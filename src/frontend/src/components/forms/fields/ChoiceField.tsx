@@ -1,13 +1,13 @@
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { Select } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { useCallback, useMemo, useRef } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 /**
  * Render a 'select' field for selecting from a list of choices
  */
-export function ChoiceField({
+function ChoiceFieldComponent({
   controller,
   definition,
   fieldName
@@ -64,6 +64,8 @@ export function ChoiceField({
     }
   }, [value]);
 
+  const onDropdownOpen = useCallback(() => inputRef?.current?.select(), []);
+
   return (
     <Select
       id={fieldId}
@@ -72,7 +74,7 @@ export function ChoiceField({
       radius='sm'
       {...field}
       ref={inputRef}
-      onDropdownOpen={() => inputRef?.current?.select()}
+      onDropdownOpen={onDropdownOpen}
       onChange={onChange}
       data={choices}
       value={choiceValue}
@@ -88,3 +90,5 @@ export function ChoiceField({
     />
   );
 }
+
+export const ChoiceField = memo(ChoiceFieldComponent);

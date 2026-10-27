@@ -9,8 +9,10 @@ export enum UserRoles {
   build = 'build',
   part = 'part',
   part_category = 'part_category',
+  pricing = 'pricing',
   purchase_order = 'purchase_order',
   return_order = 'return_order',
+  transfer_order = 'transfer_order',
   sales_order = 'sales_order',
   stock = 'stock',
   stock_location = 'stock_location'
@@ -36,10 +38,14 @@ export function userRoleLabel(role: UserRoles): string {
       return t`Parts`;
     case UserRoles.part_category:
       return t`Part Categories`;
+    case UserRoles.pricing:
+      return t`Pricing`;
     case UserRoles.purchase_order:
       return t`Purchase Orders`;
     case UserRoles.return_order:
       return t`Return Orders`;
+    case UserRoles.transfer_order:
+      return t`Transfer Orders`;
     case UserRoles.sales_order:
       return t`Sales Orders`;
     case UserRoles.stock:
@@ -50,3 +56,11 @@ export function userRoleLabel(role: UserRoles): string {
       return role as string;
   }
 }
+
+export const roleToViewSettingMap: Partial<Record<UserRoles, string>> = {
+  [UserRoles.build]: 'BUILDORDER_ENABLED',
+  [UserRoles.sales_order]: 'SALESORDER_ENABLED',
+  [UserRoles.purchase_order]: 'PURCHASEORDER_ENABLED',
+  [UserRoles.transfer_order]: 'TRANSFERORDER_ENABLED',
+  [UserRoles.return_order]: 'RETURNORDER_ENABLED'
+};

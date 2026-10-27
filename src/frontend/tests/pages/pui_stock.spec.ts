@@ -1,5 +1,5 @@
 import { expect, test } from '../baseFixtures.js';
-import { stevenuser } from '../defaults.js';
+import { adminuser, stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
@@ -30,7 +30,6 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await navigate(page, 'stock/item/1194/details');
   await page.getByText('D.123 | Doohickey').waitFor();
   await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
-  await loadTab(page, 'Stock Tracking');
   await loadTab(page, 'Test Results');
   await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
   await loadTab(page, 'Installed Items');
@@ -47,12 +46,6 @@ test('Stock - Basic Tests', async ({ browser }) => {
 
   // Automatically navigate through to the newly created stock item
   await page.getByText('Quantity: 987').first().waitFor();
-  await loadTab(page, 'Stock Tracking');
-  await page
-    .getByRole('cell', { name: 'Stock item created' })
-    .first()
-    .waitFor();
-  await page.getByRole('cell', { name: 'allaccess Ally Access' }).waitFor();
 });
 
 test('Stock - Location Tree', async ({ browser }) => {
@@ -68,6 +61,24 @@ test('Stock - Location Tree', async ({ browser }) => {
   await page.getByLabel('breadcrumb-1-factory').click();
 
   await page.getByRole('cell', { name: 'Factory' }).first().waitFor();
+
+  // Load the tree again - from a deeply nested location
+  // We expect it to auto-expand to the current location
+  await navigate(page, 'stock/location/17/stock-items');
+  await page.getByLabel('nav-breadcrumb-action').click();
+
+  for (let ii = 0; ii <= 5; ii++) {
+    await page
+      .locator('div')
+      .filter({ hasText: `Location ${ii}` })
+      .first()
+      .waitFor();
+  }
+
+  // Let's search for a particular location
+  await page.getByRole('textbox', { name: 'nav-tree-search' }).fill('room');
+  await page.getByText('Storage Room A').first().waitFor();
+  await page.getByText('Storage Room B').first().waitFor();
 });
 
 test('Stock - Location Delete', async ({ browser }) => {
@@ -100,25 +111,22 @@ test('Stock - Location Delete', async ({ browser }) => {
 
   // Delete this location, and all child locations
   await page
-    .locator('div')
-    .filter({
-      hasText: new RegExp(`^Stock>PCB Assembler>${loc_1}Stock Location$`)
-    })
-    .getByLabel('action-menu-location-actions')
+    .getByRole('button', { name: 'action-menu-location-actions' })
+    .first()
     .click();
   await page
     .getByRole('menuitem', { name: 'action-menu-location-actions-delete' })
     .click();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-delete_stock_items' })
+    .getByRole('combobox', { name: 'choice-field-delete_stock_items' })
     .click();
   await page
     .getByRole('option', { name: 'Move items to parent location' })
     .click();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-delete_sub_locations' })
+    .getByRole('combobox', { name: 'choice-field-delete_sub_locations' })
     .click();
   await page.getByRole('option', { name: 'Delete items' }).click();
 
@@ -169,9 +177,14 @@ test('Stock - Filters', async ({ browser }) => {
   // Filter by custom status code
   await clearTableFilters(page);
   await setTableChoiceFilter(page, 'Status', 'Incoming goods inspection');
-  await page.getByText('1 - 8 / 8').waitFor();
   await page.getByRole('cell', { name: '1551AGY' }).first().waitFor();
+
+  await page.getByPlaceholder('Search').clear();
+  await page.getByPlaceholder('Search').fill('blue');
   await page.getByRole('cell', { name: 'widget.blue' }).first().waitFor();
+
+  await page.getByPlaceholder('Search').clear();
+  await page.getByPlaceholder('Search').fill('002.01');
   await page.getByRole('cell', { name: '002.01-PCBA' }).first().waitFor();
 
   await clearTableFilters(page);
@@ -325,10 +338,20 @@ test('Stock - Stock Actions', async ({ browser }) => {
     await page.getByRole('option', { name: status }).click();
   };
 
+  // Duplicate the stock item first - prevent impacting other tests
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-duplicate' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+
   // Check for required values
   await page.getByText('Status', { exact: true }).waitFor();
   await page.getByText('Custom Status', { exact: true }).waitFor();
-  await page.getByText('Attention needed').waitFor();
+  await page.getByText('Attention needed').first().waitFor();
   await page
     .getByLabel('Stock Details')
     .getByText('Incoming goods inspection')
@@ -395,9 +418,21 @@ test('Stock - Stock Actions', async ({ browser }) => {
 
 // Test conversion between part variants
 test('Stock - Convert', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'stock/item/242/details' });
+  const page = await doCachedLogin(browser, { url: 'part/78/stock' });
 
-  await page.getByText('widget.red.00 | Red Widget |').waitFor();
+  // Create a brand new stock item
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-item' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-batch' })
+    .fill('BATCH_TEST');
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.waitForTimeout(2500);
+  await page.getByText('widget.red.00 | Red Widget |').first().waitFor();
+  await page.getByText('BATCH_TEST', { exact: true }).first().waitFor();
 
   // Convert to widget.red.02
   await page
@@ -442,6 +477,11 @@ test('Stock - Return Items', async ({ browser }) => {
 
   // Location detail
   await navigate(page, 'stock/item/1253');
+
+  // Allow some settling time for this page
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(100);
+
   await page
     .getByRole('button', { name: 'action-menu-stock-operations' })
     .click();
@@ -456,27 +496,64 @@ test('Stock - Return Items', async ({ browser }) => {
   await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('0');
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByText('Quantity must be greater than zero').waitFor();
-  await page.getByText('This field is required.').waitFor();
+  await page.getByRole('alert', { name: 'Form Error' }).waitFor();
+  await page.getByText('Quantity must be greater than zero').first().waitFor();
+  await page.getByText('This field is required.').first().waitFor();
 });
 
-test('Stock - Tracking', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'stock/item/176/details' });
+test('Stock - History (Stock Item)', async ({ browser }) => {
+  // Note: The 'admin' user has the "Show Change History" setting enabled
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'stock/item/193/history'
+  });
+
+  await page.getByText('widget.purple | Purple Widget').first().waitFor();
+
+  // Stock tracking events are displayed in the "History" tab
+  await page.getByText('Installed into assembly').first().waitFor();
+  await page.getByText('Assigned serial number').first().waitFor();
+  await page.getByText('Stock item created').first().waitFor();
+
+  // Event deltas link to the related stock item
+  await page.getByText('Widget Board (assembled) #159').first().waitFor();
+});
+
+test('Stock - History (Part)', async ({ browser }) => {
+  // Note: The 'admin' user has the "Show Change History" setting enabled
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'part/76/history'
+  });
+
+  await page.getByText('widget.purple | Purple Widget').first().waitFor();
+
+  // The history of the part includes stock tracking events for its stock items
+  await page.getByText('Shipped against Sales Order').first().waitFor();
+  await page.getByText('Customer D').first().waitFor();
+  await page.getByText('SO0009').first().waitFor();
+  await page.getByText('Installed into assembly').first().waitFor();
+  await page.getByText('Purple Widget #35').first().waitFor();
+
+  // ...as well as changes to the part itself (e.g. parameters)
+  await page.getByText('Color: Purple').first().waitFor();
+});
+
+test('Stock - History', async ({ browser }) => {
+  // Note: The 'admin' user has the "Show Change History" setting enabled
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'stock/item/176/details'
+  });
 
   await page.getByRole('link', { name: 'Widget Assembly # 2' }).waitFor();
 
-  // Navigate to the "stock tracking" tab
-  await loadTab(page, 'Stock Tracking');
-  await page.getByText('- - Factory/Office Block/Room').first().waitFor();
-  await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
-  await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
-
-  /* Add some more stock items and tracking information:
+  /* Add some more stock items and history information:
    * - Duplicate this stock item
    * - Give it a unique serial number
-   * - Ensure the tracking information is duplicated correctly
+   * - Ensure the creation of the new item is recorded
    * - Delete the new stock item
-   * - Ensure that the tracking information is retained against the base part
+   * - Ensure that the history is retained against the base part
    */
 
   // Duplicate the stock item
@@ -491,13 +568,10 @@ test('Stock - Tracking', async ({ browser }) => {
     .fill('9876');
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  // Check stock tracking information is correct
+  // Check that the creation of the new item is recorded
   await page.getByText('Serial Number: 9876').first().waitFor();
-  await loadTab(page, 'Stock Tracking');
-  await page
-    .getByRole('cell', { name: 'Stock item created' })
-    .first()
-    .waitFor();
+  await loadTab(page, 'History', true);
+  await page.getByText('Stock item created').first().waitFor();
 
   // Delete this stock item
   await page
@@ -508,17 +582,10 @@ test('Stock - Tracking', async ({ browser }) => {
     .click();
   await page.getByRole('button', { name: 'Delete' }).click();
 
-  // Check stock tracking for base part
-  await loadTab(page, 'Stock History');
-  await page.getByRole('button', { name: 'Stock Tracking' }).click();
-
-  await page.getByText('Stock item no longer exists').first().waitFor();
-  await page
-    .getByRole('cell', { name: 'Thumbnail Blue Widget' })
-    .first()
-    .waitFor();
-
-  await page.getByText('# 162').first().waitFor();
+  // The history of the deleted item is retained against the base part
+  await loadTab(page, 'History', true);
+  await page.getByText('Object was deleted').first().waitFor();
+  await page.getByText('Stock item created').first().waitFor();
 });
 
 test('Stock - Location', async ({ browser }) => {
@@ -550,4 +617,132 @@ test('Stock - Location', async ({ browser }) => {
     .fill('{"stocklocation": 1234}');
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
   await page.getByText('No match found for barcode data').waitFor();
+});
+
+// Test disassembly of an assembled stock item
+test('Stock - Disassembly', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'stock/item/1387/details' });
+
+  // Duplicate this stock item to avoid impacting other tests
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-duplicate' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForTimeout(100);
+  await page.waitForLoadState('networkidle');
+
+  // Disassemble this stock item
+  await page
+    .getByRole('button', { name: 'action-menu-stock-operations' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-operations-disassemble' })
+    .click();
+
+  // Perform partial disassembly
+  await page
+    .getByRole('textbox', {
+      name: 'number-field-quantity',
+      description: 'Number of assemblies to disassemble'
+    })
+    .fill('6');
+
+  // Set custom status for one item
+  await page
+    .getByRole('row', { name: 'Thumbnail XT90-M 10 60 action' })
+    .getByLabel('action-button-change-status')
+    .click();
+  await page
+    .getByRole('combobox', { name: 'choice-field-status' })
+    .fill('damaged');
+  await page.getByRole('option', { name: 'Damaged' }).click();
+
+  // Specify different location for one item
+  await page
+    .getByRole('row', { name: 'Thumbnail XT90-F 10 60' })
+    .getByLabel('action-button-set-location')
+    .click();
+  await page
+    .getByRole('cell', { name: 'Location Custom location for' })
+    .getByPlaceholder('Select location')
+    .fill('factory');
+  await page.getByRole('listbox').getByText('Factory', { exact: true }).click();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Quantity of this assembly has been reduced
+  await page.getByText('Quantity: 4').first().waitFor();
+
+  await loadTab(page, 'Child Items');
+  await page.getByText('1 - 2 / 2').waitFor();
+
+  await page.getByRole('cell', { name: 'Thumbnail XT90-F' }).waitFor();
+  await page.getByRole('cell', { name: 'Thumbnail XT90-M' }).waitFor();
+});
+
+// Test that the "location" field is correctly pre-filled when creating new stock items
+test('Stock - Default Location', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'stock/location/12/stock-items'
+  });
+
+  // The stock item location is rendered via a "tree field" (backed by a real input)
+  const locationField = () =>
+    page.getByRole('textbox', { name: 'tree-field-location' });
+
+  // Scenario 1: Creating a new stock item from within a location should default to that location
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-item' })
+    .click();
+  await expect(locationField()).toHaveValue('Location 0');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Scenario 2: Duplicating a stock item should retain its original location
+  await navigate(page, 'stock/item/2/details');
+
+  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
+
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-duplicate' })
+    .click();
+  await expect(locationField()).toHaveValue('Electronics Lab/Reel Storage');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Scenario 3: Creating a new stock item for a part with a specified default location
+  // First, assign a default location to the part
+  await navigate(page, 'part/86/details');
+  await page.getByText('1553WDBK').first().waitFor();
+  await page.keyboard.press('Control+E');
+  await page.getByPlaceholder('Select location').fill('Mechanical Lab');
+  await page
+    .getByRole('listbox')
+    .getByText('Mechanical Lab', { exact: true })
+    .click();
+  await page.waitForTimeout(250);
+
+  // The "Submit" button is only enabled if the value actually changed - if a
+  // previous test run already left this part with the same default location,
+  // there is nothing to save, so just close the form instead
+  const submitButton = page.getByRole('button', { name: 'Submit' });
+  if (await submitButton.isEnabled()) {
+    await submitButton.click();
+    await page.waitForLoadState('networkidle');
+  } else {
+    await page.getByRole('button', { name: 'Cancel' }).click();
+  }
+
+  // Now, create a new stock item for this part, and check the location is pre-filled
+  await navigate(page, 'part/86/stock');
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-item' })
+    .click();
+  await expect(locationField()).toHaveValue('Factory/Mechanical Lab');
+  await page.getByRole('button', { name: 'Cancel' }).click();
 });

@@ -1,11 +1,9 @@
 """DRF data serializers for Part app."""
 
-import io
 import os
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q
@@ -14,13 +12,9 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from djmoney.contrib.exchange.exceptions import MissingRate
-from djmoney.contrib.exchange.models import convert_money
-from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
-import common.currency
 import common.filters
 import common.serializers
 import company.models
@@ -36,6 +30,8 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import OptionalField, TreePathSerializer
+from pricing.models import PartPricing
+from pricing.serializers import PartSalePriceSerializer
 from users.serializers import UserSerializer
 
 from .models import (
@@ -44,16 +40,34 @@ from .models import (
     Part,
     PartCategory,
     PartCategoryParameterTemplate,
-    PartInternalPriceBreak,
-    PartPricing,
     PartRelated,
-    PartSellPriceBreak,
     PartStar,
     PartStocktake,
     PartTestTemplate,
 )
 
 logger = structlog.get_logger('inventree')
+
+
+class CategoryDeleteSerializer(serializers.Serializer):
+    """Serializer for deleting a PartCategory instance."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['delete_child_categories', 'delete_parts']
+
+    delete_child_categories = serializers.BooleanField(
+        label=_('Delete Subcategories'),
+        help_text=_('Delete all sub-categories contained within this category'),
+        required=True,
+    )
+
+    delete_parts = serializers.BooleanField(
+        label=_('Delete Parts'),
+        help_text=_('Delete all parts contained within this category'),
+        required=True,
+    )
 
 
 @register_importer()
@@ -84,6 +98,8 @@ class CategorySerializer(
             'structural',
             'icon',
             'parent_default_location',
+            # Optional fields
+            'parameters',
         ]
         read_only_fields = ['level', 'pathstring']
 
@@ -157,15 +173,28 @@ class CategorySerializer(
 
     parent_default_location = serializers.IntegerField(read_only=True, allow_null=True)
 
+    parameters = common.filters.enable_parameters_filter()
 
-class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
+
+class CategoryTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for PartCategory tree."""
 
     class Meta:
         """Metaclass defining serializer fields."""
 
         model = PartCategory
-        fields = ['pk', 'name', 'parent', 'icon', 'structural', 'subcategories']
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'pathstring',
+            'parent',
+            'tree_id',
+            'level',
+            'icon',
+            'structural',
+            'subcategories',
+        ]
 
     subcategories = serializers.IntegerField(label=_('Subcategories'), read_only=True)
 
@@ -215,49 +244,6 @@ class PartTestTemplateSerializer(
     def annotate_queryset(queryset):
         """Custom query annotations for the PartTestTemplate serializer."""
         return queryset.annotate(results=SubqueryCount('test_results'))
-
-
-@register_importer()
-class PartSalePriceSerializer(
-    InvenTree.serializers.FilterableSerializerMixin,
-    DataImportExportSerializerMixin,
-    InvenTree.serializers.InvenTreeModelSerializer,
-):
-    """Serializer for sale prices for Part model."""
-
-    no_filters = True
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartSellPriceBreak
-        fields = ['pk', 'part', 'quantity', 'price', 'price_currency']
-
-    quantity = InvenTree.serializers.InvenTreeDecimalField()
-
-    price = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
-
-    price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
-        help_text=_('Purchase currency of this stock item')
-    )
-
-
-class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for internal prices for Part model."""
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartInternalPriceBreak
-        fields = ['pk', 'part', 'quantity', 'price', 'price_currency']
-
-    quantity = InvenTree.serializers.InvenTreeDecimalField()
-
-    price = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
-
-    price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
-        help_text=_('Purchase currency of this stock item')
-    )
 
 
 class PartThumbSerializer(serializers.Serializer):
@@ -323,6 +309,7 @@ class PartBriefSerializer(
             'testable',
             'trackable',
             'virtual',
+            'consumable',
             'units',
             'pricing_min',
             'pricing_max',
@@ -359,6 +346,7 @@ class PartBriefSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_max = OptionalField(
@@ -370,67 +358,7 @@ class PartBriefSerializer(
         },
         default_include=True,
         filter_name='pricing',
-    )
-
-
-class DuplicatePartSerializer(serializers.Serializer):
-    """Serializer for specifying options when duplicating a Part.
-
-    The fields in this serializer control how the Part is duplicated.
-    """
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = [
-            'part',
-            'copy_image',
-            'copy_bom',
-            'copy_parameters',
-            'copy_notes',
-            'copy_tests',
-        ]
-
-    part = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.all(),
-        label=_('Original Part'),
-        help_text=_('Select original part to duplicate'),
-        required=True,
-    )
-
-    copy_image = serializers.BooleanField(
-        label=_('Copy Image'),
-        help_text=_('Copy image from original part'),
-        required=False,
-        default=False,
-    )
-
-    copy_bom = serializers.BooleanField(
-        label=_('Copy BOM'),
-        help_text=_('Copy bill of materials from original part'),
-        required=False,
-        default=False,
-    )
-
-    copy_parameters = serializers.BooleanField(
-        label=_('Copy Parameters'),
-        help_text=_('Copy parameter data from original part'),
-        required=False,
-        default=False,
-    )
-
-    copy_notes = serializers.BooleanField(
-        label=_('Copy Notes'),
-        help_text=_('Copy notes from original part'),
-        required=False,
-        default=True,
-    )
-
-    copy_tests = serializers.BooleanField(
-        label=_('Copy Tests'),
-        help_text=_('Copy test templates from original part'),
-        required=False,
-        default=False,
+        model=PartPricing,
     )
 
 
@@ -558,8 +486,6 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class PartSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
-    InvenTree.serializers.NotesFieldMixin,
-    InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTaggitSerializer,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -568,7 +494,7 @@ class PartSerializer(
     Used when displaying all details of a single component.
     """
 
-    import_exclude_fields = ['creation_date', 'creation_user', 'duplicate']
+    import_exclude_fields = ['creation_date', 'creation_user']
 
     class Meta:
         """Metaclass defining serializer fields."""
@@ -592,7 +518,6 @@ class PartSerializer(
             'description',
             'full_name',
             'image',
-            'remote_image',
             'existing_image',
             'IPN',
             'is_template',
@@ -602,7 +527,6 @@ class PartSerializer(
             'minimum_stock',
             'maximum_stock',
             'name',
-            'notes',
             'parameters',
             'pk',
             'purchaseable',
@@ -617,6 +541,7 @@ class PartSerializer(
             'units',
             'variant_of',
             'virtual',
+            'consumable',
             'pricing_min',
             'pricing_max',
             'pricing_updated',
@@ -662,7 +587,7 @@ class PartSerializer(
             # These fields are only used for the LIST API endpoint
             for f in self.skip_create_fields():
                 # Fields required for certain operations, but are not part of the model
-                if f in ['remote_image', 'existing_image']:
+                if f in ['existing_image']:
                     continue
                 self.fields.pop(f, None)
 
@@ -718,6 +643,8 @@ class PartSerializer(
             ordering=part_filters.annotate_on_order_quantity(),
             in_stock=part_filters.annotate_total_stock(),
             allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(),
+            # NOTE: for now, decided that allocations to Transfer Orders don't reduce available stock
+            # allocated_to_transfer_orders=part_filters.annotate_transfer_order_allocations(),
             allocated_to_build_orders=part_filters.annotate_build_order_allocations(),
         )
 
@@ -742,6 +669,8 @@ class PartSerializer(
                 ExpressionWrapper(
                     F('total_in_stock')
                     - F('allocated_to_sales_orders')
+                    # NOTE: for now, decided that allocations to Transfer Orders don't reduce available stock
+                    # - F('allocated_to_transfer_orders'),
                     - F('allocated_to_build_orders'),
                     output_field=models.DecimalField(),
                 ),
@@ -751,6 +680,8 @@ class PartSerializer(
         )
 
         # Annotate with the total 'required for builds' quantity
+        # NOTE: for now, we don't consider transfer orders for required quantities
+        #       and they are assumed to operate on stock that already exists.
         queryset = queryset.annotate(
             required_for_build_orders=part_filters.annotate_build_order_requirements(),
             required_for_sales_orders=part_filters.annotate_sales_order_requirements(),
@@ -898,11 +829,11 @@ class PartSerializer(
         read_only=True, allow_null=True, label=_('Variant Stock')
     )
 
-    minimum_stock = serializers.FloatField(
+    minimum_stock = InvenTree.serializers.InvenTreeDecimalField(
         required=False, label=_('Minimum Stock'), default=0
     )
 
-    maximum_stock = serializers.FloatField(
+    maximum_stock = InvenTree.serializers.InvenTreeDecimalField(
         required=False, label=_('Maximum Stock'), default=0
     )
 
@@ -927,6 +858,7 @@ class PartSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_max = OptionalField(
@@ -938,6 +870,7 @@ class PartSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_updated = OptionalField(
@@ -949,6 +882,7 @@ class PartSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     parameters = common.filters.enable_parameters_filter()
@@ -969,11 +903,37 @@ class PartSerializer(
     )
 
     # Extra fields used only for creation of a new Part instance
-    duplicate = DuplicatePartSerializer(
+    duplicate = InvenTree.serializers.DuplicateOptionsSerializer(
+        Part.objects.all(),
         label=_('Duplicate Part'),
         help_text=_('Copy initial data from another Part'),
-        write_only=True,
-        required=False,
+        copy_parameters=True,
+        copy_fields=[
+            {
+                'name': 'copy_image',
+                'label': _('Copy Image'),
+                'help_text': _('Copy image from original part'),
+                'default': False,
+            },
+            {
+                'name': 'copy_bom',
+                'label': _('Copy BOM'),
+                'help_text': _('Copy bill of materials from original part'),
+                'default': False,
+            },
+            {
+                'name': 'copy_notes',
+                'label': _('Copy Notes'),
+                'help_text': _('Copy notes from original part'),
+                'default': True,
+            },
+            {
+                'name': 'copy_tests',
+                'label': _('Copy Tests'),
+                'help_text': _('Copy test templates from original part'),
+                'default': False,
+            },
+        ],
     )
 
     initial_stock = InitialStockSerializer(
@@ -1030,30 +990,28 @@ class PartSerializer(
         initial_supplier = validated_data.pop('initial_supplier', None)
         copy_category_parameters = validated_data.pop('copy_category_parameters', False)
 
-        instance = super().create(validated_data)
+        # Additional data to apply to the serializer
+        extra_data = {}
 
-        # Save user information
         if request := self.context.get('request'):
-            instance.creation_user = request.user
-            instance.save()
+            extra_data['creation_user'] = request.user
+
+        instance = super().create({**validated_data, **extra_data})
 
         # Copy data from original Part
         if duplicate:
-            original = duplicate['part']
+            original = duplicate['original']
 
             if duplicate.get('copy_bom', False):
                 instance.copy_bom_from(original)
 
-            if duplicate.get('copy_notes', False):
-                instance.notes = original.notes
-                instance.save()
+            InvenTree.serializers.apply_duplicate_copy_options(
+                instance, duplicate, original, copy_notes=False, copy_parameters=False
+            )
 
             if duplicate.get('copy_image', False):
                 instance.image = original.image
                 instance.save()
-
-            if duplicate.get('copy_parameters', False):
-                instance.copy_parameters_from(original)
 
             if duplicate.get('copy_tests', False):
                 instance.copy_tests_from(original)
@@ -1108,6 +1066,7 @@ class PartSerializer(
         part = self.instance
         data = self.validated_data
 
+        # TODO: Remove the existing_image field entirely!
         existing_image = data.pop('existing_image', None)
 
         if existing_image:
@@ -1115,19 +1074,6 @@ class PartSerializer(
 
             part.image = img_path
             part.save()
-
-        # Check if an image was downloaded from a remote URL
-        remote_img = getattr(self, 'remote_image_file', None)
-
-        if remote_img and part:
-            fmt = remote_img.format or 'PNG'
-            buffer = io.BytesIO()
-            remote_img.save(buffer, format=fmt)
-
-            # Construct a simplified name for the image
-            filename = f'part_{part.pk}_image.{fmt.lower()}'
-
-            part.image.save(filename, ContentFile(buffer.getvalue()))
 
         return self.instance
 
@@ -1276,7 +1222,7 @@ class PartStocktakeSerializer(
         if exclude_pk:
             self.fields.pop('pk', None)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTree.serializers.InvenTreeDecimalField()
 
     cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_min_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
@@ -1387,202 +1333,6 @@ class PartStocktakeGenerateSerializer(serializers.Serializer):
     )
 
 
-@extend_schema_field(
-    serializers.CharField(
-        help_text=_('Select currency from available options')
-        + '\n\n'
-        + '\n'.join(
-            f'* `{value}` - {label}'
-            for value, label in common.currency.currency_code_mappings()
-        )
-        + "\n\nOther valid currencies may be found in the 'CURRENCY_CODES' global setting."
-    )
-)
-class PartPricingCurrencySerializer(serializers.ChoiceField):
-    """Serializer to allow annotating the schema to use String on currency fields."""
-
-
-class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for Part pricing information."""
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartPricing
-        fields = [
-            'currency',
-            'updated',
-            'scheduled_for_update',
-            'bom_cost_min',
-            'bom_cost_max',
-            'purchase_cost_min',
-            'purchase_cost_max',
-            'internal_cost_min',
-            'internal_cost_max',
-            'supplier_price_min',
-            'supplier_price_max',
-            'variant_cost_min',
-            'variant_cost_max',
-            'override_min',
-            'override_min_currency',
-            'override_max',
-            'override_max_currency',
-            'overall_min',
-            'overall_max',
-            'sale_price_min',
-            'sale_price_max',
-            'sale_history_min',
-            'sale_history_max',
-            'update',
-        ]
-
-    currency = serializers.CharField(allow_null=True, read_only=True)
-
-    updated = serializers.DateTimeField(allow_null=True, read_only=True)
-
-    scheduled_for_update = serializers.BooleanField(read_only=True)
-
-    # Custom serializers
-    bom_cost_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-    bom_cost_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-
-    purchase_cost_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-    purchase_cost_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-
-    internal_cost_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-    internal_cost_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-
-    supplier_price_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-    supplier_price_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-
-    variant_cost_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-    variant_cost_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-
-    override_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        label=_('Minimum Price'),
-        help_text=_('Override calculated value for minimum price'),
-        allow_null=True,
-        read_only=False,
-        required=False,
-    )
-
-    override_min_currency = PartPricingCurrencySerializer(
-        label=_('Minimum price currency'),
-        read_only=False,
-        required=False,
-        choices=common.currency.currency_code_mappings(),
-    )
-
-    override_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        label=_('Maximum Price'),
-        help_text=_('Override calculated value for maximum price'),
-        allow_null=True,
-        read_only=False,
-        required=False,
-    )
-
-    override_max_currency = PartPricingCurrencySerializer(
-        label=_('Maximum price currency'),
-        read_only=False,
-        required=False,
-        choices=common.currency.currency_code_mappings(),
-    )
-
-    overall_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-    overall_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-
-    sale_price_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-    sale_price_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-
-    sale_history_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-    sale_history_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        allow_null=True, read_only=True
-    )
-
-    update = serializers.BooleanField(
-        write_only=True,
-        label=_('Update'),
-        help_text=_('Update pricing for this part'),
-        default=False,
-        required=False,
-        allow_null=True,
-    )
-
-    def validate(self, data):
-        """Validate supplied pricing data."""
-        super().validate(data)
-
-        # Check that override_min is not greater than override_max
-        override_min = data.get('override_min', None)
-        override_max = data.get('override_max', None)
-
-        default_currency = common.currency.currency_code_default()
-
-        if override_min is not None and override_max is not None:
-            try:
-                override_min = convert_money(override_min, default_currency)
-                override_max = convert_money(override_max, default_currency)
-            except MissingRate:
-                raise ValidationError(
-                    _(
-                        f'Could not convert from provided currencies to {default_currency}'
-                    )
-                )
-
-            if override_min > override_max:
-                raise ValidationError({
-                    'override_min': _(
-                        'Minimum price must not be greater than maximum price'
-                    ),
-                    'override_max': _(
-                        'Maximum price must not be less than minimum price'
-                    ),
-                })
-
-        return data
-
-    def save(self):
-        """Called when the serializer is saved."""
-        super().save()
-
-        data = self.validated_data
-
-        if data.get('update', False):
-            # Update part pricing
-            pricing = self.instance
-            pricing.update_pricing()
-
-
 class PartSerialNumberSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for Part serial number information."""
 
@@ -1667,6 +1417,7 @@ class BomItemSerializer(
             'reference',
             'raw_amount',
             'quantity',
+            'piece_count',
             'allow_variants',
             'inherited',
             'optional',
@@ -1714,6 +1465,16 @@ class BomItemSerializer(
 
     rounding_multiple = InvenTree.serializers.InvenTreeDecimalField(
         required=False, allow_null=True
+    )
+
+    piece_count = serializers.IntegerField(
+        required=False,
+        default=1,
+        label=_('Piece Count'),
+        help_text=_(
+            'Number of pieces required (for cut-to-length items). '
+            'Total material = quantity x piece_count.'
+        ),
     )
 
     part = serializers.PrimaryKeyRelatedField(
@@ -1809,6 +1570,7 @@ class BomItemSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_max = OptionalField(
@@ -1820,6 +1582,7 @@ class BomItemSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_min_total = OptionalField(
@@ -1827,6 +1590,7 @@ class BomItemSerializer(
         serializer_kwargs={'allow_null': True, 'read_only': True},
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_max_total = OptionalField(
@@ -1834,6 +1598,7 @@ class BomItemSerializer(
         serializer_kwargs={'allow_null': True, 'read_only': True},
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_updated = OptionalField(
@@ -1845,6 +1610,7 @@ class BomItemSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     # Annotated fields for available stock
@@ -1902,16 +1668,21 @@ class BomItemSerializer(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
+            'sub_part__stock_items__transfer_order_allocations',
         )
 
         # Annotate with the 'total pricing' information based on unit pricing and quantity
         queryset = queryset.annotate(
             pricing_min_total=ExpressionWrapper(
-                F('quantity') * F('sub_part__pricing_data__overall_min'),
+                F('quantity')
+                * F('piece_count')
+                * F('sub_part__pricing_data__overall_min'),
                 output_field=models.DecimalField(),
             ),
             pricing_max_total=ExpressionWrapper(
-                F('quantity') * F('sub_part__pricing_data__overall_max'),
+                F('quantity')
+                * F('piece_count')
+                * F('sub_part__pricing_data__overall_max'),
                 output_field=models.DecimalField(),
             ),
         )

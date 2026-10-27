@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, Group, Loader } from '@mantine/core';
+import { ActionIcon, Anchor, Group, RollingNumber } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo } from 'react';
@@ -40,8 +40,10 @@ function QueryCountWidget({
   const query = useQuery({
     queryKey: ['dashboard-query-count', modelType, params, visibility],
     enabled: user.hasViewPermission(modelType) && visibility === 'visible',
+    refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchInterval: 10 * 60 * 1000, // 10 minute refetch interval
+    staleTime: 5 * 60 * 1000, // 5 minute stale time
     queryFn: () => {
       if (visibility !== 'visible') {
         return null;
@@ -54,7 +56,9 @@ function QueryCountWidget({
             limit: 1
           }
         })
-        .then((res) => res.data);
+        .then((res) => {
+          return res.data?.count ?? 0;
+        });
     }
   });
 
@@ -81,16 +85,16 @@ function QueryCountWidget({
   );
 
   const result: ReactNode = useMemo(() => {
-    if (query.isFetching) {
-      return <Loader size='xs' />;
-    } else if (query.isError) {
+    if (query.isError) {
       return (
         <ActionIcon color='red' variant='transparent' size='lg'>
           <IconExclamationCircle />
         </ActionIcon>
       );
     } else {
-      return <StylishText size='xl'>{query.data?.count ?? '-'}</StylishText>;
+      return (
+        <RollingNumber value={query.isFetching ? 0 : query.data} fz='20px' />
+      );
     }
   }, [query.isFetching, query.isError, query.data]);
 
@@ -125,6 +129,7 @@ export default function QueryCountDashboardWidget({
   title,
   description,
   modelType,
+  icon,
   enabled = true,
   params
 }: {
@@ -132,6 +137,7 @@ export default function QueryCountDashboardWidget({
   title: string;
   description: string;
   modelType: ModelType;
+  icon?: keyof InvenTreeIconType;
   enabled?: boolean;
   params: any;
 }): DashboardWidgetProps {
@@ -143,6 +149,7 @@ export default function QueryCountDashboardWidget({
     modelType: modelType,
     minWidth: 2,
     minHeight: 1,
+    icon: icon,
     render: () => (
       <QueryCountWidget modelType={modelType} title={title} params={params} />
     )

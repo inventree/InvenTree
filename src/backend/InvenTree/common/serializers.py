@@ -1,4 +1,4 @@
-"""JSON serializers for common components."""
+"""API serializers for common components."""
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count, OuterRef, Subquery
@@ -10,24 +10,29 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from error_report.models import Error
 from flags.state import flag_state
+from oauth2_provider.generators import generate_client_secret
+from oauth2_provider.models import Application
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
+from taggit.models import Tag
 
 import common.filters
 import common.models as common_models
 import common.validators
 import generic.states.custom
 from importer.registry import register_importer
+from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.models import InvenTreeParameterMixin
+from InvenTree.models import InvenTreeNoteMixin, InvenTreeParameterMixin
 from InvenTree.serializers import (
     ContentTypeField,
     FilterableSerializerMixin,
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
+    InvenTreeTaggitSerializer,
     OptionalField,
 )
 from plugin import registry as plugin_registry
@@ -127,6 +132,12 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     confirm_text = serializers.CharField(read_only=True)
 
+    flags = serializers.ListField(
+        child=serializers.CharField(),
+        read_only=True,
+        help_text=_('Indicating behavior or purpose of setting.'),
+    )
+
     def is_valid(self, *, raise_exception=False):
         """Validate the setting, including confirmation if required."""
         ret = super().is_valid(raise_exception=raise_exception)
@@ -140,6 +151,15 @@ class SettingsSerializer(InvenTreeModelSerializer):
                     )
                 })
         return ret
+
+    def save(self, **kwargs):
+        """Save the setting, adding the updated_by field."""
+        request = self.context.get('request', None)
+        if request is not None and hasattr(request, 'user'):
+            kwargs['updated_by'] = request.user
+        elif 'updated_by' in kwargs:
+            kwargs.pop('updated_by')
+        return super().save(**kwargs)
 
 
 class GlobalSettingsSerializer(SettingsSerializer):
@@ -159,11 +179,13 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'units',
             'choices',
             'model_name',
+            'model_filters',
             'api_url',
             'typ',
             'read_only',
             'confirm',
             'confirm_text',
+            'flags',
         ]
 
     read_only = serializers.SerializerMethodField(
@@ -205,10 +227,12 @@ class UserSettingsSerializer(SettingsSerializer):
             'units',
             'choices',
             'model_name',
+            'model_filters',
             'api_url',
             'typ',
             'confirm',
             'confirm_text',
+            'flags',
         ]
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -259,6 +283,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'required',
                 'confirm',
                 'confirm_text',
+                'flags',
             ]
 
         # set Meta class
@@ -316,7 +341,9 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
         """Function to resolve generic object reference to target."""
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
-        if target and 'link' not in target:
+        if target and obj.link:
+            target['link'] = obj.link
+        elif target and 'link' not in target:
             # Check if object has an absolute_url function
             if hasattr(obj.target_object, 'get_absolute_url'):
                 target['link'] = obj.target_object.get_absolute_url()
@@ -400,7 +427,7 @@ class NotesImageSerializer(InvenTreeModelSerializer):
         """Meta options for NotesImageSerializer."""
 
         model = common_models.NotesImage
-        fields = ['pk', 'image', 'user', 'date', 'model_type', 'model_id']
+        fields = ['pk', 'image', 'user', 'date', 'note']
 
         read_only_fields = ['date', 'user']
 
@@ -415,11 +442,41 @@ class ProjectCodeSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
         """Meta options for ProjectCodeSerializer."""
 
         model = common_models.ProjectCode
-        fields = ['pk', 'code', 'description', 'responsible', 'responsible_detail']
+        fields = [
+            'pk',
+            'code',
+            'description',
+            'active',
+            'responsible',
+            'responsible_detail',
+        ]
 
     responsible_detail = OwnerSerializer(
         source='responsible', read_only=True, allow_null=True
     )
+
+
+@register_importer()
+class TagSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
+    """Serializer for the Tag model."""
+
+    class Meta:
+        """Meta options for TagSerializer."""
+
+        model = Tag
+        fields = ['pk', 'name', 'slug']
+        read_only_fields = ['pk', 'slug']
+
+    def validate(self, data):
+        """Slugify the received name to generate the slug."""
+        from django.utils.text import slugify
+
+        name = data.get('name', None)
+
+        if name is not None:
+            data['slug'] = slugify(name)
+
+        return data
 
 
 @register_importer()
@@ -720,7 +777,9 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
-class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
+class AttachmentSerializer(
+    FilterableSerializerMixin, InvenTreeTaggitSerializer, InvenTreeModelSerializer
+):
     """Serializer class for the Attachment model."""
 
     class Meta:
@@ -730,9 +789,11 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         fields = [
             'pk',
             'attachment',
+            'thumbnail',
             'filename',
             'link',
             'comment',
+            'is_image',
             'upload_date',
             'upload_user',
             'user_detail',
@@ -742,7 +803,14 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             'tags',
         ]
 
-        read_only_fields = ['pk', 'file_size', 'upload_date', 'upload_user', 'filename']
+        read_only_fields = [
+            'pk',
+            'file_size',
+            'upload_date',
+            'upload_user',
+            'filename',
+            'is_image',
+        ]
 
     def __init__(self, *args, **kwargs):
         """Override the model_type field to provide dynamic choices."""
@@ -758,6 +826,8 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     user_detail = UserSerializer(source='upload_user', read_only=True, many=False)
 
     attachment = InvenTreeAttachmentSerializerField(required=False, allow_null=True)
+
+    thumbnail = InvenTreeImageSerializerField(read_only=True, allow_null=True)
 
     # The 'filename' field must be present in the serializer
     filename = serializers.CharField(
@@ -778,7 +848,6 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
         from InvenTree.models import InvenTreeAttachmentMixin
-        from users.permissions import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)
 
@@ -792,21 +861,156 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             model_type
         )
 
-        if not issubclass(target_model_class, InvenTreeAttachmentMixin):
-            raise PermissionDenied(_('Invalid model type specified for attachment'))
-
-        permission_error_msg = _(
-            'User does not have permission to create or edit attachments for this model'
+        check_model_change_permission(
+            user,
+            target_model_class,
+            InvenTreeAttachmentMixin,
+            _('Invalid model type specified for attachment'),
+            _(
+                'User does not have permission to create or edit attachments for this model'
+            ),
         )
 
-        if not check_user_permission(user, target_model_class, 'change'):
-            raise PermissionDenied(permission_error_msg)
-
-        # Check that the user has the required permissions to attach files to the target model
-        if not target_model_class.check_related_permission('change', user):
-            raise PermissionDenied(permission_error_msg)
-
         return super().save(**kwargs)
+
+
+def check_model_change_permission(
+    user, target_model_class, mixin_class, invalid_model_msg, permission_error_msg
+):
+    """Ensure a user has 'change' permission against a generic-relation target model.
+
+    Shared by any serializer whose save() must verify both that the target model
+    supports a given mixin (e.g. Attachment/Parameter/Note), and that the user has
+    'change' permission against it - the sequence of checks is identical in each
+    case; only the mixin class and the (separately translated, so callers keep
+    full-sentence translator context) error messages differ.
+
+    Raises PermissionDenied if the model class is invalid, or the user lacks
+    permission.
+    """
+    from users.permissions import check_user_permission
+
+    if not target_model_class or not issubclass(target_model_class, mixin_class):
+        raise PermissionDenied(invalid_model_msg)
+
+    if not check_user_permission(user, target_model_class, 'change'):
+        raise PermissionDenied(permission_error_msg)
+
+    if not target_model_class.check_related_permission('change', user):
+        raise PermissionDenied(permission_error_msg)
+
+
+def check_note_change_permission(user, *, template, model_type):
+    """Check whether a user is permitted to create, edit or delete a note.
+
+    Shared between NoteSerializer.save() (create/update) and NoteDetail's
+    destroy handling (delete), so all three operations enforce the same rule:
+    staff-only for templates, model 'change' permission otherwise.
+
+    Raises PermissionDenied if the user is not permitted.
+    """
+    if template:
+        if not user.is_staff:
+            raise PermissionDenied(
+                _('Only staff users can create or edit note templates')
+            )
+        return
+
+    target_model_class = model_type.model_class() if model_type else None
+
+    check_model_change_permission(
+        user,
+        target_model_class,
+        InvenTreeNoteMixin,
+        _('Invalid model type specified for note'),
+        _('User does not have permission to create or edit notes for this model'),
+    )
+
+
+class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
+    """Serializer for the Note model."""
+
+    class Meta:
+        """Meta options for NoteSerializer."""
+
+        model = common_models.Note
+        fields = [
+            'pk',
+            'template',
+            'model_type',
+            'model_id',
+            'primary',
+            'title',
+            'description',
+            'content',
+            'updated',
+            'updated_by',
+        ]
+
+        read_only_fields = ['updated', 'updated_by']
+
+    def get_unique_together_validators(self):
+        """Suppress the auto-generated validator for 'unique_primary_note_per_model'."""
+        return []
+
+    def validate(self, data):
+        """Validate note data — templates need no model_id; regular notes require both."""
+        data = super().validate(data)
+
+        is_template = data.get('template', getattr(self.instance, 'template', False))
+
+        if not is_template:
+            model_type = data.get('model_type') or getattr(
+                self.instance, 'model_type', None
+            )
+            model_id = data.get('model_id') or getattr(self.instance, 'model_id', None)
+
+            if not model_type:
+                raise serializers.ValidationError({
+                    'model_type': _('This field is required.')
+                })
+            if model_id is None:
+                raise serializers.ValidationError({
+                    'model_id': _('This field is required.')
+                })
+
+        return data
+
+    def save(self, **kwargs):
+        """Save the Note instance."""
+        user = self.context.get('request').user
+        is_template = self.validated_data.get(
+            'template', getattr(self.instance, 'template', False)
+        )
+        model_type = self.validated_data.get('model_type') or (
+            self.instance and self.instance.model_type
+        )
+
+        check_note_change_permission(user, template=is_template, model_type=model_type)
+
+        return super().save(updated_by=user, **kwargs)
+
+    # Note: The choices are overridden at run-time on class initialization
+    model_type = ContentTypeField(
+        mixin_class=InvenTreeNoteMixin,
+        choices=common.validators.note_model_options,
+        label=_('Model Type'),
+        default=None,
+        allow_null=True,
+        required=False,
+    )
+
+    updated_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'updated_by',
+            'read_only': True,
+            'allow_null': True,
+            'many': False,
+        },
+        default_include=True,
+        prefetch_fields=['updated_by'],
+    )
 
 
 @register_importer()
@@ -829,6 +1033,7 @@ class ParameterTemplateSerializer(
             'choices',
             'selectionlist',
             'enabled',
+            'unique',
         ]
 
     # Note: The choices are overridden at run-time on class initialization
@@ -875,9 +1080,6 @@ class ParameterSerializer(
 
     def save(self, **kwargs):
         """Save the Parameter instance."""
-        from InvenTree.models import InvenTreeParameterMixin
-        from users.permissions import check_user_permission
-
         model_type = self.validated_data.get('model_type', None)
 
         if model_type is None and self.instance:
@@ -888,22 +1090,17 @@ class ParameterSerializer(
 
         target_model_class = model_type.model_class()
 
-        if not issubclass(target_model_class, InvenTreeParameterMixin):
-            raise PermissionDenied(_('Invalid model type specified for parameter'))
-
-        permission_error_msg = _(
-            'User does not have permission to create or edit parameters for this model'
+        check_model_change_permission(
+            user,
+            target_model_class,
+            InvenTreeParameterMixin,
+            _('Invalid model type specified for parameter'),
+            _(
+                'User does not have permission to create or edit parameters for this model'
+            ),
         )
 
-        if not check_user_permission(user, target_model_class, 'change'):
-            raise PermissionDenied(permission_error_msg)
-
-        if not target_model_class.check_related_permission('change', user):
-            raise PermissionDenied(permission_error_msg)
-
-        instance = super().save(**kwargs)
-        instance.updated_by = user
-        instance.save()
+        instance = super().save(updated_by=user, **kwargs)
 
         return instance
 
@@ -966,15 +1163,17 @@ class SelectionEntrySerializer(InvenTreeModelSerializer):
     def validate(self, attrs):
         """Ensure that the selection list is not locked."""
         ret = super().validate(attrs)
-        if self.instance and self.instance.list.locked:
+        list_obj = attrs.get('list') or (self.instance and self.instance.list)
+        if list_obj and list_obj.locked:
             raise serializers.ValidationError({'list': _('Selection list is locked')})
         return ret
 
 
-class SelectionListSerializer(InvenTreeModelSerializer):
+class SelectionListSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer for a selection list."""
 
     _choices_validated: dict = {}
+    _choices_provided: bool = False
 
     class Meta:
         """Meta options for SelectionListSerializer."""
@@ -991,80 +1190,24 @@ class SelectionListSerializer(InvenTreeModelSerializer):
             'default',
             'created',
             'last_updated',
-            'choices',
             'entry_count',
+            'choices',
         ]
 
-    default = SelectionEntrySerializer(read_only=True, many=False)
-    choices = SelectionEntrySerializer(source='entries', many=True, required=False)
+    default = SelectionEntrySerializer(read_only=True, allow_null=True, many=False)
     entry_count = serializers.IntegerField(read_only=True)
+
+    choices = OptionalField(
+        serializer_class=SelectionEntrySerializer,
+        serializer_kwargs={'source': 'entries', 'many': True, 'read_only': True},
+        prefetch_fields=['entries'],
+        default_include=True,
+    )
 
     @staticmethod
     def annotate_queryset(queryset):
         """Add count of entries for each selection list."""
         return queryset.annotate(entry_count=Count('entries'))
-
-    def is_valid(self, *, raise_exception=False):
-        """Validate the selection list. Choices are validated separately."""
-        choices = (
-            self.initial_data.pop('choices')
-            if self.initial_data.get('choices') is not None
-            else []
-        )
-
-        # Validate the choices
-        _choices_validated = []
-        db_entries = (
-            {a.id: a for a in self.instance.entries.all()} if self.instance else {}
-        )
-
-        for choice in choices:
-            current_inst = db_entries.get(choice.get('id'))
-            serializer = SelectionEntrySerializer(
-                instance=current_inst,
-                data={'list': current_inst.list.pk if current_inst else None, **choice},
-            )
-            serializer.is_valid(raise_exception=raise_exception)
-            _choices_validated.append({
-                **serializer.validated_data,
-                'id': choice.get('id'),
-            })
-        self._choices_validated = _choices_validated
-
-        return super().is_valid(raise_exception=raise_exception)
-
-    def create(self, validated_data):
-        """Create a new selection list. Save the choices separately."""
-        list_entry = common_models.SelectionList.objects.create(**validated_data)
-        for choice_data in self._choices_validated:
-            common_models.SelectionListEntry.objects.create(**{
-                **choice_data,
-                'list': list_entry,
-            })
-        return list_entry
-
-    def update(self, instance, validated_data):
-        """Update an existing selection list. Save the choices separately."""
-        inst_mapping = {inst.id: inst for inst in instance.entries.all()}
-        existing_ids = {a.get('id') for a in self._choices_validated}
-
-        # Perform creations and updates.
-        ret = []
-        for data in self._choices_validated:
-            list_inst = data.get('list', None)
-            inst = inst_mapping.get(data.get('id'))
-            if inst is None:
-                if list_inst is None:
-                    data['list'] = instance
-                ret.append(SelectionEntrySerializer().create(data))
-            else:
-                ret.append(SelectionEntrySerializer().update(inst, data))
-
-        # Perform deletions.
-        for entry_id in inst_mapping.keys() - existing_ids:
-            inst_mapping[entry_id].delete()
-
-        return super().update(instance, validated_data)
 
     def validate(self, attrs):
         """Ensure that the selection list is not locked."""
@@ -1140,3 +1283,84 @@ class TestEmailSerializer(serializers.Serializer):
         fields = ['email']
 
     email = serializers.EmailField(required=True)
+
+
+class InstanceInfoSerializer(serializers.Serializer):
+    """Serializer for aggregated per-instance counts (attachments, notes, parameters).
+
+    Backs a single generic lookup (see common.api.InstanceInfoView) that any
+    model instance's detail page can use to drive its Attachments/Notes/
+    Parameters tab notification dots from one request, instead of each tab
+    independently querying its own list endpoint just to read a count.
+    """
+
+    attachment_count = serializers.IntegerField(
+        label=_('Attachment Count'),
+        help_text=_('Number of attachments associated with this instance'),
+        read_only=True,
+    )
+
+    note_count = serializers.IntegerField(
+        label=_('Note Count'),
+        help_text=_('Number of notes associated with this instance'),
+        read_only=True,
+    )
+
+    parameter_count = serializers.IntegerField(
+        label=_('Parameter Count'),
+        help_text=_('Number of parameters associated with this instance'),
+        read_only=True,
+    )
+
+
+class OAuth2ApplicationSerializer(serializers.ModelSerializer):
+    """Serializer for OAuth2 application records."""
+
+    class Meta:
+        """Meta options for OAuth2ApplicationSerializer."""
+
+        model = Application
+        fields = [
+            'id',
+            'client_id',
+            'client_secret',
+            'name',
+            'client_type',
+            'authorization_grant_type',
+            'redirect_uris',
+            'post_logout_redirect_uris',
+            'skip_authorization',
+            'algorithm',
+            'is_builtin',
+        ]
+        read_only_fields = ['id', 'client_id', 'client_secret', 'is_builtin']
+        extra_kwargs = {'client_secret': {'allow_null': True}}
+
+    is_builtin = serializers.SerializerMethodField()
+
+    @extend_schema_field(serializers.BooleanField())
+    def get_is_builtin(self, obj: Application) -> bool:
+        """Indicate whether this OAuth2 application is the built-in InvenTree client."""
+        return obj.client_id == DEFAULT_OIDC_APP_ID
+
+    def create(self, validated_data):
+        """Preserve the plaintext client secret for the create response before hashing."""
+        raw_secret = validated_data.get('client_secret', None)
+        if raw_secret is None:
+            raw_secret = generate_client_secret()
+            validated_data['client_secret'] = raw_secret
+
+        instance = Application(**validated_data)
+        instance._raw_client_secret = raw_secret
+        instance.save()
+        return instance
+
+    def to_representation(self, instance):
+        """Expose the plaintext secret only for a newly-created OAuth app instance."""
+        data = super().to_representation(instance)
+        raw_secret = getattr(instance, '_raw_client_secret', None)
+        if raw_secret is not None:
+            data['client_secret'] = raw_secret
+        else:
+            data.pop('client_secret', None)
+        return data

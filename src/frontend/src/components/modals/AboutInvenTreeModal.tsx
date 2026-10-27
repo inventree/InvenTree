@@ -19,6 +19,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
+import { docLinks } from '../../defaults/links';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ServerApiState';
 
@@ -65,8 +66,8 @@ const AboutContent = ({
   function fillTable(lookup: AboutLookupRef[], data: any, alwaysLink = false) {
     return lookup
       .filter((entry: AboutLookupRef) => !!data[entry.ref])
-      .map((entry: AboutLookupRef, idx) => (
-        <Table.Tr key={idx}>
+      .map((entry: AboutLookupRef) => (
+        <Table.Tr key={entry.ref}>
           <Table.Td>{entry.title}</Table.Td>
           <Table.Td>
             <Group justify='space-between' gap='xs'>
@@ -111,7 +112,7 @@ const AboutContent = ({
     {
       ref: 'server',
       title: <Trans>InvenTree Version</Trans>,
-      link: 'https://github.com/inventree/InvenTree/releases',
+      link: docLinks.releases,
       copy: true
     },
     {
@@ -177,7 +178,12 @@ const AboutContent = ({
               { ref: 'app', title: <Trans>Mobile App</Trans> },
               { ref: 'bug', title: <Trans>Submit Bug Report</Trans> }
             ],
-            data.links,
+            {
+              doc: docLinks.docs,
+              code: docLinks.github,
+              app: docLinks.app,
+              bug: docLinks.bug
+            },
             true
           )}
         </Table.Tbody>

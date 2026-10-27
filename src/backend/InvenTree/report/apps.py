@@ -73,7 +73,9 @@ class ReportConfig(AppConfig):
     def cleanup(self):
         """Cleanup old label and report outputs."""
         try:
-            from report.tasks import cleanup_old_report_outputs  # type: ignore[import]
+            from report.tasks import (
+                cleanup_old_report_outputs,  # type: ignore[import]  # ty: ignore[unresolved-import]
+            )
 
             cleanup_old_report_outputs()
         except Exception:
@@ -94,7 +96,7 @@ class ReportConfig(AppConfig):
             raise FileNotFoundError(
                 'Template file %s does not exist in %s', file_name, file
             )
-        return ContentFile(file.open('r').read(), os.path.basename(file_name))
+        return ContentFile(file.read_bytes(), os.path.basename(file_name))
 
     def create_default_labels(self):
         """Create default label templates."""
@@ -228,6 +230,13 @@ class ReportConfig(AppConfig):
                 'description': 'Sample return order report',
                 'model_type': 'returnorder',
                 'filename_pattern': 'ReturnOrder-{{ reference }}.pdf',
+            },
+            {
+                'file': 'inventree_transfer_order_report.html',
+                'name': 'InvenTree Transfer Order',
+                'description': 'Sample transfer order report',
+                'model_type': 'transferorder',
+                'filename_pattern': 'TransferOrder-{{ reference }}.pdf',
             },
             {
                 'file': 'inventree_test_report.html',

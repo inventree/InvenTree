@@ -14,6 +14,26 @@ Some common functions are provided for use in custom report and label templates.
 !!! tip "Use the Source, Luke"
     To see the full range of available helper functions, refer to the source file [report.py]({{ sourcefile("src/backend/InvenTree/report/templatetags/report.py") }}) where these functions are defined!
 
+## Raising Template Errors
+
+Use `raise_error` to stop rendering a report or label template with an actionable error message. The message is required and can be a quoted string or a template variable.
+
+::: report.templatetags.report.raise_error
+    options:
+        show_docstring_description: false
+        show_source: False
+
+```html
+{% raw %}
+{% load report %}
+{% if not stock_item.serial %}
+    {% raise_error "Serial number is required for this label" %}
+{% endif %}
+{% endraw %}
+```
+
+The tag raises a validation error. For labels, how this error affects printing depends on the printing plugin. See [label validation](./labels.md#validating-label-data) for sheet and batch behavior.
+
 ## Assigning Variables
 
 When making use of helper functions within a template, it can be useful to store the result of the function to a variable, rather than immediately rendering the output.
@@ -79,6 +99,52 @@ To return an element corresponding to a certain key in a container which support
 </ul>
 {% endraw %}
 ```
+
+## Session Variables
+
+Variables assigned with the `as` keyword (as described above) are only visible within the template block they were assigned in - for example, a variable assigned inside a `{% raw %}{% for %}{% endraw %}` loop is not visible once the loop ends. This makes it awkward to accumulate a value (such as a running total) across a loop.
+
+To get around this, the `set_var` and `get_var` functions can be used to store and retrieve a named variable which remains visible for the remainder of the current report or label render, regardless of which template block it was set within:
+
+### set_var
+
+Assign a value to a named variable within the current rendering context. This variable will remain accessible for the remainder of the report or label render, regardless of which template block it was set within.
+
+::: report.templatetags.report.set_var
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### get_var
+
+Retrieve the value of a named variable previously stored with `set_var`. If the variable has not been set, a backup value can be provided.
+
+::: report.templatetags.report.get_var
+    options:
+        show_docstring_description: false
+        show_source: False
+
+#### Example
+
+```html
+{% raw %}
+{% load report %}
+
+{% set_var "total" 0 %}
+
+{% for line in lines %}
+    {% get_var "total" as total %}
+    {% add total line.quantity as new_total %}
+    {% set_var "total" new_total %}
+{% endfor %}
+
+{% get_var "total" as final_total %}
+Total quantity: {{ final_total }}
+{% endraw %}
+```
+
+!!! info "Isolated per Render"
+    The variables stored with `set_var` are private to the report or label instance currently being rendered. They are reset for every instance, and are never shared between reports, requests, or users.
 
 ## Database Helpers
 
@@ -149,6 +215,9 @@ The `filter_db_model` function allows for filtering of a database model based on
     options:
         show_docstring_description: false
         show_source: False
+
+!!! warning "Restricted Data"
+    While a template renders, tables holding sensitive information - such as user sessions, API tokens, outbound emails, plugin settings and social / OAuth / MFA data - are blocked. Access raises a permission error. This is defence-in-depth only: it works on whole tables, and templates remain [trusted](../concepts/threat_model.md).
 
 #### Example
 
@@ -320,21 +389,111 @@ The helper function `format_number` allows for some common number formatting opt
         show_docstring_description: false
         show_source: False
 
-#### Example
+#### Examples
 
 ```html
 {% raw %}
 {% load report %}
-{% format_number 3.14159265359 decimal_places=5, leading=3 %}
-<!-- output: 0003.14159 -->
+
+<!-- Basic usage: strip trailing zeros -->
+{% format_number 3.14159265359 decimal_places=5 %}
+<!-- output: 3.14159 -->
+
+<!-- Leading zeros with 'leading' option -->
+{% format_number 3.14159265359 decimal_places=5 leading=3 %}
+<!-- output: 003.14159 -->
+
+<!-- Round to integer -->
 {% format_number 3.14159265359 integer=True %}
 <!-- output: 3 -->
+
+<!-- Thousands separator -->
+{% format_number 9988776.5 decimal_places=2 separator=True %}
+<!-- output: 9,988,776.50 -->
+
+<!-- Locale-aware formatting: decimal comma, dot thousands separator -->
+{% format_number 9988776.5 decimal_places=2 separator=True locale='de-de' %}
+<!-- output: 9.988.776,50 -->
+
+<!-- Scale a value with a multiplier before formatting -->
+{% format_number 0.175 multiplier=100 decimal_places=1 %}
+<!-- output: 17.5 -->
+
+<!-- Allow up to N significant decimal places, but suppress trailing zeros -->
+{% format_number 1234.5 decimal_places=2 max_decimal_places=6 %}
+<!-- output: 1234.5 -->
+
+{% endraw %}
+```
+
+#### Custom Format Strings
+
+The `fmt` argument accepts a [Unicode number pattern](https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns) string (the same syntax used by [Babel](https://babel.pocoo.org/en/latest/numbers.html)). When `fmt` is provided it takes complete priority over the `decimal_places`, `max_decimal_places`, `leading`, and `separator` arguments — those arguments are silently ignored.
+
+The `integer` and `multiplier` arguments **are** still applied to the number before the format string is used.
+
+| Symbol | Meaning |
+| --- | --- |
+| `0` | Required digit — always rendered, even if zero |
+| `#` | Optional digit — suppressed when not significant |
+| `,` | Grouping separator (position defines group size) |
+| `.` | Decimal separator |
+
+Common patterns:
+
+| Pattern | Example output |
+| --- | --- |
+| `0` | `1235` |
+| `#,##0` | `1,235` |
+| `0.00` | `1234.57` |
+| `#,##0.00` | `1,234.57` |
+| `000` | `007` |
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- Two decimal places, no grouping -->
+{% format_number 1234.5678 fmt='0.00' %}
+<!-- output: 1234.57 -->
+
+<!-- Two decimal places with thousands separator -->
+{% format_number 1234.5678 fmt='#,##0.00' %}
+<!-- output: 1,234.57 -->
+
+<!-- Same pattern, German locale: dot thousands, comma decimal -->
+{% format_number 1234.5678 fmt='#,##0.00' locale='de-de' %}
+<!-- output: 1.234,57 -->
+
+<!-- Integer with thousands separator, large number -->
+{% format_number 9988776655.4321 fmt='#,##0' integer=True %}
+<!-- output: 9,988,776,655 -->
+
 {% endraw %}
 ```
 
 ## Date Formatting
 
 For rendering date and datetime information, the following helper functions are available:
+
+Both functions resolve their output using the following priority order:
+
+1. **`fmt=` argument** — a [strftime format string](https://docs.python.org/3/library/datetime.html#format-codes). When provided, this takes full priority; `locale` and `date_format` are ignored.
+2. **`locale=` argument** — when no `fmt` is given, Babel formats the value using the style set by `date_format` (default `medium`).
+3. **Server `LANGUAGE_CODE`** — used as the locale when no `locale=` argument is supplied.
+
+#### Date Format Styles
+
+The `date_format` argument controls how Babel renders the date when locale-aware formatting is used. The four named styles are:
+
+| Style | `format_date` example (en-us, 2025-01-12) | `format_datetime` example (en-us, 2025-01-12 14:30) |
+| --- | --- | --- |
+| `full` | `Sunday, January 12, 2025` | `Sunday, January 12, 2025 at 2:30:00 PM UTC` |
+| `long` | `January 12, 2025` | `January 12, 2025 at 2:30:00 PM UTC` |
+| `medium` *(default)* | `Jan 12, 2025` | `Jan 12, 2025, 2:30:00 PM` |
+| `short` | `1/12/25` | `1/12/25, 2:30 PM` |
+
+The exact output varies by locale — the table above uses `en-us`.
 
 ### format_date
 
@@ -343,6 +502,35 @@ For rendering date and datetime information, the following helper functions are 
         show_docstring_description: false
         show_source: False
 
+#### Examples
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- Default: medium style, locale from LANGUAGE_CODE -->
+{% format_date my_date %}
+<!-- output (en-us): Jan 12, 2025 -->
+
+<!-- Explicit strftime format string — locale and date_format are ignored -->
+{% format_date my_date fmt="%d/%m/%Y" %}
+<!-- output: 12/01/2025 -->
+
+<!-- Locale-aware, default medium style -->
+{% format_date my_date locale='en-us' %}
+<!-- output: Jan 12, 2025 -->
+
+<!-- Short style -->
+{% format_date my_date locale='en-us' date_format='short' %}
+<!-- output: 1/12/25 -->
+
+<!-- Full style -->
+{% format_date my_date locale='en-us' date_format='full' %}
+<!-- output: Sunday, January 12, 2025 -->
+
+{% endraw %}
+```
+
 ### format_datetime
 
 ::: report.templatetags.report.format_datetime
@@ -350,20 +538,31 @@ For rendering date and datetime information, the following helper functions are 
         show_docstring_description: false
         show_source: False
 
-### Date Formatting
-
-If not specified, these methods return a result which uses ISO formatting. Refer to the [datetime format codes](https://docs.python.org/3/library/datetime.html#format-codes) for more information! |
-
-
-### Example
-
-A simple example of using the date formatting helper functions:
+#### Examples
 
 ```html
 {% raw %}
 {% load report %}
-Date: {% format_date my_date timezone="Australia/Sydney" %}
-Datetime: {% format_datetime my_datetime format="%d-%m-%Y %H:%M%S" %}
+
+<!-- Default: medium style, locale from LANGUAGE_CODE -->
+{% format_datetime my_datetime %}
+<!-- output (en-us): Jan 12, 2025, 2:30:00 PM -->
+
+<!-- Explicit strftime format — locale and date_format are ignored -->
+{% format_datetime my_datetime fmt="%d-%m-%Y %H:%M" %}
+<!-- output: 12-01-2025 14:30 -->
+
+<!-- Locale-aware, default medium style -->
+{% format_datetime my_datetime locale='en-us' %}
+<!-- output: Jan 12, 2025, 2:30:00 PM -->
+
+<!-- Short style -->
+{% format_datetime my_datetime locale='de-de' date_format='short' %}
+<!-- output: 12.01.25, 14:30 -->
+
+<!-- Convert to a specific timezone before formatting -->
+{% format_datetime my_datetime timezone="Australia/Sydney" locale='en-au' %}
+
 {% endraw %}
 ```
 
@@ -373,11 +572,115 @@ Datetime: {% format_datetime my_datetime format="%d-%m-%Y %H:%M%S" %}
 
 The helper function `render_currency` allows for simple rendering of currency data. This function can also convert the specified amount of currency into a different target currency:
 
-::: InvenTree.helpers_model.render_currency
+::: report.templatetags.report.render_currency
     options:
         show_docstring_description: false
         show_source: False
 
+#### Decimal Places
+
+When no decimal place arguments are provided, the locale/currency standard is used (e.g. 2 places for USD, 0 for JPY).
+
+`decimal_places` and `max_decimal_places` work the same way as in [`format_number`](#format_number):
+
+| Argument | Effect |
+| --- | --- |
+| `decimal_places=N` | Forces exactly N decimal digits (zero-padded) |
+| `max_decimal_places=M` | Allows up to M decimal digits, suppressing trailing zeros beyond `decimal_places` |
+| Both set | Forced minimum of `decimal_places`, optional up to `max_decimal_places` |
+| Neither set | Locale/currency default (e.g. 2 for USD) |
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- locale default for USD: 2 decimal places -->
+{% render_currency order.total_price currency='USD' %}
+<!-- output: $1,234.56 -->
+
+<!-- force 3 decimal places -->
+{% render_currency order.total_price currency='USD' decimal_places=3 %}
+<!-- output: $1,234.560 -->
+
+<!-- at least 2, up to 4 — trailing zeros beyond the value are suppressed -->
+{% render_currency order.total_price currency='USD' decimal_places=2 max_decimal_places=4 %}
+<!-- output: $1,234.5600 or $1,234.56 depending on the value -->
+
+{% endraw %}
+```
+
+#### Locale and Symbol Rendering
+
+The locale controls how the currency symbol and separators are rendered. For example, `USD 1234.56` with various locales:
+
+| Locale | Output |
+| --- | --- |
+| `en-us` | `$1,234.56` |
+| `en-gb` | `US$1,234.56` |
+| `en-au` | `USD1,234.56` |
+| `de-de` | `1.234,56 $` |
+
+The locale is resolved in the following priority order:
+
+1. **Explicit `locale=` argument** — highest priority, always wins
+2. **Server `LANGUAGE_CODE`** — fallback
+
+#### Leading Digits
+
+The `leading` argument specifies the minimum number of digits to render before the decimal point (zero-padded). This works identically to `leading` in [`format_number`](#format_number):
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- default: no padding -->
+{% render_currency order.total_price currency='USD' %}
+<!-- output: $1.23 -->
+
+<!-- force at least 4 integer digits -->
+{% render_currency order.total_price currency='USD' leading=4 %}
+<!-- output: $0,001.23 -->
+
+{% endraw %}
+```
+
+#### Custom Format Strings
+
+The `fmt` argument accepts a [Unicode number pattern](https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns) string (same syntax as [`format_number`](#custom-format-strings)). **When `fmt` is provided, it takes complete priority over `decimal_places`, `max_decimal_places`, and `leading`** — those arguments are ignored.
+
+The `locale`, `currency`, `multiplier`, and `include_symbol` arguments are still applied when `fmt` is set.
+
+To include the currency symbol in a `fmt` pattern, use the `¤` placeholder. Without it, no symbol appears regardless of `include_symbol`.
+
+| Pattern | Example output (en-us, USD) |
+| --- | --- |
+| `#,##0.00` | `1,234.56` (no symbol) |
+| `¤#,##0.00` | `$1,234.56` |
+| `¤#,##0.0000` | `$1,234.5600` |
+| `¤ #,##0.00` | `$ 1,234.56` |
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- No symbol (no ¤ in pattern) -->
+{% render_currency order.total_price currency='USD' fmt='#,##0.00' %}
+<!-- output: 1,234.56 -->
+
+<!-- Symbol via ¤ placeholder -->
+{% render_currency order.total_price currency='USD' fmt='¤#,##0.0000' locale='en-us' %}
+<!-- output: $1,234.5600 -->
+
+<!-- fmt + locale: de-de separators -->
+{% render_currency order.total_price currency='USD' fmt='#,##0.00' locale='de-de' %}
+<!-- output: 1.234,56 -->
+
+<!-- fmt takes priority — decimal_places=2 is ignored -->
+{% render_currency order.total_price currency='USD' fmt='0.0000' decimal_places=2 %}
+<!-- output: 1234.5600 -->
+
+{% endraw %}
+```
 
 #### Example
 
@@ -392,7 +695,11 @@ The helper function `render_currency` allows for simple rendering of currency da
 {% endfor %}
 </ul>
 
+<!-- Force 2 decimal places, convert to NZD -->
 Total Price: {% render_currency order.total_price currency='NZD' decimal_places=2 %}
+
+<!-- US-style symbol, regardless of server locale -->
+Total Price: {% render_currency order.total_price currency='USD' locale='en-us' %}
 
 {% endraw %}
 ```
@@ -669,7 +976,7 @@ If you have a custom logo, but explicitly wish to load the InvenTree logo itself
 
 ## Report Assets
 
-[Report Assets](./index.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
+[Report Assets](./assets.md) are files specifically uploaded by the user for inclusion in generated reports and labels.
 
 You can add asset images to the reports and labels by using the `{% raw %}{% asset ... %}{% endraw %}` template tag:
 
@@ -738,9 +1045,98 @@ Length: {{ length_value }}
 {% endraw %}
 ```
 
+## Notes
+
+[Notes](../concepts/notes.md) are rich-text documents that can be attached to most InvenTree model instances. Two template tags are available for accessing note content in a report.
+
+### note
+
+The `note` tag returns the rendered HTML content of a note, ready to embed directly in a report. Any images embedded in the note are automatically resolved to their base64-encoded data so that they appear in the generated PDF.
+
+::: report.templatetags.report.note
+    options:
+        show_docstring_description: false
+        show_source: False
+
+If no `title` argument is given, the [primary note](../concepts/notes.md#primary-note) is returned. If a `title` is given, the note whose title matches (case-insensitively) is returned instead. An empty string is returned when no matching note exists.
+
+#### Example
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- Render the primary note for the part -->
+{% note part as part_note %}
+<div>{{ part_note }}</div>
+
+<!-- Render a note by title -->
+{% note part "Assembly Instructions" as instructions %}
+<div>{{ instructions }}</div>
+{% endraw %}
+```
+
+!!! info "Safe HTML Output"
+    The `note` tag returns pre-sanitized HTML and is marked safe for direct template rendering. Do **not** additionally wrap it with `| safe` or `| markdownify` — the content has already been processed.
+
+### note_instance
+
+The `note_instance` tag returns the `Note` object itself, giving access to its individual fields. This is useful when you need to display the note title, description, or metadata alongside its content.
+
+::: report.templatetags.report.note_instance
+    options:
+        show_docstring_description: false
+        show_source: False
+
+A `Note` object exposes the following attributes:
+
+| Attribute | Description |
+| --- | --- |
+| `title` | The title of the note |
+| `description` | An optional short description of the note |
+| `content` | The raw HTML content of the note |
+| `primary` | `True` if this is the primary note for the model instance |
+| `updated` | Timestamp of the last modification |
+| `updated_by` | The user who last modified the note |
+
+#### Example
+
+```html
+{% raw %}
+{% load report %}
+
+{% note_instance part as primary_note %}
+{% if primary_note %}
+<h3>{{ primary_note.title }}</h3>
+{% if primary_note.description %}<p><em>{{ primary_note.description }}</em></p>{% endif %}
+{% note part as note_content %}
+<div>{{ note_content }}</div>
+{% endif %}
+{% endraw %}
+```
+
+### Iterating Over All Notes
+
+When a model has multiple notes and you want to render all of them, access the `notes` queryset directly:
+
+```html
+{% raw %}
+{% load report %}
+
+{% for n in part.notes.all %}
+<h3>{{ n.title }}</h3>
+{% note part n.title as note_content %}
+<div>{{ note_content }}</div>
+{% endfor %}
+{% endraw %}
+```
+
 ## Rendering Markdown
 
-Some data fields (such as the *Notes* field available on many internal database models) support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.
+Some data fields (such as those provided by custom plugin models) may support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.
+
+!!! info "Notes"
+    [Notes](../concepts/notes.md) content is rich-text (stored as HTML) rather than markdown, and is already sanitized. Use the [note](#note) tag to render it - do not pass it through `markdownify`.
 
 To render markdown content in a report, consider the following simplified example:
 
@@ -749,9 +1145,9 @@ To render markdown content in a report, consider the following simplified exampl
 
 {% load markdownify %}
 
-<h3>Part Notes</h3>
+<h3>Description</h3>
 <p>
-    {{ part.notes | markdownify }}
+    {{ some_markdown_field | markdownify }}
 </p>
 {% endraw %}
 ```

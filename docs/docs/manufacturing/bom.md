@@ -22,6 +22,7 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | Quantity | The quantity of *Part* required for the assembly - this value is automatically calculated from the "raw amount" field, taking into account the units of measure associated with the underlying part. |
 | Attrition | Estimated attrition losses for a production run. Expressed as a percentage of the base quantity (e.g. 2%) |
 | Setup Quantity | An additional quantity of the part which is required to account for fixed setup losses during the production process. This is added to the base quantity of the BOM line item |
+| Piece Count | The number of individual pieces required per assembly (for cut-to-length items). Defaults to 1. Total material = quantity x piece_count. |
 | Rounding Multiple | A value which indicates that the required quantity should be rounded up to the nearest multiple of this value. |
 | Consumable | A boolean field which indicates whether this BOM Line Item is *consumable* |
 | Inherited | A boolean field which indicates whether this BOM Line Item will be "inherited" by BOMs for parts which are a variant (or sub-variant) of the part for which this BOM is defined. |
@@ -40,6 +41,48 @@ If the underlying part does not have a defined unit of measure, the `raw_amount`
 
 The `raw_amount` field also allows for fractional representation of the required quantity. For example, if the required quantity is 0.5 kg, the user can specify this as `500 g`, `0.5 kg`, `1/2 kg`, etc. The `quantity` field will be automatically calculated as 0.5 kg, regardless of the specific representation used in the `raw_amount` field.
 
+### Piece Count (Cut-to-Length Parts)
+
+The `piece_count` field supports scenarios where a material is cut or divided into multiple identical pieces for each assembly. This is common for cables, wires, tubing, extrusions, and similar length-based materials.
+
+When `piece_count` is greater than 1, the `quantity` field represents the size or length of each individual piece, and `piece_count` indicates how many such pieces are needed per assembly. The total material required is calculated as:
+
+```
+Total material = quantity x piece_count x build_quantity
+```
+
+#### Example: Wire Harness Assembly
+
+Consider an assembly that requires 10 pieces of wire, each cut to 200mm length:
+
+| Field | Value | Description |
+| --- | --- | --- |
+| Quantity | 200 (mm) | Length of each individual wire piece |
+| Piece Count | 10 | Number of wire pieces per assembly |
+| Build Quantity | 5 | Number of assemblies to build |
+| **Total Required** | **10,000 mm (10m)** | 200 x 10 x 5 = 10,000 mm |
+
+#### Example: Tubing for Hydraulic System
+
+An assembly requires 4 pieces of tubing, each 500mm long, with 5% attrition:
+
+| Field | Value | Description |
+| --- | --- | --- |
+| Quantity | 500 (mm) | Length of each tube section |
+| Piece Count | 4 | Number of tube pieces per assembly |
+| Build Quantity | 3 | Number of assemblies to build |
+| Attrition | 5% | Account for cutting waste |
+| **Total Required** | **6,300 mm (6.3m)** | (500 x 4 x 3) x 1.05 = 6,300 mm |
+
+!!! note "Default Behavior"
+    When `piece_count` is left at its default value of 1, the BOM line item behaves exactly as it did before this feature was introduced. Existing BOMs are unaffected.
+
+!!! info "Where Piece Count Applies"
+    The total material per assembly (`quantity x piece_count`) is used wherever InvenTree calculates component requirements for an assembly, including the [required build quantity](./required.md), the *Can Build* quantity, [BOM pricing](../part/pricing.md#bom-pricing), and the *Total Quantity* column of the [BOM Exporter](../plugins/builtin/bom_exporter.md).
+
+!!! tip "When to Use Piece Count"
+    Use `piece_count` when you are cutting or dividing a material into multiple identical pieces. If each piece has a different length, create separate BOM line items instead.
+
 ### Consumable BOM Line Items
 
 If a BOM line item is marked as *consumable*, this means that while the part and quantity information is tracked in the BOM, this line item does not get allocated to a [Build Order](./build.md). This may be useful for certain items that the user does not wish to track through the build process, as they may be low value, in abundant stock, or otherwise complicated to track.
@@ -49,6 +92,8 @@ In the example below, see that the *Wood Screw* line item is marked as consumabl
 {{ image("build/bom_consumable_item.png", "Consumable BOM Item") }}
 
 Further, in the [Build Order](./build.md) stock allocation table, we see that this line item cannot be allocated, as it is *consumable*.
+
+Marking a BOM line item as consumable is a per-assembly override - it only affects how the part is treated within *this* particular BOM, and does not change the underlying part definition. A part can also be marked as consumable directly - refer to the [consumable parts documentation](../part/consumable.md) for more information on the distinction between the two, and reasons why a part may be marked as consumable.
 
 ### Optional BOM Line Items
 
@@ -118,7 +163,7 @@ By default, the BOM is displayed in "view" mode. To edit the BOM, click on the {
 
 ### Importing a BOM
 
-BOM data can be imported from an existing file (such as CSV or Excel) from the *BOM* panel for a particular part/assembly. This process is a special case of the more general [data import process](../settings/import.md).
+BOM data can be imported from an existing file (such as CSV or Excel) from the *BOM* panel for a particular part/assembly. This process is a special case of the more general [data import process](../concepts/data_import.md).
 
 At the top of the *BOM* panel, click on the {{ icon("file-arrow-left", color="green", title="Import BOM Data") }} icon to open the import dialog.
 
@@ -146,6 +191,47 @@ Select a part in the list and click on "Add Substitute" button to confirm.
 
 Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimited number of levels.
 
+### Nested BOM View
+
+The BOM table can display the BOM for any sub-assembly directly within the parent BOM. Any line item which references an assembled part displays a {{ icon("chevron-right") }} icon next to the part name. Click on this icon to load the BOM for that sub-assembly, which is inserted into the table directly below the sub-assembly line item.
+
+Sub-assembly line items share the same columns as the top-level BOM, and are indicated by:
+
+- An indent and a {{ icon("corner-down-right") }} icon in the *Component* column, showing the depth of each line item within the BOM hierarchy
+- *Italic* text, to distinguish them from the line items defined for the top-level assembly
+
+Sub-assemblies within a sub-assembly can be expanded in the same way, for any number of levels. Click on the {{ icon("chevron-down") }} icon to collapse a sub-assembly again.
+
+{{ image("build/bom_nested.png", "Nested BOM View") }}
+
+#### Calculated Values
+
+For sub-assembly line items, some columns are calculated relative to a single unit of the *top-level* assembly, rather than a single unit of the sub-assembly. Each of these columns displays the calculation underneath the calculated value:
+
+| Column | Calculation | Example |
+| --- | --- | --- |
+| Quantity | The line item quantity, multiplied by the quantity of each upstream sub-assembly | `4 × 3` |
+| Total Price | The total price for the sub-assembly, multiplied by the quantity of each upstream sub-assembly | `3 × ($1.12 - $2.44)` |
+| Can Build | The number of sub-assemblies which can be built, divided by the quantity of each upstream sub-assembly | `120 ÷ 3` |
+
+In the example above, the *Doohickey* sub-assembly is required three times for each top-level assembly. Each *Doohickey* requires four *M3x8 Torx* screws, so twelve screws are required in total. Where there are multiple levels of sub-assemblies, the quantity of each level is included in the calculation (e.g. `19 × 1 × 3`).
+
+Other columns (such as *Available Stock*) display the same values as they would in the BOM for the sub-assembly itself.
+
+!!! info "Setup Quantity and Attrition"
+    The calculated quantity values are based on the line item quantities only. The quantity of each upstream sub-assembly includes its [piece count](#piece-count-cut-to-length-parts) (`quantity x piece_count`). The [setup quantity](#bom-line-items) and [attrition](#bom-line-items) of any upstream sub-assemblies are not included in the calculation.
+
+#### Behavior
+
+- Sub-assembly line items are loaded using the same sort order as the top-level BOM.
+- Table filters are only applied to the top-level line items. When a sub-assembly is expanded, its entire BOM is displayed.
+- Any expanded sub-assemblies are collapsed when the table is reloaded - for example when changing the page, search term, sort order or table filters.
+- Sub-assemblies cannot be expanded while the BOM is in [editing mode](#editing-mode). To edit the line items of a sub-assembly, navigate to the sub-assembly part and edit its BOM directly.
+- Sub-assembly line items are not included when [exporting](../concepts/data_export.md) the table data. To export a complete multi-level BOM, use the [BOM Exporter](../plugins/builtin/bom_exporter.md) plugin.
+
+!!! tip "User Setting"
+    Display of sub-assemblies within the BOM table can be disabled via the [Show Subassemblies in BOM table](../settings/user.md#display-settings) user setting.
+
 ## BOM Validation
 
 InvenTree maintains a "validated" flag for each assembled part. When set, this flag indicates that the production requirements for this part have been validated, and that the BOM has not been changed since the last validation.
@@ -163,6 +249,7 @@ The following BOM item fields are used when calculating the BOM checksum:
 - *Attrition* - The attrition percentage of the BOM line item.
 - *Setup Quantity* - The setup quantity of the BOM line item.
 - *Rounding Multiple* - The rounding multiple of the BOM line item.
+- *Piece Count* - The number of pieces required per assembly (for cut-to-length items).
 - *Consumable* - Whether the BOM line item is consumable.
 - *Inherited* - Whether the BOM line item is inherited.
 - *Optional* - Whether the BOM line item is optional.

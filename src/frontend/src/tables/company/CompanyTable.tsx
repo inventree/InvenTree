@@ -8,21 +8,31 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { navigateToLink } from '@lib/functions/Navigation';
+import { eventModified, navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
+import {
+  BooleanColumn,
+  CompanyColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  CompanyColumn,
-  DescriptionColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
+
+type CompanyTableType =
+  | 'all'
+  | 'internal'
+  | 'supplier'
+  | 'manufacturer'
+  | 'customer';
 
 /**
  * A table which displays a list of company records,
@@ -31,10 +41,12 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function CompanyTable({
   companyType,
   params,
+  initialData,
   path
 }: Readonly<{
-  companyType?: string;
+  companyType?: CompanyTableType;
   params?: any;
+  initialData?: any;
   path?: string;
 }>) {
   const table = useTable(`company-${companyType ?? 'index'}`, {
@@ -48,6 +60,12 @@ export function CompanyTable({
 
   const navigate = useNavigate();
   const user = useUserState();
+  const previewDrawer = usePreviewDrawerState();
+  const userSettings = useUserSettingsState();
+
+  const showPreviewPanel = useMemo(() => {
+    return userSettings.isSet('ENABLE_PREVIEW_PANEL');
+  }, [userSettings]);
 
   const columns = useMemo(() => {
     return [
@@ -63,22 +81,59 @@ export function CompanyTable({
       DescriptionColumn({}),
       BooleanColumn({
         accessor: 'active',
+        filter: 'active',
         title: t`Active`,
         sortable: true,
         switchable: true
+      }),
+      BooleanColumn({
+        accessor: 'is_supplier',
+        filter: 'is_supplier',
+        title: t`Supplier`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'supplier',
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'is_manufacturer',
+        filter: 'is_manufacturer',
+        title: t`Manufacturer`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'manufacturer',
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'is_customer',
+        filter: 'is_customer',
+        title: t`Customer`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'customer',
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'is_internal',
+        filter: 'is_internal',
+        title: t`Internal`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'internal',
+        defaultVisible: false
       }),
       {
         accessor: 'website',
         sortable: false
       }
     ];
-  }, []);
+  }, [companyType]);
 
   const newCompany = useCreateApiFormModal({
     url: ApiEndpoints.company_list,
     title: t`Add Company`,
     fields: companyFields(),
-    initialData: params,
+    initialData: initialData ?? params,
     follow: true,
     modelType: ModelType.company,
     keepOpenOption: true
@@ -115,7 +170,13 @@ export function CompanyTable({
         name: 'is_customer',
         label: t`Customer`,
         description: t`Show companies which are customers`
-      }
+      },
+      {
+        name: 'is_internal',
+        label: t`Internal`,
+        description: t`Show companies which represent your own organization`
+      },
+      TagsFilter({ modelType: ModelType.company })
     ];
   }, []);
 
@@ -163,10 +224,20 @@ export function CompanyTable({
           params: {
             ...params
           },
-          onRowClick: (record: any, index: number, event: any) => {
-            if (record.pk) {
-              const base = path ?? 'company';
-              navigateToLink(`/${base}/${record.pk}`, navigate, event);
+          onRowClick: (record: any, _index: number, event: any) => {
+            if (!record.pk) return;
+            const url = `/${path ?? 'company'}/${record.pk}`;
+            if (!showPreviewPanel || eventModified(event as any)) {
+              navigateToLink(url, navigate, event);
+            } else {
+              previewDrawer.openPreview(
+                ModelType.company,
+                Number(record.pk),
+                undefined,
+                undefined,
+                undefined,
+                url
+              );
             }
           },
           modelType: ModelType.company,

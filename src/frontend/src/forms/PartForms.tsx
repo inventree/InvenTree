@@ -1,8 +1,9 @@
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconBuildingStore, IconCopy, IconPackages } from '@tabler/icons-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGlobalSettingsState } from '../states/SettingsStates';
+import { TagsField } from './CommonFields';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
@@ -22,12 +23,36 @@ export function usePartFields({
   const [purchaseable, setPurchaseable] = useState<boolean | undefined>(
     undefined
   );
+  const [initialStockLocation, setInitialStockLocation] = useState<
+    number | null
+  >(null);
+  const initialStockLocationOverridden = useRef(false);
+
+  const partDefaultLocation = useRef<number | null>(null);
+  const categoryDefaultLocation = useRef<number | null>(null);
+
+  // Set the initial state for the tracked fields based on the global settings
+  useEffect(() => {
+    setVirtual(globalSettings.isSet('PART_VIRTUAL'));
+    setPurchaseable(globalSettings.isSet('PART_PURCHASEABLE'));
+  }, [partId, create]);
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       category: {
         filters: {
           structural: false
+        },
+        onValueChange: (_value, category) => {
+          categoryDefaultLocation.current = category?.default_location ?? null;
+
+          // A part-specific default location takes precedence over the
+          // category default location.
+          if (create && !initialStockLocationOverridden.current) {
+            setInitialStockLocation(
+              partDefaultLocation.current ?? categoryDefaultLocation.current
+            );
+          }
         }
       },
       name: {},
@@ -48,9 +73,21 @@ export function usePartFields({
         }
       },
       keywords: {},
+      tags: TagsField({}),
       units: {},
       link: {},
       default_location: {
+        onValueChange: (value) => {
+          partDefaultLocation.current = value ?? null;
+
+          // Pre-fill the initial stock location, unless the user has already
+          // selected a different location.
+          if (!initialStockLocationOverridden.current) {
+            setInitialStockLocation(
+              partDefaultLocation.current ?? categoryDefaultLocation.current
+            );
+          }
+        },
         filters: {
           structural: false
         }
@@ -95,6 +132,9 @@ export function usePartFields({
           setVirtual(value);
         }
       },
+      consumable: {
+        default: false
+      },
       locked: {},
       active: {},
       starred: {
@@ -110,14 +150,20 @@ export function usePartFields({
     if (create && !virtual) {
       fields.copy_category_parameters = {};
 
-      if (virtual != false) {
+      if (globalSettings.isSet('PART_CREATE_INITIAL')) {
         fields.initial_stock = {
           icon: <IconPackages />,
           children: {
             quantity: {
               value: 0
             },
-            location: {}
+            location: {
+              value: initialStockLocation,
+              onValueChange: (value) => {
+                initialStockLocationOverridden.current = true;
+                setInitialStockLocation(value);
+              }
+            }
           }
         };
       }
@@ -148,7 +194,7 @@ export function usePartFields({
       fields.duplicate = {
         icon: <IconCopy />,
         children: {
-          part: {
+          original: {
             value: duplicatePartInstance?.pk,
             hidden: true
           },
@@ -188,6 +234,11 @@ export function usePartFields({
       delete fields['default_expiry'];
     }
 
+    // Remove "locked" field if locking not enabled
+    if (!globalSettings.isSet('PART_ENABLE_LOCKING')) {
+      delete fields['locked'];
+    }
+
     if (create) {
       delete fields['starred'];
     }
@@ -197,6 +248,7 @@ export function usePartFields({
     partId,
     virtual,
     purchaseable,
+    initialStockLocation,
     create,
     globalSettings,
     duplicatePartInstance

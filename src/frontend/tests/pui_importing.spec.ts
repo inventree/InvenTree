@@ -1,4 +1,4 @@
-import test from '@playwright/test';
+import { test } from './baseFixtures';
 import { stevenuser } from './defaults';
 import { doCachedLogin } from './login';
 
@@ -26,7 +26,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByText('Errors exist for one or more').waitFor();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-model_type' })
+    .getByRole('combobox', { name: 'choice-field-model_type' })
     .fill('bom');
   await page.getByRole('option', { name: 'BOM Item', exact: true }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -36,7 +36,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByText('Existing database identifier for the record').waitFor();
 
   await page
-    .getByRole('textbox', { name: 'import-column-map-reference' })
+    .getByRole('combobox', { name: 'import-column-map-reference' })
     .click();
   await page.getByRole('option', { name: 'Ignore this field' }).click();
 
@@ -162,8 +162,11 @@ test('Importing - Purchase Order', async ({ browser }) => {
     url: 'purchasing/purchase-order/15/line-items'
   });
 
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
   await page
-    .getByRole('button', { name: 'action-button-import-line-' })
+    .getByRole('menuitem', {
+      name: 'action-menu-add-line-item-import-line-items'
+    })
     .click();
 
   const fileInput = await page.locator('input[type="file"]');
@@ -181,8 +184,11 @@ test('Importing - Natural Keys', async ({ browser }) => {
   });
 
   // Import line item data, but use natural keys as the import fields
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
   await page
-    .getByRole('button', { name: 'action-button-import-line-' })
+    .getByRole('menuitem', {
+      name: 'action-menu-add-line-item-import-line-items'
+    })
     .click();
 
   const fileInput = await page.locator('input[type="file"]');
@@ -195,7 +201,7 @@ test('Importing - Natural Keys', async ({ browser }) => {
 
   // Select different columns for data import
   // We will use the "SKU" field to map to the supplier part
-  await page.getByRole('textbox', { name: 'import-column-map-part' }).click();
+  await page.getByRole('combobox', { name: 'import-column-map-part' }).click();
   await page.getByRole('option', { name: 'SKU' }).click();
 
   // Other import fields will be left as default

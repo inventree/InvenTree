@@ -9,7 +9,8 @@ import {
   setTableChoiceFilter,
   showCalendarView,
   showParametricView,
-  showTableView
+  showTableView,
+  tableSearch
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -68,6 +69,12 @@ test('Sales Orders - Tabs', async ({ browser }) => {
     .getByLabel('Order Details')
     .getByText('Selling some stuff')
     .waitFor();
+
+  // Creator of the order should be displayed
+  await expect(page.getByRole('row', { name: 'Created By' })).toContainText(
+    'admin'
+  );
+
   await loadTab(page, 'Line Items');
   await loadTab(page, 'Shipments');
   await loadTab(page, 'Build Orders');
@@ -82,6 +89,12 @@ test('Sales Orders - Tabs', async ({ browser }) => {
   await loadTab(page, 'Return Orders');
   await page.getByRole('cell', { name: 'RMA-' }).click();
   await page.getByText('RMA-0001', { exact: true }).waitFor();
+
+  // Creator of the order should be displayed
+  await expect(page.getByRole('row', { name: 'Created By' })).toContainText(
+    'admin'
+  );
+
   await loadTab(page, 'Line Items');
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
@@ -126,6 +139,42 @@ test('Sales Orders - Basic Tests', async ({ browser }) => {
 
   await page.getByText('On Hold').first().waitFor();
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+});
+
+test('Sales Orders - Auto Allocate', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/sales-order/11/' });
+
+  // Duplicate the order
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Pending').first().waitFor();
+
+  await loadTab(page, 'Line Items');
+  await page
+    .getByRole('button', { name: 'action-button-auto-allocate-' })
+    .click();
+  await page
+    .getByRole('combobox', { name: 'choice-field-stock_sort_by' })
+    .click();
+  await page.getByRole('option', { name: 'Newest stock' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Stock allocation complete').first().waitFor();
+  await page.getByText('10 / 10').first().waitFor();
+
+  // Cancel the order (to free up the allocated stock)
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Cancelled').first().waitFor();
+
+  // Check that the allocated stock has been released
+  await page
+    .getByRole('region', { name: 'Line Items', exact: true })
+    .getByLabel('table-refresh')
+    .click();
+  await page.getByText('0 / 10').first().waitFor();
 });
 
 test('Sales Orders - Shipments', async ({ browser }) => {
@@ -240,6 +289,29 @@ test('Sales Orders - Shipments', async ({ browser }) => {
     .click();
 });
 
+// Filter Shipments by tag
+test('Sales Orders - Shipments - Tags', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/index/shipments' });
+
+  // Filter by tag
+  await clearTableFilters(page);
+  await page.getByRole('button', { name: 'table-select-filters' }).click();
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByRole('combobox', { name: 'Filter' }).fill('tag');
+  await page.getByRole('option', { name: 'Tags' }).click();
+  await page.getByRole('combobox', { name: 'Value' }).click();
+
+  // Apply the "Requires Payment" tag filter
+  await page.getByRole('option', { name: 'Requires Payment' }).click();
+  await page.getByRole('button', { name: 'apply-tags-filter' }).click();
+  await page.getByRole('button', { name: 'filter-drawer-close' }).click();
+
+  // Click through to one of the selected shipments
+  await page.getByRole('cell', { name: 'SO0007' }).click();
+  await page.getByText('Sales Order: SO0007').first().waitFor();
+  await page.getByText('Requires Payment', { exact: true }).first().waitFor();
+});
+
 // Complete a shipment against a sales order
 test('Sales Orders - Complete Shipment', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
@@ -311,6 +383,62 @@ test('Sales Orders - Complete Shipment', async ({ browser }) => {
   await page.getByRole('cell', { name: 'Customer D' }).waitFor();
 });
 
+// Check / uncheck / view / cancel shipment row actions
+test('Sales Orders - Shipment Row Actions', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'sales/sales-order/7/shipments'
+  });
+
+  const shipmentReference = `SHIP-${Math.floor(Math.random() * 100000)}`;
+
+  await clearTableFilters(page);
+  await page
+    .getByRole('button', { name: 'action-button-add-shipment' })
+    .click();
+  await page
+    .getByLabel('text-field-reference', { exact: true })
+    .fill(shipmentReference);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Shipment created').first().waitFor();
+
+  const cell = page.getByRole('cell', { name: shipmentReference });
+
+  // Check the shipment
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Check Shipment' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Shipment marked as checked').first().waitFor();
+
+  // Uncheck the shipment
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Uncheck Shipment' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Shipment marked as unchecked').first().waitFor();
+
+  // Open the "complete shipment" form, then cancel it
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Complete Shipment' }).click();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // View the parent sales order from the global shipments table
+  await navigate(page, 'sales/index/shipments');
+  await clearTableFilters(page);
+  await page.getByLabel('table-search-input').fill(shipmentReference);
+  await clickOnRowMenu(page.getByRole('cell', { name: shipmentReference }));
+  await page.getByRole('menuitem', { name: 'View Sales Order' }).click();
+  await page.getByText('Sales Order: SO0007').first().waitFor();
+
+  // Cancel the shipment
+  await loadTab(page, 'Shipments');
+  await clearTableFilters(page);
+  await clickOnRowMenu(page.getByRole('cell', { name: shipmentReference }));
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+  await page.getByRole('cell', { name: shipmentReference }).waitFor({
+    state: 'detached'
+  });
+});
+
 test('Sales Orders - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'sales/sales-order/14/detail'
@@ -376,9 +504,11 @@ test('Sales Orders - Price Breaks', async ({ browser }) => {
     url: 'sales/sales-order/14/line-items'
   });
 
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
   await page
-    .getByRole('button', { name: 'action-button-add-line-item' })
+    .getByRole('menuitem', { name: 'action-menu-add-line-item-add' })
     .click();
+
   await page.getByLabel('related-field-part').fill('software');
   await page.getByRole('option', { name: 'Software License' }).click();
 
@@ -408,4 +538,131 @@ test('Sales Orders - Price Breaks', async ({ browser }) => {
   await expect(
     page.getByRole('textbox', { name: 'number-field-sale_price' })
   ).toHaveValue('78', { timeout: 500 });
+});
+
+// Exercise the row and table actions on the sales order line item table
+test('Sales Orders - Line Item Actions', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/sales-order/11/' });
+
+  // Work on a duplicate, to avoid modifying fixture data
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Pending').first().waitFor();
+
+  await loadTab(page, 'Line Items');
+  await page.waitForLoadState('networkidle');
+
+  // Add a new line item
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-line-item-add' })
+    .click();
+  await page.getByLabel('related-field-part').fill('software');
+  await page.getByRole('option', { name: 'Software License' }).click();
+  await page.getByLabel('number-field-quantity').fill('3');
+  await page.getByLabel('text-field-reference').fill('New Line');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Edit the new line item
+  await clickOnRowMenu(page.getByRole('cell', { name: 'New Line' }));
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  await page.getByLabel('text-field-reference').fill('Edited Line');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('cell', { name: 'Edited Line' }).waitFor();
+
+  // Duplicate the line item
+  await clickOnRowMenu(page.getByRole('cell', { name: 'Edited Line' }));
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+
+  // Delete a line item
+  await clickOnRowMenu(page.getByRole('cell', { name: 'Edited Line' }).first());
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.waitForLoadState('networkidle');
+
+  // Open the other row actions, where available
+  const region = page.getByRole('region', { name: 'Line Items', exact: true });
+  await region.getByLabel('Select all records').click();
+
+  await region
+    .getByRole('button', { name: 'action-button-allocate-stock' })
+    .click();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  await region
+    .getByRole('button', { name: 'action-button-order-parts' })
+    .click();
+  await page.getByRole('banner').getByRole('button').click();
+});
+
+test('Sales Orders - Parametric View', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'sales/index/salesorders'
+  });
+
+  await showParametricView(page);
+  await clearTableFilters(page);
+
+  // Columns and data are rendered in the parametric table
+  await page.getByRole('button', { name: 'Customer' }).waitFor();
+  await page.getByRole('cell', { name: 'SO0001' }).waitFor();
+
+  // Search within the parametric table
+  await tableSearch(page, 'SO0001');
+  await page.getByRole('cell', { name: 'SO0001' }).waitFor();
+  await expect(page.getByRole('cell', { name: 'SO0002' })).toHaveCount(0);
+});
+
+// Edit and remove stock allocations (allocation forms)
+test('Sales Orders - Edit Allocations', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/sales-order/11/' });
+
+  // Work on a duplicate, to avoid modifying fixture data
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Pending').first().waitFor();
+
+  await loadTab(page, 'Line Items');
+  await page
+    .getByRole('button', { name: 'action-button-auto-allocate-' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Stock allocation complete').first().waitFor();
+
+  // Open the edit allocation form (serialized stock, so quantity is fixed)
+  await loadTab(page, 'Allocated Stock');
+  await page.waitForLoadState('networkidle');
+  const row = page.getByRole('row').nth(1);
+  await row.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  await page.waitForLoadState('networkidle');
+  await page.getByLabel('number-field-quantity').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Remove the allocation
+  await page
+    .getByRole('row')
+    .nth(1)
+    .getByLabel(/row-action-menu-/i)
+    .click();
+  await page.getByRole('menuitem', { name: 'Remove' }).click();
+  await page.getByRole('button', { name: 'Remove', exact: true }).click();
+  await page.waitForLoadState('networkidle');
+
+  // Open the manual allocation form
+  await loadTab(page, 'Line Items');
+  await clickOnRowMenu(page.getByRole('cell', { name: 'widget.blue' }).first());
+  await page.getByRole('menuitem', { name: 'Allocate stock' }).click();
+  await page.getByLabel('related-field-stock_item').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Cancel the order to release allocated stock
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Cancelled').first().waitFor();
 });

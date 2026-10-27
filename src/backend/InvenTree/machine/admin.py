@@ -2,19 +2,16 @@
 
 from django.contrib import admin
 
+from common.admin_shared import NoAddAdminMixin
 from machine import models
 
 
-class MachineSettingInline(admin.TabularInline):
+class MachineSettingInline(NoAddAdminMixin, admin.TabularInline):
     """Inline admin class for MachineSetting."""
 
     model = models.MachineSetting
 
-    read_only_fields = ['key', 'config_type']
-
-    def has_add_permission(self, request, obj):
-        """The machine settings should not be meddled with manually."""
-        return False
+    readonly_fields = ['key', 'config_type']
 
 
 @admin.register(models.MachineConfig)
@@ -22,6 +19,7 @@ class MachineConfigAdmin(admin.ModelAdmin):
     """Custom admin with restricted id fields."""
 
     list_filter = ['active']
+    search_fields = ['name', 'machine_type', 'driver']
     list_display = [
         'name',
         'machine_type',

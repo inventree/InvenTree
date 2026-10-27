@@ -25,9 +25,15 @@ from corsheaders.defaults import default_headers as default_cors_headers
 
 import InvenTree.backup
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
-from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
+from InvenTree.config import (
+    ensure_middleware,
+    get_boolean_setting,
+    get_oidc_private_key,
+    get_setting,
+)
 from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
+from InvenTree.validators import invalid_site_url_hint
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
 
@@ -56,7 +62,11 @@ INVENTREE_BASE_URL = 'https://inventree.org'
 INVENTREE_NEWS_URL = f'{INVENTREE_BASE_URL}/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
-TESTING = 'test' in sys.argv or 'TESTING' in os.environ or 'pytest' in sys.argv
+TESTING = (
+    'test' in sys.argv
+    or 'TESTING' in os.environ
+    or any('pytest' in arg for arg in sys.argv)
+)
 
 if TESTING:
     # Use a weaker password hasher for testing (improves testing speed)
@@ -230,6 +240,7 @@ PLUGIN_TESTING_SETUP = get_setting(
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
 PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
+SETUP_INITIALIZING = os.environ.get('SETUP_INITIALIZING', '0') == '1'
 
 # Plugin development settings
 PLUGIN_DEV_SLUG = get_setting('INVENTREE_PLUGIN_DEV_SLUG', 'plugin_dev.slug')
@@ -241,9 +252,6 @@ PLUGIN_DEV_HOST = get_setting(
 PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
 )  # How often should plugin loading be tried?
-
-# Hash of the plugin file (will be updated on each change)
-PLUGIN_FILE_HASH = ''
 
 STATICFILES_DIRS = []
 
@@ -266,6 +274,9 @@ if DEBUG and 'collectstatic' not in sys.argv:
 DBBACKUP_DATE_FORMAT = InvenTree.backup.backup_date_format()
 DBBACKUP_FILENAME_TEMPLATE = InvenTree.backup.backup_filename_template()
 DBBACKUP_MEDIA_FILENAME_TEMPLATE = InvenTree.backup.backup_media_filename_template()
+
+# How many backup files to keep
+DBBACKUP_CLEANUP_KEEP = InvenTree.backup.backup_keep_count()
 
 DBBACKUP_GPG_RECIPIENT = InvenTree.backup.backup_gpg_recipient()
 
@@ -312,11 +323,13 @@ INSTALLED_APPS = [
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
+    'scim.apps.ScimConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'machine.apps.MachineConfig',
     'data_exporter.apps.DataExporterConfig',
     'importer.apps.ImporterConfig',
+    'pricing.apps.PricingConfig',
     'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',  # InvenTree app runs last
@@ -361,6 +374,10 @@ INSTALLED_APPS = [
     'django_mailbox',  # For email import
     'anymail',  # For email sending/receiving via ESPs
     'storages',
+    'auditlog',  # Audit log / model change history (see 'audit' app)
+    # New InvenTree apps are appended here, so that existing ContentType IDs
+    # match between existing databases and freshly migrated (test) databases
+    'audit.apps.AuditConfig',
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -388,9 +405,32 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
         'InvenTree.middleware.InvenTreeHostSettingsMiddleware',  # Ensuring correct hosting/security settings
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
+        'audit.middleware.InvenTreeAuditlogMiddleware',  # Audit log context (after maintenance + request ID)
         'InvenTree.middleware.InvenTreeVersionHeaderMiddleware',
     ],
 )
+
+# The audit log middleware is required for audit entries to record the user (and request context).
+# MIDDLEWARE may be overridden via the config file - ensure that it is always present
+MIDDLEWARE = ensure_middleware(
+    MIDDLEWARE,
+    'audit.middleware.InvenTreeAuditlogMiddleware',
+    after='django_structlog.middlewares.RequestMiddleware',
+)
+
+# Audit log configuration (django-auditlog)
+# Ref: https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
+# Note: AUDITLOG_LOGENTRY_MODEL is a swappable model, and must not be changed once migrations have been applied
+AUDITLOG_LOGENTRY_MODEL = 'audit.AuditLogEntry'
+AUDITLOG_STORE_JSON_CHANGES = True  # Store values as JSON types, rather than strings
+AUDITLOG_DISABLE_ON_RAW_SAVE = True  # Do not log fixture loading / raw saves
+AUDITLOG_CID_HEADER = None  # Correlation ID is provided by AUDITLOG_CID_GETTER (below)
+AUDITLOG_CID_GETTER = 'audit.context.get_cid'  # Matches the structlog request ID
+
+# The upstream auditlog migrations only define the (swapped out) LogEntry model,
+# and do not mark it as swappable - so would create an unused 'auditlog_logentry' table.
+# Disable them entirely - the 'audit' app provides the migrations for AuditLogEntry.
+MIGRATION_MODULES = {'auditlog': None}
 
 # In DEBUG mode, add support for django-silk
 # Ref: https://silk.readthedocs.io/en/latest/
@@ -498,6 +538,7 @@ TEMPLATES = [
                         'plugin.template.PluginTemplateLoader',
                         'django.template.loaders.filesystem.Loader',
                         'django.template.loaders.app_directories.Loader',
+                        'InvenTree.template.InvenTreeStorageTemplateLoader',
                     ],
                 )
             ],
@@ -525,6 +566,8 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
+    'DEFAULT_THROTTLE_CLASSES': [],
+    'DEFAULT_THROTTLE_RATES': {},
 }
 
 if DEBUG:
@@ -539,6 +582,21 @@ if USE_JWT:
     JWT_AUTH_COOKIE = 'inventree-auth'
     JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
     INSTALLED_APPS.append('rest_framework_simplejwt')
+
+# Throtteling setup
+THROTTLE_ANON = get_setting('INVENTREE_THROTTLE_ANON', 'throttle.anon', '20/minute')
+THROTTLE_USER = get_setting('INVENTREE_THROTTLE_USER', 'throttle.user', '60/second')
+
+if not DEBUG and THROTTLE_ANON and str(THROTTLE_ANON).lower() != 'none':
+    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon'] = THROTTLE_ANON
+    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'].append(
+        'rest_framework.throttling.AnonRateThrottle'
+    )
+if not DEBUG and THROTTLE_USER and str(THROTTLE_USER).lower() != 'none':
+    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['user'] = THROTTLE_USER
+    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'].append(
+        'rest_framework.throttling.UserRateThrottle'
+    )
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
@@ -587,8 +645,15 @@ SENTRY_SAMPLE_RATE = float(
     get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1)
 )
 
+# Whether to include PII (e.g. user id/email, IP address, request data) in reported events
+SENTRY_SEND_PII = get_boolean_setting(
+    'INVENTREE_SENTRY_SEND_PII', 'sentry_send_pii', False
+)
+
 if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
-    init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
+    init_sentry(
+        SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags, send_pii=SENTRY_SEND_PII
+    )
 
 # OpenTelemetry tracing
 TRACING_ENABLED = (
@@ -742,7 +807,7 @@ if SITE_URL:
         validator = URLValidator()
         validator(SITE_URL)
     except Exception:
-        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start."
+        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.{invalid_site_url_hint(SITE_URL)}"
         logger.error(msg)
         print(msg)
         sys.exit(-1)
@@ -758,11 +823,6 @@ SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
 
 # If a SITE_ID is specified
 SITE_ID = get_setting('INVENTREE_SITE_ID', 'site_id', 1 if SITE_MULTI else None)
-
-# Load the allauth social backends
-SOCIAL_BACKENDS = get_setting(
-    'INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list
-)
 
 if not SITE_MULTI:
     INSTALLED_APPS.remove('django.contrib.sites')
@@ -820,7 +880,9 @@ if DEBUG:
         'http://localhost',
         'http://*.localhost',
         'http://*localhost:8000',
+        'http://localhost:4173',
         'http://*localhost:4173',
+        'http://localhost:5173',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
@@ -847,6 +909,7 @@ valid_cookie_modes = ['lax', 'strict', 'none']
 COOKIE_MODE = COOKIE_MODE.capitalize() if COOKIE_MODE in valid_cookie_modes else False
 
 # Additional CSRF settings
+CSRF_FAILURE_VIEW = 'InvenTree.middleware.csrf_failure'
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_COOKIE_NAME = 'csrftoken'
 
@@ -958,19 +1021,22 @@ else:
 FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
 FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
+# Load the allauth social backends
+SOCIAL_BACKENDS = get_setting(
+    'INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list
+)
+
+DEFAULT_SOCIAL = ['saml', 'openid_connect']
+
 # region auth
-for app in SOCIAL_BACKENDS:  # pragma: no cover
-    # Ensure that the app starts with 'allauth.socialaccount.providers'
-    social_prefix = 'allauth.socialaccount.providers.'
+INSTALLED_APPS.extend(config.get_social_backends(DEFAULT_SOCIAL, SOCIAL_BACKENDS))
 
-    if not app.startswith(social_prefix):
-        app = social_prefix + app
-
-    INSTALLED_APPS.append(app)
-
-SOCIALACCOUNT_PROVIDERS = get_setting(
+SOCIALACCOUNT_PROVIDERS = {a: {} for a in DEFAULT_SOCIAL}
+_PROVIDER_SETTINGS = get_setting(
     'INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict
 )
+if _PROVIDER_SETTINGS and isinstance(_PROVIDER_SETTINGS, dict):
+    SOCIALACCOUNT_PROVIDERS.update(_PROVIDER_SETTINGS)
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
@@ -990,13 +1056,11 @@ USERSESSIONS_TRACK_ACTIVITY = True
 # allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
 # The default login rate limit is "5/m/user,5/m/ip,5/m/key"
 login_attempts = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
-
 try:
-    login_attempts = int(login_attempts)
-    login_attempts = f'{login_attempts}/m,{login_attempts}/m'
+    # Only the per-account ('key') limit is user-configurable with an int - use a str for more custom limits
+    login_attempts = f'10/m/ip,{int(login_attempts)}/m/key'
 except ValueError:  # pragma: no cover
     pass
-
 ACCOUNT_RATE_LIMITS = {'login_failed': login_attempts}
 
 # Default protocol for login
@@ -1096,6 +1160,21 @@ if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
         # Set the global setting
         logger.debug('- Override value for %s = ********', key)
 
+# Plugin settings overrides
+# If provided, these values will override any plugin settings (and prevent them from being changed)
+# Specified as a nested dict: {plugin_slug: {SETTING_KEY: value}}
+PLUGIN_SETTING_OVERRIDES = get_setting(
+    'INVENTREE_PLUGIN_SETTINGS', 'plugin_settings', typecast=dict
+)
+
+if len(PLUGIN_SETTING_OVERRIDES) > 0:
+    logger.info(
+        'INVE-I1: Plugin settings overrides: %s', list(PLUGIN_SETTING_OVERRIDES.keys())
+    )
+    for slug, overrides in PLUGIN_SETTING_OVERRIDES.items():
+        for key in overrides:
+            logger.debug('- Override value for %s.%s = ********', slug, key)
+
 # User interface customization values
 CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', typecast=str)
 
@@ -1120,7 +1199,7 @@ FLAGS = {
     'NEXT_GEN': [
         {'condition': 'parameter', 'value': 'ngen='}
     ],  # Should next-gen features be turned on?
-    'OIDC': [{'condition': 'parameter', 'value': 'oidc='}],
+    'OIDC': [{'condition': 'boolean', 'value': True}],
 }
 
 # Get custom flags from environment/yaml
@@ -1148,7 +1227,7 @@ OAUTH2_PROVIDER = {
     # OIDC
     'OIDC_ENABLED': True,
     'OIDC_RSA_PRIVATE_KEY': get_oidc_private_key(),
-    'PKCE_REQUIRED': False,
+    'PKCE_REQUIRED': True,
 }
 OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/method combinations
     '/api/email/generate/:post',
@@ -1165,3 +1244,6 @@ if 'dbbackup' not in STORAGES:
 if _media:
     MEDIA_URL = _media
 PRESIGNED_URL_EXPIRATION = 600
+
+# Taggit settings
+TAGGIT_CASE_INSENSITIVE = True

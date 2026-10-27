@@ -12,6 +12,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
 from rest_framework.response import Response
 
+import common.filters
 import common.serializers
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
@@ -20,7 +21,9 @@ from InvenTree.api import (
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
+    TreeMixin,
     meta_path,
+    moved_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -54,9 +57,7 @@ from .models import (
     Part,
     PartCategory,
     PartCategoryParameterTemplate,
-    PartInternalPriceBreak,
     PartRelated,
-    PartSellPriceBreak,
     PartStocktake,
     PartTestTemplate,
 )
@@ -264,9 +265,12 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Part category instance via the API."""
-        delete_parts = str2bool(request.data.get('delete_parts', False))
+        serializer = part_serializers.CategoryDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        delete_parts = str2bool(serializer.validated_data.get('delete_parts', False))
         delete_child_categories = str2bool(
-            request.data.get('delete_child_categories', False)
+            serializer.validated_data.get('delete_child_categories', False)
         )
 
         return super().destroy(
@@ -280,25 +284,38 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
         )
 
 
-class CategoryTree(ListAPI):
+class CategoryTreeFilter(FilterSet):
+    """Custom filterset class for the CategoryTree endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = PartCategory
+        fields = ['parent', 'tree_id', 'level']
+
+    max_level = rest_filters.NumberFilter(
+        label=_('Max Level'),
+        method='filter_max_level',
+        help_text=_('Limit the depth of the category tree'),
+    )
+
+    def filter_max_level(self, queryset, name, value):
+        """Filter by the maximum depth of the category tree."""
+        return queryset.filter(level__lte=value)
+
+
+class CategoryTree(TreeMixin, ListAPI):
     """API endpoint for accessing a list of PartCategory objects ready for rendering a tree."""
 
+    model_class = PartCategory
     queryset = PartCategory.objects.all()
-    serializer_class = part_serializers.CategoryTree
-
-    filter_backends = ORDER_FILTER
-
-    ordering_fields = ['level', 'name', 'subcategories']
-
-    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
-
-    # Order by tree level (top levels first) and then name
-    ordering = ['level', 'name']
+    serializer_class = part_serializers.CategoryTreeSerializer
+    filterset_class = CategoryTreeFilter
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryTree endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
+        queryset = part_serializers.CategoryTreeSerializer.annotate_queryset(queryset)
         return queryset
 
 
@@ -348,45 +365,6 @@ class CategoryParameterDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PartCategoryParameterTemplate.objects.all()
     serializer_class = part_serializers.CategoryParameterTemplateSerializer
-
-
-class PartSalePriceDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint for PartSellPriceBreak model."""
-
-    queryset = PartSellPriceBreak.objects.all()
-    serializer_class = part_serializers.PartSalePriceSerializer
-
-
-class PartSalePriceList(DataExportViewMixin, ListCreateAPI):
-    """API endpoint for list view of PartSalePriceBreak model."""
-
-    queryset = PartSellPriceBreak.objects.all()
-    serializer_class = part_serializers.PartSalePriceSerializer
-
-    filter_backends = SEARCH_ORDER_FILTER
-    filterset_fields = ['part']
-    ordering_fields = ['quantity', 'price']
-    ordering = 'quantity'
-
-
-class PartInternalPriceDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint for PartInternalPriceBreak model."""
-
-    queryset = PartInternalPriceBreak.objects.all()
-    serializer_class = part_serializers.PartInternalPriceSerializer
-
-
-class PartInternalPriceList(DataExportViewMixin, ListCreateAPI):
-    """API endpoint for list view of PartInternalPriceBreak model."""
-
-    queryset = PartInternalPriceBreak.objects.all()
-    serializer_class = part_serializers.PartInternalPriceSerializer
-    permission_required = 'roles.sales_order.show'
-
-    filter_backends = SEARCH_ORDER_FILTER
-    filterset_fields = ['part']
-    ordering_fields = ['quantity', 'price']
-    ordering = 'quantity'
 
 
 class PartTestTemplateFilter(FilterSet):
@@ -550,25 +528,6 @@ class PartRequirements(RetrieveAPI):
     serializer_class = part_serializers.PartRequirementsSerializer
 
 
-class PartPricingDetail(RetrieveUpdateAPI):
-    """API endpoint for viewing part pricing data."""
-
-    serializer_class = part_serializers.PartPricingSerializer
-    queryset = Part.objects.all().select_related('pricing_data')
-
-    def get_object(self):
-        """Return the PartPricing object associated with the linked Part."""
-        part = super().get_object()
-        return part.pricing
-
-    def _get_serializer(self, *args, **kwargs):
-        """Return a part pricing serializer object."""
-        part = self.get_object()
-        kwargs['instance'] = part.pricing
-
-        return self.serializer_class(**kwargs)
-
-
 class PartSerialNumberDetail(RetrieveAPI):
     """API endpoint for returning extra serial number information about a particular part."""
 
@@ -599,7 +558,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartBomValidateSerializer
-    role_required = 'bom.change'
+    role_required = 'bom'
 
     @extend_schema(
         responses={
@@ -610,7 +569,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
     def update(self, request, *args, **kwargs):
         """Validate the referenced BomItem instance.
 
-        As this task if offloaded to the background worker,
+        As this task is offloaded to the background worker,
         we return information about the background task which is performing the validation.
         """
         part = self.get_object()
@@ -766,6 +725,15 @@ class PartFilter(FilterSet):
             return queryset.filter(Q(unallocated_stock__gt=0))
         return queryset.filter(Q(unallocated_stock__lte=0))
 
+    # on_order filter
+    on_order = rest_filters.BooleanFilter(label='On order', method='filter_on_order')
+
+    def filter_on_order(self, queryset, name, value):
+        """Filter by whether the Part has any stock on order."""
+        if str2bool(value):
+            return queryset.filter(Q(ordering__gt=0))
+        return queryset.filter(Q(ordering__lte=0))
+
     convert_from = rest_filters.ModelChoiceFilter(
         label='Can convert from',
         queryset=Part.objects.all(),
@@ -907,9 +875,9 @@ class PartFilter(FilterSet):
 
     virtual = rest_filters.BooleanFilter()
 
-    tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')
+    consumable = rest_filters.BooleanFilter()
 
-    tags_slug = rest_filters.CharFilter(field_name='tags__slug', lookup_expr='iexact')
+    tag_name = common.filters.TagsFilter()
 
     # Created date filters
     created_before = InvenTreeDateFilter(
@@ -1078,6 +1046,7 @@ class PartList(
         'name',
         'creation_date',
         'IPN',
+        'ordering',
         'in_stock',
         'total_in_stock',
         'unallocated_stock',
@@ -1610,32 +1579,11 @@ part_api_urls = [
             ),
         ]),
     ),
-    # Base URL for part sale pricing
-    path(
-        'sale-price/',
-        include([
-            path(
-                '<int:pk>/',
-                PartSalePriceDetail.as_view(),
-                name='api-part-sale-price-detail',
-            ),
-            path('', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
-        ]),
-    ),
-    # Base URL for part internal pricing
-    path(
-        'internal-price/',
-        include([
-            path(
-                '<int:pk>/',
-                PartInternalPriceDetail.as_view(),
-                name='api-part-internal-price-detail',
-            ),
-            path(
-                '', PartInternalPriceList.as_view(), name='api-part-internal-price-list'
-            ),
-        ]),
-    ),
+    # Legacy URLs for part pricing (moved to the 'pricing' app)
+    moved_path('sale-price/<int:pk>/', 'api-part-sale-price-detail'),
+    moved_path('sale-price/', 'api-part-sale-price-list'),
+    moved_path('internal-price/<int:pk>/', 'api-part-internal-price-detail'),
+    moved_path('internal-price/', 'api-part-internal-price-list'),
     # Base URL for PartRelated API endpoints
     path(
         'related/',
@@ -1701,7 +1649,8 @@ part_api_urls = [
             # Part metadata
             meta_path(Part),
             # Part pricing
-            path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
+            # Legacy URL for part pricing (moved to the 'pricing' app)
+            moved_path('pricing/', 'api-part-pricing'),
             # Part detail endpoint
             path('', PartDetail.as_view(), name='api-part-detail'),
         ]),

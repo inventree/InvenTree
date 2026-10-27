@@ -18,15 +18,6 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { IconPackageImport } from '@tabler/icons-react';
-import ImportPartWizard from '../../components/wizards/ImportPartWizard';
-import { useSupplierPartFields } from '../../forms/CompanyForms';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { usePluginsWithMixin } from '../../hooks/UsePlugins';
-import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
   CompanyColumn,
@@ -36,9 +27,19 @@ import {
   LinkColumn,
   NoteColumn,
   PartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
+import ImportPartWizard from '../../components/wizards/ImportPartWizard';
+import { useSupplierPartFields } from '../../forms/CompanyForms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
+import { usePluginsWithMixin } from '../../hooks/UsePlugins';
+import { useUserState } from '../../states/UserState';
 
 /*
  * Construct a table listing supplier parts
@@ -60,7 +61,8 @@ export function SupplierPartTable({
       {
         name: 'active',
         value: 'true'
-      }
+      },
+      TagsFilter({ modelType: ModelType.supplierpart })
     ];
 
     if (!supplierId) {
@@ -91,11 +93,13 @@ export function SupplierPartTable({
     return [
       PartColumn({
         switchable: !!partId,
-        part: 'part_detail'
+        part: 'part_detail',
+        filter: ['part_active']
       }),
       IPNColumn({}),
       {
         accessor: 'supplier',
+        filter: 'supplier_active',
         sortable: true,
         render: (record: any) => (
           <CompanyColumn company={record?.supplier_detail} />
@@ -177,6 +181,7 @@ export function SupplierPartTable({
         accessor: 'available',
         sortable: true,
         defaultVisible: false,
+        filter: 'has_stock',
         render: (record: any) => {
           const extra = [];
 
@@ -287,10 +292,14 @@ export function SupplierPartTable({
     }
   });
 
+  const duplicateSupplierPartFields = useSupplierPartFields({
+    duplicateSupplierPartId: selectedSupplierPart?.pk
+  });
+
   const duplicateSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     title: t`Add Supplier Part`,
-    fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
+    fields: duplicateSupplierPartFields,
     initialData: {
       ...selectedSupplierPart,
       primary: false,

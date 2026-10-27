@@ -56,6 +56,12 @@ export function RenderError({
   return instance && <RenderInlineModel primary={instance.name} />;
 }
 
+export function RenderTag({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return instance && <RenderInlineModel primary={instance.name} />;
+}
+
 export function RenderImportSession({
   instance
 }: {

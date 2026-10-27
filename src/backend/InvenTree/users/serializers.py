@@ -16,7 +16,7 @@ from InvenTree.serializers import (
     OptionalField,
 )
 
-from .models import ApiToken, Owner, RuleSet, UserProfile
+from .models import ApiToken, Owner, RuleSet, TipResult, UserProfile
 from .permissions import check_user_role, prefetch_rule_sets
 from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS, RuleSetEnum
 
@@ -78,37 +78,47 @@ class RoleSerializer(InvenTreeModelSerializer):
 
     def get_roles(self, user: User) -> dict:
         """Roles associated with the user."""
-        roles = {}
-
-        # Cache the 'groups' queryset for the user
-        groups = prefetch_rule_sets(user)
-
-        for ruleset in RULESET_CHOICES:
-            role, _text = ruleset
-
-            permissions = []
-
-            for permission in RULESET_PERMISSIONS:
-                if check_user_role(user, role, permission, groups=groups):
-                    permissions.append(permission)
-
-            if len(permissions) > 0:
-                roles[role] = permissions
-            else:
-                roles[role] = None  # pragma: no cover
-
-        return roles
+        return get_user_roles(user)
 
     def get_permissions(self, user: User) -> dict:
         """Permissions associated with the user."""
-        if user.is_superuser:
-            permissions = Permission.objects.all()
-        else:
-            permissions = Permission.objects.filter(
-                Q(user=user) | Q(group__user=user)
-            ).distinct()
+        return get_user_permissions(user)
 
-        return generate_permission_dict(permissions)
+
+def get_user_roles(user: User) -> dict:
+    """Return a dict of the roles associated with the given user."""
+    roles = {}
+
+    # Cache the 'groups' queryset for the user
+    groups = prefetch_rule_sets(user)
+
+    for ruleset in RULESET_CHOICES:
+        role, _text = ruleset
+
+        permissions = []
+
+        for permission in RULESET_PERMISSIONS:
+            if check_user_role(user, role, permission, groups=groups):
+                permissions.append(permission)
+
+        if len(permissions) > 0:
+            roles[role] = permissions
+        else:
+            roles[role] = None  # pragma: no cover
+
+    return roles
+
+
+def get_user_permissions(user: User) -> dict:
+    """Return a dict of the permissions associated with the given user."""
+    if user.is_superuser:
+        permissions = Permission.objects.all()
+    else:
+        permissions = Permission.objects.filter(
+            Q(user=user) | Q(group__user=user)
+        ).distinct()
+
+    return generate_permission_dict(permissions)
 
 
 def generate_permission_dict(permissions) -> dict:
@@ -173,6 +183,17 @@ class UserProfileSerializer(BriefUserProfileSerializer):
         ]
 
 
+class TipResultSerializer(InvenTreeModelSerializer):
+    """Serializer for the TipResult model."""
+
+    class Meta:
+        """Meta options for TipResultSerializer."""
+
+        model = TipResult
+        fields = ['pk', 'tip_id', 'shown', 'finished', 'updated']
+        read_only_fields = ['pk', 'tip_id', 'updated']
+
+
 class UserSerializer(InvenTreeModelSerializer):
     """Serializer for a User."""
 
@@ -212,7 +233,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
 
         request = self.context.get('request')
         rq_token = get_token_from_request(request)
-        return token.key == rq_token
+        return token.match(rq_token)
 
     class Meta:
         """Meta options for ApiTokenSerializer."""
@@ -230,6 +251,12 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'user',
             'user_detail',
             'in_use',
+            'revoked_by',
+            'revoked_by_detail',
+            'issued_by',
+            'issued_by_detail',
+            'token_version',
+            'revocation_reason',
         ]
 
     def validate(self, data):
@@ -252,6 +279,12 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
         return super().validate(data)
 
     user_detail = UserSerializer(source='user', read_only=True)
+    revoked_by_detail = UserSerializer(
+        source='revoked_by', read_only=True, allow_null=True
+    )
+    issued_by_detail = UserSerializer(
+        source='issued_by', read_only=True, allow_null=True
+    )
 
 
 class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
@@ -314,9 +347,13 @@ class ExtendedUserSerializer(UserSerializer):
             'is_superuser',
             'is_active',
             'profile',
+            'tips',
         ]
 
-        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
+        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups', 'tips']
+
+    # 'group_ids' is a write-only serializer field which does not exist on the model
+    SKIP_CREATE_FIELDS = ['group_ids']
 
     groups = GroupSerializer(many=True, read_only=True)
 
@@ -340,6 +377,15 @@ class ExtendedUserSerializer(UserSerializer):
     )
 
     profile = BriefUserProfileSerializer(many=False, read_only=True)
+
+    tips = serializers.SerializerMethodField()
+
+    def get_tips(self, user: User) -> list[dict]:
+        """Return the user's known tip results, creating missing records first."""
+        TipResult.backfill(user)
+        return TipResultSerializer(
+            user.tip_results.all(), many=True, context=self.context
+        ).data
 
     def validate_is_superuser(self, value):
         """Only a superuser account can adjust this value!"""
@@ -390,7 +436,7 @@ class UserSetPasswordSerializer(serializers.Serializer):
     )
 
 
-class MeUserSerializer(ExtendedUserSerializer):
+class MeUserSerializer(FilterableSerializerMixin, ExtendedUserSerializer):
     """API serializer specifically for the 'me' endpoint."""
 
     class Meta(ExtendedUserSerializer.Meta):
@@ -401,7 +447,12 @@ class MeUserSerializer(ExtendedUserSerializer):
         """
 
         # Remove the 'group_ids' field, as this is not relevant for the 'me' endpoint
-        fields = [f for f in ExtendedUserSerializer.Meta.fields if f != 'group_ids']
+        fields = [
+            *(f for f in ExtendedUserSerializer.Meta.fields if f != 'group_ids'),
+            'roles',
+            'permissions',
+            'tips',
+        ]
 
         read_only_fields = [
             *ExtendedUserSerializer.Meta.read_only_fields,
@@ -411,6 +462,31 @@ class MeUserSerializer(ExtendedUserSerializer):
         ]
 
     profile = UserProfileSerializer(many=False, read_only=True)
+
+    # Roles and permissions are only computed (and included) when the
+    # request explicitly asks for them via '?roles=true' - they require
+    # extra queries, and most callers of this endpoint only want basic
+    # user details. Shares a filter_name so both come back together, since
+    # they were previously served as a single '/user/me/roles/' response.
+    roles = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'allow_null': True, 'read_only': True},
+        filter_name='roles',
+    )
+
+    permissions = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'allow_null': True, 'read_only': True},
+        filter_name='roles',
+    )
+
+    def get_roles(self, user: User) -> dict:
+        """Roles associated with the user."""
+        return get_user_roles(user)
+
+    def get_permissions(self, user: User) -> dict:
+        """Permissions associated with the user."""
+        return get_user_permissions(user)
 
     # Redefine the fields from ExtendedUserSerializer, to ensure they are marked as read-only
     is_staff = serializers.BooleanField(
@@ -468,6 +544,19 @@ class UserCreateSerializer(ExtendedUserSerializer):
                 _('You do not have permission to create users')
             )
 
+        # Email-based flows (password reset, login link) look users up by email,
+        # and fail silently if more than one user has the same address
+        if email := attrs.get('email'):
+            from allauth.account.models import EmailAddress
+
+            if (
+                User.objects.filter(email__iexact=email).exists()
+                or EmailAddress.objects.filter(email__iexact=email).exists()
+            ):
+                raise serializers.ValidationError({
+                    'email': _('A user with this email address already exists')
+                })
+
         # Generate a random password
         password = make_random_password(length=14)
         attrs.update({'password': password})
@@ -475,12 +564,26 @@ class UserCreateSerializer(ExtendedUserSerializer):
 
     def create(self, validated_data):
         """Send an e email to the user after creation."""
+        from allauth.account.models import EmailAddress
+
         from InvenTree.helpers_model import get_base_url
         from InvenTree.tasks import email_user, offload_task
 
         base_url = get_base_url()
 
+        # Extract the groups to assign to the new user
+        groups = validated_data.pop('group_ids', None)
+
         instance = super().create(validated_data)
+
+        if groups is not None:
+            instance.groups.set(groups)
+
+        # Create the EmailAddress entry for the user
+        if instance.email:
+            EmailAddress.objects.create(
+                user=instance, email=instance.email, primary=True, verified=False
+            )
 
         # Make sure the user cannot login until they have set a password
         instance.set_unusable_password()

@@ -2,16 +2,68 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
-### 0.11.4 - Unreleased
+### 1.5.0 - August 2026
+
+Updated UI components library to match 1.5.0 InvenTree release.
+
+### 1.4.6 - June 2026
+
+Adds `useInvenTreeHotkeys` hook that mirrors mantine's `useHotkeys` hook, but adds visibility of the hotkeys to the user interface.
+
+### 1.4.5 - June 2026
+
+Fixes callback signature for `<LocalizedComponent>` to allow for an optional `loadLocale` function to be passed in, which is used to dynamically load locale messages for the plugin.
+
+### 1.4.4 - June 2026
+
+Fixes bundling issues associated with the `InventreeHmrPlugin` plugin function.
+
+### 1.4.3 - June 2026
+
+Expose the `InventreeHmrPlugin` on a different path (`@inventreedb/ui/vite`) to avoid vite bundling issues.
+
+### 1.4.2 - June 2026
+
+Fixes a bug in the `LocalizedComponent` function
+
+### 1.4.1 - June 2026
+
+### HMR Support
+
+Adds support for React Fast Refresh in plugin development. This allows for a much smoother development experience when working on UI plugins, as changes to React components will now trigger a component-level update rather than a full page reload.
+
+### Localized Components
+
+Exposes a new `LocalizedComponent` function, which can be used to create React components that are automatically localized using the InvenTree server's localization system.
+
+### 1.4.0 - May 2026
+
+#### Version Numbering
+
+This update brings the version numbering in-line with the core InvenTree server version, which is currently at `1.4.0`. This versioning scheme will be maintained going forward, with the UI components library version matching the core server version.
+
+Thus, version `1.4.x` of the UI components library will be compatible with version `1.4.x` of the InvenTree server, and so on.
+
+#### Mantine Library Update
+
+The underlying Mantine library has been updated from version `8.x` to version `9.x`. This update may introduce breaking changes for plugins that rely on the InvenTree UI components library, as the Mantine library is a core dependency. Plugin developers should test their plugins against this new version to ensure compatibility.
+
+#### New Components
 
 Adds additional functions in the plugin context related to form rendering and API invocation:
 - `useInstance`
 - `renderRemoteInstance`
 - `EditApiForm`
+- `RenderInlineModel`
+- `Thumbnail`
 
 Exposes sub-components related to DetailDrawer rendering:
 - `DetailDrawerComponent`
 - `useLocalLibState`
+
+#### Plugin System
+
+Enable React Fast Refresh support for plugin frontend development. Plugin modules exporting React components must start with a capital letter; otherwise, a full page reload occurs instead of a component-level update.
 
 ### 0.11.3 - April 2026
 

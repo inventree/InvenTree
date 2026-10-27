@@ -5,6 +5,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { api } from '../../../../App';
+import { fileNameFromUrl } from '../../../../functions/urls';
 import type { PreviewAreaComponent } from '../TemplateEditor';
 
 export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
@@ -22,7 +23,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           const formData = new FormData();
 
           const filename =
-            template.template?.split('/').pop() ?? 'template.html';
+            fileNameFromUrl(template.template) || 'template.html';
 
           formData.append('template', new File([code], filename));
 
@@ -33,7 +34,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         }
 
         let preview = await api.post(
-          printingUrl,
+          printingUrl!,
           {
             items: [previewItem],
             template: template.pk
@@ -68,9 +69,13 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
               api
                 .get(apiUrl(ApiEndpoints.data_output, preview.data.pk))
                 .then((response) => {
-                  if (response.data.error) {
+                  if (response.data.errors || response.data.error) {
                     clearInterval(interval);
-                    rej(response.data.error);
+                    rej(
+                      response.data.error ??
+                        response.data.errors?.error ??
+                        t`Process failed`
+                    );
                   }
 
                   if (response.data.complete) {

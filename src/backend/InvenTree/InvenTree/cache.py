@@ -69,7 +69,7 @@ def is_global_cache_enabled() -> bool:
         return False
 
     # Test if the cache is configured
-    if not cache_host():
+    if not host:
         logger.warning('Global cache is enabled, but no cache host is configured!')
         return False
 

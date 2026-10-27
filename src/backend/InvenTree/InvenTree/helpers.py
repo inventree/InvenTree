@@ -29,12 +29,6 @@ from PIL import Image
 from stdimage.models import StdImageField, StdImageFieldFile
 
 from common.currency import currency_code_default
-from InvenTree.sanitizer import (
-    DEAFAULT_ATTRS,
-    DEFAULT_CSS,
-    DEFAULT_PROTOCOLS,
-    DEFAULT_TAGS,
-)
 
 logger = structlog.get_logger('inventree')
 
@@ -262,27 +256,42 @@ def checkStaticFile(*args) -> bool:
     return static_storage.exists(str(fn))
 
 
-def getLogoImage(as_file=False, custom=True):
-    """Return the InvenTree logo image, or a custom logo if available."""
+def getLogoImage(as_file: bool = False, custom: bool = True) -> str:
+    """Return the InvenTree logo image, or a custom logo if available.
+
+    Arguments:
+        as_file: If True, return a base64-encoded data URI of the image contents,
+                 suitable for embedding directly into a generated report (default = False)
+        custom: If True, return a custom logo if one has been provided (default = True)
+    """
+    # Note: Imported here to avoid circular imports, as the 'report' app also imports from this module
+    import report.helpers
+    from report.templatetags.report import (
+        get_media_file_contents,
+        get_static_file_contents,
+    )
+
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
 
         if static_storage.exists(settings.CUSTOM_LOGO):
-            storage = static_storage
-        elif default_storage.exists(settings.CUSTOM_LOGO):
-            storage = default_storage
-        else:
-            storage = None
-
-        if storage is not None:
             if as_file:
-                return f'file://{storage.path(settings.CUSTOM_LOGO)}'
-            return storage.url(settings.CUSTOM_LOGO)
+                return report.helpers.encode_file_base64(
+                    settings.CUSTOM_LOGO, get_static_file_contents(settings.CUSTOM_LOGO)
+                )
+            return static_storage.url(settings.CUSTOM_LOGO)
+        elif default_storage.exists(settings.CUSTOM_LOGO):
+            if as_file:
+                return report.helpers.encode_file_base64(
+                    settings.CUSTOM_LOGO, get_media_file_contents(settings.CUSTOM_LOGO)
+                )
+            return default_storage.url(settings.CUSTOM_LOGO)
 
     # If we have got to this point, return the default logo
     if as_file:
-        path = settings.STATIC_ROOT.joinpath('img/inventree.png')
-        return f'file://{path}'
+        return report.helpers.encode_file_base64(
+            'img/inventree.png', get_static_file_contents('img/inventree.png')
+        )
     return getStaticUrl('img/inventree.png')
 
 
@@ -501,6 +510,30 @@ def GetExportFormats() -> list:
     return [opt[0] for opt in GetExportOptions()]
 
 
+def escape_export_value(value):
+    """Escape a value for export to a tabular data file, to prevent formula injection.
+
+    String values which start with a character that a spreadsheet application
+    may interpret as a formula are prefixed with a single quote character.
+    Non-string values are returned unchanged, as are strictly numeric
+    strings (e.g. "-222", "+1.5", "12e6"), which are not a formula risk.
+
+    Ref: https://owasp.org/www-community/attacks/CSV_Injection
+    """
+    if not isinstance(value, str):
+        return value
+
+    if value.startswith(('+', '-')) and re.fullmatch(
+        r'[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?', value
+    ):
+        return value
+
+    if value.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + value
+
+    return value
+
+
 def DownloadFile(
     data, filename, content_type='application/text', inline=False
 ) -> StreamingHttpResponse:
@@ -550,29 +583,31 @@ def increment_serial_number(serial, part=None):
         incremented value, or None if incrementing could not be performed.
     """
     from InvenTree.exceptions import log_error
+    from InvenTree.ready import isReadOnlyCommand
     from plugin import PluginMixinEnum, registry
 
     # Ensure we start with a string value
     if serial is not None:
         serial = str(serial).strip()
 
-    # First, let any plugins attempt to increment the serial number
-    for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-        try:
-            if not hasattr(plugin, 'increment_serial_number'):
-                continue
+    if not isReadOnlyCommand():
+        # First, let any plugins attempt to increment the serial number
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            try:
+                if not hasattr(plugin, 'increment_serial_number'):
+                    continue
 
-            signature = inspect.signature(plugin.increment_serial_number)
+                signature = inspect.signature(plugin.increment_serial_number)
 
-            # Note: 2024-08-21 - The 'part' parameter has been added to the signature
-            if 'part' in signature.parameters:
-                result = plugin.increment_serial_number(serial, part=part)
-            else:
-                result = plugin.increment_serial_number(serial)
-            if result is not None:
-                return str(result)
-        except Exception:
-            log_error('increment_serial_number', plugin=plugin.slug)
+                # Note: 2024-08-21 - The 'part' parameter has been added to the signature
+                if 'part' in signature.parameters:
+                    result = plugin.increment_serial_number(serial, part=part)
+                else:
+                    result = plugin.increment_serial_number(serial)
+                if result is not None:
+                    return str(result)
+            except Exception:
+                log_error('increment_serial_number', plugin=plugin.slug)
 
     # If we get to here, no plugins were able to "increment" the provided serial value
     # Attempt to perform increment according to some basic rules
@@ -626,6 +661,10 @@ def extract_serial_numbers(
         input_string = input_string.replace('~', str(next_value), 1)
         next_value = increment_serial_number(next_value, part=part)
 
+    from stock.models import StockItem
+
+    serial_max_length = int(StockItem._meta.get_field('serial').max_length)
+
     # Split input string by whitespace or comma (,) characters
     groups = re.split(r'[\s,]+', input_string)
 
@@ -645,7 +684,12 @@ def extract_serial_numbers(
         if len(serial) == 0:
             return
 
-        if serial in serials:
+        if len(serial) > serial_max_length:
+            add_error(
+                _('Serial number exceeds maximum length')
+                + f' ({serial_max_length}): {serial[:20]}...'
+            )
+        elif serial in serials:
             add_error(_('Duplicate serial') + f': {serial}')
         else:
             serials.append(serial)
@@ -937,63 +981,6 @@ def remove_non_printable_characters(value: str, remove_newline=True) -> str:
     return cleaned
 
 
-def clean_markdown(value: str) -> str:
-    """Clean a markdown string.
-
-    This function will remove javascript and other potentially harmful content from the markdown string.
-    """
-    import markdown
-
-    try:
-        markdownify_settings = settings.MARKDOWNIFY['default']
-    except (AttributeError, KeyError):
-        markdownify_settings = {}
-
-    extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
-    extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
-
-    # Generate raw HTML from provided markdown (without sanitizing)
-    # Note: The 'html' output_format is required to generate self closing tags, e.g. <tag> instead of <tag />
-    html = markdown.markdown(
-        value or '',
-        extensions=extensions,
-        extension_configs=extension_configs,
-        output_format='html',
-    )
-
-    # nh3 sanitizer settings
-    whitelist_tags = markdownify_settings.get('WHITELIST_TAGS', DEFAULT_TAGS)
-    whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', DEAFAULT_ATTRS)
-    whitelist_styles = markdownify_settings.get('WHITELIST_STYLES', DEFAULT_CSS)
-    whitelist_protocols = markdownify_settings.get(
-        'WHITELIST_PROTOCOLS', DEFAULT_PROTOCOLS
-    )
-
-    # Convert bleach-style attributes (list or dict) to nh3-compatible dict format
-    if isinstance(whitelist_attrs, (list, tuple, set, frozenset)):
-        attrs_dict = {'*': set(whitelist_attrs)}
-    elif isinstance(whitelist_attrs, dict):
-        attrs_dict = {tag: set(allowed) for tag, allowed in whitelist_attrs.items()}
-    else:
-        attrs_dict = None
-
-    # Clean the HTML content (for comparison). This must be the same as the original content
-    clean_html = nh3.clean(
-        html,
-        tags=set(whitelist_tags),
-        attributes=attrs_dict,
-        url_schemes=set(whitelist_protocols),
-        filter_style_properties=set(whitelist_styles),
-        link_rel=None,
-        strip_comments=True,
-    )
-
-    if html != clean_html:
-        raise ValidationError(_('Data contains prohibited markdown content'))
-
-    return value
-
-
 def hash_barcode(barcode_data: str) -> str:
     """Calculate a 'unique' hash for a barcode string.
 
@@ -1181,3 +1168,23 @@ def plugins_info(*args, **kwargs):
     return [
         {'name': plg.name, 'slug': plg.slug, 'version': plg.version} for plg in plugins
     ]
+
+
+def sanitize_token(token_value: str, front=8, back=12) -> str:
+    """Sanitize a token by replacing the middle characters with asterisks.
+
+    Args:
+        token_value: The token string to sanitize
+        front: Number of characters to show at the start of the token (default = 8)
+        back: Number of characters to show at the end of the token (default = 12)
+
+    Returns:
+        The sanitized token string
+    """
+    middle = len(token_value) - (front + back)
+    return token_value[:front] + '*' * middle + token_value[-back:]
+
+
+def get_api_token_pepper() -> str:
+    """Return the secret 'pepper' used to compute v2 tokens."""
+    return settings.SECRET_KEY

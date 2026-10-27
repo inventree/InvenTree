@@ -1,19 +1,16 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Badge, Group, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
+import type { DetailsField } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {} from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import {} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -171,13 +168,15 @@ export default function UserDetail() {
       instance.location;
 
     return (
-      <ItemDetailsGrid>
-        <DetailsTable fields={tl} item={instance} title={t`User Information`} />
-        <DetailsTable fields={tr} item={instance} title={t`User Permissions`} />
-        {hasProfile && settings.isSet('DISPLAY_PROFILE_INFO') && (
-          <DetailsTable fields={br} item={instance} title={t`User Profile`} />
-        )}
-      </ItemDetailsGrid>
+      <ItemDetailsGrid
+        tables={[
+          { fields: tl, item: instance, title: t`User Information` },
+          { fields: tr, item: instance, title: t`User Permissions` },
+          ...(hasProfile && settings.isSet('DISPLAY_PROFILE_INFO')
+            ? [{ fields: br, item: instance, title: t`User Profile` }]
+            : [])
+        ]}
+      />
     );
   }, [instance, userGroups, instanceQuery]);
 

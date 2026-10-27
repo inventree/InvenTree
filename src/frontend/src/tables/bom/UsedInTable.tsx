@@ -2,14 +2,23 @@ import { t } from '@lingui/core/macro';
 import { Alert, Divider, Group, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
+import { RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
-import { ActionButton, RowEditAction, UserRoles } from '@lib/index';
+import { ActionButton, UserRoles } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
-import { IconReplace } from '@tabler/icons-react';
+import { IconExclamationCircle, IconReplace } from '@tabler/icons-react';
+import {
+  DescriptionColumn,
+  IPNColumn,
+  PartColumn,
+  ReferenceColumn,
+  RenderPartColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatDecimal } from '../../defaults/formatters';
 import { bomItemFields } from '../../forms/BomForms';
 import {
@@ -17,14 +26,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  DescriptionColumn,
-  IPNColumn,
-  PartColumn,
-  ReferenceColumn,
-  RenderPartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * For a given part, render a table showing all the assemblies the part is used in
@@ -44,7 +45,8 @@ export function UsedInTable({
     return [
       PartColumn({
         title: t`Assembly`,
-        part: 'part_detail'
+        part: 'part_detail',
+        filter: ['part_active', 'part_locked']
       }),
       IPNColumn({
         sortable: true
@@ -132,7 +134,10 @@ export function UsedInTable({
 
       return [
         RowEditAction({
-          hidden: locked || !user.hasChangeRole(UserRoles.bom),
+          hidden:
+            locked ||
+            record.sub_part != partId ||
+            !user.hasChangeRole(UserRoles.bom),
           onClick: () => {
             setSelectedBomItem(record);
             editBomItem.open();
@@ -140,14 +145,19 @@ export function UsedInTable({
         })
       ];
     },
-    [user]
+    [user, partId]
   );
 
-  const bulkReplaceParts = useMemo(() => {}, [table.selectedRecords]);
+  const bulkReplaceRecords: any[] = useMemo(() => {
+    // Only allow replacements of BomItem entries which point to this part
+    return table.selectedRecords.filter(
+      (record: any) => record.sub_part === partId
+    );
+  }, [table.selectedRecords, partId]);
 
   const bulkReplace = useBulkEditApiFormModal({
     url: ApiEndpoints.bom_list,
-    items: table.selectedIds,
+    items: bulkReplaceRecords.map((record: any) => record.pk),
     title: t`Replace Component`,
     submitText: t`Replace`,
     preFormContent: (
@@ -160,8 +170,18 @@ export function UsedInTable({
         >
           <Text>{t`This action cannot be easily undone, so please ensure you have selected the correct assemblies.`}</Text>
         </Alert>
-        <Text>{t`The selected assemblies will be updated with the new component.`}</Text>
-        {table.selectedRecords.map((record: any) => {
+        {bulkReplaceRecords.length ? (
+          <Text>{t`The selected assemblies will be updated with the new component.`}</Text>
+        ) : (
+          <Alert
+            color='red'
+            icon={<IconExclamationCircle />}
+            title={t`No valid items selected`}
+          >
+            <Text>{t`Please select one or more valid assemblies to replace the component.`}</Text>
+          </Alert>
+        )}
+        {bulkReplaceRecords?.map((record: any) => {
           return <RenderPartColumn part={record.part_detail} key={record.pk} />;
         })}
         <Divider />
@@ -212,7 +232,8 @@ export function UsedInTable({
           modelType: ModelType.part,
           modelField: 'part',
           tableActions: tableActions,
-          tableFilters: tableFilters
+          tableFilters: tableFilters,
+          isRecordSelectable: (record: any) => record.sub_part === partId
         }}
       />
     </>

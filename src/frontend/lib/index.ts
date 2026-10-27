@@ -22,6 +22,12 @@ export type {
 } from './types/Plugins';
 
 export type {
+  PanelIndicatorType,
+  PanelType,
+  PanelGroupType
+} from './types/Panel';
+
+export type {
   RowAction,
   RowViewProps,
   TableColumn,
@@ -104,6 +110,7 @@ export { ProgressBar } from './components/ProgressBar';
 export { PassFailButton, YesNoButton } from './components/YesNoButton';
 export { SearchInput } from './components/SearchInput';
 export { TableColumnSelect } from './components/TableColumnSelect';
+export { default as TagsList } from './components/TagsList';
 export { default as InvenTreeTable } from './components/InvenTreeTable';
 export {
   RowViewAction,
@@ -132,6 +139,8 @@ export {
   type TableStateExtraProps
 } from './hooks/UseTable';
 
+export { useInvenTreeHotkeys } from './functions/Events';
+
 export {
   type DrawerProps,
   DetailDrawer,
@@ -146,3 +155,9 @@ export {
   useStoredTableState
 } from './states/StoredTableState';
 export { useLocalLibState } from './states/LocalLibState';
+
+// Plugin development utilities and hooks
+export {
+  default as LocalizedComponent,
+  type LocaleLoader
+} from './plugin/LocalizedComponent';

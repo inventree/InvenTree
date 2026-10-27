@@ -23,7 +23,7 @@ export function TableColumnSelect({
         <Menu.Label>{t`Select Columns`}</Menu.Label>
         <Divider />
         {columns
-          .filter((col) => col.switchable ?? true)
+          .filter((col) => (col.switchable ?? true) && !col.propHidden)
           .map((col) => (
             <Menu.Item key={col.accessor}>
               <Checkbox

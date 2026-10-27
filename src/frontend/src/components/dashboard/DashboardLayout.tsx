@@ -8,11 +8,12 @@ import {
   Space,
   Text
 } from '@mantine/core';
-import { useDisclosure, useHotkeys } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { useShallow } from 'zustand/react/shallow';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import { useLocalState } from '../../states/LocalState';
@@ -61,9 +62,10 @@ export default function DashboardLayout() {
   const [loaded, setLoaded] = useState(false);
 
   // Keyboard shortcut for editing the dashboard layout
-  useHotkeys([
+  useInvenTreeHotkeys([
     [
       'mod+E',
+      t`Toggle dashboard edit mode`,
       () => {
         setEditing.toggle();
       }
@@ -261,14 +263,16 @@ export default function DashboardLayout() {
       lg: layouts
     };
   }, [user]);
-  const loadWigs = ['news', 'gstart'];
   const defaultWidgets = useMemo(() => {
+    // Only superusers can view the "news" widget (matches defaultLayouts)
+    const loadWigs = user.isSuperuser() ? ['news', 'gstart'] : ['gstart'];
+
     return loadWigs
       .map((lwid: string) =>
         availableWidgets.items.find((wid) => wid.label === lwid)
       )
       .filter((widget): widget is DashboardWidgetProps => widget !== undefined);
-  }, [availableWidgets.items, defaultLayouts]);
+  }, [availableWidgets.items, defaultLayouts, user]);
 
   return (
     <>

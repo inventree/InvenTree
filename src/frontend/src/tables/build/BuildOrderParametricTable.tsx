@@ -7,15 +7,18 @@ import {
   DescriptionColumn,
   PartColumn,
   ReferenceColumn
-} from '../ColumnRenderers';
-import { OrderStatusFilter, OutstandingFilter } from '../Filter';
+} from '../../components/tables/ColumnRenderers';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import ParametricDataTable from '../general/ParametricDataTable';
+import BuildOrderFilters from './BuildOrderFilters';
 
 export default function BuildOrderParametricTable({
   queryParams
 }: {
   queryParams?: Record<string, any>;
 }): ReactNode {
+  const globalSettings = useGlobalSettingsState();
+
   const customColumns: TableColumn[] = useMemo(() => {
     return [
       ReferenceColumn({
@@ -32,8 +35,11 @@ export default function BuildOrderParametricTable({
   }, []);
 
   const customFilters: TableFilter[] = useMemo(() => {
-    return [OutstandingFilter(), OrderStatusFilter({ model: ModelType.build })];
-  }, []);
+    return BuildOrderFilters({
+      includeDateFilters: true,
+      externalBuilds: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+    });
+  }, [globalSettings]);
 
   return (
     <ParametricDataTable

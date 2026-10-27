@@ -16,15 +16,18 @@ import {
 } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 
 type NavTab = {
   name: string;
   title: string;
   icon: ReactNode;
-  role?: UserRoles;
+  visible?: boolean;
 };
 
 export function getNavTabs(user: UserStateProps): NavTab[] {
+  const globalSettings = useGlobalSettingsState.getState();
+
   const navTabs: NavTab[] = [
     {
       name: 'home',
@@ -35,54 +38,63 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       name: 'part',
       title: t`Parts`,
       icon: <IconBox />,
-      role: UserRoles.part
+      visible:
+        user.hasViewRole(UserRoles.part) ||
+        user.hasViewRole(UserRoles.part_category)
     },
     {
       name: 'stock',
       title: t`Stock`,
       icon: <IconPackages />,
-      role: UserRoles.stock
+      visible:
+        user.hasViewRole(UserRoles.stock) ||
+        user.hasViewRole(UserRoles.stock_location) ||
+        user.hasViewVisible(UserRoles.transfer_order)
     },
     {
       name: 'manufacturing',
       title: t`Manufacturing`,
       icon: <IconBuildingFactory2 />,
-      role: UserRoles.build
+      visible: user.hasViewVisible(UserRoles.build)
     },
     {
       name: 'purchasing',
       title: t`Purchasing`,
       icon: <IconShoppingCart />,
-      role: UserRoles.purchase_order
+      visible: user.hasViewVisible(UserRoles.purchase_order)
     },
     {
       name: 'sales',
       title: t`Sales`,
       icon: <IconTruckDelivery />,
-      role: UserRoles.sales_order
+      visible:
+        user.hasViewVisible(UserRoles.sales_order) ||
+        user.hasViewVisible(UserRoles.return_order)
     }
   ];
 
   return navTabs.filter((tab) => {
-    if (!tab.role) return true;
-    return user.hasViewRole(tab.role);
+    return tab.visible !== false;
   });
 }
 
 export const docLinks = {
+  docs: 'https://docs.inventree.org/',
   app: 'https://docs.inventree.org/en/latest/app/',
   getting_started: 'https://docs.inventree.org/en/latest/start/',
   api: 'https://docs.inventree.org/en/latest/api/',
   developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
   faq: 'https://docs.inventree.org/en/latest/faq/',
   github: 'https://github.com/inventree/inventree',
+  bug: 'https://github.com/inventree/inventree/issues',
+  releases: 'https://github.com/inventree/inventree/releases',
   errorcodes: 'https://docs.inventree.org/en/latest/sref/error-codes/'
 };
 
 export function DocumentationLinks(): MenuLinkItem[] {
   return [
     {
-      id: 'gettin-started',
+      id: 'getting-started',
       title: t`Getting Started`,
       link: docLinks.getting_started,
       external: true,
@@ -164,6 +176,13 @@ export function AboutLinks(
 ): MenuLinkItem[] {
   const base_items: MenuLinkItem[] = [
     {
+      id: 'documentation',
+      title: t`Documentation`,
+      description: t`InvenTree documentation`,
+      link: docLinks.docs,
+      external: true
+    },
+    {
       id: 'instance',
       title: t`System Information`,
       description: t`About this InvenTree instance`,
@@ -176,6 +195,15 @@ export function AboutLinks(
       description: t`Licenses for dependencies of the InvenTree software`,
       icon: 'license',
       action: licenseInfo
+    },
+    {
+      id: 'ftug',
+      title: t`First Use Tour`,
+      description: t`Guided tour for first-time users`,
+      icon: 'book',
+      action: () => {
+        window.dispatchEvent(new Event('inventree:start-ftu'));
+      }
     }
   ];
 

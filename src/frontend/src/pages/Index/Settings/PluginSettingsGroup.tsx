@@ -25,11 +25,13 @@ function PluginSettingGroupItem({
 }) {
   // Hide the accordion item if there are no settings for this plugin
   const [count, setCount] = useState<number>(0);
+  const [doGet, setDoGet] = useState<boolean>(true);
 
   // Callback once the plugin settings have been loaded
   const onLoaded = useCallback(
     (settings: SettingsStateProps) => {
-      setCount(settings.settings?.length || 0);
+      setCount(settings.getSettingLength());
+      setDoGet(false);
     },
     [pluginKey]
   );
@@ -50,11 +52,20 @@ function PluginSettingGroupItem({
           )}
         </Group>
       </Accordion.Control>
+
       <Accordion.Panel>
         {global ? (
-          <PluginSettingList pluginKey={pluginKey} onLoaded={onLoaded} />
+          <PluginSettingList
+            pluginKey={pluginKey}
+            onLoaded={onLoaded}
+            doGet={doGet}
+          />
         ) : (
-          <PluginUserSettingList pluginKey={pluginKey} onLoaded={onLoaded} />
+          <PluginUserSettingList
+            pluginKey={pluginKey}
+            onLoaded={onLoaded}
+            doGet={doGet}
+          />
         )}
       </Accordion.Panel>
     </Accordion.Item>
@@ -70,10 +81,12 @@ function PluginSettingGroupItem({
 export default function PluginSettingsGroup({
   mixin,
   message,
+  includeBaseSettings,
   global
 }: {
   global: boolean;
   message?: string;
+  includeBaseSettings?: boolean;
   mixin?: string;
 }) {
   const mixins: string = useMemo(() => {
@@ -99,16 +112,18 @@ export default function PluginSettingsGroup({
 
   return (
     <Stack gap='xs'>
-      <Accordion defaultValue='plugin-settings'>
-        <Accordion.Item value='plugin-settings'>
-          <Accordion.Control>
-            <StylishText size='lg'>{t`Plugin Settings`}</StylishText>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <GlobalSettingList keys={PLUGIN_SETTINGS_KEYS} />
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
+      {includeBaseSettings == true && (
+        <Accordion defaultValue='plugin-settings'>
+          <Accordion.Item value='plugin-settings'>
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Plugin Settings`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <GlobalSettingList keys={PLUGIN_SETTINGS_KEYS} />
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
+      )}
       <Alert color='blue' icon={<IconInfoCircle />}>
         <Text>
           {message ??

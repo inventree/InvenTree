@@ -1,13 +1,17 @@
 """Unit tests for the BomItem model."""
 
+import hashlib
 from decimal import Decimal
+from unittest import mock
 
 import django.core.exceptions as django_exceptions
 from django.db import transaction
 from django.test import TestCase
 
 import build.models
+import part.filters
 import stock.models
+from common.settings import set_global_setting
 
 from .models import BomItem, BomItemSubstitute, Part
 
@@ -110,6 +114,20 @@ class BomItemTest(TestCase):
         self.assertEqual(item.get_required_quantity(1), 8)  # 3 + 5 = 8
         self.assertEqual(item.get_required_quantity(10), 35)  # 30 + 5 = 35
 
+    def test_required_quantity_input_types(self):
+        """Test that get_required_quantity accepts int, float and Decimal inputs."""
+        item = BomItem.objects.get(pk=4)
+
+        for value, expected in [
+            (10, Decimal('30')),
+            (Decimal('2.5'), Decimal('7.5')),
+            (2.5, Decimal('7.5')),
+            (0.1, Decimal('0.3')),
+        ]:
+            result = item.get_required_quantity(value)
+            self.assertIsInstance(result, Decimal)
+            self.assertEqual(result, expected)
+
     def test_round_up(self):
         """Test the 'rounding_multiple' attribute."""
         item = BomItem.objects.get(pk=4)
@@ -141,6 +159,9 @@ class BomItemTest(TestCase):
             item.get_required_quantity(100), 306
         )  # 3 x 100 = 300, rounded up to nearest multiple of 17
 
+        # The rounded value must remain a Decimal (not a float)
+        self.assertIsInstance(item.get_required_quantity(10), Decimal)
+
         # Next, let's create a new Build order
         bo = build.models.Build.objects.create(
             part=item.part, quantity=21, reference='BO-9999', title='Test Build Order'
@@ -169,20 +190,6 @@ class BomItemTest(TestCase):
         item.validate_hash()
 
         self.assertNotEqual(h1, h2)
-
-    def test_pricing(self):
-        """Test BOM pricing."""
-        self.bob.get_price(1)
-        self.assertEqual(
-            self.bob.get_bom_price_range(1, internal=True),
-            (Decimal(29.5), Decimal(89.5)),
-        )
-        # remove internal price for R_2K2_0805
-        self.r1.internal_price_breaks.delete()
-        self.assertEqual(
-            self.bob.get_bom_price_range(1, internal=True),
-            (Decimal(27.5), Decimal(87.5)),
-        )
 
     def test_substitutes(self):
         """Tests for BOM item substitutes."""
@@ -276,6 +283,52 @@ class BomItemTest(TestCase):
 
         self.assertEqual(assembly.can_build, 20)
 
+        # Mark 'c4' as consumable at the *part* level (not the BOM line itself)
+        c4.consumable = True
+        c4.save()
+
+        bom_item_c4 = BomItem.objects.create(part=assembly, sub_part=c4, quantity=200)
+
+        # The raw BomItem field is unset, but the part is marked as consumable
+        self.assertFalse(bom_item_c4.consumable)
+        self.assertTrue(bom_item_c4.is_consumable)
+
+        # A BomItem which is consumable via its part does not alter the can_build calculation
+        self.assertEqual(assembly.can_build, 20)
+
+    def test_consumable_filter(self):
+        """Tests for the BomItem.consumable_filter() helper method."""
+        assembly = Part.objects.create(
+            name='Another assembly', description='Made with parts', assembly=True
+        )
+
+        c1 = Part.objects.create(name='D1', description='Not consumable')
+        c2 = Part.objects.create(name='D2', description='Consumable BOM line')
+        c3 = Part.objects.create(
+            name='D3', description='Consumable part', consumable=True
+        )
+
+        bom_item_1 = BomItem.objects.create(part=assembly, sub_part=c1, quantity=1)
+        bom_item_2 = BomItem.objects.create(
+            part=assembly, sub_part=c2, quantity=1, consumable=True
+        )
+        bom_item_3 = BomItem.objects.create(part=assembly, sub_part=c3, quantity=1)
+
+        consumable_items = set(
+            BomItem.objects.filter(BomItem.consumable_filter(consumable=True))
+        )
+        non_consumable_items = set(
+            BomItem.objects.filter(BomItem.consumable_filter(consumable=False))
+        )
+
+        self.assertIn(bom_item_2, consumable_items)
+        self.assertIn(bom_item_3, consumable_items)
+        self.assertNotIn(bom_item_1, consumable_items)
+
+        self.assertIn(bom_item_1, non_consumable_items)
+        self.assertNotIn(bom_item_2, non_consumable_items)
+        self.assertNotIn(bom_item_3, non_consumable_items)
+
     def test_metadata(self):
         """Unit tests for the metadata field."""
         for model in [BomItem]:
@@ -344,6 +397,59 @@ class BomItemTest(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             BomItem.objects.create(part=part_v, sub_part=part_a, quantity=10)
 
+    def test_bom_unrelated_root_parts(self):
+        """Unrelated top-level parts created in succession can be added to each other's BOM.
+
+        Regression test: ordered (by name) insertion of a new root Part shifted the tree_id
+        of following trees in the database, leaving instances held in memory with a stale
+        tree_id - which could match the new part's tree_id, falsely flagging the BOM as recursive.
+        """
+        # Part 'Y' is inserted directly before Part 'Z' when ordered by name
+        part_z = Part.objects.create(
+            name='zzzz assembly', description='Z', assembly=True, component=True
+        )
+        part_y = Part.objects.create(
+            name='zzzy assembly', description='Y', assembly=True, component=True
+        )
+
+        # In-memory tree_id values match the database
+        self.assertEqual(part_z.tree_id, Part.objects.get(pk=part_z.pk).tree_id)
+        self.assertNotEqual(part_z.tree_id, part_y.tree_id)
+
+        # No refresh_from_db() required
+        BomItem.objects.create(part=part_y, sub_part=part_z, quantity=1)
+
+    def test_root_part_create_preserves_tree_ids(self):
+        """Creating a new top-level part does not modify the tree_id of any other part."""
+        tree_ids = dict(Part.objects.values_list('pk', 'tree_id'))
+
+        # Name sorts before every existing part
+        Part.objects.create(name='!!! first part', description='first')
+
+        self.assertEqual(
+            dict(Part.objects.filter(pk__in=tree_ids).values_list('pk', 'tree_id')),
+            tree_ids,
+        )
+
+    def test_check_add_to_bom_stale_tree_id(self):
+        """check_add_to_bom() uses database tree_id values, not stale in-memory values."""
+        part_a = Part.objects.create(
+            name='Stale A', description='A', assembly=True, is_template=True
+        )
+        part_b = Part.objects.create(name='Stale B', description='B', component=True)
+
+        # Simulate a stale in-memory tree_id which matches the other part
+        part_b.tree_id = part_a.tree_id
+
+        self.assertTrue(part_b.check_add_to_bom(part_a, raise_error=True))
+
+        # A genuine variant relationship is still detected
+        part_v = Part.objects.create(
+            name='Stale V', description='V', variant_of=part_a, component=True
+        )
+
+        self.assertFalse(part_v.check_add_to_bom(part_a))
+
     def test_locked_assembly(self):
         """Test that BomItem objects work correctly for a 'locked' assembly."""
         assembly = Part.objects.create(
@@ -390,6 +496,97 @@ class BomItemTest(TestCase):
 
         # Delete the new BOM item
         bom_item.delete()
+
+    def test_locked_assembly_locking_disabled(self):
+        """Test that a locked assembly is not enforced when PART_ENABLE_LOCKING is disabled."""
+        assembly = Part.objects.create(
+            name='Assembly3', description='An assembly part', assembly=True
+        )
+        sub_part = Part.objects.create(
+            name='SubPart2', description='A sub-part', component=True
+        )
+
+        bom_item = BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=1)
+
+        assembly.locked = True
+        assembly.save()
+
+        # With locking enabled (default), editing is blocked
+        with self.assertRaises(django_exceptions.ValidationError):
+            bom_item.quantity = 5
+            bom_item.save()
+
+        # Disable locking globally — all BOM operations should now be allowed
+        set_global_setting('PART_ENABLE_LOCKING', False)
+
+        bom_item.quantity = 5
+        bom_item.save()
+
+        BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=2)
+
+        bom_item.delete()
+
+        # Re-enable for other tests
+        set_global_setting('PART_ENABLE_LOCKING', True)
+
+        # Confirm locking is enforced again
+        bom_item2 = BomItem.objects.get(part=assembly, sub_part=sub_part, quantity=2)
+        with self.assertRaises(django_exceptions.ValidationError):
+            bom_item2.quantity = 99
+            bom_item2.save()
+
+    def test_bom_hash_order_consistency(self):
+        """Regression test for BOM checksum instability due to non-deterministic item ordering.
+
+        See: https://github.com/inventree/InvenTree/issues/12445
+
+        get_bom_hash() must apply an explicit, stable ordering when iterating the BOM
+        items - otherwise the resulting hash can differ purely because the underlying
+        query returned rows in a different order (e.g. Postgres provides no ordering
+        guarantee unless an ORDER BY clause is specified).
+        """
+        assembly = Part.objects.create(
+            name='HashOrderAssembly', description='An assembly part', assembly=True
+        )
+
+        for ii in range(5):
+            sub_part = Part.objects.create(
+                name=f'HashOrderPart{ii}',
+                description='A sub-part for hash ordering test',
+                component=True,
+            )
+            BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=ii + 1)
+
+        # Calling get_bom_hash() repeatedly must always return the same value
+        h1 = assembly.get_bom_hash()
+        h2 = assembly.get_bom_hash()
+        self.assertEqual(h1, h2)
+
+        def hash_items(items) -> str:
+            """Replicate the hashing logic of get_bom_hash(), for a given item order."""
+            result_hash = hashlib.md5(str(assembly.id).encode())
+
+            for item in items:
+                result_hash.update(str(item.get_item_hash()).encode())
+
+            return str(result_hash.digest())
+
+        items_forward = list(assembly.get_bom_items().order_by('pk'))
+        items_reverse = list(assembly.get_bom_items().order_by('-pk'))
+        self.assertEqual(items_forward, list(reversed(items_reverse)))
+
+        # Sanity check: hashing the *same* items in a different order produces a
+        # different result - so ordering genuinely matters here
+        self.assertNotEqual(hash_items(items_forward), hash_items(items_reverse))
+
+        # Simulate the underlying queryset returning BOM items in a non pk-ascending
+        # order (as could occur against a real database with no ORDER BY applied).
+        # get_bom_hash() must be unaffected, always normalizing to the same order.
+        reversed_queryset = assembly.get_bom_items().order_by('-pk')
+        with mock.patch.object(Part, 'get_bom_items', return_value=reversed_queryset):
+            hash_from_reversed_source = assembly.get_bom_hash()
+
+        self.assertEqual(hash_from_reversed_source, hash_items(items_forward))
 
     def test_bom_validated(self):
         """Test for caching of 'bom_validated' property."""
@@ -470,3 +667,297 @@ class BomItemTest(TestCase):
         check(valid=False)
 
         self.assertIsNotNone(assembly.bom_checked_date)
+
+    def test_bom_hash_legacy_compatibility(self):
+        """Regression test for BOM checksum drift caused by unrelated Part edits.
+
+        get_bom_hash() / get_item_hash() used to include the string representation
+        of the linked 'part' and 'sub_part' objects (which embeds the part's name
+        and description). This meant that editing a component's name or
+        description - with no change to the BOM itself - would silently
+        invalidate every assembly which referenced it.
+
+        The fix excludes part names from the *default* hash calculation, but must
+        still recognize checksums calculated by the *old* algorithm (via the
+        'include_part_names' fallback), so that BOMs validated before this change
+        are not all instantly marked invalid.
+        """
+        assembly = Part.objects.create(
+            name='LegacyHashAssembly', description='An assembly part', assembly=True
+        )
+
+        sub_part = Part.objects.create(
+            name='LegacyHashSubPart', description='Original description', component=True
+        )
+
+        bom_item = BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=1)
+
+        # The 'include_part_names' flag must actually change the calculated hash
+        self.assertNotEqual(
+            assembly.get_bom_hash(), assembly.get_bom_hash(include_part_names=True)
+        )
+        self.assertNotEqual(
+            bom_item.get_item_hash(), bom_item.get_item_hash(include_part_names=True)
+        )
+
+        # Validate the BOM, then overwrite the stored checksums with the *legacy*
+        # (part-name-inclusive) hash, to simulate a BOM which was validated
+        # before this change was introduced
+        assembly.validate_bom(user=None, valid=True)
+        assembly.bom_checksum = assembly.get_bom_hash(include_part_names=True)
+        assembly.save()
+
+        bom_item.validate_hash(valid=True)
+        bom_item.checksum = bom_item.get_item_hash(include_part_names=True)
+        bom_item.save(check_lock=False)
+
+        # A legacy checksum must still be recognized as valid, via the fallback
+        self.assertTrue(assembly.is_bom_valid())
+        self.assertTrue(BomItem.objects.get(pk=bom_item.pk).is_line_valid)
+
+        # Re-validating a legacy BOM must store a new-format checksum, which no
+        # longer depends on the part/sub_part string representation
+        assembly.validate_bom(user=None, valid=True)
+        self.assertEqual(assembly.bom_checksum, assembly.get_bom_hash())
+        self.assertNotEqual(
+            assembly.bom_checksum, assembly.get_bom_hash(include_part_names=True)
+        )
+
+        fresh_item = BomItem.objects.get(pk=bom_item.pk)
+        self.assertEqual(fresh_item.checksum, fresh_item.get_item_hash())
+
+        # Editing the sub-part's name/description must *not* invalidate a BOM
+        # which has been validated under the new algorithm
+        sub_part.name = 'A renamed sub-part'
+        sub_part.description = 'An updated description'
+        sub_part.save()
+
+        self.assertTrue(assembly.is_bom_valid())
+        self.assertTrue(BomItem.objects.get(pk=bom_item.pk).is_line_valid)
+
+        # Sanity check: the fix must not mask a *genuine* BOM change
+        bom_item.set_quantity(2)
+        bom_item.save()
+
+        self.assertFalse(assembly.is_bom_valid())
+        self.assertFalse(BomItem.objects.get(pk=bom_item.pk).is_line_valid)
+
+    def test_piece_count_default(self):
+        """Test that piece_count defaults to 1 and does not change existing behavior."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        # Default value should be 1
+        self.assertEqual(item.piece_count, 1)
+
+        # With piece_count=1, get_required_quantity should behave as before
+        item.set_quantity(10)
+        item.attrition = 0
+        item.setup_quantity = 0
+        item.rounding_multiple = None
+        item.save()
+
+        # 10 * 1 (piece_count) * 5 (build_quantity) = 50
+        self.assertEqual(item.get_required_quantity(5), 50)
+
+    def test_piece_count_multiplier(self):
+        """Test that piece_count correctly multiplies the required quantity.
+
+        Example: Cutting wire into 200mm lengths, need 10 pieces per assembly.
+        quantity=200 (mm per piece), piece_count=10, build_quantity=5
+        Total = 200 * 10 * 5 = 10000 mm
+        """
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        item.set_quantity(200)
+        item.piece_count = 10
+        item.attrition = 0
+        item.setup_quantity = 0
+        item.rounding_multiple = None
+        item.save()
+
+        # 200 * 10 * 5 = 10000
+        self.assertEqual(item.get_required_quantity(5), 10000)
+
+        # 200 * 10 * 1 = 2000
+        self.assertEqual(item.get_required_quantity(1), 2000)
+
+        # 200 * 10 * 10 = 20000
+        self.assertEqual(item.get_required_quantity(10), 20000)
+
+    def test_piece_count_unit_quantity(self):
+        """Test that unit_quantity accounts for piece_count."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        item.set_quantity(2)
+        item.piece_count = 1
+        self.assertEqual(item.unit_quantity, 2)
+
+        item.piece_count = 5
+        self.assertEqual(item.unit_quantity, 10)
+
+        # Attrition and setup quantity are not included
+        item.attrition = 10
+        item.setup_quantity = 3
+        self.assertEqual(item.unit_quantity, 10)
+
+    def test_piece_count_can_build_quantity(self):
+        """Test that BomItem.can_build_quantity accounts for piece_count."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        item.set_quantity(2)
+        item.piece_count = 5
+        item.attrition = 0
+        item.setup_quantity = 0
+
+        # 20 / (2 * 5) = 2
+        self.assertEqual(item.can_build_quantity(20), 2)
+
+        # With setup quantity and attrition: (25 - 5) / (2 * 5 * 1.25) = 1.6
+        item.setup_quantity = 5
+        item.attrition = 25
+        self.assertEqual(item.can_build_quantity(25), 1)
+
+    def test_piece_count_can_build(self):
+        """Test that the 'can_build' annotation accounts for piece_count."""
+        assembly = Part.objects.create(
+            name='Cable assembly', description='Made with wire', assembly=True
+        )
+
+        wire = Part.objects.create(name='Wire', description='Cut-to-length wire')
+        stock.models.StockItem.objects.create(part=wire, quantity=20)
+
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=wire, quantity=2, piece_count=5
+        )
+
+        # 20 / (2 * 5) = 2
+        self.assertEqual(assembly.can_build, 2)
+
+        item = part.filters.annotate_bom_item_can_build(
+            BomItem.objects.filter(pk=bom_item.pk)
+        ).first()
+
+        self.assertAlmostEqual(item.can_build, 2)
+
+        # Without piece_count, 10 assemblies could be built
+        bom_item.piece_count = 1
+        bom_item.save()
+
+        self.assertEqual(assembly.can_build, 10)
+
+    def test_piece_count_with_attrition(self):
+        """Test piece_count combined with attrition percentage."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        item.set_quantity(100)
+        item.piece_count = 5
+        item.attrition = 10  # 10% attrition
+        item.setup_quantity = 0
+        item.rounding_multiple = None
+        item.save()
+
+        # Base: 100 * 5 * 2 = 1000
+        # With 10% attrition: 1000 * 1.10 = 1100
+        self.assertEqual(item.get_required_quantity(2), 1100)
+
+    def test_piece_count_with_setup_quantity(self):
+        """Test piece_count combined with setup_quantity."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        item.set_quantity(50)
+        item.piece_count = 4
+        item.attrition = 0
+        item.setup_quantity = 20
+        item.rounding_multiple = None
+        item.save()
+
+        # Base: 50 * 4 * 3 = 600
+        # With setup_quantity: 600 + 20 = 620
+        self.assertEqual(item.get_required_quantity(3), 620)
+
+    def test_piece_count_with_rounding(self):
+        """Test piece_count combined with rounding_multiple."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        item.set_quantity(7)
+        item.piece_count = 3
+        item.attrition = 0
+        item.setup_quantity = 0
+        item.rounding_multiple = 25
+        item.save()
+
+        # Base: 7 * 3 * 2 = 42
+        # Rounded up to nearest multiple of 25: 50
+        self.assertEqual(item.get_required_quantity(2), 50)
+
+    def test_piece_count_validation(self):
+        """Test that piece_count rejects invalid values (0, negative)."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        # piece_count = 0 should be rejected (MinValueValidator(1))
+        item.piece_count = 0
+        with self.assertRaises(django_exceptions.ValidationError):
+            item.full_clean()
+
+        # piece_count = -1 should also be rejected
+        item.piece_count = -1
+        with self.assertRaises(django_exceptions.ValidationError):
+            item.full_clean()
+
+        # piece_count = 1 is the minimum valid value
+        item.piece_count = 1
+        item.full_clean()  # Should not raise
+
+        # piece_count = 100 is a valid value
+        item.piece_count = 100
+        item.full_clean()  # Should not raise
+
+    def test_item_hash_piece_count_default(self):
+        """Regression test: a default 'piece_count' must not affect the checksum.
+
+        The 'piece_count' field is ignored by get_item_hash() when it holds its
+        default value (1), so that checksums calculated before this field was
+        added remain valid. Simulate a "legacy" checksum (calculated without
+        'piece_count' in the hashed fields) and confirm it still matches the
+        checksum calculated by the current code for a default piece_count.
+        """
+        item = BomItem.objects.get(part=100, sub_part=50)
+        item.piece_count = 1
+        item.save()
+
+        current_hash = item.get_item_hash()
+
+        legacy_fields = [f for f in item.hash_fields() if f != 'piece_count']
+
+        with mock.patch.object(BomItem, 'hash_fields', return_value=legacy_fields):
+            legacy_hash = item.get_item_hash()
+
+        self.assertEqual(current_hash, legacy_hash)
+
+        # A checksum validated under the "legacy" hashing scheme must still
+        # validate correctly against the current (piece_count aware) scheme
+        item.checksum = legacy_hash
+        item.save()
+        self.assertTrue(item.is_line_valid)
+
+    def test_item_hash_piece_count_non_default(self):
+        """A non-default 'piece_count' value must change the checksum hash."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+        item.piece_count = 1
+        item.save()
+
+        # Validate the BOM item hash with the default piece_count
+        item.validate_hash()
+        self.assertTrue(item.is_line_valid)
+
+        # Changing piece_count away from the default must invalidate the checksum
+        item.piece_count = 5
+        item.save()
+        self.assertFalse(item.is_line_valid)
+
+        h_non_default = item.get_item_hash()
+
+        item.piece_count = 1
+        h_default = item.get_item_hash()
+
+        self.assertNotEqual(h_default, h_non_default)

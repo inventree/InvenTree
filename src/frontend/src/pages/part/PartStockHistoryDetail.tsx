@@ -19,6 +19,11 @@ import {
 } from '@mantine/core';
 import dayjs from 'dayjs';
 import { useCallback, useMemo, useState } from 'react';
+import {
+  DateColumn,
+  DecimalColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatDate, formatPriceRange } from '../../defaults/formatters';
 import { partStocktakeFields } from '../../forms/PartForms';
 import {
@@ -27,9 +32,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { DateColumn, DecimalColumn } from '../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 
 /*
  * Render a tooltip for the chart, with correct date information
@@ -291,14 +293,6 @@ export default function PartStockHistoryDetail({
 }: Readonly<{ partId: number }>) {
   return (
     <Accordion multiple defaultValue={['stocktake']}>
-      <Accordion.Item value='tracking'>
-        <Accordion.Control>
-          <StylishText size='lg'>{t`Stock Tracking`}</StylishText>
-        </Accordion.Control>
-        <Accordion.Panel>
-          <StockTrackingTable partId={partId} />
-        </Accordion.Panel>
-      </Accordion.Item>
       <Accordion.Item value='stocktake'>
         <Accordion.Control>
           <StylishText size='lg'>{t`Stocktake Entries`}</StylishText>

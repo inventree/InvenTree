@@ -1,6 +1,7 @@
 """Custom template tags for report generation."""
 
 import base64
+import copy
 import logging
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
@@ -10,14 +11,25 @@ from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
+from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.storage import default_storage
 from django.db.models import Model
 from django.db.models.query import QuerySet
+from django.utils import translation
+from django.utils.html import conditional_escape, format_html
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+import lxml.html
+import nh3
+from babel import Locale
+from babel.core import UnknownLocaleError
+from babel.dates import format_date as babel_format_date
+from babel.dates import format_datetime as babel_format_datetime
+from babel.numbers import format_decimal as babel_format_decimal
+from babel.numbers import parse_pattern
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -32,11 +44,41 @@ import report.helpers
 from common.settings import get_global_setting
 from company.models import Company
 from part.models import Part
+from report.security import ReportAccessDenied, is_model_blocked
 
 register = template.Library()
 
 
 logger = logging.getLogger('inventree')
+
+
+@register.simple_tag()
+def raise_error(message: str):
+    """Stop rendering a report or label template with an error message.
+
+    Arguments:
+        message: The message to include in the validation error.
+
+    Raises:
+        ValidationError: Whenever this tag is evaluated.
+    """
+    raise ValidationError(message)
+
+
+def get_locale(locale: Optional[str] = None) -> Locale:
+    """Resolve and return a babel Locale.
+
+    Args:
+        locale: Optional locale string (e.g. 'en-us'). Falls back to LANGUAGE_CODE.
+
+    Raises:
+        ValidationError: If the locale string is invalid.
+    """
+    language = locale or settings.LANGUAGE_CODE
+    try:
+        return Locale.parse(translation.to_locale(language))
+    except (UnknownLocaleError, ValueError) as e:
+        raise ValidationError(f"Invalid locale '{language}' - {e}")
 
 
 @register.simple_tag()
@@ -102,6 +144,11 @@ def filter_db_model(model_name: str, **kwargs) -> Optional[QuerySet]:
     if model is None:
         return None
 
+    if is_model_blocked(model):
+        raise ReportAccessDenied(
+            'Access to this model is not allowed in report templates'
+        )
+
     queryset = model.objects.all()
 
     return filter_queryset(queryset, **kwargs)
@@ -145,6 +192,53 @@ def getkey(container: dict, key: str, backup_value: Optional[Any] = None) -> Any
         return None
 
     return container.get(key, backup_value)
+
+
+@register.simple_tag(takes_context=True)
+def set_var(context: dict, name: str, value: Any) -> str:
+    """Store a named variable, for later retrieval with get_var.
+
+    Arguments:
+        context: The template context, which should contain a 'report_vars' dictionary.
+        name: The name to store the variable against (must be a string)
+        value: The value to store
+
+    Returns:
+        An empty string - this tag does not render any output
+    """
+    if not isinstance(name, str):
+        logger.warning('set_var() called with non-string name')
+        return ''
+
+    store = context.get('report_vars')
+
+    if isinstance(store, dict):
+        store[name] = value
+    else:
+        logger.warning('set_var() called outside of a valid report context')
+
+    return ''
+
+
+@register.simple_tag(takes_context=True)
+def get_var(context: dict, name: str, backup_value: Optional[Any] = None) -> Any:
+    """Retrieve a named variable previously stored with set_var.
+
+    Arguments:
+        context: The template context, which should contain a 'report_vars' dictionary.
+        name: The name of the variable to retrieve
+        backup_value: Value to return if the variable has not been set (default = None)
+
+    Returns:
+        The stored value, or backup_value if the variable has not been set
+    """
+    store = context.get('report_vars')
+
+    if not isinstance(store, dict):
+        logger.warning('get_var() called outside of a valid report context')
+        return backup_value
+
+    return store.get(name, backup_value)
 
 
 def media_file_exists(path: Path | str) -> bool:
@@ -288,13 +382,16 @@ def asset(filename: str, raise_error: bool = False) -> str | None:
         else:
             return None
 
-    # In debug mode, return a web URL to the asset file (rather than a local file path)
+    # In debug mode, return a web URL to the asset file (rather than encoded data)
     if get_global_setting('REPORT_DEBUG_MODE', cache=False):
         return default_storage.url(str(full_path))
 
-    storage_path = default_storage.path(str(full_path))
+    file_data = get_media_file_contents(full_path, raise_error=raise_error)
 
-    return f'file://{storage_path}'
+    if not file_data:
+        return None
+
+    return report.helpers.encode_file_base64(filename, file_data)
 
 
 @register.simple_tag()
@@ -417,8 +514,13 @@ def uploaded_image(
 
 
 @register.simple_tag()
-def encode_svg_image(filename: str) -> str:
-    """Return a base64-encoded svg image data string."""
+def encode_svg_image(filename: str, raise_error: bool = False) -> str:
+    """Return a base64-encoded svg image data string.
+
+    Arguments:
+        filename: The filename of the svg image relative to the media root directory
+        raise_error: If True, raise an error if the file cannot be found (default = False)
+    """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
@@ -431,7 +533,12 @@ def encode_svg_image(filename: str) -> str:
 
     # Read out the file contents
     # Note: This will check if the file exists, and raise an error if it does not
-    data = get_media_file_contents(filename)
+    data = get_media_file_contents(filename, raise_error=raise_error)
+
+    # If the file is empty, return an empty string
+    # Note that if raise_error is True, the above function will raise a FileNotFoundError if the file does not exist
+    if not data:
+        return ''
 
     # Return the base64-encoded data
     return 'data:image/svg+xml;charset=utf-8;base64,' + base64.b64encode(data).decode(
@@ -452,7 +559,7 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
         TypeError: If provided part is not a Part instance
     """
     if not part or not isinstance(part, Part):
-        raise TypeError(_('part_image tag requires a Part instance'))
+        raise ValidationError(_('part_image tag requires a Part instance'))
 
     image_filename = InvenTree.helpers.image2name(part.image, preview, thumbnail)
 
@@ -463,6 +570,94 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     return uploaded_image(
         InvenTree.helpers.image2name(part.image, preview, thumbnail), **kwargs
     )
+
+
+@register.simple_tag()
+def note_instance(
+    instance: Model, title: Optional[str] = None
+) -> Optional[common.models.Note]:
+    """Return a Note object for the given instance and note name.
+
+    Arguments:
+        instance: A Model object
+        title: The title of the note to retrieve (case insensitive)
+
+    Returns:
+        A Note object, or None if not found
+
+    Note: If the 'title' argument is not provided, the first Note object associated with the instance will be returned (if any).
+    """
+    if not instance:
+        raise ValueError('notes tag requires a valid Model instance')
+
+    if not hasattr(instance, 'notes'):
+        raise TypeError("notes tag requires a Model with a 'notes' attribute")
+
+    notes = instance.notes
+
+    if title:
+        # First try with exact match
+        if note := notes.filter(title=title).first():
+            return note
+
+        # Next, try with case-insensitive match
+        if note := notes.filter(title__iexact=title).first():
+            return note
+
+    # If no title is provided, or if no matching note is found, return the first note (if any)
+    return notes.order_by('-primary').first()
+
+
+@register.simple_tag()
+def note(instance: Model, title: Optional[str] = None) -> str:
+    """Return the HTML content of a Note object for the given instance and note name.
+
+    Arguments:
+        instance: A Model object
+        title: The title of the note to retrieve (case insensitive)
+
+    Returns:
+        The HTML content of the Note, or an empty string if not found
+
+    Note: If the 'title' argument is not provided, the first Note object associated with the instance will be returned (if any).
+    """
+    note = note_instance(instance, title)
+
+    if not note or not note.content:
+        return ''
+
+    content = note.content
+    media_prefix = settings.MEDIA_URL
+
+    # Replace any embedded image references with the actual image data
+    root = lxml.html.fragment_fromstring(content, create_parent='div')
+
+    for img in root.iter('img'):
+        src = img.get('src')
+        if not src:
+            continue
+
+        if not src.startswith(media_prefix):
+            continue
+
+        img_src = src[len(media_prefix) :]
+
+        # Extract img size attributes
+        img_data = uploaded_image(
+            img_src,
+            replace_missing=True,
+            width=img.get('width', None),
+            height=img.get('height', None),
+        )
+
+        # Replace the <img> src attribute
+        img.set('src', img_data)
+
+    content = lxml.html.tostring(root, encoding='unicode')
+    # fragment_fromstring wraps in a <div> — strip it back off
+    content = content.removeprefix('<div>').removesuffix('</div>')
+
+    return mark_safe(content)
 
 
 @register.simple_tag()
@@ -478,28 +673,22 @@ def parameter(
     Returns:
         A Parameter object, or the provided default value if not found
     """
-    if instance is None:
-        raise ValueError('parameter tag requires a valid Model instance')
+    if instance is None or not isinstance(instance, Model):
+        raise ValidationError('parameter tag requires a valid Model instance')
 
-    if not isinstance(instance, Model) or not hasattr(instance, 'parameters'):
-        raise TypeError("parameter tag requires a Model with 'parameters' attribute")
+    if not hasattr(instance, 'parameters'):
+        raise ValidationError(
+            "parameter tag requires a Model with 'parameters' attribute"
+        )
+
+    parameters = instance.parameters_list.all().prefetch_related('template')
 
     # First try with exact match
-    if (
-        parameter := instance.parameters
-        .prefetch_related('template')
-        .filter(template__name=parameter_name)
-        .first()
-    ):
+    if parameter := parameters.filter(template__name=parameter_name).first():
         return parameter
 
     # Next, try with case-insensitive match
-    if (
-        parameter := instance.parameters
-        .prefetch_related('template')
-        .filter(template__name__iexact=parameter_name)
-        .first()
-    ):
+    if parameter := parameters.filter(template__name__iexact=parameter_name).first():
         return parameter
 
     return None
@@ -585,9 +774,9 @@ def internal_link(link, text) -> str:
     # If the base URL is not set, just return the text
     if not url:
         logger.warning('Failed to construct absolute URL for internal link')
-        return text
+        return conditional_escape(text)
 
-    return mark_safe(f'<a href="{url}">{text}</a>')
+    return format_html('<a href="{}">{}</a>', url, text)
 
 
 def make_decimal(value: Any) -> Any:
@@ -769,9 +958,98 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
 
 
 @register.simple_tag
-def render_currency(money, **kwargs):
-    """Render a currency / Money object."""
-    return InvenTree.helpers_model.render_currency(money, **kwargs)
+def render_currency(
+    money: Money | str | int | float | Decimal,
+    decimal_places: Optional[int] = None,
+    currency: Optional[str] = None,
+    multiplier: Optional[Decimal] = None,
+    max_decimal_places: Optional[int] = None,
+    include_symbol: bool = True,
+    leading: Optional[int] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    **kwargs,
+) -> str:
+    """Render a currency / Money object to a formatted string.
+
+    Arguments:
+        money: The Money instance to be rendered
+        currency: Optionally convert to the specified currency before rendering
+        multiplier: Optional multiplier to apply to the amount before rendering
+        decimal_places: Minimum (forced) decimal places, e.g. decimal_places=2 gives '.00'. Defaults to the locale/currency standard.
+        max_decimal_places: Maximum decimal places (optional digits beyond decimal_places), e.g. max_decimal_places=4 allows up to 4.
+        include_symbol: If True, include the currency symbol in the output
+        leading: Minimum number of leading digits to render before the decimal point (default = 1)
+        fmt: Optional Babel number pattern string. When provided, takes priority over all other formatting options.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Defaults to server LANGUAGE_CODE.
+    """
+    if money in [None, '']:
+        return '-'
+
+    # If the supplied value is *not* a Money instance, attempt to convert it into one
+    if not isinstance(money, Money):
+        try:
+            money = Money(
+                Decimal(str(money)),
+                currency or get_global_setting('INVENTREE_DEFAULT_CURRENCY'),
+            )
+        except Exception:
+            raise ValidationError(f'render_currency: invalid money value - {money!r}')
+
+    if currency is not None:
+        try:
+            money = convert_money(money, currency)
+        except Exception:
+            pass
+
+    if multiplier is not None:
+        try:
+            money *= Decimal(str(multiplier).strip())
+        except Exception:
+            raise ValidationError(
+                f'render_currency: invalid multiplier value - {multiplier!r}'
+            )
+
+    locale = get_locale(locale)
+
+    # If a custom fmt pattern is applied, that overrides other formatting options
+    if fmt:
+        pattern = parse_pattern(fmt)
+        return pattern.apply(
+            money.amount,
+            locale,
+            currency=money.currency.code if include_symbol else '',
+            currency_digits=False,
+            decimal_quantization=True,
+        )
+
+    pattern = copy.copy(locale.currency_formats['standard'])
+
+    if decimal_places is None or not isinstance(decimal_places, (int, float)):
+        decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
+
+    if max_decimal_places is None or not isinstance(max_decimal_places, (int, float)):
+        max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
+
+    pattern.frac_prec = (decimal_places, max(decimal_places, max_decimal_places))
+
+    if leading is not None:
+        try:
+            leading = int(leading) or 0
+        except (ValueError, TypeError):
+            leading = 0
+        if leading > 0:
+            min_int, max_int = pattern.int_prec
+            pattern.int_prec = (max(leading, min_int), max(leading, max_int))
+
+    return pattern.apply(
+        money.amount,
+        locale,
+        currency=money.currency.code if include_symbol else '',
+        currency_digits=decimal_places is None and max_decimal_places is None,
+        decimal_quantization=decimal_places is not None
+        or max_decimal_places is not None,
+    )
 
 
 @register.simple_tag
@@ -846,6 +1124,7 @@ def render_html_text(text: str, **kwargs):
         bold: Boolean, whether bold (or not)
         italic: Boolean, whether italic (or not)
         heading: str, heading level e.g. 'h3'
+        sanitize: Boolean, whether to sanitize the provided text (default = True)
     """
     tags = []
 
@@ -858,6 +1137,12 @@ def render_html_text(text: str, **kwargs):
     if heading := kwargs.get('heading', ''):
         tags.append(heading)
 
+    text = str(text)
+
+    if kwargs.get('sanitize', True):
+        # Remove any unsafe HTML content (e.g. script tags) from the provided text
+        text = nh3.clean(text)
+
     output = ''.join([f'<{tag}>' for tag in tags])
     output += text
     output += ''.join([f'</{tag}>' for tag in tags])
@@ -868,82 +1153,109 @@ def render_html_text(text: str, **kwargs):
 @register.simple_tag
 def format_number(
     number: int | float | Decimal,
-    decimal_places: Optional[int] = None,
     multiplier: Optional[int | float | Decimal] = None,
     integer: bool = False,
-    leading: int = 0,
-    separator: Optional[str] = None,
+    separator: bool = False,
+    leading: Optional[int] = None,
+    decimal_places: Optional[int] = None,
+    max_decimal_places: Optional[int] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    **kwargs,
 ) -> str:
     """Render a number with optional formatting options.
 
     Arguments:
         number: The number to be formatted
-        decimal_places: Number of decimal places to render
         multiplier: Optional multiplier to apply to the number before formatting
         integer: Boolean, whether to render the number as an integer
-        leading: Number of leading zeros (default = 0)
-        separator: Character to use as a thousands separator (default = None)
+        separator: Boolean, whether to include a thousands separator
+        leading: Minimum number of leading digits to render (default = 1)
+        decimal_places: Number of decimal places to render (default = 0)
+        max_decimal_places: Maximum number of decimal places to render (default = 0)
+        separator:
+        fmt: Optional format string for the number - if provided, takes priority over 'decimal_places' and 'leading'
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). When set, babel controls decimal and thousands separators.
     """
     check_nulls('format_number', number)
 
+    # Check that the provided number is valid
     try:
         number = Decimal(str(number).strip())
     except Exception:
         # If the number cannot be converted to a Decimal, just return the original value
         return str(number)
 
+    number = float(number)
+
     if multiplier is not None:
-        number *= Decimal(str(multiplier).strip())
+        number *= float(multiplier)
 
     if integer:
-        # Convert to integer
-        number = Decimal(int(number))
+        number = int(number)
 
-    # Normalize the number (remove trailing zeroes)
-    number = number.normalize()
+    # Construct a formatting string for the number, based on the provided options
+    if not fmt:
+        fmt = '###,###,###,###,##0'  # Default format string - this will be modified based on the provided options
 
-    if decimal_places is not None:
-        try:
-            decimal_places = int(decimal_places)
-            number = round(number, decimal_places)
-        except ValueError:
-            pass
+        # The 'leading' option specifies the minimum number of leading digits to render (not including decimal places)
+        if leading is not None:
+            try:
+                leading = int(leading) or 0
+            except (ValueError, TypeError):
+                leading = 0
 
-    # Re-encode, and normalize again
-    # Ensure that the output never uses scientific notation
-    value = Decimal(number)
-    value = (
-        value.quantize(Decimal(1))
-        if value == value.to_integral()
-        else value.normalize()
+            if leading > 1:
+                fmt = fmt[::-1].replace('#', '0', (leading - 1))[::-1]
+
+        if not bool(separator):
+            fmt = fmt.replace(',', '')
+
+        if decimal_places is not None or max_decimal_places is not None:
+            # Account for decimal places, if provided
+
+            try:
+                decimal_places = int(decimal_places) or 0
+            except (ValueError, TypeError):
+                decimal_places = 0
+
+            try:
+                max_decimal_places = int(max_decimal_places) or 0
+            except (ValueError, TypeError):
+                max_decimal_places = 0
+
+            fmt += '.' + '0' * decimal_places
+
+            if max_decimal_places > decimal_places:
+                fmt += '#' * (max_decimal_places - decimal_places)
+        elif not integer:
+            # No decimal places specified, allow any number of decimal places (up to the precision of the Decimal)
+            fmt += '.####################'
+
+    babel_locale = get_locale(locale)
+
+    return babel_format_decimal(
+        number, format=fmt, locale=babel_locale, numbering_system='latn'
     )
-
-    if separator:
-        value = f'{value:,}'
-        value = value.replace(',', separator)
-    else:
-        value = f'{value}'
-
-    if leading is not None:
-        try:
-            leading = int(leading)
-            value = '0' * leading + value
-        except ValueError:
-            pass
-
-    return value
 
 
 @register.simple_tag
 def format_datetime(
-    dt: datetime, timezone: Optional[str] = None, fmt: Optional[str] = None
+    dt: datetime,
+    timezone: Optional[str] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    date_format: str = 'medium',
+    **kwargs,
 ):
     """Format a datetime object for display.
 
     Arguments:
         dt: The datetime object to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        fmt: The format string to use (defaults to ISO formatting)
+        fmt: The strftime format string to use. When provided, takes priority over locale and date_format.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Used for locale-aware formatting when no fmt is given.
+        date_format: Babel date format style. One of 'full', 'long', 'medium' (default), 'short'.
     """
     check_nulls('format_datetime', dt)
 
@@ -951,18 +1263,27 @@ def format_datetime(
 
     if fmt:
         return dt.strftime(fmt)
-    else:
-        return dt.isoformat()
+
+    return babel_format_datetime(dt, format=date_format, locale=get_locale(locale))
 
 
 @register.simple_tag
-def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = None):
+def format_date(
+    dt: date,
+    timezone: Optional[str] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    date_format: str = 'medium',
+    **kwargs,
+):
     """Format a date object for display.
 
     Arguments:
         dt: The date to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        fmt: The format string to use (defaults to ISO formatting)
+        fmt: The strftime format string to use. When provided, takes priority over locale and date_format.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Used for locale-aware formatting when no fmt is given.
+        date_format: Babel date format style. One of 'full', 'long', 'medium' (default), 'short'.
     """
     check_nulls('format_date', dt)
 
@@ -973,8 +1294,8 @@ def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = N
 
     if fmt:
         return dt.strftime(fmt)
-    else:
-        return dt.isoformat()
+
+    return babel_format_date(dt, format=date_format, locale=get_locale(locale))
 
 
 @register.simple_tag()

@@ -11,7 +11,7 @@ import type { ServerAPIProps } from './states';
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
-  fetchServerApiState: () => Promise<void>;
+  fetchServerApiState: (force?: boolean) => Promise<void>;
   auth_config?: AuthConfig;
   auth_context?: AuthContext;
   setAuthContext: (auth_context: AuthContext | undefined) => void;
@@ -22,6 +22,9 @@ interface ServerApiStateProps {
   registration_enabled: () => boolean;
   sso_registration_enabled: () => boolean;
   password_forgotten_enabled: () => boolean;
+  // ftu
+  ftuShown: boolean;
+  setFtuShown: (value: boolean) => void;
 }
 
 function get_server_setting(val: any) {
@@ -31,13 +34,24 @@ function get_server_setting(val: any) {
   return val;
 }
 
+let pendingServerApiFetch: Promise<void> | null = null;
+let serverApiFetched = false;
+
 export const useServerApiState = create<ServerApiStateProps>()(
   persist(
     (set, get) => ({
       server: emptyServerAPI,
       setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
-      fetchServerApiState: async () => {
-        await Promise.all([
+      fetchServerApiState: async (force = false) => {
+        if (pendingServerApiFetch && !force) {
+          return pendingServerApiFetch;
+        }
+
+        if (serverApiFetched && !force) {
+          return;
+        }
+
+        pendingServerApiFetch = Promise.all([
           // Fetch server data
           api
             .get(apiUrl(ApiEndpoints.api_server_info))
@@ -59,7 +73,14 @@ export const useServerApiState = create<ServerApiStateProps>()(
             .catch(() => {
               console.error('ERR: Error fetching SSO information');
             })
-        ]);
+        ]).then(() => {});
+
+        try {
+          await pendingServerApiFetch;
+          serverApiFetched = true;
+        } finally {
+          pendingServerApiFetch = null;
+        }
       },
       auth_config: undefined,
       auth_context: undefined,
@@ -71,6 +92,9 @@ export const useServerApiState = create<ServerApiStateProps>()(
         set({ mfa_context });
       },
       sso_enabled: () => {
+        if (!get_server_setting(get().server?.settings?.sso_enabled)) {
+          return false;
+        }
         const data = get().auth_config?.socialaccount.providers;
         return !(data === undefined || data.length == 0);
       },
@@ -84,6 +108,10 @@ export const useServerApiState = create<ServerApiStateProps>()(
         return get_server_setting(
           get().server?.settings?.password_forgotten_enabled
         );
+      },
+      ftuShown: false,
+      setFtuShown: (value) => {
+        set({ ftuShown: value });
       }
     }),
     {

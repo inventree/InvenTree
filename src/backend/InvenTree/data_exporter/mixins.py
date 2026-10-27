@@ -16,8 +16,9 @@ from taggit.serializers import TagListSerializerField
 import data_exporter.serializers
 import data_exporter.tasks
 import InvenTree.exceptions
+import InvenTree.serializers
 from common.models import DataOutput
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import escape_export_value, str2bool
 from InvenTree.tasks import offload_task
 from plugin import PluginMixinEnum, registry
 
@@ -64,6 +65,14 @@ class DataExportSerializerMixin:
             # Exclude fields which are not required for data export
             for field in self.get_export_exclude_fields(**kwargs):
                 self.fields.pop(field, None)
+
+            # Duplication options are never used for data export
+            for field in [
+                name
+                for name, field in self.fields.items()
+                if isinstance(field, InvenTree.serializers.DuplicateOptionsSerializer)
+            ]:
+                self.fields.pop(field, None)
         else:
             # Exclude fields which are only used for data export
             for field in self.get_export_only_fields(**kwargs):
@@ -97,6 +106,10 @@ class DataExportSerializerMixin:
             # Top-level serializer fields can be exported with dot notation
             if issubclass(field.__class__, serializers.Serializer):
                 fields.update(self.get_child_fields(name, field))
+                continue
+
+            # Skip 'many' fields (e.g. nested serializers)
+            if getattr(field, 'many', False):
                 continue
 
             fields[name] = field
@@ -205,7 +218,9 @@ class DataExportSerializerMixin:
         dataset = tablib.Dataset(headers=field_headers)
 
         for row in data:
-            dataset.append([self.get_nested_value(row, f) for f in field_names])
+            dataset.append([
+                escape_export_value(self.get_nested_value(row, f)) for f in field_names
+            ])
 
         return dataset.export(file_format)
 
@@ -419,8 +434,8 @@ class DataExportViewMixin:
         # Update the output object with the exported data
         output.mark_complete(output=ContentFile(datafile, filename))
 
-    def get(self, request, *args, **kwargs):
-        """Override the GET method to determine export options."""
+    def list(self, request, *args, **kwargs):
+        """Override the list method to determine export options."""
         from common.serializers import DataOutputSerializer
 
         # If we are not exporting data, return the default response
@@ -491,4 +506,4 @@ class DataExportViewMixin:
             # Return a response to the frontend
             return Response(DataOutputSerializer(output).data, status=200)
 
-        return super().get(request, *args, **kwargs)
+        return super().list(request, *args, **kwargs)

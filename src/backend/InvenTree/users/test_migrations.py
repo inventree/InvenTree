@@ -14,78 +14,80 @@ class TestForwardMigrations(MigratorTestCase):
     def prepare(self):
         """Setup the initial state of the database before migrations."""
         User = self.old_state.apps.get_model('auth', 'user')
+        ApiToken = self.old_state.apps.get_model('users', 'ApiToken')
 
-        User.objects.create(username='fred', email='fred@fred.com', password='password')
+        fred = User.objects.create(
+            username='fred', email='fred@fred.com', password='password'
+        )
 
         User.objects.create(username='brad', email='brad@fred.com', password='password')
 
-    def test_users_exist(self):
-        """Test that users exist in the database."""
-        User = self.new_state.apps.get_model('auth', 'user')
-
-        self.assertEqual(User.objects.count(), 2)
-
-
-class TestBackfillUserProfiles(MigratorTestCase):
-    """Test backfill migration for user profiles."""
-
-    migrate_from = ('users', '0012_alter_ruleset_can_view')
-    migrate_to = ('users', '0014_userprofile')
-
-    def prepare(self):
-        """Setup the initial state of the database before migrations."""
-        User = self.old_state.apps.get_model('auth', 'user')
-
-        User.objects.create(
-            username='fred', email='fred@example.org', password='password'
-        )
-        User.objects.create(
-            username='brad', email='brad@example.org', password='password'
-        )
-
-    def test_backfill_user_profiles(self):
-        """Test that user profiles are created during the migration."""
-        User = self.new_state.apps.get_model('auth', 'user')
-        UserProfile = self.new_state.apps.get_model('users', 'UserProfile')
-
-        self.assertEqual(User.objects.count(), 2)
-        self.assertEqual(UserProfile.objects.count(), 2)
-
-        fred = User.objects.get(username='fred')
-        brad = User.objects.get(username='brad')
-
-        self.assertIsNotNone(UserProfile.objects.get(user=fred))
-        self.assertIsNotNone(UserProfile.objects.get(user=brad))
-
-
-class MFAMigrations(MigratorTestCase):
-    """Test entire schema migration sequence for the users app."""
-
-    migrate_from = ('users', '0012_alter_ruleset_can_view')
-    migrate_to = ('users', '0013_migrate_mfa_20240408_1659')
-
-    def prepare(self):
-        """Setup the initial state of the database before migrations."""
-        User = self.old_state.apps.get_model('auth', 'user')
-        TOTPDevice = self.old_state.apps.get_model('otp_totp', 'TOTPDevice')
-        StaticDevice = self.old_state.apps.get_model('otp_static', 'StaticDevice')
-
-        abc = User.objects.create(
-            username='fred', email='fred@fred.com', password='password'
-        )
-        TOTPDevice.objects.create(user=abc, confirmed=True, key='1234')
-        abc1 = User.objects.create(
-            username='brad', email='brad@fred.com', password='password'
-        )
-        TOTPDevice.objects.create(user=abc1, confirmed=False, key='1234')
-        StaticDevice.objects.create(user=abc1, confirmed=True)
+        ApiToken.objects.create(key='legacy-token', user=fred)
 
     def test_users_exist(self):
         """Test that users exist in the database."""
         User = self.new_state.apps.get_model('auth', 'user')
-        Authenticator = self.new_state.apps.get_model('mfa', 'Authenticator')
 
         self.assertEqual(User.objects.count(), 2)
-        # 2 Tokens - both for user 1
-        self.assertEqual(Authenticator.objects.count(), 2)
-        self.assertEqual([1, 1], [i.user_id for i in Authenticator.objects.all()])
+
+    def test_existing_tokens_are_marked_as_v1(self):
+        """Test that tokens created before v2 are marked as v1."""
+        ApiToken = self.new_state.apps.get_model('users', 'ApiToken')
+
+        token = ApiToken.objects.get(key='legacy-token')
+
+        self.assertEqual(token.token_version, 1)
+
+        # a new token should be a v2 token now
+        new_token = ApiToken.objects.create(key='new-token', user=token.user)
+        self.assertEqual(new_token.token_version, 2)
+
+
+class TestPricingRoleMigration(MigratorTestCase):
+    """Test that the 'pricing' role is copied from the existing 'part' role."""
+
+    migrate_from = ('users', '0018_tippresult')
+    migrate_to = ('users', '0019_pricing_role')
+
+    def prepare(self):
+        """Create groups with a variety of 'part' role permissions."""
+        Group = self.old_state.apps.get_model('auth', 'group')
+        RuleSet = self.old_state.apps.get_model('users', 'RuleSet')
+
+        viewer = Group.objects.create(name='viewer')
+        editor = Group.objects.create(name='editor')
+        nobody = Group.objects.create(name='nobody')
+
+        RuleSet.objects.create(group=viewer, name='part', can_view=True)
+        RuleSet.objects.create(
+            group=editor,
+            name='part',
+            can_view=True,
+            can_add=True,
+            can_change=True,
+            can_delete=True,
+        )
+        RuleSet.objects.create(group=nobody, name='part')
+
+        # A group without a 'part' ruleset at all
+        Group.objects.create(name='empty')
+
+    def test_pricing_role(self):
+        """Pricing role permissions should match the part role for each group."""
+        RuleSet = self.new_state.apps.get_model('users', 'RuleSet')
+
+        self.assertEqual(RuleSet.objects.filter(name='pricing').count(), 3)
+
+        for name in ['viewer', 'editor', 'nobody']:
+            part = RuleSet.objects.get(group__name=name, name='part')
+            pricing = RuleSet.objects.get(group__name=name, name='pricing')
+
+            for perm in ['can_view', 'can_add', 'can_change', 'can_delete']:
+                self.assertEqual(getattr(part, perm), getattr(pricing, perm))
+
+        self.assertTrue(
+            RuleSet.objects.get(group__name='editor', name='pricing').can_delete
+        )
+        self.assertFalse(
+            RuleSet.objects.filter(group__name='empty', name='pricing').exists()
+        )

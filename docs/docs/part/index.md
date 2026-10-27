@@ -53,6 +53,8 @@ A *Template* part is one which can have *variants* which exist underneath it. [R
 
 If a part is designated as an *Assembly* it can be created (or built) from other component parts. As an example, a circuit board assembly is made using multiple electronic components, which are tracked in the system. An *Assembly* Part has a Bill of Materials (BOM) which lists all the required sub-components. [Read further information about BOM management here](../manufacturing/bom.md).
 
+An assembled stock item can also be broken back down into its component parts, using the [disassembly](../stock/disassemble.md) process.
+
 ### Component
 
 If a part is designated as a *Component* it can be used as a sub-component of an *Assembly*. [Read further information about BOM management here](../manufacturing/bom.md)
@@ -87,6 +89,9 @@ A [Purchase Order](../purchasing/purchase_order.md) allows parts to be ordered f
 
 If a part is designated as *Salable* it can be sold to external customers. Setting this flag allows parts to be added to sales orders.
 
+### Consumable
+
+A *Consumable* part is one which is generally used up during a build or other process, rather than being tracked and allocated as a discrete item. Refer to the [consumable parts documentation](./consumable.md) for more information.
 
 ## Locked Parts
 
@@ -95,6 +100,8 @@ Parts can be locked to prevent them from being modified. This is useful for part
 - Locked parts cannot be deleted
 - BOM items cannot be created, edited, or deleted when they are part of a locked assembly
 - Parameters linked to a locked part cannot be created, edited or deleted
+
+The part locking functionality can be enabled or disabled globally via the [Part Locking](../settings/global.md#parts) system setting (`PART_ENABLE_LOCKING`). When disabled, the locked state of a part is ignored and all operations are permitted.
 
 ## Active Parts
 
@@ -115,10 +122,12 @@ It is possible to track parts using physical quantity values, such as *metres* o
 
 ### Supplier Part Units
 
-By default, units of measure for [supplier parts](../purchasing/supplier.md#supplier-parts) are specified in the same unit as their base part. However, supplier part units can be changed to any unit *which is compatible with the base unit*.
+A [supplier part](../purchasing/supplier.md#supplier-parts) may be sold in a different quantity or unit than is used to track the base part - for example, wire which is tracked in metres might be purchased in 100 foot reels. This is handled by the [pack quantity](../purchasing/supplier.md#supplier-part-pack-size) of the supplier part, which can be specified in any unit *which is compatible with the base unit*. The pack quantity is automatically converted into the units of the base part.
 
 !!! info "Example: Supplier Part Units"
-    If the base part has a unit of `metres` then valid units for any supplier parts would include `feet`, `cm`, `inches` (etc)
+    If the base part has a unit of `metres`, then valid pack quantities for any supplier parts would include `100 ft`, `50 cm`, `12 inches` (etc). A pack quantity of `100 ft` is equivalent to 30.48 metres.
+
+If the pack quantity is specified without units, it is assumed to be in the units of the base part.
 
 If an incompatible unit type is specified, an error will be displayed:
 
@@ -158,4 +167,4 @@ The [InvenTree mobile app](../app/part.md#part-image-view) allows part images to
 
 ## Part Import
 
-*Parts* can be imported by staff-members on the part-list-view (this feature must be enabled in the part-settings), in the part-settings or on the [admin-page for parts](../settings/import.md) (only accessible if you are also an admin). The first two options provide a multi-stage wizard that enables mapping fields from various spreadsheet or table-data formats while the latter requires a well-formatted file but is much more performant.
+*Part* data can be imported using the [data import wizard](../concepts/data_import.md). This allows part data to be imported from an external file, which can be useful for bulk importing of part data.

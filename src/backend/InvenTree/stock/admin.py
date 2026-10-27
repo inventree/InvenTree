@@ -3,13 +3,7 @@
 from django.contrib import admin
 from django.db.models import Count
 
-from .models import (
-    StockItem,
-    StockItemTestResult,
-    StockItemTracking,
-    StockLocation,
-    StockLocationType,
-)
+from .models import StockItem, StockItemTestResult, StockLocation, StockLocationType
 
 
 class LocationInline(admin.TabularInline):
@@ -37,6 +31,7 @@ class LocationTypeAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'description', 'icon', 'location_count')
     readonly_fields = ('location_count',)
+    search_fields = ('name', 'description')
 
     def get_queryset(self, request):
         """Annotate queryset to fetch location count."""
@@ -75,19 +70,18 @@ class StockItemAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(StockItemTracking)
-class StockTrackingAdmin(admin.ModelAdmin):
-    """Admin class for StockTracking."""
-
-    list_display = ('item', 'date', 'label')
-
-    autocomplete_fields = ['item']
-
-
 @admin.register(StockItemTestResult)
 class StockItemTestResultAdmin(admin.ModelAdmin):
     """Admin class for StockItemTestResult."""
 
     list_display = ('stock_item', 'test_name', 'result', 'value')
+
+    search_fields = [
+        'stock_item__part__name',
+        'stock_item__serial',
+        'template__test_name',
+        'value',
+        'notes',
+    ]
 
     autocomplete_fields = ['stock_item']

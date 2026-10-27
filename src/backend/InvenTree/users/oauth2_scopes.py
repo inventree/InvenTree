@@ -13,6 +13,7 @@ _roles = {
     'admin': 'Role Admin',
     'part_category': 'Role Part Categories',
     'part': 'Role Parts',
+    'pricing': 'Role Pricing',
     'stock_location': 'Role Stock Locations',
     'stock': 'Role Stock Items',
     'bom': 'Role Bills of Material',
@@ -20,6 +21,7 @@ _roles = {
     'purchase_order': 'Role Purchase Orders',
     'sales_order': 'Role Sales Orders',
     'return_order': 'Role Return Orders',
+    'transfer_order': 'Role Transfer Orders',
 }
 _methods = {'view': 'GET', 'add': 'POST', 'change': 'PUT / PATCH', 'delete': 'DELETE'}
 

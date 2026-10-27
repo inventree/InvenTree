@@ -16,6 +16,7 @@ import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
+import { InvenTreeTable } from '../../../components/tables/InvenTreeTable';
 import { formatCurrency } from '../../../defaults/formatters';
 import {
   useCreateApiFormModal,
@@ -23,7 +24,6 @@ import {
   useEditApiFormModal
 } from '../../../hooks/UseForm';
 import { useUserState } from '../../../states/UserState';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({
@@ -112,7 +112,7 @@ export default function PriceBreakPanel({
         onClick={() => {
           newPriceBreak.open();
         }}
-        hidden={!user.hasAddRole(UserRoles.part)}
+        hidden={!user.hasAddRole(UserRoles.pricing)}
       />
     ];
   }, [user]);
@@ -121,14 +121,14 @@ export default function PriceBreakPanel({
     (record: any): RowAction[] => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.part),
+          hidden: !user.hasChangeRole(UserRoles.pricing),
           onClick: () => {
             setSelectedPriceBreak(record.pk);
             editPriceBreak.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.part),
+          hidden: !user.hasDeleteRole(UserRoles.pricing),
           onClick: () => {
             setSelectedPriceBreak(record.pk);
             deletePriceBreak.open();
@@ -161,7 +161,8 @@ export default function PriceBreakPanel({
               part: part.pk
             },
             tableActions: tableActions,
-            rowActions: rowActions
+            rowActions: rowActions,
+            enableDownload: true
           }}
         />
         {table.records.length > 0 ? (

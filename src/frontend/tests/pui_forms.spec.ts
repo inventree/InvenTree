@@ -1,8 +1,50 @@
+import { createApi } from './api';
 /** Unit tests for form validation, rendering, etc */
-import { expect, test } from 'playwright/test';
+import { expect, test } from './baseFixtures';
 import { stevenuser } from './defaults';
-import { navigate } from './helpers';
+import {
+  clickOnRowMenu,
+  deletePart,
+  loadTab,
+  navigate,
+  openDetailAction
+} from './helpers';
 import { doCachedLogin } from './login';
+import { setSettingState } from './settings';
+
+// Test hover form action in related fields
+test('Forms - Hover', async ({ browser }) => {
+  // Patch user settings to ensure we can see "extra model info" on hover; done before load to avoid flakiness
+  const api = await createApi({
+    username: stevenuser.username,
+    password: stevenuser.testcred
+  });
+
+  const response = await api.patch('settings/user/SHOW_EXTRA_MODEL_INFO/', {
+    data: {
+      value: 'true'
+    }
+  });
+
+  expect(response.status()).toBe(200);
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'purchasing/index/purchaseorders'
+  });
+
+  await page
+    .getByRole('button', { name: 'action-button-add-purchase-' })
+    .click();
+  await page.getByLabel('related-field-supplier').fill('mou');
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
+  await page.getByText('Mouser Electronics').first().hover();
+
+  // Check for hover info
+  await page.getByText('Company[ID: 2]').waitFor();
+  await page.getByRole('link', { name: 'View details' }).waitFor();
+});
 
 test('Forms - Stock Item Validation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
@@ -41,16 +83,20 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
     .waitFor();
 
   // Set location
-  await page.getByLabel('related-field-location').click();
+  await page.getByLabel('tree-field-location').fill('production');
   await page.getByText('Electronics production facility').click();
 
   // Create the stock item
   await page.getByLabel('number-field-quantity').fill('123');
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  // Add small delay to improve test stability
+  await page.getByText('BATCH-123', { exact: true }).first().waitFor();
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
+
   // Edit the resulting stock item
-  await page.getByLabel('action-menu-stock-item-actions').click();
-  await page.getByLabel('action-menu-stock-item-actions-edit').click();
+  await openDetailAction(page, 'stock-item', 'edit');
 
   await page.getByLabel('number-field-purchase_price').fill('-1');
 
@@ -167,4 +213,332 @@ test('Forms - Keep form open option', async ({ browser }) => {
   // Location should be created, and the form (modal) should disappear
   await page.getByText('Item Created').waitFor();
   await expect(page.getByRole('dialog')).toBeHidden();
+});
+
+test('Forms - DateTime Field', async ({ browser }) => {
+  // The "started_datetime" / "finished_datetime" test-result fields are only
+  // shown when the "TEST_STATION_DATA" global setting is enabled
+  await setSettingState({ setting: 'TEST_STATION_DATA', value: true });
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'stock/item/1194/test_results'
+  });
+  await page.waitForURL('**/web/stock/**');
+  await loadTab(page, 'Test Results');
+
+  const cell = page.getByText('395c6d5586e5fb656901d047be27e1f7');
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  // Set a value via the Mantine DateTimePicker popup - a button which opens a
+  // calendar (for the date) plus separate hour/minute/second spinbuttons
+  const setDateTime = async (
+    fieldLabel: string,
+    day: string,
+    hour: string,
+    minute: string
+  ) => {
+    const field = page.getByLabel(fieldLabel).first();
+    await expect(field).toBeVisible();
+    await field.click();
+    await page.getByRole('button', { name: day }).first().click();
+
+    const spinbuttons = page.getByRole('spinbutton');
+    await spinbuttons.nth(0).fill(hour);
+    await spinbuttons.nth(1).fill(minute);
+    await spinbuttons.nth(2).fill('00');
+
+    await page.keyboard.press('Escape');
+  };
+
+  await setDateTime(
+    'date-time-field-started_datetime',
+    '10 March 2024',
+    '10',
+    '30'
+  );
+  await setDateTime(
+    'date-time-field-finished_datetime',
+    '11 March 2024',
+    '11',
+    '45'
+  );
+
+  await expect(page.getByLabel('date-time-field-started_datetime')).toHaveText(
+    '2024-03-10 10:30:00'
+  );
+  await expect(page.getByLabel('date-time-field-finished_datetime')).toHaveText(
+    '2024-03-11 11:45:00'
+  );
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Test result updated').waitFor();
+
+  // Restore the global setting to its default value
+  await setSettingState({ setting: 'TEST_STATION_DATA', value: false });
+});
+
+// Test the "nested object" field type, via the "Initial Supplier" section
+// of the "Create Part" form
+test('Forms - Nested Object Field', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+  await page.waitForURL('**/part/category/index/**');
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  // Generate a unique part name
+  const partName = `Test Part ${new Date().getTime()}`;
+  await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+
+  await page.waitForTimeout(100);
+  await page.waitForLoadState('networkidle');
+
+  // The "Initial Supplier" nested-object field should be visible and expanded by default
+  await page.getByText('Supplier Information').waitFor();
+
+  const supplierField = page.getByLabel(
+    'related-field-initial_supplier.supplier'
+  );
+  await expect(supplierField).toBeVisible();
+  await supplierField.fill('Mouser');
+  await page.waitForTimeout(100);
+  await page.waitForLoadState('networkidle');
+  await page
+    .getByRole('option', { name: /Mouser Electronics/ })
+    .first()
+    .click();
+
+  const skuValue = `SKU-${new Date().getTime()}`;
+  await page
+    .getByLabel('text-field-initial_supplier.sku', { exact: true })
+    .fill(skuValue);
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Created').waitFor();
+
+  // Confirm the part was created with the expected name
+  await page.getByText(partName).first().waitFor();
+});
+
+// Regression for #12266: initial stock fields respect PART_CREATE_INITIAL setting
+test('Forms - Initial Stock Field', async ({ browser }) => {
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: true });
+
+  const partName = `Initial Stock Part ${Date.now()}`;
+  await deletePart(partName);
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+  await page.waitForURL('**/part/category/index/**');
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+
+  const quantityField = page.getByLabel('number-field-initial_stock.quantity');
+  await expect(quantityField).toBeVisible();
+
+  await quantityField.fill('25');
+  await page.getByLabel('tree-field-initial_stock.location').fill('production');
+  await page.getByText('Electronics production facility').click();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Created').waitFor();
+
+  await page.getByText(partName).first().click();
+  await page
+    .getByLabel('panel-tabs-part')
+    .getByRole('tab', { name: 'Stock', exact: true })
+    .click();
+  await page.getByText('25').first().waitFor();
+
+  await deletePart(partName);
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+});
+
+test('Forms - Default Part Location', async ({ browser }) => {
+  // Create a new part and select a the default stock location for the part
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: true });
+
+  const partName = `Initial Stock Part ${Date.now()}`;
+  await deletePart(partName);
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+  await page.waitForURL('**/part/category/index/**');
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+
+  await page.getByLabel('tree-field-default_location').fill('production');
+  await page.getByText('Electronics production facility').click();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Created').waitFor();
+
+  // Check that the part's default location is selected when adding a stock item
+  await page
+    .getByLabel('panel-tabs-part')
+    .getByRole('tab', { name: 'Stock', exact: true })
+    .click();
+
+  await page.getByLabel('action-button-add-stock-item').click();
+
+  // The stock item location is rendered via a "tree field" (backed by a real input)
+  const locationField = () =>
+    page.getByRole('textbox', { name: 'tree-field-location' });
+  await expect(locationField()).toHaveValue('Electronics Lab');
+
+  await deletePart(partName);
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+});
+
+test('Forms - Default Category Location', async ({ browser }) => {
+  const suffix = Date.now();
+  const categoryName = `Default Location Category ${suffix}`;
+  const partName = `Category Default Location Part ${suffix}`;
+  const api = await createApi({});
+  let categoryId: number | undefined;
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+
+  try {
+    // Create a category with its own default stock location.
+    await loadTab(page, 'Part Categories');
+    await page.getByLabel('action-button-add-part-category').click();
+    await page
+      .getByLabel('text-field-name', { exact: true })
+      .fill(categoryName);
+    await page
+      .getByLabel('text-field-description', { exact: true })
+      .fill('Category default stock location test');
+    await page.getByLabel('tree-field-default_location').fill('production');
+    await page.getByText('Electronics production facility').click();
+
+    const categoryCreated = page.waitForResponse(
+      (response) =>
+        response.url().endsWith('/api/part/category/') &&
+        response.request().method() === 'POST'
+    );
+    await page.getByRole('button', { name: 'Submit' }).click();
+    const categoryResponse = await categoryCreated;
+    expect(categoryResponse.status()).toBe(201);
+    const category = await categoryResponse.json();
+    categoryId = category.pk;
+    await page.waitForURL(`**/part/category/${categoryId}/**`);
+
+    // Create a part where the default stock location is not set
+    // so it should inherits the category's on stock creation
+    await loadTab(page, 'Parts');
+    await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+    await page
+      .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+      .click();
+    await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+    await expect(page.getByLabel('tree-field-category')).toHaveValue(
+      categoryName
+    );
+    await expect(page.getByLabel('tree-field-default_location')).toHaveValue(
+      ''
+    );
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.waitForURL(/\/part\/\d+\//);
+    const partUrl = page.url();
+
+    await page
+      .getByLabel('panel-tabs-part')
+      .getByRole('tab', { name: 'Stock', exact: true })
+      .click();
+    await page.getByLabel('action-button-add-stock-item').click();
+
+    // Check that the category's default stock location is inherited properly
+    await expect(page.getByLabel('tree-field-location')).toHaveValue(
+      'Electronics Lab'
+    );
+
+    // Check that part-specific default must take precedence over the category default.
+    await page.goto(partUrl);
+    await openDetailAction(page, 'part', 'edit');
+    await expect(page.getByLabel('tree-field-default_location')).toHaveValue(
+      ''
+    );
+
+    // Change the part's default stock location to "Electornics Lab/Reel Storage"
+    await page.getByLabel('tree-field-default_location').fill('Reel Storage');
+    await page.getByText('Storage for component reels').click();
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.getByText('Item Updated').waitFor();
+
+    await page
+      .getByLabel('panel-tabs-part')
+      .getByRole('tab', { name: 'Stock', exact: true })
+      .click();
+    await page.getByLabel('action-button-add-stock-item').click();
+
+    // Check that the part's default stock location is overwrite the category's default
+    await expect(page.getByLabel('tree-field-location')).toHaveValue(
+      'Electronics Lab/Reel Storage'
+    );
+  } finally {
+    await deletePart(partName);
+    if (categoryId !== undefined) {
+      const response = await api.delete(`part/category/${categoryId}/`, {
+        data: {
+          delete_child_categories: false,
+          delete_parts: false
+        }
+      });
+      expect(response.status()).toBe(204);
+    }
+    await api.dispose();
+  }
+});
+
+test('Forms - Initial Stock hidden when setting disabled', async ({
+  browser
+}) => {
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+  await page.waitForURL('**/part/category/index/**');
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page
+    .getByLabel('text-field-name', { exact: true })
+    .fill('No Initial Stock');
+
+  await expect(
+    page.getByLabel('number-field-initial_stock.quantity')
+  ).toBeHidden();
+  await expect(
+    page.getByLabel('tree-field-initial_stock.location')
+  ).toBeHidden();
 });

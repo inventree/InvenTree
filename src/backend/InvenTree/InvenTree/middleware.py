@@ -10,12 +10,13 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import resolve, reverse, reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
-from django.utils.http import is_same_domain
+from django.utils.http import is_same_domain, url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 
 import structlog
 from error_report.middleware import ExceptionProcessor
 
+import InvenTree.helpers
 from common.settings import get_global_setting
 from InvenTree.cache import create_session_cache, delete_session_cache
 from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
@@ -65,6 +66,7 @@ urls = [
 paths_ignore_handling = [
     '/api/',
     '/plugin/',
+    '/scim/',
     reverse('auth-check'),
     settings.MEDIA_URL,
     settings.STATIC_URL,
@@ -76,7 +78,9 @@ paths_own_security = [
     '/o/',  # oAuth2 library - has its own auth model
     '/anymail/',  # Mails - webhooks etc
     '/accounts/',  # allauth account management - has its own auth model
+    '/scim/',  # SCIM provisioning endpoint - authenticated via its own bearer secret
     '/assets/',  # Web assets - only used for testing, no security model needed
+    '/.well-known/',
     ensure_slashes(
         settings.STATIC_URL
     ),  # Static files  - static files are considered safe to serve
@@ -105,6 +109,34 @@ apps_mfa_bypass = [
 """App namespaces that bypass MFA enforcement - normal security model is still enforced."""
 
 
+def csrf_failure(request, reason=''):
+    """Custom CSRF failure handler.
+
+    Returns a JSON response for API/headless requests so the frontend can
+    provide a meaningful error message to the user.
+
+    This Includes Django's own message (e.g. "CSRF cookie not set.") alongside the generic hint.
+    """
+    from django.views.csrf import csrf_failure as django_default
+
+    if (
+        request.path.startswith('/_allauth/')
+        or request.path.startswith('/api/')
+        or 'application/json' in request.headers.get('Accept', '')
+        or 'application/json' in request.headers.get('Content-Type', '')
+    ):
+        detail = _(
+            'CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly.'
+        )
+
+        if reason:
+            detail = f'{detail} ({reason})'
+
+        return JsonResponse({'detail': detail}, status=403)
+
+    return django_default(request, reason=reason)
+
+
 class AuthRequiredMiddleware:
     """Check for user to be authenticated."""
 
@@ -118,15 +150,16 @@ class AuthRequiredMiddleware:
             request.token = token
             # Does the provided token match a valid user?
             try:
-                token = ApiToken.objects.get(key=token)
+                token = ApiToken.get_from_string(token)
 
-                if token.active and token.user:
+                if token and token.active and token.user:
                     # Provide the user information to the request
                     request.user = token.user
                     return True
             except ApiToken.DoesNotExist:  # pragma: no cover
                 logger.warning(
-                    'Access denied for unknown token %s', token
+                    'Access denied for unknown token %s',
+                    InvenTree.helpers.sanitize_token(str(token)),
                 )  # pragma: no cover
 
         return False
@@ -163,9 +196,16 @@ class AuthRequiredMiddleware:
             if path not in urls and not any(
                 path.startswith(p) for p in paths_ignore_handling
             ):
+                # Validate next url is safe to redirect to
+                next_url = request.path
+                if not url_has_allowed_host_and_scheme(
+                    url=next_url,
+                    allowed_hosts=settings.ALLOWED_HOSTS,
+                    require_https=request.is_secure(),
+                ):
+                    return redirect(str(reverse_lazy('account_login')))
                 # Save the 'next' parameter to pass through to the login view
-
-                return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
+                return redirect(f'{reverse_lazy("account_login")}?next={next_url}')
             # Return a 401 (Unauthorized) response code for this request
             return HttpResponse('Unauthorized', status=401)
 

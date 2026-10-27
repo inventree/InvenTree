@@ -15,6 +15,7 @@ export interface InstanceRenderInterface {
   link?: boolean;
   navigate?: any;
   showSecondary?: boolean;
+  showHover?: boolean;
   extra?: Record<string, any>;
 }
 
@@ -59,4 +60,27 @@ export interface RemoteInstanceProps {
   modelUrl?: string;
   modelRenderer?: (instance: any) => ReactNode;
   pk: number;
+}
+export interface ThumbnailProps {
+  src?: string;
+  alt?: string;
+  size?: number;
+  text?: ReactNode;
+  align?: string;
+  link?: string;
+  hover?: boolean;
+  hoverSize?: number;
+}
+
+export interface RenderInlineModelProps {
+  primary: ReactNode;
+  secondary?: ReactNode;
+  showSecondary?: boolean;
+  prefix?: ReactNode;
+  suffix?: ReactNode;
+  image?: string;
+  labels?: string[];
+  url?: string;
+  navigate?: any;
+  tooltip?: string;
 }

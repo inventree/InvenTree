@@ -17,9 +17,13 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
+import {
+  DateColumn,
+  IPNColumn,
+  PartColumn
+} from '../../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../../components/tables/InvenTreeTable';
 import { formatDecimal, formatPriceRange } from '../../../defaults/formatters';
-import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { LoadingPricingData, NoPricingData } from './PricingPanel';
 
 // Display BOM data as a pie chart
@@ -55,6 +59,8 @@ function BomPieChart({
         withLabels={false}
         withLabelsLine={false}
         chartLabel={t`Total Price`}
+        tooltipDataSource='segment'
+        tooltipProps={{ wrapperStyle: { zIndex: 1000 } }}
         valueFormatter={(value) => tooltipFormatter(value, currency)}
       />
     </Center>
@@ -100,6 +106,9 @@ export default function BomPricingPanel({
         accessor: 'name',
         title: t`Component`,
         part: 'sub_part_detail'
+      }),
+      IPNColumn({
+        accessor: 'sub_part_detail.IPN'
       }),
       {
         accessor: 'quantity',

@@ -11,7 +11,8 @@ import {
   IconPhoto
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
-import { generateUrl } from '../../functions/urls';
+import { fileNameFromUrl, generateUrl } from '../../functions/urls';
+import { Thumbnail } from '../images/Thumbnail';
 
 /**
  * Return an icon based on the provided filename
@@ -23,7 +24,8 @@ export function attachmentIcon(attachment: string): ReactNode {
     return <IconFileUnknown size={sz} />;
   }
 
-  const suffix = attachment.split('.').pop()?.toLowerCase() ?? '';
+  const suffix =
+    fileNameFromUrl(attachment).split('.').pop()?.toLowerCase() ?? '';
   switch (suffix) {
     case 'pdf':
       return <IconFileTypePdf size={sz} />;
@@ -59,9 +61,11 @@ export function attachmentIcon(attachment: string): ReactNode {
  */
 export function AttachmentLink({
   attachment,
+  thumbnail,
   external
 }: Readonly<{
   attachment: string;
+  thumbnail?: string;
   external?: boolean;
 }>): ReactNode {
   const url = useMemo(() => {
@@ -77,12 +81,18 @@ export function AttachmentLink({
       return '-';
     }
 
-    return external ? attachment : (attachment.split('/').pop() ?? '-');
+    return external ? attachment : fileNameFromUrl(attachment) || '-';
   }, [attachment, external]);
 
   return (
     <Group justify='left' gap='sm' wrap='nowrap'>
-      {external ? <IconLink /> : attachmentIcon(attachment)}
+      {thumbnail ? (
+        <Thumbnail src={thumbnail} hover size={16} />
+      ) : external ? (
+        <IconLink />
+      ) : (
+        attachmentIcon(attachment)
+      )}
       {!!attachment ? (
         <Anchor href={url} target='_blank' rel='noopener noreferrer'>
           {text}

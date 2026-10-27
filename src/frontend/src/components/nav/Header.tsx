@@ -10,18 +10,20 @@ import {
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
-import {
-  useDisclosure,
-  useDocumentVisibility,
-  useHotkeys
-} from '@mantine/hooks';
+import { useDisclosure, useDocumentVisibility } from '@mantine/hooks';
 import { IconBell, IconSearch, IconUserBolt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
-import { useMatch, useNavigate } from 'react-router-dom';
+import {
+  matchPath,
+  useLocation,
+  useMatch,
+  useNavigate
+} from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
@@ -60,15 +62,17 @@ export function Header() {
     { open: openSearchDrawer, close: closeSearchDrawer }
   ] = useDisclosure(false);
 
-  useHotkeys([
+  useInvenTreeHotkeys([
     [
       '/',
+      t`Open search`,
       () => {
         openSearchDrawer();
       }
     ],
     [
       'mod+/',
+      t`Open search`,
       () => {
         openSearchDrawer();
       }
@@ -114,7 +118,9 @@ export function Header() {
     },
     // Refetch every minute, *if* the tab is visible
     refetchInterval: 60 * 1000,
-    refetchOnMount: true
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    staleTime: 30 * 1000
   });
 
   // Sync Navigation Drawer state with zustand
@@ -176,7 +182,7 @@ export function Header() {
       />
       <Container className={classes.layoutHeaderSection} size='100%'>
         <Group justify='space-between'>
-          <Group>
+          <Group id='tip-ftu-nav1'>
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
           </Group>
@@ -192,12 +198,15 @@ export function Header() {
                 onClick={openSearchDrawer}
                 variant='transparent'
                 aria-label='open-search'
+                id='tip-ftu-search'
               >
                 <IconSearch />
               </ActionIcon>
             </Tooltip>
-            {userSettings.isSet('SHOW_SPOTLIGHT') && <SpotlightButton />}
-            {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton />}
+            {userSettings.isSet('SHOW_SPOTLIGHT') && <SpotlightButton hotkey />}
+            {globalSettings.isSet('BARCODE_ENABLE') && (
+              <ScanButton hotkey id='tip-ftu-barcode' />
+            )}
             <Indicator
               radius='lg'
               size='18'
@@ -211,6 +220,7 @@ export function Header() {
                   onClick={openNotificationDrawer}
                   variant='transparent'
                   aria-label='open-notifications'
+                  id='tip-ftu-notif'
                 >
                   <IconBell />
                 </ActionIcon>
@@ -251,6 +261,8 @@ function NavTabs() {
   const tabValue = match?.params.tabName;
   const navTabs = getNavTabs(user);
   const userSettings = useUserSettingsState();
+  // Get the current URL
+  const location = useLocation();
 
   const withIcons: boolean = useMemo(
     () => userSettings.isSet('ICONS_IN_NAVBAR', false),
@@ -262,6 +274,21 @@ function NavTabs() {
     context: {}
   });
 
+  // Find dynamic navigation URLs that match the current location, with a preference towards more specific URLs.
+  const dynamicTabValue = extraNavs
+    .filter((nav) =>
+      matchPath(
+        {
+          path: `/${nav.options.options.url}`,
+          end: false
+        },
+        location.pathname
+      )
+    )
+    .sort(
+      (a, b) => b.options.options.url.length - a.options.options.url.length
+    )[0]?.options.key;
+
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
 
@@ -269,7 +296,7 @@ function NavTabs() {
 
     // static content
     mainNavTabs.forEach((tab) => {
-      if (tab.role && !user.hasViewRole(tab.role)) {
+      if (tab.visible === false) {
         return;
       }
 
@@ -300,7 +327,7 @@ function NavTabs() {
     extraNavs.forEach((nav) => {
       _tabs.push(
         <Tabs.Tab
-          value={nav.options.title}
+          value={nav.options.key}
           key={nav.options.key}
           onClick={(event: any) =>
             navigateToLink(nav.options.options.url, navigate, event)
@@ -322,7 +349,9 @@ function NavTabs() {
         list: classes.tabsList,
         tab: classes.tab
       }}
-      value={tabValue}
+      // Select either a static or dynamic tab to be highlighted.
+      value={dynamicTabValue ?? tabValue}
+      id='tip-ftu-nav3'
     >
       <Tabs.List>{tabs.map((tab) => tab)}</Tabs.List>
     </Tabs>

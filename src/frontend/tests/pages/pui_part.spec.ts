@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures';
+import { readeruser } from '../defaults';
 import {
   clearTableFilters,
   clickOnParamFilter,
@@ -9,10 +10,15 @@ import {
   getRowFromCell,
   loadTab,
   navigate,
+  openDetailAction,
   setTableChoiceFilter,
   showParametricView,
-  showTableView
+  showTableView,
+  tableSearch
 } from '../helpers';
+
+import { adminuser } from '../defaults';
+
 import { doCachedLogin } from '../login';
 import { setPluginState, setSettingState } from '../settings';
 
@@ -69,10 +75,14 @@ test('Parts - Tabs', async ({ browser }) => {
 test('Parts - Image Selection', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/911/details' });
 
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
+
   // Select a new image from the available images
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
     .locator('img')
+    .first()
     .hover();
   await page
     .getByRole('button', { name: 'action-button-select-from-' })
@@ -90,6 +100,7 @@ test('Parts - Image Selection', async ({ browser }) => {
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
     .locator('img')
+    .first()
     .hover();
   await page
     .getByRole('button', { name: 'action-button-delete-image' })
@@ -186,16 +197,34 @@ test('Parts - BOM', async ({ browser }) => {
   // Move the mouse away
   await page.getByRole('link', { name: 'Bill of Materials' }).hover();
 
-  // Test sub-assembly row expansion
-  await page.getByText('Widget Board (assembled)').click();
+  // Test sub-assembly row expansion (rows are inserted into the same table)
+  const assemblyRow = page
+    .getByRole('row')
+    .filter({ hasText: 'Widget Board (assembled)' });
+
+  await assemblyRow.getByRole('button', { name: 'nested-row-expand' }).click();
   await page.getByText('R_10R_0402_1%').waitFor();
   await page.getByText('MAX232IDR').waitFor();
 
-  // Enable BOM editing
+  // Collapse the sub-assembly rows
+  await assemblyRow
+    .getByRole('button', { name: 'nested-row-collapse' })
+    .click();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+
+  // Re-expand (from cached data)
+  await assemblyRow.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('MAX232IDR').waitFor();
+
+  // Enable BOM editing - sub-assembly rows are removed
   await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
   await page
     .getByRole('button', { name: 'action-button-finish-editing-' })
     .waitFor();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'nested-row-expand' })
+  ).toHaveCount(0);
 
   const cell = await page
     .getByRole('cell', { name: 'Thumbnail 1551ABK' })
@@ -275,6 +304,117 @@ test('Parts - BOM', async ({ browser }) => {
 });
 
 /**
+ * Expand and collapse sub-assembly BOMs within the BOM table
+ */
+test('Parts - BOM Nesting', async ({ browser }) => {
+  // Assembly with multiple levels of sub-assemblies
+  const page = await doCachedLogin(browser, { url: 'part/113/bom' });
+
+  const row = (text: string) => page.getByRole('row').filter({ hasText: text });
+
+  // Return the cell for a given row and column title
+  const cell = async (rowText: string, column: string) => {
+    const index = await page
+      .locator('thead th')
+      .evaluateAll(
+        (headers, title) =>
+          headers.findIndex((th) => th.textContent?.trim().startsWith(title)),
+        column
+      );
+
+    expect(index).toBeGreaterThanOrEqual(0);
+
+    return row(rowText).first().locator('td').nth(index);
+  };
+
+  const doohickey = row('Doohickey').first();
+  await doohickey.waitFor();
+
+  // Sub-assembly rows are not loaded initially
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(0);
+  await expect(row('Widget Board (assembled)')).toHaveCount(1);
+
+  // Expand the "Doohickey" sub-assembly (quantity 3)
+  await doohickey.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('M3x10 Torx').waitFor();
+  await page.getByText('1551ABK').waitFor();
+
+  // Nested "Widget Board (assembled)" row is inserted into the same table
+  await expect(row('Widget Board (assembled)')).toHaveCount(2);
+
+  // Pagination only counts the top-level rows
+  await page.getByText('1 - 10 / 10').waitFor();
+
+  // Quantity is multiplied by the parent quantity
+  const m3x8Quantity = await cell('M3x8 Torx', 'Quantity');
+  await expect(m3x8Quantity.getByText('12', { exact: true })).toBeVisible();
+  await expect(m3x8Quantity.getByText('4 × 3', { exact: true })).toBeVisible();
+
+  // Total price displays the multiplier and the base price
+  await expect(await cell('M3x8 Torx', 'Total Price')).toContainText(
+    /3 × \(\$[\d.,]+ - \$[\d.,]+\)/
+  );
+
+  // Can build is divided by the parent quantity
+  const m3x8Build = await cell('M3x8 Torx', 'Can Build');
+  const buildText = await m3x8Build.innerText();
+  const buildMatch = buildText.match(/^([\d,]+)\s+([\d,.]+) ÷ 3$/);
+
+  expect(buildMatch).not.toBeNull();
+
+  const chained = Number(buildMatch![1].replaceAll(',', ''));
+  const unit = Number(buildMatch![2].replaceAll(',', ''));
+
+  expect(chained).toBe(Math.trunc(unit / 3));
+
+  // Expand the nested "Widget Board (assembled)" sub-assembly (quantity 1)
+  await row('Widget Board (assembled)')
+    .nth(1)
+    .getByRole('button', { name: 'nested-row-expand' })
+    .click();
+  await page.getByText('MAX232IDR').waitFor();
+
+  // Quantity is multiplied through each level
+  const capQuantity = await cell('C_1uF_0402', 'Quantity');
+  await expect(capQuantity.getByText('57', { exact: true })).toBeVisible();
+  await expect(
+    capQuantity.getByText('19 × 1 × 3', { exact: true })
+  ).toBeVisible();
+
+  // Widget Board (PCB) line item with quantity 3
+  const pcbQuantity = await cell('PCB3, PCB4, PCB5', 'Quantity');
+  await expect(pcbQuantity.getByText('9', { exact: true })).toBeVisible();
+  await expect(
+    pcbQuantity.getByText('3 × 1 × 3', { exact: true })
+  ).toBeVisible();
+
+  // Collapse the nested sub-assembly - its rows are removed
+  await row('Widget Board (assembled)')
+    .nth(1)
+    .getByRole('button', { name: 'nested-row-collapse' })
+    .click();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(1);
+
+  // Collapse the top-level sub-assembly - all descendant rows are removed
+  await doohickey.getByRole('button', { name: 'nested-row-collapse' }).click();
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(0);
+  await expect(row('Widget Board (assembled)')).toHaveCount(1);
+
+  // Re-expand - nested sub-assemblies remain collapsed
+  await doohickey.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('M3x10 Torx').waitFor();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+
+  // Searching reloads the table, which discards sub-assembly rows
+  await tableSearch(page, 'Doohickey');
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'nested-row-collapse' })
+  ).toHaveCount(0);
+});
+
+/**
  * Perform BOM validation process
  * Note that this is a "background task" which is monitored by the "useBackgroundTask" hook
  */
@@ -290,8 +430,6 @@ test('Parts - BOM Validation', async ({ browser }) => {
   // Edit line item, to ensure BOM is not valid
   const cell = await page.getByRole('cell', { name: 'paint', exact: true });
 
-  // await cell.click({ button: 'right' });
-  // await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
 
@@ -344,7 +482,9 @@ test('Parts - BOM Comparison', async ({ browser }) => {
   await page.getByText('Removed from BOM').first().waitFor();
 
   // Change display mode
-  await page.getByRole('textbox', { name: 'bom-compare-display-mode' }).click();
+  await page
+    .getByRole('combobox', { name: 'bom-compare-display-mode' })
+    .click();
   await page.getByRole('option', { name: 'Show different Parts' }).click();
 
   // Use URL params to compare directly
@@ -489,6 +629,77 @@ test('Parts - Details', async ({ browser }) => {
   await page.getByText('Latest Serial Number').waitFor();
 });
 
+test('Parts - Details - Upload image modal accepts pasted clipboard image', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/113/details' });
+
+  await page
+    .getByRole('tabpanel', { name: 'Part Details' })
+    .locator('img')
+    .first()
+    .hover();
+
+  const uploadButton = page
+    .getByLabel('action-button-upload-new-image')
+    .first();
+
+  await uploadButton.waitFor();
+  await uploadButton.hover();
+  await uploadButton.click();
+
+  const uploadModalTitle = page.getByText('Upload Image', { exact: true });
+  await uploadModalTitle.waitFor();
+
+  await page.evaluate((pngBase64: string) => {
+    const binary = atob(pngBase64);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+
+    const imageFile = new File([bytes], 'pasted.png', { type: 'image/png' });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(imageFile);
+
+    const pasteEvent = new ClipboardEvent('paste', {
+      bubbles: true,
+      cancelable: true
+    });
+
+    // Firefox does not reliably honour `clipboardData` passed via the
+    // ClipboardEvent constructor for synthetic paste events. Define it
+    // directly so the app receives the same DataTransfer in all browsers.
+    Object.defineProperty(pasteEvent, 'clipboardData', {
+      value: dataTransfer
+    });
+
+    const pasteTarget = document.activeElement ?? document.body;
+    pasteTarget.dispatchEvent(pasteEvent);
+  }, 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kb9Lw0AcxV9TtSItDmYQEQlYneyiIo61CkWoEGqFVh3Mj/6CJg1Jiouj4Fpw8Mdi1cHFWVcHV0EQ/AHiHyBOii5S4veSQosYD4778O7e4+4dwDUqimZ1xQFNt810MiFkc6tC6BU9GAGPCEYlxTLmRDEF3/F1jwBb72Isy//cnyOi5i0FCAjEccUwbeIN4plN22C8T8wrJUklPieeMOmCxI9Mlz1+Y1x0mWOZvJlJzxPzxEKxg+UOVkqmRjxNHFU1nfK5rMcq4y3GWqWmtO7JXhjO6yvLTKc5jCQWsQQRAmTUUEYFNmK06qRYSNN+wsc/5PpFcsnkKkMhxwKq0CC5frA/+N2tVZia9JLCCaD7xXE+xoDQLtCsO873seM0T4DgM3Clt/3VBjD7SXq9rUWPgP5t4OK6rcl7wOUOMPhkSKbkSkGaXKEAvJ/RN+WAgVugb83rrbWP0wcgQ12lboCDQ2C8SNnrPu/u7ezt3zOt/n4Aps9yu33ABq8AAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfqBh4UDgm4/dnOAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAABpJREFUKM9jrPivzkAKYGIgEYxqGNUwdDQAACVQAb74u92bAAAAAElFTkSuQmCC');
+
+  await expect(page.getByText('clipboard-image.png')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Submit' })).toBeEnabled();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Image uploaded').waitFor();
+
+  await page.reload();
+
+  // Now remove the associated image
+  await page
+    .getByRole('tabpanel', { name: 'Part Details' })
+    .locator('img')
+    .first()
+    .hover();
+  await page
+    .getByRole('button', { name: 'action-button-delete-image' })
+    .click();
+  await page.getByRole('button', { name: 'Remove' }).click();
+  await page.getByText('The image has been removed successfully').waitFor();
+});
+
 test('Parts - Requirements', async ({ browser }) => {
   // Navigate to the "Widget Assembly" part detail page
   // This part has multiple "variants"
@@ -599,7 +810,10 @@ test('Parts - Allocations', async ({ browser }) => {
 
 test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   // Part with no history
-  const page = await doCachedLogin(browser, { url: 'part/82/pricing' });
+  const page = await doCachedLogin(browser, {
+    url: 'part/82/pricing',
+    user: adminuser
+  });
 
   await page.getByText('Small plastic enclosure, black').waitFor();
   await loadTab(page, 'Part Pricing');
@@ -636,6 +850,18 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   await page.getByRole('button', { name: 'Quantity Not sorted' }).waitFor();
   await page.getByRole('button', { name: 'Unit Price Not sorted' }).waitFor();
 
+  // View part details via detail drawer
+  await page
+    .getByRole('cell', { name: 'Thumbnail Blue Paint' })
+    .first()
+    .click();
+  await page.getByRole('link', { name: 'details-part-' }).first().waitFor();
+  await page.getByText('Allocated to Build Orders').waitFor();
+  await page.getByText('440[litres]').waitFor();
+
+  // Close the drawer with the escape key
+  await page.keyboard.press('Escape');
+
   // We expect some pricing data to be displayed
   await page
     .getByLabel('BOM Pricing')
@@ -649,6 +875,10 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
     .getByRole('table')
     .getByText('Wood Screw')
     .click();
+
+  // We need to navigate via the preview drawer
+  await page.getByRole('link', { name: 'details-part-98' }).click();
+
   await page.waitForURL('**/part/98/**');
 });
 
@@ -958,23 +1188,61 @@ test('Parts - Test Results', async ({ browser }) => {
 });
 
 test('Parts - Notes', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/69/notes' });
+  const page = await doCachedLogin(browser, { url: 'part/71/details' });
 
-  // Enable editing
-  await page.getByLabel('Enable Editing').waitFor();
+  await loadTab(page, 'Notes');
 
-  // Use keyboard shortcut to "edit" the part
-  await page.keyboard.press('Control+E');
-  await page.getByLabel('text-field-name', { exact: true }).waitFor();
-  await page.getByLabel('text-field-description', { exact: true }).waitFor();
-  await page.getByLabel('related-field-category').waitFor();
+  // Expect to see notes rendered for this part
+  await page.getByRole('cell', { name: 'Red Widget' }).waitFor();
+  await page.getByRole('cell', { name: 'Blue Widget' }).waitFor();
+  await page.getByRole('cell', { name: 'Green Widget' }).waitFor();
+  await page
+    .getByRole('link', { name: 'Read more in the documentation' })
+    .waitFor();
+
+  // Let's try to create a new note, but cancel before submitting
+  await page.getByRole('button', { name: 'Add Note' }).click();
+  await page.getByLabel('related-field-template').fill('instructions');
+  await page
+    .getByRole('option', { name: 'Manufacturing Instructions' })
+    .click();
+  await page.getByText('Manufacturing Instructions').waitFor();
+  await page.getByText('How to build this part').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
-  // Enable notes editing
-  await page.getByLabel('Enable Editing').click();
+  // Enable editing for this note
+  await page.getByRole('button', { name: 'edit-note' }).click();
 
-  await page.getByLabel('Save Notes').waitFor();
-  await page.getByLabel('Close Editor').waitFor();
+  await page.getByRole('button', { name: 'Bold' }).waitFor();
+  await page.getByRole('button', { name: 'Italic' }).waitFor();
+  await page.getByRole('button', { name: 'Underline' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 1' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 2' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 3' }).waitFor();
+
+  await page.getByRole('button', { name: 'finish-editing-note' }).click();
+
+  // Duplicate this part - should show options for copying notes
+  await page.getByRole('button', { name: 'action-menu-part-actions' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-part-actions-duplicate' })
+    .click();
+  await page
+    .getByRole('switch', { name: 'boolean-field-duplicate.copy_notes' })
+    .waitFor();
+
+  // Generate random IPN for copying
+  const ipn = `IPN-${Math.floor(Math.random() * 100000)}`;
+  await page.getByRole('textbox', { name: 'text-field-IPN' }).fill(ipn);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+  await page.getByText(`Part: ${ipn}`).waitFor();
+
+  // Check that the notes have been duplicated to this new part
+  await loadTab(page, 'Notes');
+  await page
+    .getByRole('heading', { name: 'On Widgets (And Variants Thereof)' })
+    .waitFor();
 });
 
 test('Parts - 404', async ({ browser }) => {
@@ -1015,13 +1283,11 @@ test('Parts - Bulk Edit', async ({ browser }) => {
   // Edit the category for multiple parts
   await page.getByLabel('Select record 1', { exact: true }).click();
   await page.getByLabel('Select record 2', { exact: true }).click();
-  await page.getByLabel('action-menu-part-actions').click();
-  await page.getByLabel('action-menu-part-actions-set-category').click();
 
-  await page.getByLabel('related-field-category').fill('rnitu');
-  await page.waitForTimeout(250);
+  await openDetailAction(page, 'part', 'set-category');
 
-  await page.getByRole('option', { name: '- Furniture/Chairs' }).click();
+  await page.getByLabel('tree-field-category').fill('rnitu');
+  await page.getByText('Furniture and associated').click();
   await page.getByRole('button', { name: 'Update' }).click();
   await page.getByText('Items Updated').waitFor();
 });
@@ -1032,9 +1298,7 @@ test('Parts - Duplicate', async ({ browser }) => {
   });
 
   // Open "duplicate part" dialog
-  await page.getByLabel('action-menu-part-actions').click();
-
-  await page.getByLabel('action-menu-part-actions-duplicate').click();
+  await openDetailAction(page, 'part', 'duplicate');
 
   // Check for expected fields
   await page.getByText('Copy Image', { exact: true }).waitFor();
@@ -1095,7 +1359,15 @@ test('Parts - Import supplier part', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'action-button-import-part-BOLT-Steel-M5-5' })
     .click();
+
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(250);
+
+  await page
+    .getByRole('textbox', { name: 'tree-field-field' })
+    .fill('electronics');
+  await page.getByText('ElectronicsElectronic').click();
+
   await page
     .getByRole('button', { name: 'action-button-import-part-now' })
     .click();
@@ -1113,4 +1385,76 @@ test('Parts - Import supplier part', async ({ browser }) => {
   // cleanup imported part if it exists
   await deletePart('BOLT-Steel-M5-5');
   await deletePart('BOLT-M5-5');
+});
+
+test('Parts - Add button visible in Parametric View (admin)', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await expect(
+    page.getByRole('button', { name: 'action-menu-add-parts' })
+  ).toBeVisible();
+});
+
+test('Parts - Add button opens Create Part form in Parametric View', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await expect(page.getByText('Add Part', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Parts - Add button hidden in Parametric View (reader)', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/4/parts',
+    user: readeruser
+  });
+
+  await showParametricView(page);
+
+  await expect(
+    page.getByRole('button', { name: 'action-menu-add-parts' })
+  ).toHaveCount(0);
+});
+
+test('Parts - Create part via Parametric View submits to API', async ({
+  browser
+}) => {
+  const testPartName = 'TEST-PARAMETRIC-ADD-PART';
+
+  await deletePart(testPartName);
+
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(testPartName);
+  await page
+    .getByLabel('text-field-description', { exact: true })
+    .fill('Created from Parametric View integration test');
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+
+  await page.getByText(testPartName).first().waitFor();
+
+  await deletePart(testPartName);
 });

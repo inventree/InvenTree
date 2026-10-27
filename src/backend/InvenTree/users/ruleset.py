@@ -7,11 +7,27 @@ from generic.enums import StringEnum
 
 
 class RuleSetEnum(StringEnum):
-    """Enumeration of ruleset names."""
+    """Enumeration of ruleset names.
+
+    Attributes:
+        ADMIN: Assigning user permissions, and other administrative tasks
+        PART_CATEGORY: Accessing Part Category data
+        PART: Accessing Part data
+        PRICING: Accessing Part pricing data (cached pricing, sale price breaks and internal price breaks)
+        BOM: Accessing Bill of Materials data
+        STOCK_LOCATION: Accessing Stock Location data
+        STOCK: Accessing Stock Item data
+        BUILD: Accessing manufacturing / Build Order data
+        PURCHASE_ORDER: Accessing Purchase Order data
+        SALES_ORDER: Accessing Sales Order data
+        RETURN_ORDER: Accessing Return Order data
+        TRANSFER_ORDER: Accessing Transfer Order data
+    """
 
     ADMIN = 'admin'
     PART_CATEGORY = 'part_category'
     PART = 'part'
+    PRICING = 'pricing'
     BOM = 'bom'
     STOCK_LOCATION = 'stock_location'
     STOCK = 'stock'
@@ -19,6 +35,7 @@ class RuleSetEnum(StringEnum):
     PURCHASE_ORDER = 'purchase_order'
     SALES_ORDER = 'sales_order'
     RETURN_ORDER = 'return_order'
+    TRANSFER_ORDER = 'transfer_order'
 
 
 # This is a list of all the ruleset choices available in the system.
@@ -27,6 +44,7 @@ RULESET_CHOICES = [
     (RuleSetEnum.ADMIN, _('Admin')),
     (RuleSetEnum.PART_CATEGORY, _('Part Categories')),
     (RuleSetEnum.PART, _('Parts')),
+    (RuleSetEnum.PRICING, _('Pricing')),
     (RuleSetEnum.BOM, _('Bills of Material')),
     (RuleSetEnum.STOCK_LOCATION, _('Stock Locations')),
     (RuleSetEnum.STOCK, _('Stock Items')),
@@ -34,6 +52,7 @@ RULESET_CHOICES = [
     (RuleSetEnum.PURCHASE_ORDER, _('Purchase Orders')),
     (RuleSetEnum.SALES_ORDER, _('Sales Orders')),
     (RuleSetEnum.RETURN_ORDER, _('Return Orders')),
+    (RuleSetEnum.TRANSFER_ORDER, _('Transfer Orders')),
 ]
 
 # Ruleset names available in the system.
@@ -115,9 +134,6 @@ def get_ruleset_models() -> dict:
         ],
         RuleSetEnum.PART: [
             'part_part',
-            'part_partpricing',
-            'part_partsellpricebreak',
-            'part_partinternalpricebreak',
             'part_parttesttemplate',
             'part_partrelated',
             'part_partstar',
@@ -126,12 +142,13 @@ def get_ruleset_models() -> dict:
             'company_supplierpart',
             'company_manufacturerpart',
         ],
-        RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
-        RuleSetEnum.STOCK: [
-            'stock_stockitem',
-            'stock_stockitemtracking',
-            'stock_stockitemtestresult',
+        RuleSetEnum.PRICING: [
+            'pricing_partpricing',
+            'pricing_partsellpricebreak',
+            'pricing_partinternalpricebreak',
         ],
+        RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
+        RuleSetEnum.STOCK: ['stock_stockitem', 'stock_stockitemtestresult'],
         RuleSetEnum.PURCHASE_ORDER: [
             'company_company',
             'company_contact',
@@ -161,6 +178,11 @@ def get_ruleset_models() -> dict:
             'order_returnorderlineitem',
             'order_returnorderextraline',
         ],
+        RuleSetEnum.TRANSFER_ORDER: [
+            'order_transferorder',
+            'order_transferorderallocation',
+            'order_transferorderlineitem',
+        ],
     }
 
     if settings.SITE_MULTI:
@@ -174,6 +196,8 @@ def get_ruleset_ignore() -> list[str]:
     return [
         # Core django models (not user configurable)
         'admin_logentry',
+        # Audit log - access is determined by the permissions of the audited model
+        'audit_auditlogentry',
         'contenttypes_contenttype',
         # Models which currently do not require permissions
         'common_attachment',
@@ -185,6 +209,7 @@ def get_ruleset_ignore() -> list[str]:
         'common_inventreeusersetting',
         'common_notificationentry',
         'common_notificationmessage',
+        'common_note',
         'common_notesimage',
         'common_projectcode',
         'common_webhookendpoint',
@@ -194,6 +219,7 @@ def get_ruleset_ignore() -> list[str]:
         'common_selectionlist',
         'users_owner',
         'users_userprofile',  # User profile is handled in the serializer - only own user can change
+        'users_tipresult',  # perms are handled in the serializer
         # Third-party tables
         'error_report_error',
         'exchange_rate',
@@ -210,4 +236,6 @@ def get_ruleset_ignore() -> list[str]:
         'importer_dataimportsession',
         'importer_dataimportcolumnmap',
         'importer_dataimportrow',
+        # SCIM - superuser-only singleton configuration, managed via the Admin Center
+        'scim_scimconfiguration',
     ]

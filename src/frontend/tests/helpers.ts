@@ -141,6 +141,18 @@ export const activateCalendarView = async (page: Page) => {
   await page.waitForLoadState('networkidle');
 };
 
+export const tableSearch = async (page: Page, query: string) => {
+  await page.getByLabel('table-search-input').fill(query);
+  await page.waitForTimeout(300);
+  await page.waitForLoadState('networkidle');
+};
+
+export const clearTableSearch = async (page: Page) => {
+  await page.getByLabel('table-search-input').clear();
+  await page.waitForTimeout(300);
+  await page.waitForLoadState('networkidle');
+};
+
 /**
  * Perform a 'global search' on the provided page, for the provided query text
  */
@@ -209,4 +221,43 @@ export const showCalendarView = async (page: Page) => {
 export const expectTableColumnCount = async (page: Page, count: number) => {
   const columns = page.locator('table thead tr th');
   await expect(columns).toHaveCount(count);
+};
+
+// Open an "action" associated with the detail view of a page
+export const openDetailAction = async (
+  page: Page,
+  menuName: string,
+  actionName: string
+) => {
+  // Ensure idle state first
+  await page.waitForLoadState('networkidle');
+
+  // Click on the "actions" menu
+  await page.getByRole('button', { name: `action-menu-${menuName}` }).click();
+
+  // Click on the specified action
+  await page
+    .getByRole('menuitem', {
+      name: `action-menu-${menuName}-actions-${actionName}`
+    })
+    .click();
+};
+
+export const waitForDataOutput = async (
+  page: Page,
+  trigger: () => Promise<unknown>
+) => {
+  const closePopup = async (popup: Page) => {
+    await popup.close();
+    await page.bringToFront();
+  };
+  page.on('popup', closePopup);
+
+  try {
+    await page.bringToFront();
+    await trigger();
+    await page.getByText('Process completed successfully').first().waitFor();
+  } finally {
+    page.off('popup', closePopup);
+  }
 };

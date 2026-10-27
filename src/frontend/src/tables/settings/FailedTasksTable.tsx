@@ -10,8 +10,8 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function FailedTasksTable({
   onRecordsUpdated

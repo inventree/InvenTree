@@ -54,14 +54,14 @@ class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     VERSION = "0.0.1"
     AUTHOR = "Michael"
 
-    def scan(self, barcode_data):
+    def scan(self, barcode_data, user, **kwargs):
         if barcode_data.startswith("PART-"):
             try:
                 pk = int(barcode_data.split("PART-")[1])
                 instance = Part.objects.get(pk=pk)
                 label = Part.barcode_model_type()
 
-                return {label: instance.format_matched_response()}
+                return {label: instance.format_matched_response(user=user)}
             except Part.DoesNotExist:
                 pass
 ```

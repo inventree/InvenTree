@@ -1,6 +1,7 @@
-import test from 'playwright/test';
+import { createApi } from './api';
+import { expect, test } from './baseFixtures';
 import { adminuser } from './defaults';
-import { clickOnRowMenu, navigate } from './helpers';
+import { clickOnRowMenu, navigate, waitForDataOutput } from './helpers';
 import { doCachedLogin } from './login';
 import { setPluginState } from './settings';
 
@@ -25,10 +26,22 @@ test('Machines - Activation', async ({ browser }) => {
   });
 
   // Ensure that the sample machine plugin is enabled
+  const api = await createApi({});
   await setPluginState({
     plugin: 'sample-printer-machine-plugin',
     state: true
   });
+  // ensure machine driver for printer is online and active
+  await expect
+    .poll(
+      async () => {
+        const response = await api.get('machine/drivers/');
+        const drivers = await response.json();
+        return drivers.map((d: any) => d.slug);
+      },
+      { timeout: 30000 }
+    )
+    .toContain('sample-printer-driver');
 
   await page.reload();
   await page.waitForLoadState('networkidle');
@@ -47,14 +60,17 @@ test('Machines - Activation', async ({ browser }) => {
       .getByRole('textbox', { name: 'text-field-name' })
       .fill('my-dummy-machine');
     await page
-      .getByRole('textbox', { name: 'choice-field-machine_type' })
+      .getByRole('combobox', { name: 'choice-field-machine_type' })
       .fill('label');
     await page.getByRole('option', { name: 'Label Printer' }).click();
 
-    await page.getByRole('textbox', { name: 'choice-field-driver' }).click();
+    await page.getByRole('combobox', { name: 'choice-field-driver' }).click();
+    await page.waitForTimeout(200);
     await page
       .getByRole('option', { name: 'Sample Label Printer Driver' })
       .click();
+    await page.waitForTimeout(200);
+
     await page.getByRole('button', { name: 'Submit' }).click();
   } else {
     // Machine already exists - just click on it to open the "machine drawer"
@@ -64,10 +80,13 @@ test('Machines - Activation', async ({ browser }) => {
   // Creating the new machine opens the "machine drawer"
 
   // Check for "machine type" settings
-  await page.getByText('Scope the printer to a specific location').waitFor();
+  await page
+    .getByText('Scope the printer to a specific location')
+    .first()
+    .waitFor();
 
   // Check for "machine driver" settings
-  await page.getByText('Custom string for connecting').waitFor();
+  await page.getByText('Custom string for connecting').first().waitFor();
 
   // Edit the available setting
   await page.getByRole('button', { name: 'edit-setting-CONNECTION' }).click();
@@ -94,6 +113,7 @@ test('Machines - Activation', async ({ browser }) => {
 
   // Let's print something with the machine
   await navigate(page, 'stock/location/1/stock-items');
+  await page.getByText('Blue plastic enclosure').first().waitFor();
 
   await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
@@ -110,15 +130,13 @@ test('Machines - Activation', async ({ browser }) => {
   await page.getByText('InvenTreeLabelMachine').click();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-machine' })
+    .getByRole('combobox', { name: 'choice-field-machine' })
     .fill('dummy');
   await page.getByRole('option', { name: 'my-dummy-machine' }).click();
 
-  await page
-    .getByRole('button', { name: 'Print', exact: true })
-    .first()
-    .click();
-  await page.getByText('Process completed successfully').waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Print', exact: true }).first().click()
+  );
 
   await navigate(page, 'settings/admin/machine/');
 

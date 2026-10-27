@@ -6,6 +6,7 @@ from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
 from common.models import InvenTreeSetting, Parameter, ParameterTemplate
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 from .models import Part, PartCategory, PartCategoryParameterTemplate
@@ -141,6 +142,43 @@ class TestParams(TestCase):
         # And we can delete the parameter
         parameter.delete()
 
+    def test_locked_part_locking_disabled(self):
+        """Test that parameter restrictions are lifted when PART_ENABLE_LOCKING is disabled."""
+        part = Part.objects.create(
+            name='Test Part Lock Override',
+            description='Part for testing global locking override',
+            category=PartCategory.objects.first(),
+        )
+
+        parameter = Parameter.objects.create(
+            content_object=part, template=ParameterTemplate.objects.first(), data='100'
+        )
+
+        part.locked = True
+        part.save()
+
+        # With locking enabled (default), editing and deletion are blocked
+        with self.assertRaises(django_exceptions.ValidationError):
+            parameter.data = '200'
+            parameter.save()
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            parameter.delete()
+
+        # Disable locking globally — parameter operations should now succeed
+        set_global_setting('PART_ENABLE_LOCKING', False)
+
+        parameter.data = '200'
+        parameter.save()
+        self.assertEqual(parameter.data, '200')
+
+        # Re-enable locking — editing should be blocked again
+        set_global_setting('PART_ENABLE_LOCKING', True)
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            parameter.data = '300'
+            parameter.save()
+
 
 class TestCategoryTemplates(TransactionTestCase):
     """Test class for PartCategoryParameterTemplate model."""
@@ -214,7 +252,7 @@ class ParameterTests(TestCase):
             tmp.full_clean()
 
         # Test that invalid units fail
-        for unit in ['mmmmm', '-', 'x', int]:
+        for unit in ['mmmmm', '-', 'x', int, "piao's"]:
             tmp = ParameterTemplate(name='test', units=unit)
             with self.assertRaises(django_exceptions.ValidationError):
                 tmp.full_clean()
@@ -649,6 +687,49 @@ class ParameterFilterTest(InvenTreeAPITestCase):
             ).data
 
             self.assertEqual(len(response), 5)
+
+    def test_filter_si_prefix(self):
+        """Test filtering by values which differ only in SI prefix.
+
+        Unit conversion introduces floating point error (e.g. '100nF' != '0.1uF'),
+        so numeric comparisons must be tolerant of this.
+        """
+        template = ParameterTemplate.objects.create(
+            name='Capacitance', description='Capacitance of the part', units='F'
+        )
+
+        values = ['10nF', '100nF', '0.1uF', '1uF', '1000nF']
+        parts = list(Part.objects.all()[: len(values)])
+
+        for part, value in zip(parts, values, strict=True):
+            Parameter.objects.create(content_object=part, template=template, data=value)
+
+        filters = [
+            ('', '100n', 2),
+            ('', '100nF', 2),
+            ('', '0.1u', 2),
+            ('', '.1uF', 2),
+            ('', '100000pF', 2),
+            ('', '1uF', 2),
+            ('', '1000n', 2),
+            ('', '0.01u', 1),
+            ('', '101nF', 0),
+            ('_ne', '0.1uF', 48),
+            ('_gt', '0.1uF', 2),
+            ('_gte', '100nF', 4),
+            ('_lt', '100nF', 1),
+            ('_lte', '0.1uF', 3),
+            ('_gt', '1000nF', 0),
+            ('_gte', '1uF', 2),
+            ('_lt', '1uF', 3),
+            ('_lte', '1000nF', 5),
+        ]
+
+        for operator, value, expected_count in filters:
+            filter_name = f'parameter_{template.pk}' + operator
+            response = self.get(self.url, {filter_name: value}, expected_code=200).data
+
+            self.assertEqual(len(response), expected_count, f'{filter_name}={value}')
 
     def test_filter_multiple(self):
         """Test filtering by multiple parameters."""

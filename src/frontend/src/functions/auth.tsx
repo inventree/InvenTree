@@ -1,10 +1,6 @@
-import {
-  type CredentialRequestOptionsJSON,
-  get,
-  parseRequestOptionsFromJSON
-} from '@github/webauthn-json/browser-ponyfill';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { getBaseUrl } from '@lib/functions/Navigation';
 import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
@@ -15,7 +11,7 @@ import { api, setApiDefaults } from '../App';
 import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
 import { useUserState } from '../states/UserState';
-import { fetchGlobalStates } from '../states/states';
+import { fetchGlobalStates, resetGlobalStatesFetched } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -129,9 +125,24 @@ export async function doBasicLogin(
             });
             break;
           default:
+            const data = err.response?.data ?? {};
+
+            let msg: string = t`Check your input and try again.`;
+
+            // Extract error message from response data
+            if (data?.detail) {
+              msg = data.detail;
+            } else if (data?.message) {
+              msg = data.message;
+            } else if (data?.error) {
+              msg = data.error;
+            } else if (data?.errors && Array.isArray(data.errors)) {
+              msg = data.errors[0]?.message ?? msg;
+            }
+
             notifications.show({
               title: `${t`Login failed`} (${err.response.status})`,
-              message: t`Check your input and try again.`,
+              message: msg,
               id: 'auth-login-error',
               color: 'red'
             });
@@ -156,7 +167,7 @@ export async function doBasicLogin(
   // we are successfully logged in - gather required states for app
   if (loginDone) {
     await fetchUserState();
-    await fetchGlobalStates();
+    await fetchGlobalStates(true);
     observeProfile();
   } else if (!success) {
     clearUserState();
@@ -225,6 +236,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
   clearUserState();
   clearCsrfCookie();
   setAuthContext(undefined);
+  resetGlobalStatesFetched();
   navigate('/login');
 };
 
@@ -440,6 +452,10 @@ export const checkLoginState = async (
     MfaSetupOk(navigate).then(async (isOk) => {
       if (isOk) {
         observeProfile();
+        // Not forced: this runs on every page load's auth check, and
+        // LanguageContext's own locale-activation effect (which always
+        // runs first, since it gates rendering of this component's whole
+        // route tree) will typically have already triggered this fetch.
         await fetchGlobalStates();
 
         followRedirect(navigate, redirect);
@@ -461,12 +477,24 @@ export const checkLoginState = async (
     await loginSuccess();
   } else if (!no_redirect) {
     setLoginChecked(true);
-    navigate('/login', { state: redirect });
+
+    // A user authenticated via SSO, but with no matching local account, is
+    // left by the server in a pending 'provider_signup' flow rather than
+    // being logged in - route them to finish registration instead of
+    // silently bouncing them back to the login page.
+    const { auth_context } = useServerApiState.getState();
+    const providerSignupPending = auth_context?.flows?.some(
+      (flow: any) => flow.id == FlowEnum.ProviderSignup && flow.is_pending
+    );
+
+    navigate(providerSignupPending ? '/provider-signup' : '/login', {
+      state: redirect
+    });
   }
   setLoginChecked(true);
 };
 
-function handleSuccessFullAuth(
+export function handleSuccessFullAuth(
   response: any,
   navigate: NavigateFunction,
   location?: Location<any>,
@@ -490,7 +518,7 @@ function handleSuccessFullAuth(
     if (isOk) {
       await fetchUserState();
       observeProfile();
-      await fetchGlobalStates();
+      await fetchGlobalStates(true);
 
       if (location !== undefined) {
         followRedirect(navigate, location?.state);
@@ -526,7 +554,17 @@ export async function ProviderLogin(
   await ensureCsrf();
   post(generateUrl(apiUrl(ApiEndpoints.auth_provider_redirect)), {
     provider: provider.id,
-    callback_url: generateUrl('/logged-in'),
+    // Return to wherever this page is actually being served from, not the
+    // configured API host - the two differ whenever the frontend and
+    // backend are hosted separately (e.g. the vite dev server, or a
+    // decoupled-frontend deployment). The '/web' base is normally added
+    // back in server-side by Django's compatibility redirect for bare
+    // (non-API-host) paths, which only exists on the Django side - so add
+    // it explicitly rather than relying on that.
+    callback_url: generateUrl(
+      `/${getBaseUrl()}/logged-in`,
+      window.location.origin
+    ),
     process: process,
     csrfmiddlewaretoken: getCsrfCookie()
   });
@@ -755,11 +793,9 @@ export async function handleWebauthnLogin(
   }
 
   try {
-    const credential = await get(
-      parseRequestOptionsFromJSON(
-        webauthn_challenge as CredentialRequestOptionsJSON
-      )
-    );
+    const publicKey =
+      PublicKeyCredential.parseRequestOptionsFromJSON(webauthn_challenge);
+    const credential = await navigator.credentials.get({ publicKey });
     await api
       .post(apiUrl(ApiEndpoints.auth_webauthn_login), {
         credential: credential

@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Stack } from '@mantine/core';
 import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -9,15 +9,10 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -29,24 +24,27 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { formatCurrency } from '../../defaults/formatters';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { PurchaseOrderDetailsPanel } from './PurchaseOrderDetailsPanel';
 
 /**
  * Detail page for a single PurchaseOrder
@@ -65,23 +63,30 @@ export default function PurchaseOrderDetail() {
     endpoint: ApiEndpoints.purchase_order_list,
     pk: id,
     params: {
-      supplier_detail: true
+      supplier_detail: true,
+      tags: true
     },
     refetchOnMount: true
   });
 
-  const orderCurrency = useMemo(() => {
-    return (
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.purchaseorder,
+    modelId: order?.pk
+  });
+
+  const orderCurrency = useMemo(
+    () =>
       order.order_currency ||
       order.supplier_detail?.currency ||
-      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
-    );
-  }, [order, globalSettings]);
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY'),
+    [order, globalSettings]
+  );
 
   const purchaseOrderFields = usePurchaseOrderFields({});
 
   const duplicatePurchaseOrderFields = usePurchaseOrderFields({
-    duplicateOrderId: order.pk
+    duplicateOrderId: order.pk,
+    create: true
   });
 
   const editPurchaseOrder = useEditApiFormModal({
@@ -89,6 +94,7 @@ export default function PurchaseOrderDetail() {
     pk: id,
     title: t`Edit Purchase Order`,
     fields: purchaseOrderFields,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }
@@ -130,211 +136,7 @@ export default function PurchaseOrderDetail() {
     modelType: ModelType.purchaseorder
   });
 
-  const detailsPanel = useMemo(() => {
-    if (instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const tl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'reference',
-        label: t`Reference`,
-        copy: true
-      },
-      {
-        type: 'text',
-        name: 'supplier_reference',
-        label: t`Supplier Reference`,
-        icon: 'reference',
-        hidden: !order.supplier_reference,
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'supplier',
-        icon: 'suppliers',
-        label: t`Supplier`,
-        model: ModelType.company
-      },
-      {
-        type: 'text',
-        name: 'description',
-        label: t`Description`,
-        copy: true
-      },
-      {
-        type: 'status',
-        name: 'status',
-        label: t`Status`,
-        model: ModelType.purchaseorder
-      },
-      {
-        type: 'status',
-        name: 'status_custom_key',
-        label: t`Custom Status`,
-        model: ModelType.purchaseorder,
-        icon: 'status',
-        hidden:
-          !order.status_custom_key || order.status_custom_key == order.status
-      }
-    ];
-
-    const tr: DetailsField[] = [
-      {
-        type: 'progressbar',
-        name: 'completed',
-        icon: 'progress',
-        label: t`Completed Line Items`,
-        total: order.line_items,
-        progress: order.completed_lines
-      },
-      {
-        type: 'link',
-        model: ModelType.stocklocation,
-        link: true,
-        name: 'destination',
-        label: t`Destination`,
-        hidden: !order.destination
-      },
-      {
-        type: 'text',
-        name: 'currency',
-        label: t`Order Currency`,
-        value_formatter: () => orderCurrency
-      },
-      {
-        type: 'text',
-        name: 'total_price',
-        label: t`Total Cost`,
-        value_formatter: () => {
-          return formatCurrency(order?.total_price, {
-            currency: order?.order_currency || order?.supplier_detail?.currency
-          });
-        }
-      }
-    ];
-
-    const bl: DetailsField[] = [
-      {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`Link`,
-        copy: true,
-        hidden: !order.link
-      },
-      {
-        type: 'text',
-        name: 'contact_detail.name',
-        label: t`Contact`,
-        icon: 'user',
-        copy: true,
-        hidden: !order.contact
-      },
-      {
-        type: 'text',
-        name: 'contact_detail.email',
-        label: t`Contact Email`,
-        icon: 'email',
-        copy: true,
-        hidden: !order.contact_detail?.email
-      },
-      {
-        type: 'text',
-        name: 'contact_detail.phone',
-        label: t`Contact Phone`,
-        icon: 'phone',
-        copy: true,
-        hidden: !order.contact_detail?.phone
-      },
-      {
-        type: 'text',
-        name: 'project_code_label',
-        label: t`Project Code`,
-        icon: 'reference',
-        copy: true,
-        hidden: !order.project_code
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !order.responsible
-      }
-    ];
-
-    const br: DetailsField[] = [
-      {
-        type: 'date',
-        name: 'creation_date',
-        label: t`Creation Date`,
-        copy: true,
-        icon: 'calendar'
-      },
-      {
-        type: 'date',
-        name: 'issue_date',
-        label: t`Issue Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.issue_date
-      },
-      {
-        type: 'date',
-        name: 'start_date',
-        label: t`Start Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.start_date
-      },
-      {
-        type: 'date',
-        name: 'target_date',
-        label: t`Target Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.target_date
-      },
-      {
-        type: 'date',
-        name: 'complete_date',
-        icon: 'calendar_check',
-        label: t`Completion Date`,
-        copy: true,
-        hidden: !order.complete_date
-      },
-      {
-        type: 'date',
-        name: 'updated_at',
-        label: t`Last Updated`,
-        icon: 'calendar',
-        copy: true,
-        showTime: true,
-        hidden: !order.updated_at
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid>
-        <Grid grow>
-          <DetailsImage
-            appRole={UserRoles.purchase_order}
-            apiPath={ApiEndpoints.company_list}
-            src={order.supplier_detail?.image}
-            pk={order.supplier}
-          />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={order} />
-          </Grid.Col>
-        </Grid>
-        <DetailsTable fields={tr} item={order} />
-        <DetailsTable fields={bl} item={order} />
-        <DetailsTable fields={br} item={order} />
-      </ItemDetailsGrid>
-    );
-  }, [order, orderCurrency, instanceQuery]);
+  const showHistory = useShowHistoryPanel();
 
   const orderPanels: PanelType[] = useMemo(() => {
     return [
@@ -342,7 +144,13 @@ export default function PurchaseOrderDetail() {
         name: 'detail',
         label: t`Order Details`,
         icon: <IconInfoCircle />,
-        content: detailsPanel
+        content: (
+          <PurchaseOrderDetailsPanel
+            instance={order}
+            allowImageEdit
+            refreshInstance={refreshInstance}
+          />
+        )
       },
       {
         name: 'line-items',
@@ -375,6 +183,7 @@ export default function PurchaseOrderDetail() {
               <Accordion.Panel>
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.purchase_order_extra_line_list}
+                  importModelType='purchaseorderextraline'
                   orderId={order.pk}
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
@@ -401,25 +210,32 @@ export default function PurchaseOrderDetail() {
       },
       ParametersPanel({
         model_type: ModelType.purchaseorder,
-        model_id: order.pk
+        model_id: order.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.purchaseorder,
-        model_id: order.pk
+        model_id: order.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.purchaseorder,
         model_id: order.pk,
-        has_note: !!order.notes,
+        note_count: instanceInfo.note_count,
         // TODO @matmair - change API to include a "locked" attribute that we can check here
         editable:
           order.status == poStatus.COMPLETE &&
           !globalSettings.isSet('PURCHASEORDER_EDIT_COMPLETED_ORDERS')
             ? false
             : undefined
+      }),
+      HistoryPanel({
+        model_type: ModelType.purchaseorder,
+        model_id: order.pk,
+        visible: showHistory
       })
     ];
-  }, [order, id, user]);
+  }, [order, id, user, instanceInfo, showHistory]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
@@ -537,7 +353,7 @@ export default function PurchaseOrderDetail() {
       ? []
       : [
           <StatusRenderer
-            status={order.status_custom_key}
+            status={order.status_custom_key || order.status}
             type={ModelType.purchaseorder}
             options={{ size: 'lg' }}
           />

@@ -12,7 +12,7 @@ Stock adjustments can be accessed in any stock items table using the "Stock Opti
 
 ### Move Stock
 
-Multiple stock items can be moved to a new location in a single operation. Each item is moved to the selected location, and a stock tracking entry is added to the stock item history.
+Multiple stock items can be moved to a new location in a single operation. Each item is moved to the selected location, and a [stock tracking](./tracking.md) event is recorded against each stock item.
 
 {{ image("stock/stock_move.png", "Stock Move") }}
 
@@ -31,6 +31,8 @@ Remove parts from a stock item record - for example taking parts from stock for 
 ### Count Stock
 
 Count stock items (stocktake) to record the number of items in stock at a given point of time. The quantity for each part is pre-filled with the current quantity based on stock item history.
+
+An optional **Location** field allows all counted items to be moved to a new location in the same operation. If left blank, each item retains its current location.
 
 {{ image("stock/stock_count.png", "Stock Count") }}
 

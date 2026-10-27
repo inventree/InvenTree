@@ -29,6 +29,8 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../plugins/PluginUIFeature';
+import GlobalPreviewDrawer from '../previews/GlobalPreviewDrawer';
+import { FirstUseTour } from './FirstUseTour';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
@@ -53,6 +55,8 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 export const [firstStore, firstSpotlight] = createSpotlight();
+
+export const searchShortcutKey = 'mod+K';
 
 export default function LayoutComponent() {
   const navigate = useNavigate();
@@ -120,6 +124,7 @@ export default function LayoutComponent() {
   return (
     <ProtectedRoute>
       <>
+        <FirstUseTour />
         <Flex direction='column' mih='100vh'>
           <Header />
           <Container className={classes.layoutContent} size='100%'>
@@ -140,12 +145,13 @@ export default function LayoutComponent() {
                 leftSection: <IconSearch size='1.2rem' />,
                 placeholder: t`Search...`
               }}
-              shortcut={['mod + K']}
+              shortcut={[searchShortcutKey]}
               nothingFound={t`Nothing found...`}
             />
           )}
         </Flex>
         <GlobalImporterDrawer />
+        <GlobalPreviewDrawer />
       </>
     </ProtectedRoute>
   );

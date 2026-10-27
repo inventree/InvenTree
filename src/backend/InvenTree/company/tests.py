@@ -1,11 +1,12 @@
 """Unit tests for the models in the 'company' app."""
 
 import os
-from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
+from common.models import InvenTreeSetting
+from common.settings import set_global_setting
 from part.models import Part
 
 from .models import (
@@ -99,24 +100,6 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(p(45), 315)
         self.assertEqual(p(55), 68.75)
 
-    def test_part_pricing(self):
-        """Unit tests for supplier part pricing."""
-        m2x4 = Part.objects.get(name='M2x4 LPHS')
-
-        self.assertEqual(m2x4.get_price_info(5.5), '38.5 - 41.25')
-        self.assertEqual(m2x4.get_price_info(10), '70 - 75')
-        self.assertEqual(m2x4.get_price_info(100), '125 - 350')
-
-        pmin, pmax = m2x4.get_price_range(5)
-        self.assertEqual(pmin, 35)
-        self.assertEqual(pmax, 37.5)
-
-        m3x12 = Part.objects.get(name='M3x12 SHCS')
-
-        self.assertEqual(m3x12.get_price_info(0.3), Decimal('2.4'))
-        self.assertEqual(m3x12.get_price_info(3), Decimal('24'))
-        self.assertIsNotNone(m3x12.get_price_info(50))
-
     def test_currency_validation(self):
         """Test validation for currency selection."""
         # Create a company with a valid currency code (should pass)
@@ -176,6 +159,57 @@ class ContactSimpleTest(TestCase):
         # Remove the parent company
         Company.objects.get(pk=self.c.pk).delete()
         self.assertEqual(Contact.objects.count(), 0)
+
+
+class InternalCompanyTest(TestCase):
+    """Unit tests for internal company support."""
+
+    SETTING = 'INVENTREE_DEFAULT_INTERNAL_COMPANY'
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create some companies to work with."""
+        super().setUpTestData()
+
+        cls.supplier = Company.objects.create(name='Supplier', is_supplier=True)
+        cls.hq = Company.objects.create(name='HQ', is_supplier=False, is_internal=True)
+
+    def test_default(self):
+        """Test the Company.get_default_internal() helper."""
+        set_global_setting(self.SETTING, '')
+
+        # A single internal company is used as the default
+        self.assertEqual(Company.get_default_internal(), self.hq)
+
+        # Multiple internal companies, with no setting, is ambiguous
+        site = Company.objects.create(name='Site', is_supplier=False, is_internal=True)
+        self.assertIsNone(Company.get_default_internal())
+
+        # The setting selects between them
+        set_global_setting(self.SETTING, site.pk)
+        self.assertEqual(Company.get_default_internal(), site)
+
+        # A setting which no longer points to an internal company is ignored
+        site.is_internal = False
+        site.save()
+        self.assertEqual(Company.get_default_internal(), self.hq)
+
+        # No internal companies at all
+        Company.objects.filter(is_internal=True).update(is_internal=False)
+        self.assertIsNone(Company.get_default_internal())
+
+    def test_setting_validation(self):
+        """The setting may only reference an internal company."""
+        setting = InvenTreeSetting.get_setting_object(self.SETTING, create=True)
+
+        for value in [self.supplier.pk, 99999, 'abc']:
+            setting.value = value
+            with self.assertRaises(ValidationError):
+                setting.full_clean()
+
+        for value in ['', self.hq.pk]:
+            setting.value = value
+            setting.full_clean()
 
 
 class AddressTest(TestCase):
