@@ -342,7 +342,6 @@ export function useStockFields({
           originalId: duplicateStockItem.pk,
           extraFields: {
             copy_notes: { value: true },
-            copy_history: { value: false },
             copy_tests: {
               value: false,
               hidden: !duplicateStockItem?.part_detail?.testable
