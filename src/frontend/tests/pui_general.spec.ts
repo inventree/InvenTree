@@ -1,4 +1,4 @@
-import { test } from './baseFixtures.js';
+import { expect, test } from './baseFixtures.js';
 import { adminuser, stevenuser } from './defaults.js';
 import { globalSearch } from './helpers.js';
 import { doCachedLogin } from './login.js';
@@ -38,6 +38,21 @@ test('General - Search', async ({ browser }) => {
   await page.locator('a').filter({ hasText: 'Customer C' }).first().waitFor();
   await page.locator('a').filter({ hasText: 'Customer D' }).first().waitFor();
   await page.locator('a').filter({ hasText: 'Customer E' }).first().waitFor();
+
+  const customerResult = page
+    .locator('a')
+    .filter({ hasText: 'Customer B' })
+    .first();
+  await expect(customerResult).toHaveAttribute(
+    'href',
+    /\/web\/sales\/customer\/\d+/
+  );
+
+  const popupPromise = page.waitForEvent('popup');
+  await customerResult.click({ modifiers: ['Control'] });
+  const popup = await popupPromise;
+  await popup.waitForURL('**/web/sales/customer/**');
+  await popup.close();
 
   // Click through to the "Customer" results
   await page.getByRole('button', { name: 'view-all-results-customer' }).click();

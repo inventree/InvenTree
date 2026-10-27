@@ -31,7 +31,7 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import { type NavigateFunction, useNavigate } from 'react-router-dom';
+import { Link, type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components/Boundary';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -180,7 +180,8 @@ function QueryResultGroup({
             <Fragment key={`result-group-${query.model}-${result.pk}`}>
               <Anchor
                 underline='never'
-                href={getDetailUrl(query.model, result.pk, true)}
+                component={Link}
+                to={getDetailUrl(query.model, result.pk)}
                 onClick={(event: any) =>
                   onResultClick(query.model, result.pk, event)
                 }
@@ -475,7 +476,14 @@ export function SearchDrawer({
   // Callback when one of the search results is clicked
   function onResultClick(query: ModelType, pk: number, event: any) {
     const targetModel = ModelInformationDict[query];
-    if (targetModel.url_detail == undefined) {
+    if (
+      targetModel.url_detail == undefined ||
+      event.button !== 0 ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
       return;
     }
 
@@ -490,14 +498,7 @@ export function SearchDrawer({
       return;
     }
 
-    if (eventModified(event)) {
-      // Keep the drawer open in this condition
-    } else {
-      closeDrawer();
-    }
-
-    const url = targetModel.url_detail.replace(':pk', pk.toString());
-    navigateToLink(url, navigate, event);
+    closeDrawer();
   }
 
   return (
