@@ -210,6 +210,48 @@ def findOffloadedEvent(
     )
 
 
+def stock_history(item, **filters):
+    """Return the audit log entries (stock history) for a StockItem, oldest first.
+
+    Arguments:
+        item: The StockItem instance (or primary key) - the item may have since been deleted
+        **filters: Additional filters to apply to the queryset (e.g. event_type=...)
+    """
+    from django.contrib.contenttypes.models import ContentType
+
+    from audit.models import AuditLogEntry
+    from stock.models import StockItem
+
+    pk = getattr(item, 'pk', item)
+
+    return AuditLogEntry.objects.filter(
+        content_type=ContentType.objects.get_for_model(StockItem),
+        object_pk=str(pk),
+        **filters,
+    ).order_by('pk')
+
+
+def stock_history_count(**filters) -> int:
+    """Return the total number of audit log entries recorded for all StockItems.
+
+    Arguments:
+        **filters: Additional filters to apply (e.g. event_type=...)
+    """
+    from django.contrib.contenttypes.models import ContentType
+
+    from audit.models import AuditLogEntry
+    from stock.models import StockItem
+
+    return AuditLogEntry.objects.filter(
+        content_type=ContentType.objects.get_for_model(StockItem), **filters
+    ).count()
+
+
+def stock_events(item, **filters):
+    """Return the named stock tracking events recorded for a StockItem, oldest first."""
+    return stock_history(item, event_type__isnull=False, **filters)
+
+
 class UserMixin:
     """Mixin to setup a user and login for tests.
 

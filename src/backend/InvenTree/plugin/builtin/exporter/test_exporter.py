@@ -1,7 +1,9 @@
 """Unit test for the exporter plugins."""
 
+from django.test import TestCase
 from django.urls import reverse
 
+from InvenTree.helpers import escape_export_value
 from InvenTree.unit_test import InvenTreeAPITestCase
 from plugin.registry import registry
 
@@ -152,3 +154,38 @@ class FormulaInjectionExportTest(InvenTreeAPITestCase):
             names.add(cell.value)
 
         self.assertEqual(names, set(self.NAMES.values()))
+
+
+class EscapeExportValueTest(TestCase):
+    """Unit tests for the escape_export_value helper."""
+
+    def test_numeric_unchanged(self):
+        """Strictly numeric values are not escaped, even with a +/- prefix."""
+        for value in ['123', '-222', '+5', '123.4', '-123.4', '+.5', '12e6', '-1.5E-3']:
+            self.assertEqual(escape_export_value(value), value)
+
+    def test_non_numeric_escaped(self):
+        """Non-numeric values with a dangerous prefix are escaped."""
+        for value in [
+            '=2+2',
+            '+1+1',
+            '-1-1',
+            '-12V Regulator',
+            '-',
+            '+',
+            '-1e',
+            '-nan',
+            '-inf',
+            '-1 ',
+            '- 1',
+            '-1,2',
+            '@SUM(1)',
+            '\tabc',
+            '\rabc',
+        ]:
+            self.assertEqual(escape_export_value(value), "'" + value)
+
+    def test_other_values(self):
+        """Safe strings and non-string values are returned unchanged."""
+        for value in ['Safe Part', '', 'a-b', 42, -42, 1.5, None, True]:
+            self.assertEqual(escape_export_value(value), value)

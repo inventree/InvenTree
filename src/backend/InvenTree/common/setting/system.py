@@ -1317,23 +1317,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'units': _('days'),
         'validator': [int, MinValueValidator(30)],
     },
-    'STOCK_TRACKING_DELETE_OLD_ENTRIES': {
-        'name': _('Delete Old Stock Tracking Entries'),
-        'description': _(
-            'Delete stock tracking entries older than the specified number of days'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'STOCK_TRACKING_DELETE_DAYS': {
-        'name': _('Stock Tracking Deletion Interval'),
-        'description': _(
-            'Stock tracking entries will be deleted after specified number of days'
-        ),
-        'default': 365,
-        'units': _('days'),
-        'validator': [int, MinValueValidator(30)],
-    },
     'AUDIT_LOG_ENABLED': {
         'name': _('Enable Audit Log'),
         'description': _('Record a history of changes made to supported models'),

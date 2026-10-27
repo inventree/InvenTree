@@ -22,7 +22,7 @@ from audit.permissions import (
 from common.filters import determine_content_type
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers_api import InvenTreeApiRouter
-from InvenTree.permissions import IsAdminOrAdminScope
+from InvenTree.permissions import IsAuthenticatedOrReadScope
 
 
 def audited_model_type_choices(user=None) -> list[tuple[str, str]]:
@@ -83,7 +83,7 @@ class AuditLogFilter(rest_filters.FilterSet):
         """Metaclass options."""
 
         model = AuditLogEntry
-        fields = ['action', 'actor', 'cid']
+        fields = ['action', 'actor', 'cid', 'event_type']
 
     model_type = ModelTypeChoiceFilter(
         choices=audited_model_type_choices,
@@ -178,9 +178,9 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     )
     serializer_class = audit.serializers.AuditLogEntrySerializer
 
-    # The audit log is only available to staff users.
-    # Entries are *additionally* filtered by the user's permissions on each audited model.
-    permission_classes = [IsAdminOrAdminScope]
+    # Entries are filtered by the user's permissions on each audited model
+    # (some models are further restricted to staff users, see audit.registry.AUDIT_VIEW_RESTRICTIONS)
+    permission_classes = [IsAuthenticatedOrReadScope]
 
     filterset_class = AuditLogFilter
     filter_backends = SEARCH_ORDER_FILTER

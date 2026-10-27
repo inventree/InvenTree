@@ -1232,7 +1232,7 @@ def apply_duplicate_copy_options(
     at each call site rather than a new copy-pasted `if duplicate.get(...): instance.copy_..._
     from(...)` block. Any duplicate flag whose target method doesn't follow the
     copy_<x>_from() naming convention (e.g. Part's copy_bom/copy_image/copy_tests, or
-    StockItem's copy_history/copy_tests) must still be handled separately by the caller.
+    StockItem's copy_tests) must still be handled separately by the caller.
 
     Arguments:
         instance: The newly created instance to copy data onto

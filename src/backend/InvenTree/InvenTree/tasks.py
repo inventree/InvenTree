@@ -346,7 +346,7 @@ def batch_offload_tasks():
     Nesting is not supported: a nested batch_offload_tasks() call reuses the outer batch,
     and only the outermost call schedules a flush.
 
-    This mirrors plugin.base.event.events.batch_events() and stock.models.batch_tracking_entries()
+    This mirrors plugin.base.event.events.batch_events() and audit.helpers.write_batched()
     - see batch_events()'s docstring for the reasoning behind the on-commit flush and the
     context-local (rather than parameter-based) design.
 

@@ -151,7 +151,7 @@ export const ModelInformationDict: ModelDict = {
   stockhistory: {
     label: () => t`Stock History`,
     label_multiple: () => t`Stock Histories`,
-    api_endpoint: ApiEndpoints.stock_tracking_list,
+    api_endpoint: ApiEndpoints.audit_log_list,
     icon: 'history'
   },
   build: {
