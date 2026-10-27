@@ -538,3 +538,61 @@ test('Sales Orders - Price Breaks', async ({ browser }) => {
     page.getByRole('textbox', { name: 'number-field-sale_price' })
   ).toHaveValue('78', { timeout: 500 });
 });
+
+// Exercise the row and table actions on the sales order line item table
+test('Sales Orders - Line Item Actions', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/sales-order/11/' });
+
+  // Work on a duplicate, to avoid modifying fixture data
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Pending').first().waitFor();
+
+  await loadTab(page, 'Line Items');
+  await page.waitForLoadState('networkidle');
+
+  // Add a new line item
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-line-item-add' })
+    .click();
+  await page.getByLabel('related-field-part').fill('software');
+  await page.getByRole('option', { name: 'Software License' }).click();
+  await page.getByLabel('number-field-quantity').fill('3');
+  await page.getByLabel('text-field-reference').fill('New Line');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Edit the new line item
+  await clickOnRowMenu(page.getByRole('cell', { name: 'New Line' }));
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  await page.getByLabel('text-field-reference').fill('Edited Line');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('cell', { name: 'Edited Line' }).waitFor();
+
+  // Duplicate the line item
+  await clickOnRowMenu(page.getByRole('cell', { name: 'Edited Line' }));
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+
+  // Delete a line item
+  await clickOnRowMenu(page.getByRole('cell', { name: 'Edited Line' }).first());
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.waitForLoadState('networkidle');
+
+  // Open the other row actions, where available
+  const region = page.getByRole('region', { name: 'Line Items', exact: true });
+  await region.getByLabel('Select all records').click();
+
+  await region
+    .getByRole('button', { name: 'action-button-allocate-stock' })
+    .click();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  await region
+    .getByRole('button', { name: 'action-button-order-parts' })
+    .click();
+  await page.getByRole('banner').getByRole('button').click();
+});
