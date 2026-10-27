@@ -1710,3 +1710,51 @@ class S3ReportTemplateTest(TestCase):
                 'report/custom_snippet.html', {'username': 'testuser'}
             )
             self.assertEqual(result, '<span>User: testuser</span>')
+
+
+class ReportSecurityTest(InvenTreeAPITestCase):
+    """Tests for restricted database access while rendering templates."""
+
+    fixtures = ['category', 'part', 'location']
+
+    def render(self, source):
+        """Render a template string."""
+        from django.template import Context, Template
+
+        from report.security import restricted_db_access
+
+        with restricted_db_access():
+            return Template('{% load report %}' + source).render(Context({}))
+
+    def test_blocked_models(self):
+        """Blocked models cannot be queried via the template tag."""
+        from django.core.exceptions import PermissionDenied
+
+        for label in ['sessions.session', 'common.emailmessage', 'users.apitoken']:
+            with self.assertRaises(PermissionDenied):
+                self.render(f"{{% filter_db_model '{label}' as q %}}{{{{ q|length }}}}")
+
+    def test_traversal_blocked(self):
+        """Raw queries on blocked tables are rejected, even without the tag."""
+        from django.contrib.sessions.models import Session
+        from django.core.exceptions import PermissionDenied
+
+        from report.security import restricted_db_access
+
+        with restricted_db_access(), self.assertRaises(PermissionDenied):
+            list(Session.objects.all())
+
+    def test_write_blocked(self):
+        """Write queries are rejected during rendering."""
+        from django.core.exceptions import PermissionDenied
+
+        from part.models import PartCategory
+        from report.security import restricted_db_access
+
+        with restricted_db_access(), self.assertRaises(PermissionDenied):
+            PartCategory.objects.update(description='x')
+
+    def test_normal_access(self):
+        """Regular models still work."""
+        out = self.render("{% filter_db_model 'part.part' as q %}{{ q|length }}")
+        self.assertGreater(int(out), 0)
