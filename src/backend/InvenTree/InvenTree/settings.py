@@ -25,7 +25,12 @@ from corsheaders.defaults import default_headers as default_cors_headers
 
 import InvenTree.backup
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
-from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
+from InvenTree.config import (
+    ensure_middleware,
+    get_boolean_setting,
+    get_oidc_private_key,
+    get_setting,
+)
 from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.validators import invalid_site_url_hint
@@ -369,6 +374,10 @@ INSTALLED_APPS = [
     'django_mailbox',  # For email import
     'anymail',  # For email sending/receiving via ESPs
     'storages',
+    'auditlog',  # Audit log / model change history (see 'audit' app)
+    # New InvenTree apps are appended here, so that existing ContentType IDs
+    # match between existing databases and freshly migrated (test) databases
+    'audit.apps.AuditConfig',
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -396,9 +405,32 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
         'InvenTree.middleware.InvenTreeHostSettingsMiddleware',  # Ensuring correct hosting/security settings
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
+        'audit.middleware.InvenTreeAuditlogMiddleware',  # Audit log context (after maintenance + request ID)
         'InvenTree.middleware.InvenTreeVersionHeaderMiddleware',
     ],
 )
+
+# The audit log middleware is required for audit entries to record the user (and request context).
+# MIDDLEWARE may be overridden via the config file - ensure that it is always present
+MIDDLEWARE = ensure_middleware(
+    MIDDLEWARE,
+    'audit.middleware.InvenTreeAuditlogMiddleware',
+    after='django_structlog.middlewares.RequestMiddleware',
+)
+
+# Audit log configuration (django-auditlog)
+# Ref: https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
+# Note: AUDITLOG_LOGENTRY_MODEL is a swappable model, and must not be changed once migrations have been applied
+AUDITLOG_LOGENTRY_MODEL = 'audit.AuditLogEntry'
+AUDITLOG_STORE_JSON_CHANGES = True  # Store values as JSON types, rather than strings
+AUDITLOG_DISABLE_ON_RAW_SAVE = True  # Do not log fixture loading / raw saves
+AUDITLOG_CID_HEADER = None  # Correlation ID is provided by AUDITLOG_CID_GETTER (below)
+AUDITLOG_CID_GETTER = 'audit.context.get_cid'  # Matches the structlog request ID
+
+# The upstream auditlog migrations only define the (swapped out) LogEntry model,
+# and do not mark it as swappable - so would create an unused 'auditlog_logentry' table.
+# Disable them entirely - the 'audit' app provides the migrations for AuditLogEntry.
+MIGRATION_MODULES = {'auditlog': None}
 
 # In DEBUG mode, add support for django-silk
 # Ref: https://silk.readthedocs.io/en/latest/

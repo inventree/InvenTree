@@ -45,9 +45,11 @@ def determine_content_type(content_type: str | int | None) -> ContentType | None
     # First, try to resolve the content type via a PK value
     try:
         content_type_id = int(content_type)
-        ct = ContentType.objects.get_for_id(content_type_id)
+        return ContentType.objects.get_for_id(content_type_id)
     except (ValueError, ContentType.DoesNotExist):
         ct = None
+
+    content_type = str(content_type)
 
     if len(content_type.split('.')) == 2:
         # Next, try to resolve the content type via app_label.model_name

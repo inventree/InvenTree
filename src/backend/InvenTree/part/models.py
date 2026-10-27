@@ -41,6 +41,7 @@ import part.helpers as part_helpers
 import part.settings as part_settings
 import report.mixins
 import users.models
+from audit.helpers import audited_bulk_create
 from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.icons import validate_icon
@@ -61,6 +62,7 @@ logger = structlog.get_logger('inventree')
 
 
 class PartCategory(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
@@ -79,6 +81,11 @@ class PartCategory(
     ITEM_PARENT_KEY = 'category'
     EXTRA_PATH_FIELDS = ['icon']
     IMPORT_ID_FIELDS = ['pathstring', 'name']
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Derived - recalculated (in bulk) when a category is renamed or moved
+        'pathstring',
+    )
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -455,6 +462,7 @@ class PartReportContext(report.mixins.BaseReportContext, TypedDict):
 
 @cleanup.ignore
 class Part(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
@@ -515,6 +523,13 @@ class Part(
     IMPORT_ID_FIELDS = ['IPN', 'name']
 
     objects = TreeManager()
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Derived from the BOM (bom_validated / bom_checked_by / bom_checked_date are recorded)
+        'bom_checksum',
+        # Derived from 'barcode_data'
+        'barcode_hash',
+    )
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -2403,7 +2418,7 @@ class Part(
                 )
             )
 
-        Parameter.objects.bulk_create(parameters, batch_size=250)
+        audited_bulk_create(Parameter, parameters)
 
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None
@@ -2887,7 +2902,11 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         return [x.strip() for x in self.choices.split(',') if x.strip()]
 
 
-class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+class BomItem(
+    InvenTree.models.InvenTreeAuditMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
+):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -2912,6 +2931,15 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         inherited: This BomItem can be inherited by the BOMs of variant parts
         allow_variants: Stock for part variants can be substituted for this BomItem
     """
+
+    # Changes to a BOM item are included in the history of the assembly
+    AUDIT_PARENT_FIELD = 'part'
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Recalculated automatically - validate_bom() re-saves every BOM line
+        'checksum',
+        'validated',
+    )
 
     class Meta:
         """Metaclass providing extra model definition."""
@@ -3567,7 +3595,9 @@ def update_pricing_after_delete(sender, instance, **kwargs):
             pass
 
 
-class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
+class BomItemSubstitute(
+    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:
@@ -3582,6 +3612,35 @@ class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
 
         # Prevent duplication of substitute parts
         unique_together = ('part', 'bom_item')
+
+    def __str__(self):
+        """Render a string representation of a BomItemSubstitute instance."""
+        return _('{substitute} (substitute for {part})').format(
+            substitute=self.part.full_name, part=self.bom_item.sub_part.full_name
+        )
+
+    def get_audit_parent_reference(self):
+        """Audit entries for a substitute are included in the history of the *assembly*.
+
+        i.e. the parent of the BomItem (skipping a level), so that all BOM changes
+        are shown in the history of the assembly part.
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        if 'bom_item' in self._state.fields_cache:
+            part_id = self.bom_item.part_id
+        else:
+            part_id = (
+                BomItem.objects
+                .filter(pk=self.bom_item_id)
+                .values_list('part_id', flat=True)
+                .first()
+            )
+
+        if part_id is None:
+            return None
+
+        return ContentType.objects.get_for_model(Part), str(part_id)
 
     def save(self, *args, **kwargs):
         """Enforce a full_clean when saving the BomItemSubstitute model."""

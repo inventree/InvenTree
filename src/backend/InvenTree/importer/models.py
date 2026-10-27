@@ -15,6 +15,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from auditlog.context import disable_auditlog
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 import importer.operations
@@ -1014,7 +1015,9 @@ class DataImportRow(models.Model):
 
             if commit:
                 try:
-                    serializer.save()
+                    # Data imports are not recorded in the audit log
+                    with disable_auditlog():
+                        serializer.save()
                     self.complete = True
 
                 except ValueError as e:  # Exception as e:

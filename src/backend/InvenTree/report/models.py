@@ -35,6 +35,7 @@ from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin import InvenTreePlugin, PluginMixinEnum
 from plugin.registry import registry
+from report.security import restricted_db_access
 
 try:
     from weasyprint import HTML
@@ -258,7 +259,9 @@ class ReportTemplateBase(
     def generate_filename(self, context, **kwargs) -> str:
         """Generate a filename for this report."""
         template_string = Template(self.filename_pattern)
-        return template_string.render(Context(context))
+
+        with restricted_db_access():
+            return template_string.render(Context(context))
 
     def get_template_content(self) -> str:
         """Load template file content directly from storage backend.
@@ -339,15 +342,16 @@ class ReportTemplateBase(
         if context is None:
             context = self.get_context(instance, **kwargs)
 
-        try:
-            return render_to_string(self.template_name, context)
-        except TemplateDoesNotExist:
-            content = self.get_template_content()
-            from django.template import engines
+        with restricted_db_access():
+            try:
+                return render_to_string(self.template_name, context)
+            except TemplateDoesNotExist:
+                content = self.get_template_content()
+                from django.template import engines
 
-            engine = engines['django']
-            template = engine.from_string(content)
-            return template.render(context)
+                engine = engines['django']
+                template = engine.from_string(content)
+                return template.render(context)
 
     def render(
         self, instance: models.Model, context: Optional[dict] = None, **kwargs

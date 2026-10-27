@@ -1,12 +1,25 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 564
+INVENTREE_API_VERSION = 566
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v564 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/xxxxx
+v566 -> 2026-10-25 : https://github.com/inventree/InvenTree/pull/13101
+    - Audit log API (/api/audit/) is available to all authenticated users (entries are filtered by model permissions)
+    - Adds "event_type", "event_label", "notes" and "deltas" fields to the audit log API
+    - Adds "event_type" filter to the audit log API
+    - Stock item history is recorded in the audit log (StockItem events, with event_type values from StockHistoryCode)
+    - Breaking: Removes the stock tracking API endpoints (/api/stock/track/, /api/stock/track/<id>/, /api/stock/track/status/) - use /api/audit/ instead
+    - Breaking: Removes the "tracking_items" field from the StockItem API
+    - Breaking: Removes the "copy_history" option when duplicating a StockItem
+
+v565 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/13069
+    - Adds read-only audit log API endpoints (/api/audit/)
+    - OPTIONS metadata includes a "filters" entry, listing the available choices for choice-based list filters
+
+v564 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/13090
     - BomItem "can_build", "pricing_min_total" and "pricing_max_total" fields now account for "piece_count"
     - BuildLine "unit_quantity" ordering now accounts for the BOM "piece_count"
 

@@ -298,13 +298,6 @@ export default function SystemSettings() {
               ]}
             />
             <GlobalSettingList
-              heading={t`Stock Tracking`}
-              keys={[
-                'STOCK_TRACKING_DELETE_OLD_ENTRIES',
-                'STOCK_TRACKING_DELETE_DAYS'
-              ]}
-            />
-            <GlobalSettingList
               heading={t`Transfer Orders`}
               keys={[
                 'TRANSFERORDER_ENABLED',
