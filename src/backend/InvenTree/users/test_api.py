@@ -131,11 +131,24 @@ class UserAPITests(InvenTreeAPITestCase):
             ).exists()
         )
 
+        # A second user with the same email address (any case) is rejected
+        response = self.post(
+            url,
+            data={**data, 'username': 'test2', 'email': 'AA@example.org'},
+            expected_code=400,
+        )
+        self.assertIn('email', response.data)
+
         # Try to adjust the 'is_superuser' field
         # Only a "superuser" can set this field
         response = self.post(
             url,
-            data={**data, 'username': 'Superuser', 'is_superuser': True},
+            data={
+                **data,
+                'username': 'Superuser',
+                'email': 'su@example.org',
+                'is_superuser': True,
+            },
             expected_code=403,
         )
 
@@ -147,7 +160,12 @@ class UserAPITests(InvenTreeAPITestCase):
 
         response = self.post(
             url,
-            data={**data, 'username': 'Superuser', 'is_superuser': True},
+            data={
+                **data,
+                'username': 'Superuser',
+                'email': 'su@example.org',
+                'is_superuser': True,
+            },
             expected_code=201,
         )
 
@@ -186,7 +204,12 @@ class UserAPITests(InvenTreeAPITestCase):
         # Creating a user without specifying groups must still work
         response = self.post(
             url,
-            data={**data, 'username': 'ungrouped', 'group_ids': []},
+            data={
+                **data,
+                'username': 'ungrouped',
+                'email': 'ungrouped@example.org',
+                'group_ids': [],
+            },
             expected_code=201,
         )
         self.assertEqual(response.data['groups'], [])

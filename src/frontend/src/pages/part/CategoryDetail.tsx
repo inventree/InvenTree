@@ -30,6 +30,9 @@ import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import { partCategoryFields } from '../../forms/PartForms';
@@ -191,6 +194,8 @@ export default function CategoryDetail() {
     defaultValue: 'table'
   });
 
+  const showHistory = useShowHistoryPanel();
+
   const panels: PanelType[] = useMemo(
     () => [
       {
@@ -256,9 +261,15 @@ export default function CategoryDetail() {
         icon: <IconListCheck />,
         hidden: !id || !category.pk,
         content: <PartCategoryTemplateTable categoryId={category?.pk} />
-      }
+      },
+      HistoryPanel({
+        model_type: ModelType.partcategory,
+        model_id: category?.pk,
+        // Not shown for the top-level (root) category view
+        visible: showHistory && !!id && !!category?.pk
+      })
     ],
-    [category, id, partsView]
+    [category, id, partsView, showHistory]
   );
 
   const breadcrumbs = useMemo(

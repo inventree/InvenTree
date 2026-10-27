@@ -69,6 +69,14 @@ function isLineConsumable(record: any): boolean {
   );
 }
 
+/**
+ * Return the quantity of a BOM item required for a single assembly,
+ * accounting for the piece count (total material = quantity x piece_count).
+ */
+export function bomUnitQuantity(bom_item: any): number {
+  return Number(bom_item?.quantity ?? 0) * Number(bom_item?.piece_count ?? 1);
+}
+
 function allocationPartDiffers(allocation: any, bomPartId: number): boolean {
   const allocatedPartId = allocation.part_detail?.pk;
 
@@ -465,7 +473,9 @@ export default function BuildLineTable({
         render: (record: any) => {
           return (
             <Group justify='space-between' wrap='nowrap'>
-              <Text>{record.bom_item_detail?.quantity}</Text>
+              <Text>
+                {formatDecimal(bomUnitQuantity(record.bom_item_detail))}
+              </Text>
               {record?.part_detail?.units && (
                 <Text size='xs'>[{record.part_detail.units}]</Text>
               )}
@@ -581,7 +591,7 @@ export default function BuildLineTable({
 
           if (output?.pk) {
             // If an output is specified, we show the allocated quantity for that output
-            required = record.bom_item_detail?.quantity;
+            required = bomUnitQuantity(record.bom_item_detail);
           }
 
           if (allocated <= 0 && required <= 0) {

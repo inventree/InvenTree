@@ -5,7 +5,6 @@ import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconHistory,
   IconInfoCircle,
   IconPackages,
   IconShoppingCart,
@@ -40,6 +39,9 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -66,7 +68,6 @@ import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTa
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
-import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 import TransferOrderAllocationTable from '../../tables/stock/TransferOrderAllocationTable';
 import { StockDetailsPanel } from './StockDetailsPanel';
 
@@ -174,6 +175,8 @@ export default function StockDetail() {
     return stockitem?.part_detail?.assembly;
   }, [trackedBomItemQuery, stockitem]);
 
+  const showHistory = useShowHistoryPanel();
+
   const stockPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -187,16 +190,6 @@ export default function StockDetail() {
             showSerialNav
             refreshInstance={refreshInstance}
           />
-        )
-      },
-      {
-        name: 'tracking',
-        label: t`Stock Tracking`,
-        icon: <IconHistory />,
-        content: stockitem.pk ? (
-          <StockTrackingTable itemId={stockitem.pk} />
-        ) : (
-          <Skeleton />
         )
       },
       {
@@ -302,9 +295,15 @@ export default function StockDetail() {
         ) : (
           <Skeleton />
         )
-      }
+      },
+      HistoryPanel({
+        model_type: ModelType.stockitem,
+        model_id: stockitem.pk,
+        visible: showHistory
+      })
     ];
   }, [
+    showHistory,
     showSalesAllocations,
     showBuildAllocations,
     showInstalledItems,
@@ -641,23 +640,27 @@ export default function StockDetail() {
           <DetailsBadge
             color='yellow'
             label={t`In Production`}
+            tooltip={t`This stock item is currently being built`}
             visible={stockitem.is_building}
           />,
           <DetailsBadge
             color='blue'
             label={`${t`Serial Number`}: ${stockitem.serial}`}
+            tooltip={t`Serial number of this stock item`}
             visible={!!stockitem.serial}
             key='serial'
           />,
           <DetailsBadge
             color='blue'
             label={`${t`Quantity`}: ${formatDecimal(stockitem.quantity)}`}
+            tooltip={t`Total quantity of this stock item`}
             visible={!stockitem.serial}
             key='quantity'
           />,
           <DetailsBadge
             color='yellow'
             label={`${t`Available`}: ${formatDecimal(available)}`}
+            tooltip={t`Quantity which is not allocated to orders`}
             visible={
               stockitem.in_stock &&
               !stockitem.serial &&
@@ -668,6 +671,7 @@ export default function StockDetail() {
           <DetailsBadge
             color='blue'
             label={`${t`Batch Code`}: ${stockitem.batch}`}
+            tooltip={t`Batch code of this stock item`}
             visible={!!stockitem.batch}
             key='batch'
           />,
@@ -683,18 +687,21 @@ export default function StockDetail() {
           <DetailsBadge
             color='yellow'
             label={t`Stale`}
+            tooltip={t`This stock item is approaching its expiry date`}
             visible={enableExpiry && stockitem.stale && !stockitem.expired}
             key='stale'
           />,
           <DetailsBadge
             color='orange'
             label={t`Expired`}
+            tooltip={t`This stock item has passed its expiry date`}
             visible={enableExpiry && stockitem.expired}
             key='expired'
           />,
           <DetailsBadge
             color='red'
             label={t`Unavailable`}
+            tooltip={t`This stock item is not available in stock`}
             visible={stockitem.in_stock == false}
             key='unavailable'
           />

@@ -6,7 +6,8 @@ import {
   clickOnRowMenu,
   loadTab,
   navigate,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  tableSearch
 } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
@@ -26,7 +27,7 @@ test('Plugins - Settings', async ({ browser }) => {
   // Navigate and select the plugin
   await navigate(page, 'settings/admin/plugin/');
   await clearTableFilters(page);
-  await page.getByLabel('table-search-input').fill('integration');
+  await tableSearch(page, 'integration');
   await page.waitForTimeout(250);
   await page.waitForLoadState('networkidle');
 
@@ -305,7 +306,7 @@ test('Plugins - Creator', async ({ browser }) => {
 
   // View a custom table
   await page.getByRole('button', { name: 'Custom Table Example' }).click();
-  await page.getByRole('textbox', { name: 'table-search-input' }).fill('red');
+  await tableSearch(page, 'red');
   await page.waitForLoadState('networkidle');
   await page.getByRole('cell', { name: 'Red Square Table' }).first().waitFor();
 });

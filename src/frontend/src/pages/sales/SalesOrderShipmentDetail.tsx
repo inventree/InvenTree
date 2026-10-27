@@ -26,6 +26,9 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import {
   useCheckShipmentForm,
@@ -65,6 +68,8 @@ export default function SalesOrderShipmentDetail() {
   const isPending = useMemo(() => !shipment.shipment_date, [shipment]);
   const isChecked = useMemo(() => !!shipment.checked_by, [shipment]);
 
+  const showHistory = useShowHistoryPanel();
+
   const shipmentPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -92,9 +97,14 @@ export default function SalesOrderShipmentDetail() {
             modelTarget={ModelType.stockitem}
           />
         )
-      }
+      },
+      HistoryPanel({
+        model_type: ModelType.salesordershipment,
+        model_id: shipment.pk,
+        visible: showHistory
+      })
     ];
-  }, [isPending, shipment]);
+  }, [isPending, shipment, showHistory]);
 
   const editShipmentFields = useSalesOrderShipmentFields({
     pending: isPending,
@@ -144,30 +154,35 @@ export default function SalesOrderShipmentDetail() {
       <DetailsBadge
         key='pending'
         label={t`Pending`}
+        tooltip={t`This shipment has not yet been sent`}
         color='gray'
         visible={isPending}
       />,
       <DetailsBadge
         key='checked'
         label={t`Checked`}
+        tooltip={t`This shipment has been checked`}
         color='green'
         visible={isPending && isChecked}
       />,
       <DetailsBadge
         key='not-checked'
         label={t`Not Checked`}
+        tooltip={t`This shipment has not been checked`}
         color='red'
         visible={isPending && !isChecked}
       />,
       <DetailsBadge
         key='shipped'
         label={t`Shipped`}
+        tooltip={t`This shipment has been sent`}
         color='green'
         visible={!isPending}
       />,
       <DetailsBadge
         key='delivered'
         label={t`Delivered`}
+        tooltip={t`This shipment has been delivered`}
         color='blue'
         visible={!!shipment.delivery_date}
       />

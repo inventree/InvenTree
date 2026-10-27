@@ -23,6 +23,9 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
@@ -88,6 +91,8 @@ export default function ReturnOrderDetail() {
     );
   }, [order, globalSettings]);
 
+  const showHistory = useShowHistoryPanel();
+
   const orderPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -144,9 +149,14 @@ export default function ReturnOrderDetail() {
             </Accordion.Item>
           </Accordion>
         )
-      }
+      },
+      HistoryPanel({
+        model_type: ModelType.returnorder,
+        model_id: order.pk,
+        visible: showHistory
+      })
     ];
-  }, [order, id, user]);
+  }, [order, id, user, showHistory]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

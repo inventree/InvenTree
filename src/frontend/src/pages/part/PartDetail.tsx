@@ -63,6 +63,9 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -282,6 +285,8 @@ export default function PartDetail() {
   }, [enableRevisionSelection, part, partRevisionOptions]);
 
   // Part data panels (recalculate when part data changes)
+  const showHistory = useShowHistoryPanel();
+
   const partPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -507,7 +512,12 @@ export default function PartDetail() {
             />
           </>
         )
-      }
+      },
+      HistoryPanel({
+        model_type: ModelType.part,
+        model_id: part?.pk,
+        visible: showHistory
+      })
     ];
   }, [
     id,
@@ -518,7 +528,8 @@ export default function PartDetail() {
     bomInformation,
     revisionSelector,
     refreshInstance,
-    instanceInfo
+    instanceInfo,
+    showHistory
   ]);
 
   const breadcrumbs = useMemo(() => {
@@ -560,12 +571,14 @@ export default function PartDetail() {
     return [
       <DetailsBadge
         label={`${t`In Stock`}: ${formatDecimal(partRequirements.total_stock)}`}
+        tooltip={t`Total quantity of this part in stock`}
         color={stockColor}
         visible={!part.virtual && partRequirements.total_stock > 0}
         key='in_stock'
       />,
       <DetailsBadge
         label={`${t`Available`}: ${formatDecimal(partRequirements.unallocated_stock)}`}
+        tooltip={t`Quantity of stock which is not allocated to orders`}
         color='yellow'
         key='available_stock'
         visible={
@@ -575,54 +588,63 @@ export default function PartDetail() {
       />,
       <DetailsBadge
         label={t`No Stock`}
+        tooltip={t`There is no stock available for this part`}
         color='orange'
         visible={!part.virtual && partRequirements.total_stock == 0}
         key='no_stock'
       />,
       <DetailsBadge
         label={`${t`Allocated`}: ${formatDecimal(allocated)}`}
+        tooltip={t`Quantity of stock allocated to orders`}
         color='blue'
         visible={allocated > 0}
         key='allocated'
       />,
       <DetailsBadge
         label={`${t`Required`}: ${formatDecimal(required)}`}
+        tooltip={t`Quantity required for outstanding orders`}
         color='grape'
         visible={required > 0}
         key='required'
       />,
       <DetailsBadge
         label={`${t`On Order`}: ${formatDecimal(partRequirements.ordering)}`}
+        tooltip={t`Quantity on order from outstanding purchase orders`}
         color='blue'
         visible={partRequirements.ordering > 0}
         key='on_order'
       />,
       <DetailsBadge
         label={`${t`In Production`}: ${formatDecimal(partRequirements.scheduled_to_build)}`}
+        tooltip={t`Quantity scheduled to be built by outstanding build orders`}
         color='blue'
         visible={partRequirements.scheduled_to_build > 0}
         key='in_production'
       />,
       <DetailsBadge
         label={`${t`Deficit`}: ${formatDecimal(shortfall)}`}
+        tooltip={t`Shortfall between total stock and required quantity`}
         color='red'
         visible={shortfall > 0}
         key='deficit'
       />,
       <DetailsBadge
         label={t`Inactive`}
+        tooltip={t`This part is inactive`}
         color='red'
         visible={!part.active}
         key='inactive'
       />,
       <DetailsBadge
         label={t`Virtual`}
+        tooltip={t`This is a virtual part, which is not tracked in stock`}
         color='cyan.4'
         visible={part.virtual}
         key='virtual'
       />,
       <DetailsBadge
         label={t`Consumable`}
+        tooltip={t`This is a consumable part`}
         color='cyan.4'
         visible={part.consumable}
         key='consumable'

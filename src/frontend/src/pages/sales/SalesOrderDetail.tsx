@@ -29,6 +29,9 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
@@ -126,6 +129,8 @@ export default function SalesOrderDetail() {
     modelType: ModelType.salesorder
   });
 
+  const showHistory = useShowHistoryPanel();
+
   const orderPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -217,9 +222,14 @@ export default function SalesOrderDetail() {
         ) : (
           <Skeleton />
         )
-      }
+      },
+      HistoryPanel({
+        model_type: ModelType.salesorder,
+        model_id: order.pk,
+        visible: showHistory
+      })
     ];
-  }, [order, id, user, soStatus]);
+  }, [order, id, user, soStatus, showHistory]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),

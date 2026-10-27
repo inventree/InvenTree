@@ -30,6 +30,9 @@ import {
 import type { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { companyFields } from '../../forms/CompanyForms';
 import {
@@ -86,6 +89,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       refreshInstance={refreshInstance}
     />
   );
+
+  const showHistory = useShowHistoryPanel();
 
   const companyPanels: PanelType[] = useMemo(() => {
     return [
@@ -187,9 +192,14 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Addresses`,
         icon: <IconMap2 />,
         content: company?.pk && <AddressTable companyId={company.pk} />
-      }
+      },
+      HistoryPanel({
+        model_type: ModelType.company,
+        model_id: company.pk,
+        visible: showHistory
+      })
     ];
-  }, [id, company, user]);
+  }, [id, company, user, showHistory]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,
@@ -253,6 +263,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       <DetailsBadge
         label={t`Inactive`}
+        tooltip={t`This company is inactive`}
         color='red'
         visible={company.active == false}
       />

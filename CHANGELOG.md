@@ -9,11 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#13034](https://github.com/inventree/InvenTree/pull/13034) moves pricing models into a new dedicated "pricing" model, and provides new API endpoints for managing pricing separately from other models.
+- [#13101](https://github.com/inventree/InvenTree/pull/13101) removes the StockTracking model and its associated API endpoints. Stock history tracking is now handled by the global audit log.
+
 ### Added
+
+- [#13069](https://github.com/inventree/InvenTree/pull/13069) Adds an audit log which tracks changes made to internal data and exposes read-only API endpoints (/api/audit/) for accessing the audit log.
 
 ### Changed
 
 ### Removed
+
+- [#13101](https://github.com/inventree/InvenTree/pull/13101) removes the StockTracking model and its associated API endpoints. Stock history tracking is now handled by the global audit log.
 
 ## 1.6.0 - 2026-10-18
 
