@@ -9,7 +9,8 @@ import {
   setTableChoiceFilter,
   showCalendarView,
   showParametricView,
-  showTableView
+  showTableView,
+  tableSearch
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -595,4 +596,22 @@ test('Sales Orders - Line Item Actions', async ({ browser }) => {
     .getByRole('button', { name: 'action-button-order-parts' })
     .click();
   await page.getByRole('banner').getByRole('button').click();
+});
+
+test('Sales Orders - Parametric View', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'sales/index/salesorders'
+  });
+
+  await showParametricView(page);
+  await clearTableFilters(page);
+
+  // Columns and data are rendered in the parametric table
+  await page.getByRole('button', { name: 'Customer' }).waitFor();
+  await page.getByRole('cell', { name: 'SO0001' }).waitFor();
+
+  // Search within the parametric table
+  await tableSearch(page, 'SO0001');
+  await page.getByRole('cell', { name: 'SO0001' }).waitFor();
+  await expect(page.getByRole('cell', { name: 'SO0002' })).toHaveCount(0);
 });
