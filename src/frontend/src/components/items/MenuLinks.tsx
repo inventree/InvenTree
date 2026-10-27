@@ -9,10 +9,9 @@ import {
   UnstyledButton
 } from '@mantine/core';
 import { type JSX, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
-import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
 import { InvenTreeIcon } from '../../functions/icons';
 
@@ -36,8 +35,6 @@ export function MenuLinks({
   links: MenuLinkItem[];
   beforeClick?: () => void;
 }>) {
-  const navigate = useNavigate();
-
   // Filter out any hidden links
   const visibleLinks = useMemo(
     () => links.filter((item) => !item.hidden),
@@ -80,13 +77,38 @@ export function MenuLinks({
                     </Text>
                   </Group>
                 </Anchor>
+              ) : item.link ? (
+                <UnstyledButton
+                  component={Link}
+                  to={item.link}
+                  onClick={(event) => {
+                    if (
+                      event.button === 0 &&
+                      !event.ctrlKey &&
+                      !event.metaKey &&
+                      !event.shiftKey &&
+                      !event.altKey
+                    ) {
+                      beforeClick?.();
+                    }
+                  }}
+                >
+                  <Group wrap='nowrap'>
+                    {item.icon && (
+                      <InvenTreeIcon
+                        icon={item.icon}
+                        iconProps={{ size: '14' }}
+                      />
+                    )}
+                    <Text fw={500} p={5}>
+                      {item.title}
+                    </Text>
+                  </Group>
+                </UnstyledButton>
               ) : (
                 <UnstyledButton
                   onClick={(event) => {
-                    if (item.link) {
-                      beforeClick?.();
-                      navigateToLink(item.link, navigate, event);
-                    } else if (item.action) {
+                    if (item.action) {
                       beforeClick?.();
                       item.action();
                     }
