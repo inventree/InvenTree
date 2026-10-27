@@ -255,6 +255,13 @@ CORS settings only affect user browsers that respect them. Setting them correctl
 
 Use the INVENTREE_CORS_ORIGIN_ALLOW_ALL and INVENTREE_CORS_ORIGIN_WHITELIST settings - see the [Server Access settings](../start/config.md#server-access).
 
+#### INVE-W17
+**Audit log middleware missing from configuration - Backend**
+
+The `middleware` list provided in the configuration file does not include the audit log middleware (`audit.middleware.InvenTreeAuditlogMiddleware`). This middleware is required for audit log entries to record which user made each change.
+
+The middleware has been added automatically. To remove this warning, add it to the `middleware` list in your configuration file (after `django_structlog.middlewares.RequestMiddleware`).
+
 
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.

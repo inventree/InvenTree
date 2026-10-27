@@ -41,7 +41,7 @@ The following options are available when creating a new build output:
 
 ### Specifying Serial Numbers
 
-Refer to the [serial number generation guide](../stock/tracking.md#generating-serial-numbers) for further information on serial number input.
+Refer to the [serial number generation guide](../stock/traceability.md#generating-serial-numbers) for further information on serial number input.
 
 ### Creating Outputs Without Serial Numbers
 

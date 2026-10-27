@@ -5,7 +5,6 @@ import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconHistory,
   IconInfoCircle,
   IconPackages,
   IconShoppingCart,
@@ -41,6 +40,9 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
@@ -69,7 +71,6 @@ import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTa
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
-import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 import TransferOrderAllocationTable from '../../tables/stock/TransferOrderAllocationTable';
 import { StockDetailsPanel } from './StockDetailsPanel';
 
@@ -182,6 +183,8 @@ export default function StockDetail() {
     return stockitem?.part_detail?.assembly;
   }, [trackedBomItemQuery, stockitem]);
 
+  const showHistory = useShowHistoryPanel();
+
   const stockPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -195,16 +198,6 @@ export default function StockDetail() {
             showSerialNav
             refreshInstance={refreshInstance}
           />
-        )
-      },
-      {
-        name: 'tracking',
-        label: t`Stock Tracking`,
-        icon: <IconHistory />,
-        content: stockitem.pk ? (
-          <StockTrackingTable itemId={stockitem.pk} />
-        ) : (
-          <Skeleton />
         )
       },
       {
@@ -320,9 +313,15 @@ export default function StockDetail() {
         model_type: ModelType.stockitem,
         model_id: stockitem.pk,
         note_count: instanceInfo.note_count
+      }),
+      HistoryPanel({
+        model_type: ModelType.stockitem,
+        model_id: stockitem.pk,
+        visible: showHistory
       })
     ];
   }, [
+    showHistory,
     showSalesAllocations,
     showBuildAllocations,
     showInstalledItems,
