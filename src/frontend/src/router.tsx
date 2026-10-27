@@ -16,11 +16,7 @@ export const LoginLayoutComponent = EagerLoadable(
 );
 
 export const PluginRoutes = Loadable(
-  lazy(() =>
-    import('./components/plugins/PluginRoutes').then((m) => ({
-      default: m.PluginRoutes
-    }))
-  )
+  lazy(() => import('./components/plugins/PluginRoutes'))
 );
 
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
