@@ -136,15 +136,21 @@ ENV INVENTREE_DEBUG=False
 ENV INVENTREE_COMMIT_HASH="${commit_hash}"
 ENV INVENTREE_COMMIT_DATE="${commit_date}"
 
+RUN groupadd --gid 1000 inventree \
+    && useradd --uid 1000 --gid inventree --home-dir ${INVENTREE_HOME} --no-create-home --shell /usr/sbin/nologin inventree \
+    && chown inventree:inventree ${INVENTREE_HOME}
+
 # Copy source code
 COPY src/backend/InvenTree ${INVENTREE_BACKEND_DIR}/InvenTree
 COPY src/backend/requirements.txt ${INVENTREE_BACKEND_DIR}/requirements.txt
 
 # Copy compiled dependencies from prebuild image
-ENV PATH=/root/.local/bin:$PATH
+ENV PYTHONUSERBASE=/opt/inventree/.local
+ENV PATH=/opt/inventree/.local/bin:$PATH
 
 COPY --from=builder_stage ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
-COPY --from=builder_stage /root/.local /root/.local
+COPY --from=builder_stage /root/.local /opt/inventree/.local
+RUN chmod -R a+rX /opt/inventree/.local
 
 # Compile Django backend translations during image build
 RUN bash -c "cd '${INVENTREE_HOME}' && invoke int.backend-compilemessages"
@@ -152,6 +158,8 @@ RUN bash -c "cd '${INVENTREE_HOME}' && invoke int.backend-compilemessages"
 # Generate license information for installed python packages
 RUN pip-licenses --format=json --with-license-file --no-license-path > "${INVENTREE_BACKEND_DIR}/InvenTree/InvenTree/licenses.txt" \
     && test -s "${INVENTREE_BACKEND_DIR}/InvenTree/InvenTree/licenses.txt"
+
+USER inventree:inventree
 
 # Launch the production server
 CMD ["sh", "-c", "exec gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} --chdir ${INVENTREE_BACKEND_DIR}/InvenTree"]

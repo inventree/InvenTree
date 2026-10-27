@@ -827,7 +827,7 @@ SITE_ID = get_setting('INVENTREE_SITE_ID', 'site_id', 1 if SITE_MULTI else None)
 if not SITE_MULTI:
     INSTALLED_APPS.remove('django.contrib.sites')
 
-# List of allowed hosts (default = allow all)
+# List of allowed hosts
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = get_setting(
     'INVENTREE_ALLOWED_HOSTS',
@@ -919,11 +919,11 @@ LANGUAGE_COOKIE_SAMESITE = COOKIE_MODE
 
 """Set the SESSION_COOKIE_SECURE value based on the following rules:
 - False if the server is running in DEBUG mode
-- True if samesite cookie setting is set to 'None'
+- True by default outside DEBUG mode, or if samesite is set to 'None'
 - Otherwise, use the value specified in the configuration file (or env var)
 """
 COOKIE_SECURE = (
-    get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False)
+    get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', not DEBUG)
     or SESSION_COOKIE_SAMESITE == 'None'
 )
 
@@ -966,13 +966,13 @@ USE_X_FORWARDED_PORT = get_boolean_setting(
 
 # Extract CORS options from configuration file
 CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
-    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
+    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=False
 )
 
 CORS_ALLOW_CREDENTIALS = get_boolean_setting(
     'INVENTREE_CORS_ALLOW_CREDENTIALS',
     config_key='cors.allow_credentials',
-    default_value=True,
+    default_value=False,
 )
 
 # Only allow CORS access to the following URL endpoints

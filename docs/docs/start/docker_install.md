@@ -57,6 +57,9 @@ The first step is to edit the environment variables, located in the `.env` file.
 !!! warning "External Volume"
     You must define the `INVENTREE_EXT_VOLUME` variable - this must point to a directory *on your local machine* where persistent data is to be stored.
 
+!!! warning "Data Directory Ownership"
+    The InvenTree server and worker run as UID/GID `1000:1000`. On Linux, ensure the external data directory is writable by this identity before starting the containers. For a new installation, create the directory and set its ownership with `sudo mkdir -p ./inventree-data` followed by `sudo chown 1000:1000 ./inventree-data`. For an existing installation, stop the containers and update ownership only for InvenTree-managed files and directories; do not recursively change ownership of `./inventree-data/pgdb`, which belongs to PostgreSQL. Existing config and key files should be owned by `1000:1000` and have mode `0600`.
+
 !!! warning "Database Credentials"
     You must also define the database username (`INVENTREE_DB_USER`) and password (`INVENTREE_DB_PASSWORD`). You should ensure they are changed from the default values for added security
 

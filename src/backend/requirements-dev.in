@@ -7,7 +7,7 @@ django-test-migrations                  # Unit testing for database migrations
 isort                                   # python import sorting
 pip-tools                               # Compile pip requirements
 prek                                    # Git pre commit hooks
-setuptools                              # Standard dependency
+setuptools>=84.1.0                      # Standard dependency
 pdfminer.six                            # PDF validation
 ty                                      # type checking
 django-types                            # typing

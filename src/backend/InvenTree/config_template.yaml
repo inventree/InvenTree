@@ -133,9 +133,9 @@ auto_update: False
 
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
-# Default behaviour is to allow all hosts (THIS IS NOT SECURE!)
+# Set this to the hostnames used to access InvenTree, or configure INVENTREE_SITE_URL.
 allowed_hosts:
-  - '*'
+  - 'localhost'
 
 # Trusted origins (see CSRF_TRUSTED_ORIGINS in Django settings documentation)
 # If you are running behind a proxy, you may need to add the proxy address here
@@ -156,8 +156,8 @@ allowed_hosts:
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
-  allow_all: true
-  allow_credentials: true
+  allow_all: false
+  allow_credentials: false
 
   # whitelist:
   # - https://example.com

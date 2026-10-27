@@ -2,6 +2,7 @@
 
 import base64
 import os
+import tempfile
 from datetime import datetime, timedelta
 from decimal import Decimal
 from importlib import import_module
@@ -161,11 +162,15 @@ class CorsTest(TestCase):
 
         return self.client.options(url, headers=headers)
 
+    @override_settings(
+        CORS_ALLOW_ALL_ORIGINS=True,
+        CORS_ALLOW_CREDENTIALS=True,
+    )
     def test_no_origin(self):
         """Test that CORS headers are not included for regular requests.
 
         - We use the /api/ endpoint for this test (it does not require auth)
-        - By default, in debug mode *all* CORS origins are allowed
+        - This test explicitly enables all origins and credentials
         """
         # Perform an initial response without the "origin" header
         response = self.client.get('/api/')
@@ -189,6 +194,20 @@ class CorsTest(TestCase):
 
     @override_settings(
         CORS_ALLOW_ALL_ORIGINS=False,
+        CORS_ALLOWED_ORIGINS=[],
+        CORS_ALLOW_CREDENTIALS=False,
+    )
+    def test_cors_denied_without_allowlist(self):
+        """Reject cross-origin requests when no origin is allowlisted."""
+        response = self.preflight('/api/', origin='http://random-external-server.com')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('access-control-allow-origin', response.headers)
+        self.assertNotIn('access-control-allow-credentials', response.headers)
+
+    @override_settings(
+        CORS_ALLOW_ALL_ORIGINS=False,
+        CORS_ALLOW_CREDENTIALS=True,
         CORS_ALLOWED_ORIGINS=['http://my-external-server.com'],
         CORS_ALLOWED_ORIGIN_REGEXES=[],
     )
@@ -1396,6 +1415,30 @@ class TestSettings(InvenTreeTestCase):
         )
         # Clean up again
         legacy_path.unlink(missing_ok=True)
+
+    def test_private_file_permissions(self):
+        """Sensitive files and their generated directory use private modes."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            private_dir = Path(temp_dir) / 'private'
+            private_dir.mkdir(mode=0o755)
+            config.ensure_private_dir(private_dir, restrict_existing=True)
+            self.assertEqual(private_dir.stat().st_mode & 0o777, 0o700)
+
+            secret_file = private_dir / 'secret.txt'
+            self.assertTrue(config.write_private_file(secret_file, 'secret'))
+            self.assertEqual(secret_file.stat().st_mode & 0o777, 0o600)
+            self.assertFalse(config.write_private_file(secret_file, 'replacement'))
+            self.assertEqual(secret_file.read_text(), 'secret')
+
+            binary_file = private_dir / 'private.pem'
+            self.assertTrue(config.write_private_file(binary_file, b'private key'))
+            self.assertEqual(binary_file.stat().st_mode & 0o777, 0o600)
+
+            legacy_file = private_dir / 'legacy-secret.txt'
+            legacy_file.write_text('legacy secret')
+            legacy_file.chmod(0o644)
+            config.check_private_file_permissions(legacy_file)
+            self.assertEqual(legacy_file.stat().st_mode & 0o777, 0o600)
 
     def test_helpers_plugin_file(self):
         """Test get_plugin_file."""
