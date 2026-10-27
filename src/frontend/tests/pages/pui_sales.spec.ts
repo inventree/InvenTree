@@ -382,6 +382,62 @@ test('Sales Orders - Complete Shipment', async ({ browser }) => {
   await page.getByRole('cell', { name: 'Customer D' }).waitFor();
 });
 
+// Check / uncheck / view / cancel shipment row actions
+test('Sales Orders - Shipment Row Actions', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'sales/sales-order/7/shipments'
+  });
+
+  const shipmentReference = `SHIP-${Math.floor(Math.random() * 100000)}`;
+
+  await clearTableFilters(page);
+  await page
+    .getByRole('button', { name: 'action-button-add-shipment' })
+    .click();
+  await page
+    .getByLabel('text-field-reference', { exact: true })
+    .fill(shipmentReference);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Shipment created').first().waitFor();
+
+  const cell = page.getByRole('cell', { name: shipmentReference });
+
+  // Check the shipment
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Check Shipment' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Shipment marked as checked').first().waitFor();
+
+  // Uncheck the shipment
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Uncheck Shipment' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Shipment marked as unchecked').first().waitFor();
+
+  // Open the "complete shipment" form, then cancel it
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Complete Shipment' }).click();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // View the parent sales order from the global shipments table
+  await navigate(page, 'sales/index/shipments');
+  await clearTableFilters(page);
+  await page.getByLabel('table-search-input').fill(shipmentReference);
+  await clickOnRowMenu(page.getByRole('cell', { name: shipmentReference }));
+  await page.getByRole('menuitem', { name: 'View Sales Order' }).click();
+  await page.getByText('Sales Order: SO0007').first().waitFor();
+
+  // Cancel the shipment
+  await loadTab(page, 'Shipments');
+  await clearTableFilters(page);
+  await clickOnRowMenu(page.getByRole('cell', { name: shipmentReference }));
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+  await page.getByRole('cell', { name: shipmentReference }).waitFor({
+    state: 'detached'
+  });
+});
+
 test('Sales Orders - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'sales/sales-order/14/detail'
