@@ -1454,6 +1454,33 @@ class AuditEventTest(InvenTreeAPITestCase):
         self.assertEqual(other_entry.event_type, AuditTestEvents.COUNTED)
         self.assertEqual(other_entry.changes_dict, {})
 
+    def test_nested_events_same_instance(self):
+        """Nested events for the same (unsaved) instance each create an entry."""
+        from contextlib import ExitStack
+
+        from audit.helpers import audit_event
+
+        n = self.entries().count()
+
+        # Contexts exit in reverse order (newest event first)
+        with ExitStack() as stack:
+            for quantity in [1, 2]:
+                stack.enter_context(
+                    audit_event(
+                        self.company,
+                        AuditTestEvents.COUNTED,
+                        deltas={'quantity': quantity},
+                    )
+                )
+
+        entries = list(self.entries()[n:])
+
+        self.assertEqual(len(entries), 2)
+        self.assertEqual(
+            sorted(entry.additional_data['deltas']['quantity'] for entry in entries),
+            [1, 2],
+        )
+
     def test_new_instance(self):
         """An event can be attached to the creation of a new instance."""
         from audit.helpers import audit_event

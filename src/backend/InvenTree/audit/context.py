@@ -20,6 +20,7 @@ _audit_source = ContextVar('inventree_audit_source', default=None)
 _audit_batch = ContextVar('inventree_audit_batch', default=None)
 _audit_batch_cid = ContextVar('inventree_audit_batch_cid', default=None)
 _audit_events = ContextVar('inventree_audit_events', default=None)
+_audit_flush_event = ContextVar('inventree_audit_flush_event', default=None)
 
 
 @contextlib.contextmanager
@@ -156,8 +157,39 @@ def has_pending_event(instance) -> bool:
     return registry is not None and registry.find(instance) is not None
 
 
+@contextlib.contextmanager
+def flushing_event(event: PendingEvent):
+    """Consume the provided event for any entry recorded for its instance within this context.
+
+    Used when writing an entry for a specific event (see audit.helpers.write_event_entry),
+    which may not be the first pending event for the instance.
+    """
+    token = _audit_flush_event.set(event)
+
+    try:
+        yield
+    finally:
+        _audit_flush_event.reset(token)
+
+
 def consume_event(instance) -> Optional[PendingEvent]:
     """Return (and consume) the first pending event for the provided instance, if any."""
+    event = _audit_flush_event.get()
+
+    if (
+        event is not None
+        and not event.consumed
+        and (
+            event.instance is instance
+            or (
+                (key := instance_key(instance)) is not None
+                and key == instance_key(event.instance)
+            )
+        )
+    ):
+        event.consumed = True
+        return event
+
     registry = _audit_events.get()
 
     if registry is None:

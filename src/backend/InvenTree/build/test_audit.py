@@ -335,3 +335,42 @@ class BuildStockAuditTest(BuildTestBase):
         self.assertEqual(
             entry.additional_data['deltas']['stockitem']['pk'], component.pk
         )
+
+    def test_consume_install_multiple(self):
+        """Installing multiple components into one output records an entry for each."""
+        from build.models import BuildItem
+        from stock.models import StockItem
+        from stock.status_codes import StockHistoryCode
+
+        components = [
+            StockItem.objects.create(part=self.sub_part_3, quantity=1, serial=serial)
+            for serial in ['SN-1', 'SN-2']
+        ]
+
+        for component in components:
+            BuildItem.objects.create(
+                build_line=self.line_3,
+                stock_item=component,
+                quantity=1,
+                install_into=self.output_1,
+            )
+
+        n_output = len(self.stock_entries(self.output_1))
+
+        self.build.complete_allocations(
+            BuildItem.objects.filter(stock_item__in=components), user=self.user
+        )
+
+        entries = self.stock_entries(self.output_1, n_output)
+
+        self.assertEqual(len(entries), 2)
+
+        for entry in entries:
+            self.assertEqual(entry.event_type, StockHistoryCode.INSTALLED_CHILD_ITEM)
+
+        self.assertEqual(
+            sorted(
+                entry.additional_data['deltas']['stockitem']['pk'] for entry in entries
+            ),
+            sorted(component.pk for component in components),
+        )

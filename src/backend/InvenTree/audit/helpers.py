@@ -392,6 +392,7 @@ def audit_event(
 
 def write_event_entry(event) -> None:
     """Write an audit entry for an event which has not been attached to any other entry."""
+    from audit.context import flushing_event
     from audit.models import AuditLogEntry
 
     instance = event.instance
@@ -408,9 +409,12 @@ def write_event_entry(event) -> None:
     if any(result is False for _, result in results):
         return
 
-    AuditLogEntry.objects.log_create(
-        instance, action=action, changes={}, force_log=True
-    )
+    # Attach this event to the entry - not the first pending event for the instance,
+    # which may belong to an (outer) context which has not yet exited
+    with flushing_event(event):
+        AuditLogEntry.objects.log_create(
+            instance, action=action, changes={}, force_log=True
+        )
 
 
 def log_event(
