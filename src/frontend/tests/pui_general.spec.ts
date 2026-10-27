@@ -55,7 +55,23 @@ test('General - Search', async ({ browser }) => {
   await popup.close();
 
   // Click through to the "Customer" results
-  await page.getByRole('button', { name: 'view-all-results-customer' }).click();
+  const viewAllCustomers = page.getByRole('link', {
+    name: 'view-all-results-customer'
+  });
+  await expect(viewAllCustomers).toHaveAttribute(
+    'href',
+    /\/web\/sales\/index\/customers\?search=another\+customer/
+  );
+
+  const overviewPopupPromise = page.waitForEvent('popup');
+  await viewAllCustomers.click({ modifiers: ['Control'] });
+  const overviewPopup = await overviewPopupPromise;
+  await overviewPopup.waitForURL(
+    '**/web/sales/index/customers?search=another+customer'
+  );
+  await overviewPopup.close();
+
+  await viewAllCustomers.click();
 
   await page.waitForURL('**/sales/index/customers**');
   await page.getByText('Custom table filters are active').waitFor();
@@ -73,7 +89,9 @@ test('General - Search', async ({ browser }) => {
     .first()
     .waitFor();
 
-  await page.getByLabel('view-all-results-manufacturerpart').click();
+  await page
+    .getByRole('link', { name: 'view-all-results-manufacturerpart' })
+    .click();
   await page.waitForURL('**/purchasing/index/manufacturer-parts**');
   await page.getByRole('cell', { name: 'RT0402BRD07100KL' }).waitFor();
 });

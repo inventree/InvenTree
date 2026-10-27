@@ -39,18 +39,14 @@ import {
   useMemo,
   useState
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { resolveItem } from '@lib/functions/Conversion';
-import {
-  eventModified,
-  getDetailUrl,
-  navigateToLink
-} from '@lib/functions/Navigation';
+import { eventModified, getDetailUrl } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { useApi } from '../../contexts/ApiContext';
 import { useUserSettingsState } from '../../states/SettingsStates';
@@ -81,7 +77,6 @@ export default function NavigationTree({
   children?: ReactNode;
 }>) {
   const api = useApi();
-  const navigate = useNavigate();
   const treeState = useTree();
 
   const userSettings = useUserSettingsState();
@@ -233,19 +228,6 @@ export default function NavigationTree({
     [loadingNodes, allNodes, api, endpoint, childIdentifier]
   );
 
-  const follow = useCallback(
-    (node: TreeNodeData, event?: any) => {
-      const url = getDetailUrl(modelType, node.value);
-      if (eventModified(event)) {
-        navigateToLink(url, navigate, event);
-      } else {
-        onClose();
-        navigate(url);
-      }
-    },
-    [modelType, navigate]
-  );
-
   // In search mode use the query results directly; in browse mode use the accumulated lazy-load list
   const sourceNodes: any[] = useMemo(
     () => (debouncedSearch ? (query.data ?? []) : allNodes),
@@ -356,7 +338,19 @@ export default function NavigationTree({
           >
             <HoverCard.Target>
               <Anchor
-                onClick={(event: any) => follow(payload.node, event)}
+                component={Link}
+                to={getDetailUrl(modelType, payload.node.value)}
+                onClick={(event) => {
+                  event.stopPropagation();
+
+                  if (
+                    event.button === 0 &&
+                    !eventModified(event) &&
+                    !event.altKey
+                  ) {
+                    onClose();
+                  }
+                }}
                 aria-label={`nav-tree-item-${payload.node.value}`}
                 c='var(--mantine-color-text)'
               >
@@ -385,7 +379,8 @@ export default function NavigationTree({
     [
       treeState,
       childIdentifier,
-      follow,
+      modelType,
+      onClose,
       loadingNodes,
       fetchChildren,
       debouncedSearch
