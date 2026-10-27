@@ -252,7 +252,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'DISPLAY_HISTORY_TAB': {
         'name': _('Show Change History'),
         'description': _(
-            'Display the change history (audit log) panel on detail pages (staff users only)'
+            'Display the change history (audit log) panel on detail pages'
         ),
         'default': False,
         'validator': bool,

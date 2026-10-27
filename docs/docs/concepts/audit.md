@@ -36,7 +36,6 @@ To keep the audit log focused and performant, some changes are intentionally *no
 
 - **Derived fields** - Internal or calculated fields (such as tree structure fields, cached pricing values and metadata) are excluded.
 - **Data import** - Changes made using the [data import](./data_import.md) tool are not recorded.
-- **Stock items** - Changes to stock items are tracked separately using [stock tracking](../stock/tracking.md).
 - **Unsupported models** - Only the models listed below are audited.
 
 ### Audited Models
@@ -44,6 +43,21 @@ To keep the audit log focused and performant, some changes are intentionally *no
 The following models are currently audited. Where a model has a *parent*, changes to that model are also displayed in the history of the parent item.
 
 {{ audited_models() }}
+
+### Events
+
+Some models record named *events* in the audit log, in addition to field changes. An event describes *what happened* to an item (for example, an operation which affects multiple fields, or multiple items), and may include:
+
+- **Event type** - The type of event (displayed in place of the action in the audit log table)
+- **Notes** - Optional notes provided by the user when the event was recorded
+- **Deltas** - Additional information about the event, such as quantities or references to related objects. References to related objects are recorded as they were at the time of the event.
+
+An event may be recorded even if no fields of the item were changed.
+
+For example, stock operations (such as moving, counting or shipping stock) are recorded as [stock tracking](../stock/tracking.md) events against each affected stock item.
+
+!!! warning "Disabling the Audit Log"
+    Events are recorded in the audit log, and are subject to the same settings as all other audit entries. If the audit log is disabled, events are **not** recorded - this includes **all stock tracking history**.
 
 ### Viewing Change History
 
@@ -60,8 +74,9 @@ For example, the history panel for a purchase order shows changes made to the or
 The *History* panel is only displayed if **all** of the following conditions are met:
 
 - The audit log is enabled (via the `Enable Audit Log` system setting)
-- The user is a *staff* user
 - The user has enabled the *Show Change History* user setting
+
+The entries displayed in the *History* panel are filtered by the permissions of the user (see [Permissions](#permissions) below).
 
 {{ image("concepts/audit_user_setting.png", "Show change history setting") }}
 
@@ -79,10 +94,12 @@ The audit log table can be filtered by action, user, date range and model type:
 
 Access to the audit log is restricted:
 
-- The audit log (including the `/api/audit/` API endpoint) is only available to *staff* users.
-- Audit entries are additionally filtered by the user's [role permissions](../settings/permissions.md). A user can only view audit entries for models which they have permission to view.
+- Audit entries are filtered by the user's [role permissions](../settings/permissions.md). A user can only view audit entries for models which they have permission to view.
 - Some models (e.g. attachments and parameters) require the user to also have permission to view the *parent* model.
+- The history of some models (e.g. global settings) is only available to *staff* users.
 - The remote IP address associated with each entry is only visible to staff users.
+- References to related objects (recorded against [events](#events)) are hidden if the user does not have permission to view the related model.
+- The *Audit Log* panel in the Admin Center is only available to staff users.
 
 ### Data Retention
 

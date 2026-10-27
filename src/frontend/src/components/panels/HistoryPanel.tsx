@@ -9,25 +9,24 @@ import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsStates';
-import { useUserState } from '../../states/UserState';
 import { AuditLogTable } from '../../tables/general/AuditLogTable';
 
 /**
  * Determine whether the history panel should be displayed on detail pages:
- * - Only available to staff users
+ * - The audit log must be enabled
  * - Must be enabled via the 'DISPLAY_HISTORY_TAB' user setting
+ *
+ * Note: The displayed entries are filtered by the permissions of the user
  */
 export function useShowHistoryPanel(): boolean {
-  const user = useUserState();
   const userSettings = useUserSettingsState();
   const globalSettings = useGlobalSettingsState();
 
   return useMemo(
     () =>
-      user.isStaff() &&
       globalSettings.isSet('AUDIT_LOG_ENABLED') &&
       userSettings.isSet('DISPLAY_HISTORY_TAB', false),
-    [user, userSettings, globalSettings]
+    [userSettings, globalSettings]
   );
 }
 
