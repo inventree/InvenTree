@@ -1758,3 +1758,45 @@ class ReportSecurityTest(InvenTreeAPITestCase):
         """Regular models still work."""
         out = self.render("{% filter_db_model 'part.part' as q %}{{ q|length }}")
         self.assertGreater(int(out), 0)
+
+
+class ReportTraversalSecurityTest(InvenTreeAPITestCase):
+    """Restricted models cannot be reached by dot-notation traversal."""
+
+    fixtures = ['category', 'part', 'location', 'stock', 'build']
+
+    def test_traversal_to_api_tokens(self):
+        """Traversing build.issued_by.api_tokens must be denied."""
+        from django.core.exceptions import PermissionDenied
+        from django.template import Context, Template
+
+        from build.models import Build
+        from users.models import ApiToken
+
+        build = Build.objects.first()
+        build.issued_by = self.user
+        build.save()
+
+        ApiToken.objects.create(user=self.user, name='secret-token')
+
+        source = (
+            '{% for token in build.issued_by.api_tokens.all %}'
+            '{{ token.key }}|{{ token.name }}{% endfor %}'
+        )
+        context = {'build': build}
+
+        # Without the guard the token is readable (sanity check)
+        out = Template(source).render(Context(context))
+        self.assertIn('secret-token', out)
+
+        # Rendering through the report machinery is denied
+        template = ReportTemplate.objects.create(
+            name='traversal',
+            description='traversal test',
+            model_type='build',
+            template=ContentFile(source, 'traversal.html'),
+            enabled=True,
+        )
+
+        with self.assertRaises(PermissionDenied):
+            template.render_as_string(build, context=context)
