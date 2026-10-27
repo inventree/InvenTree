@@ -67,6 +67,10 @@ test('Stock - Location Tree', async ({ browser }) => {
   await navigate(page, 'stock/location/17/stock-items');
   await page.getByLabel('nav-breadcrumb-action').click();
 
+  await expect(
+    page.getByRole('link', { name: 'breadcrumb-2-storage-room-a' })
+  ).toHaveAttribute('href', /\/web\/stock\/location\/\d+\/?$/);
+
   for (let ii = 0; ii <= 5; ii++) {
     await page
       .locator('div')
