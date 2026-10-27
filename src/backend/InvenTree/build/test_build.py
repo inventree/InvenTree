@@ -31,15 +31,11 @@ from InvenTree.unit_test import (
     InvenTreeTestCase,
     findOffloadedEvent,
     findOffloadedTask,
+    stock_history_count,
 )
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
-from stock.models import (
-    StockItem,
-    StockItemTestResult,
-    StockItemTracking,
-    StockLocation,
-)
+from stock.models import StockItem, StockItemTestResult, StockLocation
 from stock.status_codes import StockStatus
 from users.models import Owner
 
@@ -1540,7 +1536,7 @@ class BuildTaskTests(BuildTestBase):
         self.assertEqual(self.build.status, BuildStatus.COMPLETE)
 
         n_consumed = StockItem.objects.filter(consumed_by=self.build).count()
-        n_tracking = StockItemTracking.objects.count()
+        n_tracking = stock_history_count()
 
         # A redelivered task run must skip based on the (locked) database state
         with mock.patch('build.tasks.trigger_event') as trigger:
@@ -1550,7 +1546,7 @@ class BuildTaskTests(BuildTestBase):
         self.assertEqual(
             StockItem.objects.filter(consumed_by=self.build).count(), n_consumed
         )
-        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+        self.assertEqual(stock_history_count(), n_tracking)
 
     def test_allocate_stock_merges_quantities(self):
         """Repeated allocations against the same (line, stock item) accumulate.
@@ -1615,7 +1611,7 @@ class BuildTaskTests(BuildTestBase):
         self.assertEqual(self.build.completed, 10)
         self.assertFalse(self.output_1.is_building)
 
-        n_tracking = StockItemTracking.objects.count()
+        n_tracking = stock_history_count()
 
         # Run the task again (simulating a duplicated / redelivered task)
         build.tasks.complete_build_outputs(
@@ -1630,7 +1626,7 @@ class BuildTaskTests(BuildTestBase):
         # and no additional stock history has been generated
         self.build.refresh_from_db()
         self.assertEqual(self.build.completed, 10)
-        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+        self.assertEqual(stock_history_count(), n_tracking)
 
     def test_complete_output_twice_rejected(self):
         """Completing or scrapping an already-completed output must be rejected.
