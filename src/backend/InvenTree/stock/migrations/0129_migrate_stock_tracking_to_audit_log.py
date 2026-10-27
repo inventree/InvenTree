@@ -319,21 +319,6 @@ def migrate_tracking_entries(apps, schema_editor):
         print(f'- Migrated {migrated} / {n} entries')
 
 
-def reverse_tracking_entries(apps, schema_editor):
-    """Remove audit log entries which were migrated from StockItemTracking."""
-    AuditLogEntry = apps.get_model('audit', 'auditlogentry')
-    ContentType = apps.get_model('contenttypes', 'contenttype')
-
-    try:
-        stock_ct = ContentType.objects.get(app_label='stock', model='stockitem')
-    except ContentType.DoesNotExist:
-        return
-
-    AuditLogEntry.objects.filter(
-        content_type=stock_ct, additional_data__has_key='tracking_id'
-    ).delete()
-
-
 class Migration(migrations.Migration):
     """Copy legacy stock tracking entries into the audit log."""
 
@@ -348,7 +333,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # The migrated entries are retained on reversal, as the legacy table
+        # (dropped in the following migration) cannot be restored
         migrations.RunPython(
-            migrate_tracking_entries, reverse_code=reverse_tracking_entries
+            migrate_tracking_entries, reverse_code=migrations.RunPython.noop
         )
     ]
