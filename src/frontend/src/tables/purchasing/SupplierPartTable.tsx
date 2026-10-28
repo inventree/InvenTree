@@ -145,6 +145,12 @@ export function SupplierPartTable({
         accessor: 'in_stock',
         sortable: true
       }),
+      DecimalColumn({
+        accessor: 'on_order',
+        title: t`On Order`,
+        sortable: true,
+        defaultVisible: false
+      }),
       {
         accessor: 'packaging',
         sortable: true,

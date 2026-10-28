@@ -407,6 +407,7 @@ class SupplierPartList(
         'packaging',
         'pack_quantity',
         'in_stock',
+        'on_order',
         'updated',
     ]
 
