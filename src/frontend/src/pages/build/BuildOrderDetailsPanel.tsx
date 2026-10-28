@@ -62,6 +62,14 @@ export function BuildOrderDetailsPanel({
       copy: true
     },
     {
+      type: 'text',
+      name: 'part_detail.description',
+      icon: 'description',
+      label: t`Part Description`,
+      hidden: !instance?.part_detail?.description,
+      copy: true
+    },
+    {
       type: 'status',
       name: 'status',
       label: t`Status`,
