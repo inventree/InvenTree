@@ -23,13 +23,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import {
@@ -37,7 +31,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -68,11 +61,6 @@ export default function ReturnOrderDetail() {
     }
   });
 
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.returnorder,
-    modelId: order?.pk
-  });
-
   const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
 
   const orderOpen = useMemo(() => {
@@ -99,8 +87,6 @@ export default function ReturnOrderDetail() {
       globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
     );
   }, [order, globalSettings]);
-
-  const showHistory = useShowHistoryPanel();
 
   const orderPanels: PanelType[] = useMemo(() => {
     return [
@@ -158,29 +144,9 @@ export default function ReturnOrderDetail() {
             </Accordion.Item>
           </Accordion>
         )
-      },
-      ParametersPanel({
-        model_type: ModelType.returnorder,
-        model_id: order.pk,
-        parameter_count: instanceInfo.parameter_count
-      }),
-      AttachmentPanel({
-        model_type: ModelType.returnorder,
-        model_id: order.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.returnorder,
-        model_id: order.pk,
-        note_count: instanceInfo.note_count
-      }),
-      HistoryPanel({
-        model_type: ModelType.returnorder,
-        model_id: order.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [order, id, user, instanceInfo, showHistory]);
+  }, [order, id, user]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

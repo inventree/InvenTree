@@ -26,13 +26,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import {
   useCheckShipmentForm,
   useCompleteShipmentForm,
@@ -44,7 +38,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { SalesOrderShipmentDetailsPanel } from './SalesOrderShipmentDetailsPanel';
@@ -69,15 +62,8 @@ export default function SalesOrderShipmentDetail() {
     }
   });
 
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.salesordershipment,
-    modelId: shipment?.pk
-  });
-
   const isPending = useMemo(() => !shipment.shipment_date, [shipment]);
   const isChecked = useMemo(() => !!shipment.checked_by, [shipment]);
-
-  const showHistory = useShowHistoryPanel();
 
   const shipmentPanels: PanelType[] = useMemo(() => {
     return [
@@ -106,29 +92,9 @@ export default function SalesOrderShipmentDetail() {
             modelTarget={ModelType.stockitem}
           />
         )
-      },
-      ParametersPanel({
-        model_type: ModelType.salesordershipment,
-        model_id: shipment.pk,
-        parameter_count: instanceInfo.parameter_count
-      }),
-      AttachmentPanel({
-        model_type: ModelType.salesordershipment,
-        model_id: shipment.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.salesordershipment,
-        model_id: shipment.pk,
-        note_count: instanceInfo.note_count
-      }),
-      HistoryPanel({
-        model_type: ModelType.salesordershipment,
-        model_id: shipment.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [isPending, shipment, instanceInfo, showHistory]);
+  }, [isPending, shipment]);
 
   const editShipmentFields = useSalesOrderShipmentFields({
     pending: isPending,

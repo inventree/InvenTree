@@ -5,6 +5,8 @@ from typing import Generic, Optional, TypedDict, TypeVar
 
 from django.db import models
 
+from InvenTree.model_features import ModelFeatureMixin
+
 _Model = TypeVar('_Model', bound=models.Model, covariant=True)
 
 REPORT_ATTRIBUTE_MARKER = '_report_attribute_description'
@@ -54,12 +56,14 @@ class BaseReportContext(TypedDict):
     """Base context for a report model."""
 
 
-class InvenTreeReportMixin(models.Model):
+class InvenTreeReportMixin(ModelFeatureMixin, models.Model):
     """A mixin class for adding report generation functionality to a model class.
 
     In addition to exposing the model to the report generation interface,
     this mixin provides a hook for providing extra context information to the reports.
     """
+
+    MODEL_FEATURE = 'org.inventree.i.modelfeatures.report'
 
     class Meta:
         """Metaclass options for this mixin."""

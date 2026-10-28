@@ -31,6 +31,7 @@ import InvenTree.ready
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.exceptions import log_error
+from InvenTree.model_features import clear_model_features_cache
 
 from .helpers import (
     IntegrationPluginError,
@@ -1071,6 +1072,8 @@ class PluginsRegistry:
             self._try_reload(apps.populate, loadable_apps)
         else:
             self._try_reload(apps.set_installed_apps, loadable_apps)
+
+        clear_model_features_cache()
 
     def _clean_installed_apps(self):
         for plugin in self.installed_apps:

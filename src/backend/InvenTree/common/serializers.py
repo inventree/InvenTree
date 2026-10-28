@@ -25,6 +25,7 @@ from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.model_features import get_model_features
 from InvenTree.models import InvenTreeNoteMixin, InvenTreeParameterMixin
 from InvenTree.serializers import (
     ContentTypeField,
@@ -528,7 +529,7 @@ class FlagSerializer(serializers.Serializer):
         return data
 
 
-class ContentTypeSerializer(serializers.Serializer):
+class ContentTypeSerializer(FilterableSerializerMixin, serializers.ModelSerializer):
     """Serializer for ContentType models."""
 
     pk = serializers.IntegerField(read_only=True)
@@ -537,15 +538,33 @@ class ContentTypeSerializer(serializers.Serializer):
     app_labeled_name = serializers.CharField(read_only=True)
     is_plugin = serializers.SerializerMethodField('get_is_plugin', read_only=True)
 
+    features = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'read_only': True},
+        default_include=False,
+        filter_name='features',
+    )
+
     class Meta:
         """Meta options for ContentTypeSerializer."""
 
         model = ContentType
-        fields = ['pk', 'app_label', 'model', 'app_labeled_name', 'is_plugin']
+        fields = [
+            'pk',
+            'app_label',
+            'model',
+            'app_labeled_name',
+            'is_plugin',
+            'features',
+        ]
 
     def get_is_plugin(self, obj) -> bool:
         """Return True if the model is a plugin model."""
         return obj.app_label in plugin_registry.installed_apps
+
+    def get_features(self, obj) -> list[str]:
+        """Return the list of generic features supported by this model type."""
+        return get_model_features(obj.model_class())
 
 
 @register_importer()
