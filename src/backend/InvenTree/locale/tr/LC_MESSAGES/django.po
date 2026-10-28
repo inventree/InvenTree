@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 00:30+0000\n"
-"PO-Revision-Date: 2026-10-26 00:34\n"
+"POT-Creation-Date: 2026-10-27 23:44+0000\n"
+"PO-Revision-Date: 2026-10-27 23:49\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -53,7 +53,7 @@ msgstr "Bu alan eşsiz olmalı."
 msgid "Item no longer matches the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:896 InvenTree/models.py:1661
+#: InvenTree/api.py:896 InvenTree/models.py:1664
 msgid "User does not have permission to view this model"
 msgstr "Kullanıcının bu modeli görüntüleme izni yok"
 
@@ -92,8 +92,8 @@ msgid "Could not convert {original} to {unit}"
 msgstr "{original} birimi {unit} birimine dönüştürülemedi"
 
 #: InvenTree/conversion.py:334 InvenTree/conversion.py:348
-#: InvenTree/helpers.py:636 order/models.py:917 order/models.py:1215
-#: part/models.py:3089 stock/models.py:2115
+#: InvenTree/helpers.py:645 order/models.py:924 order/models.py:1216
+#: part/models.py:3089 stock/models.py:2152
 msgid "Invalid quantity provided"
 msgstr "Geçersiz veri sağlandı"
 
@@ -113,14 +113,14 @@ msgstr "Tarih giriniz"
 msgid "Invalid decimal value"
 msgstr "Geçersiz ondalık değer"
 
-#: InvenTree/fields.py:286 build/serializers.py:538 build/serializers.py:601
-#: build/serializers.py:1788 common/models.py:3246 company/models.py:922
-#: order/models.py:2274
+#: InvenTree/fields.py:286 audit/models.py:369 build/serializers.py:538
+#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3246
+#: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
-#: stock/models.py:3803 stock/models.py:3929 stock/serializers.py:778
-#: stock/serializers.py:962 stock/serializers.py:1142 stock/serializers.py:1309
-#: stock/serializers.py:1694 stock/serializers.py:1784
-#: stock/serializers.py:1994
+#: stock/models.py:3814 stock/serializers.py:761 stock/serializers.py:945
+#: stock/serializers.py:1125 stock/serializers.py:1292
+#: stock/serializers.py:1580 stock/serializers.py:1670
+#: stock/serializers.py:1880
 msgid "Notes"
 msgstr "Notlar"
 
@@ -133,43 +133,43 @@ msgstr "'{name}' değeri desen formatında yer almıyor"
 msgid "Provided value does not match required pattern: "
 msgstr "Sağlanan değer gerekli kalıpla eşleşmiyor: "
 
-#: InvenTree/helpers.py:640
+#: InvenTree/helpers.py:649
 msgid "Cannot serialize more than 1000 items at once"
 msgstr "Geçersiz grup: {grup}"
 
-#: InvenTree/helpers.py:646
+#: InvenTree/helpers.py:655
 msgid "Empty serial number string"
 msgstr "Boş seri numarası dizesi"
 
-#: InvenTree/helpers.py:680
+#: InvenTree/helpers.py:689
 msgid "Serial number exceeds maximum length"
 msgstr ""
 
-#: InvenTree/helpers.py:684
+#: InvenTree/helpers.py:693
 msgid "Duplicate serial"
 msgstr "Yinelenen seri"
 
-#: InvenTree/helpers.py:716 InvenTree/helpers.py:759 InvenTree/helpers.py:777
-#: InvenTree/helpers.py:784 InvenTree/helpers.py:803
+#: InvenTree/helpers.py:725 InvenTree/helpers.py:768 InvenTree/helpers.py:786
+#: InvenTree/helpers.py:793 InvenTree/helpers.py:812
 #, python-brace-format
 msgid "Invalid group: {group}"
 msgstr "Geçersiz grup: {group}"
 
-#: InvenTree/helpers.py:747
+#: InvenTree/helpers.py:756
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
 msgstr "Grup aralığı {group}, izin verilen miktarı aşmaktadır ({expected_quantity})"
 
-#: InvenTree/helpers.py:813
+#: InvenTree/helpers.py:822
 msgid "No serial numbers found"
 msgstr "Seri numarası bulunamadı"
 
-#: InvenTree/helpers.py:820
+#: InvenTree/helpers.py:829
 #, python-brace-format
 msgid "Number of unique serial numbers ({n}) must match quantity ({q})"
 msgstr "Benzersiz seri numaralarının sayısı ({n}) miktarla eşleşmeli ({q})"
 
-#: InvenTree/helpers.py:950
+#: InvenTree/helpers.py:959
 msgid "Remove HTML tags from this value"
 msgstr "Bu değerden HTML etiketlerini kaldır"
 
@@ -278,69 +278,69 @@ msgstr "Referans {pattern} deseniyle mutlaka eşleşmeli"
 msgid "Reference number is too large"
 msgstr "Referans sayısı çok fazla"
 
-#: InvenTree/models.py:1176
+#: InvenTree/models.py:1179
 msgid "Invalid choice"
 msgstr "Geçersiz seçim"
 
-#: InvenTree/models.py:1346 common/api.py:1825 common/models.py:1535
+#: InvenTree/models.py:1349 common/api.py:1825 common/models.py:1535
 #: common/models.py:1958 common/models.py:2422 common/models.py:2547
 #: common/models.py:2859 common/serializers.py:704
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1141
-#: plugin/models.py:54 report/models.py:233 stock/models.py:90
+#: plugin/models.py:54 report/models.py:234 stock/models.py:91
 msgid "Name"
 msgstr "Adı"
 
-#: InvenTree/models.py:1352 build/models.py:276 common/models.py:189
+#: InvenTree/models.py:1355 build/models.py:284 common/models.py:189
 #: common/models.py:2554 common/models.py:2695 common/models.py:2874
 #: common/models.py:3520 company/models.py:641 company/models.py:913
-#: order/models.py:542 order/models.py:2327 part/models.py:1164
-#: report/models.py:239 report/models.py:967 report/models.py:993
+#: order/models.py:549 order/models.py:2342 part/models.py:1164
+#: report/models.py:240 report/models.py:971 report/models.py:997
 #: report/templates/report/inventree_build_order_report.html:116
-#: stock/models.py:96
+#: stock/models.py:97
 msgid "Description"
 msgstr "Açıklama"
 
-#: InvenTree/models.py:1353 stock/models.py:97
+#: InvenTree/models.py:1356 stock/models.py:98
 msgid "Description (optional)"
 msgstr "Açıklama (isteğe bağlı)"
 
-#: InvenTree/models.py:1368 common/models.py:3609
+#: InvenTree/models.py:1371 common/models.py:3609
 msgid "Path"
 msgstr "Yol"
 
-#: InvenTree/models.py:1526
+#: InvenTree/models.py:1529
 msgid "Duplicate names cannot exist under the same parent"
 msgstr "Aynı kaynak altında birden fazla aynı isim kullanılamaz"
 
-#: InvenTree/models.py:1617
+#: InvenTree/models.py:1620
 msgid "Barcode Data"
 msgstr "Barkod Verisi"
 
-#: InvenTree/models.py:1618
+#: InvenTree/models.py:1621
 msgid "Third party barcode data"
 msgstr "Üçüncü parti barkod verisi"
 
-#: InvenTree/models.py:1624
+#: InvenTree/models.py:1627
 msgid "Barcode Hash"
 msgstr "Barkod Hash"
 
-#: InvenTree/models.py:1625
+#: InvenTree/models.py:1628
 msgid "Unique hash of barcode data"
 msgstr "Barkod verisinin benzersiz hash'i"
 
-#: InvenTree/models.py:1715
+#: InvenTree/models.py:1718
 msgid "Existing barcode found"
 msgstr "Var olan barkod bulundu"
 
-#: InvenTree/models.py:1855
+#: InvenTree/models.py:1858
 msgid "Server Error"
 msgstr "Sunucu Hatası"
 
-#: InvenTree/models.py:1856
+#: InvenTree/models.py:1859
 msgid "An error has been logged by the server."
 msgstr "Bir hafta sunucu tarafından kayıt edildi."
 
-#: InvenTree/models.py:1898 common/models.py:3545
+#: InvenTree/models.py:1901 common/models.py:3545
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -599,10 +599,10 @@ msgstr "Geçersiz fiziksel birim"
 msgid "Not a valid currency code"
 msgstr "Geçerli bir para birimi kodu değil"
 
-#: audit/api.py:91 audit/serializers.py:103 common/serializers.py:841
+#: audit/api.py:91 audit/serializers.py:107 common/serializers.py:841
 #: common/serializers.py:997 common/serializers.py:1043
 #: common/serializers.py:1111 importer/models.py:95 report/api.py:42
-#: report/models.py:386 report/serializers.py:69
+#: report/models.py:390 report/serializers.py:69
 msgid "Model Type"
 msgstr "Model Türü"
 
@@ -642,24 +642,32 @@ msgstr ""
 msgid "Invalid model type"
 msgstr ""
 
-#: audit/models.py:291
+#: audit/models.py:324
 msgid "Audit Log Entry"
 msgstr ""
 
-#: audit/models.py:292
+#: audit/models.py:325
 msgid "Audit Log Entries"
 msgstr ""
 
-#: audit/models.py:315
+#: audit/models.py:348
 msgid "Parent Content Type"
 msgstr ""
 
-#: audit/models.py:319
+#: audit/models.py:352
 msgid "Parent Object PK"
 msgstr ""
 
-#: audit/models.py:324
+#: audit/models.py:357
 msgid "Actor Username"
+msgstr ""
+
+#: audit/models.py:362
+msgid "Event Type"
+msgstr ""
+
+#: audit/models.py:370
+msgid "Notes associated with this entry"
 msgstr ""
 
 #: audit/serializers.py:26 importer/models.py:588
@@ -687,27 +695,35 @@ msgstr ""
 msgid "The field holds a numeric value"
 msgstr ""
 
-#: audit/serializers.py:100
+#: audit/serializers.py:104
 msgid "Action"
 msgstr ""
 
-#: audit/serializers.py:105
+#: audit/serializers.py:109
 msgid "Model Label"
 msgstr ""
 
-#: audit/serializers.py:115
+#: audit/serializers.py:119
 msgid "Parent Model Type"
 msgstr ""
 
-#: audit/serializers.py:118
+#: audit/serializers.py:123
+msgid "Event"
+msgstr ""
+
+#: audit/serializers.py:126
+msgid "Deltas"
+msgstr ""
+
+#: audit/serializers.py:158
 msgid "Changes"
 msgstr ""
 
-#: audit/serializers.py:122
+#: audit/serializers.py:162
 msgid "Change Details"
 msgstr ""
 
-#: audit/serializers.py:195
+#: audit/serializers.py:235
 msgid "Deleted"
 msgstr ""
 
@@ -716,23 +732,23 @@ msgstr ""
 msgid "Order Status"
 msgstr "Sipariş Durumu"
 
-#: build/api.py:91 build/models.py:288
+#: build/api.py:91 build/models.py:296
 msgid "Parent Build"
 msgstr "Üst Yapım İşi"
 
 #: build/api.py:95 build/api.py:1101 order/api.py:544 order/api.py:835
 #: order/api.py:1312 order/api.py:1626 order/api.py:1943 order/api.py:2153
-#: stock/api.py:646
+#: stock/api.py:635
 msgid "Include Variants"
 msgstr "Varyantları Dahil Et"
 
-#: build/api.py:111 build/api.py:498 build/api.py:1115 build/models.py:294
+#: build/api.py:111 build/api.py:498 build/api.py:1115 build/models.py:302
 #: build/serializers.py:1214 build/serializers.py:1390
 #: build/serializers.py:1483 company/models.py:1137 company/serializers.py:480
 #: order/api.py:327 order/api.py:331 order/api.py:992 order/api.py:1325
 #: order/api.py:1328 order/api.py:2166 order/api.py:2169 order/api.py:2324
-#: order/models.py:2459 order/models.py:2635 order/models.py:2636
-#: order/models.py:4202 order/models.py:4203 part/api.py:1120 part/api.py:1123
+#: order/models.py:2474 order/models.py:2650 order/models.py:2651
+#: order/models.py:4203 order/models.py:4204 part/api.py:1120 part/api.py:1123
 #: part/api.py:1340 part/models.py:537 part/models.py:2643 part/models.py:2700
 #: part/models.py:2841 part/models.py:3183 part/models.py:3681
 #: part/serializers.py:1287 part/serializers.py:1775 pricing/models.py:724
@@ -746,9 +762,9 @@ msgstr "Varyantları Dahil Et"
 #: report/templates/report/inventree_sales_order_shipment_report.html:27
 #: report/templates/report/inventree_stock_location_report.html:102
 #: report/templates/report/inventree_transfer_order_report.html:24
-#: stock/api.py:659 stock/api.py:1620 stock/serializers.py:125
-#: stock/serializers.py:177 stock/serializers.py:430 stock/serializers.py:638
-#: stock/serializers.py:1226 templates/email/build_order_completed.html:17
+#: stock/api.py:648 stock/serializers.py:119 stock/serializers.py:171
+#: stock/serializers.py:423 stock/serializers.py:624 stock/serializers.py:1209
+#: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
 #: templates/email/overdue_build_order.html:16
@@ -760,7 +776,7 @@ msgstr "Parça"
 
 #: build/api.py:131 build/api.py:134 build/serializers.py:1497 part/api.py:953
 #: part/api.py:1351 part/models.py:413 part/models.py:1182 part/models.py:2728
-#: part/serializers.py:1297 part/serializers.py:1537 stock/api.py:937
+#: part/serializers.py:1297 part/serializers.py:1537 stock/api.py:926
 msgid "Category"
 msgstr "Kategori"
 
@@ -776,11 +792,11 @@ msgstr "Bana atandı"
 msgid "Assigned To"
 msgstr "Atanılan Kişi"
 
-#: build/api.py:213 stock/api.py:980
+#: build/api.py:213 stock/api.py:969
 msgid "Created before"
 msgstr "Daha önce oluşturuldu"
 
-#: build/api.py:217 stock/api.py:984
+#: build/api.py:217 stock/api.py:973
 msgid "Created after"
 msgstr "Sonra oluşturuldu"
 
@@ -835,7 +851,7 @@ msgstr "İsteğe Bağlı"
 
 #: build/api.py:487 build/serializers.py:1469 common/setting/system.py:521
 #: part/models.py:1297 part/serializers.py:1482 part/serializers.py:1508
-#: stock/api.py:712
+#: stock/api.py:701
 msgid "Assembly"
 msgstr "Montaj"
 
@@ -856,7 +872,7 @@ msgstr "Sipariş Açık"
 msgid "Allocated"
 msgstr "Tahsis Edildi"
 
-#: build/api.py:538 build/models.py:2267 build/serializers.py:1443
+#: build/api.py:538 build/models.py:2259 build/serializers.py:1443
 msgid "Consumed"
 msgstr "Tüketildi"
 
@@ -878,9 +894,9 @@ msgstr "Siparişte"
 msgid "Build not found"
 msgstr "Üretim bulunamadı"
 
-#: build/api.py:1138 build/models.py:131 order/models.py:2492
+#: build/api.py:1138 build/models.py:139 order/models.py:2507
 #: report/templates/report/inventree_build_order_report.html:104
-#: stock/serializers.py:98 templates/email/build_order_completed.html:16
+#: stock/serializers.py:92 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "Üretim Emri"
@@ -890,11 +906,11 @@ msgstr "Üretim Emri"
 #: build/serializers.py:1270 order/api.py:1372 order/api.py:1377
 #: order/api.py:2205 order/api.py:2210 order/serializers.py:878
 #: order/serializers.py:1022 order/serializers.py:2342 part/serializers.py:1307
-#: stock/api.py:1052 stock/serializers.py:116 stock/serializers.py:650
-#: stock/serializers.py:770 stock/serializers.py:956 stock/serializers.py:1066
-#: stock/serializers.py:1134 stock/serializers.py:1776
-#: stock/serializers.py:2051 stock/serializers.py:2179
-#: stock/serializers.py:2295 templates/email/purchase_order_received.html:17
+#: stock/api.py:1041 stock/serializers.py:110 stock/serializers.py:636
+#: stock/serializers.py:753 stock/serializers.py:939 stock/serializers.py:1049
+#: stock/serializers.py:1117 stock/serializers.py:1662
+#: stock/serializers.py:1937 stock/serializers.py:2065
+#: stock/serializers.py:2181 templates/email/purchase_order_received.html:17
 #: templates/email/stale_stock_notification.html:18 users/models.py:745
 msgid "Location"
 msgstr "Konum"
@@ -907,45 +923,45 @@ msgstr "Çıktı"
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "Çıktı stok kalemi ID'sine göre filtrele. Takılmamış üretim kalemlerini bulmak için ‘null’ kullan."
 
-#: build/models.py:132 users/ruleset.py:51
+#: build/models.py:140 users/ruleset.py:51
 msgid "Build Orders"
 msgstr "Üretim Emirleri"
 
-#: build/models.py:192
+#: build/models.py:200
 msgid "Assembly BOM has not been validated"
 msgstr "Montaj BOM listesi henüz doğrulanmadı"
 
-#: build/models.py:199
+#: build/models.py:207
 msgid "Build order cannot be created for an inactive part"
 msgstr "Pasif bir parça için üretim emri oluşturulamaz"
 
-#: build/models.py:206
+#: build/models.py:214
 msgid "Build order cannot be created for an unlocked part"
 msgstr "Kilidi açılmış bir parça için üretim emri oluşturulamaz"
 
-#: build/models.py:224
+#: build/models.py:232
 msgid "Build orders can only be externally fulfilled for purchaseable parts"
 msgstr "Harici üretim emirleri yalnızca satın alınabilir parçalar için yerine getirilebilir"
 
-#: build/models.py:231 order/models.py:456
+#: build/models.py:239 order/models.py:463
 msgid "Responsible user or group must be specified"
 msgstr "Sorumlu kullanıcı veya grup belirtilmelidir"
 
-#: build/models.py:236
+#: build/models.py:244
 msgid "Build order part cannot be changed"
 msgstr "Üretim emri parçası değiştirilemez"
 
-#: build/models.py:241 order/models.py:474
+#: build/models.py:249 order/models.py:481
 msgid "Target date must be after start date"
 msgstr "Hedef tarih başlangıç tarihinden sonra olmalıdır"
 
-#: build/models.py:269
+#: build/models.py:277
 msgid "Build Order Reference"
 msgstr "Üretim Emri Referansı"
 
-#: build/models.py:270 build/serializers.py:1421 order/models.py:784
-#: order/models.py:1555 order/models.py:2267 order/models.py:3461
-#: order/models.py:3909 part/models.py:3275
+#: build/models.py:278 build/serializers.py:1421 order/models.py:791
+#: order/models.py:1570 order/models.py:2282 order/models.py:3464
+#: order/models.py:3910 part/models.py:3275
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:34
 #: report/templates/report/inventree_return_order_report.html:25
@@ -954,236 +970,236 @@ msgstr "Üretim Emri Referansı"
 msgid "Reference"
 msgstr "Referans"
 
-#: build/models.py:279
+#: build/models.py:287
 msgid "Brief description of the build (optional)"
 msgstr "Üretimin kısa açıklaması (isteğe bağlı)"
 
-#: build/models.py:289
+#: build/models.py:297
 msgid "Build Order to which this build is allocated"
 msgstr "Bu üretimin tahsis edildiği üretim emri"
 
-#: build/models.py:298
+#: build/models.py:306
 msgid "Select part to build"
 msgstr "Üretilecek parçayı seçin"
 
-#: build/models.py:303
+#: build/models.py:311
 msgid "Sales Order Reference"
 msgstr "Satış Emri Referansı"
 
-#: build/models.py:308
+#: build/models.py:316
 msgid "Sales Order to which this build is allocated"
 msgstr "Bu üretimin tahsis edildiği satış siparişi"
 
-#: build/models.py:313 build/serializers.py:1075 order/models.py:3929
+#: build/models.py:321 build/serializers.py:1075 order/models.py:3930
 #: order/serializers.py:2081
 msgid "Source Location"
 msgstr "Kaynak Konum"
 
-#: build/models.py:319
+#: build/models.py:327
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "Bu üretim için stok alınacak konumu seçin (herhangi bir stok konumundan amak için boş bırakın)"
 
-#: build/models.py:325
+#: build/models.py:333
 msgid "External Build"
 msgstr "Harici Üretim"
 
-#: build/models.py:326
+#: build/models.py:334
 msgid "This build order is fulfilled externally"
 msgstr "Bu üretim emri harici olarak tamamlanmıştır"
 
-#: build/models.py:331 order/models.py:3939
+#: build/models.py:339 order/models.py:3940
 msgid "Destination Location"
 msgstr "Hedef Konum"
 
-#: build/models.py:336
+#: build/models.py:344
 msgid "Select location where the completed items will be stored"
 msgstr "Tamamlanmış ögelerin saklanacağı konumu seçiniz"
 
-#: build/models.py:340
+#: build/models.py:348
 msgid "Build Quantity"
 msgstr "Üretim Miktarı"
 
-#: build/models.py:343
+#: build/models.py:351
 msgid "Number of stock items to build"
 msgstr "Üretilecek stok kalemlerinin sayısı"
 
-#: build/models.py:347
+#: build/models.py:355
 msgid "Completed items"
 msgstr "Tamamlanmış ögeler"
 
-#: build/models.py:349
+#: build/models.py:357
 msgid "Number of stock items which have been completed"
 msgstr "Tamamlanan stok kalemlerinin sayısı"
 
-#: build/models.py:353
+#: build/models.py:361
 msgid "Build Status"
 msgstr "Üretim Durumu"
 
-#: build/models.py:358
+#: build/models.py:366
 msgid "Build status code"
 msgstr "Üretim durum kodu"
 
-#: build/models.py:367 build/serializers.py:407 order/serializers.py:895
-#: order/serializers.py:1028 stock/models.py:1240 stock/serializers.py:90
-#: stock/serializers.py:1951
+#: build/models.py:375 build/serializers.py:407 order/serializers.py:895
+#: order/serializers.py:1028 stock/models.py:1280 stock/serializers.py:84
+#: stock/serializers.py:1837
 msgid "Batch Code"
 msgstr "Sıra numarası"
 
-#: build/models.py:371 build/serializers.py:408
+#: build/models.py:379 build/serializers.py:408
 msgid "Batch code for this build output"
 msgstr "Bu üretim çıktısının parti kodu"
 
-#: build/models.py:375 order/models.py:579 order/serializers.py:163
-#: part/models.py:1384 stock/models.py:1321
+#: build/models.py:383 order/models.py:586 order/serializers.py:163
+#: part/models.py:1384 stock/models.py:1361
 msgid "Creation Date"
 msgstr "Oluşturulma tarihi"
 
-#: build/models.py:381
+#: build/models.py:389
 msgid "Build start date"
 msgstr "Üretim başlangıç tarihi"
 
-#: build/models.py:382
+#: build/models.py:390
 msgid "Scheduled start date for this build order"
 msgstr "Bu üretim emri için planlanan başlangıç tarihi"
 
-#: build/models.py:388
+#: build/models.py:396
 msgid "Target completion date"
 msgstr "Hedef tamamlama tarihi"
 
-#: build/models.py:390
+#: build/models.py:398
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Üretimin tamamlanması için hedef tarih. Bu tarihten sonra üretim gecikmiş olacak."
 
-#: build/models.py:395 order/models.py:842 order/models.py:3500
-#: order/models.py:3958
+#: build/models.py:403 order/models.py:849 order/models.py:3503
+#: order/models.py:3959
 msgid "Completion Date"
 msgstr "Tamamlama tarihi"
 
-#: build/models.py:403
+#: build/models.py:411
 msgid "completed by"
 msgstr "tamamlayan"
 
-#: build/models.py:412
+#: build/models.py:420
 msgid "Issued by"
 msgstr "Düzenleyen"
 
-#: build/models.py:413
+#: build/models.py:421
 msgid "User who issued this build order"
 msgstr "Bu üretim emrini düzenleyen kullanıcı"
 
-#: build/models.py:430 common/models.py:204 order/api.py:198
-#: order/models.py:611 part/models.py:1401
+#: build/models.py:438 common/models.py:204 order/api.py:198
+#: order/models.py:618 part/models.py:1401
 #: report/templates/report/inventree_build_order_report.html:157
 msgid "Responsible"
 msgstr "Sorumlu"
 
-#: build/models.py:431
+#: build/models.py:439
 msgid "User or group responsible for this build order"
 msgstr "Bu üretim emrinden sorumlu kullanıcı veya grup"
 
-#: build/models.py:436 stock/models.py:1233
+#: build/models.py:444 stock/models.py:1273
 msgid "External Link"
 msgstr "Harici Bağlantı"
 
-#: build/models.py:438 common/models.py:2239 part/models.py:1216
-#: stock/models.py:1235
+#: build/models.py:446 common/models.py:2239 part/models.py:1216
+#: stock/models.py:1275
 msgid "Link to external URL"
 msgstr "Harici URL'ye bağlantı"
 
-#: build/models.py:443
+#: build/models.py:451
 msgid "Build Priority"
 msgstr "Üretim Önceliği"
 
-#: build/models.py:446
+#: build/models.py:454
 msgid "Priority of this build order"
 msgstr "Bu üretim emrinin önceliği"
 
-#: build/models.py:454 common/models.py:164 common/models.py:182
-#: order/api.py:184 order/models.py:551 order/models.py:2299
+#: build/models.py:462 common/models.py:164 common/models.py:182
+#: order/api.py:184 order/models.py:558 order/models.py:2314
 msgid "Project Code"
 msgstr "Proje Kodu"
 
-#: build/models.py:455
+#: build/models.py:463
 msgid "Project code for this build order"
 msgstr "Bu üretim emri için proje kodu"
 
-#: build/models.py:1029
+#: build/models.py:1030
 msgid "Cannot complete build order with open child builds"
 msgstr "Açık alt üretim işlemleri varken üretim emri tamamlanamaz"
 
-#: build/models.py:1034
+#: build/models.py:1035
 msgid "Cannot complete build order with incomplete outputs"
 msgstr "Eksik çıktılar varken üretim emri tamamlanamaz"
 
-#: build/models.py:1175
+#: build/models.py:1176
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "İzlenebilir parçalar için seri numaraları sağlanmalıdır"
 
-#: build/models.py:1267 build/models.py:1353
+#: build/models.py:1261 build/models.py:1347
 msgid "No build output specified"
 msgstr "Hiçbir üretim çıktısı belirtilmedi"
 
-#: build/models.py:1270
+#: build/models.py:1264
 msgid "Build output is already completed"
 msgstr "Üretim çıktısı zaten tamamlanmış"
 
-#: build/models.py:1273 build/models.py:1362 build/models.py:1440
+#: build/models.py:1267 build/models.py:1356 build/models.py:1433
 msgid "Build output does not match Build Order"
 msgstr "Üretim çıktısı, üretim emri ile eşleşmiyor"
 
-#: build/models.py:1359 build/models.py:1437
+#: build/models.py:1353 build/models.py:1430
 msgid "Build output has already been completed"
 msgstr ""
 
-#: build/models.py:1369 build/models.py:1470 build/serializers.py:328
+#: build/models.py:1363 build/models.py:1463 build/serializers.py:328
 #: build/serializers.py:382 build/serializers.py:932 build/serializers.py:1739
-#: order/models.py:914 order/serializers.py:654 order/serializers.py:889
-#: part/models.py:3073 stock/models.py:1080 stock/models.py:1505
-#: stock/models.py:1589 stock/models.py:1907 stock/models.py:2118
-#: stock/models.py:2441 stock/serializers.py:748 stock/serializers.py:1057
-#: stock/serializers.py:1119 stock/serializers.py:1940
+#: order/models.py:921 order/serializers.py:654 order/serializers.py:889
+#: part/models.py:3073 stock/models.py:1120 stock/models.py:1545
+#: stock/models.py:1628 stock/models.py:1945 stock/models.py:2155
+#: stock/models.py:2523 stock/serializers.py:731 stock/serializers.py:1040
+#: stock/serializers.py:1102 stock/serializers.py:1826
 msgid "Quantity must be greater than zero"
 msgstr "Miktar sıfırdan büyük olmalıdır"
 
-#: build/models.py:1373 build/models.py:1475 build/serializers.py:333
+#: build/models.py:1367 build/models.py:1468 build/serializers.py:333
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Miktar çıktı miktarından büyük olamaz"
 
-#: build/models.py:1449
+#: build/models.py:1442
 msgid "Build output has not passed all required tests"
 msgstr "Üretim çıktısı tüm gerekli testleri geçmedi"
 
-#: build/models.py:1457
+#: build/models.py:1450
 msgid "Allocated stock items are still in production"
 msgstr "Tahsis edilen stok kalemleri hâlâ üretimde"
 
-#: build/models.py:1464
+#: build/models.py:1457
 msgid "Cannot partially complete a build output with allocated items"
 msgstr "Tahsisli kalemler içeren bir üretim çıktısı kısmi olarak tamamlanamaz"
 
-#: build/models.py:1647 order/models.py:4389 order/serializers.py:2045
-#: order/serializers.py:2899 stock/models.py:1495 stock/models.py:1899
-#: stock/models.py:2122 stock/models.py:2445 stock/models.py:2754
+#: build/models.py:1639 order/models.py:4390 order/serializers.py:2045
+#: order/serializers.py:2899 stock/models.py:1535 stock/models.py:1937
+#: stock/models.py:2159 stock/models.py:2527 stock/models.py:2804
 msgid "Stock item no longer exists"
 msgstr ""
 
-#: build/models.py:1665 build/serializers.py:980 order/serializers.py:1823
+#: build/models.py:1657 build/serializers.py:980 order/serializers.py:1823
 #: order/serializers.py:2855
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Mevcut miktar ({q}) aşıldı"
 
-#: build/models.py:2221
+#: build/models.py:2213
 msgid "Build Order Line Item"
 msgstr "Üretim Emri Satırı"
 
-#: build/models.py:2246
+#: build/models.py:2238
 msgid "Build object"
 msgstr "Üretim nesnesi"
 
-#: build/models.py:2258 build/models.py:2538 build/serializers.py:314
+#: build/models.py:2250 build/models.py:2530 build/serializers.py:314
 #: build/serializers.py:367 build/serializers.py:1442 common/models.py:1455
-#: order/models.py:2230 order/models.py:3352 order/models.py:4356
+#: order/models.py:2245 order/models.py:3355 order/models.py:4357
 #: order/serializers.py:1932 order/serializers.py:2437
 #: order/serializers.py:3025 part/models.py:2657 part/models.py:3213
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1198,69 +1214,69 @@ msgstr "Üretim nesnesi"
 #: report/templates/report/inventree_test_report.html:90
 #: report/templates/report/inventree_test_report.html:169
 #: report/templates/report/inventree_transfer_order_report.html:26
-#: stock/serializers.py:141 stock/serializers.py:185 stock/serializers.py:736
-#: stock/serializers.py:1050 stock/serializers.py:1107
+#: stock/serializers.py:135 stock/serializers.py:179 stock/serializers.py:719
+#: stock/serializers.py:1033 stock/serializers.py:1090
 #: templates/email/build_order_completed.html:18
 #: templates/email/purchase_order_received.html:16
 #: templates/email/stale_stock_notification.html:19
 msgid "Quantity"
 msgstr "Miktar"
 
-#: build/models.py:2259
+#: build/models.py:2251
 msgid "Required quantity for build order"
 msgstr "Üretim emri için gereken miktar"
 
-#: build/models.py:2268
+#: build/models.py:2260
 msgid "Quantity of consumed stock"
 msgstr "Tüketilen Stok Miktarı"
 
-#: build/models.py:2369
+#: build/models.py:2361
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Ana parça izlenebilir olarak işaretlendiğinden, üretim kalemi bir üretim çıktısı belirtmelidir"
 
-#: build/models.py:2432 build/serializers.py:963
+#: build/models.py:2424 build/serializers.py:963
 msgid "Selected stock item does not match BOM line"
 msgstr "Seçili stok kalemi BOM satırı ile eşleşmiyor"
 
-#: build/models.py:2451
+#: build/models.py:2443
 msgid "Allocated quantity must be greater than zero"
 msgstr "Tahsis edilen miktar sıfırdan büyük olmalıdır"
 
-#: build/models.py:2457
+#: build/models.py:2449
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Seri numaralı stok için miktar bir olmalı"
 
-#: build/models.py:2467
+#: build/models.py:2459
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Tahsis edilen miktar ({q}) mevcut stok miktarını ({a}) aşmamalıdır"
 
-#: build/models.py:2484 order/models.py:3301 order/models.py:4320
+#: build/models.py:2476 order/models.py:3304 order/models.py:4321
 msgid "Stock item is over-allocated"
 msgstr "Stok kalemi fazladan tahsis edilmiş"
 
-#: build/models.py:2528 build/serializers.py:915 build/serializers.py:1231
+#: build/models.py:2520 build/serializers.py:915 build/serializers.py:1231
 #: order/serializers.py:1760 order/serializers.py:1781
 #: order/serializers.py:2801 order/serializers.py:2822
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
-#: stock/api.py:1511 stock/models.py:471 stock/serializers.py:107
-#: stock/serializers.py:867 stock/serializers.py:1627 stock/serializers.py:1744
+#: stock/api.py:1497 stock/models.py:494 stock/serializers.py:101
+#: stock/serializers.py:850 stock/serializers.py:1513 stock/serializers.py:1630
 msgid "Stock Item"
 msgstr "Stok Kalemi"
 
-#: build/models.py:2529
+#: build/models.py:2521
 msgid "Source stock item"
 msgstr "Kaynak stok kalemi"
 
-#: build/models.py:2539
+#: build/models.py:2531
 msgid "Stock quantity to allocate to build"
 msgstr "Üretime tahsis edilecek stok miktarı"
 
-#: build/models.py:2548
+#: build/models.py:2540
 msgid "Install into"
 msgstr "Kur"
 
-#: build/models.py:2549
+#: build/models.py:2541
 msgid "Destination stock item"
 msgstr "Hedef stok kalemi"
 
@@ -1305,7 +1321,7 @@ msgid "Integer quantity required, as the bill of materials contains trackable pa
 msgstr "Ürün ağacı izlenebilir parçalar içerdiğinden tamsayı miktar gereklidir"
 
 #: build/serializers.py:414 order/serializers.py:911 order/serializers.py:1936
-#: order/serializers.py:3029 stock/serializers.py:759
+#: order/serializers.py:3029 stock/serializers.py:742
 msgid "Serial Numbers"
 msgstr "Seri Numaraları"
 
@@ -1325,8 +1341,8 @@ msgstr "Seri Numaralarını Otomatik Tahsis Et"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Eşleşen seri numaralı gerekli kalemleri otomatik tahsis et"
 
-#: build/serializers.py:464 order/serializers.py:1000 stock/api.py:1254
-#: stock/models.py:731 stock/models.py:2468
+#: build/serializers.py:464 order/serializers.py:1000 stock/api.py:1243
+#: stock/models.py:732 stock/models.py:2550
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Şu seri numaraları zaten varlar veya geçersizler"
 
@@ -1354,8 +1370,8 @@ msgstr "Üretim çıktı(larını) hurdaya ayırma nedeni"
 msgid "Location for completed build outputs"
 msgstr "Tamamlanan üretim çıktıları içi konum"
 
-#: build/serializers.py:586 stock/serializers.py:972 stock/serializers.py:2059
-#: stock/serializers.py:2187 stock/serializers.py:2303
+#: build/serializers.py:586 stock/serializers.py:955 stock/serializers.py:1945
+#: stock/serializers.py:2073 stock/serializers.py:2189
 msgid "Structural locations cannot be assigned stock items"
 msgstr ""
 
@@ -1463,7 +1479,7 @@ msgstr "Üretim Satırı"
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part üretim emri ile aynı parçayı göstermelidir"
 
-#: build/serializers.py:921 stock/serializers.py:1640
+#: build/serializers.py:921 stock/serializers.py:1526
 msgid "Item must be in stock"
 msgstr "Kalem stokta olmalıdır"
 
@@ -1574,11 +1590,11 @@ msgstr "Yap"
 
 #: build/serializers.py:1302 company/models.py:731 order/api.py:340
 #: order/api.py:345 order/api.py:540 order/serializers.py:646
-#: stock/models.py:1176 stock/serializers.py:617
+#: stock/models.py:1216 stock/serializers.py:603
 msgid "Supplier Part"
 msgstr "Tedarikçi Parçası"
 
-#: build/serializers.py:1318 stock/serializers.py:680
+#: build/serializers.py:1318 stock/serializers.py:666
 msgid "Allocated Quantity"
 msgstr "Tahsis Edilen Miktar"
 
@@ -1603,7 +1619,7 @@ msgid "Allow Variants"
 msgstr "Varyantlara İzin Ver"
 
 #: build/serializers.py:1445 build/serializers.py:1451 part/models.py:2947
-#: part/models.py:3673 stock/api.py:950 stock/serializers.py:1041
+#: part/models.py:3673 stock/api.py:939 stock/serializers.py:1024
 msgid "BOM Item"
 msgstr "ML Ögesi"
 
@@ -1831,7 +1847,7 @@ msgstr "Proje Kodu Etiketi"
 msgid "Updated"
 msgstr "Güncellendi"
 
-#: common/models.py:112 common/models.py:137 order/models.py:602
+#: common/models.py:112 common/models.py:137 order/models.py:609
 msgid "Timestamp of last update"
 msgstr "Son güncellemenin zaman damgası"
 
@@ -1854,7 +1870,7 @@ msgstr "Proje açıklaması"
 #: common/models.py:195 common/models.py:1540 common/models.py:2567
 #: common/models.py:2702 company/models.py:231 company/models.py:881
 #: machine/models.py:43 part/models.py:1332 plugin/models.py:69
-#: stock/api.py:715 users/models.py:382 users/models.py:750
+#: stock/api.py:704 users/models.py:382 users/models.py:750
 #: users/serializers.py:376 users/serializers.py:507
 msgid "Active"
 msgstr "Aktif"
@@ -1917,8 +1933,8 @@ msgstr "Kullanıcı"
 msgid "Price break quantity"
 msgstr "Fiyat kademesi miktarı"
 
-#: common/models.py:1463 company/serializers.py:357 order/models.py:2344
-#: order/models.py:3796
+#: common/models.py:1463 company/serializers.py:357 order/models.py:2359
+#: order/models.py:3797
 msgid "Price"
 msgstr "Fiyat"
 
@@ -2016,7 +2032,7 @@ msgstr "Başlık"
 
 #: common/models.py:1856 common/models.py:2238 company/models.py:225
 #: company/models.py:557 company/models.py:632 company/models.py:904
-#: order/models.py:557 order/models.py:2280 order/models.py:2903
+#: order/models.py:564 order/models.py:2295 order/models.py:2918
 #: part/models.py:1215
 #: report/templates/report/inventree_build_order_report.html:163
 msgid "Link"
@@ -2079,8 +2095,8 @@ msgstr "Tanımlama"
 msgid "Unit definition"
 msgstr "Birim tanımlaması"
 
-#: common/models.py:2049 common/models.py:2221 stock/models.py:3924
-#: stock/serializers.py:263
+#: common/models.py:2049 common/models.py:2221 stock/models.py:3809
+#: stock/serializers.py:257
 msgid "Attachment"
 msgstr "Ek"
 
@@ -2197,7 +2213,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "İş mantığında bu özel duruma eşit olan durum mantıksal anahtarı"
 
 #: common/models.py:2416 common/models.py:2683 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3916
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3801
 msgid "Value"
 msgstr "Değer"
 
@@ -2433,7 +2449,7 @@ msgstr "Bu parametre için geçerli seçenekler (virgül ile ayrılmış)"
 msgid "Selection list for this parameter"
 msgstr "Bu parametre için seçim listesi"
 
-#: common/models.py:2904 part/models.py:2867 report/models.py:380
+#: common/models.py:2904 part/models.py:2867 report/models.py:384
 #: scim/models.py:31
 msgid "Enabled"
 msgstr "Etkin"
@@ -2475,8 +2491,8 @@ msgid "ID of the target model for this parameter"
 msgstr "Bu parametre için hedef modelin ID'si"
 
 #: common/models.py:3189 common/models.py:3486 common/setting/system.py:515
-#: report/models.py:478 report/models.py:812 report/serializers.py:115
-#: report/serializers.py:166 stock/serializers.py:250
+#: report/models.py:482 report/models.py:816 report/serializers.py:115
+#: report/serializers.py:166 stock/serializers.py:244
 msgid "Template"
 msgstr "Şablon"
 
@@ -2501,11 +2517,11 @@ msgstr "Parametre Değeri"
 #: report/templates/report/inventree_sales_order_report.html:31
 #: report/templates/report/inventree_stock_location_report.html:105
 #: report/templates/report/inventree_transfer_order_report.html:28
-#: stock/serializers.py:881
+#: stock/serializers.py:864
 msgid "Note"
 msgstr "Not"
 
-#: common/models.py:3206 stock/serializers.py:779 stock/serializers.py:1143
+#: common/models.py:3206 stock/serializers.py:762 stock/serializers.py:1126
 msgid "Optional note field"
 msgstr "İsteğe bağlı not alanı"
 
@@ -2578,7 +2594,7 @@ msgstr "Barkod taramasının tarihi ve saati"
 msgid "URL endpoint which processed the barcode"
 msgstr "Barkodu işleyen URL uç noktası"
 
-#: common/models.py:3617 order/models.py:2334 plugin/serializers.py:93
+#: common/models.py:3617 order/models.py:2349 plugin/serializers.py:93
 msgid "Context"
 msgstr "Bağlam"
 
@@ -2595,7 +2611,7 @@ msgid "Response data from the barcode scan"
 msgstr "Barkod taramasından gelen yanıt verisi"
 
 #: common/models.py:3632 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3910
+#: stock/models.py:3795
 msgid "Result"
 msgstr "Sonuç"
 
@@ -3044,7 +3060,7 @@ msgstr "Döviz kurlarını şu sıklıkla güncelle (etkisizleştirmek için sı
 #: common/setting/system.py:392 common/setting/system.py:645
 #: common/setting/system.py:673 common/setting/system.py:804
 #: common/setting/system.py:1301 common/setting/system.py:1317
-#: common/setting/system.py:1334 common/setting/system.py:1365
+#: common/setting/system.py:1348
 msgid "days"
 msgstr "günler"
 
@@ -3305,7 +3321,7 @@ msgstr "Satın Alınabilir"
 msgid "Parts are purchaseable by default"
 msgstr "Parçalar varsayılan olarak satın alınabilir"
 
-#: common/setting/system.py:539 part/models.py:1327 stock/api.py:716
+#: common/setting/system.py:539 part/models.py:1327 stock/api.py:705
 msgid "Salable"
 msgstr "Satılabilir"
 
@@ -3518,7 +3534,7 @@ msgid "Log errors which occur when generating reports"
 msgstr "Raporlar üretirken oluşan hataları günlüğe kaydet"
 
 #: common/setting/system.py:743 plugin/builtin/labels/label_sheet.py:30
-#: report/models.py:486
+#: report/models.py:490
 msgid "Page Size"
 msgstr "Sayfa Boyutu"
 
@@ -4123,154 +4139,138 @@ msgid "Stocktake entries will be deleted after specified number of days"
 msgstr "Stok geçmişi girdileri belirtilen gün sayısı sonrasında silinecektir"
 
 #: common/setting/system.py:1321
-msgid "Delete Old Stock Tracking Entries"
-msgstr "Eski Stok Takip Kayıtlarını Sil"
-
-#: common/setting/system.py:1323
-msgid "Delete stock tracking entries older than the specified number of days"
-msgstr "Belirtilen gün sayısından daha eski stok takip kayıtlarını sil"
-
-#: common/setting/system.py:1329
-msgid "Stock Tracking Deletion Interval"
-msgstr "Stok Geçmişi Silme Aralığı"
-
-#: common/setting/system.py:1331
-msgid "Stock tracking entries will be deleted after specified number of days"
-msgstr "Stok takip kayıtları belirtilen gün sayısı sonrasında silinecektir"
-
-#: common/setting/system.py:1338
 msgid "Enable Audit Log"
 msgstr ""
 
-#: common/setting/system.py:1339
+#: common/setting/system.py:1322
 msgid "Record a history of changes made to supported models"
 msgstr ""
 
-#: common/setting/system.py:1344
+#: common/setting/system.py:1327
 msgid "Delete Old Audit Log Entries"
 msgstr ""
 
-#: common/setting/system.py:1346
+#: common/setting/system.py:1329
 msgid "Delete audit log entries older than the specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1352
+#: common/setting/system.py:1335
 msgid "Retain Audit Log Summary"
 msgstr ""
 
-#: common/setting/system.py:1354
+#: common/setting/system.py:1337
 msgid "When deleting old audit log entries, always keep the creation entry and the most recent entry for each item"
 msgstr ""
 
-#: common/setting/system.py:1360
+#: common/setting/system.py:1343
 msgid "Audit Log Deletion Interval"
 msgstr ""
 
-#: common/setting/system.py:1362
+#: common/setting/system.py:1345
 msgid "Audit log entries will be deleted after specified number of days"
 msgstr ""
 
-#: common/setting/system.py:1369
+#: common/setting/system.py:1352
 msgid "Display Users full names"
 msgstr "Kullancıların tam isimlerini görüntüle"
 
-#: common/setting/system.py:1370
+#: common/setting/system.py:1353
 msgid "Display Users full names instead of usernames"
 msgstr "Kullanıcı adı yerine kullanıcıların tam adlarını görüntüle"
 
-#: common/setting/system.py:1375
+#: common/setting/system.py:1358
 msgid "Display User Profiles"
 msgstr "Kullanıcı Profillerini Göster"
 
-#: common/setting/system.py:1376
+#: common/setting/system.py:1359
 msgid "Display Users Profiles on their profile page"
 msgstr "Kullanıcıların Profillerini kendi profil sayfalarında göster"
 
-#: common/setting/system.py:1381
+#: common/setting/system.py:1364
 msgid "Week Starts On"
 msgstr "Haftanın başladığı gün"
 
-#: common/setting/system.py:1382
+#: common/setting/system.py:1365
 msgid "Starting day of the week, for display in calendar views"
 msgstr "Takvimlerde görüntülemek için haftanın başlangıç günü"
 
-#: common/setting/system.py:1385
+#: common/setting/system.py:1368
 msgid "Sunday"
 msgstr "Pazar"
 
-#: common/setting/system.py:1386
+#: common/setting/system.py:1369
 msgid "Monday"
 msgstr "Pazartesi"
 
-#: common/setting/system.py:1387
+#: common/setting/system.py:1370
 msgid "Tuesday"
 msgstr "Salı"
 
-#: common/setting/system.py:1388
+#: common/setting/system.py:1371
 msgid "Wednesday"
 msgstr "Çarşamba"
 
-#: common/setting/system.py:1389
+#: common/setting/system.py:1372
 msgid "Thursday"
 msgstr "Perşembe"
 
-#: common/setting/system.py:1390
+#: common/setting/system.py:1373
 msgid "Friday"
 msgstr "Cuma"
 
-#: common/setting/system.py:1391
+#: common/setting/system.py:1374
 msgid "Saturday"
 msgstr "Cumartesi"
 
-#: common/setting/system.py:1395
+#: common/setting/system.py:1378
 msgid "Calendar Horizon"
 msgstr "Takvim Ufku"
 
-#: common/setting/system.py:1397
+#: common/setting/system.py:1380
 msgid "Number of months into the future to display in calendar views"
 msgstr "Takvim görünümlerinde görüntülenecek gelecek ayların sayısı"
 
-#: common/setting/system.py:1401
+#: common/setting/system.py:1384
 msgid "months"
 msgstr "aylar"
 
-#: common/setting/system.py:1404
+#: common/setting/system.py:1387
 msgid "Enable Test Station Data"
 msgstr "Test İstasyon Verisini Etkinleştir"
 
-#: common/setting/system.py:1405
+#: common/setting/system.py:1388
 msgid "Enable test station data collection for test results"
 msgstr "Test sonuçları için test istasyonundan veri toplamayı etkinleştir"
 
-#: common/setting/system.py:1411
+#: common/setting/system.py:1394
 msgid "Enable Machine Ping"
 msgstr "Makine Pingini Etkinleştir"
 
-#: common/setting/system.py:1413
+#: common/setting/system.py:1396
 msgid "Enable periodic ping task of registered machines to check their status"
 msgstr "Durumlarını kontrol etmek için kayıtlı makinelerin periyodik ping görevini etkinleştir"
 
-#: common/setting/system.py:1419
+#: common/setting/system.py:1402
 msgid "Enable Sales Orders"
 msgstr ""
 
-#: common/setting/system.py:1420
+#: common/setting/system.py:1403
 msgid "Enable sales order functionality in the user interface"
 msgstr ""
 
-#: common/setting/system.py:1426
+#: common/setting/system.py:1409
 msgid "Enable Purchase Orders"
 msgstr ""
 
-#: common/setting/system.py:1427
+#: common/setting/system.py:1410
 msgid "Enable purchase order functionality in the user interface"
 msgstr ""
 
-#: common/setting/system.py:1433
+#: common/setting/system.py:1416
 msgid "Enable Build Orders"
 msgstr ""
 
-#: common/setting/system.py:1434
+#: common/setting/system.py:1417
 msgid "Enable build order functionality in the user interface"
 msgstr ""
 
@@ -4559,7 +4559,7 @@ msgid "Show Change History"
 msgstr ""
 
 #: common/setting/user.py:255
-msgid "Display the change history (audit log) panel on detail pages (staff users only)"
+msgid "Display the change history (audit log) panel on detail pages"
 msgstr ""
 
 #: common/setting/user.py:261
@@ -4730,7 +4730,7 @@ msgid "Manufacturer"
 msgstr "Üretici"
 
 #: company/api.py:310 company/models.py:138 company/models.py:469
-#: stock/api.py:968
+#: stock/api.py:957
 msgid "Company"
 msgstr "Şirket"
 
@@ -4770,8 +4770,8 @@ msgstr "İletişim telefon numarası"
 msgid "Contact email address"
 msgstr "İletişim e-posta adresi"
 
-#: company/models.py:218 company/models.py:363 order/models.py:620
-#: order/models.py:2848 users/models.py:757
+#: company/models.py:218 company/models.py:363 order/models.py:627
+#: order/models.py:2863 users/models.py:757
 msgid "Contact"
 msgstr "İletişim"
 
@@ -4831,7 +4831,7 @@ msgstr "Vergi Numarası"
 msgid "Company Tax ID"
 msgstr "Şirket Vergi Numarası"
 
-#: company/models.py:411 order/models.py:630 order/models.py:2838
+#: company/models.py:411 order/models.py:637 order/models.py:2853
 msgid "Address"
 msgstr "Adres"
 
@@ -4932,12 +4932,12 @@ msgid "Link to address information (external)"
 msgstr "Adres bilgisine bağlantı (harici)"
 
 #: company/models.py:590 company/models.py:897 company/serializers.py:534
-#: stock/api.py:634
+#: stock/api.py:623
 msgid "Manufacturer Part"
 msgstr "Üretici Parçası"
 
-#: company/models.py:607 company/models.py:859 stock/models.py:1165
-#: stock/serializers.py:429
+#: company/models.py:607 company/models.py:859 stock/models.py:1205
+#: stock/serializers.py:422
 msgid "Base Part"
 msgstr "Temel Parça"
 
@@ -4954,7 +4954,7 @@ msgstr "Üretici seçin"
 msgid "MPN"
 msgstr "ÜPN"
 
-#: company/models.py:626 stock/serializers.py:609
+#: company/models.py:626 stock/serializers.py:595
 msgid "Manufacturer Part Number"
 msgstr "Üretici Parça Numarası"
 
@@ -4979,10 +4979,10 @@ msgid "Linked manufacturer part must reference the same base part"
 msgstr "Bağlantılı üretici parçası aynı temel parçayı referans almalıdır"
 
 #: company/models.py:869 company/serializers.py:493 company/serializers.py:528
-#: order/models.py:804 part/serializers.py:403
+#: order/models.py:811 part/serializers.py:403
 #: plugin/builtin/suppliers/digikey.py:26 plugin/builtin/suppliers/lcsc.py:27
 #: plugin/builtin/suppliers/mouser.py:25 plugin/builtin/suppliers/tme.py:27
-#: stock/api.py:640 templates/email/overdue_purchase_order.html:16
+#: stock/api.py:629 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr "Tedarikçi"
 
@@ -5022,8 +5022,8 @@ msgstr "temel maliyet"
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Minimum ücret (örneğin stoklama ücreti)"
 
-#: company/models.py:938 order/serializers.py:922 stock/models.py:1196
-#: stock/serializers.py:1966
+#: company/models.py:938 order/serializers.py:922 stock/models.py:1236
+#: stock/serializers.py:1852
 msgid "Packaging"
 msgstr "Paketleme"
 
@@ -5071,7 +5071,7 @@ msgstr "Bu tedarikçi için kullanılan varsayılan para birimi"
 msgid "Company Name"
 msgstr "Şirket Adı"
 
-#: company/serializers.py:450 part/serializers.py:789 stock/serializers.py:455
+#: company/serializers.py:450 part/serializers.py:789 stock/serializers.py:448
 msgid "In Stock"
 msgstr "Stokta"
 
@@ -5528,7 +5528,7 @@ msgstr "Açık"
 msgid "Has Project Code"
 msgstr "Proje Kodu Var"
 
-#: order/api.py:202 order/models.py:588
+#: order/api.py:202 order/models.py:595
 msgid "Created By"
 msgstr "Oluşturan"
 
@@ -5593,9 +5593,9 @@ msgid "Purchase order not found"
 msgstr ""
 
 #: order/api.py:523 order/api.py:977 order/api.py:1308 order/api.py:2149
-#: order/api.py:2309 order/models.py:2440 order/models.py:2566
-#: order/models.py:2626 order/models.py:2829 order/models.py:3228
-#: order/models.py:3752 order/models.py:3818 order/models.py:4193
+#: order/api.py:2309 order/models.py:2455 order/models.py:2581
+#: order/models.py:2641 order/models.py:2844 order/models.py:3231
+#: order/models.py:3753 order/models.py:3819 order/models.py:4194
 msgid "Order"
 msgstr "Sipariş"
 
@@ -5639,15 +5639,15 @@ msgstr ""
 msgid "Transfer order not found"
 msgstr ""
 
-#: order/api.py:2583 order/models.py:692 order/models.py:2441
-#: order/models.py:2567
+#: order/api.py:2583 order/models.py:699 order/models.py:2456
+#: order/models.py:2582
 #: report/templates/report/inventree_purchase_order_report.html:13
-#: stock/serializers.py:134 templates/email/overdue_purchase_order.html:15
+#: stock/serializers.py:128 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "Satın Alma Siparişi"
 
-#: order/api.py:2585 order/models.py:1492 order/models.py:2627
-#: order/models.py:2830 order/models.py:3229
+#: order/api.py:2585 order/models.py:1507 order/models.py:2642
+#: order/models.py:2845 order/models.py:3232
 #: report/templates/report/inventree_build_order_report.html:134
 #: report/templates/report/inventree_sales_order_report.html:13
 #: report/templates/report/inventree_sales_order_shipment_report.html:14
@@ -5655,673 +5655,673 @@ msgstr "Satın Alma Siparişi"
 msgid "Sales Order"
 msgstr "Satış Siparişi"
 
-#: order/api.py:2587 order/models.py:3395 order/models.py:3753
-#: order/models.py:3819
+#: order/api.py:2587 order/models.py:3398 order/models.py:3754
+#: order/models.py:3820
 #: report/templates/report/inventree_return_order_report.html:12
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "İade Siparişi"
 
-#: order/api.py:2589 order/models.py:3841 order/models.py:4194
+#: order/api.py:2589 order/models.py:3842 order/models.py:4195
 #: report/templates/report/inventree_transfer_order_report.html:11
 msgid "Transfer Order"
 msgstr "Aktarım Emri"
 
-#: order/models.py:143
+#: order/models.py:150
 #: report/templates/report/inventree_purchase_order_report.html:37
 #: report/templates/report/inventree_sales_order_report.html:30
 msgid "Total Price"
 msgstr "Toplam Fiyat"
 
-#: order/models.py:144
+#: order/models.py:151
 msgid "Total price for this order"
 msgstr "Bu sipariş için toplam fiyat"
 
-#: order/models.py:149 order/serializers.py:70
+#: order/models.py:156 order/serializers.py:70
 msgid "Order Currency"
 msgstr "Sipariş Para Birimi"
 
-#: order/models.py:152 order/serializers.py:71
+#: order/models.py:159 order/serializers.py:71
 msgid "Currency for this order (leave blank to use company default)"
 msgstr "Bu sipariş için para birimi (şirket varsayılanını kullanmak için boş bırakın)"
 
-#: order/models.py:409
+#: order/models.py:416
 msgid "This order is locked and cannot be modified"
 msgstr "Bu sipariş kilitli olduğundan değiştirilemez"
 
-#: order/models.py:468
+#: order/models.py:475
 msgid "Contact does not match selected company"
 msgstr "Kişi, seçili şirket ile eşleşmiyor"
 
-#: order/models.py:475
+#: order/models.py:482
 msgid "Start date must be before target date"
 msgstr "Başlangıç tarihi hedef tarihinden önce olmalıdır"
 
-#: order/models.py:486
+#: order/models.py:493
 msgid "Address does not match selected company"
 msgstr "Adres, seçili şirket ile eşleşmiyor"
 
-#: order/models.py:543
+#: order/models.py:550
 msgid "Order description (optional)"
 msgstr "Açıklama (isteğe bağlı)"
 
-#: order/models.py:552 order/models.py:2300
+#: order/models.py:559 order/models.py:2315
 msgid "Select project code for this order"
 msgstr "Bu sipariş için proje kodu seçin"
 
-#: order/models.py:558 order/models.py:2281 order/models.py:2904
+#: order/models.py:565 order/models.py:2296 order/models.py:2919
 msgid "Link to external page"
 msgstr "Harici sayfaya bağlantı"
 
-#: order/models.py:565
+#: order/models.py:572
 msgid "Start date"
 msgstr "Başlangıç ​​tarihi"
 
-#: order/models.py:566
+#: order/models.py:573
 msgid "Scheduled start date for this order"
 msgstr "Bu üretim emri için planlanan başlangıç tarihi"
 
-#: order/models.py:572 order/models.py:2288 order/serializers.py:305
+#: order/models.py:579 order/models.py:2303 order/serializers.py:305
 #: report/templates/report/inventree_build_order_report.html:124
 msgid "Target Date"
 msgstr "Hedeflenen tarih"
 
-#: order/models.py:574
+#: order/models.py:581
 msgid "Expected date for order delivery. Order will be overdue after this date."
 msgstr "Sipariş teslimatı için beklenen tarih. Bu tarihten sonra sipariş gecikmeli olacaktır."
 
-#: order/models.py:594
+#: order/models.py:601
 msgid "Issue Date"
 msgstr "Düzenleme Tarihi"
 
-#: order/models.py:595
+#: order/models.py:602
 msgid "Date order was issued"
 msgstr "Siparişin düzenlendiği tarih"
 
-#: order/models.py:601
+#: order/models.py:608
 msgid "Updated At"
 msgstr "Güncellenme Tarihi"
 
-#: order/models.py:610
+#: order/models.py:617
 msgid "User or group responsible for this order"
 msgstr "Bu siparişten sorumlu kullanıcı veya grup"
 
-#: order/models.py:621
+#: order/models.py:628
 msgid "Point of contact for this order"
 msgstr "Bu sipariş için ilgili kişi"
 
-#: order/models.py:631
+#: order/models.py:638
 msgid "Company address for this order"
 msgstr "Bu sipariş için şirket adresi"
 
-#: order/models.py:700
+#: order/models.py:707
 msgid "Receiving company must be an internal company"
 msgstr ""
 
-#: order/models.py:707
+#: order/models.py:714
 msgid "Receiving company must be specified when a delivery address is provided"
 msgstr ""
 
-#: order/models.py:714
+#: order/models.py:721
 msgid "Delivery address does not match selected receiving company"
 msgstr ""
 
-#: order/models.py:785 order/models.py:1556
+#: order/models.py:792 order/models.py:1571
 msgid "Order reference"
 msgstr "Sipariş referansı"
 
-#: order/models.py:794 order/models.py:1580 order/models.py:3486
-#: order/models.py:3918 stock/serializers.py:1003 users/models.py:738
+#: order/models.py:801 order/models.py:1595 order/models.py:3489
+#: order/models.py:3919 stock/serializers.py:986 users/models.py:738
 msgid "Status"
 msgstr "Durum"
 
-#: order/models.py:795
+#: order/models.py:802
 msgid "Purchase order status"
 msgstr "Satın alma siparişi durumu"
 
-#: order/models.py:805
+#: order/models.py:812
 msgid "Company from which the items are being ordered"
 msgstr "Ürünlerin sipariş edilmekte olduğu şirket"
 
-#: order/models.py:818
+#: order/models.py:825
 msgid "Supplier Address"
 msgstr ""
 
-#: order/models.py:819
+#: order/models.py:826
 msgid "Supplier address for this order"
 msgstr ""
 
-#: order/models.py:826
+#: order/models.py:833
 msgid "Supplier Reference"
 msgstr "Tedarikçi Referansı"
 
-#: order/models.py:827
+#: order/models.py:834
 msgid "Supplier order reference code"
 msgstr "Tedarikçi siparişi referans kodu"
 
-#: order/models.py:836
+#: order/models.py:843
 msgid "received by"
 msgstr "teslim alan"
 
-#: order/models.py:843 order/models.py:3501 order/models.py:3959
+#: order/models.py:850 order/models.py:3504 order/models.py:3960
 msgid "Date order was completed"
 msgstr "Siparişin tamamlandığı tarih"
 
-#: order/models.py:852 order/models.py:2499
+#: order/models.py:859 order/models.py:2514
 msgid "Destination"
 msgstr "Hedef"
 
-#: order/models.py:853 order/models.py:2503
+#: order/models.py:860 order/models.py:2518
 msgid "Destination for received items"
 msgstr "Teslim alınan kalemler için varış yeri"
 
-#: order/models.py:864
+#: order/models.py:871
 msgid "Receiving Company"
 msgstr ""
 
-#: order/models.py:865
+#: order/models.py:872
 msgid "Internal company which is receiving the items"
 msgstr ""
 
-#: order/models.py:874
+#: order/models.py:881
 msgid "Delivery Address"
 msgstr ""
 
-#: order/models.py:875
+#: order/models.py:882
 msgid "Delivery address for this order"
 msgstr ""
 
-#: order/models.py:921
+#: order/models.py:928
 msgid "Part supplier must match PO supplier"
 msgstr "Parça tedarikçisi PO tedarikçisi ile eşleşmelidir"
 
-#: order/models.py:1193
+#: order/models.py:1194
 msgid "Line item does not match purchase order"
 msgstr "Satır, satın alma siparişi ile eşleşmiyor"
 
-#: order/models.py:1196
+#: order/models.py:1197
 msgid "Line item is missing a linked part"
 msgstr "Satırda bağlantılı bir parça eksik"
 
-#: order/models.py:1211
+#: order/models.py:1212
 msgid "Quantity must be a positive number"
 msgstr "Miktar pozitif bir sayı olmalıdır"
 
-#: order/models.py:1252
+#: order/models.py:1253
 msgid "Serial numbers cannot be assigned to virtual parts"
 msgstr "Sanal parçalara seri numaraları atanamaz"
 
-#: order/models.py:1473
+#: order/models.py:1488
 msgid "Allow any stock (serialized or unserialized)"
 msgstr "Her türlü stoka izin ver (seri numaralı veya seri numarasız)"
 
-#: order/models.py:1474
+#: order/models.py:1489
 msgid "Serialized stock only"
 msgstr "Sadece seri numaralı stok"
 
-#: order/models.py:1475
+#: order/models.py:1490
 msgid "Unserialized stock only"
 msgstr "Sadece seri numarasız stok"
 
-#: order/models.py:1567 order/models.py:3473 stock/models.py:1218
-#: stock/models.py:1219 stock/serializers.py:1679
+#: order/models.py:1582 order/models.py:3476 stock/models.py:1258
+#: stock/models.py:1259 stock/serializers.py:1565
 #: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
 msgstr "Müşteri"
 
-#: order/models.py:1568
+#: order/models.py:1583
 msgid "Company to which the items are being sold"
 msgstr "Ürünlerin satılmakta olduğu şirket"
 
-#: order/models.py:1581
+#: order/models.py:1596
 msgid "Sales order status"
 msgstr "Satış siparişi durumu"
 
-#: order/models.py:1587 order/models.py:3493
+#: order/models.py:1602 order/models.py:3496
 msgid "Customer Reference "
 msgstr "Müşteri Referansı "
 
-#: order/models.py:1588 order/models.py:3494
+#: order/models.py:1603 order/models.py:3497
 msgid "Customer order reference code"
 msgstr "Müşteri siparişi referans kodu"
 
-#: order/models.py:1592 order/models.py:2856
+#: order/models.py:1607 order/models.py:2871
 msgid "Shipment Date"
 msgstr "Sevkiyat Tarihi"
 
-#: order/models.py:1601
+#: order/models.py:1616
 msgid "shipped by"
 msgstr "tarafından sevk edildi"
 
-#: order/models.py:1780 order/serializers.py:1772 order/serializers.py:1927
+#: order/models.py:1795 order/serializers.py:1772 order/serializers.py:1927
 #: order/serializers.py:2813 order/serializers.py:3020
 msgid "Line item is not associated with this order"
 msgstr "Ürün kalemi bu siparişle ilişkilendirilmemiştir"
 
-#: order/models.py:1837 order/serializers.py:3114
+#: order/models.py:1852 order/serializers.py:3114
 msgid "No match found for the following serial numbers"
 msgstr "Şu seri numaraları için bir eşleşme bulunamadı"
 
-#: order/models.py:1844 order/serializers.py:3121
+#: order/models.py:1859 order/serializers.py:3121
 msgid "The following serial numbers are unavailable"
 msgstr "Şu seri numaraları mevcut değildir"
 
-#: order/models.py:1884 order/models.py:4003
+#: order/models.py:1899 order/models.py:4004
 msgid "Order is already complete"
 msgstr "Sipariş zaten tamamlandı"
 
-#: order/models.py:1887 order/models.py:4006
+#: order/models.py:1902 order/models.py:4007
 msgid "Order is already cancelled"
 msgstr "Sipariş zaten iptal edildi"
 
-#: order/models.py:1891
+#: order/models.py:1906
 msgid "Only an open order can be marked as complete"
 msgstr "Yalnızca açık siparişler tamamlandı olarak işaretlenebilir"
 
-#: order/models.py:1895
+#: order/models.py:1910
 msgid "Order cannot be completed as there are incomplete shipments"
 msgstr "Eksik sevkiyatlar olduğundan sipariş tamamlanamaz"
 
-#: order/models.py:1900
+#: order/models.py:1915
 msgid "Order cannot be completed as there are incomplete allocations"
 msgstr "Eksik tahsisler olduğu için sipariş tamamlanamıyor"
 
-#: order/models.py:1909
+#: order/models.py:1924
 msgid "Order cannot be completed as there are incomplete line items"
 msgstr "Tamamlanmamış satırlar olduğundan sipariş tamamlanamaz"
 
-#: order/models.py:2198 order/models.py:2223
+#: order/models.py:2213 order/models.py:2238
 msgid "The order is locked and cannot be modified"
 msgstr "Bu sipariş kilitli olduğundan değiştirilemez"
 
-#: order/models.py:2231
+#: order/models.py:2246
 msgid "Item quantity"
 msgstr "Kalem miktarı"
 
-#: order/models.py:2239
+#: order/models.py:2254
 msgid "Discount"
 msgstr ""
 
-#: order/models.py:2240
+#: order/models.py:2255
 msgid "Discount percentage applied to this line item (0-100)"
 msgstr ""
 
-#: order/models.py:2258
+#: order/models.py:2273
 msgid "Line Number"
 msgstr "Satır Numarası"
 
-#: order/models.py:2259
+#: order/models.py:2274
 msgid "Line number for this item (optional)"
 msgstr "Bu ögenin satır numarası (isteğe bağlı)"
 
-#: order/models.py:2268
+#: order/models.py:2283
 msgid "Line item reference"
 msgstr "Satır referansı"
 
-#: order/models.py:2275
+#: order/models.py:2290
 msgid "Line item notes"
 msgstr "Satır notları"
 
-#: order/models.py:2290
+#: order/models.py:2305
 msgid "Target date for this line item (leave blank to use the target date from the order)"
 msgstr "Bu satır için hedef tarih (siparişin hedef tarihini kullanmak için boş bırakın)"
 
-#: order/models.py:2320
+#: order/models.py:2335
 msgid "Extra line"
 msgstr ""
 
-#: order/models.py:2328
+#: order/models.py:2343
 msgid "Line item description (optional)"
 msgstr "Satır açıklaması (isteğe bağlı)"
 
-#: order/models.py:2335
+#: order/models.py:2350
 msgid "Additional context for this line"
 msgstr "Bu satır için ek bağlam"
 
-#: order/models.py:2345
+#: order/models.py:2360
 msgid "Unit price"
 msgstr "Birim Fiyat"
 
-#: order/models.py:2364
+#: order/models.py:2379
 msgid "Purchase Order Line Item"
 msgstr "Satın Alma Siparişi Kalemi"
 
-#: order/models.py:2393
+#: order/models.py:2408
 msgid "Supplier part must match supplier"
 msgstr "Tedarikçi parçası tedarikçi ile eşleşmelidir"
 
-#: order/models.py:2401
+#: order/models.py:2416
 msgid "Build order must be marked as external"
 msgstr "Üretim emri harici olarak işaretlenmelidir"
 
-#: order/models.py:2408
+#: order/models.py:2423
 msgid "Build orders can only be linked to assembly parts"
 msgstr "Üretim emirleri yalnızca montaj parçalarına bağlanabilir"
 
-#: order/models.py:2414
+#: order/models.py:2429
 msgid "Build order part must match line item part"
 msgstr "Üretim emri parçası satır parçası ile eşleşmelidir"
 
-#: order/models.py:2424
+#: order/models.py:2439
 msgid "An external build order is required for assembly parts"
 msgstr "Montaj parçaları için harici bir üretim emri gereklidir"
 
-#: order/models.py:2460
+#: order/models.py:2475
 msgid "Supplier part"
 msgstr "Tedarikçi parçası"
 
-#: order/models.py:2467
+#: order/models.py:2482
 msgid "Received"
 msgstr "Teslim Alındı"
 
-#: order/models.py:2468
+#: order/models.py:2483
 msgid "Number of items received"
 msgstr "Teslim alınan miktar"
 
-#: order/models.py:2476 stock/models.py:1348 stock/serializers.py:697
-#: stock/serializers.py:1075
+#: order/models.py:2491 stock/models.py:1388 stock/serializers.py:680
+#: stock/serializers.py:1058
 msgid "Purchase Price"
 msgstr "Alış Fiyatı"
 
-#: order/models.py:2477
+#: order/models.py:2492
 msgid "Unit purchase price"
 msgstr "Birim alış fiyatı"
 
-#: order/models.py:2493
+#: order/models.py:2508
 msgid "External Build Order to be fulfilled by this line item"
 msgstr "Bu kalem tarafından karşılanacak harici Üretim Emri"
 
-#: order/models.py:2555
+#: order/models.py:2570
 msgid "Purchase Order Extra Line"
 msgstr "Ek Sipariş Kalemi"
 
-#: order/models.py:2584
+#: order/models.py:2599
 msgid "Sales Order Line Item"
 msgstr "Satış Siparişi Kalemi"
 
-#: order/models.py:2611
+#: order/models.py:2626
 msgid "Only salable parts can be assigned to a sales order"
 msgstr "Yalnızca satışa uygun parçalar bir satış siparişine atanabilir"
 
-#: order/models.py:2618 order/models.py:4185
+#: order/models.py:2633 order/models.py:4186
 msgid "Unknown part"
 msgstr ""
 
-#: order/models.py:2645
+#: order/models.py:2660
 msgid "Sale Price"
 msgstr "Satış Fiyatı"
 
-#: order/models.py:2646
+#: order/models.py:2661
 msgid "Unit sale price"
 msgstr "Birim satış fiyatı"
 
-#: order/models.py:2655 order/status_codes.py:66
+#: order/models.py:2670 order/status_codes.py:66
 msgid "Shipped"
 msgstr "Sevk edildi"
 
-#: order/models.py:2656
+#: order/models.py:2671
 msgid "Shipped quantity"
 msgstr "Sevk edilen miktar"
 
-#: order/models.py:2778
+#: order/models.py:2793
 msgid "Sales Order Shipment"
 msgstr "Satış Siparişi Sevkiyatı"
 
-#: order/models.py:2791
+#: order/models.py:2806
 msgid "Shipment address must match the customer"
 msgstr "Sevk adresi müşteri ile eşleşmelidir"
 
-#: order/models.py:2797
+#: order/models.py:2812
 msgid "Contact does not match the customer"
 msgstr ""
 
-#: order/models.py:2820 order/models.py:2880 order/models.py:3329
+#: order/models.py:2835 order/models.py:2895 order/models.py:3332
 #: order/serializers.py:1947 order/serializers.py:2000
 #: order/serializers.py:2101
 #: report/templates/report/inventree_sales_order_shipment_report.html:13
 msgid "Shipment"
 msgstr "Sevkiyat"
 
-#: order/models.py:2839
+#: order/models.py:2854
 msgid "Shipping address for this shipment"
 msgstr "Bu sevkiyatın sevk adresi"
 
-#: order/models.py:2849
+#: order/models.py:2864
 msgid "Point of contact for this shipment"
 msgstr ""
 
-#: order/models.py:2857
+#: order/models.py:2872
 msgid "Date of shipment"
 msgstr "Sevkiyat tarihi"
 
-#: order/models.py:2863
+#: order/models.py:2878
 msgid "Delivery Date"
 msgstr "Teslimat Tarihi"
 
-#: order/models.py:2864
+#: order/models.py:2879
 msgid "Date of delivery of shipment"
 msgstr "Sevkiyatın teslimat tarihi"
 
-#: order/models.py:2872
+#: order/models.py:2887
 msgid "Checked By"
 msgstr "Kontrol Eden"
 
-#: order/models.py:2873
+#: order/models.py:2888
 msgid "User who checked this shipment"
 msgstr "Bu sevkiyatı kontrol eden kullanıcılar"
 
-#: order/models.py:2881
+#: order/models.py:2896
 msgid "Shipment number"
 msgstr "Sevkiyat numarası"
 
-#: order/models.py:2889
+#: order/models.py:2904
 msgid "Tracking Number"
 msgstr "Takip Numarası"
 
-#: order/models.py:2890
+#: order/models.py:2905
 msgid "Shipment tracking information"
 msgstr "Sevkiyat takip numarası"
 
-#: order/models.py:2897
+#: order/models.py:2912
 msgid "Invoice Number"
 msgstr "Fatura Numarası"
 
-#: order/models.py:2898
+#: order/models.py:2913
 msgid "Reference number for associated invoice"
 msgstr "Fatura referans numarası"
 
-#: order/models.py:2944
+#: order/models.py:2959
 msgid "Shipment has already been sent"
 msgstr "Sevkiyat zaten sevk edildi"
 
-#: order/models.py:2947
+#: order/models.py:2962
 msgid "Shipment has no allocated stock items"
 msgstr "Sevkiyatın tahsis edilen stok kalemleri bulunmuyor"
 
-#: order/models.py:2954
+#: order/models.py:2969
 msgid "Shipment must be checked before it can be completed"
 msgstr "Sevkiyat tamamlanmadan önce kontrol edilmelidir"
 
-#: order/models.py:3217
+#: order/models.py:3220
 msgid "Sales Order Extra Line"
 msgstr "Ek Sipariş Kalemi"
 
-#: order/models.py:3246
+#: order/models.py:3249
 msgid "Sales Order Allocation"
 msgstr "Satış Siparişi Tahsisatı"
 
-#: order/models.py:3269 order/models.py:3271 order/models.py:4286
-#: order/models.py:4288
+#: order/models.py:3272 order/models.py:3274 order/models.py:4287
+#: order/models.py:4289
 msgid "Stock item has not been assigned"
 msgstr "Stok kalemi henüz atanmadı"
 
-#: order/models.py:3278 order/models.py:4295
+#: order/models.py:3281 order/models.py:4296
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "Farklı bir parçaya sahip satıra stok kalemi tahsis edilemez"
 
-#: order/models.py:3281 order/models.py:4298
+#: order/models.py:3284 order/models.py:4299
 msgid "Cannot allocate stock to a line without a part"
 msgstr "Parça içermeyen bir satıra stok tahsis edilemez"
 
-#: order/models.py:3284 order/models.py:4301
+#: order/models.py:3287 order/models.py:4302
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "Tahsis miktarı stok miktarını aşamaz"
 
-#: order/models.py:3304 order/models.py:4323
+#: order/models.py:3307 order/models.py:4324
 msgid "Allocation quantity must be greater than zero"
 msgstr "Tahsis edilen miktar sıfırdan büyük olmalıdır"
 
-#: order/models.py:3307 order/models.py:4326 order/serializers.py:1817
+#: order/models.py:3310 order/models.py:4327 order/serializers.py:1817
 #: order/serializers.py:2849
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Seri numaralı stok kalemi için miktar 1 olmalıdır"
 
-#: order/models.py:3310
+#: order/models.py:3313
 msgid "Sales order does not match shipment"
 msgstr "Satış siparişi sevkiyatla eşleşmiyor"
 
-#: order/models.py:3311 plugin/base/barcodes/api.py:724
+#: order/models.py:3314 plugin/base/barcodes/api.py:724
 msgid "Shipment does not match sales order"
 msgstr "Sevkiyat satış siparişiyle eşleşmiyor"
 
-#: order/models.py:3319 order/models.py:4334
+#: order/models.py:3322 order/models.py:4335
 msgid "Line"
 msgstr "Satır"
 
-#: order/models.py:3330
+#: order/models.py:3333
 msgid "Sales order shipment reference"
 msgstr "Satış siparişinin sevkiyat referansı"
 
-#: order/models.py:3343 order/models.py:3760 order/models.py:4347
+#: order/models.py:3346 order/models.py:3761 order/models.py:4348
 msgid "Item"
 msgstr "Kalem"
 
-#: order/models.py:3344 order/models.py:4348
+#: order/models.py:3347 order/models.py:4349
 msgid "Select stock item to allocate"
 msgstr "Tahsis edilecek stok kalemini seçin"
 
-#: order/models.py:3353 order/models.py:4357
+#: order/models.py:3356 order/models.py:4358
 msgid "Enter stock allocation quantity"
 msgstr "Stok tahsis miktarını girin"
 
-#: order/models.py:3462
+#: order/models.py:3465
 msgid "Return Order reference"
 msgstr "İade Siparişi referansı"
 
-#: order/models.py:3474
+#: order/models.py:3477
 msgid "Company from which items are being returned"
 msgstr "Ürünlerin iade edildiği şirket"
 
-#: order/models.py:3487
+#: order/models.py:3490
 msgid "Return order status"
 msgstr "İade siparişi durumu"
 
-#: order/models.py:3712
+#: order/models.py:3713
 msgid "Return Order Line Item"
 msgstr "İade Siparişi Satırı"
 
-#: order/models.py:3725
+#: order/models.py:3726
 msgid "Stock item must be specified"
 msgstr "Stok kalemi belirtilmelidir"
 
-#: order/models.py:3729
+#: order/models.py:3730
 msgid "Return quantity exceeds stock quantity"
 msgstr "İade miktarı stok miktarını aşıyor"
 
-#: order/models.py:3734
+#: order/models.py:3735
 msgid "Return quantity must be greater than zero"
 msgstr "İade miktarı sıfırdan büyük olmalıdır"
 
-#: order/models.py:3739
+#: order/models.py:3740
 msgid "Invalid quantity for serialized stock item"
 msgstr "Seri numaralı stok kalemi için geçersiz miktar"
 
-#: order/models.py:3745
+#: order/models.py:3746
 msgid "Unknown item"
 msgstr ""
 
-#: order/models.py:3761
+#: order/models.py:3762
 msgid "Select item to return from customer"
 msgstr "Müşteriden iade edilecek ürünü seçin"
 
-#: order/models.py:3776
+#: order/models.py:3777
 msgid "Received Date"
 msgstr "Teslim Alma Tarihi"
 
-#: order/models.py:3777
+#: order/models.py:3778
 msgid "The date this return item was received"
 msgstr "Bu iade kaleminin teslim alındığı tarih"
 
-#: order/models.py:3789
+#: order/models.py:3790
 msgid "Outcome"
 msgstr "Sonuç"
 
-#: order/models.py:3790
+#: order/models.py:3791
 msgid "Outcome for this line item"
 msgstr "Bu satırın sonucu"
 
-#: order/models.py:3797
+#: order/models.py:3798
 msgid "Cost associated with return or repair for this line item"
 msgstr "Bu kalem için iade veya onarımla ilgili maliyet"
 
-#: order/models.py:3807
+#: order/models.py:3808
 msgid "Return Order Extra Line"
 msgstr "Ek Sipariş Kalemi"
 
-#: order/models.py:3908
+#: order/models.py:3909
 msgid "Transfer Order Reference"
 msgstr "Aktarım Emri Referansı"
 
-#: order/models.py:3919
+#: order/models.py:3920
 msgid "Transfer order status"
 msgstr "Aktarım emri durumu"
 
-#: order/models.py:3934
+#: order/models.py:3935
 msgid "Source for transferred items"
 msgstr "Aktarılan kalemlerin kaynağı"
 
-#: order/models.py:3944
+#: order/models.py:3945
 msgid "Destination for transferred items"
 msgstr "Aktarılan kalemlerin varış yeri"
 
-#: order/models.py:3949
+#: order/models.py:3950
 msgid "Consume Stock"
 msgstr "Stoku Tüket"
 
-#: order/models.py:3951
+#: order/models.py:3952
 msgid "Rather than transfer the stock to the destination, \"consume\" it, by removing transferred quantity from the allocated stock item"
 msgstr "Stokları hedef noktaya aktarmak yerine, tahsis edilen stok kaleminden aktarılan miktarı çıkararak \"tüket\""
 
-#: order/models.py:4010
+#: order/models.py:4011
 msgid "Order cannot be completed until a destination location is set"
 msgstr "Hedef konum belirlenene kadar emir tamamlanamaz"
 
-#: order/models.py:4015
+#: order/models.py:4016
 msgid "Order cannot be completed until it is fully allocated"
 msgstr "Tümüyle tahsis edilene kadar emir tamamlanamaz"
 
-#: order/models.py:4167
+#: order/models.py:4168
 msgid "Transfer Order Line Item"
 msgstr "Emir Satırını Aktar"
 
-#: order/models.py:4208
+#: order/models.py:4209
 msgid "transferred"
 msgstr "aktarıldı"
 
-#: order/models.py:4209
+#: order/models.py:4210
 msgid "transferred quantity"
 msgstr "aktarılan miktar"
 
-#: order/models.py:4263
+#: order/models.py:4264
 msgid "Transfer Order Allocation"
 msgstr "Transfer Emri Tahsisatı"
 
-#: order/models.py:4416
+#: order/models.py:4417
 msgid "Failed to consume stock item against transfer order"
 msgstr ""
 
-#: order/models.py:4428 order/models.py:4440
+#: order/models.py:4429 order/models.py:4441
 msgid "Failed to transfer stock item against transfer order"
 msgstr ""
 
@@ -6381,7 +6381,7 @@ msgstr "Otomatik Fiyatlandırma"
 msgid "Automatically calculate purchase price based on supplier part data"
 msgstr "Tedarikçi parça verilerine göre satın alma fiyatını otomatik olarak hesapla"
 
-#: order/serializers.py:720 stock/serializers.py:1085
+#: order/serializers.py:720 stock/serializers.py:1068
 msgid "Purchase price currency"
 msgstr "Satın alma fiyatı para birimi"
 
@@ -6433,7 +6433,7 @@ msgstr "Teslim alınan kalemler için varış konumunu seçin"
 msgid "Enter batch code for incoming stock items"
 msgstr "Gelen stok kalemleri için parti numarası girin"
 
-#: order/serializers.py:903 stock/models.py:1300
+#: order/serializers.py:903 stock/models.py:1340
 #: templates/email/stale_stock_notification.html:22 users/models.py:265
 msgid "Expiry Date"
 msgstr "Raf Ömrü Tarihi"
@@ -6471,7 +6471,7 @@ msgid "Enter batch code for incoming stock items - applied to any line item whic
 msgstr ""
 
 #: order/serializers.py:1052 order/serializers.py:2368
-#: stock/serializers.py:1166
+#: stock/serializers.py:1149
 msgid "Line items must be provided"
 msgstr "Satırlar sağlanmalıdır"
 
@@ -6673,7 +6673,7 @@ msgstr "Yıldızlı"
 msgid "Filter by starred categories"
 msgstr "Yıldızlı kategorilere göre filtrele"
 
-#: part/api.py:108 stock/api.py:341
+#: part/api.py:108 stock/api.py:330
 msgid "Depth"
 msgstr "Derinlik"
 
@@ -6681,7 +6681,7 @@ msgstr "Derinlik"
 msgid "Filter by category depth"
 msgstr "Kategori derinliğine göre filtrele"
 
-#: part/api.py:126 stock/api.py:359
+#: part/api.py:126 stock/api.py:348
 msgid "Top Level"
 msgstr "Üst Seviye"
 
@@ -6689,7 +6689,7 @@ msgstr "Üst Seviye"
 msgid "Filter by top-level categories"
 msgstr "Üst seviye kategorilere göre filtrele"
 
-#: part/api.py:141 stock/api.py:374
+#: part/api.py:141 stock/api.py:363
 msgid "Cascade"
 msgstr "Kademeli"
 
@@ -6709,11 +6709,11 @@ msgstr "Üst kategoriye göre filtrele"
 msgid "Exclude sub-categories under the specified category"
 msgstr "Belirtilen kategorideki alt kategorileri hariç tut"
 
-#: part/api.py:297 stock/api.py:521
+#: part/api.py:297 stock/api.py:510
 msgid "Max Level"
 msgstr ""
 
-#: part/api.py:299 stock/api.py:523
+#: part/api.py:299 stock/api.py:512
 msgid "Limit the depth of the category tree"
 msgstr ""
 
@@ -6810,7 +6810,7 @@ msgstr "Varsayılan Konum"
 msgid "Default location for parts in this category"
 msgstr "Bu kategori içindeki parçalar için varsayılan konum"
 
-#: part/models.py:118 stock/models.py:207
+#: part/models.py:118 stock/models.py:208
 msgid "Structural"
 msgstr "Yapısal"
 
@@ -6826,12 +6826,12 @@ msgstr "Varsayılan anahtar kelimeler"
 msgid "Default keywords for parts in this category"
 msgstr "Bu kategoridaki parçalar için varsayılan anahtar kelimeler"
 
-#: part/models.py:137 stock/models.py:103 stock/models.py:189
+#: part/models.py:137 stock/models.py:104 stock/models.py:190
 msgid "Icon"
 msgstr "Simge"
 
 #: part/models.py:138 part/serializers.py:170 part/serializers.py:202
-#: stock/models.py:190
+#: stock/models.py:191
 msgid "Icon (optional)"
 msgstr "Simge (isteğe bağlı)"
 
@@ -6975,7 +6975,7 @@ msgstr "DPN"
 msgid "Part revision or version number"
 msgstr "Parça revizyon veya versiyon numarası"
 
-#: part/models.py:1199 report/models.py:245
+#: part/models.py:1199 report/models.py:246
 msgid "Revision"
 msgstr "Revizyon"
 
@@ -7112,7 +7112,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "Sayım anındaki toplam mevcut stok"
 
 #: part/models.py:2662 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3956
+#: stock/models.py:3841
 msgid "Date"
 msgstr "Tarih"
 
@@ -7324,7 +7324,7 @@ msgstr "Bu BOM kalemi, varyant parçaların BOM'larından devralınmıştır"
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Varyant parçaların stok kalemleri bu BOM kalemi için kullanılabilir"
 
-#: part/models.py:3463 stock/models.py:1065
+#: part/models.py:3463 stock/models.py:1105
 msgid "Quantity must be integer value for trackable parts"
 msgstr "İzlenebilir parçalar için miktar tamsayı olmalıdır"
 
@@ -7477,7 +7477,7 @@ msgstr "Bu parçanın şu anda üretimde olan miktarı"
 msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "Bu parçanın üretilmesi planlanan açık miktarı"
 
-#: part/serializers.py:805 stock/serializers.py:1292 stock/serializers.py:1509
+#: part/serializers.py:805 stock/serializers.py:1275 stock/serializers.py:1462
 #: users/ruleset.py:50
 msgid "Stock Items"
 msgstr "Stok Kalemleri"
@@ -8005,7 +8005,7 @@ msgid "Provides native support for barcodes"
 msgstr "Barkodlar için yerleşik destek sağlar"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:30
-#: plugin/builtin/events/auto_create_builds.py:31
+#: plugin/builtin/events/auto_create_builds.py:41
 #: plugin/builtin/events/auto_issue_orders.py:19
 #: plugin/builtin/exporter/bom_exporter.py:74
 #: plugin/builtin/exporter/inventree_exporter.py:17
@@ -8050,13 +8050,21 @@ msgstr "Kısa Barkod Ön Eki"
 msgid "Customize the prefix used for short barcodes, may be useful for environments with multiple InvenTree instances"
 msgstr "Kısa barkodlar için kullanılan ön eki özelleştirin; birden fazla InvenTree örneği bulunan ortamlar için kullanışlı olabilir"
 
-#: plugin/builtin/events/auto_create_builds.py:29
+#: plugin/builtin/events/auto_create_builds.py:39
 msgid "Auto Create Builds"
 msgstr "Üretimleri Otomatik Oluştur"
 
-#: plugin/builtin/events/auto_create_builds.py:32
+#: plugin/builtin/events/auto_create_builds.py:42
 msgid "Automatically create build orders for assemblies"
 msgstr "Montajlar için otomatik olarak üretim emirleri oluşturun"
+
+#: plugin/builtin/events/auto_create_builds.py:47
+msgid "Cascade Depth"
+msgstr ""
+
+#: plugin/builtin/events/auto_create_builds.py:49
+msgid "How many levels of the sub-assembly tree to generate child build orders for"
+msgstr ""
 
 #: plugin/builtin/events/auto_issue_orders.py:17
 msgid "Auto Issue Orders"
@@ -8434,7 +8442,7 @@ msgstr "Kenarlık"
 msgid "Print a border around each label"
 msgstr "Her etiketin etrafına kenarlık ekle"
 
-#: plugin/builtin/labels/label_sheet.py:50 report/models.py:492
+#: plugin/builtin/labels/label_sheet.py:50 report/models.py:496
 msgid "Landscape"
 msgstr "Yatay"
 
@@ -9133,136 +9141,136 @@ msgstr "Yasal"
 msgid "Letter"
 msgstr "Harf"
 
-#: report/models.py:138
+#: report/models.py:139
 msgid "Template file with this name already exists"
 msgstr "Aynı isimde bir şablon zaten mevcut"
 
-#: report/models.py:234
+#: report/models.py:235
 msgid "Template name"
 msgstr "Şablon adı"
 
-#: report/models.py:240
+#: report/models.py:241
 msgid "Template description"
 msgstr "Şablon açıklaması"
 
-#: report/models.py:246
+#: report/models.py:247
 msgid "Revision number (auto-increments)"
 msgstr "Revizyon numarası (otomatik artar)"
 
-#: report/models.py:252
+#: report/models.py:253
 msgid "Attach to Model on Print"
 msgstr "Yazdırmada Modele Ekle"
 
-#: report/models.py:254
+#: report/models.py:255
 msgid "Save report output as an attachment against linked model instance when printing"
 msgstr "Yazdırırken rapor çıktısını bağlantılı model örneğine ek olarak kaydet"
 
-#: report/models.py:374
+#: report/models.py:378
 msgid "Filename Pattern"
 msgstr "Dosya Adı Deseni"
 
-#: report/models.py:375
+#: report/models.py:379
 msgid "Pattern for generating filenames"
 msgstr "Dosya adları oluşturmak için desen"
 
-#: report/models.py:380
+#: report/models.py:384
 msgid "Template is enabled"
 msgstr "Şablon etkinleştirildi"
 
-#: report/models.py:387
+#: report/models.py:391
 msgid "Target model type for template"
 msgstr "Şablon için hedef model türü"
 
-#: report/models.py:407
+#: report/models.py:411
 msgid "Filters"
 msgstr "Filtreler"
 
-#: report/models.py:408
+#: report/models.py:412
 msgid "Template query filters (comma-separated list of key=value pairs)"
 msgstr "Şablon sorgu filtreleri (virgülle ayrılmış anahtar=değer çiftleri listesi)"
 
-#: report/models.py:479 report/models.py:813
+#: report/models.py:483 report/models.py:817
 msgid "Template file"
 msgstr "Şablon dosyası"
 
-#: report/models.py:487
+#: report/models.py:491
 msgid "Page size for PDF reports"
 msgstr "PDF raporları için sayfa boyutu"
 
-#: report/models.py:493
+#: report/models.py:497
 msgid "Render report in landscape orientation"
 msgstr "Raporu yatay yönde işle"
 
-#: report/models.py:498
+#: report/models.py:502
 msgid "Merge"
 msgstr "Birleştir"
 
-#: report/models.py:499
+#: report/models.py:503
 msgid "Render a single report against selected items"
 msgstr "Seçili ögeler için tek bir rapor oluştur"
 
-#: report/models.py:566
+#: report/models.py:570
 #, python-brace-format
 msgid "Report generated from template {self.name}"
 msgstr "{self.name} şablonundan oluşturulan rapor"
 
-#: report/models.py:676 report/models.py:715
+#: report/models.py:680 report/models.py:719
 msgid "Template syntax error"
 msgstr "Şablon sözdizimi hatası"
 
-#: report/models.py:683 report/models.py:722
+#: report/models.py:687 report/models.py:726
 msgid "Error rendering report"
 msgstr "Rapor işleme hatası"
 
-#: report/models.py:750
+#: report/models.py:754
 msgid "Error generating report"
 msgstr "Rapor oluşturma hatası"
 
-#: report/models.py:781
+#: report/models.py:785
 msgid "Error merging report outputs"
 msgstr "Rapor çıktılarını birleştirme hatası"
 
-#: report/models.py:819
+#: report/models.py:823
 msgid "Width [mm]"
 msgstr "Genişlik [mm]"
 
-#: report/models.py:820
+#: report/models.py:824
 msgid "Label width, specified in mm"
 msgstr "Etiket genişliği mm olarak belirtilmeli"
 
-#: report/models.py:826
+#: report/models.py:830
 msgid "Height [mm]"
 msgstr "Yükseklik [mm]"
 
-#: report/models.py:827
+#: report/models.py:831
 msgid "Label height, specified in mm"
 msgstr "Etiket yüksekliği mm olarak belirtilmeli"
 
-#: report/models.py:941
+#: report/models.py:945
 msgid "Error printing labels"
 msgstr "Etiket yazdırma hatası"
 
-#: report/models.py:960
+#: report/models.py:964
 msgid "Snippet"
 msgstr "Parçacık"
 
-#: report/models.py:961
+#: report/models.py:965
 msgid "Report snippet file"
 msgstr "Rapor parçacık dosyası"
 
-#: report/models.py:968
+#: report/models.py:972
 msgid "Snippet file description"
 msgstr "Parçacık dosyası açıklaması"
 
-#: report/models.py:986
+#: report/models.py:990
 msgid "Asset"
 msgstr "Kaynak Dosyası"
 
-#: report/models.py:987
+#: report/models.py:991
 msgid "Report asset file"
 msgstr "Rapor kaynak dosyası"
 
-#: report/models.py:994
+#: report/models.py:998
 msgid "Asset file description"
 msgstr "Kaynak dosyası açıklaması"
 
@@ -9357,8 +9365,8 @@ msgstr "Toplam"
 #: report/templates/report/inventree_return_order_report.html:24
 #: report/templates/report/inventree_sales_order_shipment_report.html:44
 #: report/templates/report/inventree_stock_report_merge.html:88
-#: report/templates/report/inventree_test_report.html:88 stock/models.py:1223
-#: stock/serializers.py:169 templates/email/stale_stock_notification.html:21
+#: report/templates/report/inventree_test_report.html:88 stock/models.py:1263
+#: stock/serializers.py:163 templates/email/stale_stock_notification.html:21
 msgid "Serial Number"
 msgstr "Seri Numara"
 
@@ -9382,7 +9390,7 @@ msgstr "Stok Kalemi Test Raporu"
 
 #: report/templates/report/inventree_stock_report_merge.html:97
 #: report/templates/report/inventree_test_report.html:153
-#: stock/serializers.py:686
+#: stock/serializers.py:672
 msgid "Installed Items"
 msgstr "Takılı Kalemler"
 
@@ -9419,31 +9427,31 @@ msgstr "Sonuç yok"
 msgid "Transferred"
 msgstr "Aktarıldı"
 
-#: report/templatetags/report.py:254
+#: report/templatetags/report.py:260
 msgid "Invalid media file path"
 msgstr "Geçersiz ortam dosya yolu"
 
-#: report/templatetags/report.py:273
+#: report/templatetags/report.py:279
 msgid "Invalid static file path"
 msgstr "Geçersiz statik dosya yolu"
 
-#: report/templatetags/report.py:375
+#: report/templatetags/report.py:381
 msgid "Asset file not found"
 msgstr "Varlık dosyası bulunamadı"
 
-#: report/templatetags/report.py:436 report/templatetags/report.py:562
+#: report/templatetags/report.py:442 report/templatetags/report.py:568
 msgid "Image file not found"
 msgstr "Görsel dosyası bulunumadı"
 
-#: report/templatetags/report.py:526
+#: report/templatetags/report.py:532
 msgid "No image file specified"
 msgstr "Görüntü dosyası belirtilmedi"
 
-#: report/templatetags/report.py:556
+#: report/templatetags/report.py:562
 msgid "part_image tag requires a Part instance"
 msgstr "part_image etiketi bir parça örneği gerektirir"
 
-#: report/templatetags/report.py:736
+#: report/templatetags/report.py:742
 msgid "company_image tag requires a Company instance"
 msgstr "company_image etiketi bir şirket örneği gerektirir"
 
@@ -9479,918 +9487,886 @@ msgstr ""
 msgid "Last Used"
 msgstr ""
 
-#: stock/api.py:341
+#: stock/api.py:330
 msgid "Filter by location depth"
 msgstr "Konum derinliğine göre filtrele"
 
-#: stock/api.py:361
+#: stock/api.py:350
 msgid "Filter by top-level locations"
 msgstr "Üst seviye konumlara göre filtrele"
 
-#: stock/api.py:376
+#: stock/api.py:365
 msgid "Include sub-locations in filtered results"
 msgstr "Filtrelenmiş sonuçlara alt konumları dahil et"
 
-#: stock/api.py:397 stock/serializers.py:1505
+#: stock/api.py:386 stock/serializers.py:1458
 msgid "Parent Location"
 msgstr "Üst Konum"
 
-#: stock/api.py:398
+#: stock/api.py:387
 msgid "Filter by parent location"
 msgstr "Üst konuma göre filtrele"
 
-#: stock/api.py:678
+#: stock/api.py:667
 msgid "Part name (case insensitive)"
 msgstr "Parça adı (büyük/küçük harf duyarlı değildir)"
 
-#: stock/api.py:684
+#: stock/api.py:673
 msgid "Part name contains (case insensitive)"
 msgstr "Parça adı şunu içerir (büyük/küçük harf duyarlı değildir)"
 
-#: stock/api.py:690
+#: stock/api.py:679
 msgid "Part name (regex)"
 msgstr "Parça adı (regex)"
 
-#: stock/api.py:695
+#: stock/api.py:684
 msgid "Part IPN (case insensitive)"
 msgstr "Parça IPN (büyük/küçük harf duyarlı değildir)"
 
-#: stock/api.py:701
+#: stock/api.py:690
 msgid "Part IPN contains (case insensitive)"
 msgstr "Parça IPN şunu içerir (büyük/küçük harf duyarlı değildir)"
 
-#: stock/api.py:707
+#: stock/api.py:696
 msgid "Part IPN (regex)"
 msgstr "Parça IPN (regex)"
 
-#: stock/api.py:719
+#: stock/api.py:708
 msgid "Minimum stock"
 msgstr "Minimum stok"
 
-#: stock/api.py:723
+#: stock/api.py:712
 msgid "Maximum stock"
 msgstr "Maksimum stok"
 
-#: stock/api.py:726
+#: stock/api.py:715
 msgid "Status Code"
 msgstr "Durum Kodu"
 
-#: stock/api.py:770
+#: stock/api.py:759
 msgid "External Location"
 msgstr "Harici Konum"
 
-#: stock/api.py:869
+#: stock/api.py:858
 msgid "Consumed by Build Order"
 msgstr "Üretim Emrine göre Tüketilenler"
 
-#: stock/api.py:879
+#: stock/api.py:868
 msgid "Installed in other stock item"
 msgstr "Başka bir stok kalemine takılı"
 
-#: stock/api.py:959
+#: stock/api.py:948
 msgid "Part Tree"
 msgstr "Parça Ağacı"
 
-#: stock/api.py:988
+#: stock/api.py:977
 msgid "Updated before"
 msgstr "Daha önce güncellendi"
 
-#: stock/api.py:992
+#: stock/api.py:981
 msgid "Updated after"
 msgstr "Güncellendi (den sonra)"
 
-#: stock/api.py:996
+#: stock/api.py:985
 msgid "Stocktake Before"
 msgstr "Stok Sayımı (-dan önce)"
 
-#: stock/api.py:1000
+#: stock/api.py:989
 msgid "Stocktake After"
 msgstr "Stok Sayımı (-dan sonra)"
 
-#: stock/api.py:1004
+#: stock/api.py:993
 msgid "Has Stocktake Date"
 msgstr "Stok Sayım Tarihi Olanlar"
 
-#: stock/api.py:1015
+#: stock/api.py:1004
 msgid "Expiry date before"
 msgstr "Raf ömrü şu tarihten önce"
 
-#: stock/api.py:1019
+#: stock/api.py:1008
 msgid "Expiry date after"
 msgstr "Raf ömrü şu tarihten sonra"
 
-#: stock/api.py:1022 stock/serializers.py:691
+#: stock/api.py:1011 stock/serializers.py:677
 msgid "Stale"
 msgstr "Bozuk"
 
-#: stock/api.py:1046
+#: stock/api.py:1035
 msgid "Cascade Locations"
 msgstr "Konumları alt konumlara uygula"
 
-#: stock/api.py:1047
+#: stock/api.py:1036
 msgid "If true, include items in child locations of the given location"
 msgstr "Açıksa belirtilen konumun alt konumlarındaki öğeleri de dahil eder"
 
-#: stock/api.py:1053
+#: stock/api.py:1042
 msgid "Filter by numeric Location ID or the literal 'null'"
 msgstr "Sayısal konum ID'si veya \"null\" değeriyle filtreleyin"
 
-#: stock/api.py:1155
+#: stock/api.py:1144
 msgid "Quantity is required"
 msgstr "Miktar gereklidir"
 
-#: stock/api.py:1160
+#: stock/api.py:1149
 msgid "Valid part must be supplied"
 msgstr "Geçerli bir parça girilmelidir"
 
-#: stock/api.py:1191
+#: stock/api.py:1180
 msgid "The given supplier part does not exist"
 msgstr "Belirtilen tedarikçi parçası bulunamadı"
 
-#: stock/api.py:1201
+#: stock/api.py:1190
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "Tedarikçi parçası için paket boyutu tanımlanmış, ancak ‘use_pack_size’ seçeneği etkin değil"
 
-#: stock/api.py:1233
+#: stock/api.py:1222
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Takibi olmayan bir parça için seri numarası verilemez"
 
-#: stock/api.py:1503
+#: stock/api.py:1489
 msgid "Include Installed"
 msgstr "Takılıyı Dahil Et"
 
-#: stock/api.py:1505
+#: stock/api.py:1491
 msgid "If true, include test results for items installed underneath the given stock item"
 msgstr "Aktifse verilen stok kaleminin altına takılı öğelerin test sonuçları da dahil edilir"
 
-#: stock/api.py:1512
+#: stock/api.py:1498
 msgid "Filter by numeric Stock Item ID"
 msgstr "Sayısal Stok Kalemi ID’sine göre Filtrele"
 
-#: stock/api.py:1533
+#: stock/api.py:1519
 #, python-brace-format
 msgid "Stock item with ID {id} does not exist"
 msgstr "Belirtilen ID {id} ile bir stok kalemi bulunamadı"
 
-#: stock/api.py:1607
-msgid "Include Part Variants"
-msgstr "Varyantları Dahil Et"
-
-#: stock/api.py:1637
-msgid "Date after"
-msgstr "(-den sonra) sil"
-
-#: stock/api.py:1641
-msgid "Date before"
-msgstr "Önce"
-
-#: stock/models.py:77
+#: stock/models.py:78
 msgid "Stock Location type"
 msgstr "Stok Konumu Türü"
 
-#: stock/models.py:78
+#: stock/models.py:79
 msgid "Stock Location types"
 msgstr "Stok Konum Türleri"
 
-#: stock/models.py:104
+#: stock/models.py:105
 msgid "Default icon for all locations that have no icon set (optional)"
 msgstr "Simge atanmamış tüm konumlar için varsayılan simge (isteğe bağlı)"
 
-#: stock/models.py:152 stock/models.py:1185
+#: stock/models.py:153 stock/models.py:1225
 msgid "Stock Location"
 msgstr "Stok Konumu"
 
-#: stock/models.py:153 users/ruleset.py:49
+#: stock/models.py:154 users/ruleset.py:49
 msgid "Stock Locations"
 msgstr "Stok Konumları"
 
-#: stock/models.py:200 stock/models.py:1357
+#: stock/models.py:201 stock/models.py:1397
 msgid "Owner"
 msgstr "Sahip"
 
-#: stock/models.py:201 stock/models.py:1358
+#: stock/models.py:202 stock/models.py:1398
 msgid "Select Owner"
 msgstr "Sahibi Seçin"
 
-#: stock/models.py:209
+#: stock/models.py:210
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "Stok kalemleri yapısal stok konumlarına doğrudan yerleştirilemez; ancak alt konumlara yerleştirilebilir."
 
-#: stock/models.py:216 users/models.py:684
+#: stock/models.py:217 users/models.py:684
 msgid "External"
 msgstr "Harici"
 
-#: stock/models.py:217
+#: stock/models.py:218
 msgid "This is an external stock location"
 msgstr "Bu, harici bir stok konumudur"
 
-#: stock/models.py:223
+#: stock/models.py:224
 msgid "Location type"
 msgstr "Konum türü"
 
-#: stock/models.py:227
+#: stock/models.py:228
 msgid "Stock location type of this location"
 msgstr "Bu konumun stok konumu türü"
 
-#: stock/models.py:300
+#: stock/models.py:301
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
 msgstr "Bazı stok kalemleri zaten bu stok konumunda bulunduğundan, bu stok konumunu yapısal hale getiremezsiniz!"
 
-#: stock/models.py:417
+#: stock/models.py:418
 msgid "Oldest stock first (FIFO)"
 msgstr "Önce en eski stok (FIFO)"
 
-#: stock/models.py:418
+#: stock/models.py:419
 msgid "Newest stock first (LIFO)"
 msgstr "Önce en yeni stok (LIFO)"
 
-#: stock/models.py:419
+#: stock/models.py:420
 msgid "Smallest quantity first"
 msgstr "Önce en küçük miktar"
 
-#: stock/models.py:420
+#: stock/models.py:421
 msgid "Largest quantity first"
 msgstr "Önce en büyük miktar"
 
-#: stock/models.py:421
+#: stock/models.py:422
 msgid "Soonest expiry date first"
 msgstr "Önce en yakın raf ömrü"
 
-#: stock/models.py:583
+#: stock/models.py:578
 msgid "Serialized stock items cannot be deleted"
 msgstr "Seri numaralı stok kalemleri silinemez"
 
-#: stock/models.py:792
+#: stock/models.py:797
 #, python-brace-format
 msgid "{field} does not exist"
 msgstr "{field} mevcut değil"
 
-#: stock/models.py:805
+#: stock/models.py:810
 msgid "Part must be specified"
 msgstr "Parça belirtilmelidir"
 
-#: stock/models.py:1025
+#: stock/models.py:1065
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr "Stok kalemleri yapısal stok konumlarına yerleştirilemez!"
 
-#: stock/models.py:1054
+#: stock/models.py:1094
 msgid "Editing of serial numbers is not allowed - this item has already been assigned a serial number"
 msgstr "Seri numalarının düzenlemesine izin verilmez - bu ögeye zaten bir seri numarası atanmıştır"
 
-#: stock/models.py:1071 stock/serializers.py:502
+#: stock/models.py:1111 stock/serializers.py:489
 msgid "Stock item cannot be created for virtual parts"
 msgstr "Sanal parçalar için stok kalemi oluşturulamaz"
 
-#: stock/models.py:1088
+#: stock/models.py:1128
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
 msgstr "Parça türü ('{self.supplier_part.part}'), {self.part} olmalıdır"
 
-#: stock/models.py:1098 stock/models.py:1111
+#: stock/models.py:1138 stock/models.py:1151
 msgid "Quantity must be 1 for item with a serial number"
 msgstr "Seri numarası olan ögenin miktarı bir olmalı"
 
-#: stock/models.py:1101
+#: stock/models.py:1141
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr "Miktar birden büyük ise seri numarası ayarlanamaz"
 
-#: stock/models.py:1123
+#: stock/models.py:1163
 msgid "Item cannot belong to itself"
 msgstr "Öge kendisine ait olamaz"
 
-#: stock/models.py:1128
+#: stock/models.py:1168
 msgid "Item must have a build reference if is_building=True"
 msgstr "is_building=True ise ögenin bir üretim referansı olmalıdır"
 
-#: stock/models.py:1141
+#: stock/models.py:1181
 msgid "Build reference does not point to the same part object"
 msgstr "Üretim referansı aynı parça nesnesini göstermiyor"
 
-#: stock/models.py:1155
+#: stock/models.py:1195
 msgid "Parent Stock Item"
 msgstr "Üst Stok Kalemi"
 
-#: stock/models.py:1167
+#: stock/models.py:1207
 msgid "Base part"
 msgstr "Temel parça"
 
-#: stock/models.py:1177
+#: stock/models.py:1217
 msgid "Select a matching supplier part for this stock item"
 msgstr "Bu stok kalemiyle eşleşen bir tedarikçi parçası seçin"
 
-#: stock/models.py:1189
+#: stock/models.py:1229
 msgid "Where is this stock item located?"
 msgstr "Bu stok kalemi nerede bulunur?"
 
-#: stock/models.py:1197 stock/serializers.py:1967
+#: stock/models.py:1237 stock/serializers.py:1853
 msgid "Packaging this stock item is stored in"
 msgstr "Bu stok kaleminin ambalajı şu şekilde saklanmaktadır"
 
-#: stock/models.py:1203
+#: stock/models.py:1243
 msgid "Installed In"
 msgstr "Şuna Takıldı"
 
-#: stock/models.py:1208
+#: stock/models.py:1248
 msgid "Is this item installed in another item?"
 msgstr "Bu öge başka bir ögeye takılı mı?"
 
-#: stock/models.py:1227
+#: stock/models.py:1267
 msgid "Serial number for this item"
 msgstr "Bu öge için seri numarası"
 
-#: stock/models.py:1244 stock/serializers.py:1952
+#: stock/models.py:1284 stock/serializers.py:1838
 msgid "Batch code for this stock item"
 msgstr "Bu stok kalemine ait parti kodu"
 
-#: stock/models.py:1249
+#: stock/models.py:1289
 msgid "Stock Quantity"
 msgstr "Stok Miktarı"
 
-#: stock/models.py:1259
+#: stock/models.py:1299
 msgid "Source Build"
 msgstr "Kaynak Üretim"
 
-#: stock/models.py:1262
+#: stock/models.py:1302
 msgid "Build for this stock item"
 msgstr "Bu stok kalemi için üretim kaydı"
 
-#: stock/models.py:1269
+#: stock/models.py:1309
 msgid "Consumed By"
 msgstr "Tüketen"
 
-#: stock/models.py:1272
+#: stock/models.py:1312
 msgid "Build order which consumed this stock item"
 msgstr "Bu stok kaleminin kullanıldığı üretim emri"
 
-#: stock/models.py:1281
+#: stock/models.py:1321
 msgid "Source Purchase Order"
 msgstr "Kaynak Satın Alma Emri"
 
-#: stock/models.py:1285
+#: stock/models.py:1325
 msgid "Purchase order for this stock item"
 msgstr "Bu stok kalemi için satın alma emri"
 
-#: stock/models.py:1291
+#: stock/models.py:1331
 msgid "Destination Sales Order"
 msgstr "Hedef satış siparişi"
 
-#: stock/models.py:1302
+#: stock/models.py:1342
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr "Stok kalemi için raf ömrü tarihi. Bu tarihten sonra stok raf ömrünü doldurmuş kabul edilir"
 
-#: stock/models.py:1322
+#: stock/models.py:1362
 msgid "Date that this stock item was created"
 msgstr "Bu stok kaleminin oluşturulduğu tarih"
 
-#: stock/models.py:1327
+#: stock/models.py:1367
 msgid "Delete on deplete"
 msgstr "Tükendiğinde sil"
 
-#: stock/models.py:1328
+#: stock/models.py:1368
 msgid "Delete this Stock Item when stock is depleted"
 msgstr "Stok tükendiğinde bu stok kalemini sil"
 
-#: stock/models.py:1349
+#: stock/models.py:1389
 msgid "Single unit purchase price at time of purchase"
 msgstr "Satın alma anındaki birim alış fiyatı"
 
-#: stock/models.py:1380
+#: stock/models.py:1419
 msgid "Converted to part"
 msgstr "Parçaya dönüştürüldü"
 
-#: stock/models.py:1594
+#: stock/models.py:1633
 msgid "Quantity exceeds available stock"
 msgstr "Miktar, mevcut stoğu aşıyor"
 
-#: stock/models.py:1904
+#: stock/models.py:1942
 msgid "Invalid quantity value"
 msgstr ""
 
-#: stock/models.py:1967 stock/models.py:2479
+#: stock/models.py:2008 stock/models.py:2561
 msgid "Cannot assign stock to structural location"
 msgstr "Stok, yapısal bir konuma atanamaz"
 
-#: stock/models.py:2126 stock/serializers.py:1123
+#: stock/models.py:2163 stock/serializers.py:1106
 msgid "Quantity must not exceed available stock quantity"
 msgstr ""
 
-#: stock/models.py:2132
+#: stock/models.py:2169
 msgid "Serialized stock item must be disassembled in its entirety"
 msgstr ""
 
-#: stock/models.py:2137
+#: stock/models.py:2174
 msgid "No BOM lines provided"
 msgstr ""
 
-#: stock/models.py:2146
+#: stock/models.py:2183
 msgid "Stock item with installed items must be disassembled in its entirety"
 msgstr ""
 
-#: stock/models.py:2432
+#: stock/models.py:2514
 msgid "Part is not set as trackable"
 msgstr "Parça için izlenebilirlik etkin değil"
 
-#: stock/models.py:2438
+#: stock/models.py:2520
 msgid "Quantity must be integer"
 msgstr "Miktar tam sayı olmalıdır"
 
-#: stock/models.py:2450
+#: stock/models.py:2532
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr "Miktar, mevcut stok miktarını ({self.quantity}) aşmamalıdır"
 
-#: stock/models.py:2456
+#: stock/models.py:2538
 msgid "Serial numbers must be provided as a list"
 msgstr "Seri numaraları liste halinde girilmelidir"
 
-#: stock/models.py:2461
+#: stock/models.py:2543
 msgid "Quantity does not match serial numbers"
 msgstr "Miktar seri numaları ile eşleşmiyor"
 
-#: stock/models.py:2607 stock/models.py:3874
+#: stock/models.py:2657 stock/models.py:3759
 msgid "Test template does not exist"
 msgstr "Test şablonu mevcut değil"
 
-#: stock/models.py:2625
+#: stock/models.py:2675
 msgid "Stock item has been assigned to a sales order"
 msgstr "Stok kalemi bir satış siparişine atanmıştır"
 
-#: stock/models.py:2629
+#: stock/models.py:2679
 msgid "Stock item is installed in another item"
 msgstr "Stok kalemi başka bir stok kalemine takılıdır"
 
-#: stock/models.py:2632
+#: stock/models.py:2682
 msgid "Stock item contains other items"
 msgstr "Stok kalemi başka kalemleri de içermektedir"
 
-#: stock/models.py:2635
+#: stock/models.py:2685
 msgid "Stock item has been assigned to a customer"
 msgstr "Stok kalemi bir müşteriye atanmıştır"
 
-#: stock/models.py:2638 stock/models.py:2904
+#: stock/models.py:2688 stock/models.py:2957
 msgid "Stock item is currently in production"
 msgstr "Stok kalemi şu anda üretim aşamasındadır"
 
-#: stock/models.py:2641
+#: stock/models.py:2691
 msgid "Serialized stock cannot be merged"
 msgstr "Seri numaralı stok birleştirilemez"
 
-#: stock/models.py:2648 stock/serializers.py:1821
+#: stock/models.py:2698 stock/serializers.py:1707
 msgid "Duplicate stock items"
 msgstr "Yinelenen stok kalemleri"
 
-#: stock/models.py:2652
+#: stock/models.py:2702
 msgid "Stock items must refer to the same part"
 msgstr "Stok kalemleri aynı parçayı ifade etmelidir"
 
-#: stock/models.py:2660
+#: stock/models.py:2710
 msgid "Stock items must refer to the same supplier part"
 msgstr "Stok kalemleri aynı tedarikçi parçasını ifade etmelidir"
 
-#: stock/models.py:2665
+#: stock/models.py:2715
 msgid "Stock status codes must match"
 msgstr "Stok durum kodları eşleşmelidir"
 
-#: stock/models.py:3108
+#: stock/models.py:3159
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Stok kalemi stokta olmadığı için taşınamaz"
 
-#: stock/models.py:3754
-msgid "Stock Item Tracking"
-msgstr "Stok Kalemi Takibi"
-
-#: stock/models.py:3804
-msgid "Entry notes"
-msgstr "Giriş notları"
-
-#: stock/models.py:3844
+#: stock/models.py:3729
 msgid "Stock Item Test Result"
 msgstr "Stok Kalemi Test Sonucu"
 
-#: stock/models.py:3877
+#: stock/models.py:3762
 msgid "Value must be provided for this test"
 msgstr "Bu test için değer sağlanmalıdır"
 
-#: stock/models.py:3881
+#: stock/models.py:3766
 msgid "Attachment must be uploaded for this test"
 msgstr "Bu test için dosya eki yüklenmelidir"
 
-#: stock/models.py:3886
+#: stock/models.py:3771
 msgid "Invalid value for this test"
 msgstr "Bu tet için geçersiz değer"
 
-#: stock/models.py:3910
+#: stock/models.py:3795
 msgid "Test result"
 msgstr "Test sonucu"
 
-#: stock/models.py:3917
+#: stock/models.py:3802
 msgid "Test output value"
 msgstr "Test çıktı değeri"
 
-#: stock/models.py:3925 stock/serializers.py:264
+#: stock/models.py:3810 stock/serializers.py:258
 msgid "Test result attachment"
 msgstr "Test sonucu eki"
 
-#: stock/models.py:3929
+#: stock/models.py:3814
 msgid "Test notes"
 msgstr "Test notları"
 
-#: stock/models.py:3937
+#: stock/models.py:3822
 msgid "Test station"
 msgstr "Test istasyonu"
 
-#: stock/models.py:3938
+#: stock/models.py:3823
 msgid "The identifier of the test station where the test was performed"
 msgstr "Testin gerçekleştirildiği test istasyonunun tanımlayıcısı"
 
-#: stock/models.py:3944
+#: stock/models.py:3829
 msgid "Started"
 msgstr "Başladı"
 
-#: stock/models.py:3945
+#: stock/models.py:3830
 msgid "The timestamp of the test start"
 msgstr "Test başlangıcı zaman damgası"
 
-#: stock/models.py:3951 users/models.py:829
+#: stock/models.py:3836 users/models.py:829
 msgid "Finished"
 msgstr "Bitti"
 
-#: stock/models.py:3952
+#: stock/models.py:3837
 msgid "The timestamp of the test finish"
 msgstr "Test bitişi zaman damgası"
 
-#: stock/serializers.py:90
+#: stock/serializers.py:84
 msgid "Generated batch code"
 msgstr "Oluşturulan parti kodu"
 
-#: stock/serializers.py:99
+#: stock/serializers.py:93
 msgid "Select build order"
 msgstr "Üretim emri seç"
 
-#: stock/serializers.py:108
+#: stock/serializers.py:102
 msgid "Select stock item to generate batch code for"
 msgstr "Parti kodu oluşturulacak stok kalemini seç"
 
-#: stock/serializers.py:117
+#: stock/serializers.py:111
 msgid "Select location to generate batch code for"
 msgstr "Parti kodu oluşturulacak konumu seç"
 
-#: stock/serializers.py:126
+#: stock/serializers.py:120
 msgid "Select part to generate batch code for"
 msgstr "Parti kodu oluşturulacak parçayı seç"
 
-#: stock/serializers.py:135
+#: stock/serializers.py:129
 msgid "Select purchase order"
 msgstr "Satın alma siparişi seç"
 
-#: stock/serializers.py:142
+#: stock/serializers.py:136
 msgid "Enter quantity for batch code"
 msgstr "Parti kodu için miktar gir"
 
-#: stock/serializers.py:168
+#: stock/serializers.py:162
 msgid "Generated serial number"
 msgstr "Oluşturulan seri numarası"
 
-#: stock/serializers.py:178
+#: stock/serializers.py:172
 msgid "Select part to generate serial number for"
 msgstr "Seri numarası oluşturulacak parçayı seç"
 
-#: stock/serializers.py:186
+#: stock/serializers.py:180
 msgid "Quantity of serial numbers to generate"
 msgstr "Oluşturulacak seri numaralarının miktarı"
 
-#: stock/serializers.py:251
+#: stock/serializers.py:245
 msgid "Test template for this result"
 msgstr "Bu sonuç için test şablonu"
 
-#: stock/serializers.py:294
+#: stock/serializers.py:288
 msgid "No matching test found for this part"
 msgstr "Bu parça ile eşleşen test bulunamadı"
 
-#: stock/serializers.py:298
+#: stock/serializers.py:292
 msgid "Template ID or test name must be provided"
 msgstr "Şablon ID veya test adı belirtilmelidir"
 
-#: stock/serializers.py:308
+#: stock/serializers.py:302
 msgid "The test finished time cannot be earlier than the test started time"
 msgstr "Testin bitiş zamanı, testin başlama zamanından daha erken olamaz"
 
-#: stock/serializers.py:438
+#: stock/serializers.py:431
 msgid "Parent Item"
 msgstr "Üst Kalem"
 
-#: stock/serializers.py:439
+#: stock/serializers.py:432
 msgid "Parent stock item"
 msgstr "Üst stok kalemi"
 
-#: stock/serializers.py:465
+#: stock/serializers.py:458
 msgid "Use pack size when adding: the quantity defined is the number of packs"
 msgstr "Ekleme yaparken paket boyutunu kullan: tanımlanan miktar, paket sayısıdır"
 
-#: stock/serializers.py:467
+#: stock/serializers.py:460
 msgid "Use pack size"
 msgstr "Paket boyutunu kullan"
 
-#: stock/serializers.py:474 stock/serializers.py:760
+#: stock/serializers.py:467 stock/serializers.py:743
 msgid "Enter serial numbers for new items"
 msgstr "Yeni kalemler için seri numaraları gir"
 
-#: stock/serializers.py:480
+#: stock/serializers.py:473
 msgid "Duplicate Stock Item"
 msgstr ""
 
-#: stock/serializers.py:481
+#: stock/serializers.py:474
 msgid "Copy initial data from another stock item"
 msgstr ""
 
-#: stock/serializers.py:486
+#: stock/serializers.py:479
 msgid "Copy Test Results"
 msgstr ""
 
-#: stock/serializers.py:487
+#: stock/serializers.py:480
 msgid "Copy test results from the original stock item"
 msgstr ""
 
-#: stock/serializers.py:492
-msgid "Copy History"
-msgstr ""
-
-#: stock/serializers.py:493
-msgid "Copy stock history from the original stock item"
-msgstr ""
-
-#: stock/serializers.py:602
+#: stock/serializers.py:588
 msgid "Supplier Part Number"
 msgstr "Tedarikçi Parça Numarası"
 
-#: stock/serializers.py:683 users/models.py:374
+#: stock/serializers.py:669 users/models.py:374
 msgid "Expired"
 msgstr "Süresi dolmuş"
 
-#: stock/serializers.py:689
+#: stock/serializers.py:675
 msgid "Child Items"
 msgstr "Alt Kalemler"
 
-#: stock/serializers.py:693
-msgid "Tracking Items"
-msgstr "Takip Edilen Kalemler"
-
-#: stock/serializers.py:699
+#: stock/serializers.py:682
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr "Bu stok kaleminin birim veya paket başına satın alma fiyatı"
 
-#: stock/serializers.py:703
+#: stock/serializers.py:686
 msgid "Purchase currency of this stock item"
 msgstr "Bu stok kaleminin alış para birimi"
 
-#: stock/serializers.py:737
+#: stock/serializers.py:720
 msgid "Enter number of stock items to serialize"
 msgstr "Seri numarası verilecek stok kalemlerinin sayısını gir"
 
-#: stock/serializers.py:745 stock/serializers.py:789 stock/serializers.py:827
-#: stock/serializers.py:982 stock/serializers.py:1116 stock/serializers.py:1158
+#: stock/serializers.py:728 stock/serializers.py:772 stock/serializers.py:810
+#: stock/serializers.py:965 stock/serializers.py:1099 stock/serializers.py:1141
 msgid "No stock item provided"
 msgstr "Stok kalemi belirtilmedi"
 
-#: stock/serializers.py:753
+#: stock/serializers.py:736
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr "Miktar, mevcut stok miktarını ({q}) aşmamalıdır"
 
-#: stock/serializers.py:771 stock/serializers.py:1777 stock/serializers.py:2180
-#: stock/serializers.py:2296
+#: stock/serializers.py:754 stock/serializers.py:1663 stock/serializers.py:2066
+#: stock/serializers.py:2182
 msgid "Destination stock location"
 msgstr "Hedef stok konumu"
 
-#: stock/serializers.py:792
+#: stock/serializers.py:775
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "Bu parçaya seri numarası atanamaz"
 
-#: stock/serializers.py:812
+#: stock/serializers.py:795
 msgid "Serial numbers already exist"
 msgstr "Seri numaraları zaten mevcut"
 
-#: stock/serializers.py:868
+#: stock/serializers.py:851
 msgid "Select stock item to install"
 msgstr "Takılacak stok kalemini seçin"
 
-#: stock/serializers.py:875
+#: stock/serializers.py:858
 msgid "Quantity to Install"
 msgstr "Takılacak Miktar"
 
-#: stock/serializers.py:876
+#: stock/serializers.py:859
 msgid "Enter the quantity of items to install"
 msgstr "Takılacak kalemlerin miktarını girin"
 
-#: stock/serializers.py:882 stock/serializers.py:963 stock/serializers.py:1310
+#: stock/serializers.py:865 stock/serializers.py:946 stock/serializers.py:1293
 msgid "Add transaction note (optional)"
 msgstr "İşlem notu ekle (isteğe bağlı)"
 
-#: stock/serializers.py:890
+#: stock/serializers.py:873
 msgid "Quantity to install must be at least 1"
 msgstr "Miktar en az \"1\" olmalıdır"
 
-#: stock/serializers.py:898 stock/serializers.py:1161
+#: stock/serializers.py:881 stock/serializers.py:1144
 msgid "Stock item is unavailable"
 msgstr "Stok kalemi mevcut değil"
 
-#: stock/serializers.py:909
+#: stock/serializers.py:892
 msgid "Selected part is not in the Bill of Materials"
 msgstr "Seçili parça ürün ağacında bulunamadı"
 
-#: stock/serializers.py:922
+#: stock/serializers.py:905
 msgid "Quantity to install must not exceed available quantity"
 msgstr "Takılacak miktar, mevcudu geçmemeli"
 
-#: stock/serializers.py:957
+#: stock/serializers.py:940
 msgid "Destination location for uninstalled item"
 msgstr "Sökülen ürün için hedef konum"
 
-#: stock/serializers.py:1006
+#: stock/serializers.py:989
 msgid "Stock item status code"
 msgstr "Stok kalemi durum kodu"
 
-#: stock/serializers.py:1042
+#: stock/serializers.py:1025
 msgid "BOM line which defines the component part to break out"
 msgstr ""
 
-#: stock/serializers.py:1051
+#: stock/serializers.py:1034
 msgid "Quantity of the component part to create"
 msgstr ""
 
-#: stock/serializers.py:1067
+#: stock/serializers.py:1050
 msgid "Destination location for the component items"
 msgstr ""
 
-#: stock/serializers.py:1071
+#: stock/serializers.py:1054
 msgid "Status code for the component items"
 msgstr ""
 
-#: stock/serializers.py:1080
+#: stock/serializers.py:1063
 msgid "Unit purchase price for the component items (leave blank for automatic cost allocation)"
 msgstr ""
 
-#: stock/serializers.py:1108
+#: stock/serializers.py:1091
 msgid "Number of assemblies to disassemble"
 msgstr ""
 
-#: stock/serializers.py:1135
+#: stock/serializers.py:1118
 msgid "Default destination location for the component items"
 msgstr ""
 
-#: stock/serializers.py:1182
+#: stock/serializers.py:1165
 msgid "BOM item is not valid for the selected stock item"
 msgstr ""
 
-#: stock/serializers.py:1186
+#: stock/serializers.py:1169
 msgid "Duplicate BOM items provided"
 msgstr ""
 
-#: stock/serializers.py:1227
+#: stock/serializers.py:1210
 msgid "Select part to convert stock item into"
 msgstr "Stok kaleminin dönüştürüleceği parçayı seçin"
 
-#: stock/serializers.py:1240
+#: stock/serializers.py:1223
 msgid "Selected part is not a valid option for conversion"
 msgstr "Seçili parça dönüştürme için geçerli bir seçenek değil"
 
-#: stock/serializers.py:1257
+#: stock/serializers.py:1240
 msgid "Cannot convert stock item with assigned SupplierPart"
 msgstr "Tedarikçi parçası atanmış stok kalemi dönüştürülemez"
 
-#: stock/serializers.py:1293
+#: stock/serializers.py:1276
 msgid "Select stock items to change status"
 msgstr "Durumu değiştirilecek stok kalemlerini seçin"
 
-#: stock/serializers.py:1299
+#: stock/serializers.py:1282
 msgid "No stock items selected"
 msgstr "Hiçbir stok kalemi seçilmedi"
 
-#: stock/serializers.py:1418 stock/serializers.py:1511
+#: stock/serializers.py:1371 stock/serializers.py:1464
 msgid "Sublocations"
 msgstr "Alt konumlar"
 
-#: stock/serializers.py:1436
+#: stock/serializers.py:1389
 msgid "Delete Stock Items"
 msgstr "Stok Kalemlerini Sil"
 
-#: stock/serializers.py:1437
+#: stock/serializers.py:1390
 msgid "Delete all stock items contained within this location"
 msgstr "Bu konumda barındırılan tüm stok kalemlerini sil"
 
-#: stock/serializers.py:1442
+#: stock/serializers.py:1395
 msgid "Delete Sublocations"
 msgstr "Alt Konumları Sil"
 
-#: stock/serializers.py:1443
+#: stock/serializers.py:1396
 msgid "Delete all sub-locations contained within this location"
 msgstr "Bu konumda barındırılan tüm alt konumları sil"
 
-#: stock/serializers.py:1506
+#: stock/serializers.py:1459
 msgid "Parent stock location"
 msgstr "Üst stok konumu"
 
-#: stock/serializers.py:1644
+#: stock/serializers.py:1530
 msgid "Part must be salable"
 msgstr "Parça satılabilir olmalıdır"
 
-#: stock/serializers.py:1648
+#: stock/serializers.py:1534
 msgid "Item is allocated to a sales order"
 msgstr "Ürün bir satış siparişine tahsis edilmiştir"
 
-#: stock/serializers.py:1652
+#: stock/serializers.py:1538
 msgid "Item is allocated to a transfer order"
 msgstr "Kalem, bir transfer emrine tahsis edilmiştir"
 
-#: stock/serializers.py:1656
+#: stock/serializers.py:1542
 msgid "Item is allocated to a build order"
 msgstr "Ürün bir üretim emrine tahsis edilmiştir"
 
-#: stock/serializers.py:1680
+#: stock/serializers.py:1566
 msgid "Customer to assign stock items"
 msgstr "Stok kalemlerini atamak için müşteri"
 
-#: stock/serializers.py:1686
+#: stock/serializers.py:1572
 msgid "Selected company is not a customer"
 msgstr "Seçili şirket bir müşteri değil"
 
-#: stock/serializers.py:1695
+#: stock/serializers.py:1581
 msgid "Stock assignment notes"
 msgstr "Stok tahsis notları"
 
-#: stock/serializers.py:1705 stock/serializers.py:2029
+#: stock/serializers.py:1591 stock/serializers.py:1915
 msgid "A list of stock items must be provided"
 msgstr "Bir stok kalemleri listesi girilmelidir"
 
-#: stock/serializers.py:1785
+#: stock/serializers.py:1671
 msgid "Stock merging notes"
 msgstr "Stok birleştirme notları"
 
-#: stock/serializers.py:1790
+#: stock/serializers.py:1676
 msgid "Allow mismatched suppliers"
 msgstr "Farklı tedarikçilere izin ver"
 
-#: stock/serializers.py:1791
+#: stock/serializers.py:1677
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr "Farklı tedarikçi parçalarına sahip stokları birleştirmeye izin ver"
 
-#: stock/serializers.py:1796
+#: stock/serializers.py:1682
 msgid "Allow mismatched status"
 msgstr "Farklı durumlara sahip kalemlere izin ver"
 
-#: stock/serializers.py:1797
+#: stock/serializers.py:1683
 msgid "Allow stock items with different status codes to be merged"
 msgstr "Farklı durum kodlarına sahip stokları birleştirmeye izin ver"
 
-#: stock/serializers.py:1807
+#: stock/serializers.py:1693
 msgid "At least two stock items must be provided"
 msgstr "En az iki stok kalemi girilmelidir"
 
-#: stock/serializers.py:1874
+#: stock/serializers.py:1760
 msgid "No Change"
 msgstr "Değişiklik Yok"
 
-#: stock/serializers.py:1913
+#: stock/serializers.py:1799
 msgid "StockItem primary key value"
 msgstr "Stok Kalemi birincil anahtar (PK) değeri"
 
-#: stock/serializers.py:1926
+#: stock/serializers.py:1812
 msgid "Stock item is not in stock"
 msgstr "Stok kalemi mevcut stokta yok"
 
-#: stock/serializers.py:1929
+#: stock/serializers.py:1815
 msgid "Stock item is already in stock"
 msgstr "Stok kalemi zaten stokta"
 
-#: stock/serializers.py:1943
+#: stock/serializers.py:1829
 msgid "Quantity must not be negative"
 msgstr "Miktar negatif olamaz"
 
-#: stock/serializers.py:1973 stock/serializers.py:2311
+#: stock/serializers.py:1859 stock/serializers.py:2197
 msgid "Merge into existing stock"
 msgstr "Mevcut stokla birleştir"
 
-#: stock/serializers.py:1975
+#: stock/serializers.py:1861
 msgid "Merge this item into existing stock at the destination if possible"
 msgstr ""
 
-#: stock/serializers.py:1995
+#: stock/serializers.py:1881
 msgid "Stock transaction notes"
 msgstr "Stok aktarım notları"
 
-#: stock/serializers.py:2052
+#: stock/serializers.py:1938
 msgid "Set stock location for counted items (optional)"
 msgstr "Sayılan kalemler için stok konumunu belirle (isteğe bağlı)"
 
-#: stock/serializers.py:2312
+#: stock/serializers.py:2198
 msgid "Merge returned items into existing stock items if possible"
 msgstr "Mümkünse iade edilen ürünleri mevcut stoklarla birleştir"
 
-#: stock/serializers.py:2355
+#: stock/serializers.py:2241
 msgid "Next Serial Number"
 msgstr "Sıradaki Seri Numarası"
 
-#: stock/serializers.py:2361
+#: stock/serializers.py:2247
 msgid "Previous Serial Number"
 msgstr "Önceki Seri Numarası"
 
