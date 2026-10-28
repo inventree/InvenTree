@@ -547,6 +547,8 @@ class InvenTreeAuditMixin:
         AUDIT_VIEW_RESTRICTION: Restrict reading audit history to 'staff' or 'superuser' users (or None)
         AUDIT_REQUIRE_PARENT_PERMISSION: Entries are only visible to users who can view the *parent* model
             (for models whose access is determined by the linked object, e.g. attachments)
+        AUDIT_EVENT_TYPES: Enumeration of named event types which can be recorded against this model
+            (e.g. StockHistoryCode) - see audit.helpers.audit_event
     """
 
     AUDIT_INCLUDE_FIELDS: tuple[str, ...] = ()
@@ -556,6 +558,7 @@ class InvenTreeAuditMixin:
     AUDIT_PARENT_FIELD: Optional[str] = None
     AUDIT_VIEW_RESTRICTION: Optional[str] = None
     AUDIT_REQUIRE_PARENT_PERMISSION: bool = False
+    AUDIT_EVENT_TYPES: Optional[type] = None
 
     def get_audit_parent(self):
         """Return the "parent" object for audit log entries against this instance.

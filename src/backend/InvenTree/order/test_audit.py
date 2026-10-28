@@ -264,6 +264,23 @@ class PurchaseOrderAuditTest(OrderAuditTestBase):
             self.assertEqual(new, line.received + 3)
             self.assertEqual(entry.parent_object_pk, str(po.pk))
 
+        # Each received stock item records a single entry (creation, with the event)
+        from stock.models import StockItem
+        from stock.status_codes import StockHistoryCode
+
+        items = StockItem.objects.filter(purchase_order=po)
+        self.assertEqual(items.count(), 2)
+
+        for item in items:
+            [entry] = self.entries(StockItem, item.pk)
+
+            self.assertEqual(entry.action, ACTION.CREATE)
+            self.assertEqual(
+                entry.event_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+            )
+            self.assertEqual(entry.actor, self.user)
+            self.assertEqual(entry.changes_dict['location'][1], location.pk)
+
 
 class SalesOrderAuditTest(OrderAuditTestBase):
     """Audit tests for SalesOrder, line items, extra lines and shipments."""
@@ -412,6 +429,27 @@ class SalesOrderAuditTest(OrderAuditTestBase):
 
         self.assertIsNone(shipment_entry.changes_dict['shipment_date'][0])
 
+        # Stock items record a single entry each
+        from stock.models import StockItem
+        from stock.status_codes import StockHistoryCode
+
+        [source_entry] = self.entries(
+            StockItem, self.stock.pk, event_type__isnull=False
+        ).exclude(event_type=StockHistoryCode.CREATED)
+
+        self.assertEqual(source_entry.event_type, StockHistoryCode.SPLIT_CHILD_ITEM)
+        self.assertEqual(source_entry.actor, self.user)
+
+        shipped = StockItem.objects.get(parent=self.stock)
+
+        [shipped_entry] = self.entries(StockItem, shipped.pk)
+
+        self.assertEqual(shipped_entry.action, ACTION.CREATE)
+        self.assertEqual(
+            shipped_entry.event_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
+        )
+        self.assertEqual(shipped_entry.changes_dict['customer'][1], self.customer.pk)
+
 
 class ReturnOrderAuditTest(OrderAuditTestBase):
     """Audit tests for ReturnOrder, line items and extra lines."""
@@ -482,6 +520,36 @@ class ReturnOrderAuditTest(OrderAuditTestBase):
 
         self.assertEqual(
             update.changes_dict['description'], ['Restocking fee', 'Inspection fee']
+        )
+
+    def test_receive_stock(self):
+        """Receiving an item against a return order records a single entry."""
+        from stock.models import StockItem
+        from stock.status_codes import StockHistoryCode, StockStatus
+
+        location = StockLocation.objects.create(name='Returns')
+
+        line = models.ReturnOrderLineItem.objects.create(
+            order=self.order, item=self.item
+        )
+
+        self.order.issue_order()
+
+        n = self.entries(StockItem, self.item.pk).count()
+
+        self.order.receive_line_item(line, location, self.user, note='Inspected')
+
+        [entry] = list(self.entries(StockItem, self.item.pk).order_by('pk')[n:])
+
+        self.assertEqual(
+            entry.event_type, StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER
+        )
+        self.assertEqual(entry.actor, self.user)
+        self.assertEqual(entry.notes, 'Inspected')
+        self.assertEqual(entry.changes_dict['location'][1], location.pk)
+        self.assertEqual(entry.changes_dict['status'][1], StockStatus.QUARANTINED.value)
+        self.assertEqual(
+            entry.additional_data['deltas']['returnorder']['pk'], self.order.pk
         )
 
 
@@ -566,3 +634,17 @@ class TransferOrderAuditTest(OrderAuditTestBase):
         )
         self.assertNotIn('F(', str(entry.changes))
         self.assertEqual(entry.parent_object_pk, str(self.order.pk))
+
+        # The transferred stock records a single STOCK_MOVE event (linked to the order)
+        from stock.models import StockItem
+        from stock.status_codes import StockHistoryCode
+
+        moved = StockItem.objects.get(parent=self.stock)
+
+        [created] = self.entries(StockItem, moved.pk)
+
+        self.assertEqual(created.event_type, StockHistoryCode.SPLIT_FROM_PARENT)
+        self.assertEqual(created.changes_dict['location'][1], self.target.pk)
+        self.assertEqual(
+            created.additional_data['deltas']['transferorder']['pk'], self.order.pk
+        )

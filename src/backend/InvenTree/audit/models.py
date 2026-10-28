@@ -1,6 +1,7 @@
 """Database models for the audit app."""
 
 import os
+from typing import Optional
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldDoesNotExist
@@ -13,6 +14,9 @@ from auditlog.models import AbstractLogEntry, LogEntryManager
 import audit.context
 
 MASKED_VALUE = '***'
+
+# Maximum length of the notes associated with an audit entry
+NOTES_MAX_LENGTH = 512
 
 
 def get_audit_parent_reference(instance):
@@ -161,7 +165,13 @@ class AuditLogEntryManager(LogEntryManager):
             kwargs.setdefault('parent_content_type', parent_ct)
             kwargs.setdefault('parent_object_pk', parent_pk)
 
-        if 'actor' not in kwargs and (actor := audit.context.get_request_actor()):
+        # A pending named event for this instance (see audit.helpers.audit_event)
+        event = audit.context.consume_event(instance)
+
+        # The actor is (in order of preference) provided explicitly, by the event, or by the request
+        if 'actor' not in kwargs and (
+            actor := (event and event.actor) or audit.context.get_request_actor()
+        ):
             kwargs['actor'] = actor
             kwargs['actor_email'] = getattr(actor, 'email', None)
 
@@ -179,12 +189,35 @@ class AuditLogEntryManager(LogEntryManager):
 
             kwargs['additional_data'] = {**(additional_data or {}), 'source': source}
 
+        # Attach the pending named event
+        if event:
+            kwargs['event_type'] = event.event_type
+            kwargs['notes'] = event.notes or None
+
+            # Deltas which are already recorded as field changes are not duplicated
+            changes = kwargs.get('changes')
+            deltas = {
+                key: value
+                for key, value in (event.deltas or {}).items()
+                if not (isinstance(changes, dict) and key in changes)
+            }
+
+            if deltas:
+                kwargs['additional_data'] = {
+                    **(kwargs.get('additional_data') or {}),
+                    'deltas': deltas,
+                }
+
         is_masked = getattr(instance, 'is_audit_masked', None)
 
         if callable(is_masked) and is_masked():
             # Mask at write time - sensitive values must never reach the log table
             kwargs['changes'] = mask_changes(kwargs.get('changes'))
             kwargs['serialized_data'] = None
+            kwargs['notes'] = None
+
+            if additional_data := kwargs.get('additional_data'):
+                additional_data.pop('deltas', None)
 
         return kwargs
 
@@ -323,6 +356,29 @@ class AuditLogEntry(AbstractLogEntry):
     actor_username = models.CharField(
         max_length=150, null=True, blank=True, verbose_name=_('Actor Username')
     )
+
+    # Named event type (see InvenTreeAuditMixin.AUDIT_EVENT_TYPES)
+    event_type = models.PositiveIntegerField(
+        null=True, blank=True, verbose_name=_('Event Type')
+    )
+
+    notes = models.CharField(
+        max_length=NOTES_MAX_LENGTH,
+        null=True,
+        blank=True,
+        verbose_name=_('Notes'),
+        help_text=_('Notes associated with this entry'),
+    )
+
+    @property
+    def event_label(self) -> Optional[str]:
+        """Return the label for the event type of this entry (if any)."""
+        from audit.registry import event_type_label
+
+        if self.event_type is None:
+            return None
+
+        return event_type_label(self.content_type.model_class(), self.event_type)
 
     @property
     def model_type(self) -> str:

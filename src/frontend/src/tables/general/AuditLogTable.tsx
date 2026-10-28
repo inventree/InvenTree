@@ -234,6 +234,86 @@ function getChanges(record: any): AuditChange[] {
 }
 
 /**
+ * Return a human readable label for an event delta key (e.g. 'sales_order' -> 'Sales order')
+ */
+function deltaLabel(key: string): string {
+  // Labels for commonly used delta keys (e.g. stock tracking events)
+  const labels: Record<string, string> = {
+    added: t`Added`,
+    build_order: t`Build Order`,
+    buildorder: t`Build Order`,
+    customer: t`Customer`,
+    location: t`Location`,
+    part: t`Part`,
+    purchaseorder: t`Purchase Order`,
+    quantity: t`Quantity`,
+    removed: t`Removed`,
+    returnorder: t`Return Order`,
+    salesorder: t`Sales Order`,
+    stockitem: t`Stock Item`,
+    transferorder: t`Transfer Order`
+  };
+
+  if (key in labels) {
+    return labels[key];
+  }
+
+  const label = key.replaceAll('_', ' ');
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+/**
+ * Render the deltas and notes recorded against a named event (if any)
+ */
+function AuditEventDetails({
+  record,
+  navigate
+}: Readonly<{
+  record: any;
+  navigate: NavigateFunction;
+}>): ReactNode {
+  const deltas: [string, any][] = Object.entries(record.deltas ?? {});
+
+  if (deltas.length == 0 && !record.notes) {
+    return null;
+  }
+
+  return (
+    <Stack gap={2}>
+      {deltas.map(([key, value]) => {
+        // A reference to another object: {model_type, pk, str}
+        const isReference =
+          value !== null && typeof value === 'object' && 'model_type' in value;
+
+        return (
+          <Group key={key} gap='xs' wrap='nowrap'>
+            <Text size='sm' fw={500}>
+              {deltaLabel(key)}:
+            </Text>
+            {isReference && !value.str ? (
+              <Text size='sm' c='dimmed' fs='italic'>{t`Hidden`}</Text>
+            ) : (
+              <AuditValue
+                value={isReference ? value.pk : value}
+                display={isReference ? value.str : undefined}
+                modelType={isReference ? value.model_type : undefined}
+                numeric={typeof value === 'number'}
+                navigate={navigate}
+              />
+            )}
+          </Group>
+        );
+      })}
+      {record.notes && (
+        <Text size='sm' fs='italic'>
+          {record.notes}
+        </Text>
+      )}
+    </Stack>
+  );
+}
+
+/**
  * Render a summary of the changes for an audit entry
  */
 function AuditChangesSummary({
@@ -243,17 +323,30 @@ function AuditChangesSummary({
   record: any;
   navigate: NavigateFunction;
 }>): ReactNode {
+  const eventDetails = (
+    <AuditEventDetails record={record} navigate={navigate} />
+  );
+
   if (record.action == AuditAction.DELETE) {
+    // A named event may be recorded against the deletion (e.g. stock depleted to zero)
     return (
-      <Text size='sm' c='dimmed' fs='italic'>
-        {t`Object was deleted`}
-      </Text>
+      <Stack gap={2}>
+        {eventDetails}
+        <Text size='sm' c='dimmed' fs='italic'>
+          {t`Object was deleted`}
+        </Text>
+      </Stack>
     );
   }
 
   const changes = getChanges(record);
 
   if (changes.length == 0) {
+    // A named event may be recorded without any field changes
+    if (record.event_type !== null && record.event_type !== undefined) {
+      return eventDetails;
+    }
+
     return (
       <Text size='sm' c='dimmed' fs='italic'>
         {t`No changes recorded`}
@@ -263,6 +356,7 @@ function AuditChangesSummary({
 
   return (
     <Stack gap={2}>
+      {eventDetails}
       {changes.slice(0, MAX_INLINE_CHANGES).map((change) => (
         <AuditChangeItem
           key={change.field}
@@ -450,7 +544,7 @@ export function AuditLogTable({
         switchable: false,
         render: (record: any) => (
           <Badge color={actionColor(record.action)} variant='light'>
-            {actionLabel(record.action)}
+            {record.event_label ?? actionLabel(record.action)}
           </Badge>
         )
       },
