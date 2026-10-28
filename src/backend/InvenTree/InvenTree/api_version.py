@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 567
 
 INVENTREE_API_TEXT = """
 
-v567 -> 2026-10-28 : https://github.com/inventree/InvenTree/pull/xxxxx
+v567 -> 2026-10-28 : https://github.com/inventree/InvenTree/pull/13128
     - Allow ordering of SupplierPart API by "on_order" field
 
 v566 -> 2026-10-25 : https://github.com/inventree/InvenTree/pull/13101
