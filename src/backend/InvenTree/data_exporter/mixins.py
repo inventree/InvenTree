@@ -18,7 +18,7 @@ import data_exporter.tasks
 import InvenTree.exceptions
 import InvenTree.serializers
 from common.models import DataOutput
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import escape_export_value, str2bool
 from InvenTree.tasks import offload_task
 from plugin import PluginMixinEnum, registry
 
@@ -218,7 +218,9 @@ class DataExportSerializerMixin:
         dataset = tablib.Dataset(headers=field_headers)
 
         for row in data:
-            dataset.append([self.get_nested_value(row, f) for f in field_names])
+            dataset.append([
+                escape_export_value(self.get_nested_value(row, f)) for f in field_names
+            ])
 
         return dataset.export(file_format)
 

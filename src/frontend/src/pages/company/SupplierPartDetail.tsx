@@ -27,6 +27,9 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
@@ -71,6 +74,8 @@ export default function SupplierPartDetail() {
     modelType: ModelType.supplierpart,
     modelId: supplierPart?.pk
   });
+
+  const showHistory = useShowHistoryPanel();
 
   const panels: PanelType[] = useMemo(() => {
     return [
@@ -137,9 +142,14 @@ export default function SupplierPartDetail() {
         model_type: ModelType.supplierpart,
         model_id: supplierPart?.pk,
         note_count: instanceInfo.note_count
+      }),
+      HistoryPanel({
+        model_type: ModelType.supplierpart,
+        model_id: supplierPart?.pk,
+        visible: showHistory
       })
     ];
-  }, [supplierPart, instanceInfo]);
+  }, [supplierPart, instanceInfo, showHistory]);
 
   const supplierPartActions = useMemo(() => {
     return [
@@ -222,11 +232,13 @@ export default function SupplierPartDetail() {
     return [
       <DetailsBadge
         label={t`Inactive`}
+        tooltip={t`This supplier part is inactive`}
         color='red'
         visible={supplierPart.active == false}
       />,
       <DetailsBadge
         label={`${t`In Stock`}: ${formatDecimal(supplierPart.in_stock)}`}
+        tooltip={t`Quantity of this supplier part in stock`}
         color={'green'}
         visible={
           supplierPart?.active &&
@@ -237,12 +249,14 @@ export default function SupplierPartDetail() {
       />,
       <DetailsBadge
         label={t`No Stock`}
+        tooltip={t`There is no stock available for this supplier part`}
         color={'red'}
         visible={supplierPart.active && supplierPart.in_stock == 0}
         key='no_stock'
       />,
       <DetailsBadge
         label={`${t`On Order`}: ${formatDecimal(supplierPart.on_order)}`}
+        tooltip={t`Quantity on order from outstanding purchase orders`}
         color='blue'
         visible={supplierPart.on_order > 0}
         key='on_order'
