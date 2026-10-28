@@ -13,13 +13,14 @@ import {
 import { useDisclosure, useDocumentVisibility } from '@mantine/hooks';
 import { IconBell, IconSearch, IconUserBolt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { type ReactNode, lazy, useEffect, useMemo, useState } from 'react';
 import {
   matchPath,
   useLocation,
   useMatch,
   useNavigate
 } from 'react-router-dom';
+import { Loadable } from '../../functions/loading';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
@@ -48,7 +49,8 @@ import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
 import { NotificationDrawer } from './NotificationDrawer';
-import { SearchDrawer } from './SearchDrawer';
+
+const SearchDrawer = Loadable(lazy(() => import('./SearchDrawer')));
 
 export function Header() {
   const [setNavigationOpen, navigationOpen] = useLocalState(

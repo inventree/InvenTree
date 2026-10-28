@@ -1,32 +1,30 @@
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Button, Group, Text, Tour, rem } from '@mantine/core';
+import { Button, Group, Text, rem } from '@mantine/core';
 import { useWindowEvent } from '@mantine/hooks';
 import { type NotificationData, notifications } from '@mantine/notifications';
 
 import {
   type Dispatch,
   type SetStateAction,
+  lazy,
   useEffect,
   useMemo,
   useRef,
   useState
 } from 'react';
 import { api } from '../../App';
+import { Loadable } from '../../functions/loading';
 import { useServerApiState } from '../../states/ServerApiState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
+import type { FtuStep } from './FirstUseTourView';
 
-interface FtuStep {
-  target: string;
-  title: string;
-  description: string;
-  action_before?: () => void;
-}
+const FirstUseTourView = Loadable(lazy(() => import('./FirstUseTourView')));
 
 const ftuKex = 'org.inventree.i.tip.ftug';
 
@@ -153,22 +151,11 @@ export function FirstUseTour() {
   }, [showNudge]);
 
   // rendering
-  if (!user) {
+  if (!user || !active) {
     return null;
   }
   return (
-    <Tour active={active} onClose={completeTour} zIndex={10002}>
-      {ftusteps.map((step, index) => (
-        <Tour.Step
-          key={index}
-          target={`#${step.target}`}
-          title={step.title}
-          onStepOpen={step.action_before}
-        >
-          {step.description}
-        </Tour.Step>
-      ))}
-    </Tour>
+    <FirstUseTourView active={active} onClose={completeTour} steps={ftusteps} />
   );
 }
 

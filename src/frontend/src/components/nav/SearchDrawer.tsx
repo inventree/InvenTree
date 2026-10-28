@@ -208,7 +208,7 @@ function QueryResultGroup({
  * Construct a drawer which provides quick-search functionality
  * @param
  */
-export function SearchDrawer({
+export default function SearchDrawer({
   opened,
   onClose
 }: Readonly<{
