@@ -1,10 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Container, Flex, Space } from '@mantine/core';
-import {
-  Spotlight,
-  type SpotlightActionData,
-  createSpotlight
-} from '@mantine/spotlight';
+import { Spotlight, type SpotlightActionData } from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';
 import { type JSX, useEffect, useMemo, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -33,6 +29,7 @@ import GlobalPreviewDrawer from '../previews/GlobalPreviewDrawer';
 import { FirstUseTour } from './FirstUseTour';
 import { Footer } from './Footer';
 import { Header } from './Header';
+import { firstStore, searchShortcutKey } from './spotlightStore';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const location = useLocation();
@@ -53,10 +50,6 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 
   return children;
 };
-
-export const [firstStore, firstSpotlight] = createSpotlight();
-
-export const searchShortcutKey = 'mod+K';
 
 export default function LayoutComponent() {
   const navigate = useNavigate();
