@@ -1,6 +1,7 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import type { UseInstanceResult } from '@lib/types/Rendering';
 import { t } from '@lingui/core/macro';
 import {
@@ -17,10 +18,13 @@ import {
   IconCircleCheck,
   IconExclamationCircle,
   IconGitCompare,
+  IconHistory,
   IconListCheck
 } from '@tabler/icons-react';
-import { type ReactNode, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { api } from '../../../App';
 import { RenderUser } from '../../../components/render/User';
 import useBackgroundTask from '../../../hooks/UseBackgroundTask';
 import { useApiFormModal } from '../../../hooks/UseForm';
@@ -64,6 +68,35 @@ export function BomActions({
       setBomCompareOpen(true);
     }
   }, [searchParams]);
+
+  // Fetch the list of BOM snapshots for this assembly
+  const bomSnapshots = useQuery({
+    queryKey: [
+      'bom-snapshots',
+      partInstance.pk,
+      bomInformation.instance?.bom_checksum
+    ],
+    enabled: !!partInstance.pk && user.hasViewRole(UserRoles.bom),
+    queryFn: async () => {
+      return api
+        .get(apiUrl(ApiEndpoints.bom_snapshot_list), {
+          params: {
+            part: partInstance.pk
+          }
+        })
+        .then((response) => response.data);
+    }
+  });
+
+  // The most recent snapshot which differs from the currently validated BOM
+  const previousSnapshot: any = useMemo(() => {
+    const validated: boolean = !!bomInformation.instance?.bom_validated;
+    const checksum: string = bomInformation.instance?.bom_checksum ?? '';
+
+    return bomSnapshots.data?.find(
+      (snapshot: any) => !(validated && snapshot.checksum == checksum)
+    );
+  }, [bomSnapshots.data, bomInformation.instance]);
 
   const [taskId, setTaskId] = useState<string>('');
 
@@ -142,6 +175,17 @@ export function BomActions({
           tooltip={t`Compare Bill of Materials`}
           onClick={() => setBomCompareOpen(true)}
         />
+        {previousSnapshot && (
+          <ActionButton
+            icon={<IconHistory />}
+            color='blue'
+            tooltip={t`Previous BOM snapshots available`}
+            onClick={() => {
+              setBomCompareSnapshotId(`${previousSnapshot.pk}`);
+              setBomCompareOpen(true);
+            }}
+          />
+        )}
         {!bomInformation.instance?.bom_validated &&
           user.hasChangeRole(UserRoles.bom) && (
             <ActionButton

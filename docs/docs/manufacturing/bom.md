@@ -315,6 +315,8 @@ In each case, any differences between the BOM line items are highlighted in red.
 
 Instead of comparing against another assembly, the BOM can be compared against a previously validated [snapshot](#bom-snapshots) of the same assembly. In the BOM comparison view, select *Snapshot* (instead of *Assembly*), and then select the snapshot to compare against. Each snapshot is listed with the date and time of validation, the user who validated the BOM, and the validation note (if provided).
 
+If any snapshots exist which differ from the currently validated BOM, a {{ icon("history", color="blue", title="BOM Snapshots") }} icon is displayed at the top of the BOM table. Clicking this icon opens the BOM comparison view, comparing the current BOM against the most recent of these snapshots.
+
 ## Replacing Components
 
 When a component is used in the BOM for multiple assemblies, it can be time consuming to update the BOM for each assembly when a change is required. InvenTree provides a "Replace Component" function which streamlines the process of replacing a component part with another part across multiple BOMs.
