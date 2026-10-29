@@ -230,7 +230,7 @@ export default function NonConformanceDetail() {
         <Stack gap='xs'>
           <PageDetail
             title={`${t`NCR`}: ${ncr.reference}`}
-            subtitle={ncr.title}
+            subtitle={ncr.description}
             imageUrl={ncr.part_detail?.thumbnail || ncr.part_detail?.image}
             badges={ncrBadges}
             actions={ncrActions}
