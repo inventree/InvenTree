@@ -1,10 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 567
+INVENTREE_API_VERSION = 568
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v568 -> 2026-10-29 : https://github.com/inventree/InvenTree/pull/13133
+    - Adds BOM snapshot API endpoints (/api/bom/snapshot/), recording the BOM each time it is validated
+    - BOM snapshot detail endpoint includes "part_details" (current details for referenced parts)
+    - Adds optional "note" field to the BOM validation API endpoint
+    - Adds read-only "bom_snapshot" field to the BuildOrder API
 
 v567 -> 2026-10-28 : https://github.com/inventree/InvenTree/pull/13128
     - Allow ordering of SupplierPart API by "on_order" field

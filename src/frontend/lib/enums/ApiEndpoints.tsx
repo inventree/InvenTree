@@ -112,6 +112,7 @@ export enum ApiEndpoints {
   bom_item_validate = 'bom/:id/validate/',
   bom_validate = 'part/:id/bom-validate/',
   bom_substitute_list = 'bom/substitute/',
+  bom_snapshot_list = 'bom/snapshot/',
 
   // Part API endpoints
   part_list = 'part/',

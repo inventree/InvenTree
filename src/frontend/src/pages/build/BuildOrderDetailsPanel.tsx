@@ -1,11 +1,13 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Anchor, Grid, Skeleton, Stack } from '@mantine/core';
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { TagsList } from '@lib/index';
 
 import {
@@ -16,6 +18,8 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
 import { useInstance } from '../../hooks/UseInstance';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
 
 export function BuildOrderDetailsPanel({
   instance,
@@ -26,6 +30,16 @@ export function BuildOrderDetailsPanel({
   allowImageEdit?: boolean;
   refreshInstance?: () => void;
 }>) {
+  const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
+
+  // The BOM snapshot link is only useful if the user can view the snapshot
+  const showBomSnapshot: boolean =
+    !!instance?.bom_snapshot &&
+    globalSettings.isSet('PART_BOM_SNAPSHOT') &&
+    user.hasViewRole(UserRoles.bom);
+
   const { instance: partRequirements } = useInstance({
     endpoint: ApiEndpoints.part_requirements,
     pk: instance?.part,
@@ -113,6 +127,22 @@ export function BuildOrderDetailsPanel({
       model_field: 'reference',
       model: ModelType.build,
       hidden: !instance?.parent
+    },
+    {
+      type: 'text',
+      name: 'bom_snapshot',
+      icon: 'bom',
+      label: t`Validated BOM`,
+      hidden: !showBomSnapshot,
+      value_formatter: () => (
+        <Anchor
+          component={Link}
+          size='sm'
+          to={`${getDetailUrl(ModelType.part, instance?.part)}bom?compare_snapshot=${instance?.bom_snapshot}`}
+        >
+          {t`Compare against current BOM`}
+        </Anchor>
+      )
     }
   ];
 

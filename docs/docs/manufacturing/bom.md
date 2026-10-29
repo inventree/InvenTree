@@ -269,6 +269,24 @@ If the BOM requires revalidation, the status will be displayed as "Not Validated
 
 {{ image("build/bom_invalid.png", "BOM Not Validated") }}
 
+### BOM Snapshots
+
+Each time the BOM for an assembly is validated, InvenTree records a *snapshot* of the BOM. A snapshot is a read-only record of every BOM line item (including inherited line items and substitute parts) at the time of validation, along with the user who validated the BOM and an optional note (e.g. the reason for the change, or an engineering change order reference) which can be entered when validating.
+
+Snapshots store the part information (name, IPN, revision and description) at the time of validation, so they remain a faithful record even if the referenced parts are later modified or deleted.
+
+A new snapshot is only recorded if the BOM has changed since the most recent snapshot. Re-validating an unchanged BOM does not create a new snapshot (and any note entered is discarded).
+
+Snapshots can be compared against the current BOM - refer to [BOM Comparison](#comparing-against-a-snapshot) below.
+
+!!! info "Substitute Parts"
+    Substitute parts are recorded in the snapshot, but are not included in the BOM checksum. Changing only the substitute parts for a BOM line item does not require the BOM to be revalidated.
+
+!!! info "Build Orders"
+    When a build order is created against an assembly with a validated BOM, the build order records which BOM snapshot it was created from. This is displayed as *Validated BOM* on the build order detail page, with a link to compare the snapshot against the current BOM.
+
+BOM snapshots are enabled by default, and can be disabled via the `PART_BOM_SNAPSHOT` [global setting](../settings/global.md). When disabled, no new snapshots are recorded, and the option to compare against snapshots is removed from the user interface. Any existing snapshots are retained. Snapshots cannot be edited, and can only be deleted via the admin interface.
+
 ## BOM Comparison
 
 It is possible to compare the BOM of one assembly with another assembly. This comparison can highlight different component parts, quantities and other properties of the BOM line items.
@@ -292,6 +310,16 @@ When comparing BOMs from two different assemblies, the user can select from the 
 | *Show common parts* | Display only the BOM line items which are common between the two assemblies. |
 
 In each case, any differences between the BOM line items are highlighted in red.
+
+### Comparing Against a Snapshot
+
+Instead of comparing against another assembly, the BOM can be compared against a previously validated [snapshot](#bom-snapshots) of the same assembly. In the BOM comparison view, select *Snapshot* (instead of *Assembly*), and then select the snapshot to compare against. Each snapshot is listed with the date and time of validation, the user who validated the BOM, and the validation note (if provided).
+
+{{ image("build/bom_compare_snapshot.png", "BOM Compare against Snapshot") }}
+
+If any snapshots exist which differ from the currently validated BOM, a {{ icon("history", color="blue", title="BOM Snapshots") }} icon is displayed at the top of the BOM table. Clicking this icon opens the BOM comparison view, comparing the current BOM against the most recent of these snapshots.
+
+{{ image("build/bom_snapshot_icon.png", "BOM Snapshot Icon") }}
 
 ## Replacing Components
 

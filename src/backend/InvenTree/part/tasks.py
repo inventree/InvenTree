@@ -418,13 +418,16 @@ def check_bom_valid(part_id: int):
 
 
 @tracer.start_as_current_span('validate_bom')
-def validate_bom(part_id: int, valid: bool, user_id: Optional[int] = None):
+def validate_bom(
+    part_id: int, valid: bool, user_id: Optional[int] = None, note: str = ''
+):
     """Run BOM validation for the specified Part.
 
     Arguments:
         part_id: The ID of the part for which to validate the BOM.
         valid: Boolean indicating whether the BOM is valid or not.
         user_id: Optional ID of the user performing the validation.
+        note: Optional note to store against the BOM snapshot.
     """
     from django.contrib.auth import get_user_model
 
@@ -446,4 +449,4 @@ def validate_bom(part_id: int, valid: bool, user_id: Optional[int] = None):
     else:
         user = None
 
-    part.validate_bom(user, valid=valid)
+    part.validate_bom(user, valid=valid, note=note)

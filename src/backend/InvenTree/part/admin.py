@@ -87,3 +87,23 @@ class BomItemAdmin(admin.ModelAdmin):
     )
 
     autocomplete_fields = ('part', 'sub_part')
+
+
+@admin.register(models.BomSnapshot)
+class BomSnapshotAdmin(admin.ModelAdmin):
+    """Admin class for the BomSnapshot model.
+
+    Snapshots are immutable, and can only be viewed (or deleted) via the admin interface.
+    """
+
+    list_display = ('part', 'created', 'created_by', 'line_count')
+
+    search_fields = ('part__name', 'part__IPN', 'note')
+
+    def has_add_permission(self, request):
+        """Snapshots are created automatically when a BOM is validated."""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Snapshots are immutable."""
+        return False

@@ -37,6 +37,7 @@ from users.serializers import UserSerializer
 from .models import (
     BomItem,
     BomItemSubstitute,
+    BomSnapshot,
     Part,
     PartCategory,
     PartCategoryParameterTemplate,
@@ -1093,6 +1094,7 @@ class PartBomValidateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'bom_checked_by_detail',
             'bom_checked_date',
             'valid',
+            'note',
         ]
 
         read_only_fields = [
@@ -1109,6 +1111,15 @@ class PartBomValidateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         required=False,
         label=_('Valid'),
         help_text=_('Validate entire Bill of Materials'),
+    )
+
+    note = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_blank=True,
+        max_length=250,
+        label=_('Note'),
+        help_text=_('Optional note for this BOM validation'),
     )
 
     bom_checked_by_detail = UserSerializer(
@@ -1387,6 +1398,83 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
     part_detail = PartBriefSerializer(
         source='part', read_only=True, many=False, pricing=False
     )
+
+
+class BomSnapshotSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for the BomSnapshot model.
+
+    Note: The (potentially large) 'data' field is only provided by BomSnapshotDetailSerializer.
+    """
+
+    class Meta:
+        """Metaclass defining serializer fields."""
+
+        model = BomSnapshot
+        fields = [
+            'pk',
+            'part',
+            'checksum',
+            'created',
+            'created_by',
+            'created_by_detail',
+            'schema_version',
+            'line_count',
+            'note',
+        ]
+        read_only_fields = fields
+
+    created_by_detail = UserSerializer(
+        source='created_by', many=False, read_only=True, allow_null=True
+    )
+
+
+class BomSnapshotDetailSerializer(BomSnapshotSerializer):
+    """Detail serializer for the BomSnapshot model, including the serialized BOM data."""
+
+    class Meta(BomSnapshotSerializer.Meta):
+        """Metaclass defining serializer fields."""
+
+        fields = [*BomSnapshotSerializer.Meta.fields, 'data', 'part_details']
+        read_only_fields = fields
+
+    part_details = serializers.SerializerMethodField(
+        label=_('Part Details'),
+        help_text=_(
+            'Current details for the parts referenced by this snapshot (parts which no longer exist are omitted)'
+        ),
+    )
+
+    def get_part_details(self, snapshot) -> dict:
+        """Return current information for each part referenced in the snapshot, keyed by part ID.
+
+        The snapshot stores part information by value, which does not include images.
+        """
+        part_ids = set()
+
+        for item in (snapshot.data or {}).get('items', []):
+            part_ids.add(item.get('sub_part', {}).get('pk'))
+
+            for substitute in item.get('substitutes', []):
+                part_ids.add(substitute.get('pk'))
+
+        parts = Part.objects.filter(pk__in=[pk for pk in part_ids if pk])
+
+        return {
+            str(part.pk): {
+                'pk': part.pk,
+                'name': part.name,
+                'full_name': part.full_name,
+                'IPN': part.IPN,
+                'revision': part.revision,
+                'description': part.description,
+                'units': part.units,
+                'active': part.active,
+                'locked': part.locked,
+                'image': part.get_image_url() if part.image else None,
+                'thumbnail': part.get_thumbnail_url(),
+            }
+            for part in parts
+        }
 
 
 @register_importer()

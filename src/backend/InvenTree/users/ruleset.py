@@ -115,7 +115,7 @@ def get_ruleset_models() -> dict:
             'django_mailbox_messageattachment',
             'django_mailbox_message',
         ],
-        RuleSetEnum.BOM: ['part_bomitem', 'part_bomitemsubstitute'],
+        RuleSetEnum.BOM: ['part_bomitem', 'part_bomitemsubstitute', 'part_bomsnapshot'],
         RuleSetEnum.BUILD: [
             'part_part',
             'part_partcategory',

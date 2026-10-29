@@ -1,6 +1,7 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
 import type { UseInstanceResult } from '@lib/types/Rendering';
 import { t } from '@lingui/core/macro';
 import {
@@ -17,13 +18,17 @@ import {
   IconCircleCheck,
   IconExclamationCircle,
   IconGitCompare,
+  IconHistory,
   IconListCheck
 } from '@tabler/icons-react';
-import { type ReactNode, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { api } from '../../../App';
 import { RenderUser } from '../../../components/render/User';
 import useBackgroundTask from '../../../hooks/UseBackgroundTask';
 import { useApiFormModal } from '../../../hooks/UseForm';
+import { useGlobalSettingsState } from '../../../states/SettingsStates';
 import { useUserState } from '../../../states/UserState';
 import { BomCompareDrawer } from './BomCompare';
 
@@ -39,23 +44,62 @@ export function BomActions({
 }>) {
   const user = useUserState();
 
+  const globalSettings = useGlobalSettingsState();
+
+  const snapshotsEnabled: boolean = globalSettings.isSet('PART_BOM_SNAPSHOT');
+
   const [bomCompareOpen, setBomCompareOpen] = useState<boolean>(false);
 
   const [bomCompareId, setBomCompareId] = useState<string>('');
+
+  const [bomCompareSnapshotId, setBomCompareSnapshotId] = useState<string>('');
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Open the BOM compare drawer if the URL contains the relevant query parameter
   useEffect(() => {
-    if (
-      searchParams.has('compare') &&
-      !!searchParams.get('compare') &&
-      !bomCompareOpen
-    ) {
+    if (bomCompareOpen) {
+      return;
+    }
+
+    if (searchParams.get('compare')) {
       setBomCompareId(searchParams.get('compare') as string);
+      setBomCompareOpen(true);
+    } else if (snapshotsEnabled && searchParams.get('compare_snapshot')) {
+      setBomCompareSnapshotId(searchParams.get('compare_snapshot') as string);
       setBomCompareOpen(true);
     }
   }, [searchParams]);
+
+  // Fetch the list of BOM snapshots for this assembly
+  const bomSnapshots = useQuery({
+    queryKey: [
+      'bom-snapshots',
+      partInstance.pk,
+      bomInformation.instance?.bom_checksum
+    ],
+    enabled:
+      snapshotsEnabled && !!partInstance.pk && user.hasViewRole(UserRoles.bom),
+    queryFn: async () => {
+      return api
+        .get(apiUrl(ApiEndpoints.bom_snapshot_list), {
+          params: {
+            part: partInstance.pk
+          }
+        })
+        .then((response) => response.data);
+    }
+  });
+
+  // The most recent snapshot which differs from the currently validated BOM
+  const previousSnapshot: any = useMemo(() => {
+    const validated: boolean = !!bomInformation.instance?.bom_validated;
+    const checksum: string = bomInformation.instance?.bom_checksum ?? '';
+
+    return bomSnapshots.data?.find(
+      (snapshot: any) => !(validated && snapshot.checksum == checksum)
+    );
+  }, [bomSnapshots.data, bomInformation.instance]);
 
   const [taskId, setTaskId] = useState<string>('');
 
@@ -75,6 +119,9 @@ export function BomActions({
       valid: {
         hidden: true,
         value: true
+      },
+      note: {
+        hidden: !snapshotsEnabled
       }
     },
     title: t`Validate BOM`,
@@ -131,6 +178,17 @@ export function BomActions({
           tooltip={t`Compare Bill of Materials`}
           onClick={() => setBomCompareOpen(true)}
         />
+        {snapshotsEnabled && previousSnapshot && (
+          <ActionButton
+            icon={<IconHistory />}
+            color='blue'
+            tooltip={t`Previous BOM snapshots available`}
+            onClick={() => {
+              setBomCompareSnapshotId(`${previousSnapshot.pk}`);
+              setBomCompareOpen(true);
+            }}
+          />
+        )}
         {!bomInformation.instance?.bom_validated &&
           user.hasChangeRole(UserRoles.bom) && (
             <ActionButton
@@ -176,12 +234,15 @@ export function BomActions({
       <BomCompareDrawer
         partInstance={partInstance}
         compareId={bomCompareId}
+        compareSnapshotId={bomCompareSnapshotId}
         opened={bomCompareOpen}
         onClosed={() => {
           setBomCompareId('');
+          setBomCompareSnapshotId('');
           setBomCompareOpen(false);
           setSearchParams((params: URLSearchParams) => {
             params.delete('compare');
+            params.delete('compare_snapshot');
             return params;
           });
         }}

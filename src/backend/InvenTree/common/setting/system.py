@@ -696,6 +696,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'PART_BOM_SNAPSHOT': {
+        'name': _('BOM Snapshots'),
+        'description': _(
+            'Record a snapshot of the BOM each time it is validated, to allow comparison against previous versions'
+        ),
+        'default': True,
+        'validator': bool,
+    },
     'LABEL_ENABLE': {
         'name': _('Enable label printing'),
         'description': _('Enable label printing from the web interface'),

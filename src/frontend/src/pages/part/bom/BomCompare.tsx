@@ -7,6 +7,7 @@ import {
   Drawer,
   Group,
   Paper,
+  SegmentedControl,
   Select,
   SimpleGrid,
   Stack,
@@ -27,10 +28,13 @@ import { api } from '../../../App';
 import { StandaloneField } from '../../../components/forms/StandaloneField';
 import Expand from '../../../components/items/Expand';
 import { RenderPartColumn } from '../../../components/tables/ColumnRenderers';
+import { formatDate } from '../../../defaults/formatters';
+import { useGlobalSettingsState } from '../../../states/SettingsStates';
 
 // Field to check for differences when comparing BOM items
 const DELTA_FIELDS = {
   quantity: t`Quantity`,
+  piece_count: t`Piece Count`,
   reference: t`Reference`,
   allow_variants: t`Allow Variants`,
   inherited: t`Inherited`,
@@ -38,25 +42,121 @@ const DELTA_FIELDS = {
   consumable: t`Consumable`,
   setup_quantity: t`Setup Quantity`,
   attrition: t`Attrition`,
-  rounding_multiple: t`Rounding Multiple`
+  rounding_multiple: t`Rounding Multiple`,
+  substitutes: t`Substitutes`
 };
 
+// Fields which are compared (and displayed) using a derived value
+const DELTA_COMPARE_KEYS: Record<string, string> = {
+  substitutes: 'substitute_ids'
+};
+
+const DELTA_DISPLAY_KEYS: Record<string, string> = {
+  substitutes: 'substitutes_text'
+};
+
+/**
+ * A single row in the BOM comparison.
+ * The comparison is from the "before" BOM to the "after" BOM:
+ * - When comparing against another assembly, "before" is the primary assembly
+ * - When comparing against a snapshot, "before" is the (older) snapshot
+ */
 type BomCompareRow = {
   part_detail: any;
-  primary: any;
-  secondary: any;
+  before: any;
+  after: any;
   match: boolean;
   deltas: string[];
-  key: string;
 };
 
 type BomDisplayMode = 'all' | 'different' | 'common';
 
-function getBomDeltas(primary: any, secondary: any): string[] {
+type BomCompareSource = 'assembly' | 'snapshot';
+
+// Decimal fields are stored as strings in a BOM snapshot, but returned as numbers by the BOM API
+const SNAPSHOT_DECIMAL_FIELDS = [
+  'quantity',
+  'setup_quantity',
+  'attrition',
+  'rounding_multiple'
+];
+
+/**
+ * Add derived substitute fields to a BOM item, for comparison
+ */
+function withSubstitutes(item: any, substitutes: any[]): any {
+  const sorted = [...substitutes].sort((a: any, b: any) => a.pk - b.pk);
+
+  return {
+    ...item,
+    substitute_ids: sorted.map((sub: any) => sub.pk).join(','),
+    substitutes_text: sorted.map((sub: any) => sub.name).join(', ')
+  };
+}
+
+/**
+ * Convert a BOM item returned by the BOM API into the format used for comparison
+ */
+function apiItemToBomItem(item: any): any {
+  return withSubstitutes(
+    item,
+    (item.substitutes ?? []).map((sub: any) => ({
+      pk: sub.part,
+      name: sub.part_detail?.name
+    }))
+  );
+}
+
+/**
+ * Convert a BOM item stored in a BomSnapshot into the format used for comparison
+ *
+ * @param partDetails - Current details for parts which still exist, keyed by part ID
+ */
+function snapshotItemToBomItem(item: any, partDetails: any): any {
+  const bomItem: any = withSubstitutes(
+    {
+      ...item,
+      sub_part: item.sub_part?.pk,
+      // Use current part details (e.g. thumbnail) if the part still exists
+      sub_part_detail: partDetails?.[`${item.sub_part?.pk}`] ?? {
+        ...item.sub_part,
+        full_name: item.sub_part?.name
+      }
+    },
+    item.substitutes ?? []
+  );
+
+  SNAPSHOT_DECIMAL_FIELDS.forEach((field) => {
+    const value = item[field];
+    bomItem[field] =
+      value === null || value === undefined ? null : Number(value);
+  });
+
+  return bomItem;
+}
+
+/**
+ * Format a BOM item field value for display in the comparison
+ */
+function formatDeltaValue(value: any): string {
+  if (value === true) {
+    return t`Yes`;
+  } else if (value === false) {
+    return t`No`;
+  } else if (value === null || value === undefined || value === '') {
+    return '-';
+  }
+
+  return `${value}`;
+}
+
+function getBomDeltas(before: any, after: any): string[] {
   const deltas: string[] = [];
 
-  Object.entries(DELTA_FIELDS).forEach(([field, label]) => {
-    if (primary?.[field] != secondary?.[field]) {
+  Object.keys(DELTA_FIELDS).forEach((field) => {
+    const key = DELTA_COMPARE_KEYS[field] ?? field;
+
+    if (before?.[key] != after?.[key]) {
       deltas.push(field);
     }
   });
@@ -64,25 +164,100 @@ function getBomDeltas(primary: any, secondary: any): string[] {
   return deltas;
 }
 
+/**
+ * Match the BOM items from two BOMs, and calculate the differences between them
+ *
+ * @param beforeItems - BOM items in the "before" BOM
+ * @param afterItems - BOM items in the "after" BOM
+ * @param matchByPk - Match BOM lines by ID first (for comparing two versions of the same BOM)
+ */
+function compareBomItems(
+  beforeItems: any[],
+  afterItems: any[],
+  matchByPk: boolean
+): BomCompareRow[] {
+  const rows: BomCompareRow[] = beforeItems.map((item: any) => ({
+    part_detail: item.sub_part_detail,
+    before: item,
+    after: null,
+    match: false,
+    deltas: []
+  }));
+
+  const unmatched: any[] = [];
+
+  // First, match the same BOM line (where the line still refers to the same part)
+  afterItems.forEach((item: any) => {
+    const row = matchByPk
+      ? rows.find(
+          (r) =>
+            !r.match &&
+            r.before.pk == item.pk &&
+            r.before.sub_part == item.sub_part
+        )
+      : undefined;
+
+    if (row) {
+      row.after = item;
+      row.match = true;
+    } else {
+      unmatched.push(item);
+    }
+  });
+
+  // Next, match any remaining lines by part
+  unmatched.forEach((item: any) => {
+    const row = rows.find(
+      (r) => !r.match && !!r.before && r.before.sub_part == item.sub_part
+    );
+
+    if (row) {
+      row.after = item;
+      row.match = true;
+    } else {
+      rows.push({
+        part_detail: item.sub_part_detail,
+        before: null,
+        after: item,
+        match: false,
+        deltas: []
+      });
+    }
+  });
+
+  rows.forEach((row) => {
+    if (row.match) {
+      row.deltas = getBomDeltas(row.before, row.after);
+    }
+  });
+
+  return rows;
+}
+
 function BomTableRow({
-  item
+  item,
+  currentSide
 }: Readonly<{
   item: BomCompareRow;
+  currentSide: 'before' | 'after';
 }>) {
-  const partMatch = !!item.primary && !!item.secondary;
+  const partMatch = !!item.before && !!item.after;
 
-  const quantityMatch =
-    partMatch && item.primary.quantity == item.secondary.quantity;
+  // Display the quantity from the current BOM of the primary assembly
+  const current = currentSide == 'before' ? item.before : item.after;
+  const other = currentSide == 'before' ? item.after : item.before;
 
   const deltas: any[] = useMemo(() => {
     const fields: any[] = [];
 
     item.deltas.forEach((delta) => {
+      const key = DELTA_DISPLAY_KEYS[delta] ?? delta;
+
       fields.push({
         field: delta,
         label: DELTA_FIELDS[delta as keyof typeof DELTA_FIELDS],
-        primaryValue: item.primary?.[delta] ?? null,
-        secondaryValue: item.secondary?.[delta] ?? null
+        beforeValue: item.before?.[key] ?? null,
+        afterValue: item.after?.[key] ?? null
       });
     });
 
@@ -91,9 +266,9 @@ function BomTableRow({
 
   // Determine the appropriate icon to display for this row
   const rowIcon: ReactNode = useMemo(() => {
-    if (!!item.primary != !!item.secondary) {
-      if (!!item.secondary) {
-        // Part was added to the secondary BOM (exists in secondary but not primary)
+    if (!!item.before != !!item.after) {
+      if (!!item.after) {
+        // Part was added (exists in the "after" BOM but not the "before" BOM)
         return (
           <ActionIcon
             variant='transparent'
@@ -114,10 +289,7 @@ function BomTableRow({
           </ActionIcon>
         );
       }
-    } else if (
-      !!item.deltas?.length ||
-      item.primary?.quantity != item.secondary?.quantity
-    ) {
+    } else if (!!item.deltas?.length) {
       // Part exists in both BOMs but has differences
       return (
         <ActionIcon
@@ -151,9 +323,7 @@ function BomTableRow({
       </Table.Td>
       <Table.Td>
         <Group gap='xs'>
-          <Text size='sm'>
-            {item.primary?.quantity ?? item.secondary?.quantity ?? '-'}
-          </Text>
+          <Text size='sm'>{current?.quantity ?? other?.quantity ?? '-'}</Text>
           {item.part_detail?.units && (
             <Text size='xs'>[{item.part_detail.units}]</Text>
           )}
@@ -164,14 +334,14 @@ function BomTableRow({
           {rowIcon}
           {partMatch && deltas.length > 0 ? (
             <Stack gap='xs'>
-              {deltas.map((delta, index) => (
+              {deltas.map((delta) => (
                 <Group key={delta.field} gap='xs' justify='space-between'>
                   <Text size='xs'>{delta.label}</Text>
-                  <Text size='xs'>{delta.primaryValue ?? '-'}</Text>
+                  <Text size='xs'>{formatDeltaValue(delta.beforeValue)}</Text>
                   <ActionIcon size='xs' variant='transparent'>
                     <IconArrowRight />
                   </ActionIcon>
-                  <Text size='xs'>{delta.secondaryValue ?? '-'}</Text>
+                  <Text size='xs'>{formatDeltaValue(delta.afterValue)}</Text>
                 </Group>
               ))}
             </Stack>
@@ -179,7 +349,7 @@ function BomTableRow({
             <Text size='xs'>
               {partMatch
                 ? t`No changes`
-                : !!item.primary
+                : !!item.before
                   ? t`Part removed from BOM`
                   : t`Part added to BOM`}
             </Text>
@@ -191,9 +361,11 @@ function BomTableRow({
 }
 
 function BomTable({
-  items
+  items,
+  currentSide
 }: Readonly<{
   items: BomCompareRow[];
+  currentSide: 'before' | 'after';
 }>) {
   return (
     <Paper p='xs' withBorder>
@@ -207,7 +379,7 @@ function BomTable({
         </Table.Thead>
         <Table.Tbody>
           {items.map((item: any, index) => (
-            <BomTableRow key={index} item={item} />
+            <BomTableRow key={index} item={item} currentSide={currentSide} />
           ))}
         </Table.Tbody>
       </Table>
@@ -219,14 +391,29 @@ export function BomCompareDrawer({
   opened,
   onClosed,
   compareId,
+  compareSnapshotId,
   partInstance
 }: {
   opened: boolean;
   onClosed: () => void;
   compareId?: string;
+  compareSnapshotId?: string;
   partInstance: any;
 }) {
   const [displayMode, setDisplayMode] = useState<BomDisplayMode>('all');
+
+  const globalSettings = useGlobalSettingsState();
+
+  const snapshotsEnabled: boolean = globalSettings.isSet('PART_BOM_SNAPSHOT');
+
+  const [selectedSource, setCompareSource] = useState<BomCompareSource>(
+    compareSnapshotId ? 'snapshot' : 'assembly'
+  );
+
+  // Comparison against BOM snapshots is only available if the feature is enabled
+  const compareSource: BomCompareSource = snapshotsEnabled
+    ? selectedSource
+    : 'assembly';
 
   const [searchParam, setSearchParams] = useSearchParams();
 
@@ -239,10 +426,11 @@ export function BomCompareDrawer({
         .get(apiUrl(ApiEndpoints.bom_list), {
           params: {
             part: partInstance.pk,
-            sub_part_detail: true
+            sub_part_detail: true,
+            substitutes: true
           }
         })
-        .then((response) => response.data);
+        .then((response) => response.data?.map(apiItemToBomItem));
     }
   });
 
@@ -251,9 +439,69 @@ export function BomCompareDrawer({
     compareId ?? ''
   );
 
+  // Secondary snapshot ID
+  const [snapshotId, setSnapshotId] = useState<string>(compareSnapshotId ?? '');
+
   useEffect(() => {
     setSecondaryPartId(compareId ?? '');
+    setSnapshotId(compareSnapshotId ?? '');
+    setCompareSource(compareSnapshotId ? 'snapshot' : 'assembly');
   }, [opened]);
+
+  // Fetch the list of available snapshots for the primary part
+  const snapshotList = useQuery({
+    queryKey: ['bom-compare-snapshots', partInstance.pk, opened],
+    enabled: opened && !!partInstance.pk && compareSource == 'snapshot',
+    queryFn: async () => {
+      return api
+        .get(apiUrl(ApiEndpoints.bom_snapshot_list), {
+          params: {
+            part: partInstance.pk
+          }
+        })
+        .then((response) => response.data);
+    }
+  });
+
+  const snapshotOptions = useMemo(() => {
+    return (
+      snapshotList.data?.map((snapshot: any) => {
+        const label = [
+          formatDate(snapshot.created, { showTime: true }),
+          snapshot.created_by_detail?.username,
+          snapshot.note
+        ]
+          .filter((value) => !!value)
+          .join(' · ');
+
+        return {
+          value: `${snapshot.pk}`,
+          label: label
+        };
+      }) ?? []
+    );
+  }, [snapshotList.data]);
+
+  // Fetch the selected snapshot
+  const snapshotBom = useQuery({
+    queryKey: ['bom-compare-snapshot', snapshotId, opened],
+    enabled: opened && !!snapshotId && compareSource == 'snapshot',
+    queryFn: async () => {
+      return api
+        .get(apiUrl(ApiEndpoints.bom_snapshot_list, snapshotId))
+        .then((response) =>
+          (response.data?.data?.items ?? []).map((item: any) =>
+            snapshotItemToBomItem(item, response.data?.part_details)
+          )
+        );
+    }
+  });
+
+  const updateSearchParams = (params: Record<string, string>) => {
+    if (opened) {
+      setSearchParams(params, { replace: true });
+    }
+  };
 
   // Fetch BOM for the secondary part
   const secondaryBom = useQuery({
@@ -264,70 +512,30 @@ export function BomCompareDrawer({
         .get(apiUrl(ApiEndpoints.bom_list), {
           params: {
             part: secondaryPartId,
-            sub_part_detail: true
+            sub_part_detail: true,
+            substitutes: true
           }
         })
-        .then((response) => response.data);
+        .then((response) => response.data?.map(apiItemToBomItem));
     }
   });
 
-  // Perform comparison against
+  const hasSecondary: boolean =
+    compareSource == 'snapshot' ? !!snapshotId : !!secondaryPartId;
+
+  // When comparing against a snapshot, show the changes *from* the snapshot *to* the current BOM
+  const currentSide: 'before' | 'after' =
+    compareSource == 'snapshot' ? 'after' : 'before';
+
   const comparedItems: any[] = useMemo(() => {
-    let rows: BomCompareRow[] = [];
-
-    const primaryPartIds = new Set();
-    const secondaryPartIds = new Set();
-
-    // First, iterate through the "primary" BOM to generate the initial data
-    primaryBom.data?.forEach((item: any) => {
-      let subPartId = `${item.sub_part}`;
-
-      while (primaryPartIds.has(subPartId)) {
-        subPartId += '_dup';
-      }
-
-      primaryPartIds.add(subPartId);
-
-      rows.push({
-        part_detail: item.sub_part_detail,
-        primary: item,
-        secondary: null,
-        match: false,
-        deltas: getBomDeltas(item, null), // Initialize deltas with all fields (since no match yet)
-        key: subPartId
-      });
-    });
-
-    // Next, iterate through the "secondary" BOM to find matches and update the data
-    secondaryBom.data?.forEach((item: any) => {
-      let subPartId = `${item.sub_part}`;
-
-      while (secondaryPartIds.has(subPartId)) {
-        subPartId += '_dup';
-      }
-
-      secondaryPartIds.add(subPartId);
-
-      // Try to find a matching part in the primary BOM
-      const match = rows.find((row) => row.key == subPartId);
-
-      if (match) {
-        // If a match is found, update the existing row
-        match.secondary = item;
-        match.match = true; // Mark as a match
-        match.deltas = getBomDeltas(match.primary, match.secondary); // Update deltas with actual differences
-      } else {
-        // If no match is found, add a new row for the secondary item
-        rows.push({
-          part_detail: item.sub_part_detail,
-          primary: null,
-          secondary: item,
-          match: false,
-          deltas: getBomDeltas(null, item),
-          key: subPartId
-        });
-      }
-    });
+    let rows: BomCompareRow[] =
+      compareSource == 'snapshot'
+        ? compareBomItems(snapshotBom.data ?? [], primaryBom.data ?? [], true)
+        : compareBomItems(
+            primaryBom.data ?? [],
+            secondaryBom.data ?? [],
+            false
+          );
 
     switch (displayMode) {
       case 'different':
@@ -350,7 +558,13 @@ export function BomCompareDrawer({
 
       return nameA.localeCompare(nameB);
     });
-  }, [displayMode, primaryBom.data, secondaryBom.data]);
+  }, [
+    displayMode,
+    compareSource,
+    primaryBom.data,
+    secondaryBom.data,
+    snapshotBom.data
+  ]);
 
   return (
     <Drawer
@@ -376,32 +590,60 @@ export function BomCompareDrawer({
               <RenderPartColumn part={partInstance} />
             </Stack>
             <Expand>
-              <StandaloneField
-                fieldName='assembly'
-                fieldDefinition={{
-                  description: t`Select assembly to compare`,
-                  label: t`Secondary Assembly`,
-                  field_type: 'related field',
-                  value: secondaryPartId,
-                  api_url: apiUrl(ApiEndpoints.part_list),
-                  model: ModelType.part,
-                  required: true,
-                  filters: {
-                    assembly: true
-                  },
-                  onValueChange: (value) => {
-                    setSecondaryPartId(value);
-                    if (opened) {
-                      setSearchParams(
-                        {
-                          compare: value
-                        },
-                        { replace: true }
-                      );
+              <Stack gap='xs'>
+                {snapshotsEnabled && (
+                  <SegmentedControl
+                    aria-label='bom-compare-source'
+                    value={compareSource}
+                    onChange={(value) =>
+                      setCompareSource(value as BomCompareSource)
                     }
-                  }
-                }}
-              />
+                    data={[
+                      { value: 'assembly', label: t`Assembly` },
+                      { value: 'snapshot', label: t`Snapshot` }
+                    ]}
+                  />
+                )}
+                {compareSource == 'assembly' ? (
+                  <StandaloneField
+                    fieldName='assembly'
+                    fieldDefinition={{
+                      description: t`Select assembly to compare`,
+                      label: t`Secondary Assembly`,
+                      field_type: 'related field',
+                      value: secondaryPartId,
+                      api_url: apiUrl(ApiEndpoints.part_list),
+                      model: ModelType.part,
+                      required: true,
+                      filters: {
+                        assembly: true
+                      },
+                      onValueChange: (value) => {
+                        setSecondaryPartId(value);
+                        updateSearchParams({ compare: value });
+                      }
+                    }}
+                  />
+                ) : (
+                  <Select
+                    label={t`BOM Snapshot`}
+                    aria-label='bom-compare-snapshot'
+                    description={t`Select a previously validated BOM to compare`}
+                    placeholder={
+                      snapshotOptions.length == 0
+                        ? t`No snapshots available`
+                        : undefined
+                    }
+                    disabled={snapshotOptions.length == 0}
+                    value={snapshotId || null}
+                    onChange={(value) => {
+                      setSnapshotId(value ?? '');
+                      updateSearchParams({ compare_snapshot: value ?? '' });
+                    }}
+                    data={snapshotOptions}
+                  />
+                )}
+              </Stack>
             </Expand>
             <Select
               label={t`Display Mode`}
@@ -417,8 +659,10 @@ export function BomCompareDrawer({
             />
           </SimpleGrid>
         </Paper>
-        {secondaryPartId ? (
-          <BomTable items={comparedItems} />
+        {hasSecondary ? (
+          <BomTable items={comparedItems} currentSide={currentSide} />
+        ) : compareSource == 'snapshot' ? (
+          <Alert color='yellow'>{t`Select a BOM snapshot to view Bill of Materials comparison`}</Alert>
         ) : (
           <Alert color='yellow'>{t`Select an assembly to view Bill of Materials comparison`}</Alert>
         )}
