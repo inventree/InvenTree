@@ -44,5 +44,5 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
         with open(filename, 'wb') as pdf_out:
             pdf_out.write(pdf_data)
 
-        # Save the PNG to disk
-        png_file.save(filename.replace('.pdf', '.png'))
+        if png_file is not None:
+            png_file.save(filename.replace('.pdf', '.png'))

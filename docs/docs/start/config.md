@@ -122,6 +122,9 @@ Depending on how your InvenTree installation is configured, you will need to pay
 !!! success "INVENTREE_SITE_URL"
     If you have specified the `INVENTREE_SITE_URL`, this will automatically be used as a trusted CSRF and CORS host (see below).
 
+!!! warning "Existing Configuration Files"
+    New installations deny cross-origin requests by default and do not allow credentialed CORS. Existing `config.yaml` files are not overwritten during upgrades; review their `allowed_hosts` and `cors` sections, remove wildcard hosts, set `cors.allow_all` and `cors.allow_credentials` to `false` unless needed, and list only trusted origins under `cors.whitelist`.
+
 !!! tip "Running Behind a Reverse Proxy"
     If InvenTree is served behind an existing reverse proxy (e.g. NGINX, Traefik) with SSL termination happening upstream, refer to the [worked example](./processes.md#integrating-with-existing-proxy) for the combination of `INVENTREE_TRUSTED_ORIGINS` and `INVENTREE_USE_X_FORWARDED_*` settings that setup requires.
 
@@ -151,11 +154,11 @@ Note that in [debug mode](./index.md#debug-mode), some of the above settings are
 | `INVENTREE_ALLOWED_HOSTS` | `*` | Allow all host in debug mode |
 | `CSRF_TRUSTED_ORIGINS` | Value is appended to allow `http://*.localhost:*` | Allow all connections from localhost, for development purposes |
 | `INVENTREE_COOKIE_SAMESITE` | `False` | Disable all same-site cookie checks in debug mode |
-| `INVENTREE_SESSION_COOKIE_SECURE` | `False` | Disable secure session cookies in debug mode (allow non-https cookies) |
+| `INVENTREE_SESSION_COOKIE_SECURE` | `False` in debug; `True` in production | Allow non-HTTPS cookies only in debug mode |
 
 ### Cookie Settings
 
-Note that if you set the `INVENTREE_COOKIE_SAMESITE` to `None`, then `INVENTREE_SESSION_COOKIE_SECURE` is automatically set to `True` to ensure that the session cookie is secure! This means that the session cookie will only be sent over secure (https) connections.
+In production, session cookies are secure by default and are sent only over HTTPS. Debug mode disables this so local HTTP development continues to work. Setting `INVENTREE_COOKIE_SAMESITE` to `None` also forces secure cookies. Set `INVENTREE_SESSION_COOKIE_SECURE=False` only when your deployment intentionally requires insecure HTTP cookies.
 
 ### Proxy Considerations
 

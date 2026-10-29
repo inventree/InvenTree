@@ -4,7 +4,6 @@ import datetime
 import json
 import logging
 import os
-import shutil
 import sys
 from pathlib import Path
 from typing import Any, Optional
@@ -178,6 +177,62 @@ def ensure_dir(path: Path, storage=None) -> None:
         path.mkdir(parents=True, exist_ok=True)
 
 
+def ensure_private_dir(path: Path, restrict_existing: bool = False) -> None:
+    """Create a directory for sensitive configuration with owner-only access."""
+    existed = path.exists()
+    path.mkdir(parents=True, exist_ok=True, mode=0o700)
+
+    data_dir = os.getenv('INVENTREE_DATA_DIR')
+    shared_docker_data_dir = (
+        os.getenv('INVENTREE_DOCKER', '').lower() == 'true'
+        and data_dir
+        and path.resolve() == Path(data_dir).resolve()
+    )
+
+    if not shared_docker_data_dir and (not existed or restrict_existing):
+        path.chmod(0o700)
+
+
+def write_private_file(path: Path, content: str | bytes) -> bool:
+    """Create a sensitive file without exposing it through the process umask."""
+    try:
+        file_descriptor = os.open(
+            path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
+        )
+    except FileExistsError:
+        return False
+
+    if isinstance(content, bytes):
+        with os.fdopen(file_descriptor, 'wb') as file:
+            file.write(content)
+    else:
+        with os.fdopen(file_descriptor, 'w', encoding='utf-8') as file:
+            file.write(content)
+
+    return True
+
+
+def check_private_file_permissions(path: Path) -> None:
+    """Warn when an existing sensitive file is accessible by group or others."""
+    try:
+        mode = path.stat().st_mode & 0o777
+    except OSError:
+        return
+
+    if mode & 0o077:
+        try:
+            path.chmod(0o600)
+            return
+        except OSError:
+            pass
+
+        logger.warning(
+            "Sensitive file '%s' has permissions %s; restrict it to owner access (0600).",
+            path,
+            oct(mode),
+        )
+
+
 def get_config_file(create=True) -> Path:
     """Returns the path of the InvenTree configuration file.
 
@@ -197,17 +252,27 @@ def get_config_file(create=True) -> Path:
         # Config file is *not* specified - use the default
         cfg_filename = conf_dir.joinpath('config.yaml').resolve()
 
+    if cfg_filename.parent == conf_dir and (
+        create or cfg_filename.parent.exists()
+    ):
+        ensure_private_dir(conf_dir, restrict_existing=True)
+
     if not cfg_filename.exists() and create:
         print(
             "InvenTree configuration file 'config.yaml' not found - creating default file"
         )
-        ensure_dir(cfg_filename.parent)
+        if cfg_filename.parent == conf_dir:
+            ensure_private_dir(cfg_filename.parent)
+        else:
+            ensure_dir(cfg_filename.parent)
 
         cfg_template = base_dir.joinpath('config_template.yaml')
-        shutil.copyfile(cfg_template, cfg_filename)
+        write_private_file(cfg_filename, cfg_template.read_text(encoding='utf-8'))
         print(f'Created config file {cfg_filename}')
 
     check_config_dir('INVENTREE_CONFIG_FILE', cfg_filename, conf_dir)
+    check_private_file_permissions(cfg_filename)
+
     return cfg_filename
 
 
@@ -479,13 +544,18 @@ def get_secret_key(return_path: bool = False) -> str | Path:
 
     if not secret_key_file.exists():
         logger.info("Generating random key file at '%s'", secret_key_file)
-        ensure_dir(secret_key_file.parent)
+        ensure_private_dir(
+            secret_key_file.parent,
+            restrict_existing=secret_key_file.parent.resolve() == get_config_dir(),
+        )
 
         # Create a random key file (using a cryptographically secure generator)
         from django.core.management.utils import get_random_secret_key
 
         key = get_random_secret_key()
-        secret_key_file.write_text(key)
+        write_private_file(secret_key_file, key)
+
+    check_private_file_permissions(secret_key_file)
 
     if return_path:
         return secret_key_file
@@ -524,6 +594,7 @@ def get_oidc_private_key(return_path: bool = False) -> str | Path:
 
     check_config_dir('INVENTREE_OIDC_PRIVATE_KEY_FILE', key_loc)
     if key_loc.exists():
+        check_private_file_permissions(key_loc)
         return key_loc.read_text() if not return_path else key_loc
     else:
         from cryptography.hazmat.primitives import serialization
@@ -531,19 +602,23 @@ def get_oidc_private_key(return_path: bool = False) -> str | Path:
 
         # Default location for private key file
         logger.info("Generating oidc key file at '%s'", key_loc)
-        ensure_dir(key_loc.parent)
+        ensure_private_dir(
+            key_loc.parent,
+            restrict_existing=key_loc.parent.resolve() == get_config_dir(),
+        )
 
         # Create a random key file
         new_key = rsa.generate_private_key(public_exponent=65537, key_size=4096)
         # Write our key to disk for safe keeping
-        with open(str(key_loc), 'wb') as f:
-            f.write(
-                new_key.private_bytes(
-                    encoding=serialization.Encoding.PEM,
-                    format=serialization.PrivateFormat.TraditionalOpenSSL,
-                    encryption_algorithm=serialization.NoEncryption(),
-                )
+        write_private_file(
+            key_loc,
+            new_key.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.TraditionalOpenSSL,
+                encryption_algorithm=serialization.NoEncryption(),
             )
+        )
+        check_private_file_permissions(key_loc)
         return key_loc.read_text() if not return_path else key_loc
 
 

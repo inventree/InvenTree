@@ -3,7 +3,7 @@
 # Basic package requirements
 invoke                          # Invoke build tool
 pyyaml
-setuptools
+setuptools>=84.1.0
 wheel
 
 # Database links

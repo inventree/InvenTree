@@ -89,6 +89,7 @@ services:
         # If you wish to specify a particular InvenTree version, do so here
         image: inventree/inventree:${INVENTREE_TAG:-stable}
         container_name: inventree-server
+        user: "1000:1000"
         # Only change this port if you understand the stack.
         expose:
             - ${INVENTREE_WEB_PORT:-8000}
@@ -121,6 +122,7 @@ services:
         # If you wish to specify a particular InvenTree version, do so here
         image: inventree/inventree:${INVENTREE_TAG:-stable}
         container_name: inventree-worker
+        user: "1000:1000"
         command: invoke worker
         depends_on:
             inventree-server:

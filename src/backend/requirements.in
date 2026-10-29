@@ -45,7 +45,7 @@ pillow                                  # Image manipulation
 pint                                    # Unit conversion
 pip-licenses                            # License information for installed packages
 ppf.datamatrix                          # Data Matrix barcode generator
-pypdf                                   # PDF manipulation tools
+pypdf>=6.21.2                           # PDF manipulation tools
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
 pyyaml                                  # YAML parsing
@@ -53,7 +53,7 @@ qrcode[pil]                             # QR code generator
 rapidfuzz                               # Fuzzy string matching
 scim2-models                            # SCIM 2.0 schema / protocol models, used for the SCIM provisioning endpoint
 sentry-sdk                              # Error reporting (optional)
-setuptools                              # Standard dependency
+setuptools>=84.1.0                      # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 tqdm                                    # Progress bars for CLI
 typing_extensions                       # new features - for 3, 12 support

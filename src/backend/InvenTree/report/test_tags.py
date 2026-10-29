@@ -1089,6 +1089,23 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 class BarcodeTagTest(TestCase):
     """Unit tests for the barcode template tags."""
 
+    def assert_raster_image(self, data_uri, image_format, size, colors):
+        """Assert a raster data URI's format, geometry, and pixel palette."""
+        prefix, payload = data_uri.split(',', 1)
+        self.assertEqual(
+            prefix, f'data:image/{image_format.lower()};charset=utf-8;base64'
+        )
+
+        with Image.open(io.BytesIO(base64.b64decode(payload))) as image:
+            self.assertEqual(image.format, image_format.upper())
+            self.assertEqual(image.size, size)
+            rgb_image = image.convert('RGB')
+
+        actual_colors = rgb_image.getcolors(maxcolors=len(colors) + 1)
+        self.assertIsNotNone(actual_colors)
+        self.assertEqual({color for _, color in actual_colors}, set(colors))
+        return rgb_image
+
     def test_datamatrix_raster_geometry(self):
         """Raster output preserves modules, borders, colors, and scaling."""
         # Pixel digests captured before extracting the raster renderer.
@@ -1168,17 +1185,17 @@ class BarcodeTagTest(TestCase):
         """Test the qrcode generation tag."""
         # Test with default settings
         qrcode = barcode_tags.qrcode('hello world')
-        self.assertIsInstance(qrcode, str)
-        self.assertTrue(qrcode.startswith('data:image/png;'))
-        self.assertEqual(len(qrcode), 700)
+        self.assert_raster_image(
+            qrcode, 'PNG', (460, 460), {(0, 0, 0), (255, 255, 255)}
+        )
 
         # Generate a much larger qrcode
         qrcode = barcode_tags.qrcode(
             'hello_world', version=2, box_size=50, format='BMP'
         )
-        self.assertIsInstance(qrcode, str)
-        self.assertTrue(qrcode.startswith('data:image/bmp;'))
-        self.assertEqual(len(qrcode), 309720)
+        self.assert_raster_image(
+            qrcode, 'BMP', (1350, 1350), {(0, 0, 0), (255, 255, 255)}
+        )
 
         # Test empty tag
         with self.assertRaises(ValidationError):
@@ -1198,17 +1215,15 @@ class BarcodeTagTest(TestCase):
         """Test the datamatrix generation tag."""
         # Test with default settings
         datamatrix = barcode_tags.datamatrix('hello world')
-        self.assertEqual(
-            datamatrix,
-            'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAAlElEQVR4nJ1TQQ7AIAgri///cncw6wroEseBgEFbCgZJnNsFICKOPAAIjeSM5T11IznK5f5WRMgnkhP9JfCcTC/MxFZ5hxLOgqrn3o/z/OqtsNpdSL31Iu9W4Dq8Sulu+q5Nuqa3XYOdnuidlICPpXhZVBruyzAKSZehT+yNlzvZQcq6JiW7Ni592swf/43kdlDfdgMk1eOtR7kWpAAAAABJRU5ErkJggg==',
+        default_image = self.assert_raster_image(
+            datamatrix, 'PNG', (18, 18), {(0, 0, 0), (255, 255, 255)}
         )
 
         datamatrix = barcode_tags.datamatrix(
             'hello world', border=3, fill_color='red', back_color='blue'
         )
-        self.assertEqual(
-            datamatrix,
-            'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAIAAABL1vtsAAAAqElEQVR4nN1UQQ6AMAgrxv9/GQ9mpJYSY/QkBxM3KLUUA0i8i+1l/dcQiXj09CwSEU2aQJ7nE8ou2faVUXoPZSEkq+dZKVxWg4UqxUHnVdkp6IdwMXMulGvzNBDMk4WwPSrUF3LNnQNZBJmOsZaVXa44QSEKnvWb5mIgKon1E1H6aPyOcIa15uhONP9aR4hSCiGmYAoYpj4uO+vK4+ybMhr8Nkjmn/z4Dvoldi8uJu4iAAAAAElFTkSuQmCC',
+        self.assert_raster_image(
+            datamatrix, 'PNG', (22, 22), {(0, 0, 255), (255, 0, 0)}
         )
 
         # Test empty tag
@@ -1219,10 +1234,10 @@ class BarcodeTagTest(TestCase):
         datamatrix = barcode_tags.datamatrix(
             'hello world', border='abc', fill_color='aaaaaaa', back_color='aaaaaaa'
         )
-        self.assertEqual(
-            datamatrix,
-            'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAAlElEQVR4nJ1TQQ7AIAgri///cncw6wroEseBgEFbCgZJnNsFICKOPAAIjeSM5T11IznK5f5WRMgnkhP9JfCcTC/MxFZ5hxLOgqrn3o/z/OqtsNpdSL31Iu9W4Dq8Sulu+q5Nuqa3XYOdnuidlICPpXhZVBruyzAKSZehT+yNlzvZQcq6JiW7Ni592swf/43kdlDfdgMk1eOtR7kWpAAAAABJRU5ErkJggg==',
+        invalid_options_image = self.assert_raster_image(
+            datamatrix, 'PNG', (18, 18), {(0, 0, 0), (255, 255, 255)}
         )
+        self.assertEqual(invalid_options_image.tobytes(), default_image.tobytes())
 
     def test_2d_barcode_svg_renderer(self):
         """Test vector rendering of a two-dimensional barcode matrix."""

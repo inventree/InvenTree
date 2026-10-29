@@ -129,11 +129,11 @@ To see all available tasks, run `invoke --list`.
 Always pass `--keepdb` to backend test commands. It reuses the existing test database instead of rebuilding it from scratch on every run, which is significantly faster.
 
 ```bash
-# All backend tests
-invoke dev.test --keepdb
+# Run all backend tests with local SQLite and test-only settings
+./run-backend-tests.sh
 
-# Specific test module
-invoke dev.test --keepdb --runtest=company.test_api
+# Run a specific test module or test case
+./run-backend-tests.sh company.test_api
 
 # With coverage
 invoke dev.test --keepdb --coverage
