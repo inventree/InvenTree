@@ -69,6 +69,8 @@ To access this page, select *Scan Barcode* from the main navigation menu:
 {{ image("barcode/barcode_nav_menu.png", "Barcode menu item") }}
 {{ image("barcode/barcode_scan_page.png", "Barcode scan page") }}
 
+If the scanned items are parts, select them in the table and use **Create Stock Items** to add stock with a shared quantity and location. The same part can be scanned more than once when receiving multiple packages.
+
 ## Barcodes in Forms
 
 The InvenTree user interface supports direct scanning of barcodes within certain forms in the web UI. This means that any form field which points to a model which supports barcodes can accept barcode input. If barcode scanning is supported for a particular field, a barcode icon will be displayed next to the input field:
