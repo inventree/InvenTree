@@ -1,5 +1,7 @@
 """Unit tests for the BomSnapshot model and API."""
 
+from unittest import mock
+
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
@@ -244,6 +246,51 @@ class BomSnapshotModelTest(BomSnapshotTestMixin, TestQueryMixin, InvenTreeTestCa
 
         self.assertEqual(len(data), 52)
 
+    def test_checksum_matches_snapshot(self):
+        """The stored checksum is calculated from the same BOM items as the snapshot data."""
+        items = self.assembly.get_bom_snapshot_items()
+
+        self.assertEqual(
+            self.assembly.get_bom_hash(bom_items=items), self.assembly.get_bom_hash()
+        )
+
+        # The BOM items are read once during validation (for both the checksum and the snapshot)
+        with mock.patch.object(
+            Part,
+            'get_bom_snapshot_items',
+            autospec=True,
+            side_effect=Part.get_bom_snapshot_items,
+        ) as get_items:
+            self.assembly.validate_bom(self.user)
+
+        self.assertEqual(get_items.call_count, 1)
+
+        snapshot = self.assembly.bom_snapshots.first()
+        self.assertEqual(snapshot.checksum, self.assembly.get_bom_hash())
+        self.assertEqual(
+            [item['pk'] for item in snapshot.data['items']], [item.pk for item in items]
+        )
+
+    def test_build_bom_check(self):
+        """Creating a build order only checks BOM validity once."""
+        self.assembly.validate_bom(self.user)
+        snapshot = self.assembly.bom_snapshots.first()
+
+        set_global_setting('BUILDORDER_REQUIRE_VALID_BOM', True)
+
+        try:
+            with mock.patch.object(
+                Part, 'is_bom_valid', autospec=True, side_effect=Part.is_bom_valid
+            ) as is_bom_valid:
+                bo = build.models.Build.objects.create(
+                    part=self.assembly, quantity=1, reference='BO-9994'
+                )
+        finally:
+            set_global_setting('BUILDORDER_REQUIRE_VALID_BOM', False)
+
+        self.assertEqual(is_bom_valid.call_count, 1)
+        self.assertEqual(bo.bom_snapshot, snapshot)
+
     def test_build_snapshot(self):
         """A build order records the validated BOM snapshot it was created against."""
         # BOM not validated - no snapshot
@@ -344,6 +391,48 @@ class BomSnapshotAPITest(BomSnapshotTestMixin, InvenTreeAPITestCase):
         self.assertEqual(response.data['note'], 'First')
         self.assertEqual(len(response.data['data']['items']), 2)
         self.assertEqual(response.data['data']['items'][0]['quantity'], '2')
+
+    def test_part_details(self):
+        """The detail endpoint provides current details for parts which still exist."""
+        snapshot = self.assembly.bom_snapshots.order_by('pk').first()
+        url = reverse('api-bom-snapshot-detail', kwargs={'pk': snapshot.pk})
+
+        details = self.get(url).data['part_details']
+
+        self.assertEqual(
+            set(details.keys()),
+            {str(self.components[0].pk), str(self.components[1].pk)},
+        )
+
+        detail = details[str(self.components[0].pk)]
+        self.assertEqual(detail['name'], 'Snapshot Component 0')
+        self.assertIn('thumbnail', detail)
+
+        # Renamed parts report the current name; deleted parts are omitted
+        self.components[0].name = 'Renamed Component'
+        self.components[0].save()
+
+        set_global_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', True)
+
+        deleted = self.components[1]
+        deleted.active = False
+        deleted.save()
+        deleted.delete()
+
+        set_global_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', False)
+
+        response = self.get(url).data
+        details = response['part_details']
+
+        self.assertEqual(set(details.keys()), {str(self.components[0].pk)})
+        self.assertEqual(
+            details[str(self.components[0].pk)]['name'], 'Renamed Component'
+        )
+
+        # The snapshot data itself is unchanged
+        self.assertEqual(
+            response['data']['items'][0]['sub_part']['name'], 'Snapshot Component 0'
+        )
 
     def test_read_only(self):
         """Snapshots cannot be created, modified or deleted via the API."""

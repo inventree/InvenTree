@@ -8,6 +8,7 @@ INVENTREE_API_TEXT = """
 
 v568 -> 2026-10-29 : https://github.com/inventree/InvenTree/pull/XXXX
     - Adds BOM snapshot API endpoints (/api/bom/snapshot/), recording the BOM each time it is validated
+    - BOM snapshot detail endpoint includes "part_details" (current details for referenced parts)
     - Adds optional "note" field to the BOM validation API endpoint
     - Adds read-only "bom_snapshot" field to the BuildOrder API
 

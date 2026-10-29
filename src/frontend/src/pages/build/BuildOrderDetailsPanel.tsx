@@ -18,6 +18,8 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
 import { useInstance } from '../../hooks/UseInstance';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
 
 export function BuildOrderDetailsPanel({
   instance,
@@ -28,6 +30,16 @@ export function BuildOrderDetailsPanel({
   allowImageEdit?: boolean;
   refreshInstance?: () => void;
 }>) {
+  const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
+
+  // The BOM snapshot link is only useful if the user can view the snapshot
+  const showBomSnapshot: boolean =
+    !!instance?.bom_snapshot &&
+    globalSettings.isSet('PART_BOM_SNAPSHOT') &&
+    user.hasViewRole(UserRoles.bom);
+
   const { instance: partRequirements } = useInstance({
     endpoint: ApiEndpoints.part_requirements,
     pk: instance?.part,
@@ -121,7 +133,7 @@ export function BuildOrderDetailsPanel({
       name: 'bom_snapshot',
       icon: 'bom',
       label: t`Validated BOM`,
-      hidden: !instance?.bom_snapshot,
+      hidden: !showBomSnapshot,
       value_formatter: () => (
         <Anchor
           component={Link}

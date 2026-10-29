@@ -2091,7 +2091,9 @@ class Part(
         """Return the number of part BOMs that this part appears in."""
         return len(self.get_used_in())
 
-    def get_bom_hash(self, include_part_names: bool = False) -> str:
+    def get_bom_hash(
+        self, include_part_names: bool = False, bom_items: Optional[list] = None
+    ) -> str:
         """Return a checksum hash for the BOM for this part.
 
         Used to determine if the BOM has changed (and needs to be signed off!)
@@ -2099,19 +2101,21 @@ class Part(
 
         Arguments:
             include_part_names: If True, include the part names in the hash calculation (default = False, legacy support).
-
+            bom_items: Optional list of BOM items (as returned by get_bom_snapshot_items) to calculate the hash from.
+                If not provided, the BOM items are fetched from the database.
         """
         result_hash = hashlib.md5(str(self.id).encode())
 
         # List *all* BOM items (including inherited ones!)
         # Note: We must order the BOM items in a consistent way, otherwise the hash will change if the order of the items changes
-        bom_items = (
-            self
-            .get_bom_items()
-            .all()
-            .prefetch_related('part', 'sub_part')
-            .order_by('pk')
-        )
+        if bom_items is None:
+            bom_items = (
+                self
+                .get_bom_items()
+                .all()
+                .prefetch_related('part', 'sub_part')
+                .order_by('pk')
+            )
 
         for item in bom_items:
             result_hash.update(
@@ -2140,18 +2144,30 @@ class Part(
             or self.get_bom_hash(include_part_names=True) == self.bom_checksum
         )
 
-    def get_bom_snapshot_data(self) -> list[dict]:
+    def get_bom_snapshot_items(self) -> list[BomItem]:
+        """Return a list of all BOM items for this part (including inherited items), for creating a BomSnapshot.
+
+        The items are fetched in a single query, ordered consistently with get_bom_hash,
+        so that a checksum and a snapshot calculated from the same list describe the same BOM.
+        """
+        return list(
+            self
+            .get_bom_items()
+            .prefetch_related('part', 'sub_part', 'substitutes', 'substitutes__part')
+            .order_by('pk')
+        )
+
+    def get_bom_snapshot_data(self, bom_items: Optional[list] = None) -> list[dict]:
         """Return a serialized representation of the entire BOM for this part (including inherited items).
+
+        Arguments:
+            bom_items: Optional list of BOM items (as returned by get_bom_snapshot_items) to serialize
 
         Each item records 'inherited_from' (the ID of the template part which defines the BOM item),
         or None if the item is defined directly against this part.
         """
-        bom_items = (
-            self
-            .get_bom_items()
-            .prefetch_related('sub_part', 'substitutes', 'substitutes__part')
-            .order_by('pk')
-        )
+        if bom_items is None:
+            bom_items = self.get_bom_snapshot_items()
 
         items = []
 
@@ -2162,13 +2178,16 @@ class Part(
 
         return items
 
-    def create_bom_snapshot(self, checksum: str, user=None, note: str = ''):
+    def create_bom_snapshot(
+        self, checksum: str, user=None, note: str = '', bom_items: Optional[list] = None
+    ):
         """Create a BomSnapshot for the current state of the BOM.
 
         Arguments:
             checksum: The BOM checksum to associate with the snapshot
             user: User who validated the BOM
             note: Optional note to associate with the snapshot
+            bom_items: Optional list of BOM items (as returned by get_bom_snapshot_items) which the checksum was calculated from
 
         Returns:
             The new BomSnapshot instance, or None if no snapshot was created
@@ -2185,7 +2204,7 @@ class Part(
         if latest and latest.checksum == checksum:
             return None
 
-        items = self.get_bom_snapshot_data()
+        items = self.get_bom_snapshot_data(bom_items=bom_items)
 
         return BomSnapshot.objects.create(
             part=self,
@@ -2204,8 +2223,11 @@ class Part(
             note=note or '',
         )
 
-    def get_latest_bom_snapshot(self):
+    def get_latest_bom_snapshot(self, bom_valid: Optional[bool] = None):
         """Return the BomSnapshot which matches the currently validated BOM, if one exists.
+
+        Arguments:
+            bom_valid: Result of is_bom_valid(), if already known (avoids recalculating the BOM hash)
 
         Returns None if the BOM is not currently valid,
         or if the most recent snapshot does not match the stored BOM checksum.
@@ -2218,8 +2240,11 @@ class Part(
         if not latest or latest.checksum != self.bom_checksum:
             return None
 
-        # Calculating the BOM hash is (relatively) expensive, so check this last
-        return latest if self.is_bom_valid() else None
+        if bom_valid is None:
+            # Calculating the BOM hash is (relatively) expensive, so check this last
+            bom_valid = self.is_bom_valid()
+
+        return latest if bom_valid else None
 
     @transaction.atomic
     def validate_bom(self, user, valid: bool = True, note: str = ''):
@@ -2239,19 +2264,26 @@ class Part(
             'part', 'sub_part'
         )
 
+        snapshot_items = None
+
         if valid:
             for item in bom_items:
                 item.validate_hash(valid=True)
 
+            # Read the BOM once, so that the stored checksum and the snapshot describe the same BOM
+            snapshot_items = self.get_bom_snapshot_items()
+
         self.bom_validated = valid
-        self.bom_checksum = self.get_bom_hash() if valid else ''
+        self.bom_checksum = self.get_bom_hash(bom_items=snapshot_items) if valid else ''
         self.bom_checked_by = user
         self.bom_checked_date = InvenTree.helpers.current_date()
 
         self.save()
 
         if valid:
-            self.create_bom_snapshot(self.bom_checksum, user=user, note=note)
+            self.create_bom_snapshot(
+                self.bom_checksum, user=user, note=note, bom_items=snapshot_items
+            )
 
     @transaction.atomic
     def clear_bom(self):

@@ -194,9 +194,14 @@ class Build(
 
         # Check part when initially creating the build order
         if not self.pk or self.has_field_changed('part'):
+            # Result of the (relatively expensive) BOM validity check, if performed
+            bom_valid = None
+
             if get_global_setting('BUILDORDER_REQUIRE_VALID_BOM'):
                 # Check that the BOM is valid
-                if not self.part.is_bom_valid():
+                bom_valid = self.part.is_bom_valid()
+
+                if not bom_valid:
                     raise ValidationError({
                         'part': _('Assembly BOM has not been validated')
                     })
@@ -216,7 +221,7 @@ class Build(
                     })
 
             # Record the validated BOM which this build order is created against
-            self.bom_snapshot = self.part.get_latest_bom_snapshot()
+            self.bom_snapshot = self.part.get_latest_bom_snapshot(bom_valid=bom_valid)
 
         # On first save (i.e. creation), run some extra checks
         if self.pk is None:

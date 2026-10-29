@@ -1434,8 +1434,47 @@ class BomSnapshotDetailSerializer(BomSnapshotSerializer):
     class Meta(BomSnapshotSerializer.Meta):
         """Metaclass defining serializer fields."""
 
-        fields = [*BomSnapshotSerializer.Meta.fields, 'data']
+        fields = [*BomSnapshotSerializer.Meta.fields, 'data', 'part_details']
         read_only_fields = fields
+
+    part_details = serializers.SerializerMethodField(
+        label=_('Part Details'),
+        help_text=_(
+            'Current details for the parts referenced by this snapshot (parts which no longer exist are omitted)'
+        ),
+    )
+
+    def get_part_details(self, snapshot) -> dict:
+        """Return current information for each part referenced in the snapshot, keyed by part ID.
+
+        The snapshot stores part information by value, which does not include images.
+        """
+        part_ids = set()
+
+        for item in (snapshot.data or {}).get('items', []):
+            part_ids.add(item.get('sub_part', {}).get('pk'))
+
+            for substitute in item.get('substitutes', []):
+                part_ids.add(substitute.get('pk'))
+
+        parts = Part.objects.filter(pk__in=[pk for pk in part_ids if pk])
+
+        return {
+            str(part.pk): {
+                'pk': part.pk,
+                'name': part.name,
+                'full_name': part.full_name,
+                'IPN': part.IPN,
+                'revision': part.revision,
+                'description': part.description,
+                'units': part.units,
+                'active': part.active,
+                'locked': part.locked,
+                'image': part.get_image_url() if part.image else None,
+                'thumbnail': part.get_thumbnail_url(),
+            }
+            for part in parts
+        }
 
 
 @register_importer()
