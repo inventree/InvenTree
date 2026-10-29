@@ -25,7 +25,7 @@ The version information contains the following information extracted form the in
 | Platform | Yes | Linux-5.15.0-67-generic-x86_64 | instance |
 | Installer | Yes | PKG | environment: `INVENTREE_PKG_INSTALLER`, instance |
 | Target | No | ubuntu:20.04 | environment: `INVENTREE_PKG_TARGET` |
-| Active plugins | Yes | [{'name': 'InvenTreeBarcode', 'slug': 'inventreebarcode', 'version': '2.0.0'}] | instance |
+| Active plugins | Yes | `[{'name': 'InvenTreeBarcode', 'slug': 'inventreebarcode', 'version': '2.0.0'}]` | instance |
 
 ### Installer codes
 

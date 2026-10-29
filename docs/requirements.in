@@ -8,3 +8,4 @@ mkdocs-include-markdown-plugin
 neoteroi-mkdocs
 mkdocstrings[python]
 mkdocs-mermaid2-plugin
+zensical>=0.0.40
