@@ -920,6 +920,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'validator': bool,
         'default': False,
+        'flags': [SettingFlag.TOGGLE],
     },
     'NCR_REFERENCE_PATTERN': {
         'name': _('NCR Reference Pattern'),

@@ -1891,7 +1891,6 @@ class NonConformanceSerializer(
             'target_date',
             'closed_date',
             'link',
-            'notes',
             'tags',
             'barcode_hash',
         ]

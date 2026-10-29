@@ -31,6 +31,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
 import NonConformanceStockItemTable from '../../tables/build/NonConformanceStockItemTable';
@@ -55,6 +56,11 @@ export default function NonConformanceDetail() {
       part_detail: true,
       tags: true
     }
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.nonconformance,
+    modelId: ncr?.pk
   });
 
   const ncrStatus = useStatusCodes({ modelType: ModelType.nonconformance });
@@ -89,19 +95,21 @@ export default function NonConformanceDetail() {
       },
       ParametersPanel({
         model_type: ModelType.nonconformance,
-        model_id: ncr.pk
+        model_id: ncr.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.nonconformance,
-        model_id: ncr.pk
+        model_id: ncr.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.nonconformance,
         model_id: ncr.pk,
-        has_note: !!ncr.notes
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [ncr, id, user]);
+  }, [ncr, id, user, instanceInfo]);
 
   const ncrBadges: ReactNode[] = useMemo(() => {
     if (instanceQuery.isLoading) {
