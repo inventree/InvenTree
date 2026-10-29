@@ -73,7 +73,7 @@ Generate the HTML files from the markdown source files, and start the MkDocs web
 $ mkdocs serve -f docs/mkdocs.yml
 ```
 
-You can then point your web browser at http://localhost:8080/
+You can then point your web browser at http://127.0.0.1:8000/
 
 Alternatively, you can use the `invoke` command:
 
