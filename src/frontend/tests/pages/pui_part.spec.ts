@@ -195,7 +195,7 @@ test('Parts - BOM', async ({ browser }) => {
   await page.getByText('Robert Shuruncle').waitFor();
 
   // Move the mouse away
-  await page.getByRole('link', { name: 'Bill of Materials' }).hover();
+  await page.getByRole('tab', { name: 'Bill of Materials' }).hover();
 
   // Test sub-assembly row expansion (rows are inserted into the same table)
   const assemblyRow = page
