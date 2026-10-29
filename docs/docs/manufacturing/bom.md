@@ -285,7 +285,7 @@ Snapshots can be compared against the current BOM - refer to [BOM Comparison](#c
 !!! info "Build Orders"
     When a build order is created against an assembly with a validated BOM, the build order records which BOM snapshot it was created from. This is displayed as *Validated BOM* on the build order detail page, with a link to compare the snapshot against the current BOM.
 
-BOM snapshots are enabled by default, and can be disabled via the `PART_BOM_SNAPSHOT` [global setting](../settings/global.md). Snapshots cannot be edited, and can only be deleted via the admin interface.
+BOM snapshots are enabled by default, and can be disabled via the `PART_BOM_SNAPSHOT` [global setting](../settings/global.md). When disabled, no new snapshots are recorded, and the option to compare against snapshots is removed from the user interface. Any existing snapshots are retained. Snapshots cannot be edited, and can only be deleted via the admin interface.
 
 ## BOM Comparison
 

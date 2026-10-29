@@ -29,6 +29,7 @@ import { StandaloneField } from '../../../components/forms/StandaloneField';
 import Expand from '../../../components/items/Expand';
 import { RenderPartColumn } from '../../../components/tables/ColumnRenderers';
 import { formatDate } from '../../../defaults/formatters';
+import { useGlobalSettingsState } from '../../../states/SettingsStates';
 
 // Field to check for differences when comparing BOM items
 const DELTA_FIELDS = {
@@ -264,9 +265,18 @@ export function BomCompareDrawer({
 }) {
   const [displayMode, setDisplayMode] = useState<BomDisplayMode>('all');
 
-  const [compareSource, setCompareSource] = useState<BomCompareSource>(
+  const globalSettings = useGlobalSettingsState();
+
+  const snapshotsEnabled: boolean = globalSettings.isSet('PART_BOM_SNAPSHOT');
+
+  const [selectedSource, setCompareSource] = useState<BomCompareSource>(
     compareSnapshotId ? 'snapshot' : 'assembly'
   );
+
+  // Comparison against BOM snapshots is only available if the feature is enabled
+  const compareSource: BomCompareSource = snapshotsEnabled
+    ? selectedSource
+    : 'assembly';
 
   const [searchParam, setSearchParams] = useSearchParams();
 
@@ -481,17 +491,19 @@ export function BomCompareDrawer({
             </Stack>
             <Expand>
               <Stack gap='xs'>
-                <SegmentedControl
-                  aria-label='bom-compare-source'
-                  value={compareSource}
-                  onChange={(value) =>
-                    setCompareSource(value as BomCompareSource)
-                  }
-                  data={[
-                    { value: 'assembly', label: t`Assembly` },
-                    { value: 'snapshot', label: t`Snapshot` }
-                  ]}
-                />
+                {snapshotsEnabled && (
+                  <SegmentedControl
+                    aria-label='bom-compare-source'
+                    value={compareSource}
+                    onChange={(value) =>
+                      setCompareSource(value as BomCompareSource)
+                    }
+                    data={[
+                      { value: 'assembly', label: t`Assembly` },
+                      { value: 'snapshot', label: t`Snapshot` }
+                    ]}
+                  />
+                )}
                 {compareSource == 'assembly' ? (
                   <StandaloneField
                     fieldName='assembly'

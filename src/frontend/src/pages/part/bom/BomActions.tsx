@@ -46,6 +46,8 @@ export function BomActions({
 
   const globalSettings = useGlobalSettingsState();
 
+  const snapshotsEnabled: boolean = globalSettings.isSet('PART_BOM_SNAPSHOT');
+
   const [bomCompareOpen, setBomCompareOpen] = useState<boolean>(false);
 
   const [bomCompareId, setBomCompareId] = useState<string>('');
@@ -63,7 +65,7 @@ export function BomActions({
     if (searchParams.get('compare')) {
       setBomCompareId(searchParams.get('compare') as string);
       setBomCompareOpen(true);
-    } else if (searchParams.get('compare_snapshot')) {
+    } else if (snapshotsEnabled && searchParams.get('compare_snapshot')) {
       setBomCompareSnapshotId(searchParams.get('compare_snapshot') as string);
       setBomCompareOpen(true);
     }
@@ -76,7 +78,8 @@ export function BomActions({
       partInstance.pk,
       bomInformation.instance?.bom_checksum
     ],
-    enabled: !!partInstance.pk && user.hasViewRole(UserRoles.bom),
+    enabled:
+      snapshotsEnabled && !!partInstance.pk && user.hasViewRole(UserRoles.bom),
     queryFn: async () => {
       return api
         .get(apiUrl(ApiEndpoints.bom_snapshot_list), {
@@ -118,7 +121,7 @@ export function BomActions({
         value: true
       },
       note: {
-        hidden: !globalSettings.isSet('PART_BOM_SNAPSHOT')
+        hidden: !snapshotsEnabled
       }
     },
     title: t`Validate BOM`,
@@ -175,7 +178,7 @@ export function BomActions({
           tooltip={t`Compare Bill of Materials`}
           onClick={() => setBomCompareOpen(true)}
         />
-        {previousSnapshot && (
+        {snapshotsEnabled && previousSnapshot && (
           <ActionButton
             icon={<IconHistory />}
             color='blue'
