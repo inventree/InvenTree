@@ -38,7 +38,7 @@ test('Barcode Scanning - Basic', async ({ browser }) => {
 
   // Navigate to the 'scan' page
   await page.getByLabel('navigation-menu').click();
-  await page.getByRole('button', { name: 'Scan Barcode' }).click();
+  await page.getByRole('link', { name: 'Scan Barcode' }).click();
 
   await page.getByText('Scan or enter barcode data').waitFor();
 
