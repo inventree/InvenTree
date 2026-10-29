@@ -62,6 +62,9 @@ test('Stock - Location Tree', async ({ browser }) => {
   );
   await page.getByLabel('nav-tree-item-2').click();
 
+  await expect(
+    page.getByRole('link', { name: 'breadcrumb-1-factory' })
+  ).toHaveAttribute('href', /\/web\/stock\/location\/1\/?$/);
   await page.getByLabel('breadcrumb-2-storage-room-a').waitFor();
   await page.getByLabel('breadcrumb-1-factory').click();
 
@@ -71,10 +74,6 @@ test('Stock - Location Tree', async ({ browser }) => {
   // We expect it to auto-expand to the current location
   await navigate(page, 'stock/location/17/stock-items');
   await page.getByLabel('nav-breadcrumb-action').click();
-
-  await expect(
-    page.getByRole('link', { name: 'breadcrumb-2-storage-room-a' })
-  ).toHaveAttribute('href', /\/web\/stock\/location\/\d+\/?$/);
 
   for (let ii = 0; ii <= 5; ii++) {
     await page

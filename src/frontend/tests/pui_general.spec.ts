@@ -43,15 +43,12 @@ test('General - Search', async ({ browser }) => {
     .locator('a')
     .filter({ hasText: 'Customer B' })
     .first();
-  await expect(customerResult).toHaveAttribute(
-    'href',
-    /\/web\/sales\/customer\/\d+/
-  );
+  await expect(customerResult).toHaveAttribute('href', /\/web\/company\/\d+/);
 
-  const popupPromise = page.waitForEvent('popup');
+  const popupPromise = page.context().waitForEvent('page');
   await customerResult.click({ modifiers: ['Control'] });
   const popup = await popupPromise;
-  await popup.waitForURL('**/web/sales/customer/**');
+  await popup.waitForURL('**/web/company/**');
   await popup.close();
 
   // Click through to the "Customer" results
@@ -63,7 +60,7 @@ test('General - Search', async ({ browser }) => {
     /\/web\/sales\/index\/customers\?search=another\+customer/
   );
 
-  const overviewPopupPromise = page.waitForEvent('popup');
+  const overviewPopupPromise = page.context().waitForEvent('page');
   await viewAllCustomers.click({ modifiers: ['Control'] });
   const overviewPopup = await overviewPopupPromise;
   await overviewPopup.waitForURL(
