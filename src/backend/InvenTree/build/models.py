@@ -128,6 +128,7 @@ class Build(
         issued_by: User that issued the build
         responsible: User (or group) responsible for completing the build
         priority: Priority of the build
+        bom_snapshot: Snapshot of the validated BOM at the time the build was created (if available)
     """
 
     STATUS_CLASS = BuildStatus
@@ -213,6 +214,9 @@ class Build(
                     raise ValidationError({
                         'part': _('Build order cannot be created for an unlocked part')
                     })
+
+            # Record the validated BOM which this build order is created against
+            self.bom_snapshot = self.part.get_latest_bom_snapshot()
 
         # On first save (i.e. creation), run some extra checks
         if self.pk is None:
@@ -420,6 +424,19 @@ class Build(
         verbose_name=_('Issued by'),
         help_text=_('User who issued this build order'),
         related_name='builds_issued',
+    )
+
+    bom_snapshot = models.ForeignKey(
+        'part.BomSnapshot',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        editable=False,
+        related_name='builds',
+        verbose_name=_('BOM Snapshot'),
+        help_text=_(
+            'Snapshot of the validated BOM at the time this build order was created'
+        ),
     )
 
     @property

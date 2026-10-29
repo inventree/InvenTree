@@ -54,6 +54,7 @@ from . import serializers as part_serializers
 from .models import (
     BomItem,
     BomItemSubstitute,
+    BomSnapshot,
     Part,
     PartCategory,
     PartCategoryParameterTemplate,
@@ -583,6 +584,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
         serializer.is_valid(raise_exception=True)
 
         valid = str2bool(serializer.validated_data.get('valid', False))
+        note = serializer.validated_data.get('note', '')
 
         # BOM validation may take some time, so we offload it to a background task
         task_id = offload_task(
@@ -590,6 +592,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
             part.pk,
             valid,
             user_id=request.user.pk if request and request.user else None,
+            note=note,
             group='part',
         )
 
@@ -1520,6 +1523,31 @@ class BomItemSubstituteDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.BomItemSubstituteSerializer
 
 
+class BomSnapshotList(ListAPI):
+    """API endpoint for listing BomSnapshot objects.
+
+    Snapshots are created automatically when a BOM is validated, and cannot be created or modified via the API.
+    """
+
+    serializer_class = part_serializers.BomSnapshotSerializer
+    queryset = BomSnapshot.objects.all().select_related('created_by')
+
+    filter_backends = ORDER_FILTER
+
+    filterset_fields = ['part']
+
+    ordering_fields = ['created', 'line_count']
+
+    ordering = ['-created', '-pk']
+
+
+class BomSnapshotDetail(RetrieveAPI):
+    """API endpoint for detail view of a single BomSnapshot object (including the serialized BOM data)."""
+
+    serializer_class = part_serializers.BomSnapshotDetailSerializer
+    queryset = BomSnapshot.objects.all().select_related('created_by')
+
+
 part_api_urls = [
     # Base URL for PartCategory API endpoints
     path(
@@ -1659,6 +1687,15 @@ part_api_urls = [
 ]
 
 bom_api_urls = [
+    path(
+        'snapshot/',
+        include([
+            path(
+                '<int:pk>/', BomSnapshotDetail.as_view(), name='api-bom-snapshot-detail'
+            ),
+            path('', BomSnapshotList.as_view(), name='api-bom-snapshot-list'),
+        ]),
+    ),
     path(
         'substitute/',
         include([

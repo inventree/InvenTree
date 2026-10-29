@@ -113,11 +113,13 @@ class BuildSerializer(
             'priority',
             'level',
             'tags',
+            'bom_snapshot',
         ]
         read_only_fields = [
             'completed',
             'creation_date',
             'issued_by',
+            'bom_snapshot',
             'completion_date',
             'status',
             'status_text',

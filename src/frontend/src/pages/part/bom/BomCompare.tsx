@@ -7,6 +7,7 @@ import {
   Drawer,
   Group,
   Paper,
+  SegmentedControl,
   Select,
   SimpleGrid,
   Stack,
@@ -27,6 +28,7 @@ import { api } from '../../../App';
 import { StandaloneField } from '../../../components/forms/StandaloneField';
 import Expand from '../../../components/items/Expand';
 import { RenderPartColumn } from '../../../components/tables/ColumnRenderers';
+import { formatDate } from '../../../defaults/formatters';
 
 // Field to check for differences when comparing BOM items
 const DELTA_FIELDS = {
@@ -51,6 +53,38 @@ type BomCompareRow = {
 };
 
 type BomDisplayMode = 'all' | 'different' | 'common';
+
+type BomCompareSource = 'assembly' | 'snapshot';
+
+// Decimal fields are stored as strings in a BOM snapshot, but returned as numbers by the BOM API
+const SNAPSHOT_DECIMAL_FIELDS = [
+  'quantity',
+  'setup_quantity',
+  'attrition',
+  'rounding_multiple'
+];
+
+/**
+ * Convert a BOM item stored in a BomSnapshot into the format returned by the BOM API
+ */
+function snapshotItemToBomItem(item: any): any {
+  const bomItem: any = {
+    ...item,
+    sub_part: item.sub_part?.pk,
+    sub_part_detail: {
+      ...item.sub_part,
+      full_name: item.sub_part?.name
+    }
+  };
+
+  SNAPSHOT_DECIMAL_FIELDS.forEach((field) => {
+    const value = item[field];
+    bomItem[field] =
+      value === null || value === undefined ? null : Number(value);
+  });
+
+  return bomItem;
+}
 
 function getBomDeltas(primary: any, secondary: any): string[] {
   const deltas: string[] = [];
@@ -219,14 +253,20 @@ export function BomCompareDrawer({
   opened,
   onClosed,
   compareId,
+  compareSnapshotId,
   partInstance
 }: {
   opened: boolean;
   onClosed: () => void;
   compareId?: string;
+  compareSnapshotId?: string;
   partInstance: any;
 }) {
   const [displayMode, setDisplayMode] = useState<BomDisplayMode>('all');
+
+  const [compareSource, setCompareSource] = useState<BomCompareSource>(
+    compareSnapshotId ? 'snapshot' : 'assembly'
+  );
 
   const [searchParam, setSearchParams] = useSearchParams();
 
@@ -251,9 +291,67 @@ export function BomCompareDrawer({
     compareId ?? ''
   );
 
+  // Secondary snapshot ID
+  const [snapshotId, setSnapshotId] = useState<string>(compareSnapshotId ?? '');
+
   useEffect(() => {
     setSecondaryPartId(compareId ?? '');
+    setSnapshotId(compareSnapshotId ?? '');
+    setCompareSource(compareSnapshotId ? 'snapshot' : 'assembly');
   }, [opened]);
+
+  // Fetch the list of available snapshots for the primary part
+  const snapshotList = useQuery({
+    queryKey: ['bom-compare-snapshots', partInstance.pk, opened],
+    enabled: opened && !!partInstance.pk && compareSource == 'snapshot',
+    queryFn: async () => {
+      return api
+        .get(apiUrl(ApiEndpoints.bom_snapshot_list), {
+          params: {
+            part: partInstance.pk
+          }
+        })
+        .then((response) => response.data);
+    }
+  });
+
+  const snapshotOptions = useMemo(() => {
+    return (
+      snapshotList.data?.map((snapshot: any) => {
+        const label = [
+          formatDate(snapshot.created, { showTime: true }),
+          snapshot.created_by_detail?.username,
+          snapshot.note
+        ]
+          .filter((value) => !!value)
+          .join(' · ');
+
+        return {
+          value: `${snapshot.pk}`,
+          label: label
+        };
+      }) ?? []
+    );
+  }, [snapshotList.data]);
+
+  // Fetch the selected snapshot
+  const snapshotBom = useQuery({
+    queryKey: ['bom-compare-snapshot', snapshotId, opened],
+    enabled: opened && !!snapshotId && compareSource == 'snapshot',
+    queryFn: async () => {
+      return api
+        .get(apiUrl(ApiEndpoints.bom_snapshot_list, snapshotId))
+        .then((response) =>
+          (response.data?.data?.items ?? []).map(snapshotItemToBomItem)
+        );
+    }
+  });
+
+  const updateSearchParams = (params: Record<string, string>) => {
+    if (opened) {
+      setSearchParams(params, { replace: true });
+    }
+  };
 
   // Fetch BOM for the secondary part
   const secondaryBom = useQuery({
@@ -272,6 +370,12 @@ export function BomCompareDrawer({
   });
 
   // Perform comparison against
+  const secondaryData: any[] | undefined =
+    compareSource == 'snapshot' ? snapshotBom.data : secondaryBom.data;
+
+  const hasSecondary: boolean =
+    compareSource == 'snapshot' ? !!snapshotId : !!secondaryPartId;
+
   const comparedItems: any[] = useMemo(() => {
     let rows: BomCompareRow[] = [];
 
@@ -299,7 +403,7 @@ export function BomCompareDrawer({
     });
 
     // Next, iterate through the "secondary" BOM to find matches and update the data
-    secondaryBom.data?.forEach((item: any) => {
+    secondaryData?.forEach((item: any) => {
       let subPartId = `${item.sub_part}`;
 
       while (secondaryPartIds.has(subPartId)) {
@@ -350,7 +454,7 @@ export function BomCompareDrawer({
 
       return nameA.localeCompare(nameB);
     });
-  }, [displayMode, primaryBom.data, secondaryBom.data]);
+  }, [displayMode, primaryBom.data, secondaryData]);
 
   return (
     <Drawer
@@ -376,32 +480,58 @@ export function BomCompareDrawer({
               <RenderPartColumn part={partInstance} />
             </Stack>
             <Expand>
-              <StandaloneField
-                fieldName='assembly'
-                fieldDefinition={{
-                  description: t`Select assembly to compare`,
-                  label: t`Secondary Assembly`,
-                  field_type: 'related field',
-                  value: secondaryPartId,
-                  api_url: apiUrl(ApiEndpoints.part_list),
-                  model: ModelType.part,
-                  required: true,
-                  filters: {
-                    assembly: true
-                  },
-                  onValueChange: (value) => {
-                    setSecondaryPartId(value);
-                    if (opened) {
-                      setSearchParams(
-                        {
-                          compare: value
-                        },
-                        { replace: true }
-                      );
-                    }
+              <Stack gap='xs'>
+                <SegmentedControl
+                  aria-label='bom-compare-source'
+                  value={compareSource}
+                  onChange={(value) =>
+                    setCompareSource(value as BomCompareSource)
                   }
-                }}
-              />
+                  data={[
+                    { value: 'assembly', label: t`Assembly` },
+                    { value: 'snapshot', label: t`Snapshot` }
+                  ]}
+                />
+                {compareSource == 'assembly' ? (
+                  <StandaloneField
+                    fieldName='assembly'
+                    fieldDefinition={{
+                      description: t`Select assembly to compare`,
+                      label: t`Secondary Assembly`,
+                      field_type: 'related field',
+                      value: secondaryPartId,
+                      api_url: apiUrl(ApiEndpoints.part_list),
+                      model: ModelType.part,
+                      required: true,
+                      filters: {
+                        assembly: true
+                      },
+                      onValueChange: (value) => {
+                        setSecondaryPartId(value);
+                        updateSearchParams({ compare: value });
+                      }
+                    }}
+                  />
+                ) : (
+                  <Select
+                    label={t`BOM Snapshot`}
+                    aria-label='bom-compare-snapshot'
+                    description={t`Select a previously validated BOM to compare`}
+                    placeholder={
+                      snapshotOptions.length == 0
+                        ? t`No snapshots available`
+                        : undefined
+                    }
+                    disabled={snapshotOptions.length == 0}
+                    value={snapshotId || null}
+                    onChange={(value) => {
+                      setSnapshotId(value ?? '');
+                      updateSearchParams({ compare_snapshot: value ?? '' });
+                    }}
+                    data={snapshotOptions}
+                  />
+                )}
+              </Stack>
             </Expand>
             <Select
               label={t`Display Mode`}
@@ -417,8 +547,10 @@ export function BomCompareDrawer({
             />
           </SimpleGrid>
         </Paper>
-        {secondaryPartId ? (
+        {hasSecondary ? (
           <BomTable items={comparedItems} />
+        ) : compareSource == 'snapshot' ? (
+          <Alert color='yellow'>{t`Select a BOM snapshot to view Bill of Materials comparison`}</Alert>
         ) : (
           <Alert color='yellow'>{t`Select an assembly to view Bill of Materials comparison`}</Alert>
         )}

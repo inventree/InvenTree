@@ -232,6 +232,7 @@ export default function SystemSettings() {
                 'PART_REVISION_ASSEMBLY_ONLY',
                 'PART_SHOW_RELATED',
                 'PART_BOM_ALLOW_ZERO_QUANTITY',
+                'PART_BOM_SNAPSHOT',
                 'PART_CATEGORY_DEFAULT_ICON'
               ]}
             />

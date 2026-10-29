@@ -24,6 +24,7 @@ import { useSearchParams } from 'react-router-dom';
 import { RenderUser } from '../../../components/render/User';
 import useBackgroundTask from '../../../hooks/UseBackgroundTask';
 import { useApiFormModal } from '../../../hooks/UseForm';
+import { useGlobalSettingsState } from '../../../states/SettingsStates';
 import { useUserState } from '../../../states/UserState';
 import { BomCompareDrawer } from './BomCompare';
 
@@ -39,20 +40,27 @@ export function BomActions({
 }>) {
   const user = useUserState();
 
+  const globalSettings = useGlobalSettingsState();
+
   const [bomCompareOpen, setBomCompareOpen] = useState<boolean>(false);
 
   const [bomCompareId, setBomCompareId] = useState<string>('');
+
+  const [bomCompareSnapshotId, setBomCompareSnapshotId] = useState<string>('');
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Open the BOM compare drawer if the URL contains the relevant query parameter
   useEffect(() => {
-    if (
-      searchParams.has('compare') &&
-      !!searchParams.get('compare') &&
-      !bomCompareOpen
-    ) {
+    if (bomCompareOpen) {
+      return;
+    }
+
+    if (searchParams.get('compare')) {
       setBomCompareId(searchParams.get('compare') as string);
+      setBomCompareOpen(true);
+    } else if (searchParams.get('compare_snapshot')) {
+      setBomCompareSnapshotId(searchParams.get('compare_snapshot') as string);
       setBomCompareOpen(true);
     }
   }, [searchParams]);
@@ -75,6 +83,9 @@ export function BomActions({
       valid: {
         hidden: true,
         value: true
+      },
+      note: {
+        hidden: !globalSettings.isSet('PART_BOM_SNAPSHOT')
       }
     },
     title: t`Validate BOM`,
@@ -176,12 +187,15 @@ export function BomActions({
       <BomCompareDrawer
         partInstance={partInstance}
         compareId={bomCompareId}
+        compareSnapshotId={bomCompareSnapshotId}
         opened={bomCompareOpen}
         onClosed={() => {
           setBomCompareId('');
+          setBomCompareSnapshotId('');
           setBomCompareOpen(false);
           setSearchParams((params: URLSearchParams) => {
             params.delete('compare');
+            params.delete('compare_snapshot');
             return params;
           });
         }}

@@ -452,6 +452,10 @@ test('Parts - BOM Validation', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'action-button-validate-bom' })
     .click();
+
+  const note = `Paint ${nextValue.toFixed(3)}`;
+
+  await page.getByRole('textbox', { name: 'text-field-note' }).fill(note);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Background task monitoring
@@ -460,6 +464,18 @@ test('Parts - BOM Validation', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'bom-validation-info' }).hover();
   await page.getByText('Validated By: allaccessAlly').waitFor();
+
+  // A snapshot of the validated BOM is available for comparison
+  await page
+    .getByRole('button', { name: 'action-button-compare-bill-of-materials' })
+    .click();
+  await page.getByText('Snapshot', { exact: true }).click();
+  await page.getByRole('combobox', { name: 'bom-compare-snapshot' }).click();
+  await page.getByRole('option', { name: note }).click();
+
+  // The selected snapshot matches the current BOM
+  await page.getByText('No changes').first().waitFor();
+  await expect(page.getByText('Part added to BOM')).toHaveCount(0);
 });
 
 test('Parts - BOM Comparison', async ({ browser }) => {
@@ -493,6 +509,24 @@ test('Parts - BOM Comparison', async ({ browser }) => {
   await page.getByText('0.125').nth(1).waitFor();
   await page.getByText('Red Paint', { exact: true }).first().waitFor();
   await page.getByText('Blue Paint', { exact: true }).first().waitFor();
+});
+
+test('Parts - BOM Compare Snapshot', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/108/bom' });
+
+  await page
+    .getByRole('button', { name: 'action-button-compare-bill-of-materials' })
+    .click();
+  await page.getByText('Select an assembly to view').waitFor();
+
+  // Switch to comparing against a BOM snapshot
+  await page.getByText('Snapshot', { exact: true }).click();
+  await page.getByText('Select a BOM snapshot to view').waitFor();
+  await page.getByRole('combobox', { name: 'bom-compare-snapshot' }).waitFor();
+
+  // Switch back to comparing against another assembly
+  await page.getByText('Assembly', { exact: true }).click();
+  await page.getByText('Select an assembly to view').waitFor();
 });
 
 test('Parts - Used In', async ({ browser }) => {

@@ -1,11 +1,13 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Anchor, Grid, Skeleton, Stack } from '@mantine/core';
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { TagsList } from '@lib/index';
 
 import {
@@ -113,6 +115,22 @@ export function BuildOrderDetailsPanel({
       model_field: 'reference',
       model: ModelType.build,
       hidden: !instance?.parent
+    },
+    {
+      type: 'text',
+      name: 'bom_snapshot',
+      icon: 'bom',
+      label: t`Validated BOM`,
+      hidden: !instance?.bom_snapshot,
+      value_formatter: () => (
+        <Anchor
+          component={Link}
+          size='sm'
+          to={`${getDetailUrl(ModelType.part, instance?.part)}bom?compare_snapshot=${instance?.bom_snapshot}`}
+        >
+          {t`Compare against current BOM`}
+        </Anchor>
+      )
     }
   ];
 
