@@ -62,6 +62,7 @@ export function userRoleLabel(role: UserRoles): string {
 
 export const roleToViewSettingMap: Partial<Record<UserRoles, string>> = {
   [UserRoles.build]: 'BUILDORDER_ENABLED',
+  [UserRoles.ncr]: 'NCR_ENABLED',
   [UserRoles.sales_order]: 'SALESORDER_ENABLED',
   [UserRoles.purchase_order]: 'PURCHASEORDER_ENABLED',
   [UserRoles.transfer_order]: 'TRANSFERORDER_ENABLED',
