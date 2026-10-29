@@ -116,7 +116,7 @@ test('Permissions - Reader', async ({ browser }) => {
 
   // Navigate to the user / group info (via the navigation menu)
   await page.getByLabel('navigation-menu').click();
-  await page.getByRole('button', { name: 'Users' }).click();
+  await page.getByRole('link', { name: 'Users' }).click();
   await page.getByText('System Overview', { exact: true }).waitFor();
   await loadTab(page, 'Users');
   await loadTab(page, 'Groups');

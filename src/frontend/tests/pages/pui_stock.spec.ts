@@ -55,8 +55,16 @@ test('Stock - Location Tree', async ({ browser }) => {
 
   await page.getByLabel('nav-breadcrumb-action').click();
   await page.getByLabel('nav-tree-toggle-1}').click();
+
+  await expect(page.getByLabel('nav-tree-item-2')).toHaveAttribute(
+    'href',
+    /\/web\/stock\/location\/2\/?$/
+  );
   await page.getByLabel('nav-tree-item-2').click();
 
+  await expect(
+    page.getByRole('link', { name: 'breadcrumb-1-factory' })
+  ).toHaveAttribute('href', /\/web\/stock\/location\/1\/?$/);
   await page.getByLabel('breadcrumb-2-storage-room-a').waitFor();
   await page.getByLabel('breadcrumb-1-factory').click();
 
