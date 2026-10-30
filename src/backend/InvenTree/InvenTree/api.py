@@ -8,9 +8,11 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, HttpResponsePermanentRedirect, JsonResponse
 from django.urls import path, reverse
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
 import structlog
@@ -27,10 +29,12 @@ import InvenTree.config
 import InvenTree.filters
 import InvenTree.permissions
 import InvenTree.version
+from audit.helpers import write_batched
 from common.settings import get_global_setting
 from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
+from InvenTree.proof import calculate_proof
 from InvenTree.tasks import batch_offload_tasks
 from plugin.base.event.events import batch_events
 from plugin.serializers import MetadataSerializer
@@ -246,6 +250,9 @@ class InfoApiSerializer(serializers.Serializer):
 
     server = serializers.CharField(read_only=True)
     id = serializers.CharField(read_only=True, allow_null=True)
+    link = serializers.CharField(
+        read_only=True, allow_null=True, help_text='Temporary identity proof'
+    )
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
     apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
@@ -284,11 +291,20 @@ class InfoView(APIView):
         return OrmQ.objects.count()
 
     @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='link_nonce',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Nonce for short-term identity proof',
+            )
+        ],
         responses={
             200: OpenApiResponse(
                 response=InfoApiSerializer, description='InvenTree server information'
             )
-        }
+        },
     )
     def get(self, request, *args, **kwargs):
         """Serve current server information."""
@@ -341,6 +357,8 @@ class InfoView(APIView):
             },
             'system_state': {'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS},
         }
+        if nonce := request.query_params.get('link_nonce'):
+            data['link'] = calculate_proof(nonce)
 
         return JsonResponse(data)
 
@@ -517,7 +535,12 @@ class BulkCreateMixin:
                 if has_unique_errors:
                     raise ValidationError(unique_errors)
 
-            with transaction.atomic(), batch_events(), batch_offload_tasks():
+            with (
+                transaction.atomic(),
+                batch_events(),
+                batch_offload_tasks(),
+                write_batched(),
+            ):
                 for item in data:
                     serializer = self.get_serializer(data=item)
                     if serializer.is_valid():
@@ -1008,6 +1031,52 @@ class MetadataRedirectView(RedirectView):
             'lookup_field': self.lookup_field,
         }
         return reverse('api-generic-metadata', args=args, kwargs=_kwargs)
+
+
+class HttpResponsePermanentRedirectPreserveMethod(HttpResponsePermanentRedirect):
+    """Permanent redirect which preserves the request method and body (HTTP 308).
+
+    Unlike a 301 redirect, clients must not change a POST / PUT / PATCH / DELETE
+    request into a GET request when following a 308 redirect.
+    """
+
+    status_code = 308
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class MovedEndpointRedirectView(RedirectView):
+    """Redirect requests for an API endpoint which has moved to a new URL.
+
+    - The redirect target is resolved from the named URL pattern of the new endpoint
+    - The request method and body are preserved (HTTP 308), so that write operations
+      against the old endpoint continue to work
+    - Any query parameters are passed through to the new endpoint
+
+    CSRF protection is not applied here, as this view does not perform any action itself.
+    The target endpoint applies the usual authentication, permission and CSRF checks.
+    """
+
+    query_string = True
+
+    def get(self, request, *args, **kwargs):
+        """Return a method-preserving redirect to the new endpoint."""
+        url = self.get_redirect_url(*args, **kwargs)
+        return HttpResponsePermanentRedirectPreserveMethod(url)
+
+    # All request methods are redirected in the same way
+    post = put = patch = delete = options = head = get
+
+
+def moved_path(route: str, pattern_name: str):
+    """Construct a path which redirects from a legacy API endpoint to its new location.
+
+    Arguments:
+        route: The legacy URL route (relative to the including URL pattern)
+        pattern_name: The name of the URL pattern for the new endpoint
+
+    Note: Any URL kwargs captured by the legacy route are passed to the new URL pattern.
+    """
+    return path(route, MovedEndpointRedirectView.as_view(pattern_name=pattern_name))
 
 
 def meta_path(model, lookup_field: str = 'pk', lookup_field_ref: str = 'pk'):

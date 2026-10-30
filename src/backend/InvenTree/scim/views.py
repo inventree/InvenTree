@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 
 import structlog
 from drf_spectacular.utils import extend_schema
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 from rest_framework.decorators import (
     api_view,
     authentication_classes,
@@ -70,9 +70,19 @@ class ScimParser(JSONParser):
     media_type = 'application/scim+json'
 
 
-def scim_dump(obj) -> dict:
-    """Serialize a scim2_models object to a plain (JSON-safe) dict."""
-    return obj.model_dump(mode='json', exclude_none=True, by_alias=True)
+class ScimResponse(Response):
+    """Custom Response class for SCIM protocol responses."""
+
+    def __init__(self, data, *args, **kwargs):
+        """Like Response but with the scim suff auto-solved."""
+        if isinstance(data, DjangoUser):
+            data = user_to_scim(data)
+        elif isinstance(data, DjangoGroup):
+            data = group_to_scim(data)
+
+        if isinstance(data, BaseModel):
+            data = data.model_dump(mode='json', exclude_none=True, by_alias=True)
+        super().__init__(data, *args, content_type='application/scim+json', **kwargs)
 
 
 def scim_error(status: int, detail: str, scim_type: str | None = None) -> Response:
@@ -83,9 +93,7 @@ def scim_error(status: int, detail: str, scim_type: str | None = None) -> Respon
         scim_type=scim_type,
         detail=detail,
     )
-    return Response(
-        scim_dump(error), status=status, content_type='application/scim+json'
-    )
+    return ScimResponse(error, status=status)
 
 
 class ScimAPIView(APIView):
@@ -168,7 +176,7 @@ class ServiceProviderConfigView(ScimAPIView):
                 )
             ],
         )
-        return Response(scim_dump(config), content_type='application/scim+json')
+        return ScimResponse(config)
 
 
 class ResourceTypesView(ScimAPIView):
@@ -202,9 +210,7 @@ class ResourceTypesView(ScimAPIView):
             resource_type = self.resource_types.get(name)
             if not resource_type:
                 return scim_error(404, f"ResourceType '{name}' not found")
-            return Response(
-                scim_dump(resource_type), content_type='application/scim+json'
-            )
+            return ScimResponse(resource_type)
 
         resources = list(self.resource_types.values())
         response = ListResponse[ResourceType](
@@ -214,7 +220,7 @@ class ResourceTypesView(ScimAPIView):
             start_index=1,
             resources=resources,
         )
-        return Response(scim_dump(response), content_type='application/scim+json')
+        return ScimResponse(response)
 
 
 class SchemasView(ScimAPIView):
@@ -233,7 +239,7 @@ class SchemasView(ScimAPIView):
             schema = schemas.get(schema_id)
             if not schema:
                 return scim_error(404, f"Schema '{schema_id}' not found")
-            return Response(scim_dump(schema), content_type='application/scim+json')
+            return ScimResponse(schema)
 
         resources = list(schemas.values())
         response = ListResponse[Schema](
@@ -243,7 +249,7 @@ class SchemasView(ScimAPIView):
             start_index=1,
             resources=resources,
         )
-        return Response(scim_dump(response), content_type='application/scim+json')
+        return ScimResponse(response)
 
 
 class BaseResourceView(ScimAPIView):
@@ -291,7 +297,7 @@ class BaseResourceView(ScimAPIView):
             start_index=start_index,
             resources=resources,
         )
-        return Response(scim_dump(response), content_type='application/scim+json')
+        return ScimResponse(response)
 
 
 class UsersView(BaseResourceView):
@@ -325,11 +331,8 @@ class UsersView(BaseResourceView):
 
         logger.info('SCIM: provisioned new user', username=user.username)
 
-        return Response(
-            scim_dump(user_to_scim(user)),
-            status=201,
-            content_type='application/scim+json',
-            headers={'Location': user_location(user.pk)},
+        return ScimResponse(
+            user, status=201, headers={'Location': user_location(user.pk)}
         )
 
 
@@ -343,9 +346,7 @@ class UserDetailView(ScimAPIView):
     def get(self, request, pk, *args, **kwargs):
         """Retrieve a single user."""
         user = self.get_object(pk)
-        return Response(
-            scim_dump(user_to_scim(user)), content_type='application/scim+json'
-        )
+        return ScimResponse(user)
 
     def put(self, request, pk, *args, **kwargs):
         """Replace a user's attributes."""
@@ -353,9 +354,7 @@ class UserDetailView(ScimAPIView):
         scim_user = User.model_validate(request.data)
         apply_scim_to_user(scim_user, user)
         user.save()
-        return Response(
-            scim_dump(user_to_scim(user)), content_type='application/scim+json'
-        )
+        return ScimResponse(user)
 
     def patch(self, request, pk, *args, **kwargs):
         """Apply a SCIM PATCH operation set to a user."""
@@ -368,9 +367,7 @@ class UserDetailView(ScimAPIView):
         apply_scim_to_user(scim_user, user)
         user.save()
 
-        return Response(
-            scim_dump(user_to_scim(user)), content_type='application/scim+json'
-        )
+        return ScimResponse(user)
 
     def delete(self, request, pk, *args, **kwargs):
         """Deactivate a user.
@@ -414,11 +411,8 @@ class GroupsView(BaseResourceView):
 
         logger.info('SCIM: provisioned new group', name=group.name)
 
-        return Response(
-            scim_dump(group_to_scim(group)),
-            status=201,
-            content_type='application/scim+json',
-            headers={'Location': group_location(group.pk)},
+        return ScimResponse(
+            group, status=201, headers={'Location': group_location(group.pk)}
         )
 
 
@@ -432,9 +426,7 @@ class GroupDetailView(ScimAPIView):
     def get(self, request, pk, *args, **kwargs):
         """Retrieve a single group."""
         group = self.get_object(pk)
-        return Response(
-            scim_dump(group_to_scim(group)), content_type='application/scim+json'
-        )
+        return ScimResponse(group)
 
     def put(self, request, pk, *args, **kwargs):
         """Replace a group's attributes and membership."""
@@ -443,9 +435,7 @@ class GroupDetailView(ScimAPIView):
         apply_scim_to_group(scim_group, group)
         group.save()
         set_group_members(group, scim_group.members)
-        return Response(
-            scim_dump(group_to_scim(group)), content_type='application/scim+json'
-        )
+        return ScimResponse(group)
 
     def patch(self, request, pk, *args, **kwargs):
         """Apply a SCIM PATCH operation set to a group (used mainly for membership changes)."""
@@ -459,9 +449,7 @@ class GroupDetailView(ScimAPIView):
         group.save()
         set_group_members(group, scim_group.members)
 
-        return Response(
-            scim_dump(group_to_scim(group)), content_type='application/scim+json'
-        )
+        return ScimResponse(group)
 
     def delete(self, request, pk, *args, **kwargs):
         """Remove a group."""

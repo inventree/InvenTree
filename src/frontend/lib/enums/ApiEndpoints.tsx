@@ -17,6 +17,7 @@ export enum ApiEndpoints {
   // Individual user endpoints
   user_me_profile = 'user/me/profile/',
   user_me_roles = 'user/me/roles/',
+  user_me_tips = 'user/me/tips/',
   user_me_token = 'user/me/token/',
   user_me = 'user/me/',
 
@@ -115,12 +116,12 @@ export enum ApiEndpoints {
   // Part API endpoints
   part_list = 'part/',
   part_thumbs_list = 'part/thumbs/',
-  part_pricing = 'part/:id/pricing/',
+  part_pricing = 'pricing/part/:id/',
   part_requirements = 'part/:id/requirements/',
   part_serial_numbers = 'part/:id/serial-numbers/',
   part_scheduling = 'part/:id/scheduling/',
-  part_pricing_internal = 'part/internal-price/',
-  part_pricing_sale = 'part/sale-price/',
+  part_pricing_internal = 'pricing/internal-price/',
+  part_pricing_sale = 'pricing/sale-price/',
   part_stocktake_list = 'part/stocktake/',
   part_stocktake_generate = 'part/stocktake/generate/',
   category_list = 'part/category/',
@@ -144,7 +145,6 @@ export enum ApiEndpoints {
 
   // Stock item API endpoints
   stock_item_list = 'stock/',
-  stock_tracking_list = 'stock/track/',
   stock_test_result_list = 'stock/test/',
   stock_transfer = 'stock/transfer/',
   stock_remove = 'stock/remove/',
@@ -261,6 +261,7 @@ export enum ApiEndpoints {
 
   // Miscellaneous API endpoints
   attachment_list = 'attachment/',
+  audit_log_list = 'audit/',
   instance_info = 'instance-info/',
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',

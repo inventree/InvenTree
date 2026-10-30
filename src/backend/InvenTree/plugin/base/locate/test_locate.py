@@ -20,6 +20,8 @@ class LocatePluginTests(InvenTreeAPITestCase):
 
     fixtures = ['category', 'part', 'location', 'stock']
 
+    roles = ['stock.view', 'stock_location.view']
+
     def test_installed(self):
         """Test that a locate plugin is actually installed."""
         plugins = registry.with_mixin(PluginMixinEnum.LOCATE)
@@ -68,6 +70,39 @@ class LocatePluginTests(InvenTreeAPITestCase):
             self.assertIn(
                 f"StockLocation matching PK '{pk}' not found", str(response.data)
             )
+
+    def test_locate_permissions(self):
+        """Test that the locate endpoint enforces role permissions.
+
+        A user without the required view permission must be denied,
+        for both existing and non-existent targets (no existence oracle).
+        """
+        url = reverse('api-locate-plugin')
+
+        item = StockItem.objects.get(pk=1)
+        item.set_metadata('located', False)
+
+        self.clearRoles()
+
+        for pk in [1, 99999]:
+            self.post(url, {'plugin': 'samplelocate', 'item': pk}, expected_code=403)
+            self.post(
+                url, {'plugin': 'samplelocate', 'location': pk}, expected_code=403
+            )
+
+        # The plugin must not have been triggered
+        item.refresh_from_db()
+        self.assertFalse(item.metadata['located'])
+
+        # Item permission does not grant location access (and vice versa)
+        self.assignRole('stock.view')
+        self.post(url, {'plugin': 'samplelocate', 'item': 1}, expected_code=200)
+        self.post(url, {'plugin': 'samplelocate', 'location': 1}, expected_code=403)
+
+        self.clearRoles()
+        self.assignRole('stock_location.view')
+        self.post(url, {'plugin': 'samplelocate', 'item': 1}, expected_code=403)
+        self.post(url, {'plugin': 'samplelocate', 'location': 1}, expected_code=200)
 
     def test_locate_item(self):
         """Test that the plugin correctly 'locates' a StockItem.

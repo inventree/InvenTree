@@ -122,6 +122,16 @@ def backup_date_format() -> str:
     )
 
 
+def backup_keep_count() -> int:
+    """Return the number of backup files to keep."""
+    return InvenTree.config.get_setting(
+        'INVENTREE_BACKUP_KEEP_COUNT',
+        'backup_keep_count',
+        default_value=10,
+        typecast=int,
+    )
+
+
 def backup_filename_template() -> str:
     """Return the filename template for database backups."""
     return InvenTree.config.get_setting(

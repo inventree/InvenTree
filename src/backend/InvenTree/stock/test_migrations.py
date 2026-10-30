@@ -272,3 +272,364 @@ class TestRemoveMpttFieldsMigration(MigratorTestCase):
         # The orphan item still has no parent
         orphan = StockItem.objects.get(pk=self.orphan_pk)
         self.assertIsNone(orphan.parent_id)
+
+
+class TestStockTrackingAuditMigration(MigratorTestCase):
+    """Test data migration which copies StockItemTracking entries into the audit log.
+
+    Ensures that every tracking entry is copied exactly once, with the event type,
+    user, date, notes, parent (part) reference and deltas transferred correctly.
+    """
+
+    migrate_from = ('stock', '0128_remove_stockitem_notes')
+    migrate_to = ('stock', '0129_migrate_stock_tracking_to_audit_log')
+
+    def make_item(self, part, quantity, serial=None, location=None) -> int:
+        """Insert a StockItem via raw SQL (avoids a duplicate status_custom_key ORM bug)."""
+        from django.db import connection
+
+        insert_sql = """
+            INSERT INTO stock_stockitem
+                (part_id, quantity, status, delete_on_deplete, is_building,
+                 link, serial_int, barcode_data, barcode_hash, serial, location_id)
+            VALUES (%s, %s, 10, false, false, '', 0, '', '', %s, %s)
+            """
+
+        params = [part.pk, quantity, serial, location.pk if location else None]
+
+        with connection.cursor() as cursor:
+            if connection.features.can_return_rows_from_bulk_insert:
+                cursor.execute(insert_sql + 'RETURNING id', params)
+                return cursor.fetchone()[0]
+
+            cursor.execute(insert_sql, params)
+            return cursor.lastrowid
+
+    def prepare(self):
+        """Create legacy stock tracking entries to be migrated."""
+        from datetime import datetime, timezone
+
+        from django.conf import settings
+
+        apps = self.old_state.apps
+
+        User = apps.get_model('auth', 'user')
+        Part = apps.get_model('part', 'part')
+        Company = apps.get_model('company', 'company')
+        SalesOrder = apps.get_model('order', 'salesorder')
+        StockLocation = apps.get_model('stock', 'stocklocation')
+        StockItem = apps.get_model('stock', 'stockitem')
+        StockItemTracking = apps.get_model('stock', 'stockitemtracking')
+
+        self.user = User.objects.create(username='tracker', email='tracker@example.com')
+
+        self.part = Part.objects.create(
+            name='Tracked Widget', level=0, tree_id=0, lft=0, rght=0
+        )
+
+        self.loc_1 = StockLocation.objects.create(
+            name='Shelf', pathstring='Store/Shelf', level=0, tree_id=1, lft=1, rght=2
+        )
+        self.loc_2 = StockLocation.objects.create(
+            name='Bin', pathstring='Store/Bin', level=0, tree_id=2, lft=1, rght=2
+        )
+
+        self.customer = Company.objects.create(name='Acme Customer', is_customer=True)
+        self.sales_order = SalesOrder.objects.create(
+            reference='SO-1234', customer=self.customer, reference_int=1234
+        )
+
+        item_pk = self.make_item(self.part, 100, location=self.loc_1)
+        other_pk = self.make_item(self.part, 1, serial='SN-42')
+
+        item = StockItem.objects.get(pk=item_pk)
+        other = StockItem.objects.get(pk=other_pk)
+
+        self.item_pk = item_pk
+        self.other_pk = other_pk
+
+        def track(code, deltas=None, notes='', user=None, stock_item=item, day=1):
+            """Create a legacy tracking entry (with a known date)."""
+            entry = StockItemTracking.objects.create(
+                item=stock_item,
+                part=self.part,
+                tracking_type=code,
+                deltas=deltas,
+                notes=notes,
+                user=user,
+            )
+
+            # MySQL rejects timezone-aware values when USE_TZ is False
+            utc = timezone.utc if settings.USE_TZ else None
+            date = datetime(2025, 1, day, 12, 0, tzinfo=utc)
+            StockItemTracking.objects.filter(pk=entry.pk).update(date=date)
+
+            return entry.pk
+
+        self.entries = {
+            'created': track(
+                1,
+                {'status': 10, 'quantity': 100.0, 'location': self.loc_1.pk},
+                notes='Initial stock',
+                user=self.user,
+                day=1,
+            ),
+            'moved': track(
+                20,
+                {'quantity': 100.0, 'location': self.loc_2.pk},
+                user=self.user,
+                day=2,
+            ),
+            'counted': track(
+                10,
+                {
+                    'quantity': 90.0,
+                    'location': self.loc_1.pk,
+                    'old_location': self.loc_2.pk,
+                },
+                user=self.user,
+                day=3,
+            ),
+            'edited': track(
+                5,
+                {
+                    'status': 55,
+                    'status_logical': 55,
+                    'old_status': 10,
+                    'old_status_logical': 10,
+                },
+                user=self.user,
+                day=4,
+            ),
+            'custom_status': track(
+                5,
+                {
+                    'status': 1001,
+                    'status_logical': 50,
+                    'old_status': 55,
+                    'old_status_logical': 55,
+                },
+                day=5,
+            ),
+            'shipped': track(
+                60,
+                {
+                    'quantity': 5.0,
+                    'salesorder': self.sales_order.pk,
+                    'customer': self.customer.pk,
+                    'customer_name': 'Acme Customer',
+                },
+                user=self.user,
+                day=6,
+            ),
+            'split': track(42, {'stockitem': other_pk, 'removed': 5.0}, day=7),
+            'missing_reference': track(
+                42, {'stockitem': 999999, 'removed': 1.0}, day=8
+            ),
+            'deleted_item': track(12, {'removed': 1.0}, stock_item=None, day=9),
+            'legacy': track(0, None, notes='Legacy entry', stock_item=other, day=10),
+        }
+
+        self.assertEqual(StockItemTracking.objects.count(), len(self.entries))
+
+    def migrated(self, name):
+        """Return the audit log entry migrated from the named tracking entry."""
+        AuditLogEntry = self.new_state.apps.get_model('audit', 'auditlogentry')
+
+        return AuditLogEntry.objects.get(
+            additional_data__tracking_id=self.entries[name]
+        )
+
+    def check_integrity(self):
+        """Every tracking entry is copied exactly once, with all common fields transferred."""
+        apps = self.new_state.apps
+
+        AuditLogEntry = apps.get_model('audit', 'auditlogentry')
+        StockItemTracking = apps.get_model('stock', 'stockitemtracking')
+        ContentType = apps.get_model('contenttypes', 'contenttype')
+
+        stock_ct = ContentType.objects.get(app_label='stock', model='stockitem')
+        part_ct = ContentType.objects.get(app_label='part', model='part')
+
+        # The legacy entries are retained
+        self.assertEqual(StockItemTracking.objects.count(), len(self.entries))
+
+        migrated = AuditLogEntry.objects.filter(
+            content_type=stock_ct, additional_data__has_key='tracking_id'
+        )
+
+        self.assertEqual(migrated.count(), len(self.entries))
+        self.assertEqual(
+            sorted(entry.additional_data['tracking_id'] for entry in migrated),
+            sorted(self.entries.values()),
+        )
+
+        for tracking in StockItemTracking.objects.all():
+            entry = migrated.get(additional_data__tracking_id=tracking.pk)
+
+            self.assertEqual(entry.timestamp, tracking.date)
+            self.assertEqual(entry.actor_id, tracking.user_id)
+            self.assertEqual(entry.notes, tracking.notes or None)
+
+            # The entry is recorded against the stock item
+            self.assertEqual(entry.content_type_id, stock_ct.pk)
+            self.assertEqual(entry.object_id, tracking.item_id)
+            self.assertEqual(
+                entry.object_pk, str(tracking.item_id) if tracking.item_id else ''
+            )
+
+            # The parent reference is the part
+            self.assertEqual(entry.parent_content_type_id, part_ct.pk)
+            self.assertEqual(entry.parent_object_pk, str(self.part.pk))
+
+            # The event type is transferred ('EDITED' entries are regular updates)
+            if tracking.tracking_type == 5:
+                self.assertIsNone(entry.event_type)
+            else:
+                self.assertEqual(entry.event_type, tracking.tracking_type)
+
+    def check_created(self):
+        """A creation entry is recorded as a CREATE entry, with the initial values as field changes."""
+        entry = self.migrated('created')
+
+        self.assertEqual(entry.action, 0)
+        self.assertEqual(entry.event_type, 1)
+        self.assertEqual(entry.notes, 'Initial stock')
+        self.assertEqual(entry.actor_id, self.user.pk)
+        self.assertEqual(entry.actor_username, 'tracker')
+        self.assertEqual(entry.actor_email, 'tracker@example.com')
+        self.assertEqual(entry.object_repr, '100 x Tracked Widget')
+
+        self.assertEqual(
+            entry.changes,
+            {
+                'status': [None, 10],
+                'quantity': [None, '100'],
+                'location': [None, self.loc_1.pk],
+            },
+        )
+
+        self.assertNotIn('deltas', entry.additional_data)
+
+    def check_moved(self):
+        """A move records the destination location as a reference."""
+        entry = self.migrated('moved')
+
+        self.assertEqual(entry.action, 1)
+        self.assertEqual(entry.event_type, 20)
+        self.assertEqual(entry.changes, {})
+        self.assertEqual(
+            entry.additional_data['deltas'],
+            {
+                'quantity': 100.0,
+                'location': {
+                    'model_type': 'stock.stocklocation',
+                    'pk': self.loc_2.pk,
+                    'str': 'Store/Bin',
+                },
+            },
+        )
+
+    def check_counted(self):
+        """A location change (with known previous location) is recorded as a field change."""
+        entry = self.migrated('counted')
+
+        self.assertEqual(entry.event_type, 10)
+        self.assertEqual(entry.changes, {'location': [self.loc_2.pk, self.loc_1.pk]})
+        self.assertEqual(entry.additional_data['deltas'], {'quantity': 90.0})
+
+    def check_status_changes(self):
+        """Status changes are recorded as field changes (including custom status values)."""
+        entry = self.migrated('edited')
+
+        self.assertEqual(entry.action, 1)
+        self.assertIsNone(entry.event_type)
+        self.assertEqual(entry.changes, {'status': [10, 55]})
+        self.assertNotIn('deltas', entry.additional_data)
+
+        entry = self.migrated('custom_status')
+
+        self.assertEqual(
+            entry.changes, {'status': [55, 50], 'status_custom_key': [None, 1001]}
+        )
+
+    def check_references(self):
+        """References to other objects are converted to {model_type, pk, str}."""
+        deltas = self.migrated('shipped').additional_data['deltas']
+
+        self.assertEqual(
+            deltas,
+            {
+                'quantity': 5.0,
+                'salesorder': {
+                    'model_type': 'order.salesorder',
+                    'pk': self.sales_order.pk,
+                    'str': 'SO-1234',
+                },
+                'customer': {
+                    'model_type': 'company.company',
+                    'pk': self.customer.pk,
+                    'str': 'Acme Customer',
+                },
+            },
+        )
+
+        deltas = self.migrated('split').additional_data['deltas']
+
+        self.assertEqual(
+            deltas['stockitem'],
+            {
+                'model_type': 'stock.stockitem',
+                'pk': self.other_pk,
+                'str': 'Tracked Widget #SN-42',
+            },
+        )
+        self.assertEqual(deltas['removed'], 5.0)
+
+        # A reference to an object which no longer exists
+        deltas = self.migrated('missing_reference').additional_data['deltas']
+
+        self.assertEqual(
+            deltas['stockitem'],
+            {'model_type': 'stock.stockitem', 'pk': 999999, 'str': None},
+        )
+
+    def check_deleted_item(self):
+        """Entries for deleted stock items are retained against the part."""
+        entry = self.migrated('deleted_item')
+
+        self.assertEqual(entry.object_pk, '')
+        self.assertIsNone(entry.object_id)
+        self.assertEqual(entry.object_repr, 'Tracked Widget')
+        self.assertEqual(entry.parent_object_pk, str(self.part.pk))
+        self.assertEqual(entry.event_type, 12)
+
+    def check_legacy(self):
+        """Legacy entries (without user or deltas) are migrated."""
+        entry = self.migrated('legacy')
+
+        self.assertEqual(entry.event_type, 0)
+        self.assertIsNone(entry.actor_id)
+        self.assertIsNone(entry.actor_username)
+        self.assertEqual(entry.notes, 'Legacy entry')
+        self.assertEqual(entry.object_repr, 'Tracked Widget #SN-42')
+        self.assertEqual(entry.changes, {})
+        self.assertEqual(entry.additional_data, {'tracking_id': self.entries['legacy']})
+
+    def test_migration(self):
+        """Run all checks against the migrated data.
+
+        Note: A single test method is used, as the migrations are run for each test method.
+        """
+        for check in [
+            self.check_integrity,
+            self.check_created,
+            self.check_moved,
+            self.check_counted,
+            self.check_status_changes,
+            self.check_references,
+            self.check_deleted_item,
+            self.check_legacy,
+        ]:
+            with self.subTest(check=check.__name__):
+                check()

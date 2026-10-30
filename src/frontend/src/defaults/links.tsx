@@ -194,6 +194,15 @@ export function AboutLinks(
       description: t`Licenses for dependencies of the InvenTree software`,
       icon: 'license',
       action: licenseInfo
+    },
+    {
+      id: 'ftug',
+      title: t`First Use Tour`,
+      description: t`Guided tour for first-time users`,
+      icon: 'book',
+      action: () => {
+        window.dispatchEvent(new Event('inventree:start-ftu'));
+      }
     }
   ];
 

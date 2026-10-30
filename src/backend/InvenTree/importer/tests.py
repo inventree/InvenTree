@@ -45,7 +45,7 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
 
         session.extract_columns()
 
-        self.assertEqual(session.column_mappings.count(), 13)
+        self.assertEqual(session.column_mappings.count(), 14)
 
         # Check some of the field mappings
         for field, col in [
@@ -81,6 +81,36 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
 
         # Check that the new companies have been created
         self.assertEqual(n + 12, Company.objects.count())
+
+    def test_import_not_audited(self):
+        """Records created via a data import are not recorded in the audit log."""
+        from audit.models import AuditLogEntry
+        from company.models import Company
+
+        content_type = Company.get_content_type()
+        n = AuditLogEntry.objects.filter(content_type=content_type).count()
+
+        session = DataImportSession.objects.create(
+            data_file=self.helper_file('companies.csv'), model_type='company'
+        )
+        session.extract_columns()
+        session.import_data()
+
+        companies = Company.objects.count()
+
+        for row in session.rows.all():
+            self.assertTrue(row.validate(commit=True))
+
+        self.assertGreater(Company.objects.count(), companies)
+        self.assertEqual(
+            AuditLogEntry.objects.filter(content_type=content_type).count(), n
+        )
+
+        # Sanity check: companies created outside of the importer *are* recorded
+        Company.objects.create(name='Not imported')
+        self.assertEqual(
+            AuditLogEntry.objects.filter(content_type=content_type).count(), n + 1
+        )
 
     def test_row_data_datetime_serialization(self):
         """Test that row data containing native datetime values can be saved.

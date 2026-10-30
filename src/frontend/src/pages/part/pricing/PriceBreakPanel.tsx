@@ -112,7 +112,7 @@ export default function PriceBreakPanel({
         onClick={() => {
           newPriceBreak.open();
         }}
-        hidden={!user.hasAddRole(UserRoles.part)}
+        hidden={!user.hasAddRole(UserRoles.pricing)}
       />
     ];
   }, [user]);
@@ -121,14 +121,14 @@ export default function PriceBreakPanel({
     (record: any): RowAction[] => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.part),
+          hidden: !user.hasChangeRole(UserRoles.pricing),
           onClick: () => {
             setSelectedPriceBreak(record.pk);
             editPriceBreak.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.part),
+          hidden: !user.hasDeleteRole(UserRoles.pricing),
           onClick: () => {
             setSelectedPriceBreak(record.pk);
             deletePriceBreak.open();

@@ -3,7 +3,15 @@
 from __future__ import annotations
 
 from django.contrib.auth.models import User
-from django.db.models import DecimalField, F, OuterRef, Q, Subquery, Sum
+from django.db.models import (
+    DecimalField,
+    ExpressionWrapper,
+    F,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+)
 from django.db.models.functions import Coalesce
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -626,8 +634,16 @@ class BuildLineMixin(SerializerContextMixin):
 
         source_build = self.source_build
 
-        return build.serializers.BuildLineSerializer.annotate_queryset(
+        queryset = build.serializers.BuildLineSerializer.annotate_queryset(
             queryset, build=source_build
+        )
+
+        # Quantity required per assembly (used for ordering)
+        return queryset.alias(
+            unit_quantity=ExpressionWrapper(
+                F('bom_item__quantity') * F('bom_item__piece_count'),
+                output_field=DecimalField(),
+            )
         )
 
 
@@ -694,7 +710,6 @@ class BuildLineList(
         'part': 'bom_item__sub_part__name',
         'IPN': 'bom_item__sub_part__IPN',
         'reference': 'bom_item__reference',
-        'unit_quantity': 'bom_item__quantity',
         'category': 'bom_item__sub_part__category__name',
         'consumable': 'bom_item__consumable',
         'optional': 'bom_item__optional',
@@ -792,7 +807,9 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
         outputs = serializer.save()
 
         queryset = stock.serializers.StockItemSerializer.annotate_queryset(outputs)
-        response = stock.serializers.StockItemSerializer(queryset, many=True)
+        response = stock.serializers.StockItemSerializer(
+            queryset, many=True, permission_user=request.user
+        )
 
         # Return the created outputs
         return Response(response.data, status=status.HTTP_201_CREATED)
@@ -1023,14 +1040,28 @@ class BuildConsume(BuildOrderContextMixin, CreateAPI):
         lines = data.get('lines', [])
         notes = data.get('notes', '')
 
+        line_ids = [line['build_line'].pk for line in lines]
+        item_ids = [item['build_item'].pk for item in items]
+
+        # Snapshot the current allocated quantity of every affected BuildItem.
+        # The task only consumes against build items which still match this snapshot,
+        # making it idempotent against task redelivery (and stale double-submission)
+        expected = dict(
+            BuildItem.objects
+            .filter(Q(build_line__pk__in=line_ids) | Q(pk__in=item_ids))
+            .filter(build_line__build=build)
+            .values_list('pk', 'quantity')
+        )
+
         # Offload the task to the background worker
         task_id = offload_task(
             consume_build_stock,
             build.pk,
-            lines=[line['build_line'].pk for line in lines],
+            lines=line_ids,
             items={item['build_item'].pk: item['quantity'] for item in items},
             user_id=self.request.user.pk,
             notes=notes,
+            expected=expected,
         )
 
         response = common.serializers.TaskDetailSerializer.from_task(task_id).data

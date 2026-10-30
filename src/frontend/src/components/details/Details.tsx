@@ -517,29 +517,20 @@ export function DetailsTableField({
 
   return (
     <Table.Tr style={{ verticalAlign: 'top' }}>
-      <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
-        <Group gap='xs' wrap='nowrap'>
+      <Table.Td>
+        <Group gap='xs' wrap='nowrap' align='flex-start'>
           {showIcons && (
             <InvenTreeIcon
               icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
             />
           )}
-          <Text style={{ paddingLeft: showIcons ? 10 : 0 }}>{field.label}</Text>
+          <Text style={{ overflowWrap: 'anywhere' }}>{field.label}</Text>
         </Group>
       </Table.Td>
-      <Table.Td
-        style={{
-          lineBreak: 'anywhere',
-          minWidth: 100,
-          flex: 10,
-          display: 'inline-block'
-        }}
-      >
+      <Table.Td style={{ overflowWrap: 'anywhere' }}>
         <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
-      <Table.Td style={{ width: '50' }}>
-        {field.copy && <CopyField value={fieldValue} />}
-      </Table.Td>
+      <Table.Td>{field.copy && <CopyField value={fieldValue} />}</Table.Td>
     </Table.Tr>
   );
 }
@@ -574,6 +565,11 @@ export function DetailsTable({
       <Stack gap='xs'>
         {title && <StylishText size='lg'>{title}</StylishText>}
         <Table striped verticalSpacing={5} horizontalSpacing='sm'>
+          <colgroup>
+            <col style={{ width: '40%' }} />
+            <col />
+            <col style={{ width: 30 }} />
+          </colgroup>
           <Table.Tbody>
             {visibleFields.map((field: DetailsField) => (
               <DetailsTableField

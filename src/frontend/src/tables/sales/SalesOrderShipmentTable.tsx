@@ -158,6 +158,12 @@ export default function SalesOrderShipmentTable({
         title: t`Items`
       },
       {
+        accessor: 'contact_detail.name',
+        title: t`Contact`,
+        switchable: true,
+        sortable: false
+      },
+      {
         accessor: 'checked',
         title: t`Checked`,
         filter: 'checked',

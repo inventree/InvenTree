@@ -1,7 +1,13 @@
 import type { Locator } from '@playwright/test';
 import { expect, test } from './baseFixtures.js';
 import { adminuser } from './defaults.js';
-import { activateTableView, loadTab, navigate } from './helpers.js';
+import {
+  activateTableView,
+  loadTab,
+  navigate,
+  tableSearch,
+  waitForDataOutput
+} from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
@@ -128,8 +134,9 @@ test('Printing - Report Printing', async ({ browser }) => {
   // Template should auto-fill (there is only one template available)
   await page.getByText('Sample purchase order report').waitFor();
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
-  await page.getByRole('button', { name: 'Print', exact: true }).click();
-  await page.getByText('Process completed successfully').first().waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Print', exact: true }).click()
+  );
 
   await page.context().close();
 });
@@ -159,7 +166,7 @@ test('Printing - Report Editing', async ({ browser }) => {
   const color = await element.evaluate((el) => {
     return window.getComputedStyle(el).getPropertyValue('color');
   });
-  expect(color).toBe('rgb(78, 201, 176)');
+  expect(color).toBe('rgb(86, 156, 214)');
 
   // Generate preview
   await page.getByLabel('split-button-preview-options-action').click();
@@ -237,9 +244,7 @@ test('Printing - Broken Template', async ({ browser }) => {
 
   // Next, check error message from the template editor preview
   await navigate(page, 'settings/admin/reports');
-  await page
-    .getByRole('textbox', { name: 'table-search-input' })
-    .fill('broken');
+  await tableSearch(page, 'broken');
   await page.getByRole('cell', { name: 'Broken Sales Order Report' }).click();
 
   await page.getByLabel('split-button-preview-options-action').click();

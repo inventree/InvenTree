@@ -9,12 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#13034](https://github.com/inventree/InvenTree/pull/13034) moves pricing models into a new dedicated "pricing" model, and provides new API endpoints for managing pricing separately from other models.
+- [#13101](https://github.com/inventree/InvenTree/pull/13101) removes the StockTracking model and its associated API endpoints. Stock history tracking is now handled by the global audit log.
+
+### Added
+
+- [#13069](https://github.com/inventree/InvenTree/pull/13069) Adds an audit log which tracks changes made to internal data and exposes read-only API endpoints (/api/audit/) for accessing the audit log.
+
+### Changed
+
+### Removed
+
+- [#13101](https://github.com/inventree/InvenTree/pull/13101) removes the StockTracking model and its associated API endpoints. Stock history tracking is now handled by the global audit log.
+
+## 1.6.0 - 2026-10-18
+
+### Breaking Changes
+
 - [#12830](https://github.com/inventree/InvenTree/pull/12830) squashes all database migrations prior to the 1.0.0 release. This means that any users who are updating from a version older than 1.0.0 must first update to the 1.0.0 release before updating to the current release.
 - [#11971](https://github.com/inventree/InvenTree/pull/11971) is a major refactor of how notes are handled. Notes are now stored in a separate database table (in line with how attachments are handled), and each model instance can have multiple notes associated with it. The `notes` field has been removed from the individual models (and their associated API endpoints), and notes are now accessed via the new `/api/note/` endpoint. Existing notes data (and any embedded images) are automatically migrated to the new notes table, with the markdown content converted to HTML. Any external client applications which read or write the `notes` field via the API will need to be updated to use the new endpoint.
 - [#12507](https://github.com/inventree/InvenTree/pull/12507) calling an invalid or repeated state transition now raises a ValidationError. Plugins implementing state transitions should evaluate the PR and adapt their usage of transitions to gain the new safeguards.
 - [#12672](https://github.com/inventree/InvenTree/pull/12672) renames the newly added `tags` filter from 1.4.0 (https://github.com/inventree/InvenTree/pull/12077) to `tag_name` to remove a nameclash.
 - [#12850](https://github.com/inventree/InvenTree/pull/12850) Tokens are now issued in the v2 format and might be longer. Old tokens continue to work but should be considered for rotation
-
 
 ### Added
 
@@ -24,10 +40,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#12900](https://github.com/Inventree/InvenTree/pull/12900) adds a UI feature `route` to the `UIMixin`, giving plugins the ability to register custom pages.
 - [#12911](https://github.com/inventree/InvenTree/pull/12911) adds global setting for default receive location against purchase orders
 - [#12914](https://github.com/inventree/InvenTree/pull/12914) adds the AllocateMixin, allowing plugins to customize automatic stock allocation for build orders and sales orders.
-
-### Changed
-
-### Removed
+- [#9768](https://github.com/inventree/InvenTree/pull/9768) adds receiving company and delivery address fields to purchase orders. The receiving company must be an [internal company](https://docs.inventree.org/en/latest/concepts/company/#internal-companies), and defaults to the default internal company.
+- [#13017](https://github.com/inventree/InvenTree/pull/13017) adds "internal" companies, which represent your own organization, along with a `INVENTREE_DEFAULT_INTERNAL_COMPANY` setting. The default internal company is available to all report templates as `internal_company`.
+- [#13016](https://github.com/inventree/InvenTree/pull/13016) adds a "contact" field to the SalesOrderShipment model and API endpoint.
+- [#13016](https://github.com/inventree/InvenTree/pull/13016) adds "phone" and "email" fields to the Address model and API endpoint.
 
 ## 1.5.0 - 2026-08-11
 

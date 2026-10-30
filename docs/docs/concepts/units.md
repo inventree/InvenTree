@@ -57,7 +57,7 @@ The [unit of measure](../part/index.md#units-of-measure) field for the [Part](..
 
 ### Supplier Part
 
-The [supplier part](../part/index.md/#supplier-parts) model uses real-world units to convert between supplier part quantities and internal stock quantities. Unit conversion rules ensure that only compatible unit types can be supplied
+The [supplier part](../purchasing/supplier.md#supplier-part-pack-size) model uses real-world units to convert between supplier part quantities and internal stock quantities. The *pack quantity* of a supplier part can be specified in any unit which is compatible with the units of the base part. Refer to the [supplier part units](../part/index.md#supplier-part-units) documentation for more information.
 
 ### Parameter
 

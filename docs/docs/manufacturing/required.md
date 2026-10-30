@@ -14,6 +14,17 @@ The base quantity of a BOM line item is defined by the `Quantity` field of the B
 Required Quantity = Base Quantity * Number of Assemblies
 ```
 
+### Piece Count
+
+The `Piece Count` field of a BOM line item is used for [cut-to-length parts](./bom.md#piece-count-cut-to-length-parts), where the `Quantity` field represents the size (e.g. length) of each individual piece. The base quantity is multiplied by the piece count to determine the total material required for each assembly.
+
+```
+Required Quantity = Base Quantity * Piece Count * Number of Assemblies
+```
+
+!!! info "Optional"
+    The piece count is optional. If not specified, it defaults to 1.
+
 ### Attrition
 
 The `Attrition` field of a BOM line item is used to account for expected losses during the production process. This is expressed as a percentage of the `Base Quantity` (e.g. 2%).
@@ -54,6 +65,7 @@ Required Quantity = ceil(Required Quantity / Rounding Multiple) * Rounding Multi
 Consider a BOM line item with the following properties:
 
 - Base Quantity: 3
+- Piece Count: 1
 - Attrition: 2% (0.02)
 - Setup Quantity: 10
 - Rounding Multiple: 25
@@ -61,8 +73,8 @@ Consider a BOM line item with the following properties:
 If we are building 100 assemblies, the required quantity would be calculated as follows:
 
 ```
-Required Quantity = Base Quantity * Number of Assemblies
-                  = 3 * 100
+Required Quantity = Base Quantity * Piece Count * Number of Assemblies
+                  = 3 * 1 * 100
                   = 300
 
 Attrition Value = Required Quantity * Attrition Percentage

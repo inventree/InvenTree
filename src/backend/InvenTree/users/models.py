@@ -29,6 +29,7 @@ import InvenTree.helpers
 import InvenTree.models
 from common.settings import get_global_setting
 from InvenTree.ready import isImportingData, isReadOnlyCommand
+from web.tips import KNOWN_IDS
 
 from .ruleset import RULESET_CHOICES, get_ruleset_models
 
@@ -802,6 +803,65 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
     instance.profile.save()
+
+
+class TipResult(InvenTree.models.MetadataMixin):
+    """Model representing a tip result."""
+
+    class Meta:
+        """Meta options."""
+
+        verbose_name = _('Tip Result')
+        verbose_name_plural = _('Tip Results')
+        unique_together = ('user', 'tip_id')
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='tip_results',
+        verbose_name=_('User'),
+    )
+    tip_id = models.CharField(max_length=255, verbose_name=_('Tip ID/Name'))
+    shown = models.BooleanField(
+        default=False, verbose_name=_('Shown'), help_text=_('Was this tip shown?')
+    )
+    finished = models.BooleanField(
+        default=False, verbose_name=_('Finished'), help_text=_('Was this tip finished?')
+    )
+
+    updated = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Updated'),
+        help_text=_('The last time this tip result was updated'),
+    )
+
+    def __str__(self):
+        """Return string representation of the tip result."""
+        if self.finished:
+            return f'{self.user}: {self.tip_id} (Finished)'
+        if self.shown:
+            return f'{self.user}: {self.tip_id} (Shown)'
+        return f'{self.user}: {self.tip_id}'
+
+    @classmethod
+    def backfill(cls, user):
+        """Backfill missing state for all known IDs without an existing record."""
+        known_ids = KNOWN_IDS
+        if not known_ids:
+            return
+
+        existing_ids = set(
+            cls.objects.filter(user=user, tip_id__in=known_ids).values_list(
+                'tip_id', flat=True
+            )
+        )
+
+        # bulk create
+        missing_ids = set(known_ids) - existing_ids
+        if missing_ids:
+            cls.objects.bulk_create([
+                cls(user=user, tip_id=tip_id) for tip_id in missing_ids
+            ])
 
 
 # Validate groups

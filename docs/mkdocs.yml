@@ -109,6 +109,7 @@ nav:
     - Parameters: concepts/parameters.md
     - Notes: concepts/notes.md
     - Tags: concepts/tags.md
+    - Audit Log: concepts/audit.md
     - Barcodes:
       - Barcode Support: barcodes/index.md
       - Internal Barcodes: barcodes/internal.md
@@ -184,6 +185,7 @@ nav:
     - Reports: report/report.md
     - Labels: report/labels.md
     - Report Assets: report/assets.md
+    - Report Fonts: report/fonts.md
     - Report Snippets: report/snippets.md
     - Report Context: report/context_variables.md
     - Model Context: report/model_context.md

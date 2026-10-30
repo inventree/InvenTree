@@ -338,9 +338,9 @@ export function BomCompareDrawer({
         // Show only *common* parts
         rows = rows.filter((row) => row.match);
         break;
-      default:
       case 'all':
         break;
+      default:
     }
 
     // Return rows, sorted by part name

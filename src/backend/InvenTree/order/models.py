@@ -1,6 +1,7 @@
 """Order model definitions."""
 
 import copy
+from contextlib import ExitStack
 from decimal import Decimal
 from typing import Any, Optional, TypedDict
 
@@ -32,11 +33,24 @@ import order.validators
 import report.mixins
 import stock.models
 import users.models as UserModels
+from audit.helpers import (
+    audit_event,
+    audited_bulk_update,
+    copy_related_cache,
+    record_created,
+    write_batched,
+)
 from build.status_codes import BuildStatus
 from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import get_global_setting
-from company.models import Address, Company, Contact, SupplierPart
+from company.models import (
+    Address,
+    Company,
+    Contact,
+    SupplierPart,
+    default_internal_company,
+)
 from generic.states import (
     RETURN_VALUE,
     Deprecations,
@@ -80,6 +94,32 @@ from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = structlog.get_logger('inventree')
+
+
+class AuditedOrderMixin(InvenTree.models.InvenTreeAuditMixin):
+    """Audit log configuration for order models."""
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Recalculated automatically on every save
+        'total_price',
+        'total_price_currency',
+        # Derived from 'barcode_data'
+        'barcode_hash',
+    )
+
+
+class AuditedLineItemMixin(InvenTree.models.InvenTreeAuditMixin):
+    """Audit log configuration for order line item models.
+
+    Changes to line items are included in the history of the order.
+    """
+
+    AUDIT_PARENT_FIELD = 'order'
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Additional (plugin) context data for extra lines
+        'context',
+    )
 
 
 class TotalPriceMixin(models.Model):
@@ -636,7 +676,7 @@ class Order(
         raise NotImplementedError(f'get_status_class() not implemented for {__class__}')
 
 
-class PurchaseOrder(TotalPriceMixin, Order):
+class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
     """A PurchaseOrder represents goods shipped inwards from an external supplier.
 
     Attributes:
@@ -644,6 +684,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
         supplier_reference: Optional field for supplier order reference code
         received_by: User that received the goods
         target_date: Expected delivery target date for PurchaseOrder completion (optional)
+        receiving_company: Internal company which is receiving the goods
+        delivery_address: Address (of the receiving company) to which the goods are delivered
     """
 
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
@@ -655,6 +697,30 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Model meta options."""
 
         verbose_name = _('Purchase Order')
+
+    def clean(self):
+        """Custom clean method for the PurchaseOrder model."""
+        super().clean()
+
+        if self.receiving_company and not self.receiving_company.is_internal:
+            raise ValidationError({
+                'receiving_company': _('Receiving company must be an internal company')
+            })
+
+        if self.delivery_address:
+            if not self.receiving_company:
+                raise ValidationError({
+                    'receiving_company': _(
+                        'Receiving company must be specified when a delivery address is provided'
+                    )
+                })
+
+            if self.delivery_address.company != self.receiving_company:
+                raise ValidationError({
+                    'delivery_address': _(
+                        'Delivery address does not match selected receiving company'
+                    )
+                })
 
     def clean_line_item(self, line):
         """Clean a line item for this PurchaseOrder."""
@@ -688,6 +754,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         defaults = {
             'reference': order.validators.generate_next_purchase_order_reference()
         }
+
+        if company_pk := default_internal_company():
+            defaults['receiving_company'] = company_pk
 
         return defaults
 
@@ -748,6 +817,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Accessor helper for Order base class."""
         return self.supplier
 
+    address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Supplier Address'),
+        help_text=_('Supplier address for this order'),
+        related_name='+',
+    )
+
     supplier_reference = models.CharField(
         max_length=64,
         blank=True,
@@ -779,6 +858,28 @@ class PurchaseOrder(TotalPriceMixin, Order):
         null=True,
         verbose_name=_('Destination'),
         help_text=_('Destination for received items'),
+    )
+
+    receiving_company = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        default=default_internal_company,
+        limit_choices_to={'is_internal': True},
+        related_name='receiving_purchase_orders',
+        verbose_name=_('Receiving Company'),
+        help_text=_('Internal company which is receiving the items'),
+    )
+
+    delivery_address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='delivery_purchase_orders',
+        verbose_name=_('Delivery Address'),
+        help_text=_('Delivery address for this order'),
     )
 
     @transaction.atomic
@@ -1045,21 +1146,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # List of stock items which have been created
         stock_items: list[stock.models.StockItem] = []
 
-        # Per-item 'note' text, index-aligned with stock_items - StockItem no longer
-        # has its own 'notes' field, so this is threaded through to each item's
-        # RECEIVED_AGAINST_PURCHASE_ORDER tracking entry instead (see below)
-        stock_item_notes: list[str] = []
-
         # List of stock items to bulk create
         bulk_create_items: list[stock.models.StockItem] = []
 
         # Notes for bulk_create_items, appended in lockstep - bulk_create_and_fetch()
         # re-fetches fresh instances from the database, so any note has to be tracked
-        # positionally here rather than stashed on the (discarded) unsaved instance
+        # positionally here rather than stashed on the (discarded) unsaved instance.
+        # StockItem has no 'notes' field, so the note is recorded against each item's
+        # RECEIVED_AGAINST_PURCHASE_ORDER tracking event instead
         bulk_create_notes: list[str] = []
-
-        # List of tracking entries to create
-        tracking_entries: list[stock.models.StockItemTracking] = []
 
         # List of line items to update
         line_items_to_update: list[PurchaseOrderLineItem] = []
@@ -1232,14 +1327,22 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             # Now, create the new stock items
             if serialize:
+                # Resolve the (possibly custom) status *before* the items are created,
+                # so that each new item is created (and recorded) with the selected status
+                status_item = stock.models.StockItem()
+                status_item.set_status(status, custom_values=custom_stock_status_values)
+
                 new_items = stock.models.StockItem._create_serial_numbers(
-                    serials=serials, **stock_data
+                    serials=serials,
+                    tracking=lambda item, note=note: self._receive_tracking_event(
+                        item, user, note
+                    ),
+                    status=status_item.status,
+                    status_custom_key=status_item.status_custom_key,
+                    **stock_data,
                 )
 
                 for new_item in new_items:
-                    new_item.set_status(
-                        status, custom_values=custom_stock_status_values
-                    )
                     # run validation for serialized items plugin.validate_batch_code
                     new_item.validate_batch_code()
 
@@ -1247,7 +1350,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     new_item.run_plugin_validation()
 
                     stock_items.append(new_item)
-                    stock_item_notes.append(note)
 
             else:
                 new_item = stock.models.StockItem(**stock_data, serial='', parent=None)
@@ -1274,32 +1376,26 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
             )
 
-            stock_items.extend(new_items)
-            stock_item_notes.extend(bulk_create_notes)
+            # Retain the cached related objects (avoid per-item lookups)
+            for original, new_item in zip(bulk_create_items, new_items, strict=True):
+                copy_related_cache(original, new_item)
 
-        # Generate a new tracking entry for each stock item
-        for item, item_note in zip(stock_items, stock_item_notes, strict=True):
-            tracking_entries.append(
-                item.add_tracking_entry(
-                    StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
-                    user,
-                    deltas={
-                        'location': item.location.pk if item.location else None,
-                        'purchaseorder': self.pk,
-                        'quantity': float(item.quantity),
-                    },
-                    notes=item_note,
-                    commit=False,
-                )
+            # Record a tracking event for each new item
+            item_notes = dict(
+                zip([item.pk for item in new_items], bulk_create_notes, strict=True)
             )
 
-        # Bulk create new tracking entries for each item
-        stock.models.StockItemTracking.objects.bulk_create(
-            tracking_entries, batch_size=250
-        )
+            stock.models.StockItem._record_created_items(
+                new_items,
+                tracking=lambda item: self._receive_tracking_event(
+                    item, user, item_notes[item.pk]
+                ),
+            )
+
+            stock_items.extend(new_items)
 
         # Update received quantity for each line item
-        PurchaseOrderLineItem.objects.bulk_update(line_items_to_update, ['received'])
+        audited_bulk_update(PurchaseOrderLineItem, line_items_to_update, ['received'])
 
         # Trigger an event for any interested plugins
         trigger_event(
@@ -1322,6 +1418,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             PurchaseOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
+            html_context={'order': self, 'stock_items': stock_items},
             extra_users=notify_users,
         )
 
@@ -1329,6 +1426,19 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return stock.models.StockItem.objects.filter(
             pk__in=[item.pk for item in stock_items]
         )
+
+    def _receive_tracking_event(self, item, user, notes: str) -> dict:
+        """Return the tracking event for a stock item received against this order."""
+        return {
+            'entry_type': StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
+            'user': user,
+            'notes': notes,
+            'deltas': {
+                'location': item.location,
+                'purchaseorder': self,
+                'quantity': float(item.quantity),
+            },
+        }
 
     @transaction.atomic
     def receive_line_item(
@@ -1383,7 +1493,7 @@ SERIALIZED_STOCK_CHOICES = [
 SERIALIZED_STOCK_DEFAULT = 'any'
 
 
-class SalesOrder(TotalPriceMixin, Order):
+class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer."""
 
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
@@ -2218,6 +2328,14 @@ class OrderExtraLine(OrderLineItem):
 
         abstract = True
 
+    def __str__(self):
+        """Render a string representation of an extra line item."""
+        return '{n} x {description} - {order}'.format(
+            n=decimal2string(self.quantity),
+            description=self.description or self.reference or _('Extra line'),
+            order=self.order,
+        )
+
     description = models.CharField(
         max_length=250,
         blank=True,
@@ -2243,7 +2361,7 @@ class OrderExtraLine(OrderLineItem):
     )
 
 
-class PurchaseOrderLineItem(OrderLineItem):
+class PurchaseOrderLineItem(AuditedLineItemMixin, OrderLineItem):
     """Model for a purchase order line item.
 
     Attributes:
@@ -2439,7 +2557,7 @@ class PurchaseOrderLineItem(OrderLineItem):
             self.save()
 
 
-class PurchaseOrderExtraLine(OrderExtraLine):
+class PurchaseOrderExtraLine(AuditedLineItemMixin, OrderExtraLine):
     """Model for a single ExtraLine in a PurchaseOrder.
 
     Attributes:
@@ -2465,7 +2583,7 @@ class PurchaseOrderExtraLine(OrderExtraLine):
     )
 
 
-class SalesOrderLineItem(OrderLineItem):
+class SalesOrderLineItem(AuditedLineItemMixin, OrderLineItem):
     """Model for a single LineItem in a SalesOrder.
 
     Attributes:
@@ -2507,6 +2625,14 @@ class SalesOrderLineItem(OrderLineItem):
                 raise ValidationError({
                     'part': _('Only salable parts can be assigned to a sales order')
                 })
+
+    def __str__(self):
+        """Render a string representation of a SalesOrderLineItem instance."""
+        return '{n} x {part} - {order}'.format(
+            n=decimal2string(self.quantity),
+            part=self.part.full_name if self.part else _('Unknown part'),
+            order=self.order,
+        )
 
     order = models.ForeignKey(
         SalesOrder,
@@ -2621,6 +2747,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict
 
 
 class SalesOrderShipment(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
@@ -2639,10 +2766,19 @@ class SalesOrderShipment(
     Attributes:
         order: SalesOrder reference
         shipment_address: Shipping address for this shipment (optional)
+        contact: Point of contact for this shipment (optional)
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
     """
+
+    # Changes to a shipment are included in the history of the sales order
+    AUDIT_PARENT_FIELD = 'order'
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Derived from 'barcode_data'
+        'barcode_hash',
+    )
 
     @classmethod
     def barcode_model_type_code(cls):
@@ -2660,7 +2796,7 @@ class SalesOrderShipment(
         """Custom clean method for the SalesOrderShipment class.
 
         Raises:
-            ValidationError: If the shipment address does not match the customer
+            ValidationError: If the shipment address or contact does not match the customer
         """
         super().clean()
 
@@ -2668,6 +2804,12 @@ class SalesOrderShipment(
             if self.shipment_address.company != self.order.customer:
                 raise ValidationError({
                     'shipment_address': _('Shipment address must match the customer')
+                })
+
+        if self.order and self.contact:
+            if self.contact.company != self.order.customer:
+                raise ValidationError({
+                    'contact': _('Contact does not match the customer')
                 })
 
     @staticmethod
@@ -2687,6 +2829,12 @@ class SalesOrderShipment(
             'title': str(self),
         }
 
+    def __str__(self):
+        """Render a string representation of a SalesOrderShipment instance."""
+        return '{order} - {label} {reference}'.format(
+            order=self.order, label=_('Shipment'), reference=self.reference
+        )
+
     order = models.ForeignKey(
         SalesOrder,
         on_delete=models.CASCADE,
@@ -2704,6 +2852,16 @@ class SalesOrderShipment(
         null=True,
         verbose_name=_('Address'),
         help_text=_('Shipping address for this shipment'),
+        related_name='+',
+    )
+
+    contact = models.ForeignKey(
+        Contact,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Contact'),
+        help_text=_('Point of contact for this shipment'),
         related_name='+',
     )
 
@@ -2831,7 +2989,7 @@ class SalesOrderShipment(
 
         Notes:
             This unrolls what would otherwise be a per-allocation call, so that the underlying
-            StockItem, StockItemTracking, SalesOrderLineItem and SalesOrderAllocation writes can
+            StockItem, audit log, SalesOrderLineItem and SalesOrderAllocation writes can
             be batched into a handful of bulk queries instead of several per allocation.
         """
         import part.tasks
@@ -2914,6 +3072,10 @@ class SalesOrderShipment(
 
         for i, (source, placeholder, quantity) in enumerate(split_items):
             persisted = new_stock_items[i]
+
+            # Retain the cached related objects (avoid per-item lookups)
+            copy_related_cache(source, persisted)
+
             split_item_map[id(placeholder)] = persisted
             split_items[i] = (source, persisted, quantity)
 
@@ -2925,71 +3087,55 @@ class SalesOrderShipment(
         for allocation in allocations_to_update:
             allocation.item = split_item_map[id(allocation.item)]
 
-        tracking_entries = []
-        split_events = []
-        customer_events = []
+        split_events = [
+            ((), {'id': new_item.pk, 'parent': source_item.pk})
+            for source_item, new_item, _quantity in split_items
+        ]
 
-        # Split stock items for "split_items"
-        for source_item, new_item, quantity in split_items:
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=new_item.pk,
-                    part_id=new_item.part_id,
-                    tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
-                    user=user,
-                    deltas={'stockitem': source_item.pk, 'quantity': float(quantity)},
-                )
-            )
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=source_item.pk,
-                    part_id=source_item.part_id,
-                    tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
-                    user=user,
-                    deltas={
-                        'removed': float(quantity),
-                        'quantity': float(source_item.quantity),
+        customer_events = [
+            ((), {'id': target_item.pk, 'customer': customer.pk if customer else None})
+            for target_item, _quantity in shipped_items
+        ]
+
+        # Record the operation in the audit log - a single entry for each stock item
+        with write_batched(), ExitStack() as events:
+
+            def audit(item, code, deltas):
+                """Record a named event against the provided stock item."""
+                events.enter_context(audit_event(item, code, deltas=deltas, actor=user))
+
+            for source_item, new_item, quantity in split_items:
+                audit(
+                    source_item,
+                    StockHistoryCode.SPLIT_CHILD_ITEM,
+                    {
+                        'stockitem': new_item,
+                        'removed': quantity,
+                        'quantity': source_item.quantity,
                     },
                 )
-            )
 
-            split_events.append(((), {'id': new_item.pk, 'parent': source_item.pk}))
-
-        # Ship stock items for "shipped_items"
-        for target_item, quantity in shipped_items:
-            deltas = {'quantity': float(quantity), 'salesorder': order.pk}
-
-            if customer is not None:
-                deltas['customer'] = customer.pk
-                deltas['customer_name'] = customer.name
-
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=target_item.pk,
-                    part_id=target_item.part_id,
-                    tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
-                    user=user,
-                    deltas=deltas,
+            for target_item, quantity in shipped_items:
+                audit(
+                    target_item,
+                    StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER,
+                    {'quantity': quantity, 'salesorder': order, 'customer': customer},
                 )
+
+            # Newly split items are recorded as created (with the shipment event)
+            record_created(stock.models.StockItem, new_stock_items)
+
+            # Flush all StockItem field changes (quantity reductions, and shipment details)
+            # Note: Newly split items were created with their final state (no update required),
+            # and any other shipped item is one of the (existing) items drawn from
+            audited_bulk_update(
+                stock.models.StockItem,
+                list(seen_stock_items.values()),
+                ['quantity', 'sales_order', 'customer', 'location'],
             )
-
-            customer_events.append((
-                (),
-                {'id': target_item.pk, 'customer': customer.pk if customer else None},
-            ))
-
-        # Flush all StockItem field changes (quantity reductions, and shipment details)
-        stock.models.StockItem.objects.bulk_update(
-            seen_stock_items.values(), ['quantity']
-        )
-        stock.models.StockItem.objects.bulk_update(
-            [item for item, _ in shipped_items], ['sales_order', 'customer', 'location']
-        )
-
-        stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
 
         # Update sales order lines for "seen_lines"
-        SalesOrderLineItem.objects.bulk_update(seen_lines.values(), ['shipped'])
+        audited_bulk_update(SalesOrderLineItem, list(seen_lines.values()), ['shipped'])
 
         # Repoint allocations onto their (possibly newly split) StockItem
         if allocations_to_update:
@@ -3061,7 +3207,7 @@ class SalesOrderShipment(
         return task_id
 
 
-class SalesOrderExtraLine(OrderExtraLine):
+class SalesOrderExtraLine(AuditedLineItemMixin, OrderExtraLine):
     """Model for a single ExtraLine in a SalesOrder.
 
     Attributes:
@@ -3232,7 +3378,7 @@ class SalesOrderAllocation(models.Model):
         self.refresh_from_db()
 
 
-class ReturnOrder(TotalPriceMixin, Order):
+class ReturnOrder(AuditedOrderMixin, TotalPriceMixin, Order):
     """A ReturnOrder represents goods returned from a customer, e.g. an RMA or warranty.
 
     Attributes:
@@ -3515,31 +3661,29 @@ class ReturnOrder(TotalPriceMixin, Order):
 
         deltas = {
             'status': status,
-            'returnorder': self.pk,
-            'location': location.pk,
+            'returnorder': self,
+            'location': location,
             'quantity': float(line.quantity),
         }
 
         if stock_item.customer:
-            deltas['customer'] = stock_item.customer.pk
+            deltas['customer'] = stock_item.customer
 
         # Update the StockItem
         stock_item.set_status(status)
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None
-        stock_item.save(add_note=False)
-        stock_item.clearAllocations()
 
-        # Add a tracking entry to the StockItem
-        stock_item.add_tracking_entry(
+        with stock_item.tracking_event(
             StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER,
             user,
             notes=kwargs.get('note', ''),
             deltas=deltas,
-            location=location,
-            returnorder=self,
-        )
+        ):
+            stock_item.save(add_note=False)
+
+        stock_item.clearAllocations()
 
         # Update the LineItem
         line.received_date = InvenTree.helpers.current_date()
@@ -3557,7 +3701,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         )
 
 
-class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
+class ReturnOrderLineItem(AuditedLineItemMixin, StatusCodeMixin, OrderLineItem):
     """Model for a single LineItem in a ReturnOrder."""
 
     STATUS_CLASS = ReturnOrderLineStatus
@@ -3595,6 +3739,12 @@ class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
             raise ValidationError({
                 'quantity': _('Invalid quantity for serialized stock item')
             })
+
+    def __str__(self):
+        """Render a string representation of a ReturnOrderLineItem instance."""
+        return '{item} - {order}'.format(
+            item=self.item if self.item_id else _('Unknown item'), order=self.order
+        )
 
     order = models.ForeignKey(
         ReturnOrder,
@@ -3649,7 +3799,7 @@ class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
     )
 
 
-class ReturnOrderExtraLine(OrderExtraLine):
+class ReturnOrderExtraLine(AuditedLineItemMixin, OrderExtraLine):
     """Model for a single ExtraLine in a ReturnOrder."""
 
     class Meta:
@@ -3671,7 +3821,7 @@ class ReturnOrderExtraLine(OrderExtraLine):
     )
 
 
-class TransferOrder(Order):
+class TransferOrder(AuditedOrderMixin, Order):
     """A Transfer Order represents a request to transfer stock from one location to another. It provides a place to queue and review changes before execution.
 
     Attributes:
@@ -4003,7 +4153,7 @@ class TransferOrder(Order):
         return TransferOrderAllocation.objects.filter(line__order=self)
 
 
-class TransferOrderLineItem(OrderLineItem):
+class TransferOrderLineItem(AuditedLineItemMixin, OrderLineItem):
     """Model for a single LineItem in a TransferOrder.
 
     Attributes:
@@ -4028,6 +4178,14 @@ class TransferOrderLineItem(OrderLineItem):
     def get_api_url():
         """Return the API URL associated with the TransferOrderLineItem model."""
         return reverse('api-transfer-order-line-list')
+
+    def __str__(self):
+        """Render a string representation of a TransferOrderLineItem instance."""
+        return '{n} x {part} - {order}'.format(
+            n=decimal2string(self.quantity),
+            part=self.part.full_name if self.part else _('Unknown part'),
+            order=self.order,
+        )
 
     order = models.ForeignKey(
         TransferOrder,

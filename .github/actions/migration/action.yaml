@@ -15,3 +15,5 @@ runs:
           invoke migrate
           invoke import-records -c -f data.json --strict
           invoke import-records -c -f data.json --strict
+        env:
+          SETUP_INITIALIZING: 1

@@ -3,13 +3,7 @@
 from django.contrib import admin
 from django.db.models import Count
 
-from .models import (
-    StockItem,
-    StockItemTestResult,
-    StockItemTracking,
-    StockLocation,
-    StockLocationType,
-)
+from .models import StockItem, StockItemTestResult, StockLocation, StockLocationType
 
 
 class LocationInline(admin.TabularInline):
@@ -74,29 +68,6 @@ class StockItemAdmin(admin.ModelAdmin):
         'supplier_part',
         'consumed_by',
     ]
-
-
-@admin.register(StockItemTracking)
-class StockTrackingAdmin(admin.ModelAdmin):
-    """Admin class for StockTracking - read-only to preserve audit trail integrity."""
-
-    list_display = ('item', 'date', 'label')
-
-    search_fields = ['item__part__name', 'item__serial', 'notes']
-
-    autocomplete_fields = ['item']
-
-    def has_add_permission(self, request):
-        """Prevent addition of new tracking entries via the admin interface."""
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        """Prevent modification of tracking entries via the admin interface."""
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        """Prevent deletion of tracking entries via the admin interface."""
-        return False
 
 
 @admin.register(StockItemTestResult)

@@ -18,10 +18,12 @@ from django.core.files.storage import default_storage
 from django.db.models import Model
 from django.db.models.query import QuerySet
 from django.utils import translation
+from django.utils.html import conditional_escape, format_html
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
 import lxml.html
+import nh3
 from babel import Locale
 from babel.core import UnknownLocaleError
 from babel.dates import format_date as babel_format_date
@@ -42,6 +44,7 @@ import report.helpers
 from common.settings import get_global_setting
 from company.models import Company
 from part.models import Part
+from report.security import ReportAccessDenied, is_model_blocked
 
 register = template.Library()
 
@@ -140,6 +143,11 @@ def filter_db_model(model_name: str, **kwargs) -> Optional[QuerySet]:
 
     if model is None:
         return None
+
+    if is_model_blocked(model):
+        raise ReportAccessDenied(
+            'Access to this model is not allowed in report templates'
+        )
 
     queryset = model.objects.all()
 
@@ -766,9 +774,9 @@ def internal_link(link, text) -> str:
     # If the base URL is not set, just return the text
     if not url:
         logger.warning('Failed to construct absolute URL for internal link')
-        return text
+        return conditional_escape(text)
 
-    return mark_safe(f'<a href="{url}">{text}</a>')
+    return format_html('<a href="{}">{}</a>', url, text)
 
 
 def make_decimal(value: Any) -> Any:
@@ -1116,6 +1124,7 @@ def render_html_text(text: str, **kwargs):
         bold: Boolean, whether bold (or not)
         italic: Boolean, whether italic (or not)
         heading: str, heading level e.g. 'h3'
+        sanitize: Boolean, whether to sanitize the provided text (default = True)
     """
     tags = []
 
@@ -1127,6 +1136,12 @@ def render_html_text(text: str, **kwargs):
 
     if heading := kwargs.get('heading', ''):
         tags.append(heading)
+
+    text = str(text)
+
+    if kwargs.get('sanitize', True):
+        # Remove any unsafe HTML content (e.g. script tags) from the provided text
+        text = nh3.clean(text)
 
     output = ''.join([f'<{tag}>' for tag in tags])
     output += text

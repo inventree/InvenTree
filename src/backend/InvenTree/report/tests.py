@@ -13,7 +13,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
+from django.core.files.storage import Storage, default_storage
+from django.template import Context, TemplateDoesNotExist, engines
 from django.template.loader import render_to_string
 from django.test import TestCase
 from django.urls import reverse
@@ -28,6 +29,7 @@ from common.models import Attachment, Note
 from common.settings import set_global_setting
 from company.models import Company
 from InvenTree.config import get_base_dir
+from InvenTree.template import InvenTreeStorageTemplateLoader
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from part.models import Part
@@ -65,6 +67,23 @@ class ReportTest(InvenTreeAPITestCase):
         apps.get_app_config('report').create_default_reports()
 
         return super().setUp()
+
+    def test_internal_company_context(self):
+        """Test that the default internal company is available in the base context."""
+        from company.models import Company
+
+        template = ReportTemplate.objects.first()
+        self.assertIsNone(template.base_context()['internal_company'])
+
+        company = Company.objects.create(
+            name='Our Company', is_supplier=False, is_internal=True
+        )
+
+        # Value is cached against the template instance
+        self.assertIsNone(template.base_context()['internal_company'])
+
+        template = ReportTemplate.objects.get(pk=template.pk)
+        self.assertEqual(template.base_context()['internal_company'], company)
 
     def test_list_endpoint(self):
         """Test that the LIST endpoint works for each report."""
@@ -1559,3 +1578,231 @@ class DefaultTemplateFileTest(TestCase):
                 # Size and content must match the raw bytes exactly
                 self.assertEqual(content_file.size, len(raw))
                 self.assertEqual(content_file.read(), raw)
+
+
+class MockS3Storage(Storage):
+    """Mock storage simulating S3 backend with prefix/location."""
+
+    def __init__(self, location='inventree-server'):
+        """Initialize mock storage with a location."""
+        self.location = location
+        self.files = {}
+
+    def _save(self, name, content):
+        data = content.read() if hasattr(content, 'read') else content
+        if isinstance(data, str):
+            data = data.encode('utf-8')
+        self.files[name] = data
+        return name
+
+    def _open(self, name, mode='rb'):
+        if name not in self.files:
+            raise FileNotFoundError(f'{name} not found in MockS3Storage')
+        return ContentFile(self.files[name], name=name)
+
+    def exists(self, name):
+        """Check if file exists in mock storage."""
+        return name in self.files
+
+    def path(self, name):
+        """Raise NotImplementedError to simulate S3 remote storage."""
+        raise NotImplementedError("This backend doesn't support absolute paths.")
+
+
+class S3ReportTemplateTest(TestCase):
+    """Unit tests for S3 cloud storage report template loading (Issue #12426)."""
+
+    def setUp(self):
+        """Setup test fixtures."""
+        super().setUp()
+        self.storage = MockS3Storage(location='inventree-server')
+
+    def test_template_name_remote_storage(self):
+        """Test template_name property when file only exists in remote cloud storage."""
+        template = ReportTemplate(
+            name='Remote S3 Report',
+            description='Test S3 report loading',
+            model_type='part',
+        )
+        template.template.name = 'report/report_template/remote_template.html'
+        template.template.storage = self.storage
+
+        # Since the file does not exist locally under settings.MEDIA_ROOT,
+        # template_name should return the relative storage path, not a non-existent MEDIA_ROOT path.
+        self.assertEqual(
+            template.template_name, 'report/report_template/remote_template.html'
+        )
+
+    def test_get_template_content_with_prefix(self):
+        """Test get_template_content resolves templates with bucket/location prefix."""
+        template = ReportTemplate(
+            name='Prefixed S3 Report',
+            description='Test prefix resolution',
+            model_type='part',
+        )
+        template.template.name = 'report/report_template/test_prefix.html'
+        template.template.storage = self.storage
+
+        # S3 storage stores file with location prefix
+        content = b'<h1>Report: {{ part.name }}</h1>'
+        self.storage.files[
+            'inventree-server/report/report_template/test_prefix.html'
+        ] = content
+
+        result = template.get_template_content()
+        self.assertEqual(result, '<h1>Report: {{ part.name }}</h1>')
+
+    def test_get_template_content_without_prefix(self):
+        """Test get_template_content when template file is stored without location prefix."""
+        template = ReportTemplate(
+            name='Direct S3 Report',
+            description='Test direct resolution',
+            model_type='part',
+        )
+        template.template.name = 'report/report_template/direct.html'
+        template.template.storage = self.storage
+
+        content = b'<p>Direct template</p>'
+        self.storage.files['report/report_template/direct.html'] = content
+
+        result = template.get_template_content()
+        self.assertEqual(result, '<p>Direct template</p>')
+
+    def test_get_template_content_missing(self):
+        """Test get_template_content raises TemplateDoesNotExist when file not in storage."""
+        template = ReportTemplate(
+            name='Missing S3 Report',
+            description='Test missing template',
+            model_type='part',
+        )
+        template.template.name = 'report/report_template/missing.html'
+        template.template.storage = self.storage
+
+        with self.assertRaises(TemplateDoesNotExist):
+            template.get_template_content()
+
+    def test_render_as_string_fallback(self):
+        """Test render_as_string falls back to storage when TemplateDoesNotExist is caught."""
+        template = ReportTemplate(
+            name='Render S3 Report',
+            description='Test render fallback',
+            model_type='part',
+        )
+        template.template.name = 'report/report_template/render_test.html'
+        template.template.storage = self.storage
+
+        # Put template into S3 storage with location prefix
+        self.storage.files[
+            'inventree-server/report/report_template/render_test.html'
+        ] = b'<div>Hello {{ test_val }}</div>'
+
+        rendered = template.render_as_string(None, context={'test_val': 'World'})
+        self.assertEqual(rendered, '<div>Hello World</div>')
+
+    def test_storage_template_loader_resolution(self):
+        """Test InvenTreeStorageTemplateLoader loads templates from default_storage."""
+        with patch('InvenTree.template.default_storage', self.storage):
+            self.storage.files['inventree-server/report/snippets/header.html'] = (
+                b'<header>{{ title }}</header>'
+            )
+
+            loader = InvenTreeStorageTemplateLoader(engines['django'].engine)
+            tmpl = loader.get_template('report/snippets/header.html')
+            self.assertIsNotNone(tmpl)
+            rendered = tmpl.render(Context({'title': 'S3 Header Test'}))
+            self.assertEqual(rendered, '<header>S3 Header Test</header>')
+
+            with self.assertRaises(TemplateDoesNotExist):
+                loader.get_template('does/not/exist.html')
+
+    def test_render_to_string_with_storage_loader(self):
+        """Test Django render_to_string resolves via InvenTreeStorageTemplateLoader."""
+        with patch('InvenTree.template.default_storage', self.storage):
+            self.storage.files['inventree-server/report/custom_snippet.html'] = (
+                b'<span>User: {{ username }}</span>'
+            )
+
+            result = render_to_string(
+                'report/custom_snippet.html', {'username': 'testuser'}
+            )
+            self.assertEqual(result, '<span>User: testuser</span>')
+
+
+class ReportSecurityTest(InvenTreeAPITestCase):
+    """Tests for restricted database access while rendering templates."""
+
+    fixtures = ['category', 'part', 'location']
+
+    def render(self, source):
+        """Render a template string."""
+        from django.template import Context, Template
+
+        from report.security import restricted_db_access
+
+        with restricted_db_access():
+            return Template('{% load report %}' + source).render(Context({}))
+
+    def test_blocked_models(self):
+        """Blocked models cannot be queried via the template tag."""
+        from django.core.exceptions import PermissionDenied
+
+        for label in ['sessions.session', 'common.emailmessage', 'users.apitoken']:
+            with self.assertRaises(PermissionDenied):
+                self.render(f"{{% filter_db_model '{label}' as q %}}{{{{ q|length }}}}")
+
+    def test_traversal_blocked(self):
+        """Raw queries on blocked tables are rejected, even without the tag."""
+        from django.contrib.sessions.models import Session
+        from django.core.exceptions import PermissionDenied
+
+        from report.security import restricted_db_access
+
+        with restricted_db_access(), self.assertRaises(PermissionDenied):
+            list(Session.objects.all())
+
+    def test_normal_access(self):
+        """Regular models still work."""
+        out = self.render("{% filter_db_model 'part.part' as q %}{{ q|length }}")
+        self.assertGreater(int(out), 0)
+
+
+class ReportTraversalSecurityTest(InvenTreeAPITestCase):
+    """Restricted models cannot be reached by dot-notation traversal."""
+
+    fixtures = ['category', 'part', 'location', 'stock', 'build']
+
+    def test_traversal_to_api_tokens(self):
+        """Traversing build.issued_by.api_tokens must be denied."""
+        from django.core.exceptions import PermissionDenied
+        from django.template import Context, Template
+
+        from build.models import Build
+        from users.models import ApiToken
+
+        build = Build.objects.first()
+        build.issued_by = self.user
+        build.save()
+
+        ApiToken.objects.create(user=self.user, name='secret-token')
+
+        source = (
+            '{% for token in build.issued_by.api_tokens.all %}'
+            '{{ token.key }}|{{ token.name }}{% endfor %}'
+        )
+        context = {'build': build}
+
+        # Without the guard the token is readable (sanity check)
+        out = Template(source).render(Context(context))
+        self.assertIn('secret-token', out)
+
+        # Rendering through the report machinery is denied
+        template = ReportTemplate.objects.create(
+            name='traversal',
+            description='traversal test',
+            model_type='build',
+            template=ContentFile(source, 'traversal.html'),
+            enabled=True,
+        )
+
+        with self.assertRaises(PermissionDenied):
+            template.render_as_string(build, context=context)

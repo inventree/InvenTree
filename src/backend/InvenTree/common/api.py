@@ -269,7 +269,16 @@ class GlobalSettingsList(SettingsList):
         return super().list(request, *args, **kwargs)
 
 
-class GlobalSettingsDetail(RetrieveUpdateAPI):
+class TouchMixin:
+    """Mark a setting as touched when it is modified by the user."""
+
+    def perform_update(self, serializer):
+        """Mark a setting as touched when it is modified by the user."""
+        serializer.instance.touched = True
+        super().perform_update(serializer)
+
+
+class GlobalSettingsDetail(TouchMixin, RetrieveUpdateAPI):
     """Detail view for an individual "global setting" object.
 
     - User must have 'staff' status to view / edit
@@ -328,7 +337,7 @@ class UserSettingsList(SettingsList):
         return queryset
 
 
-class UserSettingsDetail(RetrieveUpdateAPI):
+class UserSettingsDetail(TouchMixin, RetrieveUpdateAPI):
     """Detail view for an individual "user setting" object.
 
     - User can only view / edit settings their own settings objects

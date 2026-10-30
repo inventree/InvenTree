@@ -2,19 +2,16 @@
 
 from django.contrib import admin
 
+from common.admin_shared import NoAddAdminMixin
 from machine import models
 
 
-class MachineSettingInline(admin.TabularInline):
+class MachineSettingInline(NoAddAdminMixin, admin.TabularInline):
     """Inline admin class for MachineSetting."""
 
     model = models.MachineSetting
 
     readonly_fields = ['key', 'config_type']
-
-    def has_add_permission(self, request, obj):
-        """The machine settings should not be meddled with manually."""
-        return False
 
 
 @admin.register(models.MachineConfig)

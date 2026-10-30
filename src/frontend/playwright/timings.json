@@ -1,0 +1,2396 @@
+{
+  "category": "playwright",
+  "commitId": "bef18f03902acabf4faac31b9c7b630c5ddb622a",
+  "flakinessProject": "InvenTree/InvenTree",
+  "configPath": "src/frontend/playwright.config.ts",
+  "duration": 0,
+  "environments": [
+    {
+      "name": "chromium"
+    },
+    {
+      "name": "firefox"
+    }
+  ],
+  "startTimestamp": 0,
+  "suites": [
+    {
+      "title": "pages/pui_build.spec.ts",
+      "type": "file",
+      "suites": [
+        {
+          "title": "Build Order - Allocated part identity",
+          "type": "suite",
+          "tests": [
+            {
+              "title": "places difference icons and uses full names under marked parents",
+              "attempts": [
+                {
+                  "duration": 9083.875
+                },
+                {
+                  "environmentIdx": 1,
+                  "duration": 16820.7
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "title": "Build - Index",
+          "attempts": [
+            {
+              "duration": 10558.286
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 11036.55
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Basic Tests",
+          "attempts": [
+            {
+              "duration": 32441
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 37541
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Tags",
+          "attempts": [
+            {
+              "duration": 15627.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 21950.25
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Reference",
+          "attempts": [
+            {
+              "duration": 14752.55
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 33264
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Calendar",
+          "attempts": [
+            {
+              "duration": 11372
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 23400.5
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Edit",
+          "attempts": [
+            {
+              "duration": 7585.667
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 13459.8
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Build Outputs",
+          "attempts": [
+            {
+              "duration": 24220.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 45701
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Allocation",
+          "attempts": [
+            {
+              "duration": 16268.75
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 32684.8
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Auto Allocate Tracked",
+          "attempts": [
+            {
+              "duration": 10894.667
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 20235.333
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Consume Stock",
+          "attempts": [
+            {
+              "duration": 21544.1
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 42106
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Tracked Outputs",
+          "attempts": [
+            {
+              "duration": 19800.9
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 37541
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Filters",
+          "attempts": [
+            {
+              "duration": 18596.25
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 27438
+            }
+          ]
+        },
+        {
+          "title": "Build Order - Duplicate",
+          "attempts": [
+            {
+              "duration": 14425
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 25969
+            }
+          ]
+        },
+        {
+          "title": "Build Order - External",
+          "attempts": [
+            {
+              "duration": 18596.25
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90424.333
+            }
+          ]
+        },
+        {
+          "title": "Build Order - BOM Quantity",
+          "attempts": [
+            {
+              "duration": 16268.75
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 33015.625
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pages/pui_company.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Company - Basic Tests",
+          "attempts": [
+            {
+              "duration": 11496.45
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 22943.833
+            }
+          ]
+        },
+        {
+          "title": "Company - Parameters",
+          "attempts": [
+            {
+              "duration": 9083.875
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 92774
+            }
+          ]
+        },
+        {
+          "title": "Company - Supplier Parts",
+          "attempts": [
+            {
+              "duration": 11496.45
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 25446.25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pages/pui_core.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Core User/Group/Contact",
+          "attempts": [
+            {
+              "duration": 9267.333
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 16820.7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pages/pui_dashboard.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Dashboard - Basic",
+          "attempts": [
+            {
+              "duration": 5463.15
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 8901.667
+            }
+          ]
+        },
+        {
+          "title": "Dashboard - Stocktake",
+          "attempts": [
+            {
+              "duration": 5006.2
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 9555
+            }
+          ]
+        },
+        {
+          "title": "Dashboard - Plugins",
+          "attempts": [
+            {
+              "duration": 6015.167
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 18465.3
+            }
+          ]
+        },
+        {
+          "title": "Dashboard - Preserve widget sizes",
+          "attempts": [
+            {
+              "duration": 7875
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15253.35
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pages/pui_part.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Parts - Tabs",
+          "attempts": [
+            {
+              "duration": 20038.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 44327.25
+            }
+          ]
+        },
+        {
+          "title": "Parts - Image Selection",
+          "attempts": [
+            {
+              "duration": 7875
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 17053.333
+            }
+          ]
+        },
+        {
+          "title": "Parts - Subscriptions",
+          "attempts": [
+            {
+              "duration": 9083.875
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 17233.65
+            }
+          ]
+        },
+        {
+          "title": "Parts - Manufacturer Parts",
+          "attempts": [
+            {
+              "duration": 6985.65
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 12103
+            }
+          ]
+        },
+        {
+          "title": "Parts - Supplier Parts",
+          "attempts": [
+            {
+              "duration": 7141.286
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 14760.15
+            }
+          ]
+        },
+        {
+          "title": "Parts - BOM",
+          "attempts": [
+            {
+              "duration": 26724
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 52231
+            }
+          ]
+        },
+        {
+          "title": "Parts - BOM Nesting",
+          "attempts": [
+            {
+              "duration": 10155
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 19405
+            }
+          ]
+        },
+        {
+          "title": "Parts - BOM Validation",
+          "attempts": [
+            {
+              "duration": 11496.45
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 22391.25
+            }
+          ]
+        },
+        {
+          "title": "Parts - BOM Comparison",
+          "attempts": [
+            {
+              "duration": 90400
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 22213.8
+            }
+          ]
+        },
+        {
+          "title": "Parts - Used In",
+          "attempts": [
+            {
+              "duration": 8396.85
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15556.417
+            }
+          ]
+        },
+        {
+          "title": "Parts - Editing",
+          "attempts": [
+            {
+              "duration": 7141.286
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15815.6
+            }
+          ]
+        },
+        {
+          "title": "Parts - Locking",
+          "attempts": [
+            {
+              "duration": 9491
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90210
+            }
+          ]
+        },
+        {
+          "title": "Parts - Details",
+          "attempts": [
+            {
+              "duration": 4569.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90363
+            }
+          ]
+        },
+        {
+          "title": "Parts - Details - Upload image modal accepts pasted clipboard image",
+          "attempts": [
+            {
+              "duration": 10170.7
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90424.333
+            }
+          ]
+        },
+        {
+          "title": "Parts - Requirements",
+          "attempts": [
+            {
+              "duration": 12739.65
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 33015.625
+            }
+          ]
+        },
+        {
+          "title": "Parts - Allocations",
+          "attempts": [
+            {
+              "duration": 12739.65
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 25969
+            }
+          ]
+        },
+        {
+          "title": "Parts - Pricing (Nothing, BOM)",
+          "attempts": [
+            {
+              "duration": 90411.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 91189
+            }
+          ]
+        },
+        {
+          "title": "Parts - Pricing (Supplier)",
+          "attempts": [
+            {
+              "duration": 5276.25
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 9535.571
+            }
+          ]
+        },
+        {
+          "title": "Parts - Pricing (Variant)",
+          "attempts": [
+            {
+              "duration": 6015.167
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 9535.571
+            }
+          ]
+        },
+        {
+          "title": "Parts - Pricing (Internal)",
+          "attempts": [
+            {
+              "duration": 90411.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 91189
+            }
+          ]
+        },
+        {
+          "title": "Parts - Pricing (Purchase)",
+          "attempts": [
+            {
+              "duration": 5006.2
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 8201.333
+            }
+          ]
+        },
+        {
+          "title": "Parts - Attachments",
+          "attempts": [
+            {
+              "duration": 6335.7
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 9555
+            }
+          ]
+        },
+        {
+          "title": "Parts - Parameters by Category",
+          "attempts": [
+            {
+              "duration": 12739.65
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 22213.8
+            }
+          ]
+        },
+        {
+          "title": "Parts - Parameters",
+          "attempts": [
+            {
+              "duration": 12526.167
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 19773.3
+            }
+          ]
+        },
+        {
+          "title": "Parts - Parameter Filtering",
+          "attempts": [
+            {
+              "duration": 9083.875
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 16569.714
+            }
+          ]
+        },
+        {
+          "title": "Parts - Test Results",
+          "attempts": [
+            {
+              "duration": 4711.286
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 10440.5
+            }
+          ]
+        },
+        {
+          "title": "Parts - Notes",
+          "attempts": [
+            {
+              "duration": 9083.875
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15556.417
+            }
+          ]
+        },
+        {
+          "title": "Parts - 404",
+          "attempts": [
+            {
+              "duration": 3414
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 6367.667
+            }
+          ]
+        },
+        {
+          "title": "Parts - Revisions",
+          "attempts": [
+            {
+              "duration": 6594
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 10440.5
+            }
+          ]
+        },
+        {
+          "title": "Parts - Bulk Edit",
+          "attempts": [
+            {
+              "duration": 7141.286
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15253.35
+            }
+          ]
+        },
+        {
+          "title": "Parts - Duplicate",
+          "attempts": [
+            {
+              "duration": 5692.05
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 10440.5
+            }
+          ]
+        },
+        {
+          "title": "Parts - Import supplier part",
+          "attempts": [
+            {
+              "duration": 18323
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90387.5
+            }
+          ]
+        },
+        {
+          "title": "Parts - Add button visible in Parametric View (admin)",
+          "attempts": [
+            {
+              "duration": 5193.75
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 5747.5
+            }
+          ]
+        },
+        {
+          "title": "Parts - Add button opens Create Part form in Parametric View",
+          "attempts": [
+            {
+              "duration": 7055.2
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7229.2
+            }
+          ]
+        },
+        {
+          "title": "Parts - Add button hidden in Parametric View (reader)",
+          "attempts": [
+            {
+              "duration": 4711.286
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 4751
+            }
+          ]
+        },
+        {
+          "title": "Parts - Create part via Parametric View submits to API",
+          "attempts": [
+            {
+              "duration": 9267.333
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 8936
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pages/pui_purchasing.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Purchasing - Index",
+          "attempts": [
+            {
+              "duration": 24785
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 37553.25
+            }
+          ]
+        },
+        {
+          "title": "Purchasing - Parameters",
+          "attempts": [
+            {
+              "duration": 13532.8
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 19053.3
+            }
+          ]
+        },
+        {
+          "title": "Purchasing - Manufacturer Parts",
+          "attempts": [
+            {
+              "duration": 23056.95
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 14760.15
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - General",
+          "attempts": [
+            {
+              "duration": 17437.25
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 24786.75
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - Table",
+          "attempts": [
+            {
+              "duration": 7907
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15556.417
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - Calendar",
+          "attempts": [
+            {
+              "duration": 6224.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 9555
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - Barcodes",
+          "attempts": [
+            {
+              "duration": 14003.75
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 24313.2
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - Filters",
+          "attempts": [
+            {
+              "duration": 5760.8
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 8936
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - Price Breaks",
+          "attempts": [
+            {
+              "duration": 5760.8
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 12616.95
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - Order Parts",
+          "attempts": [
+            {
+              "duration": 24785
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 42106
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - Receive Items",
+          "attempts": [
+            {
+              "duration": 18453.667
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 46886
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - Custom Location",
+          "attempts": [
+            {
+              "duration": 14982
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 36608
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - Receive Virtual Items",
+          "attempts": [
+            {
+              "duration": 10223
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90600
+            }
+          ]
+        },
+        {
+          "title": "Purchase Orders - Duplicate",
+          "attempts": [
+            {
+              "duration": 5760.8
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 12967.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pages/pui_return.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Return Orders - Receive Items",
+          "attempts": [
+            {
+              "duration": 7460.667
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 16569.714
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pages/pui_sales.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Sales Orders - Tabs",
+          "attempts": [
+            {
+              "duration": 18453.667
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 33015.625
+            }
+          ]
+        },
+        {
+          "title": "Sales Orders - Basic Tests",
+          "attempts": [
+            {
+              "duration": 10223
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 19053.3
+            }
+          ]
+        },
+        {
+          "title": "Sales Orders - Auto Allocate",
+          "attempts": [
+            {
+              "duration": 12025.65
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 19462.5
+            }
+          ]
+        },
+        {
+          "title": "Sales Orders - Shipments",
+          "attempts": [
+            {
+              "duration": 20227.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 33264
+            }
+          ]
+        },
+        {
+          "title": "Sales Orders - Shipments - Tags",
+          "attempts": [
+            {
+              "duration": 6853
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 11893.05
+            }
+          ]
+        },
+        {
+          "title": "Sales Orders - Complete Shipment",
+          "attempts": [
+            {
+              "duration": 18263
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90210
+            }
+          ]
+        },
+        {
+          "title": "Sales Orders - Duplicate",
+          "attempts": [
+            {
+              "duration": 14003.75
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90424.333
+            }
+          ]
+        },
+        {
+          "title": "Sales Orders - Price Breaks",
+          "attempts": [
+            {
+              "duration": 6942
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 11893.05
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pages/pui_scan.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Barcode Scanning - Dialog",
+          "attempts": [
+            {
+              "duration": 7460.667
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 14238.333
+            }
+          ]
+        },
+        {
+          "title": "Barcode Scanning - Basic",
+          "attempts": [
+            {
+              "duration": 4347
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 8222.667
+            }
+          ]
+        },
+        {
+          "title": "Barcode Scanning - Part",
+          "attempts": [
+            {
+              "duration": 3037.167
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7229.2
+            }
+          ]
+        },
+        {
+          "title": "Barcode Scanning - Stockitem",
+          "attempts": [
+            {
+              "duration": 3355
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7927.667
+            }
+          ]
+        },
+        {
+          "title": "Barcode Scanning - StockLocation",
+          "attempts": [
+            {
+              "duration": 3037.167
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7448.25
+            }
+          ]
+        },
+        {
+          "title": "Barcode Scanning - SupplierPart",
+          "attempts": [
+            {
+              "duration": 3037.167
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 6367.667
+            }
+          ]
+        },
+        {
+          "title": "Barcode Scanning - PurchaseOrder",
+          "attempts": [
+            {
+              "duration": 3182
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7615.65
+            }
+          ]
+        },
+        {
+          "title": "Barcode Scanning - SalesOrder",
+          "attempts": [
+            {
+              "duration": 3037.167
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7229.2
+            }
+          ]
+        },
+        {
+          "title": "Barcode Scanning - Build",
+          "attempts": [
+            {
+              "duration": 3471
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7383.833
+            }
+          ]
+        },
+        {
+          "title": "Barcode Scanning - Forms",
+          "attempts": [
+            {
+              "duration": 9467.667
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 19462.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pages/pui_stock.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Stock - Basic Tests",
+          "attempts": [
+            {
+              "duration": 29804
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 34473
+            }
+          ]
+        },
+        {
+          "title": "Stock - Location Tree",
+          "attempts": [
+            {
+              "duration": 12526.667
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15165.182
+            }
+          ]
+        },
+        {
+          "title": "Stock - Location Delete",
+          "attempts": [
+            {
+              "duration": 14267.4
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 13753.333
+            }
+          ]
+        },
+        {
+          "title": "Stock - Filters",
+          "attempts": [
+            {
+              "duration": 15459.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15662.182
+            }
+          ]
+        },
+        {
+          "title": "Stock - Serial Numbers",
+          "attempts": [
+            {
+              "duration": 10113.25
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 17732.429
+            }
+          ]
+        },
+        {
+          "title": "Stock - Serial Navigation",
+          "attempts": [
+            {
+              "duration": 8304
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 17277.75
+            }
+          ]
+        },
+        {
+          "title": "Stock - Serialize",
+          "attempts": [
+            {
+              "duration": 5507.15
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 9894.15
+            }
+          ]
+        },
+        {
+          "title": "Stock - Stock Actions",
+          "attempts": [
+            {
+              "duration": 17929
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 32576
+            }
+          ]
+        },
+        {
+          "title": "Stock - Convert",
+          "attempts": [
+            {
+              "duration": 11656.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 18576.167
+            }
+          ]
+        },
+        {
+          "title": "Stock - Return Items",
+          "attempts": [
+            {
+              "duration": 11656.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 18576.167
+            }
+          ]
+        },
+        {
+          "title": "Stock - Tracking",
+          "attempts": [
+            {
+              "duration": 10898.4
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 20823.6
+            }
+          ]
+        },
+        {
+          "title": "Stock - Location",
+          "attempts": [
+            {
+              "duration": 5625.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 9545
+            }
+          ]
+        },
+        {
+          "title": "Stock - Disassembly",
+          "attempts": [
+            {
+              "duration": 9908.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 16978.5
+            }
+          ]
+        },
+        {
+          "title": "Stock - Default Location",
+          "attempts": [
+            {
+              "duration": 21818
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 31162.667
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pages/pui_transfer.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Transfer Orders - General",
+          "attempts": [
+            {
+              "duration": 10953.8
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 17929.286
+            }
+          ]
+        },
+        {
+          "title": "Transfer Order - Reference",
+          "attempts": [
+            {
+              "duration": 6929.3
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15662.182
+            }
+          ]
+        },
+        {
+          "title": "Transfer Order - Calendar",
+          "attempts": [
+            {
+              "duration": 8304
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90727
+            }
+          ]
+        },
+        {
+          "title": "Transfer Order - Edit",
+          "attempts": [
+            {
+              "duration": 7038.25
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 14026.6
+            }
+          ]
+        },
+        {
+          "title": "Transfer Order - Allocate and Transfer",
+          "attempts": [
+            {
+              "duration": 14561.667
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 25797.5
+            }
+          ]
+        },
+        {
+          "title": "Transfer Orders - Duplicate",
+          "attempts": [
+            {
+              "duration": 6173.25
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 10911.6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_exporting.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Exporting - Orders",
+          "attempts": [
+            {
+              "duration": 23176
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90997
+            }
+          ]
+        },
+        {
+          "title": "Exporting - BOM",
+          "attempts": [
+            {
+              "duration": 16247
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 41163.333
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_forms.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Forms - Hover",
+          "attempts": [
+            {
+              "duration": 7113.75
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 12150.6
+            }
+          ]
+        },
+        {
+          "title": "Forms - Stock Item Validation",
+          "attempts": [
+            {
+              "duration": 12639.9
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90006.4
+            }
+          ]
+        },
+        {
+          "title": "Forms - Supplier Validation",
+          "attempts": [
+            {
+              "duration": 9908.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 16978.5
+            }
+          ]
+        },
+        {
+          "title": "Forms - Keep form open option",
+          "attempts": [
+            {
+              "duration": 8115
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 9571.25
+            }
+          ]
+        },
+        {
+          "title": "Forms - DateTime Field",
+          "attempts": [
+            {
+              "duration": 8022
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15175.65
+            }
+          ]
+        },
+        {
+          "title": "Forms - Nested Object Field",
+          "attempts": [
+            {
+              "duration": 7262.85
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 14026.6
+            }
+          ]
+        },
+        {
+          "title": "Forms - Initial Stock Field",
+          "attempts": [
+            {
+              "duration": 10846.25
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 20823.6
+            }
+          ]
+        },
+        {
+          "title": "Forms - Initial Stock hidden when setting disabled",
+          "attempts": [
+            {
+              "duration": 5109.3
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 10587.75
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_general.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "General - Admin Button",
+          "attempts": [
+            {
+              "duration": 3862
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7674.1
+            }
+          ]
+        },
+        {
+          "title": "General - Search",
+          "attempts": [
+            {
+              "duration": 9165.45
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 14026.6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_importing.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Importing - Admin Center",
+          "attempts": [
+            {
+              "duration": 10756.4
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 17929.286
+            }
+          ]
+        },
+        {
+          "title": "Importing - BOM",
+          "attempts": [
+            {
+              "duration": 13690.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 21548
+            }
+          ]
+        },
+        {
+          "title": "Importing - Purchase Order",
+          "attempts": [
+            {
+              "duration": 6332.2
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 11128.95
+            }
+          ]
+        },
+        {
+          "title": "Importing - Natural Keys",
+          "attempts": [
+            {
+              "duration": 9908.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90006.4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_login.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Login - Failures",
+          "attempts": [
+            {
+              "duration": 16899.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 28792.667
+            }
+          ]
+        },
+        {
+          "title": "Login - Cold vs Warm vs Hot Load",
+          "attempts": [
+            {
+              "duration": 11656.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 18558.5
+            }
+          ]
+        },
+        {
+          "title": "Login - JS/CSS Boot Checks",
+          "attempts": [
+            {
+              "duration": 3862
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7031.833
+            }
+          ]
+        },
+        {
+          "title": "Login - Redirect on Login",
+          "attempts": [
+            {
+              "duration": 5412
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7113.6
+            }
+          ]
+        },
+        {
+          "title": "Login - Session Persistence",
+          "attempts": [
+            {
+              "duration": 7262.85
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 11807.55
+            }
+          ]
+        },
+        {
+          "title": "Login - Network Errors & Retry",
+          "attempts": [
+            {
+              "duration": 6340.4
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 10980.9
+            }
+          ]
+        },
+        {
+          "title": "Login - Security Regression Checks",
+          "attempts": [
+            {
+              "duration": 3862
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7031.833
+            }
+          ]
+        },
+        {
+          "title": "Login - Keyboard Focus",
+          "attempts": [
+            {
+              "duration": 5109.3
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 8758.05
+            }
+          ]
+        },
+        {
+          "title": "Login - Change Password",
+          "attempts": [
+            {
+              "duration": 10323.25
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15662.182
+            }
+          ]
+        },
+        {
+          "title": "Login - MFA - TOTP",
+          "attempts": [
+            {
+              "duration": 8304
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90372.667
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_machines.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Machines - Admin Panel",
+          "attempts": [
+            {
+              "duration": 7268.45
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 6258.25
+            }
+          ]
+        },
+        {
+          "title": "Machines - Activation",
+          "attempts": [
+            {
+              "duration": 90272
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90353.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_modals.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Modals - Admin",
+          "attempts": [
+            {
+              "duration": 7599.6
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 14026.6
+            }
+          ]
+        },
+        {
+          "title": "Spotlight - Check Actions",
+          "attempts": [
+            {
+              "duration": 4978.95
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 8758.05
+            }
+          ]
+        },
+        {
+          "title": "Spotlight - No Keys",
+          "attempts": [
+            {
+              "duration": 10810.8
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 14026.6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_notifications.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Notifications - link targets",
+          "attempts": [
+            {
+              "duration": 4214
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 6258.25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_permissions.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Permissions - Admin",
+          "attempts": [
+            {
+              "duration": 8590.85
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 11807.55
+            }
+          ]
+        },
+        {
+          "title": "Permissions - Reader",
+          "attempts": [
+            {
+              "duration": 14004
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15662.182
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_plugins.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Plugins - Settings",
+          "attempts": [
+            {
+              "duration": 12352.85
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90602.5
+            }
+          ]
+        },
+        {
+          "title": "Plugins - User Settings",
+          "attempts": [
+            {
+              "duration": 8551.2
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 10587.75
+            }
+          ]
+        },
+        {
+          "title": "Plugins - Functionality",
+          "attempts": [
+            {
+              "duration": 16721.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 24797.5
+            }
+          ]
+        },
+        {
+          "title": "Plugins - Panels",
+          "attempts": [
+            {
+              "duration": 9211.2
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15662.182
+            }
+          ]
+        },
+        {
+          "title": "Plugins - Custom Admin",
+          "attempts": [
+            {
+              "duration": 10206.333
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90372.667
+            }
+          ]
+        },
+        {
+          "title": "Plugins - Locate Item",
+          "attempts": [
+            {
+              "duration": 10314
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 13759.333
+            }
+          ]
+        },
+        {
+          "title": "Plugins - Creator",
+          "attempts": [
+            {
+              "duration": 14004
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 19864.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_printing.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Printing - Label Editing",
+          "attempts": [
+            {
+              "duration": 5924
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7674.1
+            }
+          ]
+        },
+        {
+          "title": "Printing - Label Printing",
+          "attempts": [
+            {
+              "duration": 14004
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 20823.6
+            }
+          ]
+        },
+        {
+          "title": "Printing - Report Printing",
+          "attempts": [
+            {
+              "duration": 10022
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 91462
+            }
+          ]
+        },
+        {
+          "title": "Printing - Report Editing",
+          "attempts": [
+            {
+              "duration": 11450.35
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90296.667
+            }
+          ]
+        },
+        {
+          "title": "Printing - Broken Template",
+          "attempts": [
+            {
+              "duration": 13408.2
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 17929.286
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_settings.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Settings - User theme",
+          "attempts": [
+            {
+              "duration": 6580.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90997
+            }
+          ]
+        },
+        {
+          "title": "Settings - User",
+          "attempts": [
+            {
+              "duration": 4978.95
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 8499.5
+            }
+          ]
+        },
+        {
+          "title": "Settings - Global",
+          "attempts": [
+            {
+              "duration": 7520.1
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 13759.333
+            }
+          ]
+        },
+        {
+          "title": "Settings - Admin",
+          "attempts": [
+            {
+              "duration": 16721.5
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 90429
+            }
+          ]
+        },
+        {
+          "title": "Settings - Admin - Background Tasks",
+          "attempts": [
+            {
+              "duration": 4214
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 5127
+            }
+          ]
+        },
+        {
+          "title": "Settings - Admin - Barcode History",
+          "attempts": [
+            {
+              "duration": 12352.85
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 19864.95
+            }
+          ]
+        },
+        {
+          "title": "Settings - Admin - Parameter",
+          "attempts": [
+            {
+              "duration": 20121
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 91720
+            }
+          ]
+        },
+        {
+          "title": "Settings - Admin - Unauthorized",
+          "attempts": [
+            {
+              "duration": 7520.1
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 10695.1
+            }
+          ]
+        },
+        {
+          "title": "Settings - Auth - Email",
+          "attempts": [
+            {
+              "duration": 4759.4
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 7642.75
+            }
+          ]
+        },
+        {
+          "title": "Settings - Auth - Tokens",
+          "attempts": [
+            {
+              "duration": 4978.95
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 6133.6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_sso.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "SSO - Complete Registration",
+          "attempts": [
+            {
+              "duration": 8590.85
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15165.182
+            }
+          ]
+        },
+        {
+          "title": "SSO - Registration Disabled",
+          "attempts": [
+            {
+              "duration": 7520.1
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 13759.333
+            }
+          ]
+        },
+        {
+          "title": "SSO - Disabled",
+          "attempts": [
+            {
+              "duration": 5408.667
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 8847.3
+            }
+          ]
+        },
+        {
+          "title": "SSO - Provider Signup Page With No Pending Signup",
+          "attempts": [
+            {
+              "duration": 5418
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 9908.75
+            }
+          ]
+        },
+        {
+          "title": "SSO - Auto Signup",
+          "attempts": [
+            {
+              "duration": 8590.85
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 15093.167
+            }
+          ]
+        },
+        {
+          "title": "SSO - Existing User Login",
+          "attempts": [
+            {
+              "duration": 13408.2
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 21548
+            }
+          ]
+        },
+        {
+          "title": "SSO - Existing Local Account With Matching Email",
+          "attempts": [
+            {
+              "duration": 9500
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 19864.95
+            }
+          ]
+        },
+        {
+          "title": "SSO - Username Collision On Signup",
+          "attempts": [
+            {
+              "duration": 7520.1
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 13759.333
+            }
+          ]
+        },
+        {
+          "title": "SSO - Connect Provider To Existing Account",
+          "attempts": [
+            {
+              "duration": 15282.65
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 23045
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "pui_tables.spec.ts",
+      "type": "file",
+      "tests": [
+        {
+          "title": "Tables - Quick Filters",
+          "attempts": [
+            {
+              "duration": 10314
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 13759.333
+            }
+          ]
+        },
+        {
+          "title": "Tables - Filters",
+          "attempts": [
+            {
+              "duration": 32318
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 42502
+            }
+          ]
+        },
+        {
+          "title": "Tables - Pagination",
+          "attempts": [
+            {
+              "duration": 8551.2
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 13759.333
+            }
+          ]
+        },
+        {
+          "title": "Tables - Navigation query parameters",
+          "attempts": [
+            {
+              "duration": 15543.15
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 21548
+            }
+          ]
+        },
+        {
+          "title": "Tables - Detail navigation",
+          "attempts": [
+            {
+              "duration": 7502.714
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 9571.25
+            }
+          ]
+        },
+        {
+          "title": "Tables - Columns",
+          "attempts": [
+            {
+              "duration": 7520.1
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 10980.9
+            }
+          ]
+        },
+        {
+          "title": "Tables - Sorting",
+          "attempts": [
+            {
+              "duration": 9978.75
+            },
+            {
+              "environmentIdx": 1,
+              "duration": 12133.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

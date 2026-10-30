@@ -19,6 +19,7 @@ import order.models
 import part.filters as part_filters
 import stock.models
 import stock.serializers
+from audit.helpers import write_batched
 from common.settings import get_global_setting
 from company.serializers import (
     AddressBriefSerializer,
@@ -53,7 +54,6 @@ from order.status_codes import (
 )
 from part.serializers import PartBriefSerializer
 from plugin.base.event.events import batch_events
-from stock.models import batch_tracking_entries
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
@@ -401,6 +401,10 @@ class PurchaseOrderSerializer(
             'total_price',
             'order_currency',
             'destination',
+            'receiving_company',
+            'receiving_company_detail',
+            'delivery_address',
+            'delivery_address_detail',
             'updated_at',
         ])
         read_only_fields = [
@@ -486,6 +490,29 @@ class PurchaseOrderSerializer(
             'allow_null': True,
         },
         prefetch_fields=['supplier'],
+    )
+
+    receiving_company_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'receiving_company',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        prefetch_fields=['receiving_company'],
+    )
+
+    delivery_address_detail = OptionalField(
+        serializer_class=AddressBriefSerializer,
+        serializer_kwargs={
+            'source': 'delivery_address',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['delivery_address'],
     )
 
 
@@ -864,6 +891,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         return quantity
 
     batch_code = serializers.CharField(
+        max_length=stock.models.StockItem._meta.get_field('batch').max_length,
         label=_('Batch Code'),
         help_text=_('Enter batch code for incoming stock items'),
         required=False,
@@ -890,6 +918,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     status = stock.serializers.StockStatusCustomSerializer(default=StockStatus.OK.value)
 
     packaging = serializers.CharField(
+        max_length=stock.models.StockItem._meta.get_field('packaging').max_length,
         label=_('Packaging'),
         help_text=_('Override packaging information for incoming stock items'),
         required=False,
@@ -898,6 +927,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
+        max_length=stock.models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Additional note for incoming stock items'),
         required=False,
@@ -906,6 +936,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     barcode = serializers.CharField(
+        max_length=stock.models.StockItem._meta.get_field('barcode_data').max_length,
         label=_('Barcode'),
         help_text=_('Scanned barcode'),
         default='',
@@ -993,6 +1024,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
     )
 
     batch_code = serializers.CharField(
+        max_length=stock.models.StockItem._meta.get_field('batch').max_length,
         label=_('Batch Code'),
         help_text=_(
             'Enter batch code for incoming stock items - applied to any line item which does not specify its own batch code'
@@ -1095,7 +1127,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
             with (
                 transaction.atomic(),
                 batch_events(),
-                batch_tracking_entries(),
+                write_batched(),
                 batch_offload_tasks(),
             ):
                 items = order.receive_line_items(
@@ -1442,6 +1474,7 @@ class SalesOrderShipmentSerializer(
             'allocated_items',
             'shipment_date',
             'shipment_address',
+            'contact',
             'delivery_date',
             'checked_by',
             'duplicate',
@@ -1453,6 +1486,7 @@ class SalesOrderShipmentSerializer(
             # Extra detail fields
             'parameters',
             'checked_by_detail',
+            'contact_detail',
             'customer_detail',
             'order_detail',
             'shipment_address_detail',
@@ -1522,6 +1556,18 @@ class SalesOrderShipmentSerializer(
         },
         default_include=True,
         prefetch_fields=['shipment_address'],
+    )
+
+    contact_detail = OptionalField(
+        serializer_class=ContactSerializer,
+        serializer_kwargs={
+            'source': 'contact',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['contact'],
     )
 
     parameters = common.filters.enable_parameters_filter()
@@ -2298,6 +2344,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
+        max_length=stock.models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Additional note for incoming stock items'),
         required=False,

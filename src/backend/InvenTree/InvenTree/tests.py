@@ -1046,6 +1046,16 @@ class TestSerialNumberExtraction(TestCase):
         with self.assertRaises(ValidationError):
             e('1,2,3', 5, 1)
 
+        # Test serial number exceeding maximum length
+        with self.assertRaises(ValidationError) as exc:
+            e('1,' + 'x' * 101, 2, 1)
+
+        self.assertIn('Serial number exceeds maximum length', str(exc.exception))
+
+        # Generated serials are also checked
+        with self.assertRaises(ValidationError):
+            e('x' * 100 + '9+', 2, 1)
+
         # Test empty string
         with self.assertRaises(ValidationError):
             e(', , ,', 0, 1)
@@ -1317,6 +1327,41 @@ class TestSettings(InvenTreeTestCase):
         )
 
         set_global_setting('PLUGIN_ON_STARTUP', False)
+
+    def test_social_backends(self):
+        """Test that social backends are normalized and de-duplicated."""
+        prefix = 'allauth.socialaccount.providers.'
+        defaults = ['saml', 'openid_connect']
+
+        # Full module path for a default backend must not produce a duplicate
+        self.assertEqual(
+            config.get_social_backends(defaults, [f'{prefix}openid_connect']),
+            [f'{prefix}openid_connect', f'{prefix}saml'],
+        )
+
+        # Mixed short and full names, with duplicates, are sorted alphabetically
+        self.assertEqual(
+            config.get_social_backends(
+                defaults, ['github', f'{prefix}github', 'saml', f'{prefix}google']
+            ),
+            [
+                f'{prefix}github',
+                f'{prefix}google',
+                f'{prefix}openid_connect',
+                f'{prefix}saml',
+            ],
+        )
+
+        # No extra backends
+        self.assertEqual(
+            config.get_social_backends(defaults, []),
+            [f'{prefix}openid_connect', f'{prefix}saml'],
+        )
+
+        # The running configuration must not contain duplicate apps
+        self.assertEqual(
+            len(settings.INSTALLED_APPS), len(set(settings.INSTALLED_APPS))
+        )
 
     def test_helpers_cfg_file(self):
         """Test get_config_file."""

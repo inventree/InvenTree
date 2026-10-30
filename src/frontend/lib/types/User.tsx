@@ -16,6 +16,14 @@ export interface UserProfile {
   primary_group: number | null;
 }
 
+export interface UserTips {
+  pk: number;
+  tip_id: string;
+  shown: boolean;
+  finished: boolean;
+  updated: string;
+}
+
 // Type interface fully defining the current user
 export interface UserProps {
   pk: number;
@@ -29,11 +37,14 @@ export interface UserProps {
   permissions?: Record<string, string[]>;
   groups: any[] | null;
   profile: UserProfile;
+  tips: UserTips[] | null;
 }
 
 export interface UserStateProps {
   user: UserProps | undefined;
   is_authed: boolean;
+  done_tips: string[] | null;
+  setTips: (tips: UserTips[] | null) => void;
   userId: () => number | undefined;
   username: () => string;
   setAuthenticated: (authed?: boolean) => void;

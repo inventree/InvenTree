@@ -518,10 +518,26 @@ export function useSalesOrderShipmentFields({
   customerId?: number;
   pending?: boolean;
 }): ApiFormFieldSet {
+  // Customer inferred from the order, if not explicitly provided
+  const [orderCustomerId, setOrderCustomerId] = useState<number | undefined>(
+    undefined
+  );
+
+  const customer = customerId ?? orderCustomerId;
+
   return useMemo(() => {
     return {
       order: {
-        disabled: true
+        disabled: true,
+        onValueChange: (_value: any, record: any) => {
+          // Record may be the fetched shipment, or the selected order instance
+          const orderCustomer =
+            record?.order_detail?.customer ?? record?.customer;
+
+          if (orderCustomer) {
+            setOrderCustomerId(orderCustomer);
+          }
+        }
       },
       reference: {},
       shipment_date: {
@@ -533,8 +549,14 @@ export function useSalesOrderShipmentFields({
       shipment_address: {
         placeholder: t`Leave blank to use the order address`,
         filters: {
-          company: customerId,
+          company: customer,
           ordering: '-primary'
+        }
+      },
+      contact: {
+        icon: <IconUser />,
+        filters: {
+          company: customer
         }
       },
       tracking_number: {},
@@ -542,7 +564,7 @@ export function useSalesOrderShipmentFields({
       tags: TagsField({}),
       link: {}
     };
-  }, [customerId, pending]);
+  }, [customer, pending]);
 }
 
 export function useSalesOrderShipmentCompleteFields({

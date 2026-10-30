@@ -264,6 +264,10 @@ A unique number for the shipment, used to identify each shipment within a sales 
 
 A shipping address can be optionally specified for an individual shipment. If not specified, the [shipping address assigned to the sales order](#sales-order-address) will be used.
 
+#### Shipment Contact
+
+An optional point of contact for the shipment (for example, the person receiving the delivery). The contact must be one of the [contacts](../concepts/company.md#contacts) assigned to the [customer](./customer.md) linked to the sales order.
+
 #### Tracking Number
 
 An optional field used to store tracking number information for the shipment.

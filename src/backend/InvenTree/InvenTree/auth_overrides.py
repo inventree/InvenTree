@@ -216,9 +216,10 @@ class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter)
         return False
 
     def authentication_error(
-        self, request, provider_id, error=None, exception=None, extra_context=None
+        self, request, provider, error=None, exception=None, extra_context=None
     ):
         """Callback method for authentication errors."""
+        provider_id = getattr(provider, 'id', provider)
         if not error:
             error = request.GET.get('error', None)
 

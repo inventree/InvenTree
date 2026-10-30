@@ -1,5 +1,5 @@
 import { expect, test } from '../baseFixtures.js';
-import { stevenuser } from '../defaults.js';
+import { adminuser, stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
@@ -30,7 +30,6 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await navigate(page, 'stock/item/1194/details');
   await page.getByText('D.123 | Doohickey').waitFor();
   await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
-  await loadTab(page, 'Stock Tracking');
   await loadTab(page, 'Test Results');
   await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
   await loadTab(page, 'Installed Items');
@@ -47,12 +46,6 @@ test('Stock - Basic Tests', async ({ browser }) => {
 
   // Automatically navigate through to the newly created stock item
   await page.getByText('Quantity: 987').first().waitFor();
-  await loadTab(page, 'Stock Tracking');
-  await page
-    .getByRole('cell', { name: 'Stock item created' })
-    .first()
-    .waitFor();
-  await page.getByRole('cell', { name: 'allaccess Ally Access' }).waitFor();
 });
 
 test('Stock - Location Tree', async ({ browser }) => {
@@ -62,8 +55,16 @@ test('Stock - Location Tree', async ({ browser }) => {
 
   await page.getByLabel('nav-breadcrumb-action').click();
   await page.getByLabel('nav-tree-toggle-1}').click();
+
+  await expect(page.getByLabel('nav-tree-item-2')).toHaveAttribute(
+    'href',
+    /\/web\/stock\/location\/2\/?$/
+  );
   await page.getByLabel('nav-tree-item-2').click();
 
+  await expect(
+    page.getByRole('link', { name: 'breadcrumb-1-factory' })
+  ).toHaveAttribute('href', /\/web\/stock\/location\/1\/?$/);
   await page.getByLabel('breadcrumb-2-storage-room-a').waitFor();
   await page.getByLabel('breadcrumb-1-factory').click();
 
@@ -508,24 +509,59 @@ test('Stock - Return Items', async ({ browser }) => {
   await page.getByText('This field is required.').first().waitFor();
 });
 
-test('Stock - Tracking', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'stock/item/176/details' });
+test('Stock - History (Stock Item)', async ({ browser }) => {
+  // Note: The 'admin' user has the "Show Change History" setting enabled
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'stock/item/193/history'
+  });
+
+  await page.getByText('widget.purple | Purple Widget').first().waitFor();
+
+  // Stock tracking events are displayed in the "History" tab
+  await page.getByText('Installed into assembly').first().waitFor();
+  await page.getByText('Assigned serial number').first().waitFor();
+  await page.getByText('Stock item created').first().waitFor();
+
+  // Event deltas link to the related stock item
+  await page.getByText('Widget Board (assembled) #159').first().waitFor();
+});
+
+test('Stock - History (Part)', async ({ browser }) => {
+  // Note: The 'admin' user has the "Show Change History" setting enabled
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'part/76/history'
+  });
+
+  await page.getByText('widget.purple | Purple Widget').first().waitFor();
+
+  // The history of the part includes stock tracking events for its stock items
+  await page.getByText('Shipped against Sales Order').first().waitFor();
+  await page.getByText('Customer D').first().waitFor();
+  await page.getByText('SO0009').first().waitFor();
+  await page.getByText('Installed into assembly').first().waitFor();
+  await page.getByText('Purple Widget #35').first().waitFor();
+
+  // ...as well as changes to the part itself (e.g. parameters)
+  await page.getByText('Color: Purple').first().waitFor();
+});
+
+test('Stock - History', async ({ browser }) => {
+  // Note: The 'admin' user has the "Show Change History" setting enabled
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'stock/item/176/details'
+  });
 
   await page.getByRole('link', { name: 'Widget Assembly # 2' }).waitFor();
 
-  // Navigate to the "stock tracking" tab
-  await loadTab(page, 'Stock Tracking');
-
-  await page.getByText('Factory/Office Block/Room').first().waitFor();
-  await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
-  await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
-
-  /* Add some more stock items and tracking information:
+  /* Add some more stock items and history information:
    * - Duplicate this stock item
    * - Give it a unique serial number
-   * - Ensure the tracking information is duplicated correctly
+   * - Ensure the creation of the new item is recorded
    * - Delete the new stock item
-   * - Ensure that the tracking information is retained against the base part
+   * - Ensure that the history is retained against the base part
    */
 
   // Duplicate the stock item
@@ -540,13 +576,10 @@ test('Stock - Tracking', async ({ browser }) => {
     .fill('9876');
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  // Check stock tracking information is correct
+  // Check that the creation of the new item is recorded
   await page.getByText('Serial Number: 9876').first().waitFor();
-  await loadTab(page, 'Stock Tracking');
-  await page
-    .getByRole('cell', { name: 'Stock item created' })
-    .first()
-    .waitFor();
+  await loadTab(page, 'History', true);
+  await page.getByText('Stock item created').first().waitFor();
 
   // Delete this stock item
   await page
@@ -557,17 +590,10 @@ test('Stock - Tracking', async ({ browser }) => {
     .click();
   await page.getByRole('button', { name: 'Delete' }).click();
 
-  // Check stock tracking for base part
-  await loadTab(page, 'Stock History');
-  await page.getByRole('button', { name: 'Stock Tracking' }).click();
-
-  await page.getByText('Stock item no longer exists').first().waitFor();
-  await page
-    .getByRole('cell', { name: 'Thumbnail Blue Widget' })
-    .first()
-    .waitFor();
-
-  await page.getByText('# 162').first().waitFor();
+  // The history of the deleted item is retained against the base part
+  await loadTab(page, 'History', true);
+  await page.getByText('Object was deleted').first().waitFor();
+  await page.getByText('Stock item created').first().waitFor();
 });
 
 test('Stock - Location', async ({ browser }) => {

@@ -30,6 +30,7 @@ import {
   PluginUIFeatureType
 } from '../plugins/PluginUIFeature';
 import GlobalPreviewDrawer from '../previews/GlobalPreviewDrawer';
+import { FirstUseTour } from './FirstUseTour';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
@@ -123,6 +124,7 @@ export default function LayoutComponent() {
   return (
     <ProtectedRoute>
       <>
+        <FirstUseTour />
         <Flex direction='column' mih='100vh'>
           <Header />
           <Container className={classes.layoutContent} size='100%'>

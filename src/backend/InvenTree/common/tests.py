@@ -756,6 +756,30 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         # There should be no user sessions now
         self.assertEqual(self.user.usersession_set.count(), 0)
 
+    def test_model_filters(self):
+        """Test that model-backed settings expose their model filters."""
+        for key, model_name, filters in [
+            (
+                'INVENTREE_DEFAULT_INTERNAL_COMPANY',
+                'company.company',
+                {'is_internal': True},
+            ),
+            (
+                'PURCHASEORDER_DEFAULT_RECEIVE_LOCATION',
+                'stock.stocklocation',
+                {'structural': False},
+            ),
+        ]:
+            url = reverse('api-global-setting-detail', kwargs={'key': key})
+            response = self.get(url, expected_code=200)
+
+            self.assertEqual(response.data['model_name'], model_name)
+            self.assertEqual(response.data['model_filters'], filters)
+
+        # Settings without a model have no filters
+        url = reverse('api-global-setting-detail', kwargs={'key': 'INVENTREE_INSTANCE'})
+        self.assertIsNone(self.get(url, expected_code=200).data['model_filters'])
+
     def test_api_detail(self):
         """Test that we can access the detail view for a setting based on the <key>."""
         # These keys are invalid, and should return 404

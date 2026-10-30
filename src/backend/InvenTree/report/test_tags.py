@@ -326,6 +326,17 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         link = report_tags.internal_link(None, None)
         self.assertEqual(link, 'None')
 
+        # Unsafe text content is escaped
+        payload = '"><script>alert(1)</script>'
+        escaped = '&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;'
+
+        link = report_tags.internal_link(obj.get_absolute_url(), payload)
+        self.assertIn(f'>{escaped}</a>', link)
+        self.assertNotIn('<script>', link)
+
+        # Unsafe text is also escaped when no link can be constructed
+        self.assertEqual(report_tags.internal_link(None, payload), escaped)
+
     def test_logo_image(self):
         """Unit tests for the 'logo_image' tag."""
         # In debug mode, a web-accessible URL to the logo is returned
@@ -964,6 +975,24 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             report_tags.render_html_text('hello world', heading='h1'),
             '<h1>hello world</h1>',
         )
+
+        # Unsafe HTML content is sanitized by default
+        payload = (
+            '<b>hello</b><script>alert(1)</script><img src="x" onerror="alert(1)">'
+        )
+
+        self.assertEqual(
+            report_tags.render_html_text(payload, bold=True),
+            '<strong><b>hello</b><img src="x"></strong>',
+        )
+
+        # Encoded HTML entities must not be decoded into live tags
+        self.assertEqual(
+            report_tags.render_html_text('&lt;script&gt;'), '&lt;script&gt;'
+        )
+
+        # Sanitization can be explicitly disabled
+        self.assertEqual(report_tags.render_html_text(payload, sanitize=False), payload)
 
     def test_format_date(self):
         """Test the format_date template tag."""

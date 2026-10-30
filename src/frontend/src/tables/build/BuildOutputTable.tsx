@@ -73,7 +73,7 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
-import BuildLineTable from './BuildLineTable';
+import BuildLineTable, { bomUnitQuantity } from './BuildLineTable';
 
 type TestResultOverview = {
   name: string;
@@ -140,6 +140,7 @@ function OutputAllocationDrawer({
       <Divider />
       <Paper p='md'>
         <BuildLineTable
+          key={output?.pk}
           build={build}
           output={output}
           params={{
@@ -308,10 +309,9 @@ export default function BuildOutputTable({
               allocated += allocation.quantity;
             });
 
-          if (
-            item.bom_item_detail?.quantity &&
-            allocated >= item.bom_item_detail.quantity
-          ) {
+          const required = bomUnitQuantity(item.bom_item_detail);
+
+          if (required && allocated >= required) {
             fullyAllocatedCount += 1;
           }
         });

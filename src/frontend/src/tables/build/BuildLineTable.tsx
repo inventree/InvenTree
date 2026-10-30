@@ -11,13 +11,14 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { Alert, Center, Group, Paper, Text } from '@mantine/core';
+import { Alert, Center, Group, Paper, Text, Tooltip } from '@mantine/core';
 import {
   IconArrowRight,
   IconCircleCheck,
   IconCircleDashedCheck,
   IconCircleMinus,
   IconCircleX,
+  IconInfoCircle,
   IconShoppingCart,
   IconTool,
   IconWand
@@ -69,6 +70,40 @@ function isLineConsumable(record: any): boolean {
 }
 
 /**
+ * Return the quantity of a BOM item required for a single assembly,
+ * accounting for the piece count (total material = quantity x piece_count).
+ */
+export function bomUnitQuantity(bom_item: any): number {
+  return Number(bom_item?.quantity ?? 0) * Number(bom_item?.piece_count ?? 1);
+}
+
+function allocationPartDiffers(allocation: any, bomPartId: number): boolean {
+  const allocatedPartId = allocation.part_detail?.pk;
+
+  return (
+    allocatedPartId != null &&
+    bomPartId != null &&
+    allocatedPartId !== bomPartId
+  );
+}
+
+function AllocatedPartDiffersIcon() {
+  const label = t`Allocated part differs from the BOM part`;
+
+  return (
+    <Tooltip label={label}>
+      <IconInfoCircle
+        role='img'
+        aria-label={label}
+        size={16}
+        color='blue'
+        style={{ flexShrink: 0 }}
+      />
+    </Tooltip>
+  );
+}
+
+/**
  * Render a sub-table of allocated stock against a particular build line.
  *
  * - Renders a simplified table of stock allocated against the build line
@@ -88,11 +123,28 @@ export function BuildLineSubTable({
   const user = useUserState();
   const navigate = useNavigate();
   const table = useTable('buildline-subtable');
+  const allocations = lineItem.filteredAllocations ?? lineItem.allocations;
+  const showFullNames = allocations.some((allocation: any) =>
+    allocationPartDiffers(allocation, lineItem.part)
+  );
 
   const tableColumns: any[] = useMemo(() => {
     return [
       PartColumn({
-        part: 'part_detail'
+        part: 'part_detail',
+        render: (record: any) => {
+          const partDiffers = allocationPartDiffers(record, lineItem.part);
+
+          return (
+            <Group wrap='nowrap'>
+              <RenderPartColumn
+                part={record.part_detail}
+                full_name={showFullNames}
+              />
+              {partDiffers && <AllocatedPartDiffersIcon />}
+            </Group>
+          );
+        }
       }),
       {
         accessor: 'quantity',
@@ -114,7 +166,7 @@ export function BuildLineSubTable({
         accessor: 'location_detail'
       })
     ];
-  }, []);
+  }, [lineItem.part, showFullNames]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -151,7 +203,7 @@ export function BuildLineSubTable({
       <InvenTreeTable
         tableState={table}
         columns={tableColumns}
-        tableData={lineItem.filteredAllocations ?? lineItem.allocations}
+        tableData={allocations}
         props={{
           minHeight: 200,
           enableSearch: false,
@@ -347,6 +399,10 @@ export default function BuildLineTable({
                 expanded={table.isRowExpanded(record.pk)}
               />
               <RenderPartColumn part={record.part_detail} />
+              {(record.filteredAllocations ?? record.allocations).some(
+                (allocation: any) =>
+                  allocationPartDiffers(allocation, record.part)
+              ) && <AllocatedPartDiffersIcon />}
             </Group>
           );
         }
@@ -417,7 +473,9 @@ export default function BuildLineTable({
         render: (record: any) => {
           return (
             <Group justify='space-between' wrap='nowrap'>
-              <Text>{record.bom_item_detail?.quantity}</Text>
+              <Text>
+                {formatDecimal(bomUnitQuantity(record.bom_item_detail))}
+              </Text>
               {record?.part_detail?.units && (
                 <Text size='xs'>[{record.part_detail.units}]</Text>
               )}
@@ -533,7 +591,7 @@ export default function BuildLineTable({
 
           if (output?.pk) {
             // If an output is specified, we show the allocated quantity for that output
-            required = record.bom_item_detail?.quantity;
+            required = bomUnitQuantity(record.bom_item_detail);
           }
 
           if (allocated <= 0 && required <= 0) {

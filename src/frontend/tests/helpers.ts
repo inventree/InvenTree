@@ -141,6 +141,18 @@ export const activateCalendarView = async (page: Page) => {
   await page.waitForLoadState('networkidle');
 };
 
+export const tableSearch = async (page: Page, query: string) => {
+  await page.getByLabel('table-search-input').fill(query);
+  await page.waitForTimeout(300);
+  await page.waitForLoadState('networkidle');
+};
+
+export const clearTableSearch = async (page: Page) => {
+  await page.getByLabel('table-search-input').clear();
+  await page.waitForTimeout(300);
+  await page.waitForLoadState('networkidle');
+};
+
 /**
  * Perform a 'global search' on the provided page, for the provided query text
  */
@@ -229,4 +241,23 @@ export const openDetailAction = async (
       name: `action-menu-${menuName}-actions-${actionName}`
     })
     .click();
+};
+
+export const waitForDataOutput = async (
+  page: Page,
+  trigger: () => Promise<unknown>
+) => {
+  const closePopup = async (popup: Page) => {
+    await popup.close();
+    await page.bringToFront();
+  };
+  page.on('popup', closePopup);
+
+  try {
+    await page.bringToFront();
+    await trigger();
+    await page.getByText('Process completed successfully').first().waitFor();
+  } finally {
+    page.off('popup', closePopup);
+  }
 };

@@ -30,6 +30,9 @@ import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
@@ -198,6 +201,8 @@ export default function CategoryDetail() {
     defaultValue: 'table'
   });
 
+  const showHistory = useShowHistoryPanel();
+
   const panels: PanelType[] = useMemo(
     () => [
       {
@@ -269,9 +274,15 @@ export default function CategoryDetail() {
         icon: <IconListCheck />,
         hidden: !id || !category.pk,
         content: <PartCategoryTemplateTable categoryId={category?.pk} />
-      }
+      },
+      HistoryPanel({
+        model_type: ModelType.partcategory,
+        model_id: category?.pk,
+        // Not shown for the top-level (root) category view
+        visible: showHistory && !!id && !!category?.pk
+      })
     ],
-    [category, id, partsView, instanceInfo]
+    [category, id, partsView, instanceInfo, showHistory]
   );
 
   const breadcrumbs = useMemo(
@@ -318,30 +329,34 @@ export default function CategoryDetail() {
               setTreeOpen(false);
             }}
             selectedId={category?.pk}
-          />
-          <PageDetail
-            title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
-            subtitle={category?.description}
-            icon={category?.icon && <ApiIcon name={category?.icon} />}
-            breadcrumbs={breadcrumbs}
-            breadcrumbAction={() => {
-              setTreeOpen(true);
-            }}
-            actions={categoryActions}
-            editAction={editCategory.open}
-            editEnabled={
-              !!category?.pk && user.hasChangePermission(ModelType.partcategory)
-            }
-          />
-          <PanelGroup
-            pageKey='partcategory'
-            panels={panels}
-            model={ModelType.partcategory}
-            instance={category}
-            reloadInstance={refreshInstance}
-            id={category.pk ?? null}
-            defaultPanel={defaultPanel}
-          />
+          >
+            <Stack gap='xs'>
+              <PageDetail
+                title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
+                subtitle={category?.description}
+                icon={category?.icon && <ApiIcon name={category?.icon} />}
+                breadcrumbs={breadcrumbs}
+                breadcrumbAction={() => {
+                  setTreeOpen(true);
+                }}
+                actions={categoryActions}
+                editAction={editCategory.open}
+                editEnabled={
+                  !!category?.pk &&
+                  user.hasChangePermission(ModelType.partcategory)
+                }
+              />
+              <PanelGroup
+                pageKey='partcategory'
+                panels={panels}
+                model={ModelType.partcategory}
+                instance={category}
+                reloadInstance={refreshInstance}
+                id={category.pk ?? null}
+                defaultPanel={defaultPanel}
+              />
+            </Stack>
+          </NavigationTree>
         </Stack>
       </InstanceDetail>
     </>

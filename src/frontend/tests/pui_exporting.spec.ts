@@ -1,6 +1,6 @@
 import { test } from './baseFixtures';
 import { stevenuser } from './defaults';
-import { globalSearch, loadTab, navigate } from './helpers';
+import { globalSearch, loadTab, navigate, waitForDataOutput } from './helpers';
 import { doCachedLogin } from './login';
 
 // Helper function to open the export data dialog
@@ -30,8 +30,9 @@ test('Exporting - Orders', async ({ browser }) => {
   await page.getByRole('option', { name: 'InvenTree Exporter' }).click();
 
   // // Export the data
-  await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Process completed successfully').waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Export', exact: true }).click()
+  );
 
   // Download list of purchase order items
   await page.getByRole('cell', { name: 'PO0014' }).click();
@@ -48,14 +49,16 @@ test('Exporting - Orders', async ({ browser }) => {
 
   await loadTab(page, 'Line Items');
   await openExportDialog(page);
-  await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Process completed successfully').waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Export', exact: true }).click()
+  );
 
   // Download a list of build orders
   await navigate(page, 'manufacturing/index/buildorders/');
   await openExportDialog(page);
-  await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Process completed successfully').waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Export', exact: true }).click()
+  );
 
   // Finally, navigate to the admin center and ensure the export data is available
   await navigate(page, 'settings/admin/export/');
@@ -118,8 +121,9 @@ test('Exporting - BOM', async ({ browser }) => {
     .nth(1)
     .click();
 
-  await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Process completed successfully').waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Export', exact: true }).click()
+  );
 
   // Finally, navigate to the admin center and ensure the export data is available
   await navigate(page, 'settings/admin/export/');

@@ -42,7 +42,7 @@ detect_python
 
 # Check if we are updating and need to alert
 echo "# POI08| Checking if update checks are needed"
-if [ -z "$2" ]; then
+if [[ -z "$2" ]]; then
   echo "# POI08| Normal install - no need for checks"
 else
   update_checks $2
@@ -56,7 +56,7 @@ create_admin
 stop_inventree
 update_or_install
 # Write config file
-if [ "${SETUP_CONF_LOADED}" = "true" ]; then
+if [[ "${SETUP_CONF_LOADED}" = "true" ]]; then
   set_env
 fi
 set_site

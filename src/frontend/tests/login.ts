@@ -1,4 +1,7 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import type { Browser, Page } from '@playwright/test';
+import { dismissFtu } from './api';
 import {
   type UserType,
   allaccessuser,
@@ -6,9 +9,6 @@ import {
   logoutUrl,
   webUrl
 } from './defaults';
-
-import fs from 'node:fs';
-import path from 'node:path';
 import { navigate } from './helpers.js';
 
 interface LoginOptions {
@@ -28,6 +28,7 @@ export const doLogin = async (page: Page, options?: LoginOptions) => {
     options?.password ?? options?.user?.testcred ?? allaccessuser.testcred;
 
   console.log('- Logging in with username:', username);
+  await dismissFtu({ username, password });
 
   await navigate(page, loginUrl, {
     baseUrl: options?.baseUrl,
@@ -46,7 +47,7 @@ export const doLogin = async (page: Page, options?: LoginOptions) => {
   await page.waitForTimeout(100);
   await page.waitForLoadState('networkidle');
 
-  await page.getByRole('link', { name: 'Dashboard' }).waitFor();
+  await page.getByRole('tab', { name: 'Dashboard' }).waitFor();
   await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
   await page.waitForURL(/\/web(\/home)?/);
   await page.waitForLoadState('networkidle');
@@ -92,7 +93,7 @@ export const doCachedLogin = async (
       waitUntil: 'networkidle'
     });
 
-    await page.getByRole('link', { name: 'Dashboard' }).waitFor();
+    await page.getByRole('tab', { name: 'Dashboard' }).waitFor();
     await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
     await page.waitForURL(/\/web(\/home)?/);
     await page.waitForLoadState('networkidle');

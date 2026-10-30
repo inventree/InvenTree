@@ -124,6 +124,14 @@ export function SalesOrderShipmentDetailsPanel({
         ) : (
           <Text size='sm' c='red'>{t`Not specified`}</Text>
         )
+    },
+    {
+      type: 'text',
+      name: 'contact_detail.name',
+      label: t`Contact`,
+      icon: 'user',
+      copy: true,
+      hidden: !instance?.contact_detail?.name
     }
   ];
 

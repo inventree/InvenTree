@@ -16,6 +16,7 @@ from flags.urls import flagged_path
 from oauth2_provider import urls as oauth2_urls
 from sesame.views import LoginView
 
+import audit.api
 import build.api
 import common.api
 import company.api
@@ -25,6 +26,7 @@ import machine.api
 import order.api
 import part.api
 import plugin.api
+import pricing.api
 import report.api
 import scim.api
 import stock.api
@@ -54,6 +56,7 @@ admin.site.site_header = get_setting(
 apipatterns = [
     # Global search
     path('admin/', include(common.api.admin_api_urls)),
+    path('audit/', include(audit.api.audit_api_urls)),
     path('bom/', include(part.api.bom_api_urls)),
     path('build/', include(build.api.build_api_urls)),
     path('company/', include(company.api.company_api_urls)),
@@ -62,6 +65,7 @@ apipatterns = [
     path('machine/', include(machine.api.machine_api_urls)),
     path('order/', include(order.api.order_api_urls)),
     path('part/', include(part.api.part_api_urls)),
+    path('pricing/', include(pricing.api.pricing_api_urls)),
     path('report/', include(report.api.report_api_urls)),
     path('search/', APISearchView.as_view(), name='api-search'),
     path('settings/', include(common.api.settings_api_urls)),

@@ -122,10 +122,12 @@ It is possible to track parts using physical quantity values, such as *metres* o
 
 ### Supplier Part Units
 
-By default, units of measure for [supplier parts](../purchasing/supplier.md#supplier-parts) are specified in the same unit as their base part. However, supplier part units can be changed to any unit *which is compatible with the base unit*.
+A [supplier part](../purchasing/supplier.md#supplier-parts) may be sold in a different quantity or unit than is used to track the base part - for example, wire which is tracked in metres might be purchased in 100 foot reels. This is handled by the [pack quantity](../purchasing/supplier.md#supplier-part-pack-size) of the supplier part, which can be specified in any unit *which is compatible with the base unit*. The pack quantity is automatically converted into the units of the base part.
 
 !!! info "Example: Supplier Part Units"
-    If the base part has a unit of `metres` then valid units for any supplier parts would include `feet`, `cm`, `inches` (etc)
+    If the base part has a unit of `metres`, then valid pack quantities for any supplier parts would include `100 ft`, `50 cm`, `12 inches` (etc). A pack quantity of `100 ft` is equivalent to 30.48 metres.
+
+If the pack quantity is specified without units, it is assumed to be in the units of the base part.
 
 If an incompatible unit type is specified, an error will be displayed:
 

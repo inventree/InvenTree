@@ -56,6 +56,14 @@ A purchase order is linked to a specific supplier, select one in the list of exi
 
 Fill out the rest of the form with the purchase order information then click on <span class="badge inventree confirm">Submit</span>
 
+### Receiving Company and Delivery Address
+
+The *receiving company* field specifies which [internal company](../concepts/company.md#internal-companies) is receiving the items in this order. Only companies marked as internal can be selected.
+
+When a new purchase order is created, the receiving company defaults to the [default internal company](../concepts/company.md#default-internal-company), if one is configured. If no default is configured, and exactly one internal company exists, that company is selected automatically.
+
+The *delivery address* field specifies where the items should be delivered. The selected address must belong to the receiving company.
+
 ### Purchase Order Reference
 
 Each Purchase Order is uniquely identified by its *Reference* field. Read more about [reference fields](../settings/reference.md).

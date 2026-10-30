@@ -553,7 +553,11 @@ def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> Quer
                 Case(
                     When(Q(quantity=0), then=Value(0)),
                     default=(F('total_stock') - F('setup_quantity'))
-                    / (F('quantity') * (1.0 + F('attrition') / 100.0)),
+                    / (
+                        F('quantity')
+                        * F('piece_count')
+                        * (1.0 + F('attrition') / 100.0)
+                    ),
                     output_field=FloatField(),
                 ),
                 output_field=FloatField(),

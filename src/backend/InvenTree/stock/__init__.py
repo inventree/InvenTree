@@ -4,5 +4,4 @@ It includes models for:
 
 - StockLocation
 - StockItem
-- StockItemTracking
 """

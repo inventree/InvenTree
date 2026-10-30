@@ -4,9 +4,7 @@ import datetime
 import json
 import logging
 import os
-import random
 import shutil
-import string
 import sys
 from pathlib import Path
 from typing import Any, Optional
@@ -58,6 +56,41 @@ def to_dict(value):
             error,
         )
     return {}
+
+
+def ensure_middleware(
+    middleware: list[str], required: str, after: Optional[str] = None
+) -> list[str]:
+    """Ensure that a required middleware class is present in the provided MIDDLEWARE list.
+
+    The MIDDLEWARE setting can be overridden via the configuration file, which may omit
+    middleware which is required for correct operation. Any missing middleware is added
+    (and a warning logged), rather than preventing the server from starting.
+
+    Arguments:
+        middleware: The configured list of middleware classes
+        required: The middleware class which must be present
+        after: Insert after this middleware class (if present), otherwise append
+
+    Returns:
+        A list of middleware classes, including the required middleware
+    """
+    middleware = list(middleware)
+
+    if required in middleware:
+        return middleware
+
+    logger.warning(
+        'INVE-W17: %s missing from MIDDLEWARE configuration - adding automatically',
+        required,
+    )
+
+    if after and after in middleware:
+        middleware.insert(middleware.index(after) + 1, required)
+    else:
+        middleware.append(required)
+
+    return middleware
 
 
 def is_true(x):
@@ -199,7 +232,7 @@ def load_config_data(set_cache: bool = False) -> map | None:
         try:
             data = yaml.safe_load(cfg)
         except yaml.parser.ParserError as error:
-            logger.error(
+            logger.exception(
                 "INVE-E13: Error reading InvenTree configuration file '%s': %s",
                 cfg_file,
                 error,
@@ -448,9 +481,10 @@ def get_secret_key(return_path: bool = False) -> str | Path:
         logger.info("Generating random key file at '%s'", secret_key_file)
         ensure_dir(secret_key_file.parent)
 
-        # Create a random key file
-        options = string.digits + string.ascii_letters + string.punctuation
-        key = ''.join([random.choice(options) for _idx in range(100)])
+        # Create a random key file (using a cryptographically secure generator)
+        from django.core.management.utils import get_random_secret_key
+
+        key = get_random_secret_key()
         secret_key_file.write_text(key)
 
     if return_path:
@@ -545,6 +579,22 @@ def get_custom_file(
         value = False
 
     return value
+
+
+def get_social_backends(defaults: list[str], backends: list[str]) -> list[str]:
+    """Return a de-duplicated list of fully-qualified allauth social provider apps.
+
+    Backends may be specified either as the short provider name (e.g. 'openid_connect')
+    or the full module path (e.g. 'allauth.socialaccount.providers.openid_connect').
+    Names are normalized before de-duplication, so both forms map to the same app.
+    The returned list is sorted alphabetically.
+    """
+    prefix = 'allauth.socialaccount.providers.'
+
+    return sorted({
+        app if app.startswith(prefix) else prefix + app
+        for app in [*defaults, *backends]
+    })
 
 
 def get_frontend_settings(debug=True):

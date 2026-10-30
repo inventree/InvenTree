@@ -1,9 +1,22 @@
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { defineConfig, devices } from '@playwright/test';
 
 import { mockOidcPort, mockSsoUser } from './tests/defaults';
 
 // Detect if running in CI
 const IS_CI = !!process.env.CI;
+
+/* Historical test durations used to balance CI shards by runtime (not test count).
+ * Refresh from flakiness.io (run from src/frontend):
+ *   CI=1 npx flakiness-playwright-timings fetch -o playwright/timings.json
+ */
+const TIMINGS_FILE: string = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  'playwright',
+  'timings.json'
+);
 
 /* We optionally spin-up services based on the testing mode:
  *
@@ -49,7 +62,13 @@ export default defineConfig({
         ['html', { open: 'never' }],
         ['blob'],
         ['github'],
-        ['@flakiness/playwright', { flakinessProject: 'InvenTree/InvenTree' }]
+        [
+          '@flakiness/playwright',
+          {
+            flakinessProject: 'InvenTree/InvenTree',
+            shardBalancing: { timingsFile: TIMINGS_FILE }
+          }
+        ]
       ]
     : 'list',
 

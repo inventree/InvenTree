@@ -32,7 +32,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 
 /*
  * Render a tooltip for the chart, with correct date information
@@ -294,14 +293,6 @@ export default function PartStockHistoryDetail({
 }: Readonly<{ partId: number }>) {
   return (
     <Accordion multiple defaultValue={['stocktake']}>
-      <Accordion.Item value='tracking'>
-        <Accordion.Control>
-          <StylishText size='lg'>{t`Stock Tracking`}</StylishText>
-        </Accordion.Control>
-        <Accordion.Panel>
-          <StockTrackingTable partId={partId} />
-        </Accordion.Panel>
-      </Accordion.Item>
       <Accordion.Item value='stocktake'>
         <Accordion.Control>
           <StylishText size='lg'>{t`Stocktake Entries`}</StylishText>

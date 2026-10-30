@@ -5,6 +5,7 @@ import io
 import json
 import threading
 from datetime import date, datetime, timedelta
+from decimal import Decimal
 from typing import Optional
 from unittest import mock
 
@@ -23,8 +24,8 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from company.models import Company, SupplierPart, SupplierPriceBreak
-from InvenTree.unit_test import InvenTreeAPITestCase
+from company.models import Address, Company, Contact, SupplierPart, SupplierPriceBreak
+from InvenTree.unit_test import InvenTreeAPITestCase, stock_history
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
 from order.serializers import TransferOrderSerialAllocationSerializer
@@ -113,6 +114,17 @@ class PurchaseOrderTest(OrderTest):
             for k, v in spec.items():
                 self.assertIn(k, field_data)
                 self.assertEqual(field_data[k], v)
+
+        # Checks for the 'address' field
+        check_options(
+            post,
+            'address',
+            {
+                'type': 'related field',
+                'label': 'Supplier Address',
+                'help_text': 'Supplier address for this order',
+            },
+        )
 
         # Checks for the 'order_currency' field
         check_options(
@@ -994,6 +1006,39 @@ class PurchaseOrderTest(OrderTest):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_po_calendar_auth_password_colon(self):
+        """Test header authorization with a password containing a colon."""
+        password = 'pass:word:123'
+        self.user.set_password(password)
+        self.user.save()
+        self.client.logout()
+
+        base64_token = base64.b64encode(f'{self.username}:{password}'.encode()).decode(
+            'ascii'
+        )
+        response = self.client.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
+            format='json',
+            headers={'authorization': f'basic {base64_token}'},
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_po_calendar_auth_malformed(self):
+        """Test that malformed basic authorization headers return 401, not 500."""
+        self.client.logout()
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'})
+
+        for token in [
+            'not-base64!!',  # invalid base64
+            base64.b64encode(b'\xff\xfe\xfd').decode('ascii'),  # invalid utf-8
+            base64.b64encode(b'no-colon-here').decode('ascii'),  # no separator
+        ]:
+            response = self.client.get(
+                url, format='json', headers={'authorization': f'basic {token}'}
+            )
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response['WWW-Authenticate'], 'Basic realm="api"')
+
     def test_po_calendar_no_permission(self):
         """Test that an authenticated user without purchase_order view permission is denied."""
         self.clearRoles()
@@ -1094,6 +1139,269 @@ class PurchaseOrderTest(OrderTest):
         )
 
 
+class PurchaseOrderReceivingCompanyTest(OrderTest):
+    """Unit tests for the 'receiving_company' and 'delivery_address' fields of the PurchaseOrder API."""
+
+    LIST_URL = reverse('api-po-list')
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create internal companies and addresses for testing."""
+        super().setUpTestData()
+
+        cls.supplier = Company.objects.get(pk=1)
+
+        cls.alpha = Company.objects.create(name='Alpha Internal', is_internal=True)
+        cls.beta = Company.objects.create(name='Beta Internal', is_internal=True)
+
+        cls.alpha_address = Address.objects.create(company=cls.alpha, title='Alpha HQ')
+        cls.beta_address = Address.objects.create(company=cls.beta, title='Beta HQ')
+        cls.supplier_address = Address.objects.create(
+            company=cls.supplier, title='Supplier HQ'
+        )
+
+    def setUp(self):
+        """Ensure the default internal company setting is configured for each test."""
+        super().setUp()
+
+        self.assignRole('purchase_order.add')
+        self.assignRole('purchase_order.change')
+
+        # Unless otherwise specified, 'beta' is the default internal company
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', self.beta.pk)
+
+        self.reference_idx = 0
+
+    def tearDown(self):
+        """Reset the default internal company setting."""
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+        super().tearDown()
+
+    def order_data(self, **kwargs) -> dict:
+        """Construct data for creating a new PurchaseOrder via the API."""
+        self.reference_idx += 1
+
+        return {
+            'reference': f'PO-9999{self.reference_idx:04d}',
+            'supplier': self.supplier.pk,
+            'description': 'A test purchase order',
+            **kwargs,
+        }
+
+    def create_order(self, **kwargs) -> models.PurchaseOrder:
+        """Create a new PurchaseOrder (with the specified receiving company and address)."""
+        self.reference_idx += 1
+
+        return models.PurchaseOrder.objects.create(
+            reference=f'PO-8888{self.reference_idx:04d}',
+            supplier=self.supplier,
+            **kwargs,
+        )
+
+    def options_default(self):
+        """Return the default value for 'receiving_company' from an OPTIONS request."""
+        response = self.options(self.LIST_URL, expected_code=200)
+        field = response.data['actions']['POST']['receiving_company']
+
+        # Only internal companies can be selected
+        self.assertEqual(field['filters'], {'is_internal': True})
+
+        return field.get('default')
+
+    def test_options_default(self):
+        """The default internal company is presented as the default in an OPTIONS request."""
+        self.assertEqual(self.options_default(), self.beta.pk)
+
+        # Changing the setting changes the presented default
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', self.alpha.pk)
+        self.assertEqual(self.options_default(), self.alpha.pk)
+
+    def test_options_default_single_company(self):
+        """A single internal company is presented as the default, even without the setting."""
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+
+        # Multiple internal companies, and no setting - no default
+        self.assertIsNone(self.options_default())
+
+        # Only a single internal company - it is the default
+        self.beta.is_internal = False
+        self.beta.save()
+
+        self.assertEqual(self.options_default(), self.alpha.pk)
+
+        # No internal companies - no default
+        self.alpha.is_internal = False
+        self.alpha.save()
+
+        self.assertIsNone(self.options_default())
+
+    def test_create_default(self):
+        """The default internal company is used when no receiving company is specified."""
+        response = self.post(self.LIST_URL, self.order_data(), expected_code=201)
+        self.assertEqual(response.data['receiving_company'], self.beta.pk)
+
+        po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po.receiving_company, self.beta)
+
+        # Without a default internal company, the field is left blank
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+
+        response = self.post(self.LIST_URL, self.order_data(), expected_code=201)
+        self.assertIsNone(response.data['receiving_company'])
+
+    def test_create_explicit(self):
+        """A specified receiving company takes priority over the default."""
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(receiving_company=self.alpha.pk),
+            expected_code=201,
+        )
+        self.assertEqual(response.data['receiving_company'], self.alpha.pk)
+
+        po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po.receiving_company, self.alpha)
+
+        # An explicit null value is also respected
+        response = self.post(
+            self.LIST_URL, self.order_data(receiving_company=None), expected_code=201
+        )
+        self.assertIsNone(response.data['receiving_company'])
+
+    def test_create_non_internal(self):
+        """A non-internal company cannot be specified as the receiving company."""
+        self.assertFalse(self.supplier.is_internal)
+
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(receiving_company=self.supplier.pk),
+            expected_code=400,
+        )
+        self.assertIn('receiving_company', response.data)
+
+    def test_create_delivery_address(self):
+        """Regression test: the delivery address must match the receiving company on creation."""
+        # Matching address (with the default receiving company)
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(delivery_address=self.beta_address.pk),
+            expected_code=201,
+        )
+        self.assertEqual(response.data['receiving_company'], self.beta.pk)
+        self.assertEqual(response.data['delivery_address'], self.beta_address.pk)
+        self.assertEqual(
+            response.data['delivery_address_detail']['pk'], self.beta_address.pk
+        )
+
+        # Matching address (with an explicit receiving company)
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(
+                receiving_company=self.alpha.pk, delivery_address=self.alpha_address.pk
+            ),
+            expected_code=201,
+        )
+        self.assertEqual(response.data['delivery_address'], self.alpha_address.pk)
+
+        # Address belongs to a different internal company
+        n = models.PurchaseOrder.objects.count()
+
+        for company, address in [
+            (self.alpha, self.beta_address),
+            (self.beta, self.alpha_address),
+            (self.beta, self.supplier_address),
+        ]:
+            response = self.post(
+                self.LIST_URL,
+                self.order_data(
+                    receiving_company=company.pk, delivery_address=address.pk
+                ),
+                expected_code=400,
+            )
+            self.assertIn(
+                'Delivery address does not match selected receiving company',
+                str(response.data['delivery_address']),
+            )
+
+        # Address specified without a receiving company
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(
+                receiving_company=None, delivery_address=self.beta_address.pk
+            ),
+            expected_code=400,
+        )
+        self.assertIn(
+            'Receiving company must be specified when a delivery address is provided',
+            str(response.data['receiving_company']),
+        )
+
+        # No orders were created by the invalid requests
+        self.assertEqual(models.PurchaseOrder.objects.count(), n)
+
+    def test_update_delivery_address(self):
+        """Regression test: the delivery address must match the receiving company on update."""
+        po = self.create_order(receiving_company=self.alpha)
+        url = reverse('api-po-detail', kwargs={'pk': po.pk})
+
+        # Address belongs to a different company
+        for address in [self.beta_address, self.supplier_address]:
+            response = self.patch(
+                url, {'delivery_address': address.pk}, expected_code=400
+            )
+            self.assertIn(
+                'Delivery address does not match selected receiving company',
+                str(response.data['delivery_address']),
+            )
+
+        # Matching address
+        response = self.patch(
+            url, {'delivery_address': self.alpha_address.pk}, expected_code=200
+        )
+        self.assertEqual(response.data['delivery_address'], self.alpha_address.pk)
+
+        # Changing the receiving company without changing the address is rejected
+        response = self.patch(
+            url, {'receiving_company': self.beta.pk}, expected_code=400
+        )
+        self.assertIn(
+            'Delivery address does not match selected receiving company',
+            str(response.data['delivery_address']),
+        )
+
+        # Clearing the receiving company while an address is set is rejected
+        response = self.patch(url, {'receiving_company': None}, expected_code=400)
+        self.assertIn(
+            'Receiving company must be specified when a delivery address is provided',
+            str(response.data['receiving_company']),
+        )
+
+        # The order is unchanged by the rejected requests
+        po.refresh_from_db()
+        self.assertEqual(po.receiving_company, self.alpha)
+        self.assertEqual(po.delivery_address, self.alpha_address)
+
+        # Changing both the company and the address together is accepted
+        response = self.patch(
+            url,
+            {
+                'receiving_company': self.beta.pk,
+                'delivery_address': self.beta_address.pk,
+            },
+            expected_code=200,
+        )
+        self.assertEqual(response.data['receiving_company'], self.beta.pk)
+        self.assertEqual(response.data['delivery_address'], self.beta_address.pk)
+
+        # Clearing both the company and the address together is accepted
+        response = self.patch(
+            url,
+            {'receiving_company': None, 'delivery_address': None},
+            expected_code=200,
+        )
+        self.assertIsNone(response.data['receiving_company'])
+        self.assertIsNone(response.data['delivery_address'])
+
+
 class PurchaseOrderLineItemTest(OrderTest):
     """Unit tests for PurchaseOrderLineItems."""
 
@@ -1123,15 +1431,49 @@ class PurchaseOrderLineItemTest(OrderTest):
         url = reverse('api-po-line-list')
 
         # Deletion should fail without the correct role
-        self.delete(url, {'items': [1, 2]}, expected_code=403)
+        self.delete(url, {'items': [1, 3]}, expected_code=403)
 
         self.assignRole('purchase_order.delete')
 
         # Try to delete a set of line items via their IDs
-        self.delete(url, {'items': [1, 2]}, expected_code=200)
+        self.delete(url, {'items': [1, 3]}, expected_code=200)
 
         # We should have 2 less PurchaseOrderLineItems after deleting them
         self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
+
+    def test_po_line_delete_received(self):
+        """Line items against which stock has been received cannot be deleted."""
+        self.assignRole('purchase_order.delete')
+
+        n = models.PurchaseOrderLineItem.objects.count()
+
+        # Line item 2 is partially received (fixture data)
+        self.assertGreater(models.PurchaseOrderLineItem.objects.get(pk=2).received, 0)
+
+        # Single delete
+        response = self.delete(
+            reverse('api-po-line-detail', kwargs={'pk': 2}), expected_code=400
+        )
+        self.assertIn(
+            'Cannot delete line items which have received stock', str(response.data)
+        )
+
+        # Bulk delete - received line item is mixed in with unreceived line items
+        url = reverse('api-po-line-list')
+        self.delete(url, {'items': [1, 2, 3]}, expected_code=400)
+
+        # Bulk delete by filter
+        self.delete(url, {'filters': {'order': 1}}, expected_code=400)
+
+        # Nothing has been deleted
+        self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n)
+
+        # Line items without received stock can still be deleted
+        self.delete(url, {'items': [1, 3]}, expected_code=200)
+        self.delete(reverse('api-po-line-detail', kwargs={'pk': 23}), expected_code=204)
+
+        self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 3)
+        self.assertTrue(models.PurchaseOrderLineItem.objects.filter(pk=2).exists())
 
     def test_po_extra_line_bulk_delete(self):
         """Test that we can bulk delete multiple PurchaseOrderExtraLine items via the API."""
@@ -1605,6 +1947,48 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(item_1.batch, 'B-abc-123')
         self.assertEqual(item_2.batch, 'B-xyz-789')
 
+    def test_field_max_length(self):
+        """Test that overly long values are rejected with a validation error."""
+
+        def stock_field(name):
+            return StockItem._meta.get_field(name).max_length
+
+        limits = {
+            'batch_code': stock_field('batch'),
+            'packaging': stock_field('packaging'),
+            'barcode': stock_field('barcode_data'),
+            'note': StockItem.TRACKING_NOTES_MAX_LENGTH,
+        }
+
+        line_data = {'line_item': 1, 'quantity': 10}
+
+        for field, max_length in limits.items():
+            line_data[field] = 'x' * (max_length + 1)
+
+        data = {
+            'items': [line_data],
+            'location': 1,
+            'batch_code': 'x' * (limits['batch_code'] + 1),
+        }
+
+        n = StockItem.objects.count()
+
+        response = self.post(self.url, data, expected_code=400)
+
+        expected = 'Ensure this field has no more than {} characters'
+
+        self.assertIn(
+            expected.format(limits['batch_code']), str(response.data['batch_code'])
+        )
+
+        for field, max_length in limits.items():
+            self.assertIn(
+                expected.format(max_length), str(response.data['items'][0][field])
+            )
+
+        # No stock items should have been created
+        self.assertEqual(n, StockItem.objects.count())
+
     def test_top_level_batch_code(self):
         """Test the top-level 'batch_code' field.
 
@@ -1755,6 +2139,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         N_ITEMS = StockItem.objects.count()
 
         # Receive all items in a single request
+        # Includes a fixed overhead (independent of N_LINES) for recording audit entries
         response = self.post(
             url,
             {
@@ -1768,7 +2153,7 @@ class PurchaseOrderReceiveTest(OrderTest):
                 ],
                 'location': location.pk,
             },
-            max_query_count=104 + 3 * N_LINES,
+            max_query_count=124 + 3 * N_LINES,
         ).data
 
         # Check for expected response
@@ -1782,13 +2167,15 @@ class PurchaseOrderReceiveTest(OrderTest):
             self.assertEqual(item['status'], StockStatus.QUARANTINED)
 
             stock_item = StockItem.objects.get(pk=item['pk'])
-            # Check that the item has tracking entries
-            self.assertEqual(stock_item.tracking_info.count(), 1)
-            entry = stock_item.tracking_info.first()
-            self.assertEqual(entry.deltas['quantity'], stock_item.quantity)
-            self.assertEqual(entry.user, self.user)
+            # Check that the item has a single stock history entry (its creation)
+            self.assertEqual(stock_history(stock_item).count(), 1)
+            entry = stock_history(stock_item).first()
             self.assertEqual(
-                entry.tracking_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+                Decimal(entry.changes_dict['quantity'][1]), stock_item.quantity
+            )
+            self.assertEqual(entry.actor, self.user)
+            self.assertEqual(
+                entry.event_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
             )
 
         # Check that the order has been completed
@@ -1823,10 +2210,10 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         stock_item = StockItem.objects.get(pk=response[0]['pk'])
 
-        self.assertEqual(stock_item.tracking_info.count(), 1)
-        entry = stock_item.tracking_info.first()
+        self.assertEqual(stock_history(stock_item).count(), 1)
+        entry = stock_history(stock_item).first()
         self.assertEqual(
-            entry.tracking_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+            entry.event_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
         )
         self.assertEqual(entry.notes, 'Damaged box, 2 units short')
 
@@ -1855,9 +2242,85 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         for i in range(200, 203):
             item = StockItem.objects.get(serial_int=i)
-            self.assertEqual(item.tracking_info.count(), 1)
-            entry = item.tracking_info.first()
+            self.assertEqual(stock_history(item).count(), 1)
+            entry = stock_history(item).first()
+            self.assertEqual(
+                entry.event_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+            )
             self.assertEqual(entry.notes, 'Received via serialized batch')
+
+    def test_receive_serialized_status(self):
+        """Test that the selected status (including custom status values) is applied to received serialized items.
+
+        Regression test: the status was previously only applied to the (already created)
+        serialized items in memory, and was never saved to the database.
+        """
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 3,
+                        'serial_numbers': '300+',
+                        'status': StockStatus.DAMAGED.value,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        for i in range(300, 303):
+            item = StockItem.objects.get(serial_int=i)
+            self.assertEqual(item.status, StockStatus.DAMAGED.value)
+
+            # The status is recorded against the creation of the item
+            [entry] = stock_history(item)
+            self.assertEqual(
+                entry.changes_dict['status'], [None, StockStatus.DAMAGED.value]
+            )
+
+        # A custom status value is also applied (and recorded)
+        custom_status = InvenTreeCustomUserStateModel.objects.create(
+            key=1055,
+            name='Damaged (cosmetic)',
+            label='Damaged (cosmetic)',
+            color='warning',
+            logical_key=StockStatus.DAMAGED.value,
+            model=ContentType.objects.get_for_model(StockItem),
+            reference_status='StockStatus',
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 3,
+                        'serial_numbers': '400+',
+                        'status': custom_status.key,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        for i in range(400, 403):
+            item = StockItem.objects.get(serial_int=i)
+            self.assertEqual(item.status, StockStatus.DAMAGED.value)
+            self.assertEqual(item.status_custom_key, custom_status.key)
+            self.assertEqual(item.get_custom_status(), custom_status.key)
+
+            [entry] = stock_history(item)
+            self.assertEqual(
+                entry.changes_dict['status'], [None, StockStatus.DAMAGED.value]
+            )
+            self.assertEqual(
+                entry.changes_dict['status_custom_key'], [None, custom_status.key]
+            )
 
     def test_bulk_receive_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to receive 100 line items at once."""
@@ -1890,11 +2353,12 @@ class PurchaseOrderReceiveTest(OrderTest):
             'location': location.pk,
         }
 
+        # Includes a fixed overhead (independent of N_LINES) for recording audit entries
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
             response = self.post(
-                url, data, max_query_count=400, benchmark=True, format='json'
+                url, data, max_query_count=420, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -2687,15 +3151,13 @@ class SalesOrderLineItemTest(OrderTest):
         n_parts = Part.objects.filter(salable=True).count()
 
         # List by part
-        for part in Part.objects.filter(salable=True)[:3]:
+        for part in Part.objects.filter(salable=True).order_by('pk')[:3]:
             response = self.get(self.url, {'part': part.pk, 'limit': 10})
-
             self.assertEqual(response.data['count'], n_orders)
 
         # List by order
-        for order in models.SalesOrder.objects.all()[:3]:
+        for order in models.SalesOrder.objects.order_by('pk')[:3]:
             response = self.get(self.url, {'order': order.pk, 'limit': 10})
-
             self.assertEqual(response.data['count'], n_parts)
 
         # Filter by has_pricing status
@@ -3213,6 +3675,49 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertTrue(self.shipment.is_delivered())
         self.assertEqual(self.shipment.delivery_date, datetime(2023, 5, 15).date())
 
+    def test_shipment_contact(self):
+        """Test setting the 'contact' field for a shipment via the API."""
+        url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
+
+        customer = self.shipment.order.customer
+        other_company = Company.objects.exclude(pk=customer.pk).first()
+
+        contact = Contact.objects.create(company=customer, name='Shipment Contact')
+        other_contact = Contact.objects.create(
+            company=other_company, name='Other Contact'
+        )
+
+        # No contact set by default
+        response = self.get(url, expected_code=200)
+        self.assertIsNone(response.data['contact'])
+        self.assertIsNone(response.data['contact_detail'])
+
+        # A contact for a different company is rejected
+        response = self.patch(url, {'contact': other_contact.pk}, expected_code=400)
+        self.assertIn('Contact does not match the customer', str(response.data))
+
+        self.shipment.refresh_from_db()
+        self.assertIsNone(self.shipment.contact)
+
+        # A contact for the customer is accepted
+        response = self.patch(url, {'contact': contact.pk}, expected_code=200)
+        self.assertEqual(response.data['contact'], contact.pk)
+        self.assertEqual(response.data['contact_detail']['name'], contact.name)
+
+        self.shipment.refresh_from_db()
+        self.assertEqual(self.shipment.contact, contact)
+
+        # The contact can be cleared
+        response = self.patch(url, {'contact': None}, expected_code=200)
+        self.assertIsNone(response.data['contact'])
+
+        # Deleting the contact clears the reference
+        self.shipment.contact = contact
+        self.shipment.save()
+        contact.delete()
+        self.shipment.refresh_from_db()
+        self.assertIsNone(self.shipment.contact)
+
     def test_sales_order_shipment_list(self):
         """Test the SalesOrderShipment list API endpoint."""
         url = reverse('api-so-shipment-list')
@@ -3568,6 +4073,26 @@ class ReturnOrderTests(InvenTreeAPITestCase):
     ]
     roles = ['return_order.view']
 
+    def test_receive_note_max_length(self):
+        """Test that an overly long 'note' value is rejected with a validation error."""
+        self.assignRole('return_order.add')
+
+        rma = models.ReturnOrder.objects.first()
+        url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
+
+        max_length = StockItem.TRACKING_NOTES_MAX_LENGTH
+
+        response = self.post(
+            url,
+            {'items': [], 'location': 1, 'note': 'x' * (max_length + 1)},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            f'Ensure this field has no more than {max_length} characters',
+            str(response.data['note']),
+        )
+
     def test_options(self):
         """Test the OPTIONS endpoint."""
         self.assignRole('return_order.add')
@@ -3776,7 +4301,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # Get a reference to one of the stock items
         stock_item = rma.lines.first().item
 
-        n_tracking = stock_item.tracking_info.count()
+        n_tracking = stock_history(stock_item).count()
 
         # Receive items successfully
         data = receive(
@@ -3788,16 +4313,19 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             self.assertTrue(line.received)
             self.assertIsNotNone(line.received_date)
 
-        # A single tracking entry should have been added to the item
-        self.assertEqual(stock_item.tracking_info.count(), n_tracking + 1)
+        # A single audit entry should have been added to the item
+        self.assertEqual(stock_history(stock_item).count(), n_tracking + 1)
 
-        tracking_entry = stock_item.tracking_info.last()
-        deltas = tracking_entry.deltas
+        entry = stock_history(stock_item).last()
+        self.assertEqual(
+            entry.event_type, StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER
+        )
 
-        self.assertEqual(deltas['status'], StockStatus.QUARANTINED)
-        self.assertEqual(deltas['customer'], customer.pk)
-        self.assertEqual(deltas['location'], 1)
-        self.assertEqual(deltas['returnorder'], rma.pk)
+        # Field changes are recorded as such (and not duplicated in the deltas)
+        self.assertEqual(entry.changes_dict['status'][1], StockStatus.QUARANTINED)
+        self.assertEqual(entry.changes_dict['customer'], [customer.pk, None])
+        self.assertEqual(entry.changes_dict['location'][1], 1)
+        self.assertEqual(entry.additional_data['deltas']['returnorder']['pk'], rma.pk)
 
     def test_receive_untracked(self):
         """Test that we can receive untracked items against a ReturnOrder.

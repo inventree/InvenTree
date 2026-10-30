@@ -266,6 +266,7 @@ export function PartDetailsPanel({
       label: t`Saleable Part`
     },
     { type: 'boolean', name: 'virtual', label: t`Virtual Part` },
+    { type: 'boolean', name: 'consumable', label: t`Consumable Part` },
     { type: 'boolean', name: 'starred', label: t`Subscribed`, icon: 'bell' }
   ];
 

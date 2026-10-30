@@ -1,3 +1,6 @@
 # Ignore auth cache
 auth/
 *.json
+
+# Committed shard-balancing timings (see playwright.config.ts)
+!timings.json

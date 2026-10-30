@@ -6,7 +6,8 @@ exclude: |
         src/backend/InvenTree/locale/.*|
         src/frontend/src/locales/.* |
         .*/migrations/.* |
-        src/frontend/yarn.lock
+        src/frontend/yarn.lock |
+        src/frontend/playwright/timings.json
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks

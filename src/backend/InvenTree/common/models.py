@@ -151,7 +151,9 @@ class UpdatedUserMixin(models.Model):
     )
 
 
-class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
+class ProjectCode(
+    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """A ProjectCode is a unique identifier for a project."""
 
     IMPORT_ID_FIELDS = ['code']
@@ -205,7 +207,15 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class BaseInvenTreeSetting(models.Model):
+class SettingsManager(models.Manager):
+    """Ensure that the 'touched' field is deferred in all queries."""
+
+    def get_queryset(self):
+        """Defer the write-only 'touched' field."""
+        return super().get_queryset().defer('touched', 'updated_by', 'updated')
+
+
+class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
     """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     Attributes:
@@ -216,6 +226,8 @@ class BaseInvenTreeSetting(models.Model):
     SETTINGS: dict[str, SettingsKeyType] = {}
 
     CHECK_SETTING_KEY = False
+
+    objects = SettingsManager()
 
     extra_unique_fields: list[str] = []
 
@@ -236,7 +248,18 @@ class BaseInvenTreeSetting(models.Model):
         # Execute before_save action
         self._call_settings_function('before_save', args, kwargs)
 
-        super().save()
+        # Values are stored as strings - convert the (cleaned) value for the database write,
+        # so that the audit log compares like with like (e.g. 'True' vs True).
+        # The cleaned (native) value is restored afterwards, as callers may rely on it
+        value = self.value
+
+        if value is not None and not isinstance(value, str):
+            self.value = str(value)
+
+        try:
+            super().save()
+        finally:
+            self.value = value
 
         # Update this setting in the cache after it was saved so a pk exists
         if do_cache:
@@ -614,7 +637,6 @@ class BaseInvenTreeSetting(models.Model):
                 access_global_cache = False
 
         # At this point, we need to query the database
-
         filters = {
             'key__iexact': key,
             # Optionally filter by other keys
@@ -642,6 +664,9 @@ class BaseInvenTreeSetting(models.Model):
                     extra_fields[field] = kwargs[field]
 
             setting = cls(key=key, value=default_value, **extra_fields)
+
+            # Creating a setting with its default value is not a user change
+            setting.audit_skip = True
 
             try:
                 # Wrap this statement in "atomic", so it can be rolled back if it fails
@@ -804,6 +829,11 @@ class BaseInvenTreeSetting(models.Model):
 
     value = models.CharField(
         max_length=2000, blank=True, unique=False, help_text=_('Settings value')
+    )
+
+    touched = models.BooleanField(
+        default=False,
+        help_text=_('Indicates whether the setting has been modified by the user'),
     )
 
     @property
@@ -1244,12 +1274,43 @@ class BaseInvenTreeSetting(models.Model):
         return self.__class__.is_required(self.key, **self.get_filters_for_instance())
 
 
-class InvenTreeSetting(BaseInvenTreeSetting):
+class InvenTreeSetting(InvenTree.models.InvenTreeAuditMixin, BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     The class provides a way of retrieving the value for a particular key,
     even if that key does not exist.
     """
+
+    # Only the setting key and value are recorded in the audit log
+    # (e.g. 'updated_by' is redundant with the audit entry actor)
+    AUDIT_INCLUDE_FIELDS = ('key', 'value')
+
+    # Settings which are written automatically by the system (not by users)
+    AUDIT_IGNORE_KEYS = ('SERVER_RESTART_REQUIRED',)
+
+    def __str__(self):
+        """Return the setting key."""
+        return str(self.key)
+
+    def should_audit(self) -> bool:
+        """Do not record changes to settings which are written by the system.
+
+        - Internal settings (prefixed with '_') are written automatically,
+          e.g. by every scheduled task run
+        - Settings which are created automatically (with the default value) when first accessed
+        """
+        if getattr(self, 'audit_skip', False):
+            return False
+
+        return not (str(self.key).startswith('_') or self.key in self.AUDIT_IGNORE_KEYS)
+
+    def audit_always(self) -> bool:
+        """Changes to the audit log settings are always recorded (e.g. disabling the audit log)."""
+        return str(self.key).startswith('AUDIT_LOG_')
+
+    def is_audit_masked(self) -> bool:
+        """Protected setting values are never recorded."""
+        return self.protected
 
     from common.setting.system import SYSTEM_SETTINGS
 
@@ -1402,6 +1463,10 @@ class PriceBreak(MetaMixin):
         verbose_name=_('Price'),
         help_text=_('Unit price at specified quantity'),
     )
+
+    def __str__(self):
+        """Return a string representation of this price break (e.g. 'R_10K - $1.50 @ 10')."""
+        return f'{self.part} - {self.price} @ {InvenTree.helpers.decimal2string(self.quantity)}'
 
     def convert_to(self, currency_code: str, raise_error: bool = False):
         """Convert the unit-price at this price break to the specified currency code.
@@ -1801,7 +1866,7 @@ class NewsFeedEntry(models.Model):
     )
 
 
-class CustomUnit(models.Model):
+class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
     """Model for storing custom physical unit definitions.
 
     Model Attributes:
@@ -1817,6 +1882,10 @@ class CustomUnit(models.Model):
         """Class meta options."""
 
         verbose_name = _('Custom Unit')
+
+    def __str__(self):
+        """Return a string representation of this CustomUnit."""
+        return self.name
 
     def fmt_string(self):
         """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'."""
@@ -1942,6 +2011,7 @@ def rename_attachment(instance, filename: str):
 
 
 class Attachment(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeTagsMixin,
     InvenTree.models.InvenTreeModel,
@@ -1966,6 +2036,12 @@ class Attachment(
     """
 
     THUMBNAIL_SIZE = 256
+
+    # Derived values, updated automatically after upload (and by the thumbnail task)
+    AUDIT_EXCLUDE_FIELDS = ('thumbnail', 'is_image', 'file_size')
+
+    # Access to an attachment is determined by the object it is linked to
+    AUDIT_REQUIRE_PARENT_PERMISSION = True
 
     class Meta:
         """Metaclass options."""
@@ -2045,6 +2121,23 @@ class Attachment(
             InvenTree.tasks.offload_task(
                 common.tasks.rebuild_attachment, self.pk, group='attachments'
             )
+
+    def get_audit_parent_reference(self):
+        """Audit entries for an attachment are included in the history of the linked object.
+
+        The linked object is identified without being fetched, so that the reference
+        is still recorded when the attachment is deleted along with its object.
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        try:
+            model_class = common.validators.attachment_model_class_from_label(
+                self.model_type
+            )
+        except ValidationError:
+            return None
+
+        return ContentType.objects.get_for_model(model_class), str(self.model_id)
 
     def clean_svg(self, field):
         """Sanitize SVG file before saving."""
@@ -2618,7 +2711,9 @@ class SelectionListEntry(models.Model):
 
 
 class ParameterTemplate(
-    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+    InvenTree.models.InvenTreeAuditMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
 ):
     """A ParameterTemplate provides a template for defining parameter values against various models.
 
@@ -2839,7 +2934,10 @@ def post_save_parameter_template(sender, instance, created, **kwargs):
 
 
 class Parameter(
-    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+    InvenTree.models.InvenTreeAuditMixin,
+    UpdatedUserMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
 ):
     """Class which represents a parameter value assigned to a particular model instance.
 
@@ -2853,6 +2951,16 @@ class Parameter(
         updated: Date/time that this parameter was last updated
         updated_by: User who last updated this parameter
     """
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Derived from 'data'
+        'data_numeric',
+        # Redundant with the audit entry actor
+        'updated_by',
+    )
+
+    # Access to a parameter is determined by the object it is linked to
+    AUDIT_REQUIRE_PARENT_PERMISSION = True
 
     class Meta:
         """Meta options for Parameter model."""
@@ -2876,6 +2984,22 @@ class Parameter(
     def get_api_url() -> str:
         """Return the API URL associated with the Parameter model."""
         return reverse('api-parameter-list')
+
+    def __str__(self):
+        """Return a string representation of this Parameter (e.g. 'Length: 10 mm')."""
+        value = f'{self.template.name}: {self.data}'
+
+        if self.template.units:
+            value += f' {self.template.units}'
+
+        return value
+
+    def get_audit_parent_reference(self):
+        """Audit entries for a parameter are included in the history of the linked object."""
+        if self.model_type_id is None:
+            return None
+
+        return ContentType.objects.get_for_id(self.model_type_id), str(self.model_id)
 
     def save(self, *args, **kwargs):
         """Custom save method for Parameter model.

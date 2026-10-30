@@ -1,12 +1,16 @@
 """Low level tests for the InvenTree API."""
 
 import hashlib
+import hmac
 from base64 import b64encode
+from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest import mock
 from urllib.parse import parse_qs, urlencode, urlsplit
 
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.exceptions import AppRegistryNotReady
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -14,11 +18,14 @@ from django.urls import reverse
 from oauth2_provider.models import Application
 from rest_framework import status
 
+from common.models import InvenTreeSetting
+from common.settings import set_global_setting
 from InvenTree.api import read_license_file
 from InvenTree.api_version import INVENTREE_API_VERSION
 from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.exceptions import exception_handler
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from InvenTree.proof import calculate_proof
+from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, in_env_context
 from InvenTree.version import inventreeApiText, parse_version_text
 from users.models import ApiToken
 from users.ruleset import RULESET_NAMES
@@ -928,6 +935,65 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertIn('bom-exporter', keys)
         self.assertIn('inventree-ui-notification', keys)
         self.assertIn('inventreelabel', keys)
+
+    def test_info_view_link(self):
+        """Test the link proof in the 'info-view' endpoint."""
+        instance_id = 'c0ffee00-1234-4abc-8def-0123456789ab'
+        set_global_setting('INVENTREE_INSTANCE_ID', instance_id)
+        self.client.logout()
+        url = reverse('api-inventree-info')
+
+        prk = hmac.new(b'\x00' * 32, instance_id.encode(), hashlib.sha256).digest()
+        key = hmac.new(prk, b'inventree-link-v1\x01', hashlib.sha256).digest()
+        expected = hmac.new(key, b'2026-10abc_DEF-123', hashlib.sha256).hexdigest()
+        self.assertEqual(expected[:32], '301acdcf01baec22a4f2f5391a55d002')
+
+        # overwrite time
+        with mock.patch('InvenTree.proof.dt', wraps=datetime) as mock_dt:
+            mock_dt.now.return_value = datetime(2026, 10, 14, tzinfo=timezone.utc)
+            response = self.client.get(url, {'link_nonce': 'abc_DEF-123'})
+
+        data = response.json()
+        self.assertEqual(data['link'], expected[:32])
+        self.assertIsNone(data['id'])
+        self.assertNotIn(instance_id, response.content.decode())
+
+        self.assertNotIn('link', self.client.get(url).json())
+
+        set_global_setting('INVENTREE_LINK_PROOF', False)
+        response_data = self.client.get(url, {'link_nonce': 'abc'}).json()
+        self.assertIsNone(response_data['link'])
+
+    def test_link_proof(self):
+        """Test the link proof helper."""
+        set_global_setting('INVENTREE_INSTANCE_ID', 'abc')
+
+        # overwrite time
+        with mock.patch('InvenTree.proof.dt', wraps=datetime) as mock_dt:
+            mock_dt.now.return_value = datetime(2026, 10, 1, tzinfo=timezone.utc)
+            link = calculate_proof('nonce')
+            self.assertEqual(len(link), 32)
+            self.assertEqual(link, calculate_proof('nonce'))
+            self.assertNotEqual(link, calculate_proof('other'))
+            self.assertIsNotNone(calculate_proof('a' * 64))
+
+            # broken data scenarios
+            for nonce in [None, '', 'a' * 65, 'a.b', 'a b', 'abc\n', '\u00e4']:
+                self.assertIsNone(calculate_proof(nonce), nonce)
+
+            with in_env_context({'INVENTREE_LINK_PROOF': 'False'}):
+                self.assertIsNone(calculate_proof('nonce'))
+
+            mock_dt.now.return_value = datetime(2026, 11, 1, tzinfo=timezone.utc)
+            self.assertNotEqual(link, calculate_proof('nonce'))
+
+        # missing id is not created; proof is not provided
+        InvenTreeSetting.objects.filter(key='INVENTREE_INSTANCE_ID').delete()
+        cache.clear()
+        self.assertIsNone(calculate_proof('nonce'))
+        self.assertFalse(
+            InvenTreeSetting.objects.filter(key='INVENTREE_INSTANCE_ID').exists()
+        )
 
     def test_generic_metadata_lookup_field_injection(self):
         """The generic metadata endpoint must not accept arbitrary lookup expressions.

@@ -332,7 +332,7 @@ class ReferenceIndexingMixin(models.Model):
             # No existing items
             return 1
 
-        reference = latest.reference.strip
+        reference = latest.reference.strip()
 
         try:
             reference = InvenTree.format.extract_named_group(
@@ -532,6 +532,96 @@ class InvenTreePermissionCheckMixin:
         return user.has_perm(perm)
 
 
+class InvenTreeAuditMixin:
+    """Opt a model in to the audit log (field-level change history).
+
+    Any concrete model which inherits from this mixin is registered with django-auditlog
+    when the 'audit' app is loaded (see audit.registry).
+
+    Attributes:
+        AUDIT_INCLUDE_FIELDS: If specified, *only* these fields are recorded (e.g. user-editable fields of a cache model)
+        AUDIT_EXCLUDE_FIELDS: Fields which are never recorded (merged with a base set, see audit.registry)
+        AUDIT_MASK_FIELDS: Fields whose values are masked (the change is recorded, the value is not)
+        AUDIT_M2M_FIELDS: Many-to-many fields which are tracked
+        AUDIT_PARENT_FIELD: Name of the field which links to the "parent" object (e.g. 'order' for a line item)
+        AUDIT_VIEW_RESTRICTION: Restrict reading audit history to 'staff' or 'superuser' users (or None)
+        AUDIT_REQUIRE_PARENT_PERMISSION: Entries are only visible to users who can view the *parent* model
+            (for models whose access is determined by the linked object, e.g. attachments)
+        AUDIT_EVENT_TYPES: Enumeration of named event types which can be recorded against this model
+            (e.g. StockHistoryCode) - see audit.helpers.audit_event
+    """
+
+    AUDIT_INCLUDE_FIELDS: tuple[str, ...] = ()
+    AUDIT_EXCLUDE_FIELDS: tuple[str, ...] = ()
+    AUDIT_MASK_FIELDS: tuple[str, ...] = ()
+    AUDIT_M2M_FIELDS: tuple[str, ...] = ()
+    AUDIT_PARENT_FIELD: Optional[str] = None
+    AUDIT_VIEW_RESTRICTION: Optional[str] = None
+    AUDIT_REQUIRE_PARENT_PERMISSION: bool = False
+    AUDIT_EVENT_TYPES: Optional[type] = None
+
+    def get_audit_parent(self):
+        """Return the "parent" object for audit log entries against this instance.
+
+        Audit entries linked to a parent are included in the history of that parent
+        (e.g. changes to line items are shown against the order).
+        """
+        if self.AUDIT_PARENT_FIELD:
+            return getattr(self, self.AUDIT_PARENT_FIELD, None)
+
+        return None
+
+    def get_audit_parent_reference(self) -> Optional[tuple[Any, str]]:
+        """Return a (ContentType, pk) reference to the "parent" object (or None).
+
+        Override this (rather than get_audit_parent) where the parent can be identified
+        without fetching it from the database (e.g. generic model_type / model_id links).
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        # Resolve a foreign key parent from its ID, without fetching the related object
+        if self.AUDIT_PARENT_FIELD:
+            field = self._meta.get_field(self.AUDIT_PARENT_FIELD)
+
+            if field.many_to_one or field.one_to_one:
+                parent_id = getattr(self, field.attname)
+
+                if parent_id is None:
+                    return None
+
+                return ContentType.objects.get_for_model(field.related_model), str(
+                    parent_id
+                )
+
+        if parent := self.get_audit_parent():
+            return ContentType.objects.get_for_model(parent), str(parent.pk)
+
+        return None
+
+    def should_audit(self) -> bool:
+        """Return False to skip recording audit entries for this instance.
+
+        Used where only some rows of a model are of interest
+        (e.g. settings which are written automatically by the system).
+        """
+        return True
+
+    def audit_always(self) -> bool:
+        """Return True to record audit entries for this instance, even if the audit log is disabled.
+
+        Used for changes which must always be recorded (e.g. disabling the audit log itself).
+        """
+        return False
+
+    def is_audit_masked(self) -> bool:
+        """Return True if *all* values recorded against this instance must be masked.
+
+        Used where sensitivity depends on the row rather than the field
+        (e.g. a 'protected' setting value).
+        """
+        return False
+
+
 class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
     """Provides an abstracted class for managing parameters.
 
@@ -629,7 +719,9 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
             parameters.append(parameter)
 
         if len(parameters) > 0:
-            common.models.Parameter.objects.bulk_create(parameters, batch_size=250)
+            from audit.helpers import audited_bulk_create
+
+            audited_bulk_create(common.models.Parameter, parameters)
 
     def get_parameter(self, name: str):
         """Return a Parameter instance for the given parameter name.
@@ -1000,7 +1092,12 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         B) delete_children = True and delete_items = False
         C) delete_children = False and delete_items = True
         D) delete_children = False and delete_items = False
+
+        Note: re-parenting uses audited_update(), so that the change is recorded
+        for audited models (it falls back to a plain update() otherwise).
         """
+        from audit.helpers import audited_update
+
         child_nodes = self.get_descendants(include_self=False)
 
         # Case A: Delete all child items, and all child nodes.
@@ -1016,7 +1113,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         elif delete_children and not delete_items:
             if items := self.get_items(cascade=True):
                 parent = getattr(self, self.NODE_PARENT_KEY, None)
-                items.update(**{self.ITEM_PARENT_KEY: parent})
+                audited_update(items, **{self.ITEM_PARENT_KEY: parent})
             self.delete_nodes(child_nodes)
 
         # Case C: Delete all child items, but keep all child nodes
@@ -1025,7 +1122,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         elif not delete_children and delete_items:
             self.delete_items(cascade=False)
             parent = getattr(self, self.NODE_PARENT_KEY, None)
-            self.get_children().update(**{self.NODE_PARENT_KEY: parent})
+            audited_update(self.get_children(), **{self.NODE_PARENT_KEY: parent})
 
         # Case D: Keep all child items, and keep all child nodes
         # - Move all items directly associated with this node up one level
@@ -1033,8 +1130,8 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         elif not delete_children and not delete_items:
             parent = getattr(self, self.NODE_PARENT_KEY, None)
             if items := self.get_items(cascade=False):
-                items.update(**{self.ITEM_PARENT_KEY: parent})
-            self.get_children().update(**{self.NODE_PARENT_KEY: parent})
+                audited_update(items, **{self.ITEM_PARENT_KEY: parent})
+            audited_update(self.get_children(), **{self.NODE_PARENT_KEY: parent})
 
     def delete_nodes(self, nodes):
         """Delete  a set of nodes from the tree.

@@ -30,10 +30,12 @@ import report.helpers
 import report.validators
 from common.models import DataOutput, RenderChoices, UpdatedUserMixin
 from common.settings import get_global_setting
+from company.models import Company
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin import InvenTreePlugin, PluginMixinEnum
 from plugin.registry import registry
+from report.security import restricted_db_access
 
 try:
     from weasyprint import HTML
@@ -102,13 +104,19 @@ class TemplateUploadMixin:
     @property
     def template_name(self):
         """Return the filename of the template associated with this model class."""
-        template = getattr(self, self.TEMPLATE_FIELD).name
+        template_file = getattr(self, self.TEMPLATE_FIELD, None)
+        if not template_file or not template_file.name:
+            return ''
+
+        template = template_file.name
         template = template.replace('/', os.path.sep)
         template = template.replace('\\', os.path.sep)
 
-        template = settings.MEDIA_ROOT.joinpath(template)
+        local_path = settings.MEDIA_ROOT.joinpath(template)
+        if local_path.exists():
+            return str(local_path)
 
-        return str(template)
+        return template_file.name
 
     @property
     def extension(self):
@@ -152,6 +160,7 @@ class BaseContextExtension(TypedDict):
         template_name: Name of the report template
         template_revision: Revision of the report template
         user: User who is creating the report (if available)
+        internal_company: The default internal company (if defined) which represents this organization
         report_vars: Private dict for the {% get_var %} / {% set_var %} template tags
     """
 
@@ -163,6 +172,7 @@ class BaseContextExtension(TypedDict):
     template_name: str
     template_revision: int
     user: Optional[AbstractUser]
+    internal_company: Optional[Company]
     report_vars: dict
 
 
@@ -249,7 +259,73 @@ class ReportTemplateBase(
     def generate_filename(self, context, **kwargs) -> str:
         """Generate a filename for this report."""
         template_string = Template(self.filename_pattern)
-        return template_string.render(Context(context))
+
+        with restricted_db_access():
+            return template_string.render(Context(context))
+
+    def get_template_content(self) -> str:
+        """Load template file content directly from storage backend.
+
+        Supports cloud/remote storage (e.g. S3, SFTP) and resolves potential
+        storage prefix mismatches.
+        """
+        template_file = getattr(self, self.TEMPLATE_FIELD, None)
+        if not template_file or not template_file.name:
+            raise TemplateDoesNotExist(getattr(self, 'name', 'template'))
+
+        storage = getattr(template_file, 'storage', default_storage)
+        name = template_file.name
+
+        # Candidates to resolve storage path prefix mismatches
+        candidates = [name]
+        norm_name = name.replace('\\', '/').lstrip('/')
+        if norm_name not in candidates:
+            candidates.append(norm_name)
+
+        location = getattr(storage, 'location', '') or ''
+        location = str(location).replace('\\', '/').strip('/')
+        if location:
+            if norm_name.startswith(f'{location}/'):
+                stripped = norm_name[len(location) + 1 :]
+                if stripped not in candidates:
+                    candidates.append(stripped)
+            else:
+                prefixed = f'{location}/{norm_name}'
+                if prefixed not in candidates:
+                    candidates.append(prefixed)
+
+        if hasattr(self, 'SUBDIR') and self.SUBDIR:
+            subdir_prefix = f'report/{self.SUBDIR}/'
+            if norm_name.startswith(subdir_prefix):
+                short_name = norm_name[len('report/') :]
+                if short_name not in candidates:
+                    candidates.append(short_name)
+
+        file_obj = None
+        for candidate in candidates:
+            try:
+                if storage.exists(candidate):
+                    file_obj = storage.open(candidate, 'r')
+                    break
+            except Exception:
+                pass
+
+        if file_obj is None:
+            try:
+                file_obj = template_file.open('r')
+            except Exception as exc:
+                raise TemplateDoesNotExist(
+                    f"Template '{name}' not found in storage"
+                ) from exc
+
+        try:
+            content = file_obj.read()
+            if isinstance(content, bytes):
+                content = content.decode('utf-8')
+            return content
+        finally:
+            if hasattr(file_obj, 'close'):
+                file_obj.close()
 
     def render_as_string(
         self, instance: models.Model, context: Optional[dict] = None, **kwargs
@@ -266,7 +342,16 @@ class ReportTemplateBase(
         if context is None:
             context = self.get_context(instance, **kwargs)
 
-        return render_to_string(self.template_name, context)
+        with restricted_db_access():
+            try:
+                return render_to_string(self.template_name, context)
+            except TemplateDoesNotExist:
+                content = self.get_template_content()
+                from django.template import engines
+
+                engine = engines['django']
+                template = engine.from_string(content)
+                return template.render(context)
 
     def render(
         self, instance: models.Model, context: Optional[dict] = None, **kwargs
@@ -332,6 +417,13 @@ class ReportTemplateBase(
         """Return a filter dict which can be applied to the target model."""
         return report.validators.validate_filters(self.filters, model=self.get_model())
 
+    def get_internal_company(self) -> Optional[Company]:
+        """Return the default internal company, cached for the lifetime of this template instance."""
+        if not hasattr(self, '_internal_company'):
+            self._internal_company = Company.get_default_internal()
+
+        return self._internal_company
+
     def base_context(self, **kwargs) -> BaseContextExtension:
         """Return base context data (available to all templates)."""
         return {
@@ -343,6 +435,7 @@ class ReportTemplateBase(
             'template_name': self.name,
             'template_revision': self.revision,
             'user': kwargs.get('user'),
+            'internal_company': self.get_internal_company(),
             # A private, per-render dict for the {% get_var %} / {% set_var %} tags.
             # This is discarded once rendering of *this* instance completes,
             # and is never shared between instances, reports, or requests.

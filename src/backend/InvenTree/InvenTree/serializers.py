@@ -91,8 +91,17 @@ class FilterableSerializerMixin:
     optional_fields: set = None
     filter_on_query: bool = True
 
+    # Keyword argument used to pass the requesting user to nested serializers
+    PERMISSION_USER_KWARG = 'permission_user'
+
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer. This gathers and applies filters through kwargs."""
+        # The requesting user, as provided by a parent serializer (if this serializer is nested)
+        # Note: This is used *only* for permission checks against optional fields.
+        # A nested serializer does not receive the request itself,
+        # so that query parameters are only applied to the top-level serializer.
+        self.permission_user = kwargs.pop(self.PERMISSION_USER_KWARG, None)
+
         # Extract some useful context information for later use
         context = kwargs.get('context', {})
         self.request = context.get('request', None) or getattr(self, 'request', None)
@@ -237,7 +246,7 @@ class FilterableSerializerMixin:
         if model in (get_user_model(), Group, Owner, RuleSet):
             return included
 
-        user = getattr(self.request, 'user', None)
+        user = self.get_permission_user()
 
         if user is None:
             return included
@@ -319,12 +328,33 @@ class FilterableSerializerMixin:
 
         return field_names
 
+    def get_permission_user(self):
+        """Return the user against which optional field permissions are checked.
+
+        This is the user associated with the request (for a top-level serializer),
+        or the user provided by the parent serializer (for a nested serializer).
+        """
+        if user := getattr(self.request, 'user', None):
+            return user
+
+        return self.permission_user
+
     def build_optional_field(self, field_name: str):
         """Build an optional field, based on the provided field name."""
         field = getattr(self, field_name, None)
 
         if field and isinstance(field, OptionalField):
-            serializer_kwargs = {**field.serializer_kwargs} or {}
+            serializer_kwargs = {**(field.serializer_kwargs or {})}
+
+            # Pass the requesting user through to any nested filterable serializer,
+            # so that it can check permissions for its own optional fields
+            if isinstance(field.serializer_class, type) and issubclass(
+                field.serializer_class, FilterableSerializerMixin
+            ):
+                serializer_kwargs[self.PERMISSION_USER_KWARG] = (
+                    self.get_permission_user()
+                )
+
             return field.serializer_class, serializer_kwargs
 
     def build_relational_field(self, field_name, relation_info):
@@ -1202,7 +1232,7 @@ def apply_duplicate_copy_options(
     at each call site rather than a new copy-pasted `if duplicate.get(...): instance.copy_..._
     from(...)` block. Any duplicate flag whose target method doesn't follow the
     copy_<x>_from() naming convention (e.g. Part's copy_bom/copy_image/copy_tests, or
-    StockItem's copy_history/copy_tests) must still be handled separately by the caller.
+    StockItem's copy_tests) must still be handled separately by the caller.
 
     Arguments:
         instance: The newly created instance to copy data onto

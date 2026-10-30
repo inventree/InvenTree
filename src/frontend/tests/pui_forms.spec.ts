@@ -218,13 +218,7 @@ test('Forms - Keep form open option', async ({ browser }) => {
 test('Forms - DateTime Field', async ({ browser }) => {
   // The "started_datetime" / "finished_datetime" test-result fields are only
   // shown when the "TEST_STATION_DATA" global setting is enabled
-  const api = await createApi({});
-  const settingUrl = 'settings/global/TEST_STATION_DATA/';
-
-  const enableResponse = await api.patch(settingUrl, {
-    data: { value: 'true' }
-  });
-  expect(enableResponse.status()).toBe(200);
+  await setSettingState({ setting: 'TEST_STATION_DATA', value: true });
 
   const page = await doCachedLogin(browser, {
     user: stevenuser,
@@ -282,10 +276,7 @@ test('Forms - DateTime Field', async ({ browser }) => {
   await page.getByText('Test result updated').waitFor();
 
   // Restore the global setting to its default value
-  const disableResponse = await api.patch(settingUrl, {
-    data: { value: 'false' }
-  });
-  expect(disableResponse.status()).toBe(200);
+  await setSettingState({ setting: 'TEST_STATION_DATA', value: false });
 });
 
 // Test the "nested object" field type, via the "Initial Supplier" section
@@ -306,6 +297,9 @@ test('Forms - Nested Object Field', async ({ browser }) => {
   const partName = `Test Part ${new Date().getTime()}`;
   await page.getByLabel('text-field-name', { exact: true }).fill(partName);
 
+  await page.waitForTimeout(100);
+  await page.waitForLoadState('networkidle');
+
   // The "Initial Supplier" nested-object field should be visible and expanded by default
   await page.getByText('Supplier Information').waitFor();
 
@@ -314,7 +308,12 @@ test('Forms - Nested Object Field', async ({ browser }) => {
   );
   await expect(supplierField).toBeVisible();
   await supplierField.fill('Mouser');
-  await page.getByText('Mouser Electronics').first().click();
+  await page.waitForTimeout(100);
+  await page.waitForLoadState('networkidle');
+  await page
+    .getByRole('option', { name: /Mouser Electronics/ })
+    .first()
+    .click();
 
   const skuValue = `SKU-${new Date().getTime()}`;
   await page
@@ -367,6 +366,153 @@ test('Forms - Initial Stock Field', async ({ browser }) => {
 
   await deletePart(partName);
   await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+});
+
+test('Forms - Default Part Location', async ({ browser }) => {
+  // Create a new part and select a the default stock location for the part
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: true });
+
+  const partName = `Initial Stock Part ${Date.now()}`;
+  await deletePart(partName);
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+  await page.waitForURL('**/part/category/index/**');
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+
+  await page.getByLabel('tree-field-default_location').fill('production');
+  await page.getByText('Electronics production facility').click();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Created').waitFor();
+
+  // Check that the part's default location is selected when adding a stock item
+  await page
+    .getByLabel('panel-tabs-part')
+    .getByRole('tab', { name: 'Stock', exact: true })
+    .click();
+
+  await page.getByLabel('action-button-add-stock-item').click();
+
+  // The stock item location is rendered via a "tree field" (backed by a real input)
+  const locationField = () =>
+    page.getByRole('textbox', { name: 'tree-field-location' });
+  await expect(locationField()).toHaveValue('Electronics Lab');
+
+  await deletePart(partName);
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+});
+
+test('Forms - Default Category Location', async ({ browser }) => {
+  const suffix = Date.now();
+  const categoryName = `Default Location Category ${suffix}`;
+  const partName = `Category Default Location Part ${suffix}`;
+  const api = await createApi({});
+  let categoryId: number | undefined;
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+
+  try {
+    // Create a category with its own default stock location.
+    await loadTab(page, 'Part Categories');
+    await page.getByLabel('action-button-add-part-category').click();
+    await page
+      .getByLabel('text-field-name', { exact: true })
+      .fill(categoryName);
+    await page
+      .getByLabel('text-field-description', { exact: true })
+      .fill('Category default stock location test');
+    await page.getByLabel('tree-field-default_location').fill('production');
+    await page.getByText('Electronics production facility').click();
+
+    const categoryCreated = page.waitForResponse(
+      (response) =>
+        response.url().endsWith('/api/part/category/') &&
+        response.request().method() === 'POST'
+    );
+    await page.getByRole('button', { name: 'Submit' }).click();
+    const categoryResponse = await categoryCreated;
+    expect(categoryResponse.status()).toBe(201);
+    const category = await categoryResponse.json();
+    categoryId = category.pk;
+    await page.waitForURL(`**/part/category/${categoryId}/**`);
+
+    // Create a part where the default stock location is not set
+    // so it should inherits the category's on stock creation
+    await loadTab(page, 'Parts');
+    await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+    await page
+      .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+      .click();
+    await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+    await expect(page.getByLabel('tree-field-category')).toHaveValue(
+      categoryName
+    );
+    await expect(page.getByLabel('tree-field-default_location')).toHaveValue(
+      ''
+    );
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.waitForURL(/\/part\/\d+\//);
+    const partUrl = page.url();
+
+    await page
+      .getByLabel('panel-tabs-part')
+      .getByRole('tab', { name: 'Stock', exact: true })
+      .click();
+    await page.getByLabel('action-button-add-stock-item').click();
+
+    // Check that the category's default stock location is inherited properly
+    await expect(page.getByLabel('tree-field-location')).toHaveValue(
+      'Electronics Lab'
+    );
+
+    // Check that part-specific default must take precedence over the category default.
+    await page.goto(partUrl);
+    await openDetailAction(page, 'part', 'edit');
+    await expect(page.getByLabel('tree-field-default_location')).toHaveValue(
+      ''
+    );
+
+    // Change the part's default stock location to "Electornics Lab/Reel Storage"
+    await page.getByLabel('tree-field-default_location').fill('Reel Storage');
+    await page.getByText('Storage for component reels').click();
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.getByText('Item Updated').waitFor();
+
+    await page
+      .getByLabel('panel-tabs-part')
+      .getByRole('tab', { name: 'Stock', exact: true })
+      .click();
+    await page.getByLabel('action-button-add-stock-item').click();
+
+    // Check that the part's default stock location is overwrite the category's default
+    await expect(page.getByLabel('tree-field-location')).toHaveValue(
+      'Electronics Lab/Reel Storage'
+    );
+  } finally {
+    await deletePart(partName);
+    if (categoryId !== undefined) {
+      const response = await api.delete(`part/category/${categoryId}/`, {
+        data: {
+          delete_child_categories: false,
+          delete_parts: false
+        }
+      });
+      expect(response.status()).toBe(204);
+    }
+    await api.dispose();
+  }
 });
 
 test('Forms - Initial Stock hidden when setting disabled', async ({

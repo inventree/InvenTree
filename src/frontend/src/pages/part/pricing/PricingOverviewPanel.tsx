@@ -25,6 +25,7 @@ import { DataTable } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { api } from '../../../App';
@@ -37,6 +38,7 @@ import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { useEditApiFormModal } from '../../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../../states/SettingsStates';
+import { useUserState } from '../../../states/UserState';
 import { panelOptions } from '../PartPricingPanel';
 
 interface PricingOverviewEntry {
@@ -65,6 +67,7 @@ export default function PricingOverviewPanel({
   doNavigation: (panel: panelOptions) => void;
 }>): ReactNode {
   const globalSettings = useGlobalSettingsState();
+  const user = useUserState();
 
   const refreshPricing = useCallback(() => {
     const url = apiUrl(ApiEndpoints.part_pricing, part.pk);
@@ -305,6 +308,7 @@ export default function PricingOverviewPanel({
                     {
                       name: t`Refresh`,
                       tooltip: t`Refresh pricing data`,
+                      hidden: !user.hasChangeRole(UserRoles.pricing),
                       icon: (
                         <InvenTreeIcon
                           icon='refresh'
@@ -316,6 +320,7 @@ export default function PricingOverviewPanel({
                       }
                     },
                     EditItemAction({
+                      hidden: !user.hasChangeRole(UserRoles.pricing),
                       onClick: () => {
                         editPricing.open();
                       },

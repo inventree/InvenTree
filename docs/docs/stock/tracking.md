@@ -4,47 +4,56 @@ title: Stock Tracking
 
 ## Stock Tracking
 
-Stock tracking entries record the history of stock item adjustments, including the user who performed the action, the date of the action, and the quantity change. This allows users to maintain a complete history of stock item movements and adjustments over time.
+Stock tracking records the history of stock item adjustments, including the user who performed the action, the date of the action, and the changes made to the stock item (e.g. quantity or location). This allows users to maintain a complete history of stock item movements and adjustments over time.
+
+Stock tracking history is recorded in the [audit log](../concepts/audit.md) - each stock operation is recorded as a named [event](../concepts/audit.md#events) against each affected stock item.
 
 ### Tracking Events
 
-Stock tracking entries are created automatically whenever a stock item is adjusted, either through manual adjustments or through automated processes such as order fulfillment or build completion.
+Stock tracking events are recorded automatically whenever a stock item is adjusted, either through manual adjustments or through automated processes such as order fulfillment or build completion.
 
-Some examples of events that may trigger stock tracking entries include:
+Some examples of operations that record stock tracking events include:
 
 - Manual stock adjustments (e.g. correcting inventory counts)
 - Creation of new stock items (e.g. receiving new inventory)
 - Allocation of stock items to orders (e.g. shipping items against sales orders)
 - Consumption of stock items during build processes (e.g. using items to complete a build order)
 
-### Tracking Entry Types
+### Tracking Event Types
 
-Each stock tracking entry records a specific *type*, indicating which event triggered it:
+Each stock tracking event records a specific *type*, indicating which operation triggered it:
 
 {{ statuscodes("StockHistoryCode") }}
 
+!!! info "Legacy Event Types"
+    The *Legacy stock tracking entry*, *Edited stock item* and *Assigned serial number* event types are only present in stock history recorded by older versions of InvenTree. Edits to a stock item (e.g. changing the status) are now recorded as regular updates in the audit log, and serial numbers are recorded as part of the creation of the stock item.
+
 ## Viewing Stock Tracking History
 
-There are multiple ways to view the stock tracking history for a particular stock item or part via the user interface.
+Stock tracking events are recorded in the [audit log](../concepts/audit.md), along with any other changes made to a stock item. Each event records the user who performed the action, any notes provided, and additional information about the event (such as the quantity added or removed, or the order which the item was received against).
 
-### Stock Item Tracking History
+!!! warning "Audit Log Required"
+    Stock tracking history is recorded in the audit log. If the audit log is disabled (via the `Enable Audit Log` system setting), **no stock tracking history is recorded**. Refer to the [audit log documentation](../concepts/audit.md#settings) for more information.
 
-The stock tracking history for a particular stock item can be viewed on the *Stock Item Detail* page, under the *Stock Tracking* tab:
+### Stock Item History
 
-{{ image("stock/stock_item_tracking_history.png", title="Stock tracking tab") }}
+The stock tracking history for a particular stock item is displayed in the *History* panel of the *Stock Item Detail* page:
 
-This view displays all tracking entries associated with the particular stock item.
+{{ image("stock/stock_item_history.png", "Stock item history") }}
 
-### Part Tracking History
+Each entry displays the type of event, along with any changes made to the stock item, and any additional information recorded against the event (such as notes, quantities, or links to related orders and stock items).
 
-Additionally, the stock tracking history for a particular part can be viewed on the *Part Detail* page, under the *Stock History* tab:
+### Part History
 
-{{ image("stock/part_tracking_history.png", title="Part stock tracking history") }}
+The history of all stock items for a particular part is displayed in the *History* panel of the *Part Detail* page, along with any changes made to the part itself:
 
-This view displays all tracking entries associated with any stock item linked to the particular part.
+{{ image("stock/part_stock_history.png", "Part stock history") }}
+
+!!! info "Show Change History"
+    The *History* panel is only displayed if the *Show Change History* user setting is enabled. Refer to the [audit log documentation](../concepts/audit.md#viewing-change-history) for more information.
 
 !!! info "Deleted Stock Items"
-    Even if a stock item is deleted from the system, the associated stock tracking entries are retained for historical reference. They will be visible in the part tracking history, but not in the stock item tracking history (as the stock item itself has been deleted).
+    Even if a stock item is deleted from the system, the associated history is retained for historical reference. It is visible in the history of the part, but not in the history of the stock item (as the stock item itself has been deleted).
 
 ## Installed Stock Items
 
@@ -73,9 +82,7 @@ Additionally, installed items are automatically uninstalled when the parent item
 
 ## Stock Tracking Settings
 
-There are a number of configuration options available for controlling the behavior of stock tracking functionality in the [system settings view](../settings/global.md):
+Stock tracking history is recorded in the audit log, and is subject to the [audit log settings](../concepts/audit.md#settings). For example, old stock tracking history can be automatically removed using the {{ globalsetting("AUDIT_LOG_DELETE_OLD_ENTRIES", short=True) }} setting.
 
-| Name | Description | Default | Units |
-| ---- | ----------- | ------- | ----- |
-{{ globalsetting("STOCK_TRACKING_DELETE_OLD_ENTRIES") }}
-{{ globalsetting("STOCK_TRACKING_DELETE_DAYS") }}
+!!! info "Audit Log Retention"
+    The *Delete Old Stock Tracking Entries* and *Stock Tracking Deletion Interval* settings have been removed. The retention of stock tracking history is now controlled by the audit log settings.

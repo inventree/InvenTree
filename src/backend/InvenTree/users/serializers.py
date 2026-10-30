@@ -16,7 +16,7 @@ from InvenTree.serializers import (
     OptionalField,
 )
 
-from .models import ApiToken, Owner, RuleSet, UserProfile
+from .models import ApiToken, Owner, RuleSet, TipResult, UserProfile
 from .permissions import check_user_role, prefetch_rule_sets
 from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS, RuleSetEnum
 
@@ -183,6 +183,17 @@ class UserProfileSerializer(BriefUserProfileSerializer):
         ]
 
 
+class TipResultSerializer(InvenTreeModelSerializer):
+    """Serializer for the TipResult model."""
+
+    class Meta:
+        """Meta options for TipResultSerializer."""
+
+        model = TipResult
+        fields = ['pk', 'tip_id', 'shown', 'finished', 'updated']
+        read_only_fields = ['pk', 'tip_id', 'updated']
+
+
 class UserSerializer(InvenTreeModelSerializer):
     """Serializer for a User."""
 
@@ -268,8 +279,12 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
         return super().validate(data)
 
     user_detail = UserSerializer(source='user', read_only=True)
-    revoked_by_detail = UserSerializer(source='revoked_by', read_only=True)
-    issued_by_detail = UserSerializer(source='issued_by', read_only=True)
+    revoked_by_detail = UserSerializer(
+        source='revoked_by', read_only=True, allow_null=True
+    )
+    issued_by_detail = UserSerializer(
+        source='issued_by', read_only=True, allow_null=True
+    )
 
 
 class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
@@ -332,9 +347,13 @@ class ExtendedUserSerializer(UserSerializer):
             'is_superuser',
             'is_active',
             'profile',
+            'tips',
         ]
 
-        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
+        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups', 'tips']
+
+    # 'group_ids' is a write-only serializer field which does not exist on the model
+    SKIP_CREATE_FIELDS = ['group_ids']
 
     groups = GroupSerializer(many=True, read_only=True)
 
@@ -358,6 +377,15 @@ class ExtendedUserSerializer(UserSerializer):
     )
 
     profile = BriefUserProfileSerializer(many=False, read_only=True)
+
+    tips = serializers.SerializerMethodField()
+
+    def get_tips(self, user: User) -> list[dict]:
+        """Return the user's known tip results, creating missing records first."""
+        TipResult.backfill(user)
+        return TipResultSerializer(
+            user.tip_results.all(), many=True, context=self.context
+        ).data
 
     def validate_is_superuser(self, value):
         """Only a superuser account can adjust this value!"""
@@ -423,6 +451,7 @@ class MeUserSerializer(FilterableSerializerMixin, ExtendedUserSerializer):
             *(f for f in ExtendedUserSerializer.Meta.fields if f != 'group_ids'),
             'roles',
             'permissions',
+            'tips',
         ]
 
         read_only_fields = [
@@ -441,7 +470,7 @@ class MeUserSerializer(FilterableSerializerMixin, ExtendedUserSerializer):
     # they were previously served as a single '/user/me/roles/' response.
     roles = OptionalField(
         serializer_class=serializers.SerializerMethodField,
-        serializer_kwargs={'read_only': True},
+        serializer_kwargs={'allow_null': True, 'read_only': True},
         filter_name='roles',
     )
 
@@ -515,6 +544,19 @@ class UserCreateSerializer(ExtendedUserSerializer):
                 _('You do not have permission to create users')
             )
 
+        # Email-based flows (password reset, login link) look users up by email,
+        # and fail silently if more than one user has the same address
+        if email := attrs.get('email'):
+            from allauth.account.models import EmailAddress
+
+            if (
+                User.objects.filter(email__iexact=email).exists()
+                or EmailAddress.objects.filter(email__iexact=email).exists()
+            ):
+                raise serializers.ValidationError({
+                    'email': _('A user with this email address already exists')
+                })
+
         # Generate a random password
         password = make_random_password(length=14)
         attrs.update({'password': password})
@@ -529,7 +571,13 @@ class UserCreateSerializer(ExtendedUserSerializer):
 
         base_url = get_base_url()
 
+        # Extract the groups to assign to the new user
+        groups = validated_data.pop('group_ids', None)
+
         instance = super().create(validated_data)
+
+        if groups is not None:
+            instance.groups.set(groups)
 
         # Create the EmailAddress entry for the user
         if instance.email:

@@ -7,31 +7,22 @@ import {
   Paper,
   Tabs,
   Text,
-  Tooltip,
-  UnstyledButton
+  Tooltip
 } from '@mantine/core';
 import { useDisclosure, useDocumentVisibility } from '@mantine/hooks';
 import { IconBell, IconSearch, IconUserBolt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
-import {
-  matchPath,
-  useLocation,
-  useMatch,
-  useNavigate
-} from 'react-router-dom';
+import { Link, matchPath, useLocation, useMatch } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
-import { getBaseUrl } from '@lib/functions/Navigation';
-import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import type { NavigationUIFeature } from '../../components/plugins/PluginUIFeatureTypes';
 import { getNavTabs } from '../../defaults/links';
-import { generateUrl } from '../../functions/urls';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import * as classes from '../../main.css';
 import { useLocalState } from '../../states/LocalState';
@@ -182,7 +173,7 @@ export function Header() {
       />
       <Container className={classes.layoutHeaderSection} size='100%'>
         <Group justify='space-between'>
-          <Group>
+          <Group id='tip-ftu-nav1'>
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
           </Group>
@@ -198,12 +189,15 @@ export function Header() {
                 onClick={openSearchDrawer}
                 variant='transparent'
                 aria-label='open-search'
+                id='tip-ftu-search'
               >
                 <IconSearch />
               </ActionIcon>
             </Tooltip>
             {userSettings.isSet('SHOW_SPOTLIGHT') && <SpotlightButton hotkey />}
-            {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton hotkey />}
+            {globalSettings.isSet('BARCODE_ENABLE') && (
+              <ScanButton hotkey id='tip-ftu-barcode' />
+            )}
             <Indicator
               radius='lg'
               size='18'
@@ -217,6 +211,7 @@ export function Header() {
                   onClick={openNotificationDrawer}
                   variant='transparent'
                   aria-label='open-notifications'
+                  id='tip-ftu-notif'
                 >
                   <IconBell />
                 </ActionIcon>
@@ -252,7 +247,6 @@ export function Header() {
 
 function NavTabs() {
   const user = useUserState();
-  const navigate = useNavigate();
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
   const navTabs = getNavTabs(user);
@@ -300,22 +294,15 @@ function NavTabs() {
         <Tabs.Tab
           value={tab.name}
           key={tab.name}
+          renderRoot={(props) => <Link {...props} to={`/${tab.name}`} />}
           leftSection={
             withIcons &&
             tab.icon && (
               <ActionIcon variant='transparent'>{tab.icon}</ActionIcon>
             )
           }
-          onClick={(event: any) =>
-            navigateToLink(`/${tab.name}`, navigate, event)
-          }
         >
-          <UnstyledButton
-            component={'a'}
-            href={generateUrl(`/${getBaseUrl()}/${tab.name}`)}
-          >
-            {tab.title}
-          </UnstyledButton>
+          {tab.title}
         </Tabs.Tab>
       );
     });
@@ -325,9 +312,9 @@ function NavTabs() {
         <Tabs.Tab
           value={nav.options.key}
           key={nav.options.key}
-          onClick={(event: any) =>
-            navigateToLink(nav.options.options.url, navigate, event)
-          }
+          renderRoot={(props) => (
+            <Link {...props} to={nav.options.options.url} />
+          )}
         >
           {nav.options.title}
         </Tabs.Tab>
@@ -347,6 +334,7 @@ function NavTabs() {
       }}
       // Select either a static or dynamic tab to be highlighted.
       value={dynamicTabValue ?? tabValue}
+      id='tip-ftu-nav3'
     >
       <Tabs.List>{tabs.map((tab) => tab)}</Tabs.List>
     </Tabs>

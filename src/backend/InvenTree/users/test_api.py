@@ -131,11 +131,24 @@ class UserAPITests(InvenTreeAPITestCase):
             ).exists()
         )
 
+        # A second user with the same email address (any case) is rejected
+        response = self.post(
+            url,
+            data={**data, 'username': 'test2', 'email': 'AA@example.org'},
+            expected_code=400,
+        )
+        self.assertIn('email', response.data)
+
         # Try to adjust the 'is_superuser' field
         # Only a "superuser" can set this field
         response = self.post(
             url,
-            data={**data, 'username': 'Superuser', 'is_superuser': True},
+            data={
+                **data,
+                'username': 'Superuser',
+                'email': 'su@example.org',
+                'is_superuser': True,
+            },
             expected_code=403,
         )
 
@@ -147,12 +160,59 @@ class UserAPITests(InvenTreeAPITestCase):
 
         response = self.post(
             url,
-            data={**data, 'username': 'Superuser', 'is_superuser': True},
+            data={
+                **data,
+                'username': 'Superuser',
+                'email': 'su@example.org',
+                'is_superuser': True,
+            },
             expected_code=201,
         )
 
         self.assertEqual(response.data['username'], 'Superuser')
         self.assertEqual(response.data['is_superuser'], True)
+
+    def test_user_create_with_groups(self):
+        """Test that groups can be assigned when creating a new user via the API."""
+        url = reverse('api-user-list')
+
+        group_a = Group.objects.create(name='Group A')
+        group_b = Group.objects.create(name='Group B')
+
+        self.user.is_staff = True
+        self.user.save()
+        self.assignRole('admin.add')
+
+        data = {
+            'username': 'grouped',
+            'first_name': 'Grouped',
+            'last_name': 'User',
+            'email': 'grouped@example.org',
+            'group_ids': [group_a.pk, group_b.pk],
+        }
+
+        response = self.post(url, data=data, expected_code=201)
+
+        self.assertEqual(response.data['username'], 'grouped')
+
+        group_names = {g['name'] for g in response.data['groups']}
+        self.assertEqual(group_names, {'Group A', 'Group B'})
+
+        user = User.objects.get(username='grouped')
+        self.assertEqual(set(user.groups.all()), {group_a, group_b})
+
+        # Creating a user without specifying groups must still work
+        response = self.post(
+            url,
+            data={
+                **data,
+                'username': 'ungrouped',
+                'email': 'ungrouped@example.org',
+                'group_ids': [],
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['groups'], [])
 
     def test_user_detail(self):
         """Test the UserDetail API endpoint."""

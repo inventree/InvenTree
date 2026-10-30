@@ -34,6 +34,23 @@ The following file formats are available for export:
 | Excel | Microsoft Excel format (`.xlsx`). Suitable for direct use in spreadsheet applications. |
 | TSV | Tab-separated values. Similar to CSV but uses tab characters as delimiters. |
 
+## Value Escaping
+
+To prevent [CSV (formula) injection](https://owasp.org/www-community/attacks/CSV_Injection), exported text values which could be interpreted as a formula by a spreadsheet application are escaped by prefixing them with a single quote (`'`). A text value is escaped if it begins with any of the following characters:
+
+| Character | Description |
+|-----------|-------------|
+| `=` | Equals sign |
+| `+` | Plus sign |
+| `-` | Minus sign |
+| `@` | At sign |
+| Tab | Tab character |
+| Carriage return | `\r` character |
+
+Strictly numeric values are exempt, and are exported as-is even if they begin with `+` or `-`. For example, `123`, `-222`, `+1.5` and `12e6` are not modified, while `-1+2` is exported as `'-1+2`.
+
+Non-text values (such as numbers or dates) are never modified.
+
 ## Export Plugins
 
 InvenTree uses a plugin-based export system. The export dialog lists all plugins that are available for the data type being exported. Selecting a different plugin may provide additional export options or a different output format.

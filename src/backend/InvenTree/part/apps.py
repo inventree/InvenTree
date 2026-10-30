@@ -61,7 +61,7 @@ class PartConfig(AppConfig):
 
         Prevents issues with state machine if the server is restarted mid-update
         """
-        from .models import PartPricing
+        from pricing.models import PartPricing
 
         if InvenTree.ready.isImportingData():
             return

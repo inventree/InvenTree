@@ -29,6 +29,33 @@ Additionally, the following information is stored for each part, in relation to 
 | Sale Price | How much a salable item is sold for (with price-breaks) | [Part](../part/index.md) |
 | Sale Cost | How much an item was sold for | [Sales Order](../sales/sales_order.md) |
 
+## Pricing Permissions
+
+Access to part pricing data is controlled by the dedicated *Pricing* [user role](../settings/permissions.md#roles). This role is separate from the *Parts* role, allowing pricing information to be restricted (or granted) independently of general part data. For example, a group may be allowed to view and edit parts, without being able to see what those parts cost.
+
+The *Pricing* role covers the following data:
+
+| Data | Description |
+| --- | --- |
+| Cached Pricing | The calculated [pricing overview](#pricing-overview) data for each part, including any [pricing overrides](#override-pricing) |
+| Sale Price Breaks | The [sale pricing](#sale-pricing) defined for a salable part |
+| Internal Price Breaks | The [internal pricing](#internal-pricing) defined for a part |
+
+The permissions within the *Pricing* role apply as follows:
+
+| Permission | Effect |
+| --- | --- |
+| **View** | View the *Pricing* tab on the part detail page, and see pricing information (e.g. minimum / maximum price) displayed against parts and BOM items |
+| **Change** | Edit pricing overrides, manually [refresh](#manual-updates) pricing data, and edit existing price breaks |
+| **Add** | Create new sale and internal price breaks |
+| **Delete** | Delete sale and internal price breaks |
+
+If a user does not have *view* permission for the *Pricing* role, the *Pricing* tab is hidden on the part detail page, and cached pricing fields are omitted from part and BOM data returned via the API.
+
+!!! info "Other Pricing Sources"
+    Some of the data used to calculate part pricing is covered by other roles. [Supplier price breaks](../purchasing/supplier.md#supplier-part-pricing) are covered by the *Purchase Orders* role. Within the *Pricing* tab, the *Purchase History* and *Supplier Pricing* sections are only displayed if the user also has *view* permission for the *Purchase Orders* role, and the *Sale Pricing* and *Sale History* sections are only displayed if the user also has *view* permission for the *Sales Orders* role.
+
+
 ## Pricing Tab
 
 The pricing tab for a given Part provides all available pricing information for that part. It shows all price ranges and provides tools to calculate them.
@@ -79,6 +106,13 @@ If the Part is designated as *purchaseable*, then historical purchase cost infor
 
 If supplier pricing information is available, this can be also used to determine price range data.
 
+Supplier price breaks are specified *per pack* of the supplier part. When calculating supplier pricing for a part, the price of each supplier price break is divided by the [pack quantity](../purchasing/supplier.md#supplier-part-pack-size) of the supplier part, so that the resulting price is expressed per unit of the base part. This allows pricing from supplier parts with different pack sizes to be compared directly.
+
+!!! info "Example"
+    If a supplier sells a part in packs of 100, at a price of $11.55 per pack, the supplier pricing for the part is $0.1155 per unit.
+
+Refer to the [supplier part pricing](../purchasing/supplier.md#supplier-part-pricing) documentation for more information.
+
 {{ image("part/pricing_supplier.png", "Supplier Pricing") }}
 
 ### BOM Pricing
@@ -118,7 +152,7 @@ Pricing calculations (and conversions) can be expensive to perform. This can mak
 
 For this reason, all information displayed in the [pricing overview](#pricing-overview) section is pre-calculated and *cached* in the database. This ensures that when it needs to be retrieved (e.g. viewing pricing for an entire BOM) it can be accessed immediately.
 
-Pricing data is cached in the [default currency](../concepts/pricing.md/#default-currency), which ensures that pricing can be compared across multiple parts in a consistent format.
+Pricing data is cached in the [default currency](../concepts/pricing.md#default-currency), which ensures that pricing can be compared across multiple parts in a consistent format.
 
 ## Pricing Updates
 

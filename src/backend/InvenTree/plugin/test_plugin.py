@@ -324,6 +324,83 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             self.run_package_test(str(new_dir))
 
     @override_settings(PLUGIN_TESTING_SETUP=True)
+    def test_package_update_reload(self):
+        """Test that reloading the registry picks up a plugin package updated on disk.
+
+        The plugin class reads its version from the package __init__.py
+        (as per the plugin-creator template), so reloading only the module
+        which defines the class would still report the old version.
+        """
+        import sys
+
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+
+        pkg = 'inventree_reload_test_plugin'
+
+        def write_package(version: str):
+            """Write the plugin package (and its dist-info) to disk."""
+            for dist_info in tmp.glob('*.dist-info'):
+                shutil.rmtree(dist_info)
+
+            src = tmp.joinpath(pkg)
+            src.mkdir(exist_ok=True)
+            src.joinpath('__init__.py').write_text(f"PLUGIN_VERSION = '{version}'\n")
+            src.joinpath('helper.py').write_text(f"LABEL = 'helper-{version}'\n")
+            src.joinpath('core.py').write_text(
+                textwrap.dedent("""
+                from plugin import InvenTreePlugin
+
+                from . import PLUGIN_VERSION
+                from .helper import LABEL
+
+
+                class ReloadTestPlugin(InvenTreePlugin):
+                    NAME = 'ReloadTestPlugin'
+                    SLUG = 'reload-test-plugin'
+                    VERSION = PLUGIN_VERSION
+                    LABEL = LABEL
+                """)
+            )
+
+            dist_info = tmp.joinpath(f'{pkg}-{version}.dist-info')
+            dist_info.mkdir()
+            dist_info.joinpath('METADATA').write_text(
+                f'Metadata-Version: 2.1\nName: {pkg}\nVersion: {version}\n'
+            )
+            dist_info.joinpath('entry_points.txt').write_text(
+                f'[inventree_plugins]\nReloadTestPlugin = {pkg}.core:ReloadTestPlugin\n'
+            )
+
+        def cleanup():
+            sys.path.remove(str(tmp))
+            for name in [n for n in sys.modules if n.split('.')[0] == pkg]:
+                del sys.modules[name]
+            registry.reload_plugins(full_reload=True, collect=True)
+
+        # Avoid stale bytecode, as the files are rewritten within the same second
+        self.enterContext(mock.patch.object(sys, 'dont_write_bytecode', True))
+
+        write_package('1.0.0')
+        sys.path.insert(0, str(tmp))
+        self.addCleanup(cleanup)
+
+        registry.reload_plugins(full_reload=True, collect=True)
+        plg = registry.get_plugin('reload-test-plugin', active=None)
+        self.assertEqual(plg.version, '1.0.0')
+        self.assertEqual(plg.LABEL, 'helper-1.0.0')
+        old_hash = registry.registry_hash
+
+        # Update the package on disk, and reload the registry
+        write_package('1.2.3')
+        registry.reload_plugins(full_reload=True, collect=True)
+
+        plg = registry.get_plugin('reload-test-plugin', active=None)
+        self.assertEqual(plg.version, '1.2.3')
+        self.assertEqual(plg.LABEL, 'helper-1.2.3')
+        self.assertNotEqual(registry.registry_hash, old_hash)
+
+    @override_settings(PLUGIN_TESTING_SETUP=True)
     def test_package_loading(self):
         """Test that package distributed plugins work."""
         # Restore the registry to its normal state once this test finishes -
@@ -609,6 +686,55 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             # Check that changed hashes run through
             registry.registry_hash = 'abc'
             self.assertTrue(registry.check_reload())
+
+    def test_check_reload_mismatch(self):
+        """Test that a persistent registry hash mismatch is reported, rather than looping.
+
+        Simulates another process publishing a registry hash which this process
+        cannot reproduce (e.g. it has loaded a different plugin version).
+        """
+        from error_report.models import Error
+
+        from common.settings import get_global_setting, set_global_setting
+
+        def published_hash():
+            return get_global_setting(
+                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
+            )
+
+        with self.settings(TESTING=False, PLUGIN_TESTING_RELOAD=True):
+            registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
+            local_hash = registry.registry_hash
+
+            set_global_setting('_PLUGIN_REGISTRY_HASH', 'other-process-hash')
+            errors = Error.objects.filter(kind='Plugin Registry Mismatch')
+            self.assertEqual(errors.count(), 0)
+
+            # First reload does not reproduce the hash - retried, not yet reported
+            self.assertTrue(registry.check_reload())
+            self.assertEqual(registry.mismatch_count, 1)
+            self.assertEqual(errors.count(), 0)
+
+            # The following process must not publish its own hash (which would
+            # trigger the other process to reload in turn)
+            self.assertEqual(published_hash(), 'other-process-hash')
+            self.assertEqual(registry.registry_hash, local_hash)
+
+            # Second reload still does not match - the error is reported
+            self.assertTrue(registry.check_reload())
+            self.assertEqual(errors.count(), 1)
+            self.assertIn(local_hash, errors.first().data)
+
+            # No further reloads (or errors) for the same hash
+            self.assertFalse(registry.check_reload())
+            self.assertEqual(errors.count(), 1)
+
+            # Once the registry state matches again, mismatch tracking is reset
+            registry.registry_hash = 'abc'
+            set_global_setting('_PLUGIN_REGISTRY_HASH', local_hash)
+            self.assertTrue(registry.check_reload())
+            self.assertIsNone(registry.mismatch_hash)
+            self.assertEqual(registry.mismatch_count, 0)
 
     def test_registry_hash_order_independence(self):
         """Test that the registry hash does not depend on plugin iteration order.

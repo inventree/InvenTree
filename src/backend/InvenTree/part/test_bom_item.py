@@ -1,6 +1,7 @@
 """Unit tests for the BomItem model."""
 
 import hashlib
+from decimal import Decimal
 from unittest import mock
 
 import django.core.exceptions as django_exceptions
@@ -8,6 +9,7 @@ from django.db import transaction
 from django.test import TestCase
 
 import build.models
+import part.filters
 import stock.models
 from common.settings import set_global_setting
 
@@ -112,6 +114,20 @@ class BomItemTest(TestCase):
         self.assertEqual(item.get_required_quantity(1), 8)  # 3 + 5 = 8
         self.assertEqual(item.get_required_quantity(10), 35)  # 30 + 5 = 35
 
+    def test_required_quantity_input_types(self):
+        """Test that get_required_quantity accepts int, float and Decimal inputs."""
+        item = BomItem.objects.get(pk=4)
+
+        for value, expected in [
+            (10, Decimal('30')),
+            (Decimal('2.5'), Decimal('7.5')),
+            (2.5, Decimal('7.5')),
+            (0.1, Decimal('0.3')),
+        ]:
+            result = item.get_required_quantity(value)
+            self.assertIsInstance(result, Decimal)
+            self.assertEqual(result, expected)
+
     def test_round_up(self):
         """Test the 'rounding_multiple' attribute."""
         item = BomItem.objects.get(pk=4)
@@ -142,6 +158,9 @@ class BomItemTest(TestCase):
         self.assertEqual(
             item.get_required_quantity(100), 306
         )  # 3 x 100 = 300, rounded up to nearest multiple of 17
+
+        # The rounded value must remain a Decimal (not a float)
+        self.assertIsInstance(item.get_required_quantity(10), Decimal)
 
         # Next, let's create a new Build order
         bo = build.models.Build.objects.create(
@@ -377,6 +396,59 @@ class BomItemTest(TestCase):
 
         with self.assertRaises(django_exceptions.ValidationError):
             BomItem.objects.create(part=part_v, sub_part=part_a, quantity=10)
+
+    def test_bom_unrelated_root_parts(self):
+        """Unrelated top-level parts created in succession can be added to each other's BOM.
+
+        Regression test: ordered (by name) insertion of a new root Part shifted the tree_id
+        of following trees in the database, leaving instances held in memory with a stale
+        tree_id - which could match the new part's tree_id, falsely flagging the BOM as recursive.
+        """
+        # Part 'Y' is inserted directly before Part 'Z' when ordered by name
+        part_z = Part.objects.create(
+            name='zzzz assembly', description='Z', assembly=True, component=True
+        )
+        part_y = Part.objects.create(
+            name='zzzy assembly', description='Y', assembly=True, component=True
+        )
+
+        # In-memory tree_id values match the database
+        self.assertEqual(part_z.tree_id, Part.objects.get(pk=part_z.pk).tree_id)
+        self.assertNotEqual(part_z.tree_id, part_y.tree_id)
+
+        # No refresh_from_db() required
+        BomItem.objects.create(part=part_y, sub_part=part_z, quantity=1)
+
+    def test_root_part_create_preserves_tree_ids(self):
+        """Creating a new top-level part does not modify the tree_id of any other part."""
+        tree_ids = dict(Part.objects.values_list('pk', 'tree_id'))
+
+        # Name sorts before every existing part
+        Part.objects.create(name='!!! first part', description='first')
+
+        self.assertEqual(
+            dict(Part.objects.filter(pk__in=tree_ids).values_list('pk', 'tree_id')),
+            tree_ids,
+        )
+
+    def test_check_add_to_bom_stale_tree_id(self):
+        """check_add_to_bom() uses database tree_id values, not stale in-memory values."""
+        part_a = Part.objects.create(
+            name='Stale A', description='A', assembly=True, is_template=True
+        )
+        part_b = Part.objects.create(name='Stale B', description='B', component=True)
+
+        # Simulate a stale in-memory tree_id which matches the other part
+        part_b.tree_id = part_a.tree_id
+
+        self.assertTrue(part_b.check_add_to_bom(part_a, raise_error=True))
+
+        # A genuine variant relationship is still detected
+        part_v = Part.objects.create(
+            name='Stale V', description='V', variant_of=part_a, component=True
+        )
+
+        self.assertFalse(part_v.check_add_to_bom(part_a))
 
     def test_locked_assembly(self):
         """Test that BomItem objects work correctly for a 'locked' assembly."""
@@ -711,6 +783,67 @@ class BomItemTest(TestCase):
 
         # 200 * 10 * 10 = 20000
         self.assertEqual(item.get_required_quantity(10), 20000)
+
+    def test_piece_count_unit_quantity(self):
+        """Test that unit_quantity accounts for piece_count."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        item.set_quantity(2)
+        item.piece_count = 1
+        self.assertEqual(item.unit_quantity, 2)
+
+        item.piece_count = 5
+        self.assertEqual(item.unit_quantity, 10)
+
+        # Attrition and setup quantity are not included
+        item.attrition = 10
+        item.setup_quantity = 3
+        self.assertEqual(item.unit_quantity, 10)
+
+    def test_piece_count_can_build_quantity(self):
+        """Test that BomItem.can_build_quantity accounts for piece_count."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        item.set_quantity(2)
+        item.piece_count = 5
+        item.attrition = 0
+        item.setup_quantity = 0
+
+        # 20 / (2 * 5) = 2
+        self.assertEqual(item.can_build_quantity(20), 2)
+
+        # With setup quantity and attrition: (25 - 5) / (2 * 5 * 1.25) = 1.6
+        item.setup_quantity = 5
+        item.attrition = 25
+        self.assertEqual(item.can_build_quantity(25), 1)
+
+    def test_piece_count_can_build(self):
+        """Test that the 'can_build' annotation accounts for piece_count."""
+        assembly = Part.objects.create(
+            name='Cable assembly', description='Made with wire', assembly=True
+        )
+
+        wire = Part.objects.create(name='Wire', description='Cut-to-length wire')
+        stock.models.StockItem.objects.create(part=wire, quantity=20)
+
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=wire, quantity=2, piece_count=5
+        )
+
+        # 20 / (2 * 5) = 2
+        self.assertEqual(assembly.can_build, 2)
+
+        item = part.filters.annotate_bom_item_can_build(
+            BomItem.objects.filter(pk=bom_item.pk)
+        ).first()
+
+        self.assertAlmostEqual(item.can_build, 2)
+
+        # Without piece_count, 10 assemblies could be built
+        bom_item.piece_count = 1
+        bom_item.save()
+
+        self.assertEqual(assembly.can_build, 10)
 
     def test_piece_count_with_attrition(self):
         """Test piece_count combined with attrition percentage."""

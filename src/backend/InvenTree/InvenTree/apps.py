@@ -117,6 +117,7 @@ class InvenTreeConfig(AppConfig):
             'label.tasks.cleanup_old_label_outputs',
             'report.tasks.cleanup_old_report_outputs',
             'stock.tasks.delete_old_stock_items',
+            'stock.tasks.delete_old_stock_tracking',
         ]
 
         try:

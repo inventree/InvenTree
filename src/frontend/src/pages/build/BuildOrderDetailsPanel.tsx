@@ -62,6 +62,14 @@ export function BuildOrderDetailsPanel({
       copy: true
     },
     {
+      type: 'text',
+      name: 'part_detail.description',
+      icon: 'description',
+      label: t`Part Description`,
+      hidden: !instance?.part_detail?.description,
+      copy: true
+    },
+    {
       type: 'status',
       name: 'status',
       label: t`Status`,
@@ -168,6 +176,7 @@ export function BuildOrderDetailsPanel({
       type: 'link',
       name: 'take_from',
       icon: 'location',
+      hidden: !instance?.take_from,
       model: ModelType.stocklocation,
       label: t`Source Location`,
       backup_value: t`Any location`

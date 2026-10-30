@@ -263,14 +263,16 @@ export default function DashboardLayout() {
       lg: layouts
     };
   }, [user]);
-  const loadWigs = ['news', 'gstart'];
   const defaultWidgets = useMemo(() => {
+    // Only superusers can view the "news" widget (matches defaultLayouts)
+    const loadWigs = user.isSuperuser() ? ['news', 'gstart'] : ['gstart'];
+
     return loadWigs
       .map((lwid: string) =>
         availableWidgets.items.find((wid) => wid.label === lwid)
       )
       .filter((widget): widget is DashboardWidgetProps => widget !== undefined);
-  }, [availableWidgets.items, defaultLayouts]);
+  }, [availableWidgets.items, defaultLayouts, user]);
 
   return (
     <>

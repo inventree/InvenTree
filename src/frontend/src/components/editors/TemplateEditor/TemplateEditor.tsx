@@ -30,6 +30,7 @@ import Split from '@uiw/react-split';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../../../App';
+import { fileNameFromUrl } from '../../../functions/urls';
 import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { SplitButton } from '../../buttons/SplitButton';
 import { StandaloneField } from '../../forms/StandaloneField';
@@ -263,7 +264,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
     if (code === undefined) return;
 
     const filename =
-      (template as any)[fileField]?.split('/').pop() ?? 'template.html';
+      fileNameFromUrl((template as any)[fileField]) || 'template.html';
 
     const formData = new FormData();
     formData.append(fileField, new File([code], filename));

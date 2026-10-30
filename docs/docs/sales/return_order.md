@@ -145,7 +145,7 @@ Receiving a line item performs the following actions on the underlying stock ite
 * Sets the stock item status (defaulting to *Quarantined*)
 * Removes the *Customer* reference from the stock item
 * Clears any outstanding sales order allocations against the stock item
-* Adds a tracking entry recording the return
+* Records a [stock tracking](../stock/tracking.md) event for the return
 
 !!! info "Partial Returns"
     If a customer returns less than the full quantity of a non-serialized stock item, InvenTree automatically splits the returned quantity into a new stock item, leaving the remainder of the original stock item untouched (e.g. still recorded as sold to the customer).

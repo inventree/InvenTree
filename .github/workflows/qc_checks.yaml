@@ -106,12 +106,12 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
       - name: Run pre commit hook Checks
-        uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
+        uses: j178/prek-action@44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d # v3.1.0
       - name: Check Version
         run: |
           pip install --require-hashes --only-binary :all: -r contrib/dev_reqs/requirements.txt
@@ -150,7 +150,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -196,7 +196,7 @@ jobs:
       - name: Export API Documentation
         run: invoke dev.schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
@@ -216,7 +216,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@5e81b5c380accc6b523f9d32a637ca630e33620b # v0.1.17
+        uses: oasdiff/oasdiff-action/diff@9ce3a29eb0e6478dd0140932a678c7fb59d08f22 # v0.1.20
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"
@@ -245,17 +245,17 @@ jobs:
       - name: Extract settings / tags
         run: invoke int.export-definitions --basedir docs
       - name: Upload settings
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: inventree_settings.json
           path: docs/generated/inventree_settings.json
       - name: Upload tags
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: inventree_tags.yml
           path: docs/generated/inventree_tags.yml
       - name: Upload filters
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: inventree_filters.yml
           path: docs/generated/inventree_filters.yml
@@ -278,7 +278,7 @@ jobs:
       - name: Create artifact directory
         run: mkdir -p artifact
       - name: Download schema artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           path: artifact
           merge-multiple: true
@@ -357,7 +357,7 @@ jobs:
           pip install . --only-binary :all:
         if: needs.paths-filter.outputs.submit-performance == 'true'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@373d6868929f444bc08d901fd0eb0ad52a8875ea # v5.2.1
+        uses: CodSpeedHQ/action@821a40cd6c80e3cfe387caf55668287addd808da # v5.5.0
         # check if we are in inventree/inventree - reporting only works in that OIDC context
         if: github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
         with:
@@ -405,7 +405,7 @@ jobs:
       - name: Coverage Tests
         run: invoke dev.test --check --coverage --translations
       - name: Upload raw coverage to artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: coverage
           path: .coverage
@@ -450,7 +450,7 @@ jobs:
         env:
           node_version: '>=24'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@373d6868929f444bc08d901fd0eb0ad52a8875ea # v5.2.1
+        uses: CodSpeedHQ/action@821a40cd6c80e3cfe387caf55668287addd808da # v5.5.0
         with:
           mode: walltime
           run: inv dev.test --pytest
@@ -567,4 +567,4 @@ jobs:
         with:
           persist-credentials: false
       - name: Run zizmor 🌈
-        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        uses: zizmorcore/zizmor-action@85b2b9fb8e3325e7a23d7d0a9d7ba5ae0f999e3e # v0.7.1

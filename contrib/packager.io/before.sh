@@ -55,7 +55,7 @@ echo "### VERSION ###"
 echo "INFO frontend | Trying to get frontend"
 # Check if tag sha is the same as the commit sha
 TAG_SHA=$(jq -r '.sha' tag.json)
-if [ "$TAG_SHA" != "$FULL_SHA" ]; then
+if [[ "$TAG_SHA" != "$FULL_SHA" ]]; then
   echo "INFO frontend | Tag sha '$TAG_SHA' is not the same as commit sha $FULL_SHA, can not download frontend"
 else
   echo "INFO frontend | Getting frontend from github via tag"

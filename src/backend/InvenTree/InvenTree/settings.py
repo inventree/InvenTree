@@ -25,7 +25,12 @@ from corsheaders.defaults import default_headers as default_cors_headers
 
 import InvenTree.backup
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
-from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
+from InvenTree.config import (
+    ensure_middleware,
+    get_boolean_setting,
+    get_oidc_private_key,
+    get_setting,
+)
 from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.validators import invalid_site_url_hint
@@ -235,6 +240,7 @@ PLUGIN_TESTING_SETUP = get_setting(
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
 PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
+SETUP_INITIALIZING = os.environ.get('SETUP_INITIALIZING', '0') == '1'
 
 # Plugin development settings
 PLUGIN_DEV_SLUG = get_setting('INVENTREE_PLUGIN_DEV_SLUG', 'plugin_dev.slug')
@@ -268,6 +274,9 @@ if DEBUG and 'collectstatic' not in sys.argv:
 DBBACKUP_DATE_FORMAT = InvenTree.backup.backup_date_format()
 DBBACKUP_FILENAME_TEMPLATE = InvenTree.backup.backup_filename_template()
 DBBACKUP_MEDIA_FILENAME_TEMPLATE = InvenTree.backup.backup_media_filename_template()
+
+# How many backup files to keep
+DBBACKUP_CLEANUP_KEEP = InvenTree.backup.backup_keep_count()
 
 DBBACKUP_GPG_RECIPIENT = InvenTree.backup.backup_gpg_recipient()
 
@@ -320,6 +329,7 @@ INSTALLED_APPS = [
     'machine.apps.MachineConfig',
     'data_exporter.apps.DataExporterConfig',
     'importer.apps.ImporterConfig',
+    'pricing.apps.PricingConfig',
     'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',  # InvenTree app runs last
@@ -364,6 +374,10 @@ INSTALLED_APPS = [
     'django_mailbox',  # For email import
     'anymail',  # For email sending/receiving via ESPs
     'storages',
+    'auditlog',  # Audit log / model change history (see 'audit' app)
+    # New InvenTree apps are appended here, so that existing ContentType IDs
+    # match between existing databases and freshly migrated (test) databases
+    'audit.apps.AuditConfig',
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -391,9 +405,32 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
         'InvenTree.middleware.InvenTreeHostSettingsMiddleware',  # Ensuring correct hosting/security settings
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
+        'audit.middleware.InvenTreeAuditlogMiddleware',  # Audit log context (after maintenance + request ID)
         'InvenTree.middleware.InvenTreeVersionHeaderMiddleware',
     ],
 )
+
+# The audit log middleware is required for audit entries to record the user (and request context).
+# MIDDLEWARE may be overridden via the config file - ensure that it is always present
+MIDDLEWARE = ensure_middleware(
+    MIDDLEWARE,
+    'audit.middleware.InvenTreeAuditlogMiddleware',
+    after='django_structlog.middlewares.RequestMiddleware',
+)
+
+# Audit log configuration (django-auditlog)
+# Ref: https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
+# Note: AUDITLOG_LOGENTRY_MODEL is a swappable model, and must not be changed once migrations have been applied
+AUDITLOG_LOGENTRY_MODEL = 'audit.AuditLogEntry'
+AUDITLOG_STORE_JSON_CHANGES = True  # Store values as JSON types, rather than strings
+AUDITLOG_DISABLE_ON_RAW_SAVE = True  # Do not log fixture loading / raw saves
+AUDITLOG_CID_HEADER = None  # Correlation ID is provided by AUDITLOG_CID_GETTER (below)
+AUDITLOG_CID_GETTER = 'audit.context.get_cid'  # Matches the structlog request ID
+
+# The upstream auditlog migrations only define the (swapped out) LogEntry model,
+# and do not mark it as swappable - so would create an unused 'auditlog_logentry' table.
+# Disable them entirely - the 'audit' app provides the migrations for AuditLogEntry.
+MIGRATION_MODULES = {'auditlog': None}
 
 # In DEBUG mode, add support for django-silk
 # Ref: https://silk.readthedocs.io/en/latest/
@@ -501,6 +538,7 @@ TEMPLATES = [
                         'plugin.template.PluginTemplateLoader',
                         'django.template.loaders.filesystem.Loader',
                         'django.template.loaders.app_directories.Loader',
+                        'InvenTree.template.InvenTreeStorageTemplateLoader',
                     ],
                 )
             ],
@@ -842,7 +880,9 @@ if DEBUG:
         'http://localhost',
         'http://*.localhost',
         'http://*localhost:8000',
+        'http://localhost:4173',
         'http://*localhost:4173',
+        'http://localhost:5173',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
@@ -987,17 +1027,9 @@ SOCIAL_BACKENDS = get_setting(
 )
 
 DEFAULT_SOCIAL = ['saml', 'openid_connect']
-_SOCIAL_BACKENDS = list(dict.fromkeys([*DEFAULT_SOCIAL, *SOCIAL_BACKENDS]))
 
 # region auth
-for app in _SOCIAL_BACKENDS:  # pragma: no cover
-    # Ensure that the app starts with 'allauth.socialaccount.providers'
-    social_prefix = 'allauth.socialaccount.providers.'
-
-    if not app.startswith(social_prefix):
-        app = social_prefix + app
-
-    INSTALLED_APPS.append(app)
+INSTALLED_APPS.extend(config.get_social_backends(DEFAULT_SOCIAL, SOCIAL_BACKENDS))
 
 SOCIALACCOUNT_PROVIDERS = {a: {} for a in DEFAULT_SOCIAL}
 _PROVIDER_SETTINGS = get_setting(

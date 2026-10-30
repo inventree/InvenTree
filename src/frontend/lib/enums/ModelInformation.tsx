@@ -83,7 +83,6 @@ export const ModelInformationDict: ModelDict = {
   parttesttemplate: {
     label: () => t`Part Test Template`,
     label_multiple: () => t`Part Test Templates`,
-    url_detail: '/parttesttemplate/:pk/',
     api_endpoint: ApiEndpoints.part_test_template_list,
     icon: 'test'
   },
@@ -152,7 +151,7 @@ export const ModelInformationDict: ModelDict = {
   stockhistory: {
     label: () => t`Stock History`,
     label_multiple: () => t`Stock Histories`,
-    api_endpoint: ApiEndpoints.stock_tracking_list,
+    api_endpoint: ApiEndpoints.audit_log_list,
     icon: 'history'
   },
   build: {
@@ -170,7 +169,6 @@ export const ModelInformationDict: ModelDict = {
     label: () => t`Build Line`,
     label_multiple: () => t`Build Lines`,
     url_overview: '/build/line',
-    url_detail: '/build/line/:pk/',
     api_endpoint: ApiEndpoints.build_line_list,
     icon: 'build_order'
   },
@@ -191,7 +189,6 @@ export const ModelInformationDict: ModelDict = {
   projectcode: {
     label: () => t`Project Code`,
     label_multiple: () => t`Project Codes`,
-    url_detail: '/project-code/:pk/',
     api_endpoint: ApiEndpoints.project_code_list,
     icon: 'list_details'
   },
@@ -292,21 +289,18 @@ export const ModelInformationDict: ModelDict = {
   address: {
     label: () => t`Address`,
     label_multiple: () => t`Addresses`,
-    url_detail: '/address/:pk/',
     api_endpoint: ApiEndpoints.address_list,
     icon: 'address'
   },
   contact: {
     label: () => t`Contact`,
     label_multiple: () => t`Contacts`,
-    url_detail: '/contact/:pk/',
     api_endpoint: ApiEndpoints.contact_list,
     icon: 'group'
   },
   owner: {
     label: () => t`Owner`,
     label_multiple: () => t`Owners`,
-    url_detail: '/owner/:pk/',
     api_endpoint: ApiEndpoints.owner_list,
     icon: 'group'
   },
@@ -329,7 +323,6 @@ export const ModelInformationDict: ModelDict = {
     label: () => t`Import Session`,
     label_multiple: () => t`Import Sessions`,
     url_overview: '/settings/admin/import',
-    url_detail: '/import/:pk/',
     api_endpoint: ApiEndpoints.import_session_list,
     icon: 'import'
   },
