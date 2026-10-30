@@ -27,24 +27,7 @@ To navigate to the Non-Conformance Report display, select *Manufacturing* from t
 
 Each Non-Conformance Report has a specific status code, indicating where it is in its lifecycle:
 
-| Status | Description |
-| --- | --- |
-| Pending | The NCR has been raised, but not yet investigated |
-| In Progress | Root cause investigation is underway |
-| Cancelled | The NCR was raised in error, or withdrawn |
-| Complete | The NCR has been closed out |
-
-**Source Code**
-
-Refer to the source code for the NCR status codes:
-
-::: build.status_codes.NonConformanceStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
+{{ statuscodes("NonConformanceStatus") }}
 
 NCR Status supports [custom states](../concepts/custom_states.md).
 
@@ -108,28 +91,7 @@ Each linked stock item optionally records an affected *Quantity* (a portion of t
 
 Each linked stock item has its own *Disposition*, recording what has been decided for that specific item:
 
-| Disposition | Description |
-| --- | --- |
-| Pending | No disposition has been decided yet (default value for a newly-linked item) |
-| Use As Is | The item is acceptable to use without further action |
-| Rework | The item is to be reworked to meet requirements |
-| Repair | The item is to be repaired |
-| Scrap | The item is to be scrapped |
-| Return to Supplier | The item is to be returned to the supplier |
-
-**Source Code**
-
-Refer to the source code for the NCR disposition codes:
-
-::: build.status_codes.NonConformanceDisposition
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
-
-NCR Disposition supports [custom states](../concepts/custom_states.md).
+{{ statuscodes("NonConformanceDisposition") }}
 
 !!! info "Why Per-Item, Not Per-NCR?"
     A single NCR can cover a batch of material where different units end up with different outcomes - for example, some units might be usable as-is while others need to be scrapped. Recording disposition against each linked stock item (rather than a single value on the NCR itself) allows for this.
