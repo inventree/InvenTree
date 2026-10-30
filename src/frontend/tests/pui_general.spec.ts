@@ -1,4 +1,4 @@
-import { test } from './baseFixtures.js';
+import { expect, test } from './baseFixtures.js';
 import { adminuser, stevenuser } from './defaults.js';
 import { globalSearch } from './helpers.js';
 import { doCachedLogin } from './login.js';
@@ -39,8 +39,36 @@ test('General - Search', async ({ browser }) => {
   await page.locator('a').filter({ hasText: 'Customer D' }).first().waitFor();
   await page.locator('a').filter({ hasText: 'Customer E' }).first().waitFor();
 
+  const customerResult = page
+    .locator('a')
+    .filter({ hasText: 'Customer B' })
+    .first();
+  await expect(customerResult).toHaveAttribute('href', /\/web\/company\/\d+/);
+
+  const popupPromise = page.context().waitForEvent('page');
+  await customerResult.click({ modifiers: ['Control'] });
+  const popup = await popupPromise;
+  await popup.waitForURL('**/web/company/**');
+  await popup.close();
+
   // Click through to the "Customer" results
-  await page.getByRole('button', { name: 'view-all-results-customer' }).click();
+  const viewAllCustomers = page.getByRole('link', {
+    name: 'view-all-results-customer'
+  });
+  await expect(viewAllCustomers).toHaveAttribute(
+    'href',
+    /\/web\/sales\/index\/customers\?search=another\+customer/
+  );
+
+  const overviewPopupPromise = page.context().waitForEvent('page');
+  await viewAllCustomers.click({ modifiers: ['Control'] });
+  const overviewPopup = await overviewPopupPromise;
+  await overviewPopup.waitForURL(
+    '**/web/sales/index/customers?search=another+customer'
+  );
+  await overviewPopup.close();
+
+  await viewAllCustomers.click();
 
   await page.waitForURL('**/sales/index/customers**');
   await page.getByText('Custom table filters are active').waitFor();
@@ -58,7 +86,9 @@ test('General - Search', async ({ browser }) => {
     .first()
     .waitFor();
 
-  await page.getByLabel('view-all-results-manufacturerpart').click();
+  await page
+    .getByRole('link', { name: 'view-all-results-manufacturerpart' })
+    .click();
   await page.waitForURL('**/purchasing/index/manufacturer-parts**');
   await page.getByRole('cell', { name: 'RT0402BRD07100KL' }).waitFor();
 });
