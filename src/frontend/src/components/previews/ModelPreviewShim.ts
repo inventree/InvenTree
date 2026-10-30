@@ -2,6 +2,7 @@ import { registerModelPreviews } from '@lib/enums/ModelInformation';
 import { BuildOrderPreviewComponent } from './models/BuildOrderPreview';
 import { CompanyPreviewComponent } from './models/CompanyPreview';
 import { ManufacturerPartPreviewComponent } from './models/ManufacturerPartPreview';
+import { NonConformancePreviewComponent } from './models/NonConformancePreview';
 import { PartCategoryPreviewComponent } from './models/PartCategoryPreview';
 import { PartPreviewComponent } from './models/PartPreview';
 import { PurchaseOrderPreviewComponent } from './models/PurchaseOrderPreview';
@@ -21,6 +22,7 @@ registerModelPreviews({
   stockitem: StockPreviewComponent,
   stocklocation: StockLocationPreviewComponent,
   build: BuildOrderPreviewComponent,
+  nonconformance: NonConformancePreviewComponent,
   company: CompanyPreviewComponent,
   purchaseorder: PurchaseOrderPreviewComponent,
   salesorder: SalesOrderPreviewComponent,

@@ -24,6 +24,12 @@ InvenTree allows users to allocate stock items to specific build orders, ensurin
 
 Read more about stock allocation in the [Stock Allocation documentation](./allocate.md).
 
+### Non-Conformance Reports
+
+Quality problems identified against a part - a bad supplier batch, a failed inspection, or a build defect - can be tracked using Non-Conformance Reports (NCRs), from initial detection through investigation, disposition, and closure.
+
+Read more about Non-Conformance Reports in the [NCR documentation](./ncr.md).
+
 ### Disassembly
 
 The reverse process is also supported - an assembled stock item can be broken back down into its component parts, based on its BOM. This is useful for reworking or scrapping an assembly, or for splitting a bundled "kit" product purchased from a supplier into its individual components.

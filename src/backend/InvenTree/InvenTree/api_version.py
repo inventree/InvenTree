@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 567
+INVENTREE_API_VERSION = 568
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v568 -> 2026-10-30 : https://github.com/inventree/InvenTree/pull/12682
+    - Adds API endpoints for the NonConformanceReport (NCR) models
 
 v567 -> 2026-10-28 : https://github.com/inventree/InvenTree/pull/13128
     - Allow ordering of SupplierPart API by "on_order" field

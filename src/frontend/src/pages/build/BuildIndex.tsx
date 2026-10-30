@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
+  IconAlertTriangle,
   IconCalendar,
   IconListDetails,
   IconTable,
@@ -25,6 +26,7 @@ import { useUserState } from '../../states/UserState';
 import BuildOrderFilters from '../../tables/build/BuildOrderFilters';
 import BuildOrderParametricTable from '../../tables/build/BuildOrderParametricTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import { NonConformanceTable } from '../../tables/build/NonConformanceTable';
 
 function BuildOrderCalendar() {
   const globalSettings = useGlobalSettingsState();
@@ -74,6 +76,7 @@ function BuildOrderCalendar() {
  */
 export default function BuildIndex() {
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const [buildOrderView, setBuildOrderView] = useLocalStorage<string>({
     key: 'build-order-view',
@@ -86,6 +89,7 @@ export default function BuildIndex() {
         name: 'buildorder',
         label: t`Build Orders`,
         icon: <IconTools />,
+        hidden: !user.hasViewVisible(UserRoles.build),
         selection: buildOrderView,
         onChange: setBuildOrderView,
         options: [
@@ -108,11 +112,22 @@ export default function BuildIndex() {
             content: <BuildOrderParametricTable />
           }
         ]
-      })
+      }),
+      {
+        name: 'ncr',
+        label: t`Non-Conformances`,
+        icon: <IconAlertTriangle />,
+        hidden: !user.hasViewVisible(UserRoles.ncr),
+        content: <NonConformanceTable />
+      }
     ];
-  }, [user, buildOrderView]);
+  }, [user, globalSettings, buildOrderView]);
 
-  if (!user.isLoggedIn() || !user.hasViewVisible(UserRoles.build)) {
+  if (
+    !user.isLoggedIn() ||
+    (!user.hasViewVisible(UserRoles.build) &&
+      !user.hasViewVisible(UserRoles.ncr))
+  ) {
     return <PermissionDenied />;
   }
 
