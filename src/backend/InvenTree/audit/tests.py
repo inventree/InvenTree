@@ -208,6 +208,39 @@ class AuditModelTest(AuditTestMixin, TestCase):
         self.assertNotIn('reference_int', entry.changes_dict)
         self.assertNotIn('metadata', entry.changes_dict)
 
+    def test_empty_values_equivalent(self):
+        """Changing a field between None and '' is not recorded as a change."""
+        Part.objects.filter(pk=self.part.pk).update(IPN=None)
+        self.part.refresh_from_db()
+
+        # Saving an empty value from a form ('') over NULL
+        self.part.IPN = ''
+        self.part.description = 'Updated'
+        self.part.save()
+
+        entry = self.entries_for(self.part, action=AuditLogEntry.Action.UPDATE).last()
+        self.assertEqual(entry.changes_dict, {'description': ['A part', 'Updated']})
+
+        # No entry is created if the only "change" is between empty values
+        self.part.IPN = None
+        self.part.save()
+
+        self.assertEqual(
+            self.entries_for(self.part, action=AuditLogEntry.Action.UPDATE).count(), 1
+        )
+
+        # A real change to or from an empty value is still recorded
+        self.part.IPN = 'IPN-001'
+        self.part.save()
+        self.part.IPN = ''
+        self.part.save()
+
+        entries = self.entries_for(self.part, action=AuditLogEntry.Action.UPDATE)
+        self.assertEqual(
+            [e.changes_dict['IPN'] for e in entries.order_by('pk')[1:]],
+            [[None, 'IPN-001'], ['IPN-001', '']],
+        )
+
     def test_parent_link(self):
         """Child entries are linked to the parent - and are retained after deletion."""
         line = PurchaseOrderLineItem.objects.create(
