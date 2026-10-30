@@ -8,6 +8,7 @@ INVENTREE_API_TEXT = """
 
 v568 -> 2026-09-27 : https://github.com/inventree/InvenTree/pull/12072
     - Adds API endpoints for RepairOrder, RepairOrderLineItem, and RepairOrderAllocation models
+    - RepairOrder status transitions use the generic transition API (adds /api/build/repair/<id>/_transitions/)
 
 v567 -> 2026-10-28 : https://github.com/inventree/InvenTree/pull/13128
     - Allow ordering of SupplierPart API by "on_order" field

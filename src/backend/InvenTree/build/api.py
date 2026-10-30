@@ -20,6 +20,7 @@ import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers, status
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 
@@ -47,6 +48,7 @@ from build.status_codes import (
 )
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
+from generic.states.api_helpers import FSMTransitionMixin
 from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -55,6 +57,7 @@ from InvenTree.filters import (
     NumberOrNullFilter,
 )
 from InvenTree.helpers import str2bool
+from InvenTree.helpers_api import InvenTreeApiRouter, RetrieveUpdateDestroyModelViewSet
 from InvenTree.mixins import (
     CreateAPI,
     ListCreateAPI,
@@ -63,6 +66,8 @@ from InvenTree.mixins import (
     SerializerContextMixin,
 )
 from users.models import Owner
+
+repair_order_router = InvenTreeApiRouter()
 
 
 class BuildFilter(FilterSet):
@@ -1425,16 +1430,36 @@ class RepairOrderFilter(FilterSet):
         return queryset.filter(q1 | q2 | q3).distinct()
 
 
-class RepairOrderList(
-    DataExportViewMixin, OutputOptionsMixin, ParameterListMixin, ListCreateAPI
+class RepairOrderViewSet(
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ParameterListMixin,
+    FSMTransitionMixin,
+    RetrieveUpdateDestroyModelViewSet,
 ):
-    """API endpoint for accessing a list of RepairOrder objects."""
+    """API endpoint for accessing RepairOrder objects.
 
-    queryset = RepairOrder.objects.all()
+    - GET: Return list of RepairOrder objects (with filters), or a single RepairOrder object
+    - POST: Create a new RepairOrder object
+    - PUT / PATCH: Update an existing RepairOrder object
+    - DELETE: Remove a RepairOrder object
+
+    Status transition endpoints (issue / hold / complete / cancel) are generated from the model.
+    """
+
+    queryset = RepairOrder.objects.all().prefetch_related('lines')
     serializer_class = build.serializers.RepairOrderSerializer
 
     filterset_class = RepairOrderFilter
     filter_backends = SEARCH_ORDER_FILTER
+
+    # TODO: Remove legacy return codes (as per PurchaseOrderViewSet)
+    transition_options = {
+        'cancel_repair': {'name': 'cancel', 'return_code': 201},
+        'complete_repair': {'name': 'complete', 'return_code': 201},
+        'hold_repair': {'name': 'hold', 'return_code': 201},
+        'issue_repair': {'name': 'issue', 'return_code': 201},
+    }
 
     ordering_fields = [
         'reference',
@@ -1459,11 +1484,6 @@ class RepairOrderList(
         'part__name',
     ]
 
-    def get_queryset(self):
-        """Prefetch line items, in addition to any requested optional detail fields."""
-        queryset = super().get_queryset()
-        return queryset.prefetch_related('lines')
-
     def create(self, request, *args, **kwargs):
         """Save user information on order creation."""
         serializer = self.get_serializer(data=self.clean_data(request.data))
@@ -1476,89 +1496,31 @@ class RepairOrderList(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
+    @action(
+        detail=True,
+        methods=['post'],
+        url_path='auto-allocate',
+        url_name='auto-allocate',
+        serializer_class=build.serializers.RepairOrderAutoAllocateSerializer,
+        pagination_class=None,
+        filter_backends=[],
+        output_options=None,
+    )
+    def auto_allocate(self, request, pk=None):
+        """API endpoint to auto-allocate stock against a RepairOrder."""
+        order = self.get_object()
 
-class RepairOrderDetail(OutputOptionsMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a single RepairOrder object."""
+        context = self.get_serializer_context()
+        context['order'] = order
 
-    queryset = RepairOrder.objects.all()
-    serializer_class = build.serializers.RepairOrderSerializer
+        serializer = self.get_serializer(data=request.data, context=context)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-    def get_queryset(self):
-        """Prefetch line items, in addition to any requested optional detail fields."""
-        queryset = super().get_queryset()
-        return queryset.prefetch_related('lines')
-
-
-class RepairOrderContextMixin:
-    """Simple mixin class to add a RepairOrder to the serializer context."""
-
-    queryset = RepairOrder.objects.all()
-
-    def get_order(self):
-        """Return the RepairOrder object associated with this API endpoint."""
-        try:
-            return RepairOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except (ValueError, RepairOrder.DoesNotExist):
-            raise NotFound(_('Repair order not found'))
-
-    def get_serializer_context(self):
-        """Add the RepairOrder object to the serializer context."""
-        context = super().get_serializer_context()
-
-        # Pass the RepairOrder instance through to the serializer for validation
-        try:
-            context['order'] = self.get_order()
-        except NotFound:
-            # Swallowed here (e.g. schema generation may call this without a
-            # resolvable pk) - create() below is what actually enforces a 404
-            # for a real request against a non-existent order.
-            pass
-
-        context['request'] = self.request
-
-        return context
-
-    def create(self, request, *args, **kwargs):
-        """Ensure the target RepairOrder actually exists before attempting the action.
-
-        Without this, a POST against a non-existent pk would fall through to the
-        action serializer's save(), which unconditionally reads
-        self.context['order'] - raising an unhandled KeyError (HTTP 500) instead of
-        the intended 404.
-        """
-        self.get_order()
-
-        return super().create(request, *args, **kwargs)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class RepairOrderIssue(RepairOrderContextMixin, CreateAPI):
-    """API endpoint to issue a RepairOrder."""
-
-    serializer_class = build.serializers.RepairOrderIssueSerializer
-
-
-class RepairOrderHold(RepairOrderContextMixin, CreateAPI):
-    """API endpoint to hold a RepairOrder."""
-
-    serializer_class = build.serializers.RepairOrderHoldSerializer
-
-
-class RepairOrderComplete(RepairOrderContextMixin, CreateAPI):
-    """API endpoint to complete a RepairOrder."""
-
-    serializer_class = build.serializers.RepairOrderCompleteSerializer
-
-
-class RepairOrderCancel(RepairOrderContextMixin, CreateAPI):
-    """API endpoint to cancel a RepairOrder."""
-
-    serializer_class = build.serializers.RepairOrderCancelSerializer
-
-
-class RepairOrderAutoAllocate(RepairOrderContextMixin, CreateAPI):
-    """API endpoint to auto-allocate stock against a RepairOrder."""
-
-    serializer_class = build.serializers.RepairOrderAutoAllocateSerializer
+repair_order_router.register('', RepairOrderViewSet, basename='api-repair-order')
 
 
 class RepairOrderLineItemFilter(FilterSet):
@@ -1703,46 +1665,16 @@ build_api_urls = [
     path(
         'repair/',
         include([
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        'issue/',
-                        RepairOrderIssue.as_view(),
-                        name='api-repair-order-issue',
-                    ),
-                    path(
-                        'hold/', RepairOrderHold.as_view(), name='api-repair-order-hold'
-                    ),
-                    path(
-                        'complete/',
-                        RepairOrderComplete.as_view(),
-                        name='api-repair-order-complete',
-                    ),
-                    path(
-                        'cancel/',
-                        RepairOrderCancel.as_view(),
-                        name='api-repair-order-cancel',
-                    ),
-                    path(
-                        'auto-allocate/',
-                        RepairOrderAutoAllocate.as_view(),
-                        name='api-repair-order-auto-allocate',
-                    ),
-                    meta_path(RepairOrder),
-                    path(
-                        '', RepairOrderDetail.as_view(), name='api-repair-order-detail'
-                    ),
-                ]),
-            ),
             # Repair order status code information
+            # Note: Must be defined before the router URLs, to avoid conflict with the detail view
             path(
                 'status/',
                 StatusView.as_view(),
                 {StatusView.MODEL_REF: RepairOrderStatus},
                 name='api-repair-order-status-codes',
             ),
-            path('', RepairOrderList.as_view(), name='api-repair-order-list'),
+            path('<int:pk>/', include([meta_path(RepairOrder)])),
+            path('', include(repair_order_router.urls)),
         ]),
     ),
     # Repair Order line item endpoints

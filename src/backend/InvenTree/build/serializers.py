@@ -2081,40 +2081,6 @@ class RepairOrderAdjustSerializer(serializers.Serializer):
         return self.context['order']
 
 
-class RepairOrderIssueSerializer(RepairOrderAdjustSerializer):
-    """Serializer for issuing a RepairOrder."""
-
-    def save(self):
-        """Save the serializer to 'issue' the repair order."""
-        self.order.issue_repair()
-
-
-class RepairOrderHoldSerializer(RepairOrderAdjustSerializer):
-    """Serializer for placing a RepairOrder on hold."""
-
-    def save(self):
-        """Save the serializer to 'hold' the repair order."""
-        self.order.hold_repair()
-
-
-class RepairOrderCompleteSerializer(RepairOrderAdjustSerializer):
-    """Serializer for completing a RepairOrder."""
-
-    def save(self):
-        """Save the serializer to 'complete' the repair order."""
-        request = self.context.get('request')
-
-        self.order.complete_repair(user=request.user if request else None)
-
-
-class RepairOrderCancelSerializer(RepairOrderAdjustSerializer):
-    """Serializer for cancelling a RepairOrder."""
-
-    def save(self):
-        """Save the serializer to 'cancel' the repair order."""
-        self.order.cancel_repair()
-
-
 class RepairOrderAutoAllocateSerializer(RepairOrderAdjustSerializer):
     """Serializer for auto-allocating stock against a RepairOrder."""
 

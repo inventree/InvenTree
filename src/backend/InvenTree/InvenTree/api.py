@@ -813,7 +813,7 @@ class APISearchView(GenericAPIView):
             'part': part.api.PartList,
             'partcategory': part.api.CategoryList,
             'purchaseorder': order.api.PurchaseOrderViewSet,
-            'repairorder': build.api.RepairOrderList,
+            'repairorder': build.api.RepairOrderViewSet,
             'returnorder': order.api.ReturnOrderList,
             'salesorder': order.api.SalesOrderList,
             'salesordershipment': order.api.SalesOrderShipmentList,
