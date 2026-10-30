@@ -23,9 +23,9 @@ InvenTree uses [MkDocs](https://www.mkdocs.org/) to convert [Markdown](https://w
 
 To build the documentation locally, run these commands as the `inventree` user:
 
-```
-$ cd /home/inventree
-$ source env/bin/activate
+```bash
+cd /home/inventree
+source env/bin/activate
 ```
 
 !!! info "(env) prefix"
@@ -33,9 +33,9 @@ $ source env/bin/activate
 
 You can now install the additional packages needed by mkdocs:
 
-```
-$ cd src
-$ pip install --require-hashes -r docs/requirements.txt
+```bash
+cd src
+pip install --require-hashes -r docs/requirements.txt
 ```
 
 ## Schema generation
@@ -45,8 +45,8 @@ Building the documentation requires extracting the API schema from the source co
 !!! tip
     This command is only required when building the documentation for the first time, or when changes have been made to the API schema.
 
-```
-$ invoke build-docs
+```bash
+invoke build-docs
 ```
 
 You will see output similar to this (truncated for brevity):
@@ -69,16 +69,16 @@ Documentation build complete, but mkdocs not requested
 
 Generate the HTML files from the markdown source files, and start the MkDocs webpage server:
 
-```
-$ mkdocs serve -f docs/mkdocs.yml
+```bash
+mkdocs serve -f docs/mkdocs.yml
 ```
 
 You can then point your web browser at http://localhost:8080/
 
 Alternatively, you can use the `invoke` command:
 
-```
-$ invoke dev.docs-server
+```bash
+invoke dev.docs-server
 ```
 
 If you need to, use the `-a` option after `mkdocs` or `invoke` to set the address and port.  Run `invoke dev.docs-server --help` for details.

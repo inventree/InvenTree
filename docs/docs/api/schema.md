@@ -7,7 +7,7 @@ The API schema as documented below is generated using the [drf-spectactular](htt
 
 ## API Version
 
-This documentation is for API version: `459`
+This documentation is for API version: `562`
 
 !!! tip "API Schema History"
     We track API schema changes, and provide a snapshot of each API schema version in the [API schema repository](https://github.com/inventree/schema/).
@@ -33,7 +33,7 @@ API schema documentation is split into the following categories:
 | [External Order Management](./schema/order.md) | External Order Management |
 | [Parts and Part Categories](./schema/part.md) | Parts and Part Categories |
 | [Plugin Functionality](./schema/plugins.md) | Plugin Functionality |
-| [Pricing Information](./schema/pricing.md) | Part Pricing |
+| [Part Pricing](./schema/pricing.md) | Part Pricing |
 | [Report Generation](./schema/report.md) | Report Generation |
 | [Settings Management](./schema/settings.md) | Settings Management |
 | [Stock and Stock Locations](./schema/stock.md) | Stock and Stock Locations |

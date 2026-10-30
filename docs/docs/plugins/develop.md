@@ -43,7 +43,7 @@ from plugin.mixins import APICallMixin, SettingsMixin, ScheduleMixin, BarcodeMix
 ```
 - Deliver as a package (see [below](#packaging))
 - If you need to use a private infrastructure, use the 'Releases' functions in GitHub or Gitlab. Point to the 'latest' release endpoint when installing to make sure the update function works
-- Tag your GitHub repo with `inventree` and `inventreeplugins` to make discovery easier. A discovery mechanism using these tags is on the roadmap.
+- Tag your GitHub repo with `inventree` and `inventreeplugins` to make discovery easier.
 - Use GitHub actions to test your plugin regularly (you can [schedule actions](https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#schedule)) against the 'latest' [docker-build](https://hub.docker.com/r/inventree/inventree) of InvenTree
 - If you use the AppMixin pin your plugin against the stable branch of InvenTree, your migrations might get messed up otherwise
 
@@ -126,25 +126,25 @@ Supported mixin classes are:
 
 | Mixin | Description |
 | --- | --- |
-| [ActionMixin](./mixins/action.md) | Run custom actions |
+| [ActionMixin](./mixins/action.md) | Run custom actions triggered via a HTTP endpoint |
 | [AllocateMixin](./mixins/allocate.md) | Customize automatic stock allocation |
-| [APICallMixin](./mixins/api.md) | Perform calls to external APIs |
-| [AppMixin](./mixins/app.md) | Integrate additional database tables |
+| [APICallMixin](./mixins/api.md) | Perform calls to external APIs respecting built-in safety mechanism |
+| [AppMixin](./mixins/app.md) | Add models (database tables) and complex django logic  |
 | [BarcodeMixin](./mixins/barcode.md) | Support custom barcode actions |
 | [CurrencyExchangeMixin](./mixins/currency.md) | Custom interfaces for currency exchange rates |
 | [DataExport](./mixins/export.md) | Customize data export functionality |
-| [EventMixin](./mixins/event.md) | Respond to events |
-| [LabelPrintingMixin](./mixins/label.md) | Custom label printing support |
-| [LocateMixin](./mixins/locate.md) | Locate and identify stock items |
+| [EventMixin](./mixins/event.md) | Respond to events within the platform |
+| [LabelPrintingMixin](./mixins/label.md) | Customize label printing control flow and operations |
+| [LocateMixin](./mixins/locate.md) | React to locate events on stock and customize handling |
 | [MachineDriverMixin](./mixins/machine.md) | Integrate custom machine drivers
-| [MailMixin](./mixins/mail.md) | Send custom emails |
+| [MailMixin](./mixins/mail.md) | Customize email handling (incoming and outgoing) |
 | [NavigationMixin](./mixins/navigation.md) | Add custom pages to the web interface |
-| [NotificationMixin](./mixins/notification.md) | Send custom notifications in response to system events |
-| [ReportMixin](./mixins/report.md) | Add custom context data to reports |
+| [NotificationMixin](./mixins/notification.md) | Add custom ways to deliver notifications to users |
+| [ReportMixin](./mixins/report.md) | Expose custom context data to reports and labels on generation |
 | [ScheduleMixin](./mixins/schedule.md) | Schedule periodic tasks |
-| [SettingsMixin](./mixins/settings.md) | Integrate user configurable settings |
-| [UserInterfaceMixin](./mixins/ui.md) | Add custom user interface features |
-| [UrlsMixin](./mixins/urls.md) | Respond to custom URL endpoints |
+| [SettingsMixin](./mixins/settings.md) | Define configurable settings (for system or user) for your plugin |
+| [UserInterfaceMixin](./mixins/ui.md) | Customize the web interface (add pages, actions, panels, navigation items, ...) |
+| [UrlsMixin](./mixins/urls.md) | Add to custom URL endpoints / views |
 | [ValidationMixin](./mixins/validation.md) | Provide custom validation of database models |
 | [WellKnownMixin](./mixins/wellknown.md) | Provide well-known endpoints on the root of an instance |
 
