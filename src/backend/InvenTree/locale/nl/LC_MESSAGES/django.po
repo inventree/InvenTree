@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 23:44+0000\n"
-"PO-Revision-Date: 2026-10-27 23:48\n"
+"POT-Creation-Date: 2026-10-30 03:44+0000\n"
+"PO-Revision-Date: 2026-10-30 03:48\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -113,7 +113,7 @@ msgstr "Voer datum in"
 msgid "Invalid decimal value"
 msgstr "Ongeldige decimale waarde"
 
-#: InvenTree/fields.py:286 audit/models.py:369 build/serializers.py:538
+#: InvenTree/fields.py:286 audit/models.py:380 build/serializers.py:538
 #: build/serializers.py:601 build/serializers.py:1788 common/models.py:3246
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
@@ -642,31 +642,31 @@ msgstr ""
 msgid "Invalid model type"
 msgstr ""
 
-#: audit/models.py:324
+#: audit/models.py:335
 msgid "Audit Log Entry"
 msgstr ""
 
-#: audit/models.py:325
+#: audit/models.py:336
 msgid "Audit Log Entries"
 msgstr ""
 
-#: audit/models.py:348
+#: audit/models.py:359
 msgid "Parent Content Type"
 msgstr ""
 
-#: audit/models.py:352
+#: audit/models.py:363
 msgid "Parent Object PK"
 msgstr ""
 
-#: audit/models.py:357
+#: audit/models.py:368
 msgid "Actor Username"
 msgstr ""
 
-#: audit/models.py:362
+#: audit/models.py:373
 msgid "Event Type"
 msgstr ""
 
-#: audit/models.py:370
+#: audit/models.py:381
 msgid "Notes associated with this entry"
 msgstr ""
 
@@ -883,10 +883,10 @@ msgstr "Verbruikt"
 msgid "Available"
 msgstr "Beschikbaar"
 
-#: build/api.py:588 build/serializers.py:1528 company/serializers.py:454
-#: order/serializers.py:1440 order/serializers.py:2778 part/serializers.py:793
-#: part/serializers.py:1148 part/serializers.py:1546
-#: templates/email/low_stock_notification.html:18
+#: build/api.py:588 build/serializers.py:1528 company/api.py:330
+#: company/serializers.py:454 order/serializers.py:1440
+#: order/serializers.py:2778 part/serializers.py:793 part/serializers.py:1148
+#: part/serializers.py:1546 templates/email/low_stock_notification.html:18
 msgid "On Order"
 msgstr "In bestelling"
 
