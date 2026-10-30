@@ -2576,6 +2576,7 @@ class RepairOrderReportContext(report.mixins.BaseReportContext, TypedDict):
 
 
 class RepairOrder(
+    InvenTree.models.InvenTreeAuditMixin,
     StatusCodeMixin,
     StateTransitionMixin,
     InvenTree.models.InvenTreeParameterMixin,
@@ -2605,6 +2606,11 @@ class RepairOrder(
 
     STATUS_CLASS = RepairOrderStatus
     REFERENCE_PATTERN_SETTING = 'REPAIRORDER_REFERENCE_PATTERN'
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Derived from 'barcode_data'
+        'barcode_hash',
+    )
 
     class Meta:
         """Model meta options."""
@@ -2852,6 +2858,7 @@ class RepairOrder(
                     user=user,
                     code=StockHistoryCode.STOCK_REMOVE,
                     notes=_('Consumed by repair order'),
+                    repairorder=self,
                 ):
                     raise ValidationError({
                         'allocations': _('Failed to consume repair order stock')
@@ -2970,13 +2977,26 @@ class RepairOrder(
         return 'RP'
 
 
-class RepairOrderLineItem(InvenTree.models.InvenTreeMetadataModel):
+class RepairOrderLineItem(
+    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """Model for a repair order line item."""
+
+    # Changes to line items are included in the history of the repair order
+    AUDIT_PARENT_FIELD = 'order'
 
     class Meta:
         """Model meta options."""
 
         verbose_name = _('Repair Order Line Item')
+
+    def __str__(self):
+        """Render a string representation of a RepairOrderLineItem instance."""
+        return '{n} x {part} - {order}'.format(
+            n=InvenTree.helpers.decimal2string(self.quantity),
+            part=self.part.full_name if self.part else _('Unknown part'),
+            order=self.order,
+        )
 
     def save(self, *args, **kwargs):
         """Custom save — prevent modification when the parent order is locked."""

@@ -3091,6 +3091,7 @@ class StockItem(
             'salesorder',
             'returnorder',
             'buildorder',
+            'repairorder',
         ]
 
     def _apply_model_reference_fields(self, kwargs: dict, deltas: dict) -> None:

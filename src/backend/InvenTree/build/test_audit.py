@@ -374,3 +374,158 @@ class BuildStockAuditTest(BuildTestBase):
             ),
             sorted(component.pk for component in components),
         )
+
+
+class RepairOrderAuditTest(InvenTreeAPITestCase):
+    """Tests for audit history of RepairOrder and RepairOrderLineItem objects."""
+
+    fixtures = ['category', 'part', 'location', 'stock']
+
+    roles = [
+        'repair_order.view',
+        'repair_order.add',
+        'repair_order.change',
+        'repair_order.delete',
+        'part.view',
+        'stock.view',
+    ]
+
+    def setUp(self):
+        """Create a repair order to act on."""
+        from build.models import RepairOrder
+        from part.models import Part
+
+        super().setUp()
+
+        self.part = Part.objects.filter(assembly=True).first()
+
+        self.order = RepairOrder.objects.create(
+            reference='RO-9001', description='Audited repair', part=self.part
+        )
+
+    def entries(self, model, pk, **filters):
+        """Return audit entries for a given object (by PK - which survives deletion)."""
+        return AuditLogEntry.objects.filter(
+            content_type=model.get_content_type(), object_pk=str(pk), **filters
+        )
+
+    def history(self, pk):
+        """Return the audit history for the repair order (including line items)."""
+        return self.get(
+            reverse('api-audit-log-list'),
+            {'model_type': 'build.repairorder', 'model_id': pk},
+        ).data
+
+    def test_create_and_edit(self):
+        """Creating and editing a repair order is recorded, without derived fields."""
+        from build.models import RepairOrder
+
+        entry = self.entries(RepairOrder, self.order.pk, action=ACTION.CREATE).get()
+
+        self.assertEqual(entry.changes_dict['reference'][1], 'RO-9001')
+        self.assertEqual(entry.object_repr, 'RO-9001')
+
+        for field in ['reference_int', 'barcode_hash', 'metadata']:
+            self.assertNotIn(field, entry.changes_dict)
+
+        self.patch(
+            reverse('api-repair-order-detail', kwargs={'pk': self.order.pk}),
+            {'description': 'Updated description', 'symptoms': 'Smoke'},
+        )
+
+        entry = self.entries(RepairOrder, self.order.pk, action=ACTION.UPDATE).get()
+
+        self.assertEqual(entry.actor, self.user)
+        self.assertEqual(entry.changes_dict['description'][1], 'Updated description')
+        self.assertEqual(entry.changes_dict['symptoms'][1], 'Smoke')
+
+        history = self.history(self.order.pk)
+
+        self.assertEqual(len(history), 2)
+        self.assertEqual(history[0]['model_label'], 'Repair Order')
+
+    def test_status_change(self):
+        """Status transitions are recorded."""
+        from build.models import RepairOrder
+        from build.status_codes import RepairOrderStatus
+
+        self.post(
+            reverse('api-repair-order-issue', kwargs={'pk': self.order.pk}),
+            expected_code=201,
+        )
+
+        entry = (
+            self
+            .entries(RepairOrder, self.order.pk, action=ACTION.UPDATE)
+            .order_by('pk')
+            .last()
+        )
+
+        self.assertEqual(
+            entry.changes_dict['status'],
+            [RepairOrderStatus.PENDING.value, RepairOrderStatus.IN_PROGRESS.value],
+        )
+
+    def test_line_item_history(self):
+        """Line item changes are linked to the repair order, and shown in its history."""
+        from build.models import RepairOrderLineItem
+
+        url = reverse('api-repair-order-line-list')
+
+        pk = self.post(
+            url, {'order': self.order.pk, 'part': self.part.pk, 'quantity': 2}
+        ).data['pk']
+
+        detail_url = reverse('api-repair-order-line-detail', kwargs={'pk': pk})
+        self.patch(detail_url, {'quantity': 5})
+        self.delete(detail_url)
+
+        entries = self.entries(RepairOrderLineItem, pk)
+
+        self.assertEqual(
+            sorted(entries.values_list('action', flat=True)),
+            [ACTION.CREATE, ACTION.UPDATE, ACTION.DELETE],
+        )
+
+        for entry in entries:
+            self.assertEqual(entry.actor, self.user)
+            self.assertEqual(entry.parent_object_pk, str(self.order.pk))
+            self.assertNotIn(' object (', entry.object_repr)
+
+        child_actions = [
+            e['action']
+            for e in self.history(self.order.pk)
+            if e['model_type'] == 'build.repairorderlineitem'
+        ]
+
+        self.assertEqual(
+            sorted(child_actions), [ACTION.CREATE, ACTION.UPDATE, ACTION.DELETE]
+        )
+
+    def test_complete_consumes_stock(self):
+        """Stock consumed on completion records an event referencing the repair order."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem
+        from stock.status_codes import StockHistoryCode
+
+        item = StockItem.objects.filter(
+            StockItem.IN_STOCK_FILTER, serial=None, quantity__gte=5
+        ).first()
+
+        line = RepairOrderLineItem.objects.create(
+            order=self.order, part=item.part, quantity=2
+        )
+        RepairOrderAllocation.objects.create(line=line, item=item, quantity=2)
+
+        n = self.entries(StockItem, item.pk).count()
+
+        self.order.complete_repair(user=self.user)
+
+        [entry] = self.entries(StockItem, item.pk).order_by('pk')[n:]
+
+        self.assertEqual(entry.event_type, StockHistoryCode.STOCK_REMOVE)
+        self.assertEqual(entry.actor, self.user)
+        self.assertEqual(
+            entry.additional_data['deltas']['repairorder']['pk'], self.order.pk
+        )
+        self.assertEqual(entry.additional_data['deltas']['removed'], 2)
