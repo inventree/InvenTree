@@ -232,6 +232,13 @@ class ReportConfig(AppConfig):
                 'filename_pattern': 'ReturnOrder-{{ reference }}.pdf',
             },
             {
+                'file': 'inventree_repair_order_report.html',
+                'name': 'InvenTree Repair Order',
+                'description': 'Sample repair order report',
+                'model_type': 'repairorder',
+                'filename_pattern': 'RepairOrder-{{ reference }}.pdf',
+            },
+            {
                 'file': 'inventree_transfer_order_report.html',
                 'name': 'InvenTree Transfer Order',
                 'description': 'Sample transfer order report',
