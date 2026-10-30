@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [#12682](https://github.com/inventree/InvenTree/pull/12682) adds support for "Non Conformance", adding new database models, API endpoints and user interface components for managing non-conformance records.
 - [#13069](https://github.com/inventree/InvenTree/pull/13069) Adds an audit log which tracks changes made to internal data and exposes read-only API endpoints (/api/audit/) for accessing the audit log.
 
 ### Changed
