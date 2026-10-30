@@ -52,13 +52,13 @@ export function useRepairOrderFields({
     if (!!duplicateOrderId) {
       fields.duplicate = {
         children: {
-          order_id: {
+          original: {
             hidden: true,
             value: duplicateOrderId
           },
-          copy_lines: {
-            value: true
-          }
+          copy_lines: {},
+          copy_parameters: {},
+          copy_notes: {}
         }
       };
     }

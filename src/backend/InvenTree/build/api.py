@@ -1425,7 +1425,9 @@ class RepairOrderFilter(FilterSet):
         return queryset.filter(q1 | q2 | q3).distinct()
 
 
-class RepairOrderList(OutputOptionsMixin, ListCreateAPI):
+class RepairOrderList(
+    DataExportViewMixin, OutputOptionsMixin, ParameterListMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of RepairOrder objects."""
 
     queryset = RepairOrder.objects.all()
@@ -1461,6 +1463,18 @@ class RepairOrderList(OutputOptionsMixin, ListCreateAPI):
         """Prefetch line items, in addition to any requested optional detail fields."""
         queryset = super().get_queryset()
         return queryset.prefetch_related('lines')
+
+    def create(self, request, *args, **kwargs):
+        """Save user information on order creation."""
+        serializer = self.get_serializer(data=self.clean_data(request.data))
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save(issued_by=request.user)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
 
 class RepairOrderDetail(OutputOptionsMixin, RetrieveUpdateDestroyAPI):

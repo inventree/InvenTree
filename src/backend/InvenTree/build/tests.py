@@ -488,6 +488,91 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         self.ro.refresh_from_db()
         self.assertIsNone(self.ro.completion_date)
 
+    def test_issued_by_set_from_request(self):
+        """The 'issued_by' field is set to the requesting user, and cannot be spoofed."""
+        from django.contrib.auth.models import User
+
+        other = User.objects.create_user(username='other-user', password='abc')
+
+        url = reverse('api-repair-order-list')
+        data = self.post(
+            url,
+            {'description': 'Issued', 'part': self.part.pk, 'issued_by': other.pk},
+            expected_code=201,
+        ).data
+
+        self.assertEqual(data['issued_by'], self.user.pk)
+
+        # Cannot be changed after creation either
+        detail_url = reverse('api-repair-order-detail', kwargs={'pk': data['pk']})
+        self.patch(detail_url, {'issued_by': other.pk}, expected_code=200)
+
+        self.assertEqual(RepairOrder.objects.get(pk=data['pk']).issued_by, self.user)
+
+    def test_status_and_barcode_fields(self):
+        """Custom status and barcode fields are returned by the API."""
+        url = reverse('api-repair-order-detail', kwargs={'pk': self.ro.pk})
+        data = self.get(url).data
+
+        self.assertEqual(data['status_custom_key'], RepairOrderStatus.PENDING.value)
+        self.assertEqual(data['status_text'], 'Pending')
+        self.assertIn('barcode_hash', data)
+
+    def test_absolute_url(self):
+        """The web URL points to the repair order detail page."""
+        self.assertTrue(
+            self.ro.get_absolute_url().endswith(
+                f'/manufacturing/repair-order/{self.ro.pk}'
+            )
+        )
+
+    def test_duplicate(self):
+        """Duplicating an order optionally copies line items."""
+        from .models import RepairOrderLineItem
+
+        RepairOrderLineItem.objects.create(order=self.ro, part=self.part, quantity=3)
+        RepairOrderLineItem.objects.create(order=self.ro, part=self.part, quantity=4)
+
+        url = reverse('api-repair-order-list')
+
+        for copy_lines, quantities in [(True, [3, 4]), (False, [])]:
+            data = self.post(
+                url,
+                {
+                    'description': 'Duplicated order',
+                    'part': self.part.pk,
+                    'duplicate': {'original': self.ro.pk, 'copy_lines': copy_lines},
+                },
+                expected_code=201,
+            ).data
+
+            order = RepairOrder.objects.get(pk=data['pk'])
+
+            self.assertEqual(
+                sorted(order.lines.values_list('quantity', flat=True)), quantities
+            )
+
+        # The original order is unchanged
+        self.assertEqual(self.ro.lines.count(), 2)
+
+    def test_export(self):
+        """Repair orders can be exported via the API."""
+        with self.export_data(reverse('api-repair-order-list')) as data_file:
+            data = self.process_csv(
+                data_file,
+                required_cols=['ID', 'Reference', 'Part'],
+                required_rows=RepairOrder.objects.count(),
+            )
+
+            self.assertIn(self.ro.reference, [row['Reference'] for row in data])
+
+    def test_parameters(self):
+        """Parameter data can be requested (as used by the parametric table)."""
+        url = reverse('api-repair-order-list')
+        data = self.get(url, {'parameters': 'true'}).data
+
+        self.assertIn('parameters', data[0])
+
     # ── FSM transition endpoints ───────────────────────────────────
 
     def test_issue_transition(self):

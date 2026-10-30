@@ -1859,12 +1859,16 @@ class BuildConsumeSerializer(serializers.Serializer):
 
 
 class RepairOrderSerializer(
-    InvenTreeCustomStatusSerializerMixin,
+    CustomStatusSerializerMixin,
     FilterableSerializerMixin,
     InvenTreeTaggitSerializer,
+    DataImportExportSerializerMixin,
+    InvenTreeCustomStatusSerializerMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for a RepairOrder object."""
+
+    SKIP_CREATE_FIELDS = ['duplicate']
 
     class Meta:
         """Metaclass options."""
@@ -1877,9 +1881,13 @@ class RepairOrderSerializer(
             'customer_detail',
             'part',
             'part_detail',
+            'barcode_hash',
             'description',
+            'duplicate',
             'symptoms',
             'status',
+            'status_text',
+            'status_custom_key',
             'creation_date',
             'start_date',
             'target_date',
@@ -1890,9 +1898,20 @@ class RepairOrderSerializer(
             'issued_by_detail',
             'link',
             'line_items',
+            'parameters',
             'tags',
         ]
-        read_only_fields = ['creation_date', 'completion_date', 'status']
+        read_only_fields = [
+            'creation_date',
+            'completion_date',
+            'issued_by',
+            'status',
+            'status_text',
+        ]
+
+    barcode_hash = serializers.CharField(read_only=True)
+
+    parameters = common.filters.enable_parameters_filter()
 
     tags = common.filters.enable_tags_filter()
 
@@ -1942,6 +1961,35 @@ class RepairOrderSerializer(
     line_items = serializers.PrimaryKeyRelatedField(
         source='lines', many=True, read_only=True
     )
+
+    duplicate = DuplicateOptionsSerializer(
+        RepairOrder.objects.all(),
+        copy_lines=True,
+        copy_parameters=True,
+        copy_notes=True,
+    )
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a new RepairOrder, optionally copying data from an existing order."""
+        duplicate = validated_data.pop('duplicate', None)
+
+        instance = super().create(validated_data)
+
+        if duplicate:
+            original = duplicate['original']
+
+            if duplicate.get('copy_lines', True):
+                for line in original.lines.all():
+                    line.pk = None
+                    line.order = instance
+                    line.save()
+
+            apply_duplicate_copy_options(
+                instance, duplicate, original, copy_notes=True, copy_parameters=True
+            )
+
+        return instance
 
 
 class RepairOrderLineItemSerializer(
@@ -2054,7 +2102,9 @@ class RepairOrderCompleteSerializer(RepairOrderAdjustSerializer):
 
     def save(self):
         """Save the serializer to 'complete' the repair order."""
-        self.order.complete_repair()
+        request = self.context.get('request')
+
+        self.order.complete_repair(user=request.user if request else None)
 
 
 class RepairOrderCancelSerializer(RepairOrderAdjustSerializer):

@@ -2621,6 +2621,10 @@ class RepairOrder(
         """String representation of a RepairOrder."""
         return self.reference
 
+    def get_absolute_url(self):
+        """Return the web URL associated with this RepairOrder."""
+        return InvenTree.helpers.pui_url(f'/manufacturing/repair-order/{self.id}')
+
     def report_context(self) -> RepairOrderReportContext:
         """Generate custom report context data."""
         return {

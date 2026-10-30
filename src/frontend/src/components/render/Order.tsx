@@ -95,7 +95,7 @@ export function RenderRepairOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status_custom_key,
+        status: instance.status_custom_key || instance.status,
         type: ModelType.repairorder
       })}
       image={customer.thumbnail || customer.image}

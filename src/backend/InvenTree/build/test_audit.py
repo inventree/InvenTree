@@ -529,3 +529,20 @@ class RepairOrderAuditTest(InvenTreeAPITestCase):
             entry.additional_data['deltas']['repairorder']['pk'], self.order.pk
         )
         self.assertEqual(entry.additional_data['deltas']['removed'], 2)
+
+    def test_complete_via_api_passes_user(self):
+        """Completing via the API passes the requesting user through to stock removal."""
+        from unittest import mock
+
+        from build.models import RepairOrder
+
+        with mock.patch.object(
+            RepairOrder, 'complete_repair', autospec=True
+        ) as complete:
+            self.post(
+                reverse('api-repair-order-complete', kwargs={'pk': self.order.pk}),
+                expected_code=201,
+            )
+
+        complete.assert_called_once()
+        self.assertEqual(complete.call_args.kwargs['user'], self.user)
