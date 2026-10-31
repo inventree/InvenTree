@@ -756,6 +756,21 @@ class UserTokenTests(InvenTreeAPITestCase):
             data = self.get(reverse('api-inventree-info')).json()
             self.assertFalse(data['system_state']['api_token_pepper_set'])
 
+        # setup access
+        token = ApiToken.objects.create(
+            user=self.user,
+            key=default_token(),
+            token_version=1,
+            expiry=datetime.datetime.now() + datetime.timedelta(days=365),
+        )
+        token_key = token.key
+        self.logout()
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token_key}')
+
+        with self.settings(API_TOKEN_PEPPER='sk1', SECRET_KEY='sk1'):
+            data = self.get(reverse('api-inventree-info')).json()
+            self.assertFalse(data['system_state']['api_token_pepper_set'])
+
         with self.settings(API_TOKEN_PEPPER='pepper-1', SECRET_KEY='sk1'):
             data = self.get(reverse('api-inventree-info')).json()
             self.assertTrue(data['system_state']['api_token_pepper_set'])
