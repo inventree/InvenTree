@@ -482,7 +482,6 @@ mkdocs==1.6.1 \
     --hash=sha256:7b432f01d928c084353ab39c57282f29f92136665bdd6abf7c1ec8d822ef86f2 \
     --hash=sha256:db91759624d1647f3f34aa0c3f327dd2601beae39a366d6e064c03468d35c20e
     # via
-    #   -r docs/requirements.in
     #   mkdocs-autorefs
     #   mkdocs-git-revision-date-localized-plugin
     #   mkdocs-include-markdown-plugin
@@ -579,7 +578,9 @@ platformdirs==4.13.5 \
 properdocs==1.6.7 \
     --hash=sha256:6fa0cfa2e01bf338f684892c8a506cf70ea88ae7f3479c933b6fa20168101cbd \
     --hash=sha256:adc7b16e562890af0e098a7e5b02e3a81c20894a87d6a28d345c9300de73c26e
-    # via mkdocs-redirects
+    # via
+    #   -r docs/requirements.in
+    #   mkdocs-redirects
 pygments==2.21.0 \
     --hash=sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9 \
     --hash=sha256:610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c

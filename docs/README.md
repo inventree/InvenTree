@@ -62,15 +62,15 @@ Exporting definitions complete
 Exporting schema file to '/home/inventree/src/docs/generated/schema.yml'
 
 Schema export completed: /home/inventree/src/docs/generated/schema.yml
-Documentation build complete, but mkdocs not requested
+Documentation build complete, but properdocs not requested
 ```
 
 ## Viewing the documentation
 
-Generate the HTML files from the markdown source files, and start the MkDocs webpage server:
+Generate the HTML files from the markdown source files, and start the properdocs webpage server:
 
 ```
-$ mkdocs serve -f docs/mkdocs.yml
+$ properdocs serve -f docs/mkdocs.yml
 ```
 
 You can then point your web browser at http://localhost:8080/
@@ -81,7 +81,7 @@ Alternatively, you can use the `invoke` command:
 $ invoke dev.docs-server
 ```
 
-If you need to, use the `-a` option after `mkdocs` or `invoke` to set the address and port.  Run `invoke dev.docs-server --help` for details.
+If you need to, use the `-a` option after `properdocs` or `invoke` to set the address and port.  Run `invoke dev.docs-server --help` for details.
 
 ## Editing the Documentation Files
 
