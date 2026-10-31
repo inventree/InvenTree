@@ -390,7 +390,7 @@ def check_email_warning():
     from InvenTree.helpers_email import is_email_configured
 
     if is_email_configured():
-        return None
+        return None  # pragma: no cover
     return _('Email is not configured on this server - this is a security risk.')
 
 
