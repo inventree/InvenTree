@@ -385,6 +385,25 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         return not self.revoked and not self.expired
 
 
+def check_email_warning():
+    """Check if email is configured and return a warning if not."""
+    from InvenTree.helpers_email import is_email_configured
+
+    if is_email_configured():
+        return None
+    return _('Email is not configured on this server - this is a security risk.')
+
+
+@receiver(post_save, sender=ApiToken, dispatch_uid='api_token_notification')
+def api_token_notification(sender, instance: ApiToken, created, **kwargs):
+    """Notify the token owner that a token was made for them."""
+    if not created or isImportingData() or isReadOnlyCommand():
+        return
+    from users.tasks import notify_api_token
+
+    notify_api_token(instance)
+
+
 class RuleSet(models.Model):
     """A RuleSet is somewhat like a superset of the django permission class, in that in encapsulates a bunch of permissions.
 

@@ -142,11 +142,12 @@ class GetAuthTokenSerializer(serializers.Serializer):
         """Meta options for GetAuthTokenSerializer."""
 
         model = ApiToken
-        fields = ['token', 'name', 'expiry']
+        fields = ['token', 'name', 'expiry', 'warning']
 
     token = serializers.CharField(read_only=True)
     name = serializers.CharField()
     expiry = serializers.DateField(read_only=True)
+    warning = serializers.CharField(read_only=True, required=False)
 
 
 class BriefUserProfileSerializer(InvenTreeModelSerializer):
