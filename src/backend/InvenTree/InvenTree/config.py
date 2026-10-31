@@ -6,12 +6,14 @@ import logging
 import os
 import shutil
 import sys
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, TypeVar, overload
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
+_SettingType = TypeVar('_SettingType')
 
 
 def to_list(value, delimiter=','):
@@ -305,7 +307,30 @@ def get_config_value(config_key: str) -> Optional[Any]:
     return result
 
 
-def get_setting(env_var=None, config_key=None, default_value=None, typecast=None):
+@overload
+def get_setting(
+    env_var: str | None = None,
+    config_key: str | None = None,
+    default_value: Any = None,
+    typecast: Callable[[Any], _SettingType] = ...,
+) -> _SettingType: ...
+
+
+@overload
+def get_setting(
+    env_var: str | None = None,
+    config_key: str | None = None,
+    default_value: Any = None,
+    typecast: None = None,
+) -> Any: ...
+
+
+def get_setting(
+    env_var: str | None = None,
+    config_key: str | None = None,
+    default_value: Any = None,
+    typecast: Callable[[Any], Any] | None = None,
+) -> Any:
     """Helper function for retrieving a configuration setting value.
 
     - First preference is to look for the environment variable
