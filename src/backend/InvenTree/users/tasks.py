@@ -10,6 +10,7 @@ import structlog
 
 import common.notifications
 import InvenTree.helpers
+from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.ready import canAppAccessDatabase
 from users.models import ApiToken, RuleSet, check_email_warning
 from users.permissions import get_model_permission_string, split_permission
@@ -35,7 +36,9 @@ def notify_api_token(token: ApiToken):
         'name': name,
         'message': message,
         'token': token,
-        'link': InvenTree.helpers.pui_url('settings/user/security'),
+        'link': construct_absolute_url(
+            InvenTree.helpers.pui_url('settings/user/security')
+        ),
         'template': {'html': 'email/api_token_issued.html', 'subject': name},
     }
 
