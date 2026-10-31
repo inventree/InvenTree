@@ -2608,7 +2608,7 @@ def docs_server(
     compile_schema: bool = False,
     export_settings: bool = True,
 ):
-    """Start a local mkdocs server to view the documentation."""
+    """Start a local properdocs server to view the documentation."""
     # Extract settings definitions
     if export_settings:
         export_definitions(c, basedir='docs')
@@ -2616,7 +2616,7 @@ def docs_server(
     if compile_schema:
         doc_schema(c)
 
-    run(c, f'mkdocs serve -a {address} -f docs/mkdocs.yml')
+    run(c, f'properdocs serve -a {address} -f docs/mkdocs.yml')
 
 
 @task(
@@ -2629,7 +2629,7 @@ def build_docs(c, mkdocs=False):
     doc_schema(c)
 
     if mkdocs:
-        run(c, 'mkdocs build  -f docs/mkdocs.yml')
+        run(c, 'properdocs build  -f docs/mkdocs.yml')
         info('Documentation build complete')
     else:
         info('Documentation build complete, but mkdocs not requested')
