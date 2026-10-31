@@ -4,15 +4,55 @@ from typing import Any
 
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import gettext_lazy as _
 
 import structlog
 
+import common.notifications
+import InvenTree.helpers
 from InvenTree.ready import canAppAccessDatabase
-from users.models import RuleSet
+from users.models import ApiToken, RuleSet, check_email_warning
 from users.permissions import get_model_permission_string, split_permission
 from users.ruleset import RULESET_CHANGE_INHERIT, RULESET_CHOICES, RULESET_NAMES
 
 logger = structlog.get_logger('inventree')
+
+
+def notify_api_token(token: ApiToken):
+    """Send warning that a token has been issued."""
+    user = token.user
+    issuer = token.issued_by
+
+    if issuer and issuer != user:
+        message = _(
+            f"A new API token '{token.name}' was issued for your account by {issuer.username}"
+        )
+    else:
+        message = _(f"A new API token '{token.name}' was issued for your account")
+
+    name = _('API Token Issued')
+    context = {
+        'name': name,
+        'message': message,
+        'token': token,
+        'link': InvenTree.helpers.pui_url('settings/user/security'),
+        'template': {'html': 'email/api_token_issued.html', 'subject': name},
+    }
+
+    if check_email_warning():
+        logger.warning(
+            "INVE-W7: API token '%s' issued for user '%s' - but email not set up",
+            token.name,
+            user.username,
+        )
+    common.notifications.trigger_notification(
+        None,
+        'users.api_token_issued',
+        targets=[user],
+        context=context,
+        check_recent=False,
+        notification_uid=f'api_token_{token.pk}',
+    )
 
 
 def rebuild_all_permissions() -> None:
