@@ -27,6 +27,7 @@ from rest_framework.authtoken.models import Token as AuthToken
 
 import InvenTree.helpers
 import InvenTree.models
+import InvenTree.version
 from common.settings import get_global_setting
 from InvenTree.ready import isImportingData, isReadOnlyCommand
 from web.tips import KNOWN_IDS
@@ -128,27 +129,52 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         secret = secrets.token_hex(API_TOKEN_SECRET_LENGTH // 2)
         suffix = '-' + str(datetime.datetime.now().date().isoformat().replace('-', ''))
 
+        pepper = InvenTree.helpers.get_api_token_pepper()
+
         self.key = identifier
-        self.hmac_digest = self.calculate_digest(secret)
+        self.hmac_digest = self.calculate_digest(secret, pepper)
         self._raw_secret = f'{API_TOKEN_PREFIX}{identifier}.{secret}{suffix}'
 
         # metadata
         self.token_version = 2
-        self.pepper_id = self.calculate_pepper_id()
+        self.pepper_id = self.calculate_pepper_id(pepper)
+        self.issued_version = InvenTree.version.inventreeVersion()
 
     @staticmethod
-    def calculate_digest(secret: str) -> str:
+    def calculate_digest(secret: str, pepper: Optional[str] = None) -> str:
         """Calculate the HMAC digest of the provided secret."""
-        pepper = InvenTree.helpers.get_api_token_pepper()
+        if pepper is None:
+            pepper = InvenTree.helpers.get_api_token_pepper()
         return hmac.new(
             pepper.encode('utf-8'), secret.encode('utf-8'), hashlib.sha256
         ).hexdigest()
 
     @classmethod
-    def calculate_pepper_id(cls, length=8) -> str:
-        """Calculate the first 8 characters of the current pepper hashed."""
-        pepper = InvenTree.helpers.get_api_token_pepper()
+    def calculate_pepper_id(cls, pepper: Optional[str] = None, length=8) -> str:
+        """Calculate the first 8 characters of the (current) pepper hashed."""
+        if pepper is None:
+            pepper = InvenTree.helpers.get_api_token_pepper()
         return hashlib.sha256(pepper.encode('utf-8')).hexdigest()[:length]
+
+    def get_pepper(self) -> Optional[str]:
+        """Return the pepper this token was issued with, or None if it is not known (anymore)."""
+        if not self.pepper_id:
+            # Legacy v2 token without recorded pepper - assume current pepper
+            return InvenTree.helpers.get_api_token_pepper()
+
+        for pepper in InvenTree.helpers.get_api_token_peppers():
+            if hmac.compare_digest(
+                self.calculate_pepper_id(pepper, length=len(self.pepper_id)),
+                self.pepper_id,
+            ):
+                return pepper
+
+        logger.warning(
+            'INVE-W19: API token %s was issued with an unknown pepper (%s)',
+            self.pk,
+            self.pepper_id,
+        )
+        return None
 
     @staticmethod
     def split_token(raw_token: str):
@@ -203,9 +229,12 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
             # check id
             if not parts or parts[0] != self.key:
                 return False  # pragma: no cover
-            # check secret
+            # check secret - using the pepper the token was issued with
+            pepper = self.get_pepper()
+            if pepper is None:
+                return False
             return hmac.compare_digest(
-                self.calculate_digest(parts[1]), self.hmac_digest
+                self.calculate_digest(parts[1], pepper), self.hmac_digest
             )
 
         # should be a v1 - compare directly
@@ -320,6 +349,14 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         help_text=_('Identifier for the pepper used in token hashing'),
     )
     """By default, the first 8 characters of the pepper hashed."""
+
+    issued_version = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Issued Version'),
+        help_text=_('InvenTree version the token was issued with'),
+    )
 
     @staticmethod
     def sanitize_name(name: str) -> str:

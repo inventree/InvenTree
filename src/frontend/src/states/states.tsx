@@ -42,6 +42,7 @@ export interface ServerAPIProps {
   };
   system_state: {
     cors_allow_all: null | boolean;
+    api_token_pepper_set: null | boolean;
   } | null;
 }
 

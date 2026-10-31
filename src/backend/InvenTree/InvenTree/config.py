@@ -494,6 +494,35 @@ def get_secret_key(return_path: bool = False) -> str | Path:
     return secret_key_file.read_text().strip()
 
 
+def get_api_token_peppers():
+    """Get peppers from environment.
+
+    Pepper -> Pepper File -> (Secret Key, set in settings so we can throw warning)
+    """
+    pepper = get_setting('INVENTREE_API_TOKEN_PEPPER', 'api_token_pepper', typecast=str)
+
+    if not pepper:
+        if pepper_file := get_setting(
+            'INVENTREE_API_TOKEN_PEPPER_FILE', 'api_token_pepper_file', typecast=str
+        ):
+            pepper_file = Path(pepper_file).resolve()
+            if pepper_file.is_file():
+                pepper = pepper_file.read_text().strip()
+            if not pepper:
+                raise FileNotFoundError(
+                    f"INVE-E21: API token pepper file '{pepper_file}' does not exist, is empty or unreadable."
+                )
+
+    additional = get_setting(
+        'INVENTREE_API_TOKEN_PEPPER_ADDITIONAL',
+        'api_token_pepper_additional',
+        [],
+        typecast=list,
+    )
+    additional = [str(p).strip() for p in additional or []]
+    return (pepper.strip() if pepper else None), additional
+
+
 def get_oidc_private_key(return_path: bool = False) -> str | Path:
     """Return the private key for OIDC authentication.
 
