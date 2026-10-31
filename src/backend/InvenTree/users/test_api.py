@@ -750,6 +750,11 @@ class UserTokenTests(InvenTreeAPITestCase):
                 self.assertIsNone(ApiToken.get_from_string(raw_1))
             self.assertIn('INVE-W19', logs.output[0])
 
+            # no pepper id set -> should use current pepper for validation
+            token_2.pepper_id = None
+            token_2.save()
+            self.assertIsNotNone(ApiToken.get_from_string(token_2.token))
+
     def test_token_pepper_info(self):
         """Test that the pepper state is reported to staff users."""
         with self.settings(API_TOKEN_PEPPER='sk1', SECRET_KEY='sk1'):
