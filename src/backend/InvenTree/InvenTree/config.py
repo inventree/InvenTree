@@ -524,11 +524,11 @@ def get_api_token_peppers():
 
     Pepper -> Pepper File -> (Secret Key, set in settings so we can throw warning)
     """
-    pepper = get_setting('INVENTREE_API_TOKEN_PEPPER', 'api_token_pepper', typecast=str)
+    pepper = get_setting('INVENTREE_API_TOKEN_PEPPER', 'api_token_pepper')
 
     if not pepper:
         if pepper_file := get_setting(
-            'INVENTREE_API_TOKEN_PEPPER_FILE', 'api_token_pepper_file', typecast=str
+            'INVENTREE_API_TOKEN_PEPPER_FILE', 'api_token_pepper_file'
         ):
             pepper_file = Path(pepper_file).resolve()
             if pepper_file.is_file():
