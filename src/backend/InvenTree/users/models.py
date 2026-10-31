@@ -141,19 +141,15 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         self.issued_version = InvenTree.version.inventreeVersion()
 
     @staticmethod
-    def calculate_digest(secret: str, pepper: Optional[str] = None) -> str:
+    def calculate_digest(secret: str, pepper: str) -> str:
         """Calculate the HMAC digest of the provided secret."""
-        if pepper is None:
-            pepper = InvenTree.helpers.get_api_token_pepper()
         return hmac.new(
             pepper.encode('utf-8'), secret.encode('utf-8'), hashlib.sha256
         ).hexdigest()
 
     @classmethod
-    def calculate_pepper_id(cls, pepper: Optional[str] = None, length=8) -> str:
+    def calculate_pepper_id(cls, pepper: str, length=8) -> str:
         """Calculate the first 8 characters of the (current) pepper hashed."""
-        if pepper is None:
-            pepper = InvenTree.helpers.get_api_token_pepper()
         return hashlib.sha256(pepper.encode('utf-8')).hexdigest()[:length]
 
     def get_pepper(self) -> Optional[str]:
