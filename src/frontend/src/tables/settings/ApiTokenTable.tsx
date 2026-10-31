@@ -130,6 +130,10 @@ export function ApiTokenTable({
         sortable: true
       },
       {
+        accessor: 'issued_version',
+        sortable: false
+      },
+      {
         accessor: 'revocation_reason',
         sortable: false
       }

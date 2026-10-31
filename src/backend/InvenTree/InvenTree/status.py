@@ -9,6 +9,7 @@ import structlog
 from django_q.models import Success
 from django_q.status import Stat
 
+import InvenTree.helpers
 import InvenTree.helpers_email
 import InvenTree.ready
 
@@ -68,6 +69,11 @@ def check_system_health(**kwargs):
         result = False
         if not settings.DEBUG:
             logger.warning('INVE-W7: Email backend not configured')
+
+    if not InvenTree.helpers.get_api_token_pepper_set():  # pragma: no cover
+        result = False
+        if not settings.DEBUG:
+            logger.warning('INVE-W18: API token pepper not configured')
 
     if not result:  # pragma: no cover
         if not settings.DEBUG:

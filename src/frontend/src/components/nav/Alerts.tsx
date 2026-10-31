@@ -156,6 +156,13 @@ export function getAlerts(
       code: 'INVE-W16',
       message: t`CORS is set to allow all origins.`,
       condition: server?.system_state?.cors_allow_all || false
+    },
+    {
+      key: 'api_token_pepper',
+      title: t`API Token Pepper`,
+      code: 'INVE-W18',
+      message: t`No API token pepper is configured, the secret key is used instead.`,
+      condition: server?.system_state?.api_token_pepper_set === false
     }
   ];
 

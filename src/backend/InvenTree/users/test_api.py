@@ -3,11 +3,13 @@
 import datetime
 from unittest import mock
 
+from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
 
 from allauth.account.models import EmailAddress
 
+import InvenTree.version
 from InvenTree.unit_test import InvenTreeAPITestCase
 from users.models import ApiToken, default_token
 from users.ruleset import RULESET_NAMES, get_ruleset_models
@@ -688,6 +690,95 @@ class UserTokenTests(InvenTreeAPITestCase):
         # staff users are allowed to see the database field
         self.assertIn('database', response_data)
         self.assertIsNotNone(response_data.get('database'))
+
+    def test_token_metadata(self):
+        """Test that the issuing version and pepper are recorded for new tokens."""
+        t = ApiToken.objects.create(user=self.user, name='meta')
+        self.assertEqual(t.token_version, 2)
+        self.assertEqual(t.issued_version, InvenTree.version.inventreeVersion())
+        self.assertEqual(
+            t.pepper_id, ApiToken.calculate_pepper_id(settings.API_TOKEN_PEPPER)
+        )
+
+        # version cannot be set via the API
+        response = self.post(
+            reverse('api-token-list'),
+            data={'name': 'v1', 'token_version': 1},
+            expected_code=201,
+        )
+        self.assertEqual(response.data['token_version'], 2)
+        self.assertEqual(
+            response.data['issued_version'], InvenTree.version.inventreeVersion()
+        )
+
+    def test_token_pepper_rotation(self):
+        """Test that tokens are validated correctly."""
+        sk = 'secret-key'
+        p1 = 'pepper-1'
+        p2 = 'pepper-2'
+
+        # No pepper configured -  SECRET_KEY
+        with self.settings(API_TOKEN_PEPPER=sk):
+            old_token = ApiToken.objects.create(user=self.user, name='old')
+            old_raw = old_token.token
+            self.assertEqual(old_token.pepper_id, ApiToken.calculate_pepper_id(sk))
+
+        # only 1 pepper - SECRET_KEY still validates token
+        with self.settings(
+            SECRET_KEY=sk, API_TOKEN_PEPPER=p1, API_TOKEN_PEPPER_ADDITIONAL=[]
+        ):
+            token_1 = ApiToken.objects.create(user=self.user, name='p1')
+            raw_1 = token_1.token
+            self.assertEqual(token_1.pepper_id, ApiToken.calculate_pepper_id(p1))
+            self.assertIsNotNone(ApiToken.get_from_string(raw_1))
+            self.assertIsNotNone(ApiToken.get_from_string(old_raw))
+
+        # now 2 pepper
+        with self.settings(
+            SECRET_KEY=sk, API_TOKEN_PEPPER=p2, API_TOKEN_PEPPER_ADDITIONAL=[p1]
+        ):
+            token_2 = ApiToken.objects.create(user=self.user, name='p2')
+            self.assertEqual(token_2.pepper_id, ApiToken.calculate_pepper_id(p2))
+            self.assertIsNotNone(ApiToken.get_from_string(token_2.token))
+            self.assertIsNotNone(ApiToken.get_from_string(raw_1))
+
+        # only known peppers are allowed to work
+        with self.settings(
+            SECRET_KEY=sk, API_TOKEN_PEPPER=p2, API_TOKEN_PEPPER_ADDITIONAL=[]
+        ):
+            with self.assertLogs('inventree', level='WARNING') as logs:
+                self.assertIsNone(ApiToken.get_from_string(raw_1))
+            self.assertIn('INVE-W19', logs.output[0])
+
+            # no pepper id set -> should use current pepper for validation
+            token_2.pepper_id = None
+            token_2.save()
+            self.assertIsNotNone(ApiToken.get_from_string(token_2.token))
+
+    def test_token_pepper_info(self):
+        """Test that the pepper state is reported to staff users."""
+        with self.settings(API_TOKEN_PEPPER='sk1', SECRET_KEY='sk1'):
+            data = self.get(reverse('api-inventree-info')).json()
+            self.assertFalse(data['system_state']['api_token_pepper_set'])
+
+        # setup access
+        token = ApiToken.objects.create(
+            user=self.user,
+            key=default_token(),
+            token_version=1,
+            expiry=datetime.datetime.now() + datetime.timedelta(days=365),
+        )
+        token_key = token.key
+        self.logout()
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token_key}')
+
+        with self.settings(API_TOKEN_PEPPER='sk1', SECRET_KEY='sk1'):
+            data = self.get(reverse('api-inventree-info')).json()
+            self.assertFalse(data['system_state']['api_token_pepper_set'])
+
+        with self.settings(API_TOKEN_PEPPER='pepper-1', SECRET_KEY='sk1'):
+            data = self.get(reverse('api-inventree-info')).json()
+            self.assertTrue(data['system_state']['api_token_pepper_set'])
 
 
 class GroupDetailTests(InvenTreeAPITestCase):
