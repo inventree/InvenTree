@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 567
+INVENTREE_API_VERSION = 568
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v567 -> 2026-10-30 : https://github.com/inventree/InvenTree/pull/13141
+v568 -> 2026-10-30 : https://github.com/inventree/InvenTree/pull/13141
     - token endpoints now have a warning if notifications cannot be sent
+
+v567 -> 2026-10-28 : https://github.com/inventree/InvenTree/pull/13128
+    - Allow ordering of SupplierPart API by "on_order" field
 
 v566 -> 2026-10-25 : https://github.com/inventree/InvenTree/pull/13101
     - Audit log API (/api/audit/) is available to all authenticated users (entries are filtered by model permissions)
