@@ -119,6 +119,20 @@ def drop_orphan_currency_changes(instance, changes: dict) -> dict:
     return result
 
 
+def is_unchanged_value(value) -> bool:
+    """Return True if a recorded [old, new] change pair does not represent a real change.
+
+    None and '' are treated as equivalent, as nullable string fields (e.g. Part.IPN)
+    may hold either value for "empty" - e.g. a NULL value saved from a form as ''.
+    """
+    if not (isinstance(value, (list, tuple)) and len(value) == 2):
+        return False
+
+    old, new = (None if v == '' else v for v in value)
+
+    return old == new
+
+
 def is_concrete_field(model, field_name: str) -> bool:
     """Return True if field_name is a concrete field on the model (or is unknown)."""
     try:
@@ -224,9 +238,10 @@ class AuditLogEntryManager(LogEntryManager):
     def log_create(self, instance, force_log: bool = False, **kwargs):
         """Create a new log entry for the provided instance.
 
-        For updates, fields whose recorded old and new values are identical are dropped.
-        These occur when the in-memory value differs from the database value only in type
-        (e.g. an empty FieldFile vs. an empty string), and would otherwise add noise to every save.
+        For updates, fields whose recorded old and new values are identical (or both empty,
+        i.e. None or '') are dropped. These occur when the in-memory value differs from the
+        database value only in type (e.g. an empty FieldFile vs. an empty string, or a NULL
+        value saved from a form as ''), and would otherwise add noise to every save.
 
         Updates which assign a query expression (e.g. F('completed') + 1) are deferred until
         after the save, so that the value actually written can be recorded
@@ -264,11 +279,7 @@ class AuditLogEntryManager(LogEntryManager):
                 changes = {
                     field: value
                     for field, value in changes.items()
-                    if not (
-                        isinstance(value, (list, tuple))
-                        and len(value) == 2
-                        and value[0] == value[1]
-                    )
+                    if not is_unchanged_value(value)
                 }
 
                 if not changes and not force_log:
