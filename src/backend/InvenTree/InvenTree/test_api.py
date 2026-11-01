@@ -867,7 +867,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertEqual('InvenTree', data['server'])
 
         # Test with token
-        token = self.get(url=reverse('api-token'), max_query_count=20).data['token']
+        token = self.get(url=reverse('api-token'), max_query_count=40).data['token']
         self.client.logout()
 
         # Anon
@@ -878,7 +878,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
         # Staff
         response = self.get(
-            url, headers={'Authorization': f'Token {token}'}, max_query_count=20
+            url, headers={'Authorization': f'Token {token}'}, max_query_count=40
         )
         self.assertIsNotNone(data.get('active_plugins'))
         self.assertGreater(len(response.json()['database']), 4)

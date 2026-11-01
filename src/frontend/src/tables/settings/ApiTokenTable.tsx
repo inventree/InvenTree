@@ -9,6 +9,7 @@ import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
+  Alert,
   Badge,
   Button,
   Code,
@@ -20,7 +21,7 @@ import {
   Textarea
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconCircleX } from '@tabler/icons-react';
+import { IconAlertTriangle, IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
 import {
@@ -36,6 +37,7 @@ export function ApiTokenTable({
   only_myself = true
 }: Readonly<{ only_myself: boolean }>) {
   const [token, setToken] = useState<string>('');
+  const [tokenWarning, setTokenWarning] = useState<string>('');
   const [opened, { open, close }] = useDisclosure(false);
   const [revokeTokenId, setRevokeTokenId] = useState<string | null>(null);
   const [revocationReason, setRevocationReason] = useState<string>('');
@@ -48,6 +50,7 @@ export function ApiTokenTable({
     successMessage: t`Token generated`,
     onFormSuccess: (data: any) => {
       setToken(data.token);
+      setTokenWarning(data.warning ?? '');
       open();
       table.refreshTable();
     }
@@ -237,6 +240,17 @@ export function ApiTokenTable({
                 Tokens are only shown once - make sure to note it down.
               </Trans>
             </Text>
+            {tokenWarning && (
+              <Alert
+                color='red'
+                variant='filled'
+                icon={<IconAlertTriangle />}
+                title={t`Notification could not be sent`}
+                data-testid='api-token-email-warning'
+              >
+                {tokenWarning}
+              </Alert>
+            )}
             <Paper p='sm'>
               <Flex>
                 <Code>{token}</Code>
