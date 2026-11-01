@@ -191,6 +191,8 @@ class UserDetail(RetrieveUpdateDestroyAPI):
         """Override destroy method to ensure sessions are deleted first."""
         # Remove all sessions for this user
         if sessions := instance.usersession_set.all():
+            for session in sessions:
+                session.end()
             sessions.delete()
         # Normally delete the user
         return super().perform_destroy(instance)
