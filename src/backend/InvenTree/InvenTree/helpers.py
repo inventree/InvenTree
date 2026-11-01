@@ -1180,8 +1180,18 @@ def sanitize_token(token_value: str, front=8, back=12) -> str:
 
     Returns:
         The sanitized token string
+
+    Note:
+        Values too short to keep the 'front' and 'back' sections visible
+        are almost entirely masked, so that the full value is never exposed.
     """
-    middle = len(token_value) - (front + back)
+    length = len(token_value)
+
+    if length <= front + back:
+        visible = min(front, length // 4)
+        return token_value[:visible] + '*' * (length - visible)
+
+    middle = length - (front + back)
     return token_value[:front] + '*' * middle + token_value[-back:]
 
 

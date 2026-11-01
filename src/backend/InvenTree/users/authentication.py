@@ -1,13 +1,12 @@
 """Custom token authentication class for InvenTree API."""
 
-import datetime
-
 from django.utils.translation import gettext_lazy as _
 
 from oauth2_provider.contrib.rest_framework import OAuth2ProtectedResourceAuthentication
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication
 
+import InvenTree.helpers
 import users.models
 
 
@@ -34,11 +33,13 @@ def validate_api_token(raw_token: str) -> users.models.ApiToken:
     if token.expired:
         raise exceptions.AuthenticationFailed(_('Token has expired'))
 
-    if token.last_seen != datetime.date.today():
+    today = InvenTree.helpers.current_date()
+
+    if token.last_seen != today:
         # Update the last-seen date
         # Note: Use update_fields to avoid clobbering concurrent changes to
         # other fields on this token (e.g. a concurrent revocation)
-        token.last_seen = datetime.date.today()
+        token.last_seen = today
         token.save(update_fields=['last_seen'])
 
     return token

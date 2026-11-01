@@ -1716,6 +1716,28 @@ class BarcodeMixinTest(InvenTreeTestCase):
 class SanitizerTest(TestCase):
     """Simple tests for sanitizer functions."""
 
+    def test_sanitize_token(self):
+        """Test that sanitize_token never exposes a full (or near-full) value."""
+        sanitize = InvenTree.helpers.sanitize_token
+
+        # Long values keep the front and back sections
+        value = 'inv-2-' + 'a' * 20 + '.' + 'b' * 40 + '-20261101'
+        result = sanitize(value)
+        self.assertEqual(len(result), len(value))
+        self.assertTrue(result.startswith(value[:8]))
+        self.assertTrue(result.endswith(value[-12:]))
+        self.assertIn('*' * (len(value) - 20), result)
+
+        # Short values are almost entirely masked
+        for value in ['', 'a', 'abcd123', 'x' * 20, 'y' * 21]:
+            result = sanitize(value)
+            self.assertEqual(len(result), len(value))
+            if value:
+                self.assertNotEqual(result, value)
+
+        self.assertEqual(sanitize('abcd123'), 'a******')
+        self.assertEqual(sanitize('0123456789abcdefghij'), '01234*' + '*' * 14)
+
     def test_svg_sanitizer(self):
         """Test that SVGs are sanitized accordingly."""
         valid_string = """<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2" height="400" width="400">{0}
