@@ -200,6 +200,19 @@ export default function RepairOrderLineItemTable({
             maximum={record.quantity}
           />
         )
+      },
+      {
+        accessor: 'consumed',
+        title: t`Consumed`,
+        sortable: true,
+        minWidth: 125,
+        render: (record: any) => (
+          <ProgressBar
+            progressLabel
+            value={record.consumed}
+            maximum={record.quantity}
+          />
+        )
       }
     ];
   }, []);
@@ -232,7 +245,8 @@ export default function RepairOrderLineItemTable({
       const canAllocate =
         editable &&
         !!record.part &&
-        record.allocated < record.quantity &&
+        Number(record.allocated) + Number(record.consumed) <
+          Number(record.quantity) &&
         user.hasAddRole(UserRoles.repair_order);
 
       return [

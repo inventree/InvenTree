@@ -82,6 +82,8 @@ class StockHistoryCode(StatusCode):
         BUILD_OUTPUT_REJECTED: Stock item (a build order output) was rejected
         BUILD_CONSUMED: Stock item was consumed by a build order
 
+        REPAIR_CONSUMED: Stock item was consumed by a repair order
+
         SHIPPED_AGAINST_SALES_ORDER: Stock item was shipped against a Sales Order
 
         RECEIVED_AGAINST_PURCHASE_ORDER: Stock item was received against a Purchase Order
@@ -138,6 +140,9 @@ class StockHistoryCode(StatusCode):
     BUILD_OUTPUT_COMPLETED = 55, _('Build order output completed')
     BUILD_OUTPUT_REJECTED = 56, _('Build order output rejected')
     BUILD_CONSUMED = 57, _('Consumed by build order')
+
+    # Repair order codes
+    REPAIR_CONSUMED = 58, _('Consumed by repair order')
 
     # Sales order codes
     SHIPPED_AGAINST_SALES_ORDER = 60, _('Shipped against Sales Order')

@@ -2850,25 +2850,9 @@ class RepairOrder(
         """Transition this RepairOrder to COMPLETE status.
 
         The repair order must currently be PENDING, IN_PROGRESS, or ON_HOLD.
+        Any stock allocated against the order is consumed.
         """
-        with transaction.atomic():
-            for allocation in RepairOrderAllocation.objects.filter(
-                line__order=self
-            ).select_related('item', 'line__part'):
-                allocation.full_clean()
-
-                if not allocation.item.take_stock(
-                    quantity=allocation.quantity,
-                    user=user,
-                    code=StockHistoryCode.STOCK_REMOVE,
-                    notes=_('Consumed by repair order'),
-                    repairorder=self,
-                ):
-                    raise ValidationError({
-                        'allocations': _('Failed to consume repair order stock')
-                    })
-
-                allocation.delete()
+        self.consume_allocated_stock(user=user)
 
         self.completion_date = InvenTree.helpers.current_date()
 
@@ -2892,6 +2876,67 @@ class RepairOrder(
                 allocation.delete()
 
     # endregion fsm
+
+    @transaction.atomic
+    def consume_allocated_stock(self, user=None):
+        """Consume all stock which is allocated against this RepairOrder.
+
+        - The allocated quantity is removed from each stock item (recorded as a REPAIR_CONSUMED event)
+        - The consumed quantity is added to the 'consumed' field of each line item
+        - Each allocation is deleted once its stock has been consumed
+
+        Arguments:
+            user: The user consuming the stock
+
+        Raises:
+            ValidationError: If any allocation is invalid, or the stock cannot be removed.
+                In this case, no stock is consumed.
+        """
+        # Lock stock items in a consistent (pk) order, to avoid deadlocks
+        allocations = list(
+            RepairOrderAllocation.objects
+            .filter(line__order=self)
+            .select_related('item', 'item__part', 'line', 'line__part')
+            .order_by('item__pk', 'pk')
+        )
+
+        if not allocations:
+            return
+
+        lines = {}
+
+        # Record all audit entries (stock removals and line updates) with a single insert
+        with write_batched():
+            for allocation in allocations:
+                item = allocation.item
+
+                # Lock the stock item, and refresh its quantity from the database,
+                # so that the allocation is validated against the current value
+                if not item.lock_quantity():
+                    raise ValidationError({
+                        'allocations': _('Failed to consume repair order stock')
+                    })
+
+                allocation.full_clean()
+
+                if not item.take_stock(
+                    quantity=allocation.quantity,
+                    user=user,
+                    code=StockHistoryCode.REPAIR_CONSUMED,
+                    repairorder=self,
+                ):
+                    raise ValidationError({
+                        'allocations': _('Failed to consume repair order stock')
+                    })
+
+                line = lines.setdefault(allocation.line_id, allocation.line)
+                line.consumed += allocation.quantity
+
+                # Remove the allocation immediately, so that it is not counted
+                # when validating any further allocations against the same stock item
+                RepairOrderAllocation.objects.filter(pk=allocation.pk).delete()
+
+            audited_bulk_update(RepairOrderLineItem, list(lines.values()), ['consumed'])
 
     def auto_allocate_stock(
         self,
@@ -3053,6 +3098,15 @@ class RepairOrderLineItem(
         help_text=_('Item quantity required for repair'),
     )
 
+    consumed = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Consumed'),
+        help_text=_('Quantity of stock consumed for repair'),
+    )
+
     def allocated_quantity(self):
         """Return the total quantity of stock allocated against this line item."""
         allocated = self.allocations.aggregate(
@@ -3062,7 +3116,7 @@ class RepairOrderLineItem(
 
     def unallocated_quantity(self):
         """Return the outstanding quantity still to be allocated for this line item."""
-        return max(self.quantity - self.allocated_quantity(), 0)
+        return max(self.quantity - self.consumed - self.allocated_quantity(), 0)
 
     @staticmethod
     def get_api_url():
@@ -3121,7 +3175,9 @@ class RepairOrderAllocation(models.Model):
             # Determine how much of this stock item is *actually* still available,
             # accounting for every other allocation against it (build, sales,
             # transfer, and other repair orders) - not just its raw quantity.
-            available = self.item.unallocated_quantity()
+            # Note: Not clamped at zero (unlike unallocated_quantity), so that an existing
+            # allocation is not validated against stock which is already over-allocated
+            available = self.item.quantity - self.item.allocation_count()
 
             if self.pk:
                 # This allocation already exists - its own prior commitment

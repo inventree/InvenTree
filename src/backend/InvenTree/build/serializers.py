@@ -2001,7 +2001,16 @@ class RepairOrderLineItemSerializer(
         """Metaclass options."""
 
         model = RepairOrderLineItem
-        fields = ['pk', 'order', 'part', 'part_detail', 'quantity', 'allocated']
+        fields = [
+            'pk',
+            'order',
+            'part',
+            'part_detail',
+            'quantity',
+            'allocated',
+            'consumed',
+        ]
+        read_only_fields = ['consumed']
 
     part_detail = OptionalField(
         serializer_class=part_serializers.PartBriefSerializer,

@@ -523,12 +523,95 @@ class RepairOrderAuditTest(InvenTreeAPITestCase):
 
         [entry] = self.entries(StockItem, item.pk).order_by('pk')[n:]
 
-        self.assertEqual(entry.event_type, StockHistoryCode.STOCK_REMOVE)
+        self.assertEqual(entry.event_type, StockHistoryCode.REPAIR_CONSUMED)
         self.assertEqual(entry.actor, self.user)
         self.assertEqual(
             entry.additional_data['deltas']['repairorder']['pk'], self.order.pk
         )
         self.assertEqual(entry.additional_data['deltas']['removed'], 2)
+
+        # The consumed quantity is recorded against the line (and its history)
+        line.refresh_from_db()
+        self.assertEqual(line.consumed, 2)
+        self.assertEqual(line.unallocated_quantity(), 0)
+        self.assertFalse(line.allocations.exists())
+
+        entry = self.entries(RepairOrderLineItem, line.pk, action=ACTION.UPDATE).get()
+        self.assertEqual(entry.changes_dict['consumed'][1], '2.00000')
+        self.assertEqual(entry.parent_object_pk, str(self.order.pk))
+
+    def test_consume_same_stock_item(self):
+        """Multiple allocations against a single stock item are all consumed."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem
+
+        item = StockItem.objects.filter(
+            StockItem.IN_STOCK_FILTER, serial=None, quantity__gte=10
+        ).first()
+
+        quantity = item.quantity
+
+        line_1 = RepairOrderLineItem.objects.create(
+            order=self.order, part=item.part, quantity=3
+        )
+        line_2 = RepairOrderLineItem.objects.create(
+            order=self.order, part=item.part, quantity=4
+        )
+
+        RepairOrderAllocation.objects.create(line=line_1, item=item, quantity=3)
+        RepairOrderAllocation.objects.create(line=line_2, item=item, quantity=4)
+
+        self.order.complete_repair(user=self.user)
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, quantity - 7)
+
+        for line, consumed in [(line_1, 3), (line_2, 4)]:
+            line.refresh_from_db()
+            self.assertEqual(line.consumed, consumed)
+
+    def test_consume_failure_rolls_back(self):
+        """If any allocation is no longer valid, no stock is consumed."""
+        from django.core.exceptions import ValidationError
+
+        from build.models import RepairOrder, RepairOrderAllocation, RepairOrderLineItem
+        from build.status_codes import RepairOrderStatus
+        from stock.models import StockItem
+
+        items = list(
+            StockItem.objects.filter(
+                StockItem.IN_STOCK_FILTER, serial=None, quantity__gte=5
+            ).order_by('pk')[:2]
+        )
+
+        for item in items:
+            line = RepairOrderLineItem.objects.create(
+                order=self.order, part=item.part, quantity=2
+            )
+            RepairOrderAllocation.objects.create(line=line, item=item, quantity=2)
+
+        # The second stock item is (externally) reduced below the allocated quantity
+        StockItem.objects.filter(pk=items[1].pk).update(quantity=1)
+
+        with self.assertRaises(ValidationError):
+            self.order.complete_repair(user=self.user)
+
+        # The first stock item was not consumed either
+        items[0].refresh_from_db()
+        self.assertGreaterEqual(items[0].quantity, 5)
+
+        self.assertEqual(
+            RepairOrderAllocation.objects.filter(line__order=self.order).count(), 2
+        )
+        self.assertFalse(
+            RepairOrderLineItem.objects.filter(
+                order=self.order, consumed__gt=0
+            ).exists()
+        )
+        self.assertEqual(
+            RepairOrder.objects.get(pk=self.order.pk).status,
+            RepairOrderStatus.PENDING.value,
+        )
 
     def test_complete_via_api_passes_user(self):
         """Completing via the API passes the requesting user through to stock removal."""

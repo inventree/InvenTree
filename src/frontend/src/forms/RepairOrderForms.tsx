@@ -112,7 +112,9 @@ export function useAllocateStockToRepairOrderForm({
 }) {
   const fields: ApiFormFieldSet = useMemo(() => {
     const outstanding = Math.max(
-      (lineItem?.quantity ?? 0) - (lineItem?.allocated ?? 0),
+      (lineItem?.quantity ?? 0) -
+        (lineItem?.allocated ?? 0) -
+        (lineItem?.consumed ?? 0),
       0
     );
 
