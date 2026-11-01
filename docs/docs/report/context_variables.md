@@ -76,7 +76,7 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 | [purchaseorder](#purchase-order) | A [Purchase Order](../purchasing/purchase_order.md) instance |
 | [transferorder](#transfer-order) | A [Transfer Order](../stock/transfer_order.md) instance |
 | [stockitem](#stock-item) | A [StockItem](../stock/index.md#stock-item) instance |
-| [stocklocation](#stock-location) | A [StockLocation](../stock/index.md#stock-location) instance |
+| [stocklocation](#stock-location) | A [StockLocation](../stock/index.md#stock-locations) instance |
 | [part](#part) | A [Part](../part/index.md) instance |
 
 ### Company
@@ -163,11 +163,11 @@ For the fields and properties available on the underlying `StockItem` instance, 
 
 ### Stock Location
 
-When printing a report or label against a [StockLocation](../stock/index.md#stock-location) object, the following context variables are available:
+When printing a report or label against a [StockLocation](../stock/index.md#stock-locations) object, the following context variables are available:
 
 {{ report_context("models", "stocklocation") }}
 
-For the fields and properties available on the underlying `StockLocation` instance, refer to the [Model Context](model_context.md#stock-location) page.
+For the fields and properties available on the underlying `StockLocation` instance, refer to the [Model Context](model_context.md) page.
 
 ### Part
 
