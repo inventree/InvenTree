@@ -677,6 +677,23 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertEqual(token.revoked_by, self.user)
         self.assertEqual(token.revocation_reason, 'No longer needed')
 
+        # Revoking again must not overwrite the original revocation record
+        other_user = User.objects.create_user(username='other-revoker', password='x')
+        other_user.is_superuser = True
+        other_user.save()
+        self.client.force_authenticate(user=other_user)
+        self.delete(
+            reverse('api-token-detail', kwargs={'pk': token_id}) + '?all_users=true',
+            data={'revocation_reason': 'Overwritten reason'},
+            expected_code=204,
+        )
+        self.client.force_authenticate(user=None)
+
+        token.refresh_from_db()
+        self.assertTrue(token.revoked)
+        self.assertEqual(token.revoked_by, self.user)
+        self.assertEqual(token.revocation_reason, 'No longer needed')
+
         # Get token without auth (should fail)
         self.client.logout()
         self.get(reverse('api-token'), expected_code=401)

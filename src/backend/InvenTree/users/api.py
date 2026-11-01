@@ -553,6 +553,10 @@ class TokenDetailView(CleanBase, TokenMixin, DestroyAPIView, RetrieveAPI):
 
     def perform_destroy(self, instance):
         """Revoke token."""
+        # Do not overwrite the record of an earlier revocation
+        if instance.revoked:
+            return
+
         instance.revoked = True
         instance.revoked_by = self.request.user
         request_data = getattr(self.request, 'data', {})
