@@ -1,7 +1,5 @@
 """DRF API definition for the 'users' app."""
 
-import datetime
-
 from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.password_validation import password_changed, validate_password
@@ -20,6 +18,7 @@ from rest_framework import exceptions
 from rest_framework.generics import DestroyAPIView, GenericAPIView
 from rest_framework.response import Response
 
+import InvenTree.helpers
 import InvenTree.permissions
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER
@@ -408,7 +407,7 @@ class GetAuthToken(GenericAPIView):
 
         name = ApiToken.sanitize_name(name)
 
-        today = datetime.date.today()
+        today = InvenTree.helpers.current_date()
         reissue_token = request.resolver_match.url_name == 'api-token'
 
         token = ApiToken.objects.filter(
