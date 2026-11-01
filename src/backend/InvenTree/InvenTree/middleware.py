@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from error_report.middleware import ExceptionProcessor
+from rest_framework.exceptions import AuthenticationFailed
 
 import InvenTree.helpers
 from common.settings import get_global_setting
@@ -25,7 +26,7 @@ from InvenTree.version import (
     inventreePythonVersion,
     inventreeVersion,
 )
-from users.models import ApiToken
+from users.authentication import validate_api_token
 
 logger = structlog.get_logger('inventree')
 
@@ -148,19 +149,20 @@ class AuthRequiredMiddleware:
         """Check if the user is authenticated via token."""
         if token := get_token_from_request(request):
             request.token = token
-            # Does the provided token match a valid user?
+            # Does the provided token match a valid (active) user?
             try:
-                token = ApiToken.get_from_string(token)
-
-                if token and token.active and token.user:
-                    # Provide the user information to the request
-                    request.user = token.user
-                    return True
-            except ApiToken.DoesNotExist:  # pragma: no cover
+                token = validate_api_token(token)
+            except AuthenticationFailed as exc:
                 logger.warning(
-                    'Access denied for unknown token %s',
+                    'Access denied for token %s: %s',
                     InvenTree.helpers.sanitize_token(str(token)),
-                )  # pragma: no cover
+                    exc.detail,
+                )
+                return False
+
+            # Provide the user information to the request
+            request.user = token.user
+            return True
 
         return False
 
