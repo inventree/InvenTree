@@ -534,6 +534,56 @@ class AdminTest(AdminTestCase):
         )
         self.assertEqual(qs.count(), 0)
 
+    def test_usersession_admin_delete(self):
+        """Deleting a UserSession via the admin must log the user out."""
+        from django.contrib.auth import get_user_model
+        from django.contrib.sessions.models import Session
+
+        from allauth.usersessions.models import UserSession
+        from rest_framework.test import APIClient
+
+        victim = get_user_model().objects.create_user(
+            username='victim', password='password'
+        )
+        me_url = reverse('api-user-me')
+
+        def login_victim():
+            """Log in as the victim user and return the client and its UserSession."""
+            client = APIClient()
+            client.login(username='victim', password='password')
+            self.assertEqual(client.get(me_url).status_code, 200)
+            # client.login() bypasses the allauth signal which tracks the session
+            session = UserSession.objects.create(
+                user=victim, session_key=client.session.session_key, ip='127.0.0.1'
+            )
+            return client, session
+
+        def check_logged_out(client, session):
+            """Check the victim session has been ended."""
+            self.assertFalse(UserSession.objects.filter(pk=session.pk).exists())
+            self.assertFalse(Session.objects.filter(pk=session.session_key).exists())
+            self.assertIn(client.get(me_url).status_code, [401, 403])
+
+        # Single object delete view
+        client, session = login_victim()
+        self.client.post(
+            reverse('admin:usersessions_usersession_delete', args=[session.pk]),
+            {'post': 'yes'},
+        )
+        check_logged_out(client, session)
+
+        # Bulk "delete selected" action
+        client, session = login_victim()
+        self.client.post(
+            reverse('admin:usersessions_usersession_changelist'),
+            {
+                'action': 'delete_selected',
+                '_selected_action': [session.pk],
+                'post': 'yes',
+            },
+        )
+        check_logged_out(client, session)
+
     def test_owner_admin_autocomplete(self):
         """Test admin autocomplete endpoint for SalesOrder responsible field."""
         url = reverse('admin:autocomplete')
