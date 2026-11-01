@@ -54,7 +54,7 @@ Code styles are generally only applied to the code in the `src/` directory.
 
 InvenTree's backend is a Django application. It is generally structured in a way that follows Django's conventions, but also includes some customizations and extensions to support the specific needs of InvenTree.
 Most remarkable deviations from the Django standard are:
-- Manipulation of the django app mechanisms to enable the [plugin system](#plugin-system)
+- Manipulation of the django app mechanisms to enable the [plugin system](../plugins/index.md)
 - Usage of a custom role-mapping system to make permissions more approachable
 
 The backend aims to be:

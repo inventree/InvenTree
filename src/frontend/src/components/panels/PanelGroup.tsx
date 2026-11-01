@@ -12,8 +12,7 @@ import {
   Tabs,
   Text,
   Title,
-  Tooltip,
-  UnstyledButton
+  Tooltip
 } from '@mantine/core';
 import {
   IconExclamationCircle,
@@ -28,6 +27,7 @@ import {
   useState
 } from 'react';
 import {
+  Link,
   Navigate,
   Route,
   Routes,
@@ -45,7 +45,7 @@ import {
   cancelEvent,
   useInvenTreeHotkeys
 } from '@lib/functions/Events';
-import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
+import { eventModified } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type {
   PanelGroupType,
@@ -57,7 +57,6 @@ import { useDocumentVisibility, useWindowEvent } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import { useShallow } from 'zustand/react/shallow';
-import { generateUrl } from '../../functions/urls';
 import { useModelPanels } from '../../hooks/UseModelPanels';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
@@ -161,6 +160,9 @@ function PanelTabComponent({
         key={`panel-label-${panel.name}`}
         w={'100%'}
         value={panel.name}
+        renderRoot={(props) => (
+          <Link {...props} to={`../${panel.name}${location.search}`} />
+        )}
         leftSection={
           <Indicator
             position='top-end'
@@ -180,19 +182,7 @@ function PanelTabComponent({
         onClick={(event: any) => onClick(event)}
       >
         <Group justify='left' gap='xs' wrap='nowrap'>
-          <UnstyledButton
-            component={'a'}
-            style={{
-              textAlign: 'left'
-            }}
-            href={generateUrl(
-              `/${getBaseUrl()}${location.pathname}/${panel.name}${
-                location.search
-              }`
-            )}
-          >
-            {expanded && panel.label}
-          </UnstyledButton>
+          {expanded && panel.label}
         </Group>
       </Tabs.Tab>
     </Tooltip>

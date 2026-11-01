@@ -10,6 +10,7 @@ from error_report.models import Error
 from InvenTree.exceptions import log_error
 from InvenTree.helpers_mfa import get_codes
 from InvenTree.unit_test import InvenTreeTestCase
+from users.models import ApiToken
 
 
 class MiddlewareTests(InvenTreeTestCase):
@@ -113,6 +114,73 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # Request something that is not on the API - should still work
         self.check_path(reverse('auth-check'), auth_header=f'Token {token}')
+
+    def test_token_auth_inactive_user(self):
+        """Tokens for inactive users, or revoked tokens, must be rejected outside the API."""
+        target = reverse('auth-check')
+
+        token = ApiToken.objects.create(user=self.user, name='middleware-test')
+        raw_token = token.token
+        self.client.logout()
+
+        self.check_path(target, auth_header=f'Token {raw_token}')
+
+        # Inactive users are rejected
+        self.user.is_active = False
+        self.user.save()
+        self.check_path(target, 401, auth_header=f'Token {raw_token}')
+        self.user.is_active = True
+        self.user.save()
+
+        # Revoked tokens are rejected
+        token.revoked = True
+        token.save()
+        self.check_path(target, 401, auth_header=f'Token {raw_token}')
+
+    def test_token_auth_rejection_logged(self):
+        """Rejected tokens are logged (sanitized) along with the reason."""
+        target = reverse('auth-check')
+
+        token = ApiToken.objects.create(user=self.user, name='log-test')
+        raw_token = token.token
+        token.revoked = True
+        token.save()
+        self.client.logout()
+
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            self.check_path(target, 401, auth_header=f'Token {raw_token}')
+
+        output = '\n'.join(captured.output)
+        self.assertIn('Access denied for token', output)
+        self.assertIn('Token has been revoked', output)
+        # The secret must not appear in the logs
+        self.assertNotIn(raw_token, output)
+
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            self.check_path(
+                target, 401, auth_header='Token inv-unknown-token-value-0123456789'
+            )
+
+        self.assertIn('Invalid token', '\n'.join(captured.output))
+
+    def test_info_view_inactive_staff(self):
+        """InfoView must not treat a token for an inactive staff user as staff."""
+        self.user.is_staff = True
+        self.user.save()
+
+        raw_token = ApiToken.objects.create(user=self.user, name='info-test').token
+        self.client.logout()
+
+        # Use the 'Bearer' scheme, so that DRF token auth does not handle the request,
+        # and InfoView falls back to its own token check
+        url = reverse('api-inventree-info')
+        response = self.check_path(url, auth_header=f'Bearer {raw_token}')
+        self.assertIsNotNone(response.json()['database'])
+
+        self.user.is_active = False
+        self.user.save()
+        response = self.check_path(url, auth_header=f'Bearer {raw_token}')
+        self.assertIsNone(response.json()['database'])
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""

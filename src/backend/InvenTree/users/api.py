@@ -36,7 +36,14 @@ from InvenTree.mixins import (
 )
 from InvenTree.schema import exclude_from_schema
 from InvenTree.settings import FRONTEND_URL_BASE
-from users.models import ApiToken, Owner, RuleSet, TipResult, UserProfile
+from users.models import (
+    ApiToken,
+    Owner,
+    RuleSet,
+    TipResult,
+    UserProfile,
+    check_email_warning,
+)
 from users.serializers import (
     ApiTokenSerializer,
     ExtendedUserSerializer,
@@ -191,6 +198,8 @@ class UserDetail(RetrieveUpdateDestroyAPI):
         """Override destroy method to ensure sessions are deleted first."""
         # Remove all sessions for this user
         if sessions := instance.usersession_set.all():
+            for session in sessions:
+                session.end()
             sessions.delete()
         # Normally delete the user
         return super().perform_destroy(instance)
@@ -441,6 +450,9 @@ class GetAuthToken(GenericAPIView):
             'expiry': token.expiry,
         }
 
+        if warning := check_email_warning():
+            data['warning'] = warning
+
         # Ensure that the users session is logged in
         if not get_user(request).is_authenticated:
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
@@ -513,6 +525,10 @@ class TokenListView(TokenMixin, ListCreateAPI):
         """Create token and show key to user."""
         resp = super().create(request, *args, **kwargs)
         resp.data['token'] = self._created_token.token
+
+        if warning := check_email_warning():
+            resp.data['warning'] = warning
+
         return resp
 
     def get(self, request, *args, **kwargs):
@@ -539,6 +555,10 @@ class TokenDetailView(CleanBase, TokenMixin, DestroyAPIView, RetrieveAPI):
 
     def perform_destroy(self, instance):
         """Revoke token."""
+        # Do not overwrite the record of an earlier revocation
+        if instance.revoked:
+            return
+
         instance.revoked = True
         instance.revoked_by = self.request.user
         request_data = getattr(self.request, 'data', {})
