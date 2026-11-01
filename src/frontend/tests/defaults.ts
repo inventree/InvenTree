@@ -44,6 +44,15 @@ export const engineeruser: UserType = {
   testcred: 'partsonly'
 };
 
+/*
+ * Demo dataset user with a pre-configured TOTP authenticator
+ */
+export const mfauser: UserType & { totpSecret: string } = {
+  username: 'mfauser',
+  testcred: 'mfauserpassword',
+  totpSecret: 'TFFPZIB4VAOKMNMYWIYVMPGBE24RZIHF'
+};
+
 export const mockOidcPort = 9950;
 export const mockOidcUrl = `http://localhost:${mockOidcPort}`;
 
