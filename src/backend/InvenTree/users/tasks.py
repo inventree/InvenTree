@@ -26,10 +26,12 @@ def notify_api_token(token: ApiToken):
 
     if issuer and issuer != user:
         message = _(
-            f"A new API token '{token.name}' was issued for your account by {issuer.username}"
-        )
+            "A new API token '{name}' was issued for your account by {issuer}"
+        ).format(name=token.name, issuer=issuer.username)
     else:
-        message = _(f"A new API token '{token.name}' was issued for your account")
+        message = _("A new API token '{name}' was issued for your account").format(
+            name=token.name
+        )
 
     name = _('API Token Issued')
     context = {
