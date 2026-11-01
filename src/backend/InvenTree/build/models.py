@@ -2958,7 +2958,8 @@ class RepairOrder(
         from whatever stock is currently available for that part (in the order given
         by `stock_sort_by`), splitting across multiple stock items if a single one
         isn't enough. Lines with no part set, or which are already fully allocated,
-        are skipped. Unlike BuildOrder's auto-allocation, this does not consider
+        are skipped. Plugins may filter or reorder the candidate stock items
+        (see AllocateMixin.filter_repair_order_allocation). Unlike BuildOrder's auto-allocation, this does not consider
         variants/substitutes (a RepairOrderLineItem references a single concrete part
         directly) and runs synchronously rather than as a background task, as repair
         orders are expected to be small in scope.
@@ -2995,6 +2996,14 @@ class RepairOrder(
                     )
                 else:
                     available_stock = available_stock.order_by(stock_sort_by)
+
+                # Allow plugins to filter / reorder the candidate stock items
+                available_stock = apply_allocate_mixin(
+                    'filter_repair_order_allocation',
+                    line,
+                    available_stock,
+                    stock_sort_by=stock_sort_by,
+                )
 
                 for stock_item in available_stock:
                     if outstanding <= 0:
