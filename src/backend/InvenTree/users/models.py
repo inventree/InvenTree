@@ -878,9 +878,11 @@ class TipResult(InvenTree.models.MetadataMixin):
         # bulk create
         missing_ids = set(known_ids) - existing_ids
         if missing_ids:
-            cls.objects.bulk_create([
-                cls(user=user, tip_id=tip_id) for tip_id in missing_ids
-            ])
+            cls.objects.bulk_create(
+                [cls(user=user, tip_id=tip_id) for tip_id in missing_ids],
+                # Concurrent requests may race to create the same records
+                ignore_conflicts=True,
+            )
 
 
 # Validate groups

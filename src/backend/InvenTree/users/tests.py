@@ -1,6 +1,7 @@
 """Unit tests for the 'users' app."""
 
 import datetime
+from unittest import mock
 
 from django.apps import apps
 from django.contrib.auth.models import Group
@@ -10,7 +11,7 @@ from django.urls import reverse
 from common.settings import set_global_setting
 from InvenTree.helpers_mfa import get_codes
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
-from users.models import ApiToken, Owner
+from users.models import ApiToken, Owner, TipResult
 from users.oauth2_scopes import _roles
 from users.ruleset import (
     RULESET_CHOICES,
@@ -18,6 +19,7 @@ from users.ruleset import (
     get_ruleset_ignore,
     get_ruleset_models,
 )
+from web.tips import KNOWN_IDS
 
 G_RULESETS = get_ruleset_models()
 G_RULESETS_IG = get_ruleset_ignore()
@@ -696,6 +698,24 @@ class UserProfileTest(InvenTreeAPITestCase):
         # Ensure primary_group is set to None
         profile.refresh_from_db()
         self.assertIsNone(profile.primary_group)
+
+    def test_tip_backfill_race(self):
+        """Test that backfilling tip results tolerates records created concurrently."""
+        tip_id = KNOWN_IDS[0]
+
+        TipResult.objects.create(user=self.user, tip_id=tip_id)
+
+        # Simulate another request creating the record after the existing IDs are checked
+        mock_qs = mock.Mock()
+        mock_qs.values_list.return_value = []
+
+        with mock.patch.object(TipResult.objects, 'filter', return_value=mock_qs):
+            TipResult.backfill(self.user)
+
+        results = TipResult.objects.filter(user=self.user)
+
+        self.assertEqual(results.filter(tip_id=tip_id).count(), 1)
+        self.assertEqual(set(results.values_list('tip_id', flat=True)), set(KNOWN_IDS))
 
 
 class UserProfileMetadataPermissionTests(InvenTreeAPITestCase):

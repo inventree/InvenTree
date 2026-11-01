@@ -866,6 +866,32 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
         self.get(url, expected_code=200)
 
+    def test_build_default_values_race(self):
+        """Test that building default values tolerates keys created concurrently."""
+        key = 'DISPLAY_HISTORY_TAB'
+
+        InvenTreeUserSetting.objects.create(key=key, value='True', user=self.user)
+
+        # Simulate another request creating the key after the existing keys are checked
+        mock_qs = mock.Mock()
+        mock_qs.values_list.return_value = []
+
+        with (
+            mock.patch.object(
+                InvenTreeUserSetting.objects, 'filter', return_value=mock_qs
+            ),
+            self.assertNoLogs(logger='inventree', level='ERROR'),
+        ):
+            InvenTreeUserSetting.build_default_values(user=self.user)
+
+        settings = InvenTreeUserSetting.objects.filter(user=self.user)
+
+        self.assertEqual(settings.filter(key=key).count(), 1)
+        self.assertEqual(
+            set(settings.values_list('key', flat=True)),
+            {k for k in InvenTreeUserSetting.SETTINGS if not k.startswith('_')},
+        )
+
     def test_user_setting_invalid(self):
         """Test a user setting with an invalid key."""
         url = reverse('api-user-setting-detail', kwargs={'key': 'DONKEY'})
