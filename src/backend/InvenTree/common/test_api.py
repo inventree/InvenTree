@@ -14,6 +14,7 @@ from PIL import Image
 from taggit.models import Tag
 
 import common.models
+import InvenTree.model_features as mf
 from common.models import SelectionList, SelectionListEntry
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase, findOffloadedEvent
@@ -3473,3 +3474,64 @@ class GenericMetadataAuthorizationTests(InvenTreeAPITestCase):
         self.user.is_staff = True
         self.user.save()
         self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
+
+class ContentTypeFeatureAPITests(InvenTreeAPITestCase):
+    """Tests for the 'features' field on the ContentType API."""
+
+    def test_features(self):
+        """Test that the list endpoint reports features per model type."""
+        url = reverse('api-contenttype-list')
+
+        # The 'features' field is not included by default
+        data = self.get(url, expected_code=200).data
+        self.assertNotIn('features', data[0])
+
+        data = self.get(url, {'features': True}, expected_code=200).data
+        features = {item['model']: item['features'] for item in data}
+        for f in ['attachments', 'notes', 'parameters', 'barcode']:
+            self.assertIn(f'org.inventree.i.modelfeatures.{f}', features['part'])
+
+        self.assertIn(
+            'org.inventree.i.modelfeatures.attachments', features['salesorder']
+        )
+        self.assertIn('org.inventree.i.modelfeatures.notes', features['stockitem'])
+        self.assertEqual(features['contenttype'], [])
+
+    def test_model_features(self):
+        """Test that features are declared by the model mixins, and cached per application."""
+        import InvenTree.models
+        from part.models import Part
+
+        mf.clear_model_features_cache()
+
+        features = mf.get_model_features(Part)
+
+        self.assertIn('org.inventree.i.modelfeatures.attachments', features)
+        self.assertIn('org.inventree.i.modelfeatures.report', features)
+
+        # The cache is built for all models on first access, and reused afterwards
+        self.assertIsNotNone(mf._model_features_cache)
+        self.assertIs(features, mf.get_model_features(Part))
+
+        # Clearing the cache (e.g. after a plugin reload) rebuilds it
+        mf.clear_model_features_cache()
+        self.assertIsNone(mf._model_features_cache)
+        self.assertEqual(features, mf.get_model_features(Part))
+
+        self.assertEqual(mf.get_model_features(None), [])
+        self.assertEqual(mf.get_model_features(Tag), [])
+
+        # A custom mixin (e.g. provided by a plugin) can declare a new feature
+        class CustomFeatureMixin(mf.ModelFeatureMixin):
+            MODEL_FEATURE = 'custom'
+
+        class CustomModel(CustomFeatureMixin, InvenTree.models.InvenTreeNoteMixin):
+            class Meta:
+                abstract = True
+
+        self.assertEqual(
+            mf.get_model_features(CustomModel),
+            ['custom', 'org.inventree.i.modelfeatures.notes'],
+        )
+        self.assertNotIn('custom', mf.get_model_features(Part))

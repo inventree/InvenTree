@@ -29,13 +29,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
 import {
@@ -43,7 +37,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -75,11 +68,6 @@ export default function SalesOrderDetail() {
       customer_detail: true,
       tags: true
     }
-  });
-
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.salesorder,
-    modelId: order?.pk
   });
 
   const orderCurrency = useMemo(() => {
@@ -137,8 +125,6 @@ export default function SalesOrderDetail() {
     follow: true,
     modelType: ModelType.salesorder
   });
-
-  const showHistory = useShowHistoryPanel();
 
   const orderPanels: PanelType[] = useMemo(() => {
     return [
@@ -231,35 +217,9 @@ export default function SalesOrderDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      ParametersPanel({
-        model_type: ModelType.salesorder,
-        model_id: order.pk,
-        parameter_count: instanceInfo.parameter_count
-      }),
-      AttachmentPanel({
-        model_type: ModelType.salesorder,
-        model_id: order.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.salesorder,
-        model_id: order.pk,
-        note_count: instanceInfo.note_count,
-        // TODO @matmair - change API to include a "locked" attribute that we can check here
-        editable:
-          order.status == soStatus.COMPLETE &&
-          !globalSettings.isSet('SALESORDER_EDIT_COMPLETED_ORDERS')
-            ? false
-            : undefined
-      }),
-      HistoryPanel({
-        model_type: ModelType.salesorder,
-        model_id: order.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [order, id, user, soStatus, instanceInfo, showHistory]);
+  }, [order, id, user, soStatus]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),

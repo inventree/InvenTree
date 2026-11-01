@@ -30,13 +30,7 @@ import {
 import type { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -44,7 +38,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
@@ -84,11 +77,6 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     refetchOnMount: true
   });
 
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.company,
-    modelId: company?.pk
-  });
-
   const detailsPanel = instanceQuery.isFetching ? (
     <Skeleton />
   ) : (
@@ -98,8 +86,6 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       refreshInstance={refreshInstance}
     />
   );
-
-  const showHistory = useShowHistoryPanel();
 
   const companyPanels: PanelType[] = useMemo(() => {
     return [
@@ -201,29 +187,9 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Addresses`,
         icon: <IconMap2 />,
         content: company?.pk && <AddressTable companyId={company.pk} />
-      },
-      ParametersPanel({
-        model_type: ModelType.company,
-        model_id: company?.pk,
-        parameter_count: instanceInfo.parameter_count
-      }),
-      AttachmentPanel({
-        model_type: ModelType.company,
-        model_id: company.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.company,
-        model_id: company.pk,
-        note_count: instanceInfo.note_count
-      }),
-      HistoryPanel({
-        model_type: ModelType.company,
-        model_id: company.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [id, company, user, instanceInfo, showHistory]);
+  }, [id, company, user]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,

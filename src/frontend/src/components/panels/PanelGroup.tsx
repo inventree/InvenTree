@@ -57,6 +57,7 @@ import { useDocumentVisibility, useWindowEvent } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import { useShallow } from 'zustand/react/shallow';
+import { useModelPanels } from '../../hooks/UseModelPanels';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { vars } from '../../theme';
@@ -559,10 +560,22 @@ function IndexPanelComponent({
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
  */
 export function PanelGroup(props: Readonly<PanelProps>) {
+  const panels = useModelPanels({
+    model: props.model,
+    id: props.id,
+    panels: props.panels
+  });
+
   return (
     <Routes>
-      <Route index element={<IndexPanelComponent {...props} />} />
-      <Route path='/:panel/*' element={<BasePanelGroup {...props} />} />
+      <Route
+        index
+        element={<IndexPanelComponent {...props} panels={panels} />}
+      />
+      <Route
+        path='/:panel/*'
+        element={<BasePanelGroup {...props} panels={panels} />}
+      />
     </Routes>
   );
 }
