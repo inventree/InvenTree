@@ -36,7 +36,14 @@ from InvenTree.mixins import (
 )
 from InvenTree.schema import exclude_from_schema
 from InvenTree.settings import FRONTEND_URL_BASE
-from users.models import ApiToken, Owner, RuleSet, TipResult, UserProfile
+from users.models import (
+    ApiToken,
+    Owner,
+    RuleSet,
+    TipResult,
+    UserProfile,
+    check_email_warning,
+)
 from users.serializers import (
     ApiTokenSerializer,
     ExtendedUserSerializer,
@@ -441,6 +448,9 @@ class GetAuthToken(GenericAPIView):
             'expiry': token.expiry,
         }
 
+        if warning := check_email_warning():
+            data['warning'] = warning
+
         # Ensure that the users session is logged in
         if not get_user(request).is_authenticated:
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
@@ -513,6 +523,10 @@ class TokenListView(TokenMixin, ListCreateAPI):
         """Create token and show key to user."""
         resp = super().create(request, *args, **kwargs)
         resp.data['token'] = self._created_token.token
+
+        if warning := check_email_warning():
+            resp.data['warning'] = warning
+
         return resp
 
     def get(self, request, *args, **kwargs):
