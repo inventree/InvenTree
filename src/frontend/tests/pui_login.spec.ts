@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import { TOTP } from 'otpauth';
 import { expect, test } from './baseFixtures.js';
-import { engineeruser, logoutUrl, noaccessuser } from './defaults.js';
+import { engineeruser, logoutUrl, mfauser, noaccessuser } from './defaults.js';
 import { navigate, openDetailAction } from './helpers.js';
 import { doLogin } from './login.js';
 
@@ -501,4 +501,66 @@ test('Login - MFA - TOTP', async ({ page }) => {
   await page
     .getByText('No multi-factor tokens configured for this account')
     .waitFor();
+});
+
+// Test login for a user with a pre-configured TOTP authenticator
+test('Login - MFA - TOTP Login', async ({ page }) => {
+  await page.context().clearCookies();
+  await navigate(page, logoutUrl, { waitUntil: 'load' });
+  await page.waitForURL('**/web/login');
+
+  await page.getByLabel('login-username').fill(mfauser.username);
+  await page.getByLabel('login-password').fill(mfauser.testcred);
+  await page.getByRole('button', { name: 'Log In' }).click();
+
+  // User should be redirected to the MFA page
+  await page.waitForURL('**/web/mfa');
+  await page.getByText('Multi-Factor Authentication').waitFor();
+
+  const codeInput = page.getByRole('textbox', { name: 'TOTP Code' });
+  await codeInput.waitFor();
+
+  // Enter an incorrect code
+  await codeInput.fill('ABCDEF');
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.getByText('Incorrect code.').waitFor();
+
+  // We should still be on the MFA page
+  await expect(page).toHaveURL(/\/web\/mfa/);
+
+  const totp = new TOTP({
+    secret: mfauser.totpSecret,
+    digits: 6,
+    period: 30
+  });
+
+  // Codes are single-use per period (server side), and the same user may be
+  // logging in from another browser project concurrently.
+  // So, if a code is rejected, wait for the next period and try again.
+  let lastToken = '';
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    while (totp.generate() == lastToken) {
+      await page.waitForTimeout(1000);
+    }
+
+    lastToken = totp.generate();
+
+    await codeInput.fill(lastToken);
+    await page.getByRole('button', { name: 'Log in' }).click();
+
+    const loggedIn = await page
+      .getByRole('button', { name: 'navigation-menu' })
+      .waitFor({ timeout: 5000 })
+      .then(() => true)
+      .catch(() => false);
+
+    if (loggedIn) {
+      break;
+    }
+  }
+
+  await page.getByRole('tab', { name: 'Dashboard' }).waitFor();
+  await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+  await page.waitForURL(/\/web(\/home)?/);
 });
