@@ -9,6 +9,7 @@ from django.urls import reverse
 
 from allauth.account.models import EmailAddress
 
+from common.models import NotificationMessage
 import InvenTree.version
 from InvenTree.unit_test import InvenTreeAPITestCase
 from users.models import ApiToken, default_token
@@ -503,6 +504,53 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         for k in keys:
             self.assertIn(k, token.metadata)
+
+    def test_token_issued_notification(self):
+        """A notification is sent whenever a token is issued, with a warning if email is unavailable."""
+        self.ensurePluginsLoaded()
+
+        url = reverse('api-token')
+        category = 'users.api_token_issued'
+
+        self.assertEqual(
+            NotificationMessage.objects.filter(category=category).count(), 0
+        )
+
+        # No email configured -> warning is returned, UI notification is still created
+        with self.assertLogs('inventree', level='WARNING') as logs:
+            data = self.get(url, data={'name': 'notify'}, expected_code=200).data
+
+        self.assertIn('warning', data)
+        self.assertIn('Email is not configured', data['warning'])
+        self.assertTrue(any('INVE-W7' in msg for msg in logs.output))
+
+        msgs = NotificationMessage.objects.filter(category=category, user=self.user)
+        self.assertEqual(msgs.count(), 1)
+        self.assertIn("'notify'", msgs.first().message)
+
+        # Re-issuing a token with the same name sends another notification
+        self.get(url, data={'name': 'notify'}, expected_code=200)
+        self.assertEqual(msgs.count(), 2)
+
+        # Email configured -> no warning
+        with self.settings(EMAIL_HOST='localhost', TESTING_BYPASS_MAILCHECK=True):
+            data = self.get(url, data={'name': 'mailed'}, expected_code=200).data
+        self.assertNotIn('warning', data)
+
+        # Superuser issuing a token for another user notifies that user
+        self.user.is_superuser = True
+        self.user.save()
+        other = User.objects.exclude(pk=self.user.pk).first()
+
+        data = self.post(
+            reverse('api-token-list'),
+            data={'name': 'for-other', 'user': other.pk},
+            expected_code=201,
+        ).data
+        self.assertIn('warning', data)
+
+        msg = NotificationMessage.objects.get(category=category, user=other)
+        self.assertIn(self.user.username, msg.message)
 
     def test_token_auth(self):
         """Test user token authentication."""
