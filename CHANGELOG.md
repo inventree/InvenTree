@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#13034](https://github.com/inventree/InvenTree/pull/13034) moves pricing models into a new dedicated "pricing" model, and provides new API endpoints for managing pricing separately from other models.
 - [#13101](https://github.com/inventree/InvenTree/pull/13101) removes the StockTracking model and its associated API endpoints. Stock history tracking is now handled by the global audit log.
+- [#XXXXX](https://github.com/inventree/InvenTree/pull/XXXXX) disables basic (username:password) authentication against the API. Use token or OAuth2 authentication instead. Basic authentication can be re-enabled with `INVENTREE_BASIC_AUTH_ENABLED` / `basic_auth_enabled`; a warning (INVE-W18) is then logged and shown to staff users. Note that basic authentication does not work for users with multi-factor authentication enabled.
 
 ### Added
 

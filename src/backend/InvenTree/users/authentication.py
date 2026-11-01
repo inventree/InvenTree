@@ -2,11 +2,12 @@
 
 import datetime
 
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from oauth2_provider.contrib.rest_framework import OAuth2ProtectedResourceAuthentication
 from rest_framework import exceptions
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import BasicAuthentication, TokenAuthentication
 
 import users.models
 
@@ -58,6 +59,25 @@ class ApiTokenAuthentication(TokenAuthentication):
         """Adds additional checks to the default token authentication method."""
         token = validate_api_token(key)
         return (token.user, token)
+
+
+class ConfigurableBasicAuthentication(BasicAuthentication):
+    """BasicAuthentication which is only active if enabled via the BASIC_AUTH_ENABLED setting.
+
+    The setting is evaluated per request, so it can be overridden in tests.
+    """
+
+    def authenticate(self, request):
+        """Only attempt basic authentication if it is enabled."""
+        if not settings.BASIC_AUTH_ENABLED:
+            return None
+        return super().authenticate(request)
+
+    def authenticate_header(self, request):
+        """Only advertise basic authentication if it is enabled."""
+        if not settings.BASIC_AUTH_ENABLED:
+            return None
+        return super().authenticate_header(request)
 
 
 class ExtendedOAuth2Authentication(OAuth2ProtectedResourceAuthentication):

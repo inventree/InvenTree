@@ -2528,8 +2528,8 @@ class OrderCalendarExport(ICalFeed):
                 return forbidden
             return super().__call__(request, *args, **kwargs)
 
-        # No login yet - check in headers
-        if 'authorization' in request.headers:
+        # No login yet - check in headers (only if basic auth is enabled)
+        if settings.BASIC_AUTH_ENABLED and 'authorization' in request.headers:
             auth = request.headers['authorization'].split()
             if len(auth) == 2:
                 # NOTE: We are only support basic authentication for now.
@@ -2562,7 +2562,8 @@ class OrderCalendarExport(ICalFeed):
         response = JsonResponse({
             'detail': 'Authentication credentials were not provided.'
         })
-        response['WWW-Authenticate'] = 'Basic realm="api"'
+        if settings.BASIC_AUTH_ENABLED:
+            response['WWW-Authenticate'] = 'Basic realm="api"'
         response.status_code = 401
         return response
 

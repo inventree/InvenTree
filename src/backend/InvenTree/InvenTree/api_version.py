@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 568
+INVENTREE_API_VERSION = 569
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v569 -> 2026-10-31 : https://github.com/inventree/InvenTree/pull/XXXXX
+    - Breaking: Basic (username:password) authentication is disabled by default - re-enable with INVENTREE_BASIC_AUTH_ENABLED
+    - Adds "basic_auth_enabled" to the "system_state" field of the info endpoint
 
 v568 -> 2026-10-30 : https://github.com/inventree/InvenTree/pull/13141
     - token endpoints now have a warning if notifications cannot be sent

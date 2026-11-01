@@ -263,6 +263,7 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
         self.assertIn('widgets', profile)
 
 
+@override_settings(BASIC_AUTH_ENABLED=True)
 class ApiAccessTests(InvenTreeAPITestCase):
     """Tests for various access scenarios with the InvenTree API."""
 
@@ -299,6 +300,14 @@ class ApiAccessTests(InvenTreeAPITestCase):
         url = reverse('api-token')
         self.get(url, expected_code=401)
         self.assertIsNone(self.token)
+
+    @override_settings(BASIC_AUTH_ENABLED=False)
+    def test_basic_auth_disabled(self):
+        """Test that basic auth is rejected if it is disabled."""
+        self.basicAuth()
+        response = self.get(reverse('api-token'), expected_code=401)
+        self.assertNotIn('Basic', response.get('WWW-Authenticate', ''))
+        self.get(reverse('api-user-roles'), expected_code=401)
 
     def test_token_success(self):
         """Test token auth works."""
@@ -865,6 +874,11 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertIn('instance', data)
 
         self.assertEqual('InvenTree', data['server'])
+        self.assertFalse(data['system_state']['basic_auth_enabled'])
+
+        with override_settings(BASIC_AUTH_ENABLED=True):
+            data = self.get(url, max_query_count=20).json()
+            self.assertTrue(data['system_state']['basic_auth_enabled'])
 
         # Test with token
         token = self.get(url=reverse('api-token'), max_query_count=40).data['token']

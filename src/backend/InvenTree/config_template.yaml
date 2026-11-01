@@ -196,6 +196,9 @@ login_confirm_days: 3
 login_attempts: 5
 login_default_protocol: http
 
+# Basic (username:password) authentication against the API (or use the environment variable INVENTREE_BASIC_AUTH_ENABLED)
+basic_auth_enabled: False
+
 # Remote / proxy login
 # These settings can introduce security problems if configured incorrectly. Please read
 # https://docs.djangoproject.com/en/4.2/howto/auth-remote-user/ for more details

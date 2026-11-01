@@ -355,7 +355,10 @@ class InfoView(APIView):
                     'LOGIN_ENABLE_PWD_FORGOT'
                 ),
             },
-            'system_state': {'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS},
+            'system_state': {
+                'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS,
+                'basic_auth_enabled': settings.BASIC_AUTH_ENABLED,
+            },
         }
         if nonce := request.query_params.get('link_nonce'):
             data['link'] = calculate_proof(nonce)
