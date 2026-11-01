@@ -190,6 +190,21 @@ logger = structlog.getLogger('inventree')
 # Load SECRET_KEY
 SECRET_KEY = config.get_secret_key()
 
+API_TOKEN_PEPPER = None
+try:
+    API_TOKEN_PEPPER, API_TOKEN_PEPPER_ADDITIONAL = config.get_api_token_peppers()
+except FileNotFoundError as exc:  # pragma: no cover
+    msg = f'{exc}. InvenTree server cannot start.'
+    logger.error(msg)
+    print(msg)
+    sys.exit(-1)
+if not API_TOKEN_PEPPER:
+    API_TOKEN_PEPPER = SECRET_KEY
+    if not TESTING:  # pragma: no cover
+        logger.warning(
+            'INVE-W18: No API token pepper configured - falling back to SECRET_KEY. Set INVENTREE_API_TOKEN_PEPPER'
+        )
+
 # The filesystem location for served static files
 STATIC_ROOT = config.get_static_dir()
 

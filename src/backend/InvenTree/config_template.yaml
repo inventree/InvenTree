@@ -9,6 +9,14 @@
 #oidc_private_key: '-----BEGIN PRIVATE KEY-----aaa'
 #oidc_private_key_file: '/etc/inventree/oidc.key'
 
+# Pepper for API token hashing
+# Use the environment variable INVENTREE_API_TOKEN_PEPPER or INVENTREE_API_TOKEN_PEPPER_FILE
+#api_token_pepper: 'xxx' # Warning: this should be at least 20 characters long and randomly generated
+#api_token_pepper_file: '/etc/inventree/api_token_pepper.txt'
+# Additional peppers, only used to validate existing tokens (e.g. during rotation)
+#api_token_pepper_additional:
+#  - 'old-pepper'
+
 # Database backend selection - Configure backend database settings
 # Documentation: https://docs.inventree.org/en/latest/start/config/
 # Note: Database configuration options can also be specified from environmental variables,

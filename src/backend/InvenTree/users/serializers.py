@@ -257,8 +257,10 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'issued_by',
             'issued_by_detail',
             'token_version',
+            'issued_version',
             'revocation_reason',
         ]
+        read_only_fields = ['token_version', 'issued_version']
 
     def validate(self, data):
         """Validate the data for the serializer."""
