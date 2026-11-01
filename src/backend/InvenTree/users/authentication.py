@@ -11,6 +11,39 @@ from rest_framework.authentication import TokenAuthentication
 import users.models
 
 
+def validate_api_token(raw_token: str) -> users.models.ApiToken:
+    """Look up and fully validate a raw API token value.
+
+    This is the single source of truth for API token validation,
+    used by both the DRF authentication class and the middleware stack.
+
+    Raises:
+        AuthenticationFailed: If the token is unknown, revoked, expired, or belongs to an inactive user
+    """
+    token = users.models.ApiToken.get_from_string(raw_token) if raw_token else None
+
+    if token is None or token.user is None:
+        raise exceptions.AuthenticationFailed(_('Invalid token.'))
+
+    if not token.user.is_active:
+        raise exceptions.AuthenticationFailed(_('User inactive or deleted.'))
+
+    if token.revoked:
+        raise exceptions.AuthenticationFailed(_('Token has been revoked'))
+
+    if token.expired:
+        raise exceptions.AuthenticationFailed(_('Token has expired'))
+
+    if token.last_seen != datetime.date.today():
+        # Update the last-seen date
+        # Note: Use update_fields to avoid clobbering concurrent changes to
+        # other fields on this token (e.g. a concurrent revocation)
+        token.last_seen = datetime.date.today()
+        token.save(update_fields=['last_seen'])
+
+    return token
+
+
 class ApiTokenAuthentication(TokenAuthentication):
     """Custom implementation of TokenAuthentication class, with custom features.
 
@@ -23,29 +56,8 @@ class ApiTokenAuthentication(TokenAuthentication):
 
     def authenticate_credentials(self, key):
         """Adds additional checks to the default token authentication method."""
-        # If this runs without error, then the token is valid (so far)
-        token = self.model.get_from_string(key)
-        if token is None:
-            raise exceptions.AuthenticationFailed(_('Invalid token.'))
-
-        user = token.user
-        if not user.is_active:
-            raise exceptions.AuthenticationFailed(_('User inactive or deleted.'))
-
-        if token.revoked:
-            raise exceptions.AuthenticationFailed(_('Token has been revoked'))
-
-        if token.expired:
-            raise exceptions.AuthenticationFailed(_('Token has expired'))
-
-        if token.last_seen != datetime.date.today():
-            # Update the last-seen date
-            # Note: Use update_fields to avoid clobbering concurrent changes to
-            # other fields on this token (e.g. a concurrent revocation)
-            token.last_seen = datetime.date.today()
-            token.save(update_fields=['last_seen'])
-
-        return (user, token)
+        token = validate_api_token(key)
+        return (token.user, token)
 
 
 class ExtendedOAuth2Authentication(OAuth2ProtectedResourceAuthentication):

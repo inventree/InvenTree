@@ -2,6 +2,7 @@
 
 from unittest.mock import patch
 
+from django.contrib.auth.models import User
 from django.http import Http404, HttpRequest
 from django.urls import reverse
 
@@ -10,6 +11,7 @@ from error_report.models import Error
 from InvenTree.exceptions import log_error
 from InvenTree.helpers_mfa import get_codes
 from InvenTree.unit_test import InvenTreeTestCase
+from users.models import ApiToken
 
 
 class MiddlewareTests(InvenTreeTestCase):
@@ -113,6 +115,71 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # Request something that is not on the API - should still work
         self.check_path(reverse('auth-check'), auth_header=f'Token {token}')
+
+    def test_token_auth_non_api(self):
+        """Test token validation for paths handled by AuthRequiredMiddleware."""
+        target = reverse('auth-check')
+        self.client.logout()
+
+        token = ApiToken.objects.create(user=self.user, name='middleware-test')
+        raw_token = token.token
+
+        # Empty or malformed headers are rejected
+        for header in ['Token', 'Token ', 'Bearer', 'Token .', 'Token abc.']:
+            self.check_path(target, 401, auth_header=header)
+
+        # The scheme is case-insensitive
+        for scheme in ['Token', 'TOKEN', 'bearer', 'Bearer:']:
+            self.check_path(target, auth_header=f'{scheme} {raw_token}')
+
+        # The token value itself is case-sensitive
+        self.check_path(target, 401, auth_header=f'Token {raw_token.upper()}')
+
+        # Inactive users are rejected
+        self.user.is_active = False
+        self.user.save()
+        self.check_path(target, 401, auth_header=f'Token {raw_token}')
+        self.user.is_active = True
+        self.user.save()
+
+        # Revoked tokens are rejected
+        token.revoked = True
+        token.save()
+        self.check_path(target, 401, auth_header=f'Token {raw_token}')
+
+    def test_token_auth_case_sensitive(self):
+        """Test that the token value is not lowercased before lookup."""
+        key = 'inv-' + 'AbCdEf0123456789' * 2
+        ApiToken.objects.create(user=self.user, name='legacy', key=key)
+        self.client.logout()
+
+        self.check_path(reverse('auth-check'), auth_header=f'Token {key}')
+
+    def test_mfa_token_header_bypass(self):
+        """An invalid or foreign token header must not bypass MFA enforcement."""
+        url = reverse('api-part-list')
+        self.assignRole(role='part.view', group=self.group)
+
+        other_user = User.objects.create_user(username='other', password='other')
+        other_token = ApiToken.objects.create(user=other_user, name='other').token
+        own_token = ApiToken.objects.create(user=self.user, name='own').token
+
+        with (
+            self.settings(MFA_ENABLED=True),
+            patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}),
+        ):
+            # Session without MFA is blocked
+            self.check_path(url, 401)
+
+            # Junk token header does not bypass MFA
+            self.check_path(url, 401, auth_header='Bearer junk')
+            self.check_path(url, 401, auth_header='Token abc.def')
+
+            # Valid token for a *different* user does not bypass MFA
+            self.check_path(url, 401, auth_header=f'Token {other_token}')
+
+            # Valid token for the session user is accepted
+            self.check_path(url, auth_header=f'Token {own_token}')
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""

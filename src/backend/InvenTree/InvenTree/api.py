@@ -38,7 +38,6 @@ from InvenTree.proof import calculate_proof
 from InvenTree.tasks import batch_offload_tasks
 from plugin.base.event.events import batch_events
 from plugin.serializers import MetadataSerializer
-from users.models import ApiToken
 from users.permissions import check_user_permission, prefetch_rule_sets
 
 from .helpers import plugins_info, str2bool
@@ -364,17 +363,11 @@ class InfoView(APIView):
 
     def check_auth_header(self, request):
         """Check if user is authenticated via a token in the header."""
-        from InvenTree.middleware import get_token_from_request
+        from InvenTree.middleware import get_api_token
 
-        if token := get_token_from_request(request):
-            # Does the provided token match a valid user?
-            try:
-                token = ApiToken.get_from_string(token)
-                # Check if the token is active and the user is a staff member
-                if token and token.active and token.user and token.user.is_staff:
-                    return True
-            except ApiToken.DoesNotExist:
-                pass
+        # Check if the token is valid and the user is a staff member
+        if token := get_api_token(request):
+            return token.user.is_staff
 
         return False
 

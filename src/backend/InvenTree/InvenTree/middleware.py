@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from error_report.middleware import ExceptionProcessor
+from rest_framework.exceptions import AuthenticationFailed
 
 import InvenTree.helpers
 from common.settings import get_global_setting
@@ -25,6 +26,7 @@ from InvenTree.version import (
     inventreePythonVersion,
     inventreeVersion,
 )
+from users.authentication import validate_api_token
 from users.models import ApiToken
 
 logger = structlog.get_logger('inventree')
@@ -37,14 +39,41 @@ def get_token_from_request(request):
 
     for k in auth_keys:
         if auth_header := request.headers.get(k, None):
-            auth_header = auth_header.strip().lower().split()
+            # Only the scheme is case-insensitive - the token value must be preserved
+            auth_header = auth_header.split()
 
             if len(auth_header) > 1:
-                if auth_header[0].strip().lower().replace(':', '') in token_keys:
+                if auth_header[0].lower().replace(':', '') in token_keys:
                     token = auth_header[1]
                     return token
 
     return None
+
+
+def get_api_token(request) -> Optional[ApiToken]:
+    """Return the validated ApiToken provided in the request headers, if any.
+
+    A valid token is cached on the request as 'request.token'.
+    This attribute is *only* set once the token has been fully validated.
+    """
+    if token := getattr(request, 'token', None):
+        return token
+
+    if not (raw_token := get_token_from_request(request)):
+        return None
+
+    try:
+        token = validate_api_token(raw_token)
+    except AuthenticationFailed as exc:
+        logger.warning(
+            'Access denied for token %s: %s',
+            InvenTree.helpers.sanitize_token(str(raw_token)),
+            exc.detail,
+        )
+        return None
+
+    request.token = token
+    return token
 
 
 def ensure_slashes(path: str):
@@ -146,21 +175,10 @@ class AuthRequiredMiddleware:
 
     def check_token(self, request) -> bool:
         """Check if the user is authenticated via token."""
-        if token := get_token_from_request(request):
-            request.token = token
-            # Does the provided token match a valid user?
-            try:
-                token = ApiToken.get_from_string(token)
-
-                if token and token.active and token.user:
-                    # Provide the user information to the request
-                    request.user = token.user
-                    return True
-            except ApiToken.DoesNotExist:  # pragma: no cover
-                logger.warning(
-                    'Access denied for unknown token %s',
-                    InvenTree.helpers.sanitize_token(str(token)),
-                )  # pragma: no cover
+        if token := get_api_token(request):
+            # Provide the user information to the request
+            request.user = token.user
+            return True
 
         return False
 
@@ -269,9 +287,9 @@ class Check2FAMiddleware(MiddlewareMixin):
             return None
         if self.is_multifactor_logged_in(request):
             return None
-        if getattr(
-            request, 'token', get_token_from_request(request)
-        ):  # Token based login can not do MFA
+        # Token based login can not do MFA - but the token must be valid,
+        # and belong to the same user (otherwise a junk header bypasses MFA)
+        if (token := get_api_token(request)) and token.user_id == request.user.pk:
             return None
 
         if self.enforce_2fa(request):
