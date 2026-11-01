@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 23:44+0000\n"
-"PO-Revision-Date: 2026-10-27 23:48\n"
+"POT-Creation-Date: 2026-11-01 23:41+0000\n"
+"PO-Revision-Date: 2026-11-01 23:45\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -17,43 +17,43 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:394
+#: InvenTree/api.py:392
 msgid "API endpoint not found"
 msgstr "APIエンドポイントが見つかりません"
 
-#: InvenTree/api.py:467
+#: InvenTree/api.py:465
 msgid "List of items must be provided for bulk operation"
-msgstr "一括処理を行うには、部品リストを指示する必要があります"
+msgstr "一括操作では、対象項目の一覧を指定してください"
 
-#: InvenTree/api.py:474
+#: InvenTree/api.py:472
 msgid "Items must be provided as a list"
-msgstr "項目はリストとして提供されなければなりません"
+msgstr "項目はリスト形式で指定してください"
 
-#: InvenTree/api.py:482
+#: InvenTree/api.py:480
 msgid "Invalid items list provided"
-msgstr "無効なアイテムリスト"
+msgstr "項目の一覧が無効です"
 
-#: InvenTree/api.py:487
+#: InvenTree/api.py:485
 msgid "All filter must only be used with true"
-msgstr "すべてのフィルターは真の場合にのみ使用されなければならない"
+msgstr "All フィルターを指定する場合は、値を true にしてください"
 
-#: InvenTree/api.py:492
+#: InvenTree/api.py:490
 msgid "No items match the provided criteria"
 msgstr "指定された条件に一致する項目がありません"
 
-#: InvenTree/api.py:516
+#: InvenTree/api.py:514
 msgid "No data provided"
-msgstr "データの提供がありません。"
+msgstr "データが指定されていません"
 
-#: InvenTree/api.py:532
+#: InvenTree/api.py:530
 msgid "This field must be unique."
 msgstr "この項目は一意である必要があります。"
 
-#: InvenTree/api.py:641
+#: InvenTree/api.py:639
 msgid "Item no longer matches the provided criteria"
 msgstr "アイテムが指定された条件に一致しなくなりました"
 
-#: InvenTree/api.py:896 InvenTree/models.py:1664
+#: InvenTree/api.py:894 InvenTree/models.py:1664
 msgid "User does not have permission to view this model"
 msgstr "ユーザーにこのモデルを表示する権限がありません"
 
@@ -67,7 +67,7 @@ msgstr "メールアドレスの確認"
 
 #: InvenTree/auth_overrides.py:85
 msgid "You must type the same email each time."
-msgstr "毎回同じメールアドレスを入力する必要があります。"
+msgstr "確認用にも同じメールアドレスを入力してください。"
 
 #: InvenTree/auth_overrides.py:135 InvenTree/auth_overrides.py:142
 msgid "The provided primary email address is not valid."
@@ -80,11 +80,11 @@ msgstr "指定されたメールドメインは承認されていません。"
 #: InvenTree/conversion.py:288
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr "無効な単位 ({unit})"
+msgstr "指定された単位 ({unit}) は無効です"
 
 #: InvenTree/conversion.py:305
 msgid "No value provided"
-msgstr "値がありません"
+msgstr "値が指定されていません"
 
 #: InvenTree/conversion.py:332
 #, python-brace-format
@@ -95,7 +95,7 @@ msgstr "{original}を{unit}に変換できませんでした。"
 #: InvenTree/helpers.py:645 order/models.py:924 order/models.py:1216
 #: part/models.py:3089 stock/models.py:2152
 msgid "Invalid quantity provided"
-msgstr "数量コードが無効です"
+msgstr "指定された数量が無効です。"
 
 #: InvenTree/exceptions.py:128
 msgid "Server is temporarily reloading, please retry the request"
@@ -107,13 +107,13 @@ msgstr "エラーの詳細は管理者パネルで確認できます"
 
 #: InvenTree/fields.py:214
 msgid "Enter date"
-msgstr "日付を入力する"
+msgstr "日付を入力してください"
 
 #: InvenTree/fields.py:237
 msgid "Invalid decimal value"
-msgstr "無効な10進数値"
+msgstr "小数値が無効です"
 
-#: InvenTree/fields.py:286 audit/models.py:369 build/serializers.py:538
+#: InvenTree/fields.py:286 audit/models.py:380 build/serializers.py:538
 #: build/serializers.py:601 build/serializers.py:1788 common/models.py:3246
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
@@ -127,7 +127,7 @@ msgstr "メモ"
 #: InvenTree/format.py:159
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr "値 '{name}' はパターン形式で表示されません"
+msgstr "書式パターンに '{name}' が含まれていません"
 
 #: InvenTree/format.py:170
 msgid "Provided value does not match required pattern: "
@@ -135,19 +135,19 @@ msgstr "指定された値が必要なパターンと一致しません: "
 
 #: InvenTree/helpers.py:649
 msgid "Cannot serialize more than 1000 items at once"
-msgstr "一度に1000以上のアイテムをシリアライズすることはできません。"
+msgstr "1000件を超える項目を一度にシリアライズすることはできません。"
 
 #: InvenTree/helpers.py:655
 msgid "Empty serial number string"
-msgstr "シリアル番号は空です"
+msgstr "シリアル番号が空です。"
 
 #: InvenTree/helpers.py:689
 msgid "Serial number exceeds maximum length"
-msgstr ""
+msgstr "シリアル番号が最大文字数を超えています"
 
 #: InvenTree/helpers.py:693
 msgid "Duplicate serial"
-msgstr "重複シリアル"
+msgstr "シリアル番号が重複しています"
 
 #: InvenTree/helpers.py:725 InvenTree/helpers.py:768 InvenTree/helpers.py:786
 #: InvenTree/helpers.py:793 InvenTree/helpers.py:812
@@ -158,7 +158,7 @@ msgstr "無効なグループです：{group}"
 #: InvenTree/helpers.py:756
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr "グループ範囲 {group} が許容数量を超過 ({expected_quantity})"
+msgstr "グループ範囲 {group} は許容数量 ({expected_quantity}) を超えています"
 
 #: InvenTree/helpers.py:822
 msgid "No serial numbers found"
@@ -171,11 +171,11 @@ msgstr "固有のシリアル番号の数（{n}）は数量（{q}）と一致す
 
 #: InvenTree/helpers.py:959
 msgid "Remove HTML tags from this value"
-msgstr "この値からHTMLタグを削除"
+msgstr "この値からHTMLタグを削除してください"
 
 #: InvenTree/helpers_model.py:166
 msgid "Invalid URL: no hostname"
-msgstr "無効なURL：ホスト名がありません"
+msgstr "URLが無効です。ホスト名が指定されていません"
 
 #: InvenTree/helpers_model.py:171
 msgid "Invalid URL: hostname could not be resolved"
@@ -226,15 +226,15 @@ msgid "Log in to the app"
 msgstr "アプリにログイン"
 
 #: InvenTree/magic_login.py:41 company/models.py:212 company/models.py:536
-#: users/serializers.py:218
+#: users/serializers.py:219
 msgid "Email"
 msgstr "メールアドレス"
 
-#: InvenTree/middleware.py:129
+#: InvenTree/middleware.py:131
 msgid "CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly."
 msgstr "CSRF検証に失敗しました。INVENTREE_SITE_URLとINVENTREE_TRUSTED_ORIGINSが正しく設定されていることを確認してください。"
 
-#: InvenTree/middleware.py:223
+#: InvenTree/middleware.py:226
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "二要素認証を有効にする必要があります。"
 
@@ -310,7 +310,7 @@ msgstr "パス"
 
 #: InvenTree/models.py:1529
 msgid "Duplicate names cannot exist under the same parent"
-msgstr "同じ親に重複した名前は存在しません。"
+msgstr "同じ親の下に同じ名前を登録することはできません。"
 
 #: InvenTree/models.py:1620
 msgid "Barcode Data"
@@ -381,35 +381,35 @@ msgstr "コンテンツタイプが必須のミックスインクラスと一致
 
 #: InvenTree/serializers.py:1137
 msgid "Copy Parameters"
-msgstr "コピーパラメータ"
+msgstr "パラメータをコピー"
 
 #: InvenTree/serializers.py:1138
 msgid "Copy parameters from the original item"
-msgstr "元のアイテムからパラメータをコピー"
+msgstr "元の項目からパラメータをコピーします"
 
 #: InvenTree/serializers.py:1140 part/serializers.py:926
 msgid "Copy Notes"
-msgstr "コピーノート"
+msgstr "メモをコピー"
 
 #: InvenTree/serializers.py:1140
 msgid "Copy notes from the original item"
-msgstr "元のアイテムからメモをコピー"
+msgstr "元の項目からメモをコピーします"
 
 #: InvenTree/serializers.py:1141
 msgid "Copy Lines"
-msgstr "コピーライン"
+msgstr "明細をコピー"
 
 #: InvenTree/serializers.py:1141
 msgid "Copy line items from the original order"
-msgstr "元の注文から行項目をコピー"
+msgstr "元の注文から明細をコピーします"
 
 #: InvenTree/serializers.py:1144
 msgid "Copy Extra Lines"
-msgstr "余分な行をコピー"
+msgstr "追加明細をコピー"
 
 #: InvenTree/serializers.py:1145
 msgid "Copy extra line items from the original order"
-msgstr "元の注文から余分な項目をコピー"
+msgstr "元の注文から追加明細をコピーします"
 
 #: InvenTree/serializers.py:1168
 msgid "Duplication Options"
@@ -608,7 +608,7 @@ msgstr "モデルタイプ"
 
 #: audit/api.py:92
 msgid "Model type (e.g. \"order.purchaseorder\" or \"purchaseorder\")"
-msgstr ""
+msgstr "モデルタイプ（例: order.purchaseorder または purchaseorder）"
 
 #: audit/api.py:97 common/api.py:499 common/models.py:3179
 msgid "Model ID"
@@ -616,15 +616,15 @@ msgstr "モデルID"
 
 #: audit/api.py:98
 msgid "Primary key of the object (requires model_type)"
-msgstr ""
+msgstr "オブジェクトの主キー（model_type の指定が必要です）"
 
 #: audit/api.py:103
 msgid "Include Children"
-msgstr ""
+msgstr "子オブジェクトを含める"
 
 #: audit/api.py:104
 msgid "Include entries for child objects (default = true)"
-msgstr ""
+msgstr "子オブジェクトの監査ログも含めます（既定値: true）"
 
 #: audit/api.py:108 build/api.py:260 order/api.py:253
 msgid "Min Date"
@@ -636,39 +636,39 @@ msgstr "最大日付"
 
 #: audit/api.py:142
 msgid "model_type must also be provided"
-msgstr ""
+msgstr "model_type も指定してください"
 
 #: audit/api.py:150
 msgid "Invalid model type"
-msgstr ""
+msgstr "モデルタイプが無効です"
 
-#: audit/models.py:324
+#: audit/models.py:335
 msgid "Audit Log Entry"
-msgstr ""
+msgstr "監査ログエントリ"
 
-#: audit/models.py:325
+#: audit/models.py:336
 msgid "Audit Log Entries"
-msgstr ""
+msgstr "監査ログエントリ"
 
-#: audit/models.py:348
+#: audit/models.py:359
 msgid "Parent Content Type"
-msgstr ""
+msgstr "親コンテンツタイプ"
 
-#: audit/models.py:352
+#: audit/models.py:363
 msgid "Parent Object PK"
-msgstr ""
+msgstr "親オブジェクトの主キー"
 
-#: audit/models.py:357
+#: audit/models.py:368
 msgid "Actor Username"
-msgstr ""
+msgstr "操作ユーザー名"
 
-#: audit/models.py:362
+#: audit/models.py:373
 msgid "Event Type"
-msgstr ""
+msgstr "イベント種別"
 
-#: audit/models.py:370
+#: audit/models.py:381
 msgid "Notes associated with this entry"
-msgstr ""
+msgstr "このエントリに関連付けられたメモ"
 
 #: audit/serializers.py:26 importer/models.py:588
 msgid "Field"
@@ -681,51 +681,51 @@ msgstr "ラベル"
 
 #: audit/serializers.py:29
 msgid "Change Type"
-msgstr ""
+msgstr "変更種別"
 
 #: audit/serializers.py:36
 msgid "Related model (for FK fields)"
-msgstr ""
+msgstr "関連モデル（外部キー項目用）"
 
 #: audit/serializers.py:39
 msgid "M2M operation (add / delete)"
-msgstr ""
+msgstr "多対多リレーションの操作（追加 / 削除）"
 
 #: audit/serializers.py:45
 msgid "The field holds a numeric value"
-msgstr ""
+msgstr "このフィールドの値は数値です"
 
 #: audit/serializers.py:104
 msgid "Action"
-msgstr ""
+msgstr "操作"
 
 #: audit/serializers.py:109
 msgid "Model Label"
-msgstr ""
+msgstr "モデル表示名"
 
 #: audit/serializers.py:119
 msgid "Parent Model Type"
-msgstr ""
+msgstr "親モデルの種類"
 
 #: audit/serializers.py:123
 msgid "Event"
-msgstr ""
+msgstr "イベント"
 
 #: audit/serializers.py:126
 msgid "Deltas"
-msgstr ""
+msgstr "変更差分"
 
 #: audit/serializers.py:158
 msgid "Changes"
-msgstr ""
+msgstr "変更内容"
 
 #: audit/serializers.py:162
 msgid "Change Details"
-msgstr ""
+msgstr "変更の詳細"
 
 #: audit/serializers.py:235
 msgid "Deleted"
-msgstr ""
+msgstr "削除済み"
 
 #: build/api.py:65 order/api.py:130 order/api.py:299 order/api.py:1522
 #: order/serializers.py:98
@@ -734,7 +734,7 @@ msgstr "注文ステータス"
 
 #: build/api.py:91 build/models.py:296
 msgid "Parent Build"
-msgstr "親ビルド"
+msgstr "親製造オーダー"
 
 #: build/api.py:95 build/api.py:1101 order/api.py:544 order/api.py:835
 #: order/api.py:1312 order/api.py:1626 order/api.py:1943 order/api.py:2153
@@ -772,7 +772,7 @@ msgstr "バリアントを含む"
 #: templates/email/purchase_order_received.html:15
 #: templates/email/stale_stock_notification.html:17
 msgid "Part"
-msgstr "パーツ"
+msgstr "部品"
 
 #: build/api.py:131 build/api.py:134 build/serializers.py:1497 part/api.py:953
 #: part/api.py:1351 part/models.py:413 part/models.py:1182 part/models.py:2728
@@ -782,23 +782,23 @@ msgstr "カテゴリ"
 
 #: build/api.py:142 build/api.py:146
 msgid "Ancestor Build"
-msgstr "祖先ビルド"
+msgstr "上位の製造オーダー"
 
 #: build/api.py:163 order/api.py:148
 msgid "Assigned to me"
-msgstr "担当"
+msgstr "自分が担当"
 
 #: build/api.py:178
 msgid "Assigned To"
-msgstr "割り当て"
+msgstr "担当者"
 
 #: build/api.py:213 stock/api.py:969
 msgid "Created before"
-msgstr "作成前"
+msgstr "作成日が指定日より前"
 
 #: build/api.py:217 stock/api.py:973
 msgid "Created after"
-msgstr "の後に作成されました。"
+msgstr "作成日が指定日より後"
 
 #: build/api.py:221
 msgid "Has start date"
@@ -806,11 +806,11 @@ msgstr "開始日あり"
 
 #: build/api.py:229
 msgid "Start date before"
-msgstr "開始日 前"
+msgstr "開始日が指定日より前"
 
 #: build/api.py:233
 msgid "Start date after"
-msgstr "開始日 後"
+msgstr "開始日が指定日より後"
 
 #: build/api.py:237
 msgid "Has target date"
@@ -818,19 +818,19 @@ msgstr "目標期日あり"
 
 #: build/api.py:245
 msgid "Target date before"
-msgstr "目標期日"
+msgstr "目標日が指定日より前"
 
 #: build/api.py:249
 msgid "Target date after"
-msgstr "以降の目標日"
+msgstr "目標日が指定日より後"
 
 #: build/api.py:253
 msgid "Completed before"
-msgstr "完成前"
+msgstr "完了日が指定日より前"
 
 #: build/api.py:257
 msgid "Completed after"
-msgstr "終了後"
+msgstr "完了日が指定日より後"
 
 #: build/api.py:308 build/api.py:311 part/api.py:198
 msgid "Exclude Tree"
@@ -838,7 +838,7 @@ msgstr "ツリーを除く"
 
 #: build/api.py:424
 msgid "Build must be cancelled before it can be deleted"
-msgstr "削除するには、ビルドをキャンセルする必要があります。"
+msgstr "削除するには、製造オーダーをキャンセルする必要があります"
 
 #: build/api.py:468 build/serializers.py:1424 part/models.py:1349
 #: part/models.py:3225
@@ -865,16 +865,16 @@ msgstr "テスト可能"
 
 #: build/api.py:503 order/api.py:1056 order/api.py:1512 order/api.py:2388
 msgid "Order Outstanding"
-msgstr "受注残高"
+msgstr "未完了のオーダー"
 
 #: build/api.py:513 build/serializers.py:1526 order/api.py:1015
 #: order/api.py:2347
 msgid "Allocated"
-msgstr "割り当てられた"
+msgstr "引当済み"
 
 #: build/api.py:538 build/models.py:2259 build/serializers.py:1443
 msgid "Consumed"
-msgstr "消費されました"
+msgstr "消費済み"
 
 #: build/api.py:547 company/models.py:977 company/serializers.py:457
 #: templates/email/build_order_required_stock.html:19
@@ -883,23 +883,23 @@ msgstr "消費されました"
 msgid "Available"
 msgstr "利用可能"
 
-#: build/api.py:588 build/serializers.py:1528 company/serializers.py:454
-#: order/serializers.py:1440 order/serializers.py:2778 part/serializers.py:793
-#: part/serializers.py:1148 part/serializers.py:1546
-#: templates/email/low_stock_notification.html:18
+#: build/api.py:588 build/serializers.py:1528 company/api.py:330
+#: company/serializers.py:454 order/serializers.py:1440
+#: order/serializers.py:2778 part/serializers.py:793 part/serializers.py:1148
+#: part/serializers.py:1546 templates/email/low_stock_notification.html:18
 msgid "On Order"
 msgstr "注文中"
 
 #: build/api.py:748
 msgid "Build not found"
-msgstr "ビルドが見つかりません"
+msgstr "製造オーダーが見つかりません"
 
 #: build/api.py:1138 build/models.py:139 order/models.py:2507
 #: report/templates/report/inventree_build_order_report.html:104
 #: stock/serializers.py:92 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
-msgstr "組立注文"
+msgstr "製造オーダー"
 
 #: build/api.py:1152 build/api.py:1156 build/serializers.py:420
 #: build/serializers.py:526 build/serializers.py:578 build/serializers.py:1264
@@ -911,21 +911,21 @@ msgstr "組立注文"
 #: stock/serializers.py:1117 stock/serializers.py:1662
 #: stock/serializers.py:1937 stock/serializers.py:2065
 #: stock/serializers.py:2181 templates/email/purchase_order_received.html:17
-#: templates/email/stale_stock_notification.html:18 users/models.py:745
+#: templates/email/stale_stock_notification.html:18 users/models.py:764
 msgid "Location"
 msgstr "場所"
 
 #: build/api.py:1164 part/serializers.py:1332
 msgid "Output"
-msgstr "出力"
+msgstr "製造品"
 
 #: build/api.py:1166
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
-msgstr "出力ストックアイテムIDでフィルタリングします。未インストールビルドアイテムを検索するには「null」をご使用ください。"
+msgstr "製造品の在庫品IDで絞り込みます。組込先の製造品が未指定の引当を検索するには「null」を指定してください。"
 
 #: build/models.py:140 users/ruleset.py:51
 msgid "Build Orders"
-msgstr "組立注文"
+msgstr "製造オーダー"
 
 #: build/models.py:200
 msgid "Assembly BOM has not been validated"
@@ -933,15 +933,15 @@ msgstr "アセンブリBOMが検証されていません"
 
 #: build/models.py:207
 msgid "Build order cannot be created for an inactive part"
-msgstr "非アクティブな部品にビルドオーダーを作成できません。"
+msgstr "非アクティブな部品に製造オーダーを作成できません"
 
 #: build/models.py:214
 msgid "Build order cannot be created for an unlocked part"
-msgstr "ロックされていない部品にビルドオーダーを作成できません。"
+msgstr "ロックされていない部品に製造オーダーを作成できません"
 
 #: build/models.py:232
 msgid "Build orders can only be externally fulfilled for purchaseable parts"
-msgstr "ビルドオーダーを外部委託できるのは、購入可能部品のみです"
+msgstr "製造オーダーを外部委託できるのは、購入可能部品のみです"
 
 #: build/models.py:239 order/models.py:463
 msgid "Responsible user or group must be specified"
@@ -949,7 +949,7 @@ msgstr "担当ユーザーまたはグループを指定する必要がありま
 
 #: build/models.py:244
 msgid "Build order part cannot be changed"
-msgstr "ビルドオーダー部品は変更できません"
+msgstr "製造オーダー部品は変更できません"
 
 #: build/models.py:249 order/models.py:481
 msgid "Target date must be after start date"
@@ -957,7 +957,7 @@ msgstr "目標期日は開始日以降であること"
 
 #: build/models.py:277
 msgid "Build Order Reference"
-msgstr "ビルド・オーダー・リファレンス"
+msgstr "製造オーダー参照番号"
 
 #: build/models.py:278 build/serializers.py:1421 order/models.py:791
 #: order/models.py:1570 order/models.py:2282 order/models.py:3464
@@ -972,11 +972,11 @@ msgstr "参照"
 
 #: build/models.py:287
 msgid "Brief description of the build (optional)"
-msgstr "建築の簡単な説明（任意）"
+msgstr "製造オーダーの簡単な説明（任意）"
 
 #: build/models.py:297
 msgid "Build Order to which this build is allocated"
-msgstr "このビルドが引き当てられているビルドオーダー"
+msgstr "この製造オーダーの親となる製造オーダー"
 
 #: build/models.py:306
 msgid "Select part to build"
@@ -984,32 +984,32 @@ msgstr "製造する部品の選択"
 
 #: build/models.py:311
 msgid "Sales Order Reference"
-msgstr "セールス・オーダー・リファレンス"
+msgstr "受注参照番号"
 
 #: build/models.py:316
 msgid "Sales Order to which this build is allocated"
-msgstr "このビルドが引き当てられている受注"
+msgstr "この製造オーダーで対応する受注"
 
 #: build/models.py:321 build/serializers.py:1075 order/models.py:3930
 #: order/serializers.py:2081
 msgid "Source Location"
-msgstr "ソース・ロケーション"
+msgstr "供給元の保管場所"
 
 #: build/models.py:327
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr "このビルドで在庫を取得する場所を選択します（任意の在庫場所から取得する場合は空白のままにしてください）。"
+msgstr "この製造オーダーで使用する在庫の引当元の場所を選択します（場所を限定しない場合は空欄にしてください）"
 
 #: build/models.py:333
 msgid "External Build"
-msgstr "外部ビルド"
+msgstr "外部委託製造"
 
 #: build/models.py:334
 msgid "This build order is fulfilled externally"
-msgstr "このビルドオーダーは外部委託されます。"
+msgstr "この製造オーダーは外部委託されます"
 
 #: build/models.py:339 order/models.py:3940
 msgid "Destination Location"
-msgstr "目的地"
+msgstr "入庫先の保管場所"
 
 #: build/models.py:344
 msgid "Select location where the completed items will be stored"
@@ -1017,27 +1017,27 @@ msgstr "完成したアイテムの保管場所を選択"
 
 #: build/models.py:348
 msgid "Build Quantity"
-msgstr "数量"
+msgstr "製造指示数量"
 
 #: build/models.py:351
 msgid "Number of stock items to build"
-msgstr "構築するストックアイテムの数"
+msgstr "製造する完成品の予定数量"
 
 #: build/models.py:355
 msgid "Completed items"
-msgstr "完成品"
+msgstr "完成済み数量"
 
 #: build/models.py:357
 msgid "Number of stock items which have been completed"
-msgstr "完了した在庫アイテムの数"
+msgstr "完成済みの製造品の数量"
 
 #: build/models.py:361
 msgid "Build Status"
-msgstr "組立状況"
+msgstr "製造オーダーのステータス"
 
 #: build/models.py:366
 msgid "Build status code"
-msgstr "ビルドステータスコード"
+msgstr "製造オーダーのステータスコード"
 
 #: build/models.py:375 build/serializers.py:407 order/serializers.py:895
 #: order/serializers.py:1028 stock/models.py:1280 stock/serializers.py:84
@@ -1047,7 +1047,7 @@ msgstr "バッチコード"
 
 #: build/models.py:379 build/serializers.py:408
 msgid "Batch code for this build output"
-msgstr "このビルド出力のバッチコード"
+msgstr "この製造品のバッチコード"
 
 #: build/models.py:383 order/models.py:586 order/serializers.py:163
 #: part/models.py:1384 stock/models.py:1361
@@ -1056,11 +1056,11 @@ msgstr "作成日時"
 
 #: build/models.py:389
 msgid "Build start date"
-msgstr "ビルド開始日"
+msgstr "製造開始日"
 
 #: build/models.py:390
 msgid "Scheduled start date for this build order"
-msgstr "この注文の開始予定日"
+msgstr "この製造オーダーの開始予定日"
 
 #: build/models.py:396
 msgid "Target completion date"
@@ -1068,7 +1068,7 @@ msgstr "完成目標日"
 
 #: build/models.py:398
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr "ビルド完了目標日。この日付を過ぎると、ビルドは期限切れになります。"
+msgstr "製造オーダーの完了目標日。この日付を過ぎると期限超過になります。"
 
 #: build/models.py:403 order/models.py:849 order/models.py:3503
 #: order/models.py:3959
@@ -1085,7 +1085,7 @@ msgstr "発行者"
 
 #: build/models.py:421
 msgid "User who issued this build order"
-msgstr "このビルドオーダーを発行したユーザー"
+msgstr "この製造オーダーを発行したユーザー"
 
 #: build/models.py:438 common/models.py:204 order/api.py:198
 #: order/models.py:618 part/models.py:1401
@@ -1095,7 +1095,7 @@ msgstr "責任"
 
 #: build/models.py:439
 msgid "User or group responsible for this build order"
-msgstr "このビルドオーダーを担当するユーザーまたはグループ"
+msgstr "この製造オーダーを担当するユーザーまたはグループ"
 
 #: build/models.py:444 stock/models.py:1273
 msgid "External Link"
@@ -1108,11 +1108,11 @@ msgstr "外部 サイト へのリンク"
 
 #: build/models.py:451
 msgid "Build Priority"
-msgstr "組立優先度"
+msgstr "製造オーダーの優先度"
 
 #: build/models.py:454
 msgid "Priority of this build order"
-msgstr "建設順序の優先順位"
+msgstr "この製造オーダーの優先度"
 
 #: build/models.py:462 common/models.py:164 common/models.py:182
 #: order/api.py:184 order/models.py:558 order/models.py:2314
@@ -1125,11 +1125,11 @@ msgstr "プロジェクトコード"
 
 #: build/models.py:1030
 msgid "Cannot complete build order with open child builds"
-msgstr "製造中の子ビルドがあるため、ビルドオーダーを完了できません"
+msgstr "未完了の子製造オーダーがあるため、製造オーダーを完了できません"
 
 #: build/models.py:1035
 msgid "Cannot complete build order with incomplete outputs"
-msgstr "不完全な出力があるため、ビルドオーダーを完了できません"
+msgstr "未完成の製造品があるため、製造オーダーを完了できません"
 
 #: build/models.py:1176
 msgid "Serial numbers must be provided for trackable parts"
@@ -1137,19 +1137,19 @@ msgstr "追跡可能な部品については、シリアル番号の提示が必
 
 #: build/models.py:1261 build/models.py:1347
 msgid "No build output specified"
-msgstr "ビルド出力が指定されていません"
+msgstr "製造品が指定されていません"
 
 #: build/models.py:1264
 msgid "Build output is already completed"
-msgstr "ビルド出力はすでに完了しています"
+msgstr "製造品はすでに完成処理されています"
 
 #: build/models.py:1267 build/models.py:1356 build/models.py:1433
 msgid "Build output does not match Build Order"
-msgstr "ビルド出力がビルド順序と一致しません"
+msgstr "製造品が対象の製造オーダーに紐付いていません"
 
 #: build/models.py:1353 build/models.py:1430
 msgid "Build output has already been completed"
-msgstr "ビルド出力はすでに完了しています"
+msgstr "製造品はすでに完成処理されています"
 
 #: build/models.py:1363 build/models.py:1463 build/serializers.py:328
 #: build/serializers.py:382 build/serializers.py:932 build/serializers.py:1739
@@ -1163,19 +1163,19 @@ msgstr "数量はゼロより大きくなければなりません"
 
 #: build/models.py:1367 build/models.py:1468 build/serializers.py:333
 msgid "Quantity cannot be greater than the output quantity"
-msgstr "数量が出力数量を上回ることはできません"
+msgstr "処理する数量は、対象の製造品の数量以下にしてください"
 
 #: build/models.py:1442
 msgid "Build output has not passed all required tests"
-msgstr "ビルド出力は、必要なすべてのテストを通過していません"
+msgstr "未合格の必須テストがあるため、この製造品は完成処理できません"
 
 #: build/models.py:1450
 msgid "Allocated stock items are still in production"
-msgstr "引き当て済みの在庫品は、現在生産中です"
+msgstr "引当済みの在庫品がまだ製造中のため、完成処理できません"
 
 #: build/models.py:1457
 msgid "Cannot partially complete a build output with allocated items"
-msgstr "割り当てられた項目を含むビルド出力の一部のみを完了することはできません"
+msgstr "部品が引き当てられている製造品は、登録数量の一部だけを完成処理することはできません"
 
 #: build/models.py:1639 order/models.py:4390 order/serializers.py:2045
 #: order/serializers.py:2899 stock/models.py:1535 stock/models.py:1937
@@ -1191,11 +1191,11 @@ msgstr "使用可能数量（{q}）を超過"
 
 #: build/models.py:2213
 msgid "Build Order Line Item"
-msgstr "ビルドオーダーラインアイテム"
+msgstr "製造オーダー明細"
 
 #: build/models.py:2238
 msgid "Build object"
-msgstr "ビルドオブジェクト"
+msgstr "この明細が属する製造オーダー"
 
 #: build/models.py:2250 build/models.py:2530 build/serializers.py:314
 #: build/serializers.py:367 build/serializers.py:1442 common/models.py:1455
@@ -1224,7 +1224,7 @@ msgstr "数量"
 
 #: build/models.py:2251
 msgid "Required quantity for build order"
-msgstr "注文数量"
+msgstr "この製造オーダーに必要な部品の数量"
 
 #: build/models.py:2260
 msgid "Quantity of consumed stock"
@@ -1232,11 +1232,11 @@ msgstr "消費された在庫の数量"
 
 #: build/models.py:2361
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr "ビルド項目は、ビルド出力を指定する必要があります。"
+msgstr "引き当てる部品が追跡対象のため、組込先の製造品を指定してください"
 
 #: build/models.py:2424 build/serializers.py:963
 msgid "Selected stock item does not match BOM line"
-msgstr "選択された在庫品目が部品表に一致しません。"
+msgstr "選択された在庫品が部品表の明細に一致しません。"
 
 #: build/models.py:2443
 msgid "Allocated quantity must be greater than zero"
@@ -1253,7 +1253,7 @@ msgstr "割当数量({q})は在庫可能数量({a})を超えてはなりませ�
 
 #: build/models.py:2476 order/models.py:3304 order/models.py:4321
 msgid "Stock item is over-allocated"
-msgstr "在庫が過剰配分"
+msgstr "在庫品の数量を超えて引き当てられています"
 
 #: build/models.py:2520 build/serializers.py:915 build/serializers.py:1231
 #: order/serializers.py:1760 order/serializers.py:1781
@@ -1262,27 +1262,27 @@ msgstr "在庫が過剰配分"
 #: stock/api.py:1497 stock/models.py:494 stock/serializers.py:101
 #: stock/serializers.py:850 stock/serializers.py:1513 stock/serializers.py:1630
 msgid "Stock Item"
-msgstr "在庫商品"
+msgstr "在庫品"
 
 #: build/models.py:2521
 msgid "Source stock item"
-msgstr "ソース在庫品"
+msgstr "引当元の在庫品"
 
 #: build/models.py:2531
 msgid "Stock quantity to allocate to build"
-msgstr "建設に割り当てる在庫量"
+msgstr "製造オーダーに引き当てる在庫数量"
 
 #: build/models.py:2540
 msgid "Install into"
-msgstr "インストール"
+msgstr "組込先"
 
 #: build/models.py:2541
 msgid "Destination stock item"
-msgstr "仕向け地在庫品"
+msgstr "組込先の在庫品"
 
 #: build/serializers.py:129
 msgid "Build Level"
-msgstr "ビルドレベル"
+msgstr "製造オーダーの階層"
 
 #: build/serializers.py:143 part/serializers.py:1234
 msgid "Part Name"
@@ -1290,35 +1290,35 @@ msgstr "部品名"
 
 #: build/serializers.py:254 build/serializers.py:942
 msgid "Build Output"
-msgstr "ビルド出力"
+msgstr "製造品"
 
 #: build/serializers.py:266
 msgid "Build output does not match the parent build"
-msgstr "ビルド出力が親ビルドと一致しません"
+msgstr "製造品が対象の製造オーダーに紐付いていません"
 
 #: build/serializers.py:270
 msgid "Output part does not match BuildOrder part"
-msgstr "出力部分が BuildOrder 部分と一致しません。"
+msgstr "製造品の部品が製造オーダーの対象部品と一致しません。"
 
 #: build/serializers.py:274
 msgid "This build output has already been completed"
-msgstr "このビルド出力はすでに完了しています"
+msgstr "この製造品はすでに完成処理されています"
 
 #: build/serializers.py:288
 msgid "This build output is not fully allocated"
-msgstr "このビルド出力は完全に割り当てられていません"
+msgstr "この製造品に必要な追跡対象部品の在庫品がすべて引き当てられていません"
 
 #: build/serializers.py:315 build/serializers.py:368
 msgid "Enter quantity for build output"
-msgstr "ビルド出力の数量を入力"
+msgstr "製造品の数量を入力"
 
 #: build/serializers.py:390
 msgid "Integer quantity required for trackable parts"
-msgstr "追跡可能な部品に必要な整数個数"
+msgstr "追跡対象部品の数量は整数で指定してください"
 
 #: build/serializers.py:396
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr "部品表には追跡可能な部品が含まれるため、必要な数量は整数"
+msgstr "部品表に追跡対象部品が含まれるため、数量は整数で指定してください"
 
 #: build/serializers.py:414 order/serializers.py:911 order/serializers.py:1936
 #: order/serializers.py:3029 stock/serializers.py:742
@@ -1327,19 +1327,19 @@ msgstr "シリアル番号"
 
 #: build/serializers.py:415
 msgid "Enter serial numbers for build outputs"
-msgstr "ビルド出力のためのシリアル番号の入力"
+msgstr "製造品のシリアル番号を入力"
 
 #: build/serializers.py:421
 msgid "Stock location for build output"
-msgstr "ビルド出力のストック位置"
+msgstr "製造品の保管場所"
 
 #: build/serializers.py:436
 msgid "Auto Allocate Serial Numbers"
-msgstr "シリアル番号の自動割り当て"
+msgstr "シリアル番号が一致する部品を自動引当"
 
 #: build/serializers.py:438
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr "シリアル番号が一致する必要なアイテムを自動的に割り当て"
+msgstr "製造品とシリアル番号が一致する必要部品の在庫を自動的に引き当てます"
 
 #: build/serializers.py:464 order/serializers.py:1000 stock/api.py:1243
 #: stock/models.py:732 stock/models.py:2550
@@ -1348,27 +1348,27 @@ msgstr "以下のシリアル番号は既に存在するか、無効です。"
 
 #: build/serializers.py:506 build/serializers.py:551 build/serializers.py:614
 msgid "A list of build outputs must be provided"
-msgstr "ビルド出力のリストを提供する必要があります。"
+msgstr "製造品の一覧を指定してください。"
 
 #: build/serializers.py:527
 msgid "Stock location for scrapped outputs"
-msgstr "スクラップされたアウトプットの在庫場所"
+msgstr "廃棄する製造品の保管場所"
 
 #: build/serializers.py:533
 msgid "Discard Allocations"
-msgstr "廃棄割り当て"
+msgstr "引当を解除"
 
 #: build/serializers.py:534
 msgid "Discard any stock allocations for scrapped outputs"
-msgstr "廃棄されたアウトプットに割り当てられた在庫の破棄"
+msgstr "廃棄する製造品への引当を解除し、引当済みの在庫品を消費しません。"
 
 #: build/serializers.py:540
 msgid "Reason for scrapping build output(s)"
-msgstr "ビルドアウトプットを廃棄する理由"
+msgstr "製造品を廃棄する理由"
 
 #: build/serializers.py:579
 msgid "Location for completed build outputs"
-msgstr "完成した建造物のアウトプットの場所"
+msgstr "完成した製造品の保管場所"
 
 #: build/serializers.py:586 stock/serializers.py:955 stock/serializers.py:1945
 #: stock/serializers.py:2073 stock/serializers.py:2189
@@ -1377,11 +1377,11 @@ msgstr "構造ロケーションには在庫アイテムを割り当てられま
 
 #: build/serializers.py:596 order/serializers.py:2612
 msgid "Accept Incomplete Allocation"
-msgstr "不完全割当の受入れ"
+msgstr "引当不足でも完了"
 
 #: build/serializers.py:597
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr "在庫が完全に割り当てられていない場合は、出力を完了します。"
+msgstr "必要な在庫品がすべて引き当てられていなくても、製造品を完成処理します。"
 
 #: build/serializers.py:667
 msgid "Consume Allocated Stock"
@@ -1389,112 +1389,112 @@ msgstr "割当在庫の消費"
 
 #: build/serializers.py:668
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "このビルドに割り当て済みのストックを消費します。"
+msgstr "この製造オーダーに引当済みの在庫品を消費します。"
 
 #: build/serializers.py:674
 msgid "Remove Incomplete Outputs"
-msgstr "不完全な出力の削除"
+msgstr "未完成の製造品を削除"
 
 #: build/serializers.py:675
 msgid "Delete any build outputs which have not been completed"
-msgstr "完了していないビルド出力を削除します。"
+msgstr "完成処理されていない製造品を削除します。"
 
 #: build/serializers.py:702
 msgid "Not permitted"
-msgstr "不可"
+msgstr "超過分を処理するまで完了しない"
 
 #: build/serializers.py:703
 msgid "Accept as consumed by this build order"
-msgstr "このビルド・オーダーで消費されるものとして受け入れます。"
+msgstr "余分に引き当てた在庫品も、この製造オーダーで消費済みとして処理する"
 
 #: build/serializers.py:704
 msgid "Deallocate before completing this build order"
-msgstr "このビルドオーダーを完了する前に割り当てを解除します。"
+msgstr "余分な在庫の引当を解除して完了する"
 
 #: build/serializers.py:731
 msgid "Overallocated Stock"
-msgstr "総合在庫"
+msgstr "過剰引当の処理"
 
 #: build/serializers.py:734
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr "製造オーダーに割り当てられた余分な在庫品をどのように処理しますか？"
+msgstr "製造オーダーに必要な数を超えて引き当てた在庫品を、どのように処理しますか？"
 
 #: build/serializers.py:745
 msgid "Some stock items have been overallocated"
-msgstr "一部の在庫品目は全体的に配分されています。"
+msgstr "一部の在庫品が必要数を超えて引き当てられています。"
 
 #: build/serializers.py:750
 msgid "Accept Unallocated"
-msgstr "未割り当ての受け入れ"
+msgstr "未引当の部品があっても完了"
 
 #: build/serializers.py:752
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr "在庫アイテムがこのビルド・オーダーに完全に割り当てられていないことを受け入れます。"
+msgstr "部品表で必要な在庫品がすべて引き当てられていなくても、この製造オーダーを完了します。"
 
 #: build/serializers.py:763
 msgid "Required stock has not been fully allocated"
-msgstr "必要在庫の配分が完了していません"
+msgstr "部品表で必要な部品がすべて引き当てられていません。"
 
 #: build/serializers.py:768 order/serializers.py:548 order/serializers.py:1837
 msgid "Accept Incomplete"
-msgstr "インコンプリートの受け入れ"
+msgstr "未完了分があっても完了"
 
 #: build/serializers.py:770
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr "必要な数のビルドアウトプットが完了していないことを受け入れます。"
+msgstr "製造オーダーの予定数量分の製造品が完成していなくても、この製造オーダーを完了します。"
 
 #: build/serializers.py:781
 msgid "Required build quantity has not been completed"
-msgstr "必要な構築数量が完了していません"
+msgstr "予定数量分の製造品がまだ完成していません。"
 
 #: build/serializers.py:793
 msgid "Build order has open child build orders"
-msgstr "ビルド・オーダーには未完成の子ビルド・オーダーがあります。"
+msgstr "未完了の子製造オーダーがあります。"
 
 #: build/serializers.py:796
 msgid "Build order must be in production state"
-msgstr "受注生産状態であること"
+msgstr "製造オーダーは製造中の状態である必要があります。"
 
 #: build/serializers.py:799
 msgid "Build order has incomplete outputs"
-msgstr "ビルド・オーダーの出力が不完全"
+msgstr "製造オーダーに未完成の製造品があります"
 
 #: build/serializers.py:838
 msgid "Build Line"
-msgstr "組立ライン"
+msgstr "製造オーダー明細"
 
 #: build/serializers.py:846
 msgid "Build output"
-msgstr "ビルド出力"
+msgstr "製造品"
 
 #: build/serializers.py:854
 msgid "Build output must point to the same build"
-msgstr "ビルド出力は同じビルド"
+msgstr "製造品は同じ製造オーダーに紐付いている必要があります。"
 
 #: build/serializers.py:886
 msgid "Build Line Item"
-msgstr "ビルドラインアイテム"
+msgstr "製造オーダー明細"
 
 #: build/serializers.py:904
 msgid "bom_item.part must point to the same part as the build order"
-msgstr "bom_item.partは、ビルドオーダーと同じパーツを指す必要があります。"
+msgstr "bom_item.part は、製造オーダーと同じ部品を指す必要があります。"
 
 #: build/serializers.py:921 stock/serializers.py:1526
 msgid "Item must be in stock"
-msgstr "在庫があること"
+msgstr "在庫品は使用可能な在庫である必要があります"
 
 #: build/serializers.py:986
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr "追跡部品の割り当てには、ビルド出力を指定する必要があります。"
+msgstr "追跡対象部品の引当には、組込先の製造品を指定する必要があります。"
 
 #: build/serializers.py:994
 msgid "Build output cannot be specified for allocation of untracked parts"
-msgstr "追跡されていない部品の割り当てでは、ビルド出力を指定できません。"
+msgstr "追跡対象でない部品の引当には、組込先の製造品を指定できません。"
 
 #: build/serializers.py:1043 order/serializers.py:2025
 #: order/serializers.py:2880
 msgid "Allocation items must be provided"
-msgstr "割り当て項目の提供"
+msgstr "引当対象の項目を指定してください。"
 
 #: build/serializers.py:1077
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
@@ -1506,19 +1506,19 @@ msgstr "場所を除く"
 
 #: build/serializers.py:1087
 msgid "Exclude stock items from this selected location"
-msgstr "この選択された場所から在庫商品を除外"
+msgstr "選択した場所にある在庫品を引当対象から除外します"
 
 #: build/serializers.py:1092 order/serializers.py:2107
 msgid "Interchangeable Stock"
-msgstr "交換可能ストック"
+msgstr "複数の在庫品から自動引当"
 
 #: build/serializers.py:1093
 msgid "Stock items in multiple locations can be used interchangeably"
-msgstr "複数の拠点にある在庫品を交換可能"
+msgstr "複数の保管場所にある在庫品を組み合わせて使用します"
 
 #: build/serializers.py:1098
 msgid "Substitute Stock"
-msgstr "代替ストック"
+msgstr "代替部品の在庫"
 
 #: build/serializers.py:1099
 msgid "Allow allocation of substitute parts"
@@ -1530,7 +1530,7 @@ msgstr "オプション"
 
 #: build/serializers.py:1105
 msgid "Allocate optional BOM items to build order"
-msgstr "オプションのBOMアイテムをビルドオーダーに割り当てます。"
+msgstr "オプションのBOMアイテムを製造オーダーに割り当てます。"
 
 #: build/serializers.py:1111
 msgid "All Items"
@@ -1562,11 +1562,11 @@ msgstr "一致する在庫アイテムが消費される優先順位"
 
 #: build/serializers.py:1131
 msgid "Build Lines"
-msgstr "組立明細"
+msgstr "製造オーダー明細"
 
 #: build/serializers.py:1133
 msgid "Limit allocation to these build lines (leave blank to allocate all lines)"
-msgstr "これらの組立明細に割当を制限します (すべての行を割り当てるには空白のままにしてください)"
+msgstr "引当対象を指定した製造オーダー明細に限定します（すべての明細を対象にする場合は空欄にしてください）。"
 
 #: build/serializers.py:1188
 msgid "BOM Reference"
@@ -1582,11 +1582,11 @@ msgstr "部品表 部品名"
 
 #: build/serializers.py:1253
 msgid "Install Into"
-msgstr "インストール先"
+msgstr "組込先"
 
 #: build/serializers.py:1282 build/serializers.py:1511
 msgid "Build"
-msgstr "ビルド"
+msgstr "製造オーダー"
 
 #: build/serializers.py:1302 company/models.py:731 order/api.py:340
 #: order/api.py:345 order/api.py:540 order/serializers.py:646
@@ -1600,7 +1600,7 @@ msgstr "割当数量"
 
 #: build/serializers.py:1385
 msgid "Build Reference"
-msgstr "ビルドリファレンス"
+msgstr "製造オーダー参照番号"
 
 #: build/serializers.py:1395
 msgid "Part Category Name"
@@ -1630,7 +1630,7 @@ msgstr "生産中"
 
 #: build/serializers.py:1531 part/serializers.py:784 part/serializers.py:1156
 msgid "Scheduled to Build"
-msgstr "ビルド予定"
+msgstr "製造予定数量"
 
 #: build/serializers.py:1534 part/serializers.py:817
 msgid "External Stock"
@@ -1638,15 +1638,15 @@ msgstr "外部在庫"
 
 #: build/serializers.py:1535 part/serializers.py:1142 part/serializers.py:1618
 msgid "Available Stock"
-msgstr "在庫状況"
+msgstr "使用可能在庫数"
 
 #: build/serializers.py:1537
 msgid "Available Substitute Stock"
-msgstr "利用可能な代替ストック"
+msgstr "使用可能な代替部品の在庫数"
 
 #: build/serializers.py:1540
 msgid "Available Variant Stock"
-msgstr "在庫状況"
+msgstr "使用可能なバリアントの在庫数"
 
 #: build/serializers.py:1752
 msgid "Consumed quantity exceeds allocated quantity"
@@ -1658,23 +1658,23 @@ msgstr "在庫消費に関する任意の注記"
 
 #: build/serializers.py:1807
 msgid "Build item must point to the correct build order"
-msgstr "ビルド項目は正しいビルドオーダーを指す必要があります"
+msgstr "在庫品の引当は対象の製造オーダーに紐付いている必要があります。"
 
 #: build/serializers.py:1812
 msgid "Duplicate build item allocation"
-msgstr "重複したビルド項目の割り当て"
+msgstr "在庫品の引当が重複しています。"
 
 #: build/serializers.py:1830
 msgid "Build line must point to the correct build order"
-msgstr "ビルドラインは正しいビルドオーダーを指す必要があります"
+msgstr "製造オーダー明細は対象の製造オーダーに紐付いている必要があります。"
 
 #: build/serializers.py:1835
 msgid "Duplicate build line allocation"
-msgstr "重複したビルドラインの割り当て"
+msgstr "製造オーダー明細の引当が重複しています。"
 
 #: build/serializers.py:1847
 msgid "At least one item or line must be provided"
-msgstr "少なくとも1つの項目または行を指示する必要があります"
+msgstr "在庫品の引当または製造オーダー明細を少なくとも1件指定してください"
 
 #: build/status_codes.py:19 generic/states/tests.py:21
 #: generic/states/tests.py:166 order/status_codes.py:21
@@ -1685,7 +1685,7 @@ msgstr "処理待ち"
 
 #: build/status_codes.py:20
 msgid "Production"
-msgstr "生産"
+msgstr "製造中"
 
 #: build/status_codes.py:21 order/status_codes.py:23 order/status_codes.py:67
 #: order/status_codes.py:102 order/status_codes.py:152
@@ -1706,29 +1706,29 @@ msgstr "完了"
 #: build/tasks.py:381
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr "ビルドオーダー{build}が完了しました"
+msgstr "製造オーダー{build}が完了しました"
 
 #: build/tasks.py:387
 msgid "A build order has been completed"
-msgstr "建設発注が完了しました"
+msgstr "製造オーダーが完了しました"
 
 #: build/tasks.py:518
 msgid "Stock required for build order"
-msgstr "受注生産に必要な在庫"
+msgstr "製造オーダーに必要な在庫"
 
 #: build/tasks.py:528
 #, python-brace-format
 msgid "Build order {build} requires additional stock"
-msgstr "ビルドオーダー{build}には追加の在庫が必要となります"
+msgstr "製造オーダー{build}には追加の在庫が必要となります"
 
 #: build/tasks.py:552
 msgid "Overdue Build Order"
-msgstr "期限切れ注文"
+msgstr "期限超過の製造オーダー"
 
 #: build/tasks.py:557
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr "ビルドオーダー{bo}は現在期限切れです"
+msgstr "製造オーダー{bo}が期限を超過しています"
 
 #: common/api.py:858
 msgid "Has Thumbnail"
@@ -1843,9 +1843,9 @@ msgid "Project Code Label"
 msgstr "プロジェクトコードラベル"
 
 #: common/models.py:111 common/models.py:136 common/models.py:3949
-#: users/models.py:834
+#: users/models.py:853
 msgid "Updated"
-msgstr "更新しました"
+msgstr "更新日時"
 
 #: common/models.py:112 common/models.py:137 order/models.py:609
 msgid "Timestamp of last update"
@@ -1861,7 +1861,7 @@ msgstr "このオブジェクトを最後に更新したユーザー"
 
 #: common/models.py:183
 msgid "Unique project code"
-msgstr "独自のプロジェクトコード"
+msgstr "一意のプロジェクトコード"
 
 #: common/models.py:190
 msgid "Project description"
@@ -1870,14 +1870,14 @@ msgstr "プロジェクトの説明"
 #: common/models.py:195 common/models.py:1540 common/models.py:2567
 #: common/models.py:2702 company/models.py:231 company/models.py:881
 #: machine/models.py:43 part/models.py:1332 plugin/models.py:69
-#: stock/api.py:704 users/models.py:382 users/models.py:750
-#: users/serializers.py:376 users/serializers.py:507
+#: stock/api.py:704 users/models.py:382 users/models.py:769
+#: users/serializers.py:377 users/serializers.py:508
 msgid "Active"
 msgstr "有効"
 
 #: common/models.py:196
 msgid "Is this project code active?"
-msgstr "このプロジェクトコードは有効か？"
+msgstr "このプロジェクトコードは有効ですか？"
 
 #: common/models.py:205
 msgid "User or group responsible for this project"
@@ -1893,7 +1893,7 @@ msgstr "設定値"
 
 #: common/models.py:836
 msgid "Indicates whether the setting has been modified by the user"
-msgstr ""
+msgstr "この設定がユーザーによって変更されたかどうかを示します"
 
 #: common/models.py:891
 msgid "Chosen value is not a valid option"
@@ -1913,7 +1913,7 @@ msgstr "値は有効な数値でなければなりません。"
 
 #: common/models.py:948
 msgid "Value does not pass validation checks"
-msgstr "値がバリデーション・チェックに合格しない"
+msgstr "値が入力検証に通りません。"
 
 #: common/models.py:970
 msgid "Key string must be unique"
@@ -1925,7 +1925,7 @@ msgstr "キー文字列は一意でなければなりません。"
 #: importer/models.py:106 part/models.py:2707 part/models.py:2735
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:252
-#: users/models.py:688 users/models.py:822
+#: users/models.py:707 users/models.py:841
 msgid "User"
 msgstr "ユーザー"
 
@@ -2012,11 +2012,11 @@ msgstr "このメッセージを受信したエンドポイント"
 
 #: common/models.py:1716
 msgid "Worked on"
-msgstr "作業内容"
+msgstr "処理済み"
 
 #: common/models.py:1717
 msgid "Was the work on this message finished?"
-msgstr "このメッセージに関する作業は終わったのですか？"
+msgstr "このメッセージの処理は完了していますか？"
 
 #: common/models.py:1812
 msgid "Optional explicit URL associated with this notification"
@@ -2202,7 +2202,7 @@ msgstr "リファレンス・ステータス・セット"
 
 #: common/models.py:2405
 msgid "Status set that is extended with this custom state"
-msgstr "このカスタム状態で拡張されたステータスセット"
+msgstr "このカスタム状態の追加先となるステータスセット"
 
 #: common/models.py:2409 generic/states/serializers.py:18
 msgid "Logical Key"
@@ -2210,7 +2210,7 @@ msgstr "論理キー"
 
 #: common/models.py:2411
 msgid "State logical key that is equal to this custom state in business logic"
-msgstr "ビジネスロジックでこのカスタムステートに等しいステート論理キー"
+msgstr "業務処理上、このカスタム状態と同等に扱う標準状態の論理キー"
 
 #: common/models.py:2416 common/models.py:2683 machine/serializers.py:27
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:3801
@@ -2223,7 +2223,7 @@ msgstr "モデルのデータベースに保存される数値"
 
 #: common/models.py:2423
 msgid "Name of the state"
-msgstr "都道府県名"
+msgstr "状態の名前"
 
 #: common/models.py:2433
 msgid "Label that will be displayed in the frontend"
@@ -2279,11 +2279,11 @@ msgstr "リファレンス・ステータスの名前とは異なっていなけ
 
 #: common/models.py:2542 common/models.py:2677 common/models.py:2898
 msgid "Selection List"
-msgstr "セレクションリスト"
+msgstr "選択リスト"
 
 #: common/models.py:2543
 msgid "Selection Lists"
-msgstr "セレクション・リスト"
+msgstr "選択リスト"
 
 #: common/models.py:2548
 msgid "Name of the selection list"
@@ -2347,11 +2347,11 @@ msgstr "選択リストが最後に更新された日時"
 
 #: common/models.py:2667
 msgid "Selection List Entry"
-msgstr "セレクションリスト入力"
+msgstr "選択リスト項目"
 
 #: common/models.py:2668
 msgid "Selection List Entries"
-msgstr "セレクションリスト"
+msgstr "選択リスト項目"
 
 #: common/models.py:2678
 msgid "Selection list to which this entry belongs"
@@ -2371,7 +2371,7 @@ msgstr "選択リスト項目の説明"
 
 #: common/models.py:2703
 msgid "Is this selection list entry active?"
-msgstr "この選択リストはアクティブですか？"
+msgstr "この選択リスト項目は有効ですか？"
 
 #: common/models.py:2739
 msgid "Parameter Template"
@@ -2544,7 +2544,7 @@ msgstr "このメモの対象モデルインスタンスID"
 
 #: common/models.py:3509 company/models.py:887
 msgid "Primary"
-msgstr "プライマリー"
+msgstr "メイン"
 
 #: common/models.py:3510
 msgid "Is this the primary note for the associated model?"
@@ -2552,7 +2552,7 @@ msgstr "これは関連付けられたモデルのメインのメモですか?"
 
 #: common/models.py:3514
 msgid "Note title"
-msgstr "ノートのタイトル"
+msgstr "メモのタイトル"
 
 #: common/models.py:3521
 msgid "Optional description field"
@@ -2673,7 +2673,7 @@ msgstr "配送状況を記録"
 
 #: common/models.py:3819
 msgid "Track Read"
-msgstr "読み取りを記録"
+msgstr "開封状況を記録"
 
 #: common/models.py:3820
 msgid "Track Click"
@@ -2730,7 +2730,7 @@ msgstr "このスレッドの固有識別子"
 
 #: common/models.py:3939
 msgid "Started Internal"
-msgstr "内部を開始しました"
+msgstr "InvenTree側で開始"
 
 #: common/models.py:3940
 msgid "Was this thread started internally?"
@@ -2751,7 +2751,7 @@ msgstr "新しい {verbose_name}"
 
 #: common/notifications.py:59
 msgid "A new order has been created and assigned to you"
-msgstr "新しい注文が作成され、お客様に割り当てられました。"
+msgstr "新しいオーダーが作成され、あなたが担当者に指定されました。"
 
 #: common/notifications.py:65
 #, python-brace-format
@@ -2772,15 +2772,15 @@ msgstr "受領品目"
 #: common/notifications.py:75 common/test_notifications.py:83
 #: common/test_notifications.py:139 common/test_notifications.py:162
 msgid "Items have been received against a purchase order"
-msgstr "発注書と照らし合わせて商品を受領"
+msgstr "発注した品目を受領しました"
 
 #: common/notifications.py:82
 msgid "Items have been received against a return order"
-msgstr "返品注文に反して商品が届いた場合"
+msgstr "返品オーダーの対象品を受領しました"
 
 #: common/serializers.py:130
 msgid "Indicates if changing this setting requires confirmation"
-msgstr "この設定を変更する際に確認が必要かどうかの指示"
+msgstr "この設定の変更時に確認が必要かどうかを示します"
 
 #: common/serializers.py:138
 msgid "Indicating behavior or purpose of setting."
@@ -2800,7 +2800,7 @@ msgstr "上書き"
 
 #: common/serializers.py:667
 msgid "Is Running"
-msgstr "走行中"
+msgstr "稼働中"
 
 #: common/serializers.py:673
 msgid "Pending Tasks"
@@ -2840,7 +2840,7 @@ msgstr "関数"
 
 #: common/serializers.py:706
 msgid "Function name"
-msgstr "機能名"
+msgstr "関数名"
 
 #: common/serializers.py:708
 msgid "Arguments"
@@ -2880,7 +2880,7 @@ msgstr "ユーザーは、このモデルのパラメータを作成または編
 
 #: common/serializers.py:1298
 msgid "Attachment Count"
-msgstr "ディスプレイの添付ファイルは数えますか？"
+msgstr "添付ファイル数"
 
 #: common/serializers.py:1299
 msgid "Number of attachments associated with this instance"
@@ -2904,11 +2904,11 @@ msgstr "このインスタンスに関連付けられたパラメータの数"
 
 #: common/setting/system.py:34
 msgid "Invalid company"
-msgstr ""
+msgstr "会社が無効です"
 
 #: common/setting/system.py:38
 msgid "Selected company must be marked as an internal company"
-msgstr ""
+msgstr "選択した会社は社内会社として設定されている必要があります"
 
 #: common/setting/system.py:114
 msgid "No group"
@@ -2960,11 +2960,11 @@ msgstr "サーバーのインスタンスIDをサーバーステータス情報�
 
 #: common/setting/system.py:241
 msgid "Allow Link Proof"
-msgstr ""
+msgstr "リンクによるサーバー確認を許可"
 
 #: common/setting/system.py:243
 msgid "Allow other instances to verify the server identity without revealing the instance ID"
-msgstr ""
+msgstr "インスタンスIDを公開せずに、他のインスタンスがサーバーの正当性を確認できるようにします"
 
 #: common/setting/system.py:249
 msgid "Server Instance Name"
@@ -2984,7 +2984,7 @@ msgstr "タイトルバーにインスタンス名を使用"
 
 #: common/setting/system.py:261
 msgid "Restrict showing `about`"
-msgstr "about`を表示する制限"
+msgstr "「このアプリについて」の表示を制限"
 
 #: common/setting/system.py:262
 msgid "Show the `about` modal only to superusers"
@@ -3012,15 +3012,15 @@ msgstr "会社名"
 
 #: common/setting/system.py:281
 msgid "Internal company name"
-msgstr "社内社名"
+msgstr "自社名"
 
 #: common/setting/system.py:285
 msgid "Default internal company"
-msgstr ""
+msgstr "既定の自社組織"
 
 #: common/setting/system.py:286
 msgid "Internal company which represents this organization"
-msgstr ""
+msgstr "この組織を表す会社レコード"
 
 #: common/setting/system.py:293
 msgid "Base URL"
@@ -3086,7 +3086,7 @@ msgstr "厳格なURLバリデーション"
 
 #: common/setting/system.py:336
 msgid "Require schema specification when validating URLs"
-msgstr "URL検証時にスキーマ指定を要求"
+msgstr "URL検証時にスキーム（https:// など）の指定を必須にします"
 
 #: common/setting/system.py:342
 msgid "Update Check Interval"
@@ -3162,7 +3162,7 @@ msgstr "ウェブインターフェイスでバーコードスキャナのサポ
 
 #: common/setting/system.py:409
 msgid "Store Barcode Results"
-msgstr "店舗バーコード結果"
+msgstr "バーコード読取結果を保存"
 
 #: common/setting/system.py:410
 msgid "Store barcode scan results in the database"
@@ -3214,7 +3214,7 @@ msgstr "部品のロック"
 
 #: common/setting/system.py:450
 msgid "Enable locking of parts to prevent modification"
-msgstr "変更を防止するためにパーツのロックを有効にする"
+msgstr "部品の変更を防ぐため、ロック機能を有効にします。"
 
 #: common/setting/system.py:456
 msgid "Part Revisions"
@@ -3222,7 +3222,7 @@ msgstr "部品改訂"
 
 #: common/setting/system.py:457
 msgid "Enable revision field for Part"
-msgstr "パートのリビジョンフィールドを有効にします。"
+msgstr "部品のリビジョン項目を有効にします。"
 
 #: common/setting/system.py:463
 msgid "Assembly Revision Only"
@@ -3230,7 +3230,7 @@ msgstr "アセンブリ改訂のみ"
 
 #: common/setting/system.py:464
 msgid "Only allow revisions for assembly parts"
-msgstr "組立部品のみ修正可能"
+msgstr "リビジョンは組立部品にのみ設定できます。"
 
 #: common/setting/system.py:469
 msgid "Allow Deletion from Assembly"
@@ -3246,7 +3246,7 @@ msgstr "IPN 正規表現"
 
 #: common/setting/system.py:476
 msgid "Regular expression pattern for matching Part IPN"
-msgstr "部分IPNにマッチする正規表現パターン"
+msgstr "部品のIPNに一致させる正規表現パターン"
 
 #: common/setting/system.py:479
 msgid "Allow Duplicate IPN"
@@ -3254,7 +3254,7 @@ msgstr "IPNの重複を許可"
 
 #: common/setting/system.py:480
 msgid "Allow multiple parts to share the same IPN"
-msgstr "複数のパートが同じIPNを共有できるようにします。"
+msgstr "複数の部品に同じIPNを設定できるようにします。"
 
 #: common/setting/system.py:485
 msgid "Allow Editing IPN"
@@ -3262,7 +3262,7 @@ msgstr "IPNの編集を許可"
 
 #: common/setting/system.py:486
 msgid "Allow changing the IPN value while editing a part"
-msgstr "部品編集中にIPN値の変更を許可"
+msgstr "部品の編集中にIPNを変更できるようにします。"
 
 #: common/setting/system.py:491
 msgid "Copy Part BOM Data"
@@ -3278,31 +3278,31 @@ msgstr "部品パラメータデータのコピー"
 
 #: common/setting/system.py:498
 msgid "Copy parameter data by default when duplicating a part"
-msgstr "部品複製時にデフォルトでパラメータデータをコピー"
+msgstr "部品を複製するとき、既定でパラメータデータをコピーします。"
 
 #: common/setting/system.py:503
 msgid "Copy Part Test Data"
-msgstr "コピー部品テストデータ"
+msgstr "部品のテストデータをコピー"
 
 #: common/setting/system.py:504
 msgid "Copy test data by default when duplicating a part"
-msgstr "部品複製時にテストデータをデフォルトでコピー"
+msgstr "部品を複製するとき、既定でテストデータをコピーします。"
 
 #: common/setting/system.py:509
 msgid "Copy Category Parameter Templates"
-msgstr "カテゴリー・パラメーター・テンプレートのコピー"
+msgstr "カテゴリのパラメータテンプレートをコピー"
 
 #: common/setting/system.py:510
 msgid "Copy category parameter templates when creating a part"
-msgstr "部品作成時のカテゴリー・パラメーター・テンプレートのコピー"
+msgstr "部品の作成時にカテゴリのパラメータテンプレートをコピーします。"
 
 #: common/setting/system.py:516
 msgid "Parts are templates by default"
-msgstr "パーツはデフォルトのテンプレートです"
+msgstr "部品を既定でテンプレートとして扱います。"
 
 #: common/setting/system.py:522
 msgid "Parts can be assembled from other components by default"
-msgstr "パーツはデフォルトで他のコンポーネントから組み立てることができます"
+msgstr "部品を既定で他の構成部品から組み立て可能にします。"
 
 #: common/setting/system.py:527 part/models.py:1303 part/serializers.py:1517
 #: part/serializers.py:1525
@@ -3311,7 +3311,7 @@ msgstr "コンポーネント"
 
 #: common/setting/system.py:528
 msgid "Parts can be used as sub-components by default"
-msgstr "パーツはデフォルトでサブコンポーネントとして使用できます"
+msgstr "部品を既定でサブコンポーネントとして使用可能にします。"
 
 #: common/setting/system.py:533 part/models.py:1321
 msgid "Purchaseable"
@@ -3319,7 +3319,7 @@ msgstr "購入可能"
 
 #: common/setting/system.py:534
 msgid "Parts are purchaseable by default"
-msgstr "パーツはデフォルトで購入可能です"
+msgstr "部品を既定で購入可能にします。"
 
 #: common/setting/system.py:539 part/models.py:1327 stock/api.py:705
 msgid "Salable"
@@ -3327,11 +3327,11 @@ msgstr "販売可能"
 
 #: common/setting/system.py:540
 msgid "Parts are salable by default"
-msgstr "パーツはデフォルトで販売可能です"
+msgstr "部品を既定で販売可能にします。"
 
 #: common/setting/system.py:546
 msgid "Parts are trackable by default"
-msgstr "パーツはデフォルトで追跡可能です"
+msgstr "部品を既定で在庫追跡対象にします。"
 
 #: common/setting/system.py:551 part/models.py:1343
 msgid "Virtual"
@@ -3339,7 +3339,7 @@ msgstr "バーチャル"
 
 #: common/setting/system.py:552
 msgid "Parts are virtual by default"
-msgstr "パーツはデフォルトでバーチャル"
+msgstr "部品を既定で仮想部品にします。"
 
 #: common/setting/system.py:557
 msgid "Show related parts"
@@ -3359,11 +3359,11 @@ msgstr "新規部品追加時に初期在庫を作成可能"
 
 #: common/setting/system.py:569
 msgid "Initial Supplier Data"
-msgstr "サプライヤー初期データ"
+msgstr "仕入先の初期データ"
 
 #: common/setting/system.py:571
 msgid "Allow creation of initial supplier data when adding a new part"
-msgstr "新しい部品を追加する際に、最初のサプライヤーデータを作成できるようにします。"
+msgstr "新しい部品の追加時に、仕入先の初期データを作成できるようにします。"
 
 #: common/setting/system.py:577
 msgid "Part Name Display Format"
@@ -3375,59 +3375,59 @@ msgstr "部品名の表示形式"
 
 #: common/setting/system.py:584
 msgid "Part Category Default Icon"
-msgstr "パーツカテゴリー デフォルトアイコン"
+msgstr "部品カテゴリの既定アイコン"
 
 #: common/setting/system.py:585
 msgid "Part category default icon (empty means no icon)"
-msgstr "パートカテゴリのデフォルトアイコン（空はアイコンがないことを意味します）"
+msgstr "部品カテゴリの既定アイコンです。空欄の場合、アイコンは表示されません。"
 
 #: common/setting/system.py:590
 msgid "Minimum Pricing Decimal Places"
-msgstr "価格の最小桁数"
+msgstr "価格の小数点以下の最小桁数"
 
 #: common/setting/system.py:592
 msgid "Minimum number of decimal places to display when rendering pricing data"
-msgstr "価格データのレンダリング時に表示する最小小数点以下の桁数"
+msgstr "価格データの表示時に必要な小数点以下の最小桁数"
 
 #: common/setting/system.py:603
 msgid "Maximum Pricing Decimal Places"
-msgstr "価格の小数点以下の桁数"
+msgstr "価格の小数点以下の最大桁数"
 
 #: common/setting/system.py:605
 msgid "Maximum number of decimal places to display when rendering pricing data"
-msgstr "価格データのレンダリング時に表示する小数点以下の桁数の最大値"
+msgstr "価格データの表示時に許可する小数点以下の最大桁数"
 
 #: common/setting/system.py:616
 msgid "Use Supplier Pricing"
-msgstr "サプライヤー価格の利用"
+msgstr "仕入先価格を使用"
 
 #: common/setting/system.py:618
 msgid "Include supplier price breaks in overall pricing calculations"
-msgstr "全体的な価格計算にサプライヤーの価格破壊を含めること"
+msgstr "全体の価格計算に仕入先の数量別価格を含めます。"
 
 #: common/setting/system.py:624
 msgid "Purchase History Override"
-msgstr "購入履歴の上書き"
+msgstr "過去の発注価格を優先"
 
 #: common/setting/system.py:626
 msgid "Historical purchase order pricing overrides supplier price breaks"
-msgstr "過去の発注価格がサプライヤーの価格変動を上書き"
+msgstr "過去の発注価格を仕入先の数量別価格より優先します。"
 
 #: common/setting/system.py:632
 msgid "Use Stock Item Pricing"
-msgstr "ストックアイテム価格を使用"
+msgstr "在庫品の価格を使用"
 
 #: common/setting/system.py:634
 msgid "Use pricing from manually entered stock data for pricing calculations"
-msgstr "手動入力された在庫データから価格計算を行います。"
+msgstr "手入力した在庫データの価格を価格計算に使用します。"
 
 #: common/setting/system.py:640
 msgid "Stock Item Pricing Age"
-msgstr "在庫商品の価格設定年齢"
+msgstr "価格計算に使う在庫品の最長経過日数"
 
 #: common/setting/system.py:642
 msgid "Exclude stock items older than this number of days from pricing calculations"
-msgstr "この日数より古い在庫品を価格計算から除外します。"
+msgstr "指定した日数より古い在庫品を価格計算から除外します。"
 
 #: common/setting/system.py:649
 msgid "Use Variant Pricing"
@@ -3439,19 +3439,19 @@ msgstr "全体的な価格計算にバリアント価格を含む"
 
 #: common/setting/system.py:655
 msgid "Active Variants Only"
-msgstr "アクティブバリアントのみ"
+msgstr "有効なバリアントのみ"
 
 #: common/setting/system.py:657
 msgid "Only use active variant parts for calculating variant pricing"
-msgstr "バリアント価格の計算には、アクティブなバリアントパーツのみを使用します。"
+msgstr "バリアント価格の計算には、有効なバリアント部品のみを使用します。"
 
 #: common/setting/system.py:663
 msgid "Auto Update Pricing"
-msgstr "自動更新の価格設定"
+msgstr "価格を自動更新"
 
 #: common/setting/system.py:665
 msgid "Automatically update part pricing when internal data changes"
-msgstr "内部データが変更された際に、部品価格を自動的に更新します。"
+msgstr "部品の内部データが変更されたときに、価格を自動更新します。"
 
 #: common/setting/system.py:671
 msgid "Pricing Rebuild Interval"
@@ -3527,7 +3527,7 @@ msgstr "レポート生成時にリモート URL の取得を許可する"
 
 #: common/setting/system.py:736
 msgid "Log Report Errors"
-msgstr "ログレポートエラー"
+msgstr "レポート生成エラーを記録"
 
 #: common/setting/system.py:737
 msgid "Log errors which occur when generating reports"
@@ -3552,11 +3552,11 @@ msgstr "単位が指定されている場合、パラメータ値は指定され
 
 #: common/setting/system.py:757
 msgid "Globally Unique Serials"
-msgstr "世界的にユニークな連載"
+msgstr "シリアル番号を全体で一意にする"
 
 #: common/setting/system.py:758
 msgid "Serial numbers for stock items must be globally unique"
-msgstr "在庫品のシリアル番号はグローバルに一意でなければなりません。"
+msgstr "すべての部品を通じて、在庫品のシリアル番号を重複不可にします。"
 
 #: common/setting/system.py:763
 msgid "Delete Depleted Stock"
@@ -3588,47 +3588,47 @@ msgstr "バッチコードテンプレート"
 
 #: common/setting/system.py:782
 msgid "Template for generating default batch codes for stock items"
-msgstr "ストックアイテムのデフォルトバッチコード生成用テンプレート"
+msgstr "在庫品の既定バッチコードを生成するテンプレート"
 
 #: common/setting/system.py:786
 msgid "Stock Expiry"
-msgstr "有効期限"
+msgstr "在庫の有効期限"
 
 #: common/setting/system.py:787
 msgid "Enable stock expiry functionality"
-msgstr "在庫期限切れ機能の有効化"
+msgstr "在庫の有効期限管理を有効にします。"
 
 #: common/setting/system.py:793
 msgid "Sell Expired Stock"
-msgstr "期限切れ株式の売却"
+msgstr "期限切れ在庫の販売"
 
 #: common/setting/system.py:794
 msgid "Allow sale of expired stock"
-msgstr "期限切れ株式の売却を許可"
+msgstr "有効期限が切れた在庫の販売を許可します。"
 
 #: common/setting/system.py:799
 msgid "Stock Stale Time"
-msgstr "在庫切れ時間"
+msgstr "有効期限の事前警告日数"
 
 #: common/setting/system.py:801
 msgid "Number of days stock items are considered stale before expiring"
-msgstr "在庫品が期限切れとみなされるまでの日数"
+msgstr "有効期限の何日前から在庫品を期限間近として扱うかを指定します。"
 
 #: common/setting/system.py:808
 msgid "Build Expired Stock"
-msgstr "賞味期限切れ在庫の処理"
+msgstr "期限切れ在庫の製造利用"
 
 #: common/setting/system.py:809
 msgid "Allow building with expired stock"
-msgstr "期限切れの在庫を使用した建物の建築を許可"
+msgstr "有効期限が切れた在庫を製造に使用できるようにします。"
 
 #: common/setting/system.py:814
 msgid "Stock Ownership Control"
-msgstr "株式所有権"
+msgstr "在庫の所有者管理"
 
 #: common/setting/system.py:815
 msgid "Enable ownership control over stock locations and items"
-msgstr "ストックロケーションとアイテムの所有権管理"
+msgstr "在庫場所と在庫品の所有者管理を有効にします。"
 
 #: common/setting/system.py:821
 msgid "Stock Location Default Icon"
@@ -3640,11 +3640,11 @@ msgstr "在庫場所のデフォルトアイコン（空はアイコンがない
 
 #: common/setting/system.py:827
 msgid "Show Installed Stock Items"
-msgstr "インストール済みストックアイテムの表示"
+msgstr "組込済みの在庫品を表示"
 
 #: common/setting/system.py:828
 msgid "Display installed stock items in stock tables"
-msgstr "ストックテーブルにインストールされたストックアイテムを表示"
+msgstr "他の在庫品に組み込まれた在庫品も在庫一覧に表示します"
 
 #: common/setting/system.py:833
 msgid "Check BOM when installing items"
@@ -3652,15 +3652,15 @@ msgstr "アイテム取り付けの際はBOMをチェック"
 
 #: common/setting/system.py:835
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr "親部品のBOMには、インストールされたストックアイテムが存在する必要があります。"
+msgstr "組み込む在庫品の部品は、組込先の部品表に含まれている必要があります。"
 
 #: common/setting/system.py:841
 msgid "Allow Out of Stock Transfer"
-msgstr "在庫切れの転送を許可"
+msgstr "使用可能在庫でない在庫品の移動を許可"
 
 #: common/setting/system.py:843
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
-msgstr "在庫のないストックアイテムをストックロケーション間で移動可能"
+msgstr "使用可能な在庫として扱われていない在庫品も、保管場所間で移動できるようにします"
 
 #: common/setting/system.py:849
 msgid "Merge stock with existing stock on transfer by default"
@@ -3668,39 +3668,39 @@ msgstr "既定で、在庫転送時に既存の在庫とマージする"
 
 #: common/setting/system.py:851
 msgid "Default state for merge stock on transfer behaviour. (Can be changed per transfer if desired)"
-msgstr "転送動作時の在庫のデフォルト状態(必要に応じて転送ごとに変更できます)"
+msgstr "移動時に既存の在庫へ統合するかどうかの既定値です（移動ごとに変更できます）"
 
 #: common/setting/system.py:857
 msgid "Build Order Reference Pattern"
-msgstr "ビルド・オーダー参照パターン"
+msgstr "製造オーダー参照パターン"
 
 #: common/setting/system.py:858
 msgid "Required pattern for generating Build Order reference field"
-msgstr "Build Order参照フィールドの生成に必要なパターン"
+msgstr "製造オーダー参照番号の生成に使用する必須の書式パターン"
 
 #: common/setting/system.py:863 common/setting/system.py:932
 #: common/setting/system.py:952 common/setting/system.py:1003
 #: common/setting/system.py:1033
 msgid "Require Responsible Owner"
-msgstr "責任ある所有者を要求"
+msgstr "担当者の指定を必須にする"
 
 #: common/setting/system.py:864 common/setting/system.py:933
 #: common/setting/system.py:953 common/setting/system.py:1004
 #: common/setting/system.py:1034
 msgid "A responsible owner must be assigned to each order"
-msgstr "各注文には、責任ある所有者を指定する必要があります。"
+msgstr "各オーダーに担当ユーザーまたはグループを指定する必要があります。"
 
 #: common/setting/system.py:869
 msgid "Require Active Part"
-msgstr "アクティブパートが必要"
+msgstr "有効な部品に限定"
 
 #: common/setting/system.py:870
 msgid "Prevent build order creation for inactive parts"
-msgstr "非稼動部品の製造オーダー作成を防止"
+msgstr "無効な部品の製造オーダー作成を禁止します"
 
 #: common/setting/system.py:875
 msgid "Require Locked Part"
-msgstr "ロックされた部分を要求"
+msgstr "ロック済み部品に限定"
 
 #: common/setting/system.py:876
 msgid "Prevent build order creation for unlocked parts"
@@ -3716,27 +3716,27 @@ msgstr "BOMが検証されない限り、製造オーダーが作成されない
 
 #: common/setting/system.py:887
 msgid "Require Closed Child Orders"
-msgstr "クローズド・チャイルド・オーダー"
+msgstr "子オーダーの終了を必須にする"
 
 #: common/setting/system.py:889
 msgid "Prevent build order completion until all child orders are closed"
-msgstr "すべてのチャイルドオーダーが終了するまで、ビルドオーダーの完了を防止します。"
+msgstr "すべての子製造オーダーが終了するまで、親製造オーダーの完了を禁止します。"
 
 #: common/setting/system.py:895
 msgid "External Build Orders"
-msgstr "外部ビルドオーダー"
+msgstr "外部製造オーダー"
 
 #: common/setting/system.py:896
 msgid "Enable external build order functionality"
-msgstr "外部ビルドオーダー機能の有効化"
+msgstr "外部製造オーダー機能の有効化"
 
 #: common/setting/system.py:901
 msgid "Require External Build Orders"
-msgstr "外部ビルドオーダーを必須とする"
+msgstr "外部製造オーダーを必須とする"
 
 #: common/setting/system.py:903
 msgid "Require an external build order when ordering assembled parts from an external supplier"
-msgstr "外部サプライヤーから組み立て済み部品を発注する際は、外部ビルドオーダーを指定する必要があります"
+msgstr "外部サプライヤーから組み立て済み部品を発注する際は、外部製造オーダーを指定する必要があります"
 
 #: common/setting/system.py:909
 msgid "Block Until Tests Pass"
@@ -3744,7 +3744,7 @@ msgstr "テストがパスするまでブロック"
 
 #: common/setting/system.py:911
 msgid "Prevent build outputs from being completed until all required tests pass"
-msgstr "必要なテストがすべて合格するまで、ビルド出力が完了しないようにします。"
+msgstr "必要なすべてのテストに合格するまで、製造品の完成処理を禁止します。"
 
 #: common/setting/system.py:917
 msgid "Enable Return Orders"
@@ -3756,7 +3756,7 @@ msgstr "ユーザーインターフェイスで返品注文機能を有効にし
 
 #: common/setting/system.py:924
 msgid "Return Order Reference Pattern"
-msgstr "リターンオーダー参照パターン"
+msgstr "返品オーダー参照番号のパターン"
 
 #: common/setting/system.py:926
 msgid "Required pattern for generating Return Order reference field"
@@ -3772,27 +3772,27 @@ msgstr "注文完了後の返品注文の編集が可能"
 
 #: common/setting/system.py:946
 msgid "Sales Order Reference Pattern"
-msgstr "販売注文参照パターン"
+msgstr "受注参照番号のパターン"
 
 #: common/setting/system.py:947
 msgid "Required pattern for generating Sales Order reference field"
-msgstr "販売注文参照フィールドの生成に必要なパターン"
+msgstr "受注参照番号の生成に使用するパターン"
 
 #: common/setting/system.py:958
 msgid "Sales Order Default Shipment"
-msgstr "販売注文のデフォルト出荷"
+msgstr "受注のデフォルト出荷"
 
 #: common/setting/system.py:959
 msgid "Enable creation of default shipment with sales orders"
-msgstr "販売注文でデフォルト出荷を作成可能"
+msgstr "受注時にデフォルトの出荷を作成します"
 
 #: common/setting/system.py:964
 msgid "Edit Completed Sales Orders"
-msgstr "完了した販売注文の編集"
+msgstr "完了した受注の編集"
 
 #: common/setting/system.py:966
 msgid "Allow editing of sales orders after they have been shipped or completed"
-msgstr "出荷または完了後の販売注文の編集を許可します。"
+msgstr "出荷または完了後の受注の編集を許可します。"
 
 #: common/setting/system.py:972
 msgid "Shipment Requires Checking"
@@ -3800,7 +3800,7 @@ msgstr "出荷には確認が必要です"
 
 #: common/setting/system.py:974
 msgid "Prevent completion of shipments until items have been checked"
-msgstr "商品が確認されるまで、出荷の完了をお控えください。"
+msgstr "品目の確認が済むまで、出荷の完了を禁止します。"
 
 #: common/setting/system.py:980
 msgid "Mark Shipped Orders as Complete"
@@ -3808,7 +3808,7 @@ msgstr "出荷された注文を完了としてマーク"
 
 #: common/setting/system.py:982
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
-msgstr "出荷済みと表示された販売注文は、「出荷済み」ステータスを回避して自動的に完了します。"
+msgstr "出荷処理した受注を、「出荷済み」状態を経由せず自動的に完了します。"
 
 #: common/setting/system.py:988
 msgid "Enable Transfer Orders"
@@ -3836,11 +3836,11 @@ msgstr "完了後の移動オーダーの編集を許可する"
 
 #: common/setting/system.py:1017
 msgid "Block Incomplete Item Tests"
-msgstr "未完了項目のテストのブロック"
+msgstr "必須テスト未完了の在庫品の引当を禁止"
 
 #: common/setting/system.py:1019
 msgid "Prevent allocation of stock items to sales orders if required item tests are incomplete"
-msgstr "必要な品目チェックが完了していない場合、販売注文への在庫品目の割り当てを防止します"
+msgstr "必須テストが完了していない在庫品は、受注に引き当てられないようにします"
 
 #: common/setting/system.py:1025
 msgid "Purchase Order Reference Pattern"
@@ -3864,11 +3864,11 @@ msgstr "通貨の変換"
 
 #: common/setting/system.py:1048
 msgid "Convert item value to base currency when receiving stock"
-msgstr "在庫を受け取る際、商品価値を基準通貨に変換"
+msgstr "在庫の受領時に在庫品の金額を基準通貨に換算します"
 
 #: common/setting/system.py:1053
 msgid "Auto Complete Purchase Orders"
-msgstr "自動発注"
+msgstr "発注を自動完了"
 
 #: common/setting/system.py:1055
 msgid "Automatically mark purchase orders as complete when all line items are received"
@@ -3892,11 +3892,11 @@ msgstr "新規発注で入荷した品物のデフォルトの保管先ロケー
 
 #: common/setting/system.py:1079
 msgid "Enable password forgot"
-msgstr "パスワード忘れ"
+msgstr "パスワード再設定を有効化"
 
 #: common/setting/system.py:1080
 msgid "Enable password forgot function on the login pages"
-msgstr "ログインページでのパスワード忘れ防止機能の有効化"
+msgstr "ログインページからパスワードを再設定できるようにします"
 
 #: common/setting/system.py:1086
 msgid "Enable registration"
@@ -3948,11 +3948,11 @@ msgstr "SSOグループからローカルのInvenTreeグループへのマッピ
 
 #: common/setting/system.py:1134
 msgid "Remove groups outside of SSO"
-msgstr "SSO外のグループを削除"
+msgstr "SSOで指定されないグループへの所属を解除"
 
 #: common/setting/system.py:1136
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
-msgstr "ユーザーに割り当てられたグループがIdPによってバックエンドされていない場合に削除するかどうか。この設定を無効にすると、セキュリティ上の問題が発生する可能性があります。"
+msgstr "IdPから指定されないグループへのユーザーの所属を解除するかどうかを指定します。無効にすると、セキュリティ上の問題が発生する可能性があります。"
 
 #: common/setting/system.py:1142
 msgid "Disabling this setting will stop cleaning up groups that external users no longer belong to. This might cause security issues."
@@ -3996,7 +3996,7 @@ msgstr "許可ドメイン"
 
 #: common/setting/system.py:1173
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
-msgstr "特定のドメイン(@で始まるカンマ区切り)へのサインアップを制限します。"
+msgstr "登録可能なメールアドレスのドメインを限定します（@で始まるドメインをカンマ区切りで指定）"
 
 #: common/setting/system.py:1180
 msgid "Group on signup"
@@ -4008,7 +4008,7 @@ msgstr "新規ユーザ登録時に割り当てられるグループ。SSOグル
 
 #: common/setting/system.py:1189
 msgid "Enforce MFA"
-msgstr "MFAの実施"
+msgstr "多要素認証を必須にする"
 
 #: common/setting/system.py:1190
 msgid "Users must use multifactor security."
@@ -4056,7 +4056,7 @@ msgstr "アプリとの統合"
 
 #: common/setting/system.py:1234
 msgid "Enable plugins to add apps"
-msgstr "プラグインを有効にしてアプリを追加"
+msgstr "プラグインによるアプリの追加を許可します"
 
 #: common/setting/system.py:1241
 msgid "Enable schedule integration"
@@ -4104,7 +4104,7 @@ msgstr "棚卸機能を有効"
 
 #: common/setting/system.py:1282
 msgid "Enable functionality for recording historical stock levels and value"
-msgstr "過去の在庫数量および価値を記録する機能を有効にします"
+msgstr "在庫数量と在庫金額の履歴を記録する機能を有効にします"
 
 #: common/setting/system.py:1289
 msgid "Exclude External Locations"
@@ -4116,7 +4116,7 @@ msgstr "外部拠点にある在庫品を棚卸計算から除外します"
 
 #: common/setting/system.py:1297
 msgid "Automatic Stocktake Period"
-msgstr "自動引取期間"
+msgstr "自動棚卸記録の間隔"
 
 #: common/setting/system.py:1298
 msgid "Number of days between automatic stocktake recording"
@@ -4140,35 +4140,35 @@ msgstr "棚卸し記録は、指定された日数が経過すると削除され
 
 #: common/setting/system.py:1321
 msgid "Enable Audit Log"
-msgstr ""
+msgstr "監査ログを有効化"
 
 #: common/setting/system.py:1322
 msgid "Record a history of changes made to supported models"
-msgstr ""
+msgstr "対応モデルへの変更履歴を記録します"
 
 #: common/setting/system.py:1327
 msgid "Delete Old Audit Log Entries"
-msgstr ""
+msgstr "古い監査ログエントリを削除"
 
 #: common/setting/system.py:1329
 msgid "Delete audit log entries older than the specified number of days"
-msgstr ""
+msgstr "指定した日数より古い監査ログエントリを削除します"
 
 #: common/setting/system.py:1335
 msgid "Retain Audit Log Summary"
-msgstr ""
+msgstr "監査ログの概要を保持"
 
 #: common/setting/system.py:1337
 msgid "When deleting old audit log entries, always keep the creation entry and the most recent entry for each item"
-msgstr ""
+msgstr "古い監査ログエントリを削除するときも、各項目の作成時と最新のエントリは必ず保持します"
 
 #: common/setting/system.py:1343
 msgid "Audit Log Deletion Interval"
-msgstr ""
+msgstr "監査ログの削除間隔"
 
 #: common/setting/system.py:1345
 msgid "Audit log entries will be deleted after specified number of days"
-msgstr ""
+msgstr "監査ログエントリは、指定した日数が経過すると削除されます"
 
 #: common/setting/system.py:1352
 msgid "Display Users full names"
@@ -4248,7 +4248,7 @@ msgstr "マシン ping を有効にする"
 
 #: common/setting/system.py:1396
 msgid "Enable periodic ping task of registered machines to check their status"
-msgstr "登録されたマシンの状態を確認するため、定期的なpingタスクを有効にしてください"
+msgstr "登録されたマシンの状態を確認するため、定期的なpingタスクを有効にします"
 
 #: common/setting/system.py:1402
 msgid "Enable Sales Orders"
@@ -4316,7 +4316,7 @@ msgstr "検索プレビューウィンドウに部品を表示"
 
 #: common/setting/user.py:57
 msgid "Search Supplier Parts"
-msgstr "サプライヤー検索 部品"
+msgstr "サプライヤー部品を検索"
 
 #: common/setting/user.py:58
 msgid "Display supplier parts in search preview window"
@@ -4336,7 +4336,7 @@ msgstr "非アクティブな部品を非表示"
 
 #: common/setting/user.py:70
 msgid "Excluded inactive parts from search preview window"
-msgstr "検索プレビューウィンドウから非アクティブ部分を除外"
+msgstr "検索プレビューから無効な部品を除外します"
 
 #: common/setting/user.py:75
 msgid "Search Categories"
@@ -4356,7 +4356,7 @@ msgstr "検索プレビューウィンドウに在庫アイテムを表示"
 
 #: common/setting/user.py:87
 msgid "Hide Unavailable Stock Items"
-msgstr "在庫のない商品を隠す"
+msgstr "使用できない在庫品を非表示"
 
 #: common/setting/user.py:89
 msgid "Exclude stock items which are not available from the search preview window"
@@ -4380,15 +4380,15 @@ msgstr "検索プレビューウィンドウに企業を表示"
 
 #: common/setting/user.py:107
 msgid "Search Build Orders"
-msgstr "建設オーダーの検索"
+msgstr "製造オーダーを検索"
 
 #: common/setting/user.py:108
 msgid "Display build orders in search preview window"
-msgstr "検索プレビューウィンドウに構築順を表示"
+msgstr "検索プレビューに製造オーダーを表示します"
 
 #: common/setting/user.py:113
 msgid "Search Purchase Orders"
-msgstr "注文書の検索"
+msgstr "発注を検索"
 
 #: common/setting/user.py:114
 msgid "Display purchase orders in search preview window"
@@ -4404,31 +4404,31 @@ msgstr "検索プレビューウィンドウから非アクティブな発注書
 
 #: common/setting/user.py:125
 msgid "Search Sales Orders"
-msgstr "販売注文の検索"
+msgstr "受注を検索"
 
 #: common/setting/user.py:126
 msgid "Display sales orders in search preview window"
-msgstr "検索プレビューウィンドウに販売注文を表示"
+msgstr "検索プレビューに受注を表示します"
 
 #: common/setting/user.py:131
 msgid "Exclude Inactive Sales Orders"
-msgstr "非アクティブな販売注文の除外"
+msgstr "非アクティブな受注を除外"
 
 #: common/setting/user.py:132
 msgid "Exclude inactive sales orders from search preview window"
-msgstr "検索プレビューウィンドウから非アクティブな販売注文を除外"
+msgstr "検索プレビューから非アクティブな受注を除外します"
 
 #: common/setting/user.py:137
 msgid "Search Sales Order Shipments"
-msgstr "販売注文の出荷を検索"
+msgstr "受注の出荷を検索"
 
 #: common/setting/user.py:138
 msgid "Display sales order shipments in search preview window"
-msgstr "検索プレビューウィンドウに販売注文の出荷を表示"
+msgstr "検索プレビューに受注の出荷を表示します"
 
 #: common/setting/user.py:143
 msgid "Search Return Orders"
-msgstr "返品注文の検索"
+msgstr "返品オーダーを検索"
 
 #: common/setting/user.py:144
 msgid "Display return orders in search preview window"
@@ -4556,11 +4556,11 @@ msgstr "部品詳細ページに在庫履歴情報を表示します"
 
 #: common/setting/user.py:253
 msgid "Show Change History"
-msgstr ""
+msgstr "変更履歴を表示"
 
 #: common/setting/user.py:255
 msgid "Display the change history (audit log) panel on detail pages"
-msgstr ""
+msgstr "詳細ページに変更履歴（監査ログ）パネルを表示します"
 
 #: common/setting/user.py:261
 msgid "Show Last Breadcrumb"
@@ -4572,11 +4572,11 @@ msgstr "現在のページをパンくずで表示"
 
 #: common/setting/user.py:267
 msgid "Pin Navigation Tree"
-msgstr ""
+msgstr "ナビゲーションツリーを固定"
 
 #: common/setting/user.py:268
 msgid "Display navigation tree permanently"
-msgstr ""
+msgstr "ナビゲーションツリーを常に表示します"
 
 #: common/setting/user.py:273
 msgid "Show Extra Model Information"
@@ -4588,19 +4588,19 @@ msgstr "モデル選択ドロップダウンに追加情報を表示します"
 
 #: common/setting/user.py:279
 msgid "Show full stock location in tables"
-msgstr "表に在庫場所をすべて表示します"
+msgstr "テーブルで在庫場所のパス全体を表示します。"
 
 #: common/setting/user.py:281
 msgid "Disabled: The full location path is displayed as a hover tooltip. Enabled: The full location path is displayed as plain text."
-msgstr "無効時：完全な場所のパスがホバーツールチップとして表示されます。有効時：完全な場所のパスがプレーンテキストとして表示されます。"
+msgstr "オフの場合は場所のフルパスをツールチップに表示し、オンの場合はテキストとして表示します。"
 
 #: common/setting/user.py:287
 msgid "Show full part categories in tables"
-msgstr "表内の全カテゴリを表示します"
+msgstr "テーブルで部品カテゴリのパス全体を表示します。"
 
 #: common/setting/user.py:289
 msgid "Disabled: The full category path is displayed as a hover tooltip. Enabled: The full category path is displayed as plain text."
-msgstr "無効時：カテゴリの完全なパスがホバー時のツールチップとして表示されます。有効時：カテゴリの完全なパスがプレーンテキストとして表示されます。"
+msgstr "オフの場合はカテゴリのフルパスをツールチップに表示し、オンの場合はテキストとして表示します。"
 
 #: common/setting/user.py:295
 msgid "Show Subassemblies in BOM table"
@@ -4612,7 +4612,7 @@ msgstr "BOMテーブルでサブアセンブリ表示を有効にします"
 
 #: common/setting/user.py:301
 msgid "Receive error reports"
-msgstr "エラー・レポートの受信"
+msgstr "エラーレポートを受信"
 
 #: common/setting/user.py:302
 msgid "Receive notifications for system errors"
@@ -4620,11 +4620,11 @@ msgstr "システムエラーの通知を受信"
 
 #: common/setting/user.py:307
 msgid "Last used printing machines"
-msgstr "最後の中古印刷機"
+msgstr "最後に使用したプリンター"
 
 #: common/setting/user.py:308
 msgid "Save the last used printing machines for a user"
-msgstr "ユーザーの最後に使用した印刷機を保存"
+msgstr "ユーザーが最後に使用したプリンターを保存します"
 
 #: common/setting/user.py:312
 msgid "Display Items at Final Level"
@@ -4632,7 +4632,7 @@ msgstr "最終階層の項目を表示"
 
 #: common/setting/user.py:314
 msgid "Automatically default to showing items/parts instead of sub-levels for locations or categories with no children"
-msgstr "子要素がない場所やカテゴリについては、サブレベルではなくアイテムやパーツを自動的にデフォルト表示にします"
+msgstr "子要素のない場所やカテゴリでは、下位階層の代わりに項目や部品を既定で表示します。"
 
 #: common/setting/user.py:320
 msgid "Enable Filtered Detail Navigation"
@@ -4644,7 +4644,7 @@ msgstr "フィルター付き詳細ナビゲーションのパラメータを表
 
 #: common/test_audit.py:117
 msgid "Generated"
-msgstr ""
+msgstr "生成済み"
 
 #: common/validators.py:60
 msgid "Invalid content type"
@@ -4660,7 +4660,7 @@ msgstr "全モデル"
 
 #: common/validators.py:102
 msgid "No attachment model type provided"
-msgstr "アタッチメント型式なし"
+msgstr "添付先のモデルタイプが指定されていません"
 
 #: common/validators.py:108
 msgid "Invalid attachment model type"
@@ -4677,11 +4677,11 @@ msgstr "ファイル名が不正です"
 
 #: common/validators.py:142
 msgid "Minimum places cannot be greater than maximum places"
-msgstr "最小プレースは最大プレースより大きくできません。"
+msgstr "小数点以下の最小桁数は、最大桁数以下にしてください。"
 
 #: common/validators.py:154
 msgid "Maximum places cannot be less than minimum places"
-msgstr "最大定員が最小定員を下回ることはありません。"
+msgstr "小数点以下の最大桁数は、最小桁数以上にしてください。"
 
 #: common/validators.py:165
 msgid "An empty domain is not allowed."
@@ -4702,27 +4702,27 @@ msgstr "値は有効な変数識別名でなければならない。"
 
 #: company/api.py:167
 msgid "Part is Active"
-msgstr "パートはアクティブ"
+msgstr "部品は有効"
 
 #: company/api.py:171
 msgid "Manufacturer is Active"
-msgstr "メーカーはアクティブ"
+msgstr "メーカーは有効"
 
 #: company/api.py:280
 msgid "Supplier Part is Active"
-msgstr "サプライヤーが活動中"
+msgstr "仕入先部品は有効"
 
 #: company/api.py:282
 msgid "Primary Supplier Part"
-msgstr "主要サプライヤー部品"
+msgstr "優先仕入先部品"
 
 #: company/api.py:286
 msgid "Internal Part is Active"
-msgstr "内部はアクティブ"
+msgstr "社内部品は有効"
 
 #: company/api.py:291
 msgid "Supplier is Active"
-msgstr "サプライヤーの活動"
+msgstr "仕入先は有効"
 
 #: company/api.py:303 company/models.py:618 company/serializers.py:506
 #: part/serializers.py:419
@@ -4732,7 +4732,7 @@ msgstr "製造元"
 #: company/api.py:310 company/models.py:138 company/models.py:469
 #: stock/api.py:957
 msgid "Company"
-msgstr "会社名"
+msgstr "会社"
 
 #: company/api.py:320
 msgid "Has Stock"
@@ -4771,9 +4771,9 @@ msgid "Contact email address"
 msgstr "連絡先メールアドレス"
 
 #: company/models.py:218 company/models.py:363 order/models.py:627
-#: order/models.py:2863 users/models.py:757
+#: order/models.py:2863 users/models.py:776
 msgid "Contact"
-msgstr "お問い合わせ"
+msgstr "連絡先"
 
 #: company/models.py:220
 msgid "Point of contact"
@@ -4785,11 +4785,11 @@ msgstr "外部企業情報へのリンク"
 
 #: company/models.py:231
 msgid "Is this company active?"
-msgstr "この会社は活動していますか？"
+msgstr "この会社は有効ですか？"
 
 #: company/models.py:236
 msgid "Is customer"
-msgstr "お客様"
+msgstr "顧客"
 
 #: company/models.py:237
 msgid "Do you sell items to this company?"
@@ -4805,7 +4805,7 @@ msgstr "この会社から商品を購入しますか？"
 
 #: company/models.py:248
 msgid "Is manufacturer"
-msgstr "メーカーは"
+msgstr "メーカー"
 
 #: company/models.py:249
 msgid "Does this company manufacture parts?"
@@ -4813,11 +4813,11 @@ msgstr "この会社は部品を製造しているのですか？"
 
 #: company/models.py:254
 msgid "Is internal"
-msgstr ""
+msgstr "自社"
 
 #: company/models.py:255
 msgid "Does this company represent your own organization?"
-msgstr ""
+msgstr "この会社は自社の組織を表しますか？"
 
 #: company/models.py:263
 msgid "Default currency used for this company"
@@ -4829,7 +4829,7 @@ msgstr "納税者番号"
 
 #: company/models.py:271
 msgid "Company Tax ID"
-msgstr "法人税番号"
+msgstr "会社の納税者番号"
 
 #: company/models.py:411 order/models.py:637 order/models.py:2853
 msgid "Address"
@@ -4837,7 +4837,7 @@ msgstr "住所"
 
 #: company/models.py:412
 msgid "Addresses"
-msgstr "マイアカウント"
+msgstr "住所一覧"
 
 #: company/models.py:470
 msgid "Select company"
@@ -4845,23 +4845,23 @@ msgstr "会社を選択"
 
 #: company/models.py:475
 msgid "Address title"
-msgstr "住所"
+msgstr "住所名"
 
 #: company/models.py:476
 msgid "Title describing the address entry"
-msgstr "アドレスエントリを説明するタイトル"
+msgstr "住所の内容を表す名称"
 
 #: company/models.py:482
 msgid "Primary address"
-msgstr "主な住所"
+msgstr "主住所"
 
 #: company/models.py:483
 msgid "Set as primary address"
-msgstr "プライマリアドレスに設定"
+msgstr "主住所に設定"
 
 #: company/models.py:488
 msgid "Line 1"
-msgstr "1行目"
+msgstr "住所1"
 
 #: company/models.py:489
 msgid "Address line 1"
@@ -4869,7 +4869,7 @@ msgstr "丁目、番地、号など"
 
 #: company/models.py:495
 msgid "Line 2"
-msgstr "2行目"
+msgstr "住所2"
 
 #: company/models.py:496
 msgid "Address line 2"
@@ -4885,7 +4885,7 @@ msgstr "都市/地域"
 
 #: company/models.py:510
 msgid "Postal code city/region"
-msgstr "郵便番号 都市/地域"
+msgstr "郵便番号に対応する市区町村/地域"
 
 #: company/models.py:516
 msgid "State/Province"
@@ -4901,15 +4901,15 @@ msgstr "国"
 
 #: company/models.py:524
 msgid "Address country"
-msgstr "住所国"
+msgstr "住所の国"
 
 #: company/models.py:531
 msgid "Phone number for this address"
-msgstr ""
+msgstr "この住所の電話番号"
 
 #: company/models.py:537
 msgid "Email address for this address"
-msgstr ""
+msgstr "この住所のメールアドレス"
 
 #: company/models.py:543
 msgid "Courier shipping notes"
@@ -4934,12 +4934,12 @@ msgstr "住所情報へのリンク（外部）"
 #: company/models.py:590 company/models.py:897 company/serializers.py:534
 #: stock/api.py:623
 msgid "Manufacturer Part"
-msgstr "メーカー・パーツ"
+msgstr "メーカー部品"
 
 #: company/models.py:607 company/models.py:859 stock/models.py:1205
 #: stock/serializers.py:422
 msgid "Base Part"
-msgstr "ベース部"
+msgstr "基本部品"
 
 #: company/models.py:609 company/models.py:861
 msgid "Select part"
@@ -4968,11 +4968,11 @@ msgstr "メーカー部品説明"
 
 #: company/models.py:782
 msgid "Pack units must be compatible with the base part units"
-msgstr "パックユニットは、ベースユニットと互換性がある必要があります。"
+msgstr "梱包数量の単位は、基本部品の単位に換算できる必要があります。"
 
 #: company/models.py:789
 msgid "Pack units must be greater than zero"
-msgstr "パック単位はゼロより大きくなければなりません。"
+msgstr "梱包数量はゼロより大きい値にしてください。"
 
 #: company/models.py:803
 msgid "Linked manufacturer part must reference the same base part"
@@ -4992,15 +4992,15 @@ msgstr "サプライヤーを選択"
 
 #: company/models.py:876 part/serializers.py:414
 msgid "Supplier stock keeping unit"
-msgstr "サプライヤー在庫管理ユニット"
+msgstr "サプライヤーの在庫管理コード（SKU）"
 
 #: company/models.py:882
 msgid "Is this supplier part active?"
-msgstr "このサプライヤーは活動していますか？"
+msgstr "このサプライヤー部品は有効ですか？"
 
 #: company/models.py:888
 msgid "Is this the primary supplier part for the linked Part?"
-msgstr "これは、リンク先の部品に対する主要サプライヤーの部品でしょうか？"
+msgstr "紐付けられた部品に対して、このサプライヤー部品を優先しますか？"
 
 #: company/models.py:898
 msgid "Select manufacturer part"
@@ -5041,11 +5041,11 @@ msgstr "1パックに供給される総量。単品の場合は空のままに�
 
 #: company/models.py:965 part/models.py:2280
 msgid "multiple"
-msgstr "複数"
+msgstr "取引数量の倍数"
 
 #: company/models.py:966
 msgid "Order multiple"
-msgstr "複数注文"
+msgstr "発注単位"
 
 #: company/models.py:978
 msgid "Quantity available from supplier"
@@ -5053,15 +5053,15 @@ msgstr "サプライヤーから入手可能な数量"
 
 #: company/models.py:984
 msgid "Availability Updated"
-msgstr "空席状況更新"
+msgstr "在庫状況の最終更新日"
 
 #: company/models.py:985
 msgid "Date of last update of availability data"
-msgstr "アベイラビリティ・データの最終更新日"
+msgstr "在庫状況データの最終更新日"
 
 #: company/models.py:1118
 msgid "Supplier Price Break"
-msgstr "サプライヤーの価格破壊"
+msgstr "仕入先の数量別価格"
 
 #: company/serializers.py:195
 msgid "Default currency used for this supplier"
@@ -5077,7 +5077,7 @@ msgstr "在庫あり"
 
 #: company/serializers.py:468
 msgid "Price Breaks"
-msgstr "価格割り引き"
+msgstr "数量別価格"
 
 #: company/serializers.py:521
 msgid "Pretty Name"
@@ -5107,7 +5107,7 @@ msgstr "エクスポートプラグイン"
 msgid "Select export plugin"
 msgstr "エクスポートプラグインを選択"
 
-#: generic/states/api_helpers.py:385
+#: generic/states/api_helpers.py:387
 msgid "User does not have permission to view or change this object"
 msgstr "ユーザーにはこのオブジェクトを表示・変更する権限がありません"
 
@@ -5133,7 +5133,7 @@ msgstr "値"
 
 #: generic/states/tests.py:22 order/status_codes.py:22
 msgid "Placed"
-msgstr "設置済"
+msgstr "発注済み"
 
 #: generic/states/transition.py:196
 msgid "Failed to offload background task for this transition"
@@ -5298,7 +5298,7 @@ msgstr "データファイルをテキストとしてデコードできません
 
 #: importer/operations.py:64
 msgid "Invalid data file dimensions"
-msgstr "無効なデータファイルの寸法"
+msgstr "データファイルの行と列の構成が不正です"
 
 #: importer/serializers.py:98
 msgid "Model type cannot be changed after the import session has been created"
@@ -5326,7 +5326,7 @@ msgstr "受け付ける行IDのリスト"
 
 #: importer/serializers.py:243
 msgid "No rows provided"
-msgstr "列はありません"
+msgstr "行が指定されていません"
 
 #: importer/serializers.py:247
 msgid "Row does not belong to this session"
@@ -5338,11 +5338,11 @@ msgstr "行に無効なデータが含まれています。"
 
 #: importer/serializers.py:253
 msgid "Row has already been completed"
-msgstr "列はすでに完成しています"
+msgstr "この行はすでに処理済みです"
 
 #: importer/status_codes.py:19
 msgid "Initializing"
-msgstr "初期化"
+msgstr "初期化中"
 
 #: importer/status_codes.py:20
 msgid "Mapping Columns"
@@ -5354,7 +5354,7 @@ msgstr "データのインポート"
 
 #: importer/status_codes.py:22
 msgid "Processing Data"
-msgstr "加工データ"
+msgstr "データ処理中"
 
 #: importer/validators.py:21
 msgid "Data file exceeds maximum size limit"
@@ -5394,7 +5394,7 @@ msgstr "不明"
 
 #: machine/machine_types/label_printer.py:237
 msgid "Printing"
-msgstr "印刷"
+msgstr "印刷中"
 
 #: machine/machine_types/label_printer.py:238
 msgid "Warning"
@@ -5410,7 +5410,7 @@ msgstr "紙詰まり"
 
 #: machine/machine_types/label_printer.py:241
 msgid "Disconnected"
-msgstr "ネットワーク接続なし"
+msgstr "未接続"
 
 #: machine/machine_types/label_printer.py:242
 msgid "Error"
@@ -5430,7 +5430,7 @@ msgstr "プリンタの場所"
 
 #: machine/machine_types/label_printer.py:257
 msgid "Scope the printer to a specific location"
-msgstr "プリンターを特定の場所に設置"
+msgstr "プリンターを特定の保管場所に紐付けます"
 
 #: machine/models.py:29
 msgid "Name of machine"
@@ -5466,7 +5466,7 @@ msgstr "エラーなし"
 
 #: machine/models.py:109
 msgid "Initialized"
-msgstr "初期化"
+msgstr "初期化済み"
 
 #: machine/models.py:121
 msgid "Machine status"
@@ -5492,7 +5492,7 @@ msgstr "プロパティーキー"
 msgid "Value of the property"
 msgstr "プロパティー値"
 
-#: machine/serializers.py:30 users/models.py:425
+#: machine/serializers.py:30 users/models.py:444
 msgid "Group"
 msgstr "グループ"
 
@@ -5522,11 +5522,11 @@ msgstr "注文参照"
 
 #: order/api.py:172 order/api.py:1345 order/api.py:2186
 msgid "Outstanding"
-msgstr "並外れた"
+msgstr "未完了"
 
 #: order/api.py:188
 msgid "Has Project Code"
-msgstr "プロジェクトコード"
+msgstr "プロジェクトコードあり"
 
 #: order/api.py:202 order/models.py:595
 msgid "Created By"
@@ -5534,11 +5534,11 @@ msgstr "作成者"
 
 #: order/api.py:206
 msgid "Created Before"
-msgstr "作成前"
+msgstr "作成日が指定日より前"
 
 #: order/api.py:210
 msgid "Created After"
-msgstr "の後に作成されました。"
+msgstr "作成日が指定日より後"
 
 #: order/api.py:214
 msgid "Has Start Date"
@@ -5546,11 +5546,11 @@ msgstr "開始日あり"
 
 #: order/api.py:222
 msgid "Start Date Before"
-msgstr "開始日 前"
+msgstr "開始日が指定日より前"
 
 #: order/api.py:226
 msgid "Start Date After"
-msgstr "開始日 後"
+msgstr "開始日が指定日より後"
 
 #: order/api.py:230
 msgid "Has Target Date"
@@ -5558,35 +5558,35 @@ msgstr "目標期日あり"
 
 #: order/api.py:238
 msgid "Target Date Before"
-msgstr "目標期日"
+msgstr "目標日が指定日より前"
 
 #: order/api.py:242
 msgid "Target Date After"
-msgstr "以降の目標日"
+msgstr "目標日が指定日より後"
 
 #: order/api.py:246
 msgid "Updated Before"
-msgstr "更新日（開始）"
+msgstr "更新日が指定日より前"
 
 #: order/api.py:250
 msgid "Updated After"
-msgstr "更新日（終了）"
+msgstr "更新日が指定日より後"
 
 #: order/api.py:303
 msgid "Has Pricing"
-msgstr "価格"
+msgstr "価格あり"
 
 #: order/api.py:356 order/api.py:877 order/api.py:1667 order/api.py:1984
 msgid "Completed Before"
-msgstr "完成前"
+msgstr "完了日が指定日より前"
 
 #: order/api.py:360 order/api.py:881 order/api.py:1671 order/api.py:1988
 msgid "Completed After"
-msgstr "終了後"
+msgstr "完了日が指定日より後"
 
 #: order/api.py:366 order/api.py:370
 msgid "External Build Order"
-msgstr "外部ビルドオーダー"
+msgstr "外部製造オーダー"
 
 #: order/api.py:464
 msgid "Purchase order not found"
@@ -5605,15 +5605,15 @@ msgstr "注文完了"
 
 #: order/api.py:559 order/api.py:563 order/serializers.py:786
 msgid "Internal Part"
-msgstr "内部パーツ"
+msgstr "社内部品"
 
 #: order/api.py:581
 msgid "Order Pending"
-msgstr "注文保留"
+msgstr "発注が未完了"
 
 #: order/api.py:716
 msgid "Cannot delete line items which have received stock"
-msgstr ""
+msgstr "入庫済みの在庫がある明細は削除できません"
 
 #: order/api.py:1030 order/api.py:2362
 msgid "Completed"
@@ -5629,7 +5629,7 @@ msgstr "出荷あり"
 
 #: order/api.py:1582
 msgid "Shipment not found"
-msgstr "配送が見つかりません"
+msgstr "出荷が見つかりません"
 
 #: order/api.py:1760
 msgid "Return order not found"
@@ -5644,7 +5644,7 @@ msgstr "移動オーダーが見つかりません"
 #: report/templates/report/inventree_purchase_order_report.html:13
 #: stock/serializers.py:128 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
-msgstr "注文"
+msgstr "発注"
 
 #: order/api.py:2585 order/models.py:1507 order/models.py:2642
 #: order/models.py:2845 order/models.py:3232
@@ -5653,14 +5653,14 @@ msgstr "注文"
 #: report/templates/report/inventree_sales_order_shipment_report.html:14
 #: templates/email/overdue_sales_order.html:15
 msgid "Sales Order"
-msgstr "セールスオーダー"
+msgstr "受注"
 
 #: order/api.py:2587 order/models.py:3398 order/models.py:3754
 #: order/models.py:3820
 #: report/templates/report/inventree_return_order_report.html:12
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
-msgstr "リターンオーダー"
+msgstr "返品オーダー"
 
 #: order/api.py:2589 order/models.py:3842 order/models.py:4195
 #: report/templates/report/inventree_transfer_order_report.html:11
@@ -5724,11 +5724,11 @@ msgstr "本注文の開始予定日"
 #: order/models.py:579 order/models.py:2303 order/serializers.py:305
 #: report/templates/report/inventree_build_order_report.html:124
 msgid "Target Date"
-msgstr "終了日に達したら"
+msgstr "目標日"
 
 #: order/models.py:581
 msgid "Expected date for order delivery. Order will be overdue after this date."
-msgstr "お届け予定日この期日を過ぎますと延滞となります。"
+msgstr "納品予定日。この日付を過ぎると、オーダーは期限超過になります。"
 
 #: order/models.py:601
 msgid "Issue Date"
@@ -5736,7 +5736,7 @@ msgstr "発行日"
 
 #: order/models.py:602
 msgid "Date order was issued"
-msgstr "オーダー発行日"
+msgstr "注文発行日"
 
 #: order/models.py:608
 msgid "Updated At"
@@ -5752,26 +5752,26 @@ msgstr "本注文に関する連絡先"
 
 #: order/models.py:638
 msgid "Company address for this order"
-msgstr "本注文の会社住所"
+msgstr "この注文に使用する会社住所"
 
 #: order/models.py:707
 msgid "Receiving company must be an internal company"
-msgstr ""
+msgstr "受領先会社は自社組織である必要があります"
 
 #: order/models.py:714
 msgid "Receiving company must be specified when a delivery address is provided"
-msgstr ""
+msgstr "配送先住所を指定する場合は、受領先会社も指定してください"
 
 #: order/models.py:721
 msgid "Delivery address does not match selected receiving company"
-msgstr ""
+msgstr "配送先住所が選択した受領先会社と一致しません"
 
 #: order/models.py:792 order/models.py:1571
 msgid "Order reference"
-msgstr "注文参照"
+msgstr "注文参照番号"
 
 #: order/models.py:801 order/models.py:1595 order/models.py:3489
-#: order/models.py:3919 stock/serializers.py:986 users/models.py:738
+#: order/models.py:3919 stock/serializers.py:986 users/models.py:757
 msgid "Status"
 msgstr "ステータス"
 
@@ -5781,27 +5781,27 @@ msgstr "発注状況"
 
 #: order/models.py:812
 msgid "Company from which the items are being ordered"
-msgstr "注文元の会社"
+msgstr "品目の発注先会社"
 
 #: order/models.py:825
 msgid "Supplier Address"
-msgstr ""
+msgstr "仕入先住所"
 
 #: order/models.py:826
 msgid "Supplier address for this order"
-msgstr ""
+msgstr "この注文の仕入先住所"
 
 #: order/models.py:833
 msgid "Supplier Reference"
-msgstr "サプライヤー・リファレンス"
+msgstr "仕入先参照番号"
 
 #: order/models.py:834
 msgid "Supplier order reference code"
-msgstr "サプライヤー注文参照コード"
+msgstr "仕入先の注文参照番号"
 
 #: order/models.py:843
 msgid "received by"
-msgstr "受信"
+msgstr "受領者"
 
 #: order/models.py:850 order/models.py:3504 order/models.py:3960
 msgid "Date order was completed"
@@ -5809,39 +5809,39 @@ msgstr "注文完了日"
 
 #: order/models.py:859 order/models.py:2514
 msgid "Destination"
-msgstr "目的地"
+msgstr "入庫先"
 
 #: order/models.py:860 order/models.py:2518
 msgid "Destination for received items"
-msgstr "入荷商品のお届け先"
+msgstr "受領品の入庫先"
 
 #: order/models.py:871
 msgid "Receiving Company"
-msgstr ""
+msgstr "受領先会社"
 
 #: order/models.py:872
 msgid "Internal company which is receiving the items"
-msgstr ""
+msgstr "品目を受け取る自社組織"
 
 #: order/models.py:881
 msgid "Delivery Address"
-msgstr ""
+msgstr "配送先住所"
 
 #: order/models.py:882
 msgid "Delivery address for this order"
-msgstr ""
+msgstr "この注文の配送先住所"
 
 #: order/models.py:928
 msgid "Part supplier must match PO supplier"
-msgstr "部品サプライヤーは、POサプライヤーと一致する必要があります。"
+msgstr "部品の仕入先は発注書の仕入先と一致する必要があります。"
 
 #: order/models.py:1194
 msgid "Line item does not match purchase order"
-msgstr "品目が発注書と一致しません"
+msgstr "明細が発注書と一致しません。"
 
 #: order/models.py:1197
 msgid "Line item is missing a linked part"
-msgstr "行項目にリンクされた部品が不足しています"
+msgstr "明細に部品が紐付けられていません。"
 
 #: order/models.py:1212
 msgid "Quantity must be a positive number"
@@ -5876,7 +5876,7 @@ msgstr "販売先"
 
 #: order/models.py:1596
 msgid "Sales order status"
-msgstr "販売注文状況"
+msgstr "受注の状態"
 
 #: order/models.py:1602 order/models.py:3496
 msgid "Customer Reference "
@@ -5892,12 +5892,12 @@ msgstr "出荷日"
 
 #: order/models.py:1616
 msgid "shipped by"
-msgstr "出荷元"
+msgstr "出荷担当者"
 
 #: order/models.py:1795 order/serializers.py:1772 order/serializers.py:1927
 #: order/serializers.py:2813 order/serializers.py:3020
 msgid "Line item is not associated with this order"
-msgstr "ラインアイテムは、この注文に関連付けられていません。"
+msgstr "明細がこのオーダーに紐付いていません。"
 
 #: order/models.py:1852 order/serializers.py:3114
 msgid "No match found for the following serial numbers"
@@ -5921,15 +5921,15 @@ msgstr "未完了の注文にのみ完了マークを付けることができま
 
 #: order/models.py:1910
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr "出荷に不備があるため、注文を完了できません。"
+msgstr "未完了の出荷があるため、受注を完了できません。"
 
 #: order/models.py:1915
 msgid "Order cannot be completed as there are incomplete allocations"
-msgstr "割り当てに不備があるため、注文を完了できません。"
+msgstr "引当が完了していないため、受注を完了できません。"
 
 #: order/models.py:1924
 msgid "Order cannot be completed as there are incomplete line items"
-msgstr "不完全な項目があるため、注文を完了できません。"
+msgstr "未完了の明細があるため、受注を完了できません。"
 
 #: order/models.py:2213 order/models.py:2238
 msgid "The order is locked and cannot be modified"
@@ -5953,27 +5953,27 @@ msgstr "項番"
 
 #: order/models.py:2274
 msgid "Line number for this item (optional)"
-msgstr "この項目の行番号（任意）"
+msgstr "この明細の番号（任意）"
 
 #: order/models.py:2283
 msgid "Line item reference"
-msgstr "行項目参照"
+msgstr "明細参照番号"
 
 #: order/models.py:2290
 msgid "Line item notes"
-msgstr "項目"
+msgstr "明細メモ"
 
 #: order/models.py:2305
 msgid "Target date for this line item (leave blank to use the target date from the order)"
-msgstr "この行項目の目標期日（注文の目標期日を使用する場合は空白のままにしてください。）"
+msgstr "この明細の目標日（注文の目標日を使う場合は空欄のままにしてください）"
 
 #: order/models.py:2335
 msgid "Extra line"
-msgstr ""
+msgstr "追加明細"
 
 #: order/models.py:2343
 msgid "Line item description (optional)"
-msgstr "行項目の説明（オプション）"
+msgstr "明細の説明（任意）"
 
 #: order/models.py:2350
 msgid "Additional context for this line"
@@ -5985,44 +5985,44 @@ msgstr "単価"
 
 #: order/models.py:2379
 msgid "Purchase Order Line Item"
-msgstr "発注書項目"
+msgstr "発注明細"
 
 #: order/models.py:2408
 msgid "Supplier part must match supplier"
-msgstr "サプライヤーの部品はサプライヤーと一致しなければなりません。"
+msgstr "仕入先部品の仕入先は発注書の仕入先と一致する必要があります。"
 
 #: order/models.py:2416
 msgid "Build order must be marked as external"
-msgstr "ビルドオーダーは外部としてマークする必要があります"
+msgstr "製造オーダーを外部委託に設定してください"
 
 #: order/models.py:2423
 msgid "Build orders can only be linked to assembly parts"
-msgstr "ビルドオーダーはアセンブリ部品にのみリンクできます"
+msgstr "製造オーダーはアセンブリ部品にのみリンクできます"
 
 #: order/models.py:2429
 msgid "Build order part must match line item part"
-msgstr "ビルドオーダーの部品は、ラインアイテムの部品と一致する必要があります。"
+msgstr "製造オーダーの部品は、ラインアイテムの部品と一致する必要があります。"
 
 #: order/models.py:2439
 msgid "An external build order is required for assembly parts"
-msgstr "組立部品には、外部ビルドオーダーが必要です"
+msgstr "組立部品には、外部製造オーダーが必要です"
 
 #: order/models.py:2475
 msgid "Supplier part"
-msgstr "サプライヤー"
+msgstr "仕入先部品"
 
 #: order/models.py:2482
 msgid "Received"
-msgstr "受信"
+msgstr "受領数量"
 
 #: order/models.py:2483
 msgid "Number of items received"
-msgstr "受領品目数"
+msgstr "受領した数量"
 
 #: order/models.py:2491 stock/models.py:1388 stock/serializers.py:680
 #: stock/serializers.py:1058
 msgid "Purchase Price"
-msgstr "購入金額"
+msgstr "仕入価格"
 
 #: order/models.py:2492
 msgid "Unit purchase price"
@@ -6030,15 +6030,15 @@ msgstr "購入単価"
 
 #: order/models.py:2508
 msgid "External Build Order to be fulfilled by this line item"
-msgstr "本品目により完成する外部ビルドオーダー"
+msgstr "この発注明細で対応する外部製造オーダー"
 
 #: order/models.py:2570
 msgid "Purchase Order Extra Line"
-msgstr "発注書追加行"
+msgstr "発注の追加明細"
 
 #: order/models.py:2599
 msgid "Sales Order Line Item"
-msgstr "販売注文明細"
+msgstr "受注明細"
 
 #: order/models.py:2626
 msgid "Only salable parts can be assigned to a sales order"
@@ -6046,11 +6046,11 @@ msgstr "販売可能な部品のみを販売オーダーに割り当てること
 
 #: order/models.py:2633 order/models.py:4186
 msgid "Unknown part"
-msgstr ""
+msgstr "部品が見つかりません。"
 
 #: order/models.py:2660
 msgid "Sale Price"
-msgstr "セール価格"
+msgstr "販売価格"
 
 #: order/models.py:2661
 msgid "Unit sale price"
@@ -6066,30 +6066,30 @@ msgstr "出荷数量"
 
 #: order/models.py:2793
 msgid "Sales Order Shipment"
-msgstr "販売注文の出荷"
+msgstr "受注出荷"
 
 #: order/models.py:2806
 msgid "Shipment address must match the customer"
-msgstr "配送先住所はお客様と一致している必要があります"
+msgstr "出荷先住所は顧客に登録された住所と一致している必要があります。"
 
 #: order/models.py:2812
 msgid "Contact does not match the customer"
-msgstr ""
+msgstr "連絡先が顧客に紐付いていません。"
 
 #: order/models.py:2835 order/models.py:2895 order/models.py:3332
 #: order/serializers.py:1947 order/serializers.py:2000
 #: order/serializers.py:2101
 #: report/templates/report/inventree_sales_order_shipment_report.html:13
 msgid "Shipment"
-msgstr "発送"
+msgstr "出荷"
 
 #: order/models.py:2854
 msgid "Shipping address for this shipment"
-msgstr "こちらの発送先住所"
+msgstr "この出荷の配送先住所"
 
 #: order/models.py:2864
 msgid "Point of contact for this shipment"
-msgstr ""
+msgstr "この出荷の連絡先"
 
 #: order/models.py:2872
 msgid "Date of shipment"
@@ -6105,11 +6105,11 @@ msgstr "貨物の引渡日"
 
 #: order/models.py:2887
 msgid "Checked By"
-msgstr "チェック済み"
+msgstr "確認者"
 
 #: order/models.py:2888
 msgid "User who checked this shipment"
-msgstr "この貨物をチェックしたユーザー"
+msgstr "この出荷を確認したユーザー"
 
 #: order/models.py:2896
 msgid "Shipment number"
@@ -6133,40 +6133,40 @@ msgstr "関連する請求書の参照番号"
 
 #: order/models.py:2959
 msgid "Shipment has already been sent"
-msgstr "発送済み"
+msgstr "この出荷はすでに発送されています。"
 
 #: order/models.py:2962
 msgid "Shipment has no allocated stock items"
-msgstr "出荷品目に割り当てられた在庫がありません"
+msgstr "この出荷に割り当てられた在庫品がありません。"
 
 #: order/models.py:2969
 msgid "Shipment must be checked before it can be completed"
-msgstr "出荷は完了前に必ず確認が必要となります"
+msgstr "出荷を完了する前に内容を確認してください。"
 
 #: order/models.py:3220
 msgid "Sales Order Extra Line"
-msgstr "セールスオーダー追加ライン"
+msgstr "受注の追加明細"
 
 #: order/models.py:3249
 msgid "Sales Order Allocation"
-msgstr "販売注文の割り当て"
+msgstr "受注明細の引当"
 
 #: order/models.py:3272 order/models.py:3274 order/models.py:4287
 #: order/models.py:4289
 msgid "Stock item has not been assigned"
-msgstr "在庫アイテムが割り当てられていません"
+msgstr "在庫品が割り当てられていません。"
 
 #: order/models.py:3281 order/models.py:4296
 msgid "Cannot allocate stock item to a line with a different part"
-msgstr "在庫品を別部品のラインに割り当てることはできません。"
+msgstr "異なる部品の明細に在庫品を引き当てることはできません。"
 
 #: order/models.py:3284 order/models.py:4299
 msgid "Cannot allocate stock to a line without a part"
-msgstr "部品のないラインに在庫を割り当てることはできません。"
+msgstr "部品が設定されていない明細に在庫を引き当てることはできません。"
 
 #: order/models.py:3287 order/models.py:4302
 msgid "Allocation quantity cannot exceed stock quantity"
-msgstr "割当数量が在庫数量を超えることはできません"
+msgstr "引当数量は在庫数量を超えられません。"
 
 #: order/models.py:3307 order/models.py:4324
 msgid "Allocation quantity must be greater than zero"
@@ -6175,23 +6175,23 @@ msgstr "割当数量はゼロより大きくなければなりません"
 #: order/models.py:3310 order/models.py:4327 order/serializers.py:1817
 #: order/serializers.py:2849
 msgid "Quantity must be 1 for serialized stock item"
-msgstr "シリアル化された在庫品の場合、数量は1でなければなりません。"
+msgstr "シリアル番号付き在庫品の数量は1でなければなりません。"
 
 #: order/models.py:3313
 msgid "Sales order does not match shipment"
-msgstr "販売注文と出荷が一致しません"
+msgstr "受注と出荷が一致しません。"
 
 #: order/models.py:3314 plugin/base/barcodes/api.py:724
 msgid "Shipment does not match sales order"
-msgstr "出荷が販売注文と一致しません"
+msgstr "出荷が受注と一致しません。"
 
 #: order/models.py:3322 order/models.py:4335
 msgid "Line"
-msgstr "ライン"
+msgstr "明細"
 
 #: order/models.py:3333
 msgid "Sales order shipment reference"
-msgstr "販売注文の出荷参照"
+msgstr "受注出荷の参照番号"
 
 #: order/models.py:3346 order/models.py:3761 order/models.py:4348
 msgid "Item"
@@ -6207,7 +6207,7 @@ msgstr "在庫割当数量の入力"
 
 #: order/models.py:3465
 msgid "Return Order reference"
-msgstr "リターンオーダー参照"
+msgstr "返品オーダー参照番号"
 
 #: order/models.py:3477
 msgid "Company from which items are being returned"
@@ -6219,7 +6219,7 @@ msgstr "返品状況"
 
 #: order/models.py:3713
 msgid "Return Order Line Item"
-msgstr "返品注文項目"
+msgstr "返品明細"
 
 #: order/models.py:3726
 msgid "Stock item must be specified"
@@ -6227,7 +6227,7 @@ msgstr "在庫品の指定が必要です。"
 
 #: order/models.py:3730
 msgid "Return quantity exceeds stock quantity"
-msgstr "返品数量が在庫数量を超える場合"
+msgstr "返品数量が在庫数量を超えています。"
 
 #: order/models.py:3735
 msgid "Return quantity must be greater than zero"
@@ -6235,15 +6235,15 @@ msgstr "返品数量はゼロより大きくなければなりません。"
 
 #: order/models.py:3740
 msgid "Invalid quantity for serialized stock item"
-msgstr "シリアル化されたストックアイテムの数量が無効です。"
+msgstr "シリアル番号付き在庫品の数量が無効です。"
 
 #: order/models.py:3746
 msgid "Unknown item"
-msgstr ""
+msgstr "項目が見つかりません。"
 
 #: order/models.py:3762
 msgid "Select item to return from customer"
-msgstr "お客様から返品する商品を選択"
+msgstr "顧客から返品を受け付ける在庫品を選択してください。"
 
 #: order/models.py:3777
 msgid "Received Date"
@@ -6255,11 +6255,11 @@ msgstr "この返品商品が到着した日付"
 
 #: order/models.py:3790
 msgid "Outcome"
-msgstr "転帰"
+msgstr "処理結果"
 
 #: order/models.py:3791
 msgid "Outcome for this line item"
-msgstr "この項目の成果"
+msgstr "この明細の処理結果"
 
 #: order/models.py:3798
 msgid "Cost associated with return or repair for this line item"
@@ -6267,7 +6267,7 @@ msgstr "この品目の返品または修理に関連する費用"
 
 #: order/models.py:3808
 msgid "Return Order Extra Line"
-msgstr "リターンオーダー追加ライン"
+msgstr "返品オーダーの追加明細"
 
 #: order/models.py:3909
 msgid "Transfer Order Reference"
@@ -6279,11 +6279,11 @@ msgstr "在庫移動指示の状態"
 
 #: order/models.py:3935
 msgid "Source for transferred items"
-msgstr "移動元品"
+msgstr "在庫品の移動元の保管場所"
 
 #: order/models.py:3945
 msgid "Destination for transferred items"
-msgstr "移動先品"
+msgstr "在庫品の移動先の保管場所"
 
 #: order/models.py:3950
 msgid "Consume Stock"
@@ -6299,7 +6299,7 @@ msgstr "移動先が設定されるまで、指示を完了することはでき
 
 #: order/models.py:4016
 msgid "Order cannot be completed until it is fully allocated"
-msgstr "指示は、完全に割り当てられるまで完了しません"
+msgstr "必要数量の在庫をすべて引き当てるまで、在庫移動指示を完了できません"
 
 #: order/models.py:4168
 msgid "Transfer Order Line Item"
@@ -6331,11 +6331,11 @@ msgstr "移動オーダーに対する在庫アイテムの移動に失敗しま
 #: report/templates/report/inventree_sales_order_report.html:21
 #: report/templates/report/inventree_transfer_order_report.html:19
 msgid "Line Items"
-msgstr "ラインアイテム"
+msgstr "明細"
 
 #: order/serializers.py:94
 msgid "Completed Lines"
-msgstr "完成路線"
+msgstr "完了した明細"
 
 #: order/serializers.py:102
 msgid "Custom Status Key"
@@ -6363,19 +6363,19 @@ msgstr "サプライヤー名"
 
 #: order/serializers.py:549 order/serializers.py:1838
 msgid "Allow order to be closed with incomplete line items"
-msgstr "未完了の行項目で注文を閉じることができます。"
+msgstr "未完了の明細があっても注文を完了できるようにします。"
 
 #: order/serializers.py:559 order/serializers.py:1848
 msgid "Order has incomplete line items"
-msgstr "注文に不備がある場合"
+msgstr "注文に未完了の明細があります。"
 
 #: order/serializers.py:661
 msgid "Order is not open"
-msgstr "ご注文は受け付けておりません。"
+msgstr "注文はオープン状態ではありません。"
 
 #: order/serializers.py:701
 msgid "Auto Pricing"
-msgstr "自動車価格"
+msgstr "価格の自動計算"
 
 #: order/serializers.py:703
 msgid "Automatically calculate purchase price based on supplier part data"
@@ -6391,7 +6391,7 @@ msgstr "アイテムのマージ"
 
 #: order/serializers.py:753
 msgid "Merge items with the same part, destination and target date into one line item"
-msgstr "同じ品目、同じ仕向け地、同じ日付の品目を1つの品目に統合します。"
+msgstr "部品・入庫先・目標日が同じ項目を1つの明細に統合します。"
 
 #: order/serializers.py:768 part/serializers.py:413
 msgid "SKU"
@@ -6427,13 +6427,14 @@ msgstr "明細"
 
 #: order/serializers.py:879 order/serializers.py:1023 order/serializers.py:2343
 msgid "Select destination location for received items"
-msgstr "受取商品の配送先選択"
+msgstr "受領する在庫品の入庫先を選択してください"
 
 #: order/serializers.py:896
 msgid "Enter batch code for incoming stock items"
 msgstr "入荷在庫品のバッチコード入力"
 
 #: order/serializers.py:903 stock/models.py:1340
+#: templates/email/api_token_issued.html:18
 #: templates/email/stale_stock_notification.html:22 users/models.py:265
 msgid "Expiry Date"
 msgstr "有効期限"
@@ -6473,11 +6474,11 @@ msgstr "入荷する在庫アイテムのバッチコードを入力 - 個別の
 #: order/serializers.py:1052 order/serializers.py:2368
 #: stock/serializers.py:1149
 msgid "Line items must be provided"
-msgstr "項目は必ずご記入ください。"
+msgstr "明細を指定してください。"
 
 #: order/serializers.py:1078
 msgid "Destination location must be specified"
-msgstr "デスティネーション・ロケーションを指定する必要があります。"
+msgstr "移動先の保管場所を指定してください。"
 
 #: order/serializers.py:1089
 msgid "Supplied barcode values must be unique"
@@ -6517,7 +6518,7 @@ msgstr "数量は正数でなければなりません。"
 
 #: order/serializers.py:1812
 msgid "Stock item has not passed all required tests"
-msgstr "この在庫品は、必要なすべてのテストに合格していません"
+msgstr "この在庫品には未合格の必須テストがあります"
 
 #: order/serializers.py:1937 order/serializers.py:3030
 msgid "Enter serial numbers to allocate"
@@ -6567,7 +6568,7 @@ msgstr "明細行はこの注文に属していません"
 
 #: order/serializers.py:2309
 msgid "Return order line item"
-msgstr "返品注文項目"
+msgstr "返品オーダー明細"
 
 #: order/serializers.py:2319
 msgid "Line item does not match return order"
@@ -6587,7 +6588,7 @@ msgstr "返品数量"
 
 #: order/serializers.py:2462
 msgid "Line price currency"
-msgstr "ライン価格通貨"
+msgstr "明細価格の通貨"
 
 #: order/serializers.py:2598
 msgid "Order cannot be cancelled"
@@ -6595,7 +6596,7 @@ msgstr "ご注文のキャンセルはできません。"
 
 #: order/serializers.py:2613
 msgid "Allow order to complete with incomplete allocations"
-msgstr "引き当てが未完了でも指示を許可"
+msgstr "引当が未完了でも在庫移動指示を完了できるようにします"
 
 #: order/serializers.py:2623
 msgid "Order has incomplete allocations"
@@ -6615,7 +6616,7 @@ msgstr "処理中"
 
 #: order/status_codes.py:132
 msgid "Return"
-msgstr "戻る"
+msgstr "顧客へ返却"
 
 #: order/status_codes.py:133
 msgid "Repair"
@@ -6623,7 +6624,7 @@ msgstr "修理"
 
 #: order/status_codes.py:134
 msgid "Replace"
-msgstr "置換"
+msgstr "交換"
 
 #: order/status_codes.py:135
 msgid "Refund"
@@ -6640,30 +6641,30 @@ msgstr "発行済"
 
 #: order/tasks.py:49
 msgid "Overdue Purchase Order"
-msgstr "期限切れ発注書"
+msgstr "納期超過の発注書"
 
 #: order/tasks.py:54
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
-msgstr "発注書{po}は現在期限切れです"
+msgstr "発注書 {po} の納期を過ぎています。"
 
 #: order/tasks.py:119
 msgid "Overdue Sales Order"
-msgstr "期限切れ販売注文"
+msgstr "納期超過の受注"
 
 #: order/tasks.py:124
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
-msgstr "セールスオーダー{so}は現在期限切れです。"
+msgstr "受注 {so} の納期を過ぎています。"
 
 #: order/tasks.py:186
 msgid "Overdue Return Order"
-msgstr "期限切れ返品注文"
+msgstr "期限超過の返品注文"
 
 #: order/tasks.py:191
 #, python-brace-format
 msgid "Return order {ro} is now overdue"
-msgstr "リターンオーダー{ro}は現在期限切れです"
+msgstr "返品注文 {ro} の期限を過ぎています。"
 
 #: part/api.py:89
 msgid "Starred"
@@ -6671,7 +6672,7 @@ msgstr "スター付き"
 
 #: part/api.py:91
 msgid "Filter by starred categories"
-msgstr "星の数で絞り込む"
+msgstr "お気に入り登録したカテゴリで絞り込みます。"
 
 #: part/api.py:108 stock/api.py:330
 msgid "Depth"
@@ -6683,7 +6684,7 @@ msgstr "カテゴリの深さでフィルタリング"
 
 #: part/api.py:126 stock/api.py:348
 msgid "Top Level"
-msgstr "最多メンバーレベル"
+msgstr "最上位階層"
 
 #: part/api.py:128
 msgid "Filter by top-level categories"
@@ -6719,11 +6720,11 @@ msgstr "カテゴリツリーの深さを制限する"
 
 #: part/api.py:402
 msgid "Has Results"
-msgstr "実績あり"
+msgstr "テスト結果あり"
 
 #: part/api.py:613
 msgid "Is Variant"
-msgstr "バリエーション？"
+msgstr "バリアント"
 
 #: part/api.py:621
 msgid "Is Revision"
@@ -6731,7 +6732,7 @@ msgstr "改訂版"
 
 #: part/api.py:631
 msgid "Has Revisions"
-msgstr "改定あり"
+msgstr "リビジョンあり"
 
 #: part/api.py:838
 msgid "BOM Valid"
@@ -6743,7 +6744,7 @@ msgstr "カスケードカテゴリ"
 
 #: part/api.py:948
 msgid "If true, include items in child categories of the given category"
-msgstr "もし該当する場合には、指定されたカテゴリの子カテゴリ内のアイテムを含めてください。"
+msgstr "true の場合、指定したカテゴリの子カテゴリにある項目も含めます。"
 
 #: part/api.py:954
 msgid "Filter by numeric category ID or the literal 'null'"
@@ -6759,7 +6760,7 @@ msgstr "アセンブリ部品は追跡可能です"
 
 #: part/api.py:1276
 msgid "Assembly part is testable"
-msgstr "組み立て部分はテスト可能"
+msgstr "アセンブリ部品がテスト可能"
 
 #: part/api.py:1280
 msgid "Assembly part is locked"
@@ -6775,7 +6776,7 @@ msgstr "コンポーネント部品は追跡可能です"
 
 #: part/api.py:1293
 msgid "Component part is testable"
-msgstr "コンポーネント部分はテスト可能"
+msgstr "構成部品がテスト可能"
 
 #: part/api.py:1297
 msgid "Component part is an assembly"
@@ -6791,16 +6792,16 @@ msgstr "引き当て可能在庫あり"
 
 #: part/api.py:1362
 msgid "Uses"
-msgstr "用途"
+msgstr "使用部品"
 
 #: part/models.py:93 part/models.py:414
 #: templates/email/part_event_notification.html:16
 msgid "Part Category"
-msgstr "パーツカテゴリ"
+msgstr "部品カテゴリ"
 
 #: part/models.py:94 users/ruleset.py:45
 msgid "Part Categories"
-msgstr "パーツカテゴリ"
+msgstr "部品カテゴリ"
 
 #: part/models.py:112 part/models.py:1227
 msgid "Default Location"
@@ -6812,11 +6813,11 @@ msgstr "このカテゴリの部品のデフォルトの場所"
 
 #: part/models.py:118 stock/models.py:208
 msgid "Structural"
-msgstr "構造に関するパターン"
+msgstr "階層構造用"
 
 #: part/models.py:120
 msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
-msgstr "部品は構造カテゴリーに直接割り当てることはできませんが、子カテゴリーに割り当てることはできます。"
+msgstr "階層構造用カテゴリには部品を直接登録できません。子カテゴリには登録できます。"
 
 #: part/models.py:129
 msgid "Default keywords"
@@ -6837,7 +6838,7 @@ msgstr "アイコン (オプション)"
 
 #: part/models.py:182
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
-msgstr "いくつかの部品がすでに割り当てられているため、この部品カテゴリを構造化することはできません！"
+msgstr "部品がすでに登録されているため、このカテゴリを階層構造用には変更できません。"
 
 #: part/models.py:370
 msgid "Part Category Parameter Template"
@@ -6853,7 +6854,7 @@ msgstr "パラメータのデフォルト値"
 
 #: part/models.py:538 part/serializers.py:130 users/ruleset.py:46
 msgid "Parts"
-msgstr "パーツ"
+msgstr "部品"
 
 #: part/models.py:590
 msgid "Cannot delete parameters of a locked part"
@@ -6865,11 +6866,11 @@ msgstr "ロックされた部品のパラメータを変更することはでき
 
 #: part/models.py:606
 msgid "Cannot delete this part as it is locked"
-msgstr "この部分はロックされているため削除できません"
+msgstr "この部品はロックされているため削除できません。"
 
 #: part/models.py:609
 msgid "Cannot delete this part as it is still active"
-msgstr "このパートはまだアクティブなので削除できません。"
+msgstr "この部品は有効なため削除できません。"
 
 #: part/models.py:614
 msgid "Cannot delete this part as it is used in an assembly"
@@ -6878,12 +6879,12 @@ msgstr "この部品はアセンブリで使用されているため、削除で
 #: part/models.py:698 part/models.py:714
 #, python-brace-format
 msgid "Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
-msgstr "パート'{self}'は'{parent}'（再帰的）のBOMでは使用できません。"
+msgstr "部品 '{self}' を '{parent}' のBOMに使用すると循環参照になるため、使用できません。"
 
 #: part/models.py:726
 #, python-brace-format
 msgid "Part '{parent}' is  used in BOM for '{self}' (recursive)"
-msgstr "パート'{parent}'は'{self}'のBOMで使用（再帰的）"
+msgstr "部品 '{parent}' は '{self}' のBOMに含まれているため、循環参照になります。"
 
 #: part/models.py:797
 #, python-brace-format
@@ -6892,15 +6893,15 @@ msgstr "IPNは正規表現パターン{pattern}に一致しなければなりま
 
 #: part/models.py:805
 msgid "Part cannot be a revision of itself"
-msgstr "パートはそれ自体の改訂にはなりえません"
+msgstr "部品を自分自身のリビジョンにはできません。"
 
 #: part/models.py:812
 msgid "Revision code must be specified for a part marked as a revision"
-msgstr "「改訂あり」に設定された部品には、版数の入力が必須です"
+msgstr "他の部品のリビジョンとして登録する部品には、リビジョン番号を指定してください"
 
 #: part/models.py:820
 msgid "Revisions are only allowed for assembly parts"
-msgstr "修正が許されるのは組立部品のみ"
+msgstr "リビジョンを作成できるのは組立部品のみです。"
 
 #: part/models.py:827
 msgid "Cannot make a revision of a template part"
@@ -6916,7 +6917,7 @@ msgstr "このシリアル番号の在庫品はすでに存在します"
 
 #: part/models.py:1062
 msgid "Duplicate IPN not allowed in part settings"
-msgstr "パート設定でIPNの重複が許可されていません。"
+msgstr "部品設定でIPNの重複が許可されていません。"
 
 #: part/models.py:1075
 msgid "Duplicate part revision already exists."
@@ -6928,7 +6929,7 @@ msgstr "この名前、IPN、リビジョンを持つ部品は既に存在しま
 
 #: part/models.py:1109
 msgid "Parts cannot be assigned to structural part categories!"
-msgstr "部品を構造部品のカテゴリーに割り当てることはできません！"
+msgstr "部品は階層構造用のカテゴリには登録できません。"
 
 #: part/models.py:1141
 msgid "Part name"
@@ -6944,11 +6945,11 @@ msgstr "この部品はテンプレート部品ですか？"
 
 #: part/models.py:1157
 msgid "Is this part a variant of another part?"
-msgstr "この部品は他の部品の変形ですか？"
+msgstr "この部品は他の部品のバリアントですか？"
 
 #: part/models.py:1158
 msgid "Variant Of"
-msgstr "変種"
+msgstr "バリアント元の部品"
 
 #: part/models.py:1165
 msgid "Part description (optional)"
@@ -6960,11 +6961,11 @@ msgstr "キーワード"
 
 #: part/models.py:1173
 msgid "Part keywords to improve visibility in search results"
-msgstr "検索結果での視認性を向上させる部分キーワード"
+msgstr "検索結果で部品を見つけやすくするためのキーワード"
 
 #: part/models.py:1183
 msgid "Part category"
-msgstr "パーツカテゴリ"
+msgstr "部品カテゴリ"
 
 #: part/models.py:1190 part/serializers.py:763
 #: report/templates/report/inventree_stock_location_report.html:103
@@ -6985,7 +6986,7 @@ msgstr "この部品は他の部品の改訂版ですか？"
 
 #: part/models.py:1209
 msgid "Revision Of"
-msgstr "改訂版"
+msgstr "改訂元の部品"
 
 #: part/models.py:1225
 msgid "Where is this item normally stored?"
@@ -6997,7 +6998,7 @@ msgstr "デフォルトの有効期限"
 
 #: part/models.py:1264
 msgid "Expiry time (in days) for stock items of this part"
-msgstr "この部品の在庫品の有効期限（日単位"
+msgstr "この部品の在庫品の有効期間（日数）"
 
 #: part/models.py:1272 part/serializers.py:833
 msgid "Minimum Stock"
@@ -7029,7 +7030,7 @@ msgstr "この部品を使って他の部品を作ることはできますか？
 
 #: part/models.py:1310
 msgid "Does this part have tracking for unique items?"
-msgstr "このパーツはユニークなアイテムの追跡が可能ですか？"
+msgstr "この部品の在庫品を個体ごとに追跡しますか？"
 
 #: part/models.py:1316
 msgid "Can this part have test results recorded against it?"
@@ -7045,11 +7046,11 @@ msgstr "この部品は顧客に販売できますか？"
 
 #: part/models.py:1332
 msgid "Is this part active?"
-msgstr "この部分はアクティブですか？"
+msgstr "この部品は有効ですか？"
 
 #: part/models.py:1338
 msgid "Locked parts cannot be edited"
-msgstr "ロックされた部分は編集できません"
+msgstr "ロックされた部品は編集できません。"
 
 #: part/models.py:1344
 msgid "Is this a virtual part, such as a software product or license?"
@@ -7061,7 +7062,7 @@ msgstr "この部品は接着剤や締結部品などの消耗品ですか?"
 
 #: part/models.py:1355
 msgid "BOM Validated"
-msgstr "部品表の検証が完了しました"
+msgstr "部品表検証済み"
 
 #: part/models.py:1356
 msgid "Is the BOM for this part valid?"
@@ -7077,7 +7078,7 @@ msgstr "保存されたBOMのチェックサム"
 
 #: part/models.py:1371
 msgid "BOM checked by"
-msgstr "BOMチェック済み"
+msgstr "部品表の確認者"
 
 #: part/models.py:1376
 msgid "BOM checked date"
@@ -7089,27 +7090,27 @@ msgstr "作成ユーザー"
 
 #: part/models.py:1402
 msgid "Owner responsible for this part"
-msgstr "この部分の責任者"
+msgstr "この部品の担当者"
 
 #: part/models.py:2281
 msgid "Sell multiple"
-msgstr "複数販売"
+msgstr "販売単位"
 
 #: part/models.py:2644
 msgid "Part for stocktake"
-msgstr "ストックテイク用部品"
+msgstr "棚卸対象の部品"
 
 #: part/models.py:2649
 msgid "Item Count"
-msgstr "個数"
+msgstr "在庫レコード数"
 
 #: part/models.py:2650
 msgid "Number of individual stock entries at time of stocktake"
-msgstr "棚卸時の個別在庫数"
+msgstr "棚卸時の在庫レコード数"
 
 #: part/models.py:2658
 msgid "Total available stock at time of stocktake"
-msgstr "ストックテイク時の在庫可能量"
+msgstr "棚卸時の使用可能在庫数量"
 
 #: part/models.py:2662 report/templates/report/inventree_test_report.html:106
 #: stock/models.py:3841
@@ -7118,7 +7119,7 @@ msgstr "日付"
 
 #: part/models.py:2663
 msgid "Date stocktake was performed"
-msgstr "ストックテイク実施日"
+msgstr "棚卸実施日"
 
 #: part/models.py:2670
 msgid "Minimum Stock Cost"
@@ -7146,11 +7147,11 @@ msgstr "無効なテンプレート名 - 英数字を1文字以上含む必要�
 
 #: part/models.py:2816
 msgid "Test templates can only be created for testable parts"
-msgstr "テストテンプレートは、テスト可能な部分に対してのみ作成できます。"
+msgstr "テストテンプレートを作成できるのは、テスト可能な部品のみです。"
 
 #: part/models.py:2830
 msgid "Test template with the same key already exists for part"
-msgstr "同じキーを持つテスト・テンプレートがパートに既に存在します。"
+msgstr "この部品には、同じキーのテストテンプレートがすでに存在します。"
 
 #: part/models.py:2847
 msgid "Test Name"
@@ -7186,11 +7187,11 @@ msgstr "必須"
 
 #: part/models.py:2873
 msgid "Is this test required to pass?"
-msgstr "このテストは合格するために必要ですか？"
+msgstr "このテストへの合格は必須ですか？"
 
 #: part/models.py:2878
 msgid "Requires Value"
-msgstr "価値が必要"
+msgstr "結果の値が必須"
 
 #: part/models.py:2879
 msgid "Does this test require a value when adding a test result?"
@@ -7230,7 +7231,7 @@ msgstr "親部品を選択"
 
 #: part/models.py:3194
 msgid "Sub part"
-msgstr "サブパート"
+msgstr "構成部品"
 
 #: part/models.py:3195
 msgid "Select part to be used in BOM"
@@ -7238,7 +7239,7 @@ msgstr "BOMで使用する部品を選択"
 
 #: part/models.py:3201 part/serializers.py:1455
 msgid "Amount"
-msgstr "金額"
+msgstr "使用数量"
 
 #: part/models.py:3202
 msgid "Amount of sub-part consumed to produce one part"
@@ -7250,19 +7251,19 @@ msgstr "このBOMアイテムのBOM数量"
 
 #: part/models.py:3220
 msgid "This BOM item is optional"
-msgstr "この部品表はオプションです。"
+msgstr "このBOM明細は任意です。"
 
 #: part/models.py:3226
 msgid "This BOM item is consumable (it is not tracked in build orders)"
-msgstr "このBOMアイテムは消耗品です。"
+msgstr "このBOM明細は消耗品です（製造オーダーで追跡しません）。"
 
 #: part/models.py:3234
 msgid "Setup Quantity"
-msgstr "設定数量"
+msgstr "段取り損失数量"
 
 #: part/models.py:3235
 msgid "Extra required quantity for a build, to account for setup losses"
-msgstr "ビルドに必要な追加の必要量（セットアップ時の損失を考慮した分）"
+msgstr "製造時の段取り損失を考慮した追加の必要数量"
 
 #: part/models.py:3243
 msgid "Attrition"
@@ -7270,7 +7271,7 @@ msgstr "歩留まり損失"
 
 #: part/models.py:3245
 msgid "Estimated attrition for a build, expressed as a percentage (0-100)"
-msgstr "ビルドにおける推定歩留まり率（0～100％で表されます）"
+msgstr "製造時の推定歩留まり率（0～100％）"
 
 #: part/models.py:3256
 msgid "Rounding Multiple"
@@ -7298,7 +7299,7 @@ msgstr "BOMアイテムノート"
 
 #: part/models.py:3290
 msgid "Checksum"
-msgstr "チェックサムi"
+msgstr "チェックサム"
 
 #: part/models.py:3291
 msgid "BOM line checksum"
@@ -7334,16 +7335,16 @@ msgstr "サブパーツの指定が必要"
 
 #: part/models.py:3611
 msgid "BOM Item Substitute"
-msgstr "BOMアイテム代替"
+msgstr "BOM項目の代替部品"
 
 #: part/models.py:3618
 #, python-brace-format
 msgid "{substitute} (substitute for {part})"
-msgstr ""
+msgstr "{substitute}（{part}の代替部品）"
 
 #: part/models.py:3661
 msgid "Substitute part cannot be the same as the master part"
-msgstr "代用部品はマスター部品と同じにすることはできません。"
+msgstr "代替部品に元の部品と同じ部品は指定できません。"
 
 #: part/models.py:3674
 msgid "Parent BOM item"
@@ -7355,11 +7356,11 @@ msgstr "代用部品"
 
 #: part/models.py:3698
 msgid "Part 1"
-msgstr "パート #1"
+msgstr "部品1"
 
 #: part/models.py:3706
 msgid "Part 2"
-msgstr "パート #2"
+msgstr "部品2"
 
 #: part/models.py:3707
 msgid "Select Related Part"
@@ -7435,11 +7436,11 @@ msgstr "この部品の初期在庫場所を指定してください。"
 
 #: part/serializers.py:404
 msgid "Select supplier (or leave blank to skip)"
-msgstr "サプライヤーを選択してください。"
+msgstr "サプライヤーを選択してください（省略する場合は空欄）。"
 
 #: part/serializers.py:420
 msgid "Select manufacturer (or leave blank to skip)"
-msgstr "メーカーを選択してください。"
+msgstr "メーカーを選択してください（省略する場合は空欄）。"
 
 #: part/serializers.py:430
 msgid "Manufacturer part number"
@@ -7467,7 +7468,7 @@ msgstr "カテゴリ名"
 
 #: part/serializers.py:777
 msgid "Building"
-msgstr "建物"
+msgstr "製造中数量"
 
 #: part/serializers.py:778
 msgid "Quantity of this part currently being in production"
@@ -7475,12 +7476,12 @@ msgstr "現在生産中の当該部品の数量"
 
 #: part/serializers.py:785
 msgid "Outstanding quantity of this part scheduled to be built"
-msgstr "この部品の予定生産数量"
+msgstr "この部品の製造予定数量のうち、未完成の数量"
 
 #: part/serializers.py:805 stock/serializers.py:1275 stock/serializers.py:1462
 #: users/ruleset.py:50
 msgid "Stock Items"
-msgstr "在庫商品"
+msgstr "在庫品"
 
 #: part/serializers.py:809
 msgid "Revisions"
@@ -7494,27 +7495,27 @@ msgstr "総在庫"
 
 #: part/serializers.py:821
 msgid "Unallocated Stock"
-msgstr "未割当株式"
+msgstr "未引当在庫"
 
 #: part/serializers.py:829
 msgid "Variant Stock"
-msgstr "バリアントストック"
+msgstr "バリアント部品の在庫"
 
 #: part/serializers.py:908
 msgid "Duplicate Part"
-msgstr "重複部分"
+msgstr "部品を複製"
 
 #: part/serializers.py:909
 msgid "Copy initial data from another Part"
-msgstr "別のパートから初期データをコピー"
+msgstr "別の部品から初期データをコピー"
 
 #: part/serializers.py:914
 msgid "Copy Image"
-msgstr "コピー画像"
+msgstr "画像をコピー"
 
 #: part/serializers.py:915
 msgid "Copy image from original part"
-msgstr "元の部分から画像をコピー"
+msgstr "元の部品から画像をコピー"
 
 #: part/serializers.py:920
 msgid "Copy BOM"
@@ -7526,11 +7527,11 @@ msgstr "元の部品から部品表をコピー"
 
 #: part/serializers.py:927
 msgid "Copy notes from original part"
-msgstr "元のパートからメモをコピー"
+msgstr "元の部品からメモをコピー"
 
 #: part/serializers.py:932
 msgid "Copy Tests"
-msgstr "コピーテスト"
+msgstr "テストをコピー"
 
 #: part/serializers.py:933
 msgid "Copy test templates from original part"
@@ -7554,7 +7555,7 @@ msgstr "この部品の初期サプライヤー情報を追加します。"
 
 #: part/serializers.py:957
 msgid "Copy Category Parameters"
-msgstr "コピーカテゴリパラメータ"
+msgstr "カテゴリのパラメータをコピー"
 
 #: part/serializers.py:958
 msgid "Copy parameter templates from selected part category"
@@ -7578,27 +7579,27 @@ msgstr "部品表全体の検証"
 
 #: part/serializers.py:1145 part/serializers.py:1556
 msgid "Can Build"
-msgstr "ビルド"
+msgstr "製造可能数量"
 
 #: part/serializers.py:1162
 msgid "Required for Build Orders"
-msgstr "ビルドオーダーに必要なもの"
+msgstr "製造オーダーの必要数量"
 
 #: part/serializers.py:1167
 msgid "Allocated to Build Orders"
-msgstr "ビルドオーダーに割り当てられました"
+msgstr "製造オーダーへの引当数量"
 
 #: part/serializers.py:1174
 msgid "Required for Sales Orders"
-msgstr "セールスオーダーに必要なもの"
+msgstr "受注の必要数量"
 
 #: part/serializers.py:1178
 msgid "Allocated to Sales Orders"
-msgstr "セールスオーダーに割り当てられました"
+msgstr "受注への引当数量"
 
 #: part/serializers.py:1238
 msgid "Part IPN"
-msgstr "パートIPN"
+msgstr "部品のIPN"
 
 #: part/serializers.py:1245
 msgid "Part Description"
@@ -7662,7 +7663,7 @@ msgstr "コピー前に既存のBOMアイテムを削除"
 
 #: part/serializers.py:1790
 msgid "Include Inherited"
-msgstr "インクルード継承"
+msgstr "継承した明細を含める"
 
 #: part/serializers.py:1791
 msgid "Include BOM items which are inherited from templated parts"
@@ -7678,11 +7679,11 @@ msgstr "無効な行をスキップするには、このオプションを有効
 
 #: part/serializers.py:1802
 msgid "Copy Substitute Parts"
-msgstr "コピー代用部品"
+msgstr "代替部品をコピー"
 
 #: part/serializers.py:1803
 msgid "Copy substitute parts when duplicate BOM items"
-msgstr "BOMアイテムの重複時に代替部品をコピー"
+msgstr "BOM明細を複製するときに代替部品もコピーします"
 
 #: part/tasks.py:43
 msgid "Low stock notification"
@@ -7695,7 +7696,7 @@ msgstr "{part.name}の在庫が設定された最低レベルを下回りまし�
 
 #: part/tasks.py:75
 msgid "Stale stock notification"
-msgstr "在庫切れ通知"
+msgstr "在庫の有効期限通知"
 
 #: part/tasks.py:79
 msgid "You have 1 stock item approaching its expiry date"
@@ -7793,7 +7794,7 @@ msgstr "バーコードデータに一致するプラグインは見つかりま
 
 #: plugin/base/barcodes/api.py:471
 msgid "Matched supplier part"
-msgstr "適合部品"
+msgstr "一致した仕入先部品"
 
 #: plugin/base/barcodes/api.py:546
 msgid "Item has already been received"
@@ -7813,11 +7814,11 @@ msgstr "サプライヤーのバーコードに一致するプラグインがな
 
 #: plugin/base/barcodes/api.py:707
 msgid "Multiple matching line items found"
-msgstr "複数の一致する行項目が見つかりました"
+msgstr "一致する明細が複数見つかりました。"
 
 #: plugin/base/barcodes/api.py:710 plugin/base/barcodes/mixins.py:393
 msgid "No matching line item found"
-msgstr "該当する項目が見つかりません"
+msgstr "一致する明細が見つかりません。"
 
 #: plugin/base/barcodes/api.py:752
 msgid "You do not have the required permissions for sales orders"
@@ -7825,7 +7826,7 @@ msgstr "受注に必要な権限がありません"
 
 #: plugin/base/barcodes/api.py:761
 msgid "No sales order provided"
-msgstr "販売注文はありません"
+msgstr "受注が指定されていません。"
 
 #: plugin/base/barcodes/api.py:770
 msgid "Barcode does not match an existing stock item"
@@ -7833,7 +7834,7 @@ msgstr "バーコードが既存の在庫品と一致しません"
 
 #: plugin/base/barcodes/api.py:786
 msgid "Stock item does not match line item"
-msgstr "在庫品目が行品目と一致しません"
+msgstr "在庫品が明細と一致しません。"
 
 #: plugin/base/barcodes/api.py:816
 msgid "Insufficient stock available"
@@ -7841,7 +7842,7 @@ msgstr "在庫不足"
 
 #: plugin/base/barcodes/api.py:829
 msgid "Stock item allocated to sales order"
-msgstr "販売注文に割り当てられた在庫品目"
+msgstr "在庫品を受注に引き当てました。"
 
 #: plugin/base/barcodes/api.py:832
 msgid "Not enough information"
@@ -7850,27 +7851,27 @@ msgstr "情報が不足しています"
 #: plugin/base/barcodes/mixins.py:309
 #: plugin/builtin/barcodes/inventree_barcode.py:101
 msgid "Found matching item"
-msgstr "一致するアイテムが見つかりました"
+msgstr "一致する項目が見つかりました。"
 
 #: plugin/base/barcodes/mixins.py:397
 msgid "Supplier part does not match line item"
-msgstr "サプライヤーの部品が品目と一致しない"
+msgstr "仕入先部品が明細と一致しません。"
 
 #: plugin/base/barcodes/mixins.py:402
 msgid "Line item is already completed"
-msgstr "ライン・アイテムはすでに完了している"
+msgstr "明細はすでに完了しています。"
 
 #: plugin/base/barcodes/mixins.py:440
 msgid "Further information required to receive line item"
-msgstr "ライン・アイテムを受け取るために必要な詳細情報"
+msgstr "明細を受領するには追加情報が必要です。"
 
 #: plugin/base/barcodes/mixins.py:448
 msgid "Received purchase order line item"
-msgstr "受領済み発注書項目"
+msgstr "発注明細を受領しました。"
 
 #: plugin/base/barcodes/mixins.py:455
 msgid "Failed to receive line item"
-msgstr "ラインアイテムの受信に失敗"
+msgstr "明細を受領できませんでした。"
 
 #: plugin/base/barcodes/serializers.py:53
 msgid "Scanned barcode data"
@@ -7886,11 +7887,11 @@ msgstr "バーコードを生成するモデルオブジェクトの主キー"
 
 #: plugin/base/barcodes/serializers.py:137
 msgid "Purchase Order to allocate items against"
-msgstr "発注書"
+msgstr "品目の引当先となる発注書"
 
 #: plugin/base/barcodes/serializers.py:143
 msgid "Purchase order is not open"
-msgstr "注文書が未開封"
+msgstr "この発注は未完了状態ではありません"
 
 #: plugin/base/barcodes/serializers.py:161
 msgid "Supplier to receive items from"
@@ -7898,7 +7899,7 @@ msgstr "商品を受け取るサプライヤー"
 
 #: plugin/base/barcodes/serializers.py:168
 msgid "PurchaseOrder to receive items against"
-msgstr "商品を受け取るPurchaseOrder"
+msgstr "受領対象の発注"
 
 #: plugin/base/barcodes/serializers.py:174
 msgid "Purchase order has not been placed"
@@ -7910,11 +7911,11 @@ msgstr "商品を受け取る場所"
 
 #: plugin/base/barcodes/serializers.py:188
 msgid "Cannot select a structural location"
-msgstr "構造上の位置を選択できません"
+msgstr "階層構造用の保管場所は選択できません"
 
 #: plugin/base/barcodes/serializers.py:196
 msgid "Purchase order line item to receive items against"
-msgstr "物品を受け取るための購買発注項目"
+msgstr "受領対象の発注明細"
 
 #: plugin/base/barcodes/serializers.py:202
 msgid "Automatically allocate stock items to the purchase order"
@@ -7922,27 +7923,27 @@ msgstr "在庫アイテムを自動的に発注書に割り当てる"
 
 #: plugin/base/barcodes/serializers.py:215
 msgid "Sales Order to allocate items against"
-msgstr "セールスオーダー"
+msgstr "在庫の引当先となる受注"
 
 #: plugin/base/barcodes/serializers.py:221
 msgid "Sales order is not open"
-msgstr "販売注文がオープンされていません"
+msgstr "この受注は未完了状態ではありません"
 
 #: plugin/base/barcodes/serializers.py:229
 msgid "Sales order line item to allocate items against"
-msgstr "商品を割り当てる販売注文項目"
+msgstr "在庫の引当先となる受注明細"
 
 #: plugin/base/barcodes/serializers.py:236
 msgid "Sales order shipment to allocate items against"
-msgstr "商品を割り当てる販売注文の出荷"
+msgstr "在庫の引当先となる受注の出荷"
 
 #: plugin/base/barcodes/serializers.py:242
 msgid "Shipment has already been delivered"
-msgstr "出荷済み"
+msgstr "この出荷はすでに配達済みです"
 
 #: plugin/base/barcodes/serializers.py:247
 msgid "Quantity to allocate"
-msgstr "配分数量"
+msgstr "引当数量"
 
 #: plugin/base/label/label.py:41
 msgid "Label printing failed"
@@ -7982,7 +7983,7 @@ msgstr "機能の説明"
 
 #: plugin/base/ui/serializers.py:54
 msgid "Feature Icon"
-msgstr "特長アイコン"
+msgstr "機能アイコン"
 
 #: plugin/base/ui/serializers.py:58
 msgid "Feature Options"
@@ -8036,55 +8037,55 @@ msgstr "内部バーコードフォーマットの選択"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:37
 msgid "JSON barcodes (human readable)"
-msgstr "JSONバーコード（可読）"
+msgstr "JSONバーコード（人が読める形式）"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:38
 msgid "Short barcodes (space optimized)"
-msgstr "短いバーコード（スペース最適化）"
+msgstr "省スペース型の短縮バーコード"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:43
 msgid "Short Barcode Prefix"
-msgstr "短いバーコードプレフィックス"
+msgstr "短縮バーコードの接頭辞"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:45
 msgid "Customize the prefix used for short barcodes, may be useful for environments with multiple InvenTree instances"
-msgstr "複数のInvenTreeインスタンスがある環境で便利です。"
+msgstr "短縮バーコードに使う接頭辞を設定します。複数のInvenTreeインスタンスを運用する環境で役立ちます。"
 
 #: plugin/builtin/events/auto_create_builds.py:39
 msgid "Auto Create Builds"
-msgstr "自動ビルド作成"
+msgstr "製造オーダーを自動作成"
 
 #: plugin/builtin/events/auto_create_builds.py:42
 msgid "Automatically create build orders for assemblies"
-msgstr "アセンブリのビルドオーダーを自動的に作成します"
+msgstr "アセンブリの製造オーダーを自動作成します。"
 
 #: plugin/builtin/events/auto_create_builds.py:47
 msgid "Cascade Depth"
-msgstr ""
+msgstr "子製造オーダーの自動作成階層数"
 
 #: plugin/builtin/events/auto_create_builds.py:49
 msgid "How many levels of the sub-assembly tree to generate child build orders for"
-msgstr ""
+msgstr "子製造オーダーを自動作成するサブアセンブリの階層数を指定します"
 
 #: plugin/builtin/events/auto_issue_orders.py:17
 msgid "Auto Issue Orders"
-msgstr "自動発行オーダー"
+msgstr "注文を自動発行"
 
 #: plugin/builtin/events/auto_issue_orders.py:20
 msgid "Automatically issue orders on the assigned target date"
-msgstr "指定された目標日に自動的にオーダーを発行します"
+msgstr "指定した目標日に注文を自動発行します。"
 
 #: plugin/builtin/events/auto_issue_orders.py:30
 msgid "Auto Issue Build Orders"
-msgstr "自動発行ビルドオーダー"
+msgstr "製造オーダーを自動発行"
 
 #: plugin/builtin/events/auto_issue_orders.py:32
 msgid "Automatically issue build orders on the assigned target date"
-msgstr "割り当てられた目標日に、自動的にビルドオーダーを発行します。"
+msgstr "指定した目標日に製造オーダーを自動発行します。"
 
 #: plugin/builtin/events/auto_issue_orders.py:38
 msgid "Auto Issue Purchase Orders"
-msgstr "自動発行発注書"
+msgstr "発注書を自動発行"
 
 #: plugin/builtin/events/auto_issue_orders.py:40
 msgid "Automatically issue purchase orders on the assigned target date"
@@ -8092,11 +8093,11 @@ msgstr "割り当てられた目標日に、自動的に発注書を発行しま
 
 #: plugin/builtin/events/auto_issue_orders.py:46
 msgid "Auto Issue Sales Orders"
-msgstr "自動発行セールスオーダー"
+msgstr "受注を自動発行"
 
 #: plugin/builtin/events/auto_issue_orders.py:48
 msgid "Automatically issue sales orders on the assigned target date"
-msgstr "割り当てられた目標日に、自動的にセールスオーダーを発行します。"
+msgstr "指定した目標日に受注を自動発行します。"
 
 #: plugin/builtin/events/auto_issue_orders.py:54
 msgid "Auto Issue Return Orders"
@@ -8349,7 +8350,7 @@ msgstr "InvenTreeの組み込みWell-Known URL"
 
 #: plugin/builtin/integration/currency_exchange.py:22
 msgid "InvenTree Currency Exchange"
-msgstr "インベンツリー両替所"
+msgstr "InvenTree 為替レート連携"
 
 #: plugin/builtin/integration/currency_exchange.py:23
 msgid "Default currency exchange integration"
@@ -8622,7 +8623,7 @@ msgstr "プラグイン名"
 
 #: plugin/models.py:62 plugin/serializers.py:119
 msgid "Package Name"
-msgstr "ご利用プラン"
+msgstr "パッケージ名"
 
 #: plugin/models.py:64
 msgid "Name of the installed package, if the plugin was installed via PIP"
@@ -8713,7 +8714,7 @@ msgstr "外部APIへのアクセスに必要なキー"
 
 #: plugin/samples/integration/sample.py:83
 msgid "Numerical"
-msgstr "日数"
+msgstr "数値"
 
 #: plugin/samples/integration/sample.py:84
 msgid "A numerical setting"
@@ -8741,7 +8742,7 @@ msgstr "パーツパネルの有効化"
 
 #: plugin/samples/integration/user_interface_sample.py:28
 msgid "Enable custom panels for Part views"
-msgstr "パートビューのカスタムパネルを有効化"
+msgstr "部品画面のカスタムパネルを有効化"
 
 #: plugin/samples/integration/user_interface_sample.py:33
 msgid "Enable Purchase Order Panels"
@@ -8769,11 +8770,11 @@ msgstr "テスト用ダイナミックパネルの有効化"
 
 #: plugin/samples/integration/user_interface_sample.py:114
 msgid "Part Panel"
-msgstr "パートパネル"
+msgstr "部品パネル"
 
 #: plugin/samples/integration/user_interface_sample.py:149
 msgid "Broken Dashboard Item"
-msgstr "ダッシュボードの故障"
+msgstr "動作しないダッシュボード項目"
 
 #: plugin/samples/integration/user_interface_sample.py:151
 msgid "This is a broken dashboard item - it will not render!"
@@ -8841,7 +8842,7 @@ msgstr "これでこのプラグインが現在のインスタンスにインス
 
 #: plugin/serializers.py:150
 msgid "Installation not confirmed"
-msgstr "設置未確認"
+msgstr "インストールが確認されていません"
 
 #: plugin/serializers.py:152
 msgid "Either packagename or URL must be provided"
@@ -8902,7 +8903,7 @@ msgstr "この設定が適用されるユーザー"
 #: pricing/models.py:86
 #, python-brace-format
 msgid "{part} pricing"
-msgstr ""
+msgstr "{part} の価格設定"
 
 #: pricing/models.py:714
 msgid "Currency used to cache pricing calculations"
@@ -8910,19 +8911,19 @@ msgstr "価格計算のキャッシュに使用される通貨"
 
 #: pricing/models.py:730
 msgid "Minimum BOM Cost"
-msgstr "最小BOMコスト"
+msgstr "BOMの最低原価"
 
 #: pricing/models.py:731
 msgid "Minimum cost of component parts"
-msgstr "構成部品の最低コスト"
+msgstr "構成部品の最低原価"
 
 #: pricing/models.py:737
 msgid "Maximum BOM Cost"
-msgstr "最大BOMコスト"
+msgstr "BOMの最高原価"
 
 #: pricing/models.py:738
 msgid "Maximum cost of component parts"
-msgstr "構成部品の最大コスト"
+msgstr "構成部品の最高原価"
 
 #: pricing/models.py:744
 msgid "Minimum Purchase Cost"
@@ -8946,7 +8947,7 @@ msgstr "最低社内価格"
 
 #: pricing/models.py:759
 msgid "Minimum cost based on internal price breaks"
-msgstr "社内価格ブレークに基づく最低コスト"
+msgstr "社内向けの数量別価格に基づく最低原価"
 
 #: pricing/models.py:765
 msgid "Maximum Internal Price"
@@ -8954,7 +8955,7 @@ msgstr "社内最高価格"
 
 #: pricing/models.py:766
 msgid "Maximum cost based on internal price breaks"
-msgstr "社内価格ブレークに基づく最大コスト"
+msgstr "社内向けの数量別価格に基づく最高原価"
 
 #: pricing/models.py:772
 msgid "Minimum Supplier Price"
@@ -9018,7 +9019,7 @@ msgstr "最低販売価格"
 
 #: pricing/models.py:829
 msgid "Minimum sale price based on price breaks"
-msgstr "価格破壊に基づく最低販売価格"
+msgstr "数量別価格帯に基づく最低販売価格"
 
 #: pricing/models.py:835
 msgid "Maximum Sale Price"
@@ -9026,7 +9027,7 @@ msgstr "最高販売価格"
 
 #: pricing/models.py:836
 msgid "Maximum sale price based on price breaks"
-msgstr "価格破壊に基づく最高販売価格"
+msgstr "数量別価格帯に基づく最高販売価格"
 
 #: pricing/models.py:842
 msgid "Minimum Sale Cost"
@@ -9034,51 +9035,51 @@ msgstr "最低販売価格"
 
 #: pricing/models.py:843
 msgid "Minimum historical sale price"
-msgstr "過去の最低売却価格"
+msgstr "過去の最低販売価格"
 
 #: pricing/models.py:849
 msgid "Maximum Sale Cost"
-msgstr "最大販売価格"
+msgstr "最高販売価格"
 
 #: pricing/models.py:850
 msgid "Maximum historical sale price"
-msgstr "過去の最高売却価格"
+msgstr "過去の最高販売価格"
 
 #: pricing/models.py:865
 msgid "Part Sale Price Break"
-msgstr "パーツセール価格"
+msgstr "部品の数量別販売価格帯"
 
 #: pricing/models.py:896
 msgid "Part Internal Price Break"
-msgstr "数量別社内部品価格"
+msgstr "部品の社内向け数量別価格帯"
 
 #: pricing/serializers.py:40 pricing/serializers.py:61
 msgid "Currency for this price break"
-msgstr ""
+msgstr "この数量別価格の通貨"
 
 #: pricing/serializers.py:159
 msgid "Minimum Price"
-msgstr "最小価格"
+msgstr "最低価格"
 
 #: pricing/serializers.py:160
 msgid "Override calculated value for minimum price"
-msgstr "最低価格の計算値の上書き"
+msgstr "最低価格の計算値を上書きします。"
 
 #: pricing/serializers.py:167
 msgid "Minimum price currency"
-msgstr "最低価格通貨"
+msgstr "最低価格の通貨"
 
 #: pricing/serializers.py:174
 msgid "Maximum Price"
-msgstr "最大価格"
+msgstr "最高価格"
 
 #: pricing/serializers.py:175
 msgid "Override calculated value for maximum price"
-msgstr "最高価格の計算値を上書き"
+msgstr "最高価格の計算値を上書きします。"
 
 #: pricing/serializers.py:182
 msgid "Maximum price currency"
-msgstr "最高価格通貨"
+msgstr "最高価格の通貨"
 
 #: pricing/serializers.py:211
 msgid "Update"
@@ -9091,15 +9092,15 @@ msgstr "この部品の価格を更新"
 #: pricing/serializers.py:241
 #, python-brace-format
 msgid "Could not convert from provided currencies to {currency}"
-msgstr ""
+msgstr "指定された通貨から {currency} に変換できませんでした"
 
 #: pricing/serializers.py:248
 msgid "Minimum price must not be greater than maximum price"
-msgstr "最低価格は最高価格を超えてはなりません。"
+msgstr "最低価格は最高価格以下である必要があります。"
 
 #: pricing/serializers.py:251
 msgid "Maximum price must not be less than minimum price"
-msgstr "最高価格は最低価格を下回ってはなりません。"
+msgstr "最高価格は最低価格以上である必要があります。"
 
 #: report/api.py:45 report/serializers.py:123 report/serializers.py:183
 msgid "Items"
@@ -9139,7 +9140,7 @@ msgstr "リーガル"
 
 #: report/helpers.py:52
 msgid "Letter"
-msgstr "文字"
+msgstr "レター"
 
 #: report/models.py:139
 msgid "Template file with this name already exists"
@@ -9159,7 +9160,7 @@ msgstr "リビジョン番号（自動インクリメント）"
 
 #: report/models.py:253
 msgid "Attach to Model on Print"
-msgstr "プリントのモデルに装着"
+msgstr "印刷時に対象データに添付"
 
 #: report/models.py:255
 msgid "Save report output as an attachment against linked model instance when printing"
@@ -9232,7 +9233,7 @@ msgstr "レポート出力の統合エラー"
 
 #: report/models.py:823
 msgid "Width [mm]"
-msgstr "幅 [mm］"
+msgstr "幅 [mm]"
 
 #: report/models.py:824
 msgid "Label width, specified in mm"
@@ -9240,7 +9241,7 @@ msgstr "ラベル幅（mm単位）"
 
 #: report/models.py:830
 msgid "Height [mm]"
-msgstr "高さ [mm］"
+msgstr "高さ [mm]"
 
 #: report/models.py:831
 msgid "Label height, specified in mm"
@@ -9264,11 +9265,11 @@ msgstr "スニペットファイルの説明"
 
 #: report/models.py:990
 msgid "Asset"
-msgstr "資産"
+msgstr "アセット"
 
 #: report/models.py:991
 msgid "Report asset file"
-msgstr "レポート資産ファイル"
+msgstr "レポート用アセットファイル"
 
 #: report/models.py:998
 msgid "Asset file description"
@@ -9331,10 +9332,10 @@ msgstr "部品画像"
 
 #: report/templates/report/inventree_build_order_report.html:145
 msgid "Required For"
-msgstr "必須"
+msgstr "供給先の親製造オーダー"
 
 #: report/templates/report/inventree_build_order_report.html:151
-#: users/models.py:304
+#: templates/email/api_token_issued.html:17 users/models.py:304
 msgid "Issued By"
 msgstr "発行者"
 
@@ -9355,7 +9356,7 @@ msgstr "単価"
 #: report/templates/report/inventree_return_order_report.html:47
 #: report/templates/report/inventree_sales_order_report.html:54
 msgid "Extra Line Items"
-msgstr "追加項目"
+msgstr "追加明細"
 
 #: report/templates/report/inventree_purchase_order_report.html:78
 #: report/templates/report/inventree_sales_order_report.html:71
@@ -9392,7 +9393,7 @@ msgstr "在庫品テストレポート"
 #: report/templates/report/inventree_test_report.html:153
 #: stock/serializers.py:672
 msgid "Installed Items"
-msgstr "設置項目"
+msgstr "組込済み在庫品"
 
 #: report/templates/report/inventree_stock_report_merge.html:111
 #: report/templates/report/inventree_test_report.html:167
@@ -9409,11 +9410,11 @@ msgstr "テスト"
 
 #: report/templates/report/inventree_test_report.html:129
 msgid "Pass"
-msgstr "パス"
+msgstr "合格"
 
 #: report/templates/report/inventree_test_report.html:131
 msgid "Fail"
-msgstr "失敗"
+msgstr "不合格"
 
 #: report/templates/report/inventree_test_report.html:138
 msgid "No result (required)"
@@ -9421,11 +9422,11 @@ msgstr "結果なし（必須）"
 
 #: report/templates/report/inventree_test_report.html:140
 msgid "No result"
-msgstr "何も結果はありません"
+msgstr "結果なし"
 
 #: report/templates/report/inventree_transfer_order_report.html:27
 msgid "Transferred"
-msgstr "転送されました"
+msgstr "移動済み"
 
 #: report/templatetags/report.py:260
 msgid "Invalid media file path"
@@ -9501,7 +9502,7 @@ msgstr "フィルタリング結果にサブロケーションを含めること
 
 #: stock/api.py:386 stock/serializers.py:1458
 msgid "Parent Location"
-msgstr "親の位置"
+msgstr "親の保管場所"
 
 #: stock/api.py:387
 msgid "Filter by parent location"
@@ -9513,7 +9514,7 @@ msgstr "部品名（大文字・小文字を区別しません）"
 
 #: stock/api.py:673
 msgid "Part name contains (case insensitive)"
-msgstr "パート名に含まれるもの（大文字・小文字を区別しません）"
+msgstr "部品名の部分一致（大文字・小文字を区別しません）"
 
 #: stock/api.py:679
 msgid "Part name (regex)"
@@ -9521,15 +9522,15 @@ msgstr "部品名（正規表現）"
 
 #: stock/api.py:684
 msgid "Part IPN (case insensitive)"
-msgstr "パートIPN（大文字と小文字を区別しません）"
+msgstr "部品IPN（大文字・小文字を区別しません）"
 
 #: stock/api.py:690
 msgid "Part IPN contains (case insensitive)"
-msgstr "パートIPNに含まれるもの（大文字と小文字は区別されません）"
+msgstr "部品IPNの部分一致（大文字・小文字を区別しません）"
 
 #: stock/api.py:696
 msgid "Part IPN (regex)"
-msgstr "パートIPN（正規表現）"
+msgstr "部品IPN（正規表現）"
 
 #: stock/api.py:708
 msgid "Minimum stock"
@@ -9549,7 +9550,7 @@ msgstr "外部ロケーション"
 
 #: stock/api.py:858
 msgid "Consumed by Build Order"
-msgstr "ビルド・オーダーで消費"
+msgstr "製造オーダーで消費"
 
 #: stock/api.py:868
 msgid "Installed in other stock item"
@@ -9557,23 +9558,23 @@ msgstr "その他在庫品に装着"
 
 #: stock/api.py:948
 msgid "Part Tree"
-msgstr "パートツリー"
+msgstr "部品ツリー"
 
 #: stock/api.py:977
 msgid "Updated before"
-msgstr "更新前"
+msgstr "更新日が指定日より前"
 
 #: stock/api.py:981
 msgid "Updated after"
-msgstr "更新後"
+msgstr "更新日が指定日より後"
 
 #: stock/api.py:985
 msgid "Stocktake Before"
-msgstr "ストックテイク前"
+msgstr "棚卸日が指定日より前"
 
 #: stock/api.py:989
 msgid "Stocktake After"
-msgstr "ストックテイク後"
+msgstr "棚卸日が指定日より後"
 
 #: stock/api.py:993
 msgid "Has Stocktake Date"
@@ -9581,19 +9582,19 @@ msgstr "棚卸日あり"
 
 #: stock/api.py:1004
 msgid "Expiry date before"
-msgstr "有効期限"
+msgstr "有効期限が指定日より前"
 
 #: stock/api.py:1008
 msgid "Expiry date after"
-msgstr "有効期限"
+msgstr "有効期限が指定日より後"
 
 #: stock/api.py:1011 stock/serializers.py:677
 msgid "Stale"
-msgstr "期限失効"
+msgstr "有効期限が近い"
 
 #: stock/api.py:1035
 msgid "Cascade Locations"
-msgstr "カスケードの所在地"
+msgstr "子の保管場所を含める"
 
 #: stock/api.py:1036
 msgid "If true, include items in child locations of the given location"
@@ -9609,7 +9610,7 @@ msgstr "数量が必要です"
 
 #: stock/api.py:1149
 msgid "Valid part must be supplied"
-msgstr "有効な部品を供給する必要があります。"
+msgstr "有効な部品を指定してください。"
 
 #: stock/api.py:1180
 msgid "The given supplier part does not exist"
@@ -9642,11 +9643,11 @@ msgstr "ID {id} の在庫品は存在しません"
 
 #: stock/models.py:78
 msgid "Stock Location type"
-msgstr "在庫ロケーションタイプ"
+msgstr "在庫場所の種類"
 
 #: stock/models.py:79
 msgid "Stock Location types"
-msgstr "ストックロケーションの種類"
+msgstr "在庫場所の種類"
 
 #: stock/models.py:105
 msgid "Default icon for all locations that have no icon set (optional)"
@@ -9654,7 +9655,7 @@ msgstr "アイコンが設定されていないすべての場所のデフォル
 
 #: stock/models.py:153 stock/models.py:1225
 msgid "Stock Location"
-msgstr "ストックロケーション"
+msgstr "在庫場所"
 
 #: stock/models.py:154 users/ruleset.py:49
 msgid "Stock Locations"
@@ -9670,9 +9671,9 @@ msgstr "所有者を選択"
 
 #: stock/models.py:210
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
-msgstr "ストックアイテムは、構造的なストックロケーションに直接配置されることはありませんが、子ロケーションに配置されることはあります。"
+msgstr "階層構造用の在庫場所には在庫品を直接配置できません。子の在庫場所には配置できます。"
 
-#: stock/models.py:217 users/models.py:684
+#: stock/models.py:217 users/models.py:703
 msgid "External"
 msgstr "外部"
 
@@ -9690,7 +9691,7 @@ msgstr "このロケーションのロケーションタイプ"
 
 #: stock/models.py:301
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
-msgstr "いくつかのストックアイテムがすでにストックロケーションに配置されているため、このストックロケーションを構造化することはできません！"
+msgstr "在庫品がすでに配置されているため、この在庫場所を階層構造用には変更できません。"
 
 #: stock/models.py:418
 msgid "Oldest stock first (FIFO)"
@@ -9727,7 +9728,7 @@ msgstr "部品の指定が必要"
 
 #: stock/models.py:1065
 msgid "Stock items cannot be located into structural stock locations!"
-msgstr "在庫品は、構造的な在庫場所に配置することはできません！"
+msgstr "階層構造用の在庫場所には在庫品を配置できません。"
 
 #: stock/models.py:1094
 msgid "Editing of serial numbers is not allowed - this item has already been assigned a serial number"
@@ -9735,12 +9736,12 @@ msgstr "シリアル番号の編集はできません。この商品にはすで
 
 #: stock/models.py:1111 stock/serializers.py:489
 msgid "Stock item cannot be created for virtual parts"
-msgstr "仮想部品にストックアイテムを作成できません"
+msgstr "仮想部品の在庫品は作成できません。"
 
 #: stock/models.py:1128
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
-msgstr "パートタイプ('{self.supplier_part.part}')は{self.part}でなければなりません。"
+msgstr "仕入先部品の部品 ('{self.supplier_part.part}') は {self.part} と一致する必要があります。"
 
 #: stock/models.py:1138 stock/models.py:1151
 msgid "Quantity must be 1 for item with a serial number"
@@ -9748,7 +9749,7 @@ msgstr "シリアル番号のある商品は数量が1でなければなりま�
 
 #: stock/models.py:1141
 msgid "Serial number cannot be set if quantity greater than 1"
-msgstr "数量が1以上の場合、シリアル番号は設定できません。"
+msgstr "数量が1より大きい場合、シリアル番号は設定できません。"
 
 #: stock/models.py:1163
 msgid "Item cannot belong to itself"
@@ -9756,19 +9757,19 @@ msgstr "アイテムはそれ自身に属することはできません"
 
 #: stock/models.py:1168
 msgid "Item must have a build reference if is_building=True"
-msgstr "is_building=Trueの場合、アイテムはビルド・リファレンスを持っていなければならない。"
+msgstr "is_building=True の在庫品には、製造オーダーを紐付ける必要があります。"
 
 #: stock/models.py:1181
 msgid "Build reference does not point to the same part object"
-msgstr "ビルド参照が同じ部品オブジェクトを指していません。"
+msgstr "紐付けられた製造オーダーの対象部品が在庫品の部品と一致しません。"
 
 #: stock/models.py:1195
 msgid "Parent Stock Item"
-msgstr "親株式"
+msgstr "親在庫品"
 
 #: stock/models.py:1207
 msgid "Base part"
-msgstr "ベース部"
+msgstr "元の部品"
 
 #: stock/models.py:1217
 msgid "Select a matching supplier part for this stock item"
@@ -9784,11 +9785,11 @@ msgstr "この在庫品は以下の梱包で保管されています。"
 
 #: stock/models.py:1243
 msgid "Installed In"
-msgstr "設置場所"
+msgstr "組込先"
 
 #: stock/models.py:1248
 msgid "Is this item installed in another item?"
-msgstr "このアイテムは他のアイテムにインストールされていますか？"
+msgstr "この在庫品は他の在庫品に組み込まれていますか？"
 
 #: stock/models.py:1267
 msgid "Serial number for this item"
@@ -9796,7 +9797,7 @@ msgstr "この商品のシリアル番号"
 
 #: stock/models.py:1284 stock/serializers.py:1838
 msgid "Batch code for this stock item"
-msgstr "このストックアイテムのバッチコード"
+msgstr "この在庫品のバッチコード"
 
 #: stock/models.py:1289
 msgid "Stock Quantity"
@@ -9804,31 +9805,31 @@ msgstr "在庫数"
 
 #: stock/models.py:1299
 msgid "Source Build"
-msgstr "ソースビルド"
+msgstr "製造元オーダー"
 
 #: stock/models.py:1302
 msgid "Build for this stock item"
-msgstr "このストックアイテムのビルド"
+msgstr "この在庫品を製造した製造オーダー"
 
 #: stock/models.py:1309
 msgid "Consumed By"
-msgstr "消費者"
+msgstr "消費先"
 
 #: stock/models.py:1312
 msgid "Build order which consumed this stock item"
-msgstr "このストックアイテムを消費したビルドオーダー"
+msgstr "この在庫品を消費した製造オーダー"
 
 #: stock/models.py:1321
 msgid "Source Purchase Order"
-msgstr "発注元"
+msgstr "仕入元の発注書"
 
 #: stock/models.py:1325
 msgid "Purchase order for this stock item"
-msgstr "この在庫商品の購入注文"
+msgstr "この在庫品の発注書"
 
 #: stock/models.py:1331
 msgid "Destination Sales Order"
-msgstr "販売先オーダー"
+msgstr "出荷先の受注"
 
 #: stock/models.py:1342
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
@@ -9844,7 +9845,7 @@ msgstr "枯渇時に削除"
 
 #: stock/models.py:1368
 msgid "Delete this Stock Item when stock is depleted"
-msgstr "在庫がなくなったら、このストックアイテムを削除します。"
+msgstr "数量がゼロになったら、この在庫品を削除します。"
 
 #: stock/models.py:1389
 msgid "Single unit purchase price at time of purchase"
@@ -9852,7 +9853,7 @@ msgstr "購入時の単品購入価格"
 
 #: stock/models.py:1419
 msgid "Converted to part"
-msgstr "パートに変換"
+msgstr "変換先の部品"
 
 #: stock/models.py:1633
 msgid "Quantity exceeds available stock"
@@ -9864,7 +9865,7 @@ msgstr "無効な数量値"
 
 #: stock/models.py:2008 stock/models.py:2561
 msgid "Cannot assign stock to structural location"
-msgstr "構造上ロケーションに在庫を割り当てることはできません"
+msgstr "階層構造用の在庫場所に在庫を配置することはできません。"
 
 #: stock/models.py:2163 stock/serializers.py:1106
 msgid "Quantity must not exceed available stock quantity"
@@ -9901,7 +9902,7 @@ msgstr "シリアル番号はリストとして提供されなければなりま
 
 #: stock/models.py:2543
 msgid "Quantity does not match serial numbers"
-msgstr "数量がシリアル番号と一致しません"
+msgstr "数量がシリアル番号の数と一致しません"
 
 #: stock/models.py:2657 stock/models.py:3759
 msgid "Test template does not exist"
@@ -9909,11 +9910,11 @@ msgstr "テストテンプレートが存在しません"
 
 #: stock/models.py:2675
 msgid "Stock item has been assigned to a sales order"
-msgstr "在庫商品が販売注文に割り当てられました"
+msgstr "この在庫品は受注に割り当てられています"
 
 #: stock/models.py:2679
 msgid "Stock item is installed in another item"
-msgstr "ストックアイテムが他のアイテムに装着されている場合"
+msgstr "この在庫品は別の在庫品に組み込まれています。"
 
 #: stock/models.py:2682
 msgid "Stock item contains other items"
@@ -9921,7 +9922,7 @@ msgstr "在庫商品には他の商品が含まれています。"
 
 #: stock/models.py:2685
 msgid "Stock item has been assigned to a customer"
-msgstr "在庫商品が顧客に割り当てられました"
+msgstr "この在庫品は顧客に割り当てられています"
 
 #: stock/models.py:2688 stock/models.py:2957
 msgid "Stock item is currently in production"
@@ -9929,7 +9930,7 @@ msgstr "在庫品は現在生産中です。"
 
 #: stock/models.py:2691
 msgid "Serialized stock cannot be merged"
-msgstr "連番在庫の統合はできません"
+msgstr "シリアル番号付きの在庫品は統合できません"
 
 #: stock/models.py:2698 stock/serializers.py:1707
 msgid "Duplicate stock items"
@@ -9949,7 +9950,7 @@ msgstr "在庫状況コードが一致していること"
 
 #: stock/models.py:3159
 msgid "StockItem cannot be moved as it is not in stock"
-msgstr "在庫がないため移動できません。"
+msgstr "この在庫品は在庫として使用できる状態ではないため、移動できません。"
 
 #: stock/models.py:3729
 msgid "Stock Item Test Result"
@@ -9999,9 +10000,9 @@ msgstr "開始"
 msgid "The timestamp of the test start"
 msgstr "テスト開始のタイムスタンプ"
 
-#: stock/models.py:3836 users/models.py:829
+#: stock/models.py:3836 users/models.py:848
 msgid "Finished"
-msgstr "修了済み"
+msgstr "完了"
 
 #: stock/models.py:3837
 msgid "The timestamp of the test finish"
@@ -10013,11 +10014,11 @@ msgstr "生成バッチコード"
 
 #: stock/serializers.py:93
 msgid "Select build order"
-msgstr "製造順序の選択"
+msgstr "製造オーダーを選択してください。"
 
 #: stock/serializers.py:102
 msgid "Select stock item to generate batch code for"
-msgstr "バッチコードを生成するストックアイテムを選択します。"
+msgstr "バッチコードを生成する在庫品を選択してください。"
 
 #: stock/serializers.py:111
 msgid "Select location to generate batch code for"
@@ -10069,15 +10070,15 @@ msgstr "親アイテム"
 
 #: stock/serializers.py:432
 msgid "Parent stock item"
-msgstr "親株式"
+msgstr "親在庫品"
 
 #: stock/serializers.py:458
 msgid "Use pack size when adding: the quantity defined is the number of packs"
-msgstr "数量はパック数です。"
+msgstr "追加時に梱包数量を適用します。入力する数量は梱包数です。"
 
 #: stock/serializers.py:460
 msgid "Use pack size"
-msgstr "パッケージサイズを使用"
+msgstr "梱包数量を適用"
 
 #: stock/serializers.py:467 stock/serializers.py:743
 msgid "Enter serial numbers for new items"
@@ -10109,7 +10110,7 @@ msgstr "期限切れ"
 
 #: stock/serializers.py:675
 msgid "Child Items"
-msgstr "子供用品"
+msgstr "子在庫品"
 
 #: stock/serializers.py:682
 msgid "Purchase price of this stock item, per unit or pack"
@@ -10121,12 +10122,12 @@ msgstr "この在庫商品の購入通貨"
 
 #: stock/serializers.py:720
 msgid "Enter number of stock items to serialize"
-msgstr "シリアル化するストックアイテムの数を入力"
+msgstr "シリアル番号を付ける在庫品の数を入力してください。"
 
 #: stock/serializers.py:728 stock/serializers.py:772 stock/serializers.py:810
 #: stock/serializers.py:965 stock/serializers.py:1099 stock/serializers.py:1141
 msgid "No stock item provided"
-msgstr "在庫品目がしていされていません"
+msgstr "在庫品が指定されていません。"
 
 #: stock/serializers.py:736
 #, python-brace-format
@@ -10136,7 +10137,7 @@ msgstr "数量は在庫数 ({q}) を超えてはなりません。"
 #: stock/serializers.py:754 stock/serializers.py:1663 stock/serializers.py:2066
 #: stock/serializers.py:2182
 msgid "Destination stock location"
-msgstr "仕向け地"
+msgstr "移動先の在庫場所"
 
 #: stock/serializers.py:775
 msgid "Serial numbers cannot be assigned to this part"
@@ -10148,15 +10149,15 @@ msgstr "シリアル番号が既に存在します"
 
 #: stock/serializers.py:851
 msgid "Select stock item to install"
-msgstr "インストールするストックアイテムを選択"
+msgstr "組み込む在庫品を選択してください。"
 
 #: stock/serializers.py:858
 msgid "Quantity to Install"
-msgstr "設置数量"
+msgstr "組込数量"
 
 #: stock/serializers.py:859
 msgid "Enter the quantity of items to install"
-msgstr "インストールするアイテムの数量を入力してください。"
+msgstr "組み込む在庫品の数量を入力してください。"
 
 #: stock/serializers.py:865 stock/serializers.py:946 stock/serializers.py:1293
 msgid "Add transaction note (optional)"
@@ -10164,11 +10165,11 @@ msgstr "取引メモの追加（オプション）"
 
 #: stock/serializers.py:873
 msgid "Quantity to install must be at least 1"
-msgstr "設置数量は1台以上"
+msgstr "組込数量は1以上にしてください"
 
 #: stock/serializers.py:881 stock/serializers.py:1144
 msgid "Stock item is unavailable"
-msgstr "在庫がありません"
+msgstr "この在庫品は使用できません"
 
 #: stock/serializers.py:892
 msgid "Selected part is not in the Bill of Materials"
@@ -10176,11 +10177,11 @@ msgstr "選択した部品が部品表にない"
 
 #: stock/serializers.py:905
 msgid "Quantity to install must not exceed available quantity"
-msgstr "設置する数量は、利用可能な数量を超えてはなりません。"
+msgstr "組込数量は使用可能な数量以下にしてください。"
 
 #: stock/serializers.py:940
 msgid "Destination location for uninstalled item"
-msgstr "アンインストール先の場所"
+msgstr "取り外した在庫品の保管先"
 
 #: stock/serializers.py:989
 msgid "Stock item status code"
@@ -10228,7 +10229,7 @@ msgstr "在庫品を変換する部品を選択"
 
 #: stock/serializers.py:1223
 msgid "Selected part is not a valid option for conversion"
-msgstr "選択された部分は、変換のための有効なオプションではありません。"
+msgstr "選択した部品には変換できません。"
 
 #: stock/serializers.py:1240
 msgid "Cannot convert stock item with assigned SupplierPart"
@@ -10236,11 +10237,11 @@ msgstr "SupplierPartが割り当てられている在庫品を変換できませ
 
 #: stock/serializers.py:1276
 msgid "Select stock items to change status"
-msgstr "ステータスを変更するストックアイテムを選択"
+msgstr "ステータスを変更する在庫品を選択してください。"
 
 #: stock/serializers.py:1282
 msgid "No stock items selected"
-msgstr "ストックアイテムが選択されていません"
+msgstr "在庫品が選択されていません。"
 
 #: stock/serializers.py:1371 stock/serializers.py:1464
 msgid "Sublocations"
@@ -10264,11 +10265,11 @@ msgstr "このロケーションに含まれるすべてのサブロケーショ
 
 #: stock/serializers.py:1459
 msgid "Parent stock location"
-msgstr "親株式所在地"
+msgstr "親在庫場所"
 
 #: stock/serializers.py:1530
 msgid "Part must be salable"
-msgstr "パーツは販売可能でなければなりません"
+msgstr "部品は販売可能である必要があります。"
 
 #: stock/serializers.py:1534
 msgid "Item is allocated to a sales order"
@@ -10276,11 +10277,11 @@ msgstr "商品が販売オーダーに割り当てられています。"
 
 #: stock/serializers.py:1538
 msgid "Item is allocated to a transfer order"
-msgstr "部品がが在庫移動指示にに引き当てられました"
+msgstr "この在庫品は在庫移動指示に引き当てられています。"
 
 #: stock/serializers.py:1542
 msgid "Item is allocated to a build order"
-msgstr "アイテムがビルドオーダーに割り当てられています。"
+msgstr "アイテムが製造オーダーに割り当てられています。"
 
 #: stock/serializers.py:1566
 msgid "Customer to assign stock items"
@@ -10292,7 +10293,7 @@ msgstr "選択された企業は顧客ではありません"
 
 #: stock/serializers.py:1581
 msgid "Stock assignment notes"
-msgstr "株式譲渡に関する注意事項"
+msgstr "在庫割り当てのメモ"
 
 #: stock/serializers.py:1591 stock/serializers.py:1915
 msgid "A list of stock items must be provided"
@@ -10300,15 +10301,15 @@ msgstr "在庫品のリストが必要です。"
 
 #: stock/serializers.py:1671
 msgid "Stock merging notes"
-msgstr "株式併合に関する注意事項"
+msgstr "在庫統合のメモ"
 
 #: stock/serializers.py:1676
 msgid "Allow mismatched suppliers"
-msgstr "不一致のサプライヤーを許可"
+msgstr "仕入先部品の不一致を許可"
 
 #: stock/serializers.py:1677
 msgid "Allow stock items with different supplier parts to be merged"
-msgstr "異なるサプライヤの部品を持つ在庫品目をマージできるようにします。"
+msgstr "異なる仕入先部品に紐付いた在庫品の統合を許可します。"
 
 #: stock/serializers.py:1682
 msgid "Allow mismatched status"
@@ -10316,11 +10317,11 @@ msgstr "不一致の状態を許可"
 
 #: stock/serializers.py:1683
 msgid "Allow stock items with different status codes to be merged"
-msgstr "異なるステータスコードを持つストックアイテムをマージすることができます。"
+msgstr "ステータスコードが異なる在庫品の統合を許可します。"
 
 #: stock/serializers.py:1693
 msgid "At least two stock items must be provided"
-msgstr "少なくとも2つのストックアイテムを提供する必要があります。"
+msgstr "在庫品を少なくとも2件指定してください。"
 
 #: stock/serializers.py:1760
 msgid "No Change"
@@ -10332,7 +10333,7 @@ msgstr "StockItem 主キー値"
 
 #: stock/serializers.py:1812
 msgid "Stock item is not in stock"
-msgstr "在庫がありません"
+msgstr "この在庫品は在庫として使用できる状態ではありません"
 
 #: stock/serializers.py:1815
 msgid "Stock item is already in stock"
@@ -10352,7 +10353,7 @@ msgstr "可能な場合、このアイテムを宛先の既存の在庫にマー
 
 #: stock/serializers.py:1881
 msgid "Stock transaction notes"
-msgstr "株式取引に関する注記"
+msgstr "在庫操作のメモ"
 
 #: stock/serializers.py:1938
 msgid "Set stock location for counted items (optional)"
@@ -10412,7 +10413,7 @@ msgstr "割り当てられたシリアル番号"
 
 #: stock/status_codes.py:104
 msgid "Stock counted"
-msgstr "在庫数"
+msgstr "棚卸しました"
 
 #: stock/status_codes.py:105
 msgid "Stock manually added"
@@ -10420,7 +10421,7 @@ msgstr "手動在庫追加が完了しました"
 
 #: stock/status_codes.py:106
 msgid "Stock manually removed"
-msgstr "手動在庫削除が完了しました"
+msgstr "在庫数量を手動で減らしました"
 
 #: stock/status_codes.py:107
 msgid "Serialized stock items"
@@ -10440,27 +10441,27 @@ msgstr "在庫更新"
 
 #: stock/status_codes.py:116
 msgid "Installed into assembly"
-msgstr "アセンブリへインストールしました"
+msgstr "アセンブリに組み込みました"
 
 #: stock/status_codes.py:117
 msgid "Removed from assembly"
-msgstr "アセンブリから削除しました"
+msgstr "アセンブリから取り外しました"
 
 #: stock/status_codes.py:119
 msgid "Installed component item"
-msgstr "インストール済みのコンポーネント項目"
+msgstr "構成部品を組み込みました"
 
 #: stock/status_codes.py:120
 msgid "Removed component item"
-msgstr "コンポーネント項目を削除しました"
+msgstr "構成部品を取り外しました"
 
 #: stock/status_codes.py:123
 msgid "Split from parent item"
-msgstr "親アイテムから分割する"
+msgstr "親の在庫品から分割しました"
 
 #: stock/status_codes.py:124
 msgid "Split child item"
-msgstr "子項目を分割"
+msgstr "この在庫品から子の在庫品を分割しました"
 
 #: stock/status_codes.py:127
 msgid "Merged stock items"
@@ -10480,35 +10481,35 @@ msgstr "バリアントに変換"
 
 #: stock/status_codes.py:137
 msgid "Build order output created"
-msgstr "組立注文の出力が作成されました"
+msgstr "製造オーダーの成果物を登録しました"
 
 #: stock/status_codes.py:138
 msgid "Build order output completed"
-msgstr "組立注文の出力が完了しました"
+msgstr "製造オーダーの製造品を完成処理しました"
 
 #: stock/status_codes.py:139
 msgid "Build order output rejected"
-msgstr "ビルドオーダーの出力が拒否されました"
+msgstr "製造オーダーの製造品を廃棄しました"
 
 #: stock/status_codes.py:140
 msgid "Consumed by build order"
-msgstr "ビルド・オーダーで消費"
+msgstr "製造オーダーで消費"
 
 #: stock/status_codes.py:143
 msgid "Shipped against Sales Order"
-msgstr "販売注文に対して出荷"
+msgstr "受注に基づいて出荷しました"
 
 #: stock/status_codes.py:146
 msgid "Received against Purchase Order"
-msgstr "発注書との照合"
+msgstr "発注に基づいて受領しました"
 
 #: stock/status_codes.py:149
 msgid "Returned against Return Order"
-msgstr "リターンオーダーに反して返品"
+msgstr "返品オーダーに基づいて返品を受領しました"
 
 #: stock/status_codes.py:152
 msgid "Sent to customer"
-msgstr "顧客に送信されました"
+msgstr "顧客に引き渡しました"
 
 #: stock/status_codes.py:153
 msgid "Returned from customer"
@@ -10588,6 +10589,18 @@ msgstr "設定エラー"
 msgid "The %(inventree_title)s server raised a configuration error"
 msgstr "%(inventree_title)sサーバーで設定エラーが発生しました"
 
+#: templates/email/api_token_issued.html:8
+msgid "If you did not request this token, revoke it immediately and contact your administrator."
+msgstr ""
+
+#: templates/email/api_token_issued.html:10
+msgid "Click on the following link to review your API tokens"
+msgstr ""
+
+#: templates/email/api_token_issued.html:16 users/models.py:259
+msgid "Token Name"
+msgstr "トークン名"
+
 #: templates/email/build_order_completed.html:9
 #: templates/email/canceled_order_assigned.html:9
 #: templates/email/new_order_assigned.html:9
@@ -10602,16 +10615,16 @@ msgstr "このオーダーをご覧になるには、以下のリンクをクリ
 
 #: templates/email/build_order_required_stock.html:7
 msgid "Stock is required for the following build order"
-msgstr "在庫は以下の製造順に必要です。"
+msgstr "次の製造オーダーに在庫が必要です。"
 
 #: templates/email/build_order_required_stock.html:8
 #, python-format
 msgid "Build order %(build)s - building %(quantity)s x %(part)s"
-msgstr "ビルドオーダー %(build)s – ビルド中 %(quantity)s x %(part)s"
+msgstr "製造オーダー %(build)s - %(part)s を製造（数量: %(quantity)s）"
 
 #: templates/email/build_order_required_stock.html:10
 msgid "Click on the following link to view this build order"
-msgstr "次のリンクをクリックして、このビルドオーダーをご覧ください。"
+msgstr "次のリンクをクリックして、この製造オーダーをご覧ください。"
 
 #: templates/email/build_order_required_stock.html:14
 msgid "The following parts are low on required stock"
@@ -10624,7 +10637,7 @@ msgstr "必要数量"
 #: templates/email/build_order_required_stock.html:38
 #: templates/email/low_stock_notification.html:32
 msgid "You are receiving this email because you are subscribed to notifications for this part "
-msgstr "このパートに関する通知を購読しているため、このメールを受信しています。"
+msgstr "この部品の通知を購読しているため、このメールを受信しています。"
 
 #: templates/email/low_stock_notification.html:9
 #: templates/email/part_event_notification.html:9
@@ -10638,7 +10651,7 @@ msgstr "最小在庫"
 
 #: templates/email/part_event_notification.html:32
 msgid "You are receiving this email because you are subscribed to notifications for this part or a category that it is part of "
-msgstr "この部品またはその部品の一部であるカテゴリの通知を購読しているため、このメールを受信しています。"
+msgstr "この部品、またはこの部品が属するカテゴリの通知を購読しているため、このメールを受信しています。"
 
 #: templates/email/stale_stock_notification.html:10
 msgid "The following stock items are approaching their expiry dates:"
@@ -10666,25 +10679,25 @@ msgstr "個人情報"
 
 #: users/admin.py:150
 msgid "Permissions"
-msgstr "許可"
+msgstr "権限"
 
 #: users/admin.py:153
 msgid "Important dates"
 msgstr "重要な日付"
 
-#: users/authentication.py:29
+#: users/authentication.py:25
 msgid "Invalid token."
 msgstr "無効なトークン。"
 
-#: users/authentication.py:33
+#: users/authentication.py:28
 msgid "User inactive or deleted."
 msgstr "ユーザーが無効化または削除されています。"
 
-#: users/authentication.py:36 users/models.py:279
+#: users/authentication.py:31 users/models.py:279
 msgid "Token has been revoked"
 msgstr "トークンは失効しました"
 
-#: users/authentication.py:39
+#: users/authentication.py:34
 msgid "Token has expired"
 msgstr "トークンの有効期限が切れました"
 
@@ -10696,10 +10709,6 @@ msgstr "APIトークン"
 msgid "API Tokens"
 msgstr "APIトークン"
 
-#: users/models.py:259
-msgid "Token Name"
-msgstr "トークン名"
-
 #: users/models.py:260
 msgid "Custom token name"
 msgstr "カスタムトークン名"
@@ -10710,7 +10719,7 @@ msgstr "トークンの有効期限"
 
 #: users/models.py:274
 msgid "Last Seen"
-msgstr "最終表示"
+msgstr "最終使用日時"
 
 #: users/models.py:275
 msgid "Last time the token was used"
@@ -10756,161 +10765,165 @@ msgstr "ペッパーID"
 msgid "Identifier for the pepper used in token hashing"
 msgstr "トークンのハッシュ化に使用するペッパーの識別子"
 
-#: users/models.py:416
+#: users/models.py:394
+msgid "Email is not configured on this server - this is a security risk."
+msgstr ""
+
+#: users/models.py:435
 msgid "Permission set"
 msgstr "パーミッション設定"
 
-#: users/models.py:429
+#: users/models.py:448
 msgid "View"
 msgstr "表示"
 
-#: users/models.py:429
+#: users/models.py:448
 msgid "Permission to view items"
 msgstr "項目を表示する権限"
 
-#: users/models.py:433
+#: users/models.py:452
 msgid "Add"
 msgstr "追加"
 
-#: users/models.py:433
+#: users/models.py:452
 msgid "Permission to add items"
 msgstr "項目を追加する権限"
 
-#: users/models.py:437
+#: users/models.py:456
 msgid "Change"
 msgstr "変更"
 
-#: users/models.py:439
+#: users/models.py:458
 msgid "Permissions to edit items"
 msgstr "項目を編集する権限"
 
-#: users/models.py:443
+#: users/models.py:462
 msgid "Delete"
 msgstr "削除"
 
-#: users/models.py:445
+#: users/models.py:464
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
 
-#: users/models.py:682
+#: users/models.py:701
 msgid "Bot"
 msgstr "ボット"
 
-#: users/models.py:683
+#: users/models.py:702
 msgid "Internal"
 msgstr "内部"
 
-#: users/models.py:685
+#: users/models.py:704
 msgid "Guest"
 msgstr "ゲスト"
 
-#: users/models.py:703
+#: users/models.py:722
 msgid "Language"
 msgstr "言語"
 
-#: users/models.py:704
+#: users/models.py:723
 msgid "Preferred language for the user"
 msgstr "ユーザーの希望言語"
 
-#: users/models.py:709
+#: users/models.py:728
 msgid "Theme"
 msgstr "テーマ"
 
-#: users/models.py:710
+#: users/models.py:729
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr "JSONとしてのウェブUI用の設定 - 手動で編集しないでください！"
 
-#: users/models.py:715
+#: users/models.py:734
 msgid "Widgets"
 msgstr "ウィジェット"
 
-#: users/models.py:717
+#: users/models.py:736
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr "JSONとしてのダッシュボード・ウィジェットの設定 - 手動で編集しないでください！"
 
-#: users/models.py:724
+#: users/models.py:743
 msgid "Display Name"
 msgstr "表示名"
 
-#: users/models.py:725
+#: users/models.py:744
 msgid "Chosen display name for the user"
 msgstr "ユーザーの表示名選択"
 
-#: users/models.py:731
+#: users/models.py:750
 msgid "Position"
-msgstr "位置"
+msgstr "役職"
 
-#: users/models.py:732
+#: users/models.py:751
 msgid "Main job title or position"
 msgstr "主な役職名"
 
-#: users/models.py:739
+#: users/models.py:758
 msgid "User status message"
 msgstr "ユーザーのステータスメッセージ"
 
-#: users/models.py:746
+#: users/models.py:765
 msgid "User location information"
 msgstr "ユーザーの位置情報"
 
-#: users/models.py:751
+#: users/models.py:770
 msgid "User is actively using the system"
 msgstr "ユーザーが積極的にシステムを利用"
 
-#: users/models.py:758
+#: users/models.py:777
 msgid "Preferred contact information for the user"
 msgstr "希望の連絡先"
 
-#: users/models.py:764
+#: users/models.py:783
 msgid "User Type"
 msgstr "ユーザータイプ"
 
-#: users/models.py:765
+#: users/models.py:784
 msgid "Which type of user is this?"
 msgstr "どのようなユーザーですか？"
 
-#: users/models.py:771
+#: users/models.py:790
 msgid "Organisation"
 msgstr "組織"
 
-#: users/models.py:772
+#: users/models.py:791
 msgid "Users primary organisation/affiliation"
 msgstr "ユーザーの主な所属組織"
 
-#: users/models.py:780
+#: users/models.py:799
 msgid "Primary Group"
-msgstr "プライマリーグループ"
+msgstr "主グループ"
 
-#: users/models.py:781
+#: users/models.py:800
 msgid "Primary group for the user"
-msgstr "ユーザーのプライマリグループ"
+msgstr "ユーザーの主グループ"
 
-#: users/models.py:814
+#: users/models.py:833
 msgid "Tip Result"
-msgstr ""
+msgstr "ヒントの利用状況"
 
-#: users/models.py:815
+#: users/models.py:834
 msgid "Tip Results"
-msgstr ""
+msgstr "ヒントの利用状況"
 
-#: users/models.py:824
+#: users/models.py:843
 msgid "Tip ID/Name"
-msgstr ""
+msgstr "ヒントID/名前"
 
-#: users/models.py:826
+#: users/models.py:845
 msgid "Shown"
-msgstr ""
+msgstr "表示済み"
 
-#: users/models.py:826
+#: users/models.py:845
 msgid "Was this tip shown?"
-msgstr ""
+msgstr "このヒントは表示されましたか？"
 
-#: users/models.py:829
+#: users/models.py:848
 msgid "Was this tip finished?"
-msgstr ""
+msgstr "このヒントは完了しましたか？"
 
-#: users/models.py:835
+#: users/models.py:854
 msgid "The last time this tip result was updated"
-msgstr ""
+msgstr "このヒントの利用状況が最後に更新された日時"
 
 #: users/ruleset.py:44
 msgid "Admin"
@@ -10918,7 +10931,7 @@ msgstr "管理者"
 
 #: users/ruleset.py:47
 msgid "Pricing"
-msgstr ""
+msgstr "価格設定"
 
 #: users/ruleset.py:48
 msgid "Bills of Material"
@@ -10926,117 +10939,131 @@ msgstr "部品表"
 
 #: users/ruleset.py:52
 msgid "Purchase Orders"
-msgstr "購入注文"
+msgstr "発注書"
 
 #: users/ruleset.py:53
 msgid "Sales Orders"
-msgstr "セールスオーダー"
+msgstr "受注"
 
 #: users/ruleset.py:54
 msgid "Return Orders"
-msgstr "返品注文"
+msgstr "返品オーダー"
 
 #: users/ruleset.py:55
 msgid "Transfer Orders"
 msgstr "在庫移動指示"
 
-#: users/serializers.py:207
+#: users/serializers.py:208
 msgid "Username"
 msgstr "ユーザー名"
 
-#: users/serializers.py:210
+#: users/serializers.py:211
 msgid "First Name"
 msgstr "名"
 
-#: users/serializers.py:210
+#: users/serializers.py:211
 msgid "First name of the user"
 msgstr "ユーザーの名"
 
-#: users/serializers.py:214
+#: users/serializers.py:215
 msgid "Last Name"
 msgstr "姓"
 
-#: users/serializers.py:214
+#: users/serializers.py:215
 msgid "Last name of the user"
 msgstr "ユーザーの姓"
 
-#: users/serializers.py:218
+#: users/serializers.py:219
 msgid "Email address of the user"
 msgstr "ユーザーのメールアドレス"
 
-#: users/serializers.py:267
+#: users/serializers.py:268
 msgid "User must be authenticated"
 msgstr "ユーザーは認証されている必要があります"
 
-#: users/serializers.py:276
+#: users/serializers.py:277
 msgid "Only a superuser can create a token for another user"
 msgstr "他のユーザー用トークンを作成できるのは、スーパーユーザーのみです"
 
-#: users/serializers.py:366
+#: users/serializers.py:367
 msgid "Administrator"
 msgstr "管理者"
 
-#: users/serializers.py:367
+#: users/serializers.py:368
 msgid "Does this user have administrative permissions"
 msgstr "このユーザーには管理者権限がありますか"
 
-#: users/serializers.py:372 users/serializers.py:500
+#: users/serializers.py:373 users/serializers.py:501
 msgid "Superuser"
 msgstr "スーパーユーザー"
 
-#: users/serializers.py:372 users/serializers.py:501
+#: users/serializers.py:373 users/serializers.py:502
 msgid "Is this user a superuser"
 msgstr "このユーザーはスーパーユーザーですか？"
 
-#: users/serializers.py:376 users/serializers.py:508
+#: users/serializers.py:377 users/serializers.py:509
 msgid "Is this user account active"
 msgstr "このユーザーアカウントはアクティブですか"
 
-#: users/serializers.py:397
+#: users/serializers.py:398
 msgid "Only a superuser can adjust this field"
 msgstr "このフィールドを調整できるのはスーパーユーザーのみです。"
 
-#: users/serializers.py:425
+#: users/serializers.py:426
 msgid "Password"
 msgstr "パスワード"
 
-#: users/serializers.py:426
+#: users/serializers.py:427
 msgid "Password for the user"
 msgstr "ユーザーのパスワード"
 
-#: users/serializers.py:432
+#: users/serializers.py:433
 msgid "Override warning"
 msgstr "警告を上書きします"
 
-#: users/serializers.py:433
+#: users/serializers.py:434
 msgid "Override the warning about password rules"
 msgstr "パスワードルールに関する警告を無効にする"
 
-#: users/serializers.py:493
+#: users/serializers.py:494
 msgid "Staff"
 msgstr "スタッフ"
 
-#: users/serializers.py:494
+#: users/serializers.py:495
 msgid "Does this user have staff permissions"
 msgstr "このユーザーにはスタッフ権限がありますか？"
 
-#: users/serializers.py:544
+#: users/serializers.py:545
 msgid "You do not have permission to create users"
 msgstr "ユーザーを作成する権限がありません"
 
-#: users/serializers.py:557
+#: users/serializers.py:558
 msgid "A user with this email address already exists"
-msgstr ""
+msgstr "このメールアドレスのユーザーはすでに存在します"
 
-#: users/serializers.py:592
+#: users/serializers.py:593
 msgid "Your account has been created."
 msgstr "アカウントが作成されました"
 
-#: users/serializers.py:594
+#: users/serializers.py:595
 msgid "Please use the password reset function to login"
 msgstr "パスワードリセット機能を使ってログインしてください"
 
-#: users/serializers.py:600
+#: users/serializers.py:601
 msgid "Welcome to InvenTree"
 msgstr "InvenTreeへようこそ"
+
+#: users/tasks.py:29
+#, python-brace-format
+msgid "A new API token '{name}' was issued for your account by {issuer}"
+msgstr ""
+
+#: users/tasks.py:32
+#, python-brace-format
+msgid "A new API token '{name}' was issued for your account"
+msgstr ""
+
+#: users/tasks.py:36
+msgid "API Token Issued"
+msgstr ""
 

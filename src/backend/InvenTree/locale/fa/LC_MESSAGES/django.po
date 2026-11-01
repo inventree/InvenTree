@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 23:44+0000\n"
-"PO-Revision-Date: 2026-10-27 23:48\n"
+"POT-Creation-Date: 2026-11-01 23:41+0000\n"
+"PO-Revision-Date: 2026-11-01 23:45\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -17,43 +17,43 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:394
+#: InvenTree/api.py:392
 msgid "API endpoint not found"
 msgstr "Address e API peida nashod"
 
-#: InvenTree/api.py:467
+#: InvenTree/api.py:465
 msgid "List of items must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:474
+#: InvenTree/api.py:472
 msgid "Items must be provided as a list"
 msgstr "موارد باید به صورت لیست ارائه شود"
 
-#: InvenTree/api.py:482
+#: InvenTree/api.py:480
 msgid "Invalid items list provided"
 msgstr "لیست موارد نامعتبر ارائه شده است"
 
-#: InvenTree/api.py:487
+#: InvenTree/api.py:485
 msgid "All filter must only be used with true"
 msgstr "تمامی فیلترها باید منحصراً با مقدار true مورد استفاده قرار گیرند"
 
-#: InvenTree/api.py:492
+#: InvenTree/api.py:490
 msgid "No items match the provided criteria"
 msgstr "هیچ موردی با معیارهای ارائه شده مطابقت ندارد"
 
-#: InvenTree/api.py:516
+#: InvenTree/api.py:514
 msgid "No data provided"
 msgstr ""
 
-#: InvenTree/api.py:532
+#: InvenTree/api.py:530
 msgid "This field must be unique."
 msgstr ""
 
-#: InvenTree/api.py:641
+#: InvenTree/api.py:639
 msgid "Item no longer matches the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:896 InvenTree/models.py:1664
+#: InvenTree/api.py:894 InvenTree/models.py:1664
 msgid "User does not have permission to view this model"
 msgstr "کاربر سطح دسترسی نمایش این مدل را ندارد"
 
@@ -113,7 +113,7 @@ msgstr "تاریخ را وارد کنید"
 msgid "Invalid decimal value"
 msgstr "مقدار اعشاری نامعتبر است"
 
-#: InvenTree/fields.py:286 audit/models.py:369 build/serializers.py:538
+#: InvenTree/fields.py:286 audit/models.py:380 build/serializers.py:538
 #: build/serializers.py:601 build/serializers.py:1788 common/models.py:3246
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
@@ -226,15 +226,15 @@ msgid "Log in to the app"
 msgstr "وارد برنامه شوید"
 
 #: InvenTree/magic_login.py:41 company/models.py:212 company/models.py:536
-#: users/serializers.py:218
+#: users/serializers.py:219
 msgid "Email"
 msgstr "ایمیل"
 
-#: InvenTree/middleware.py:129
+#: InvenTree/middleware.py:131
 msgid "CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly."
 msgstr ""
 
-#: InvenTree/middleware.py:223
+#: InvenTree/middleware.py:226
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "قبل از انجام هر کار دیگری باید احراز هویت دو مرحله ای را فعال کنید."
 
@@ -642,31 +642,31 @@ msgstr ""
 msgid "Invalid model type"
 msgstr ""
 
-#: audit/models.py:324
+#: audit/models.py:335
 msgid "Audit Log Entry"
 msgstr ""
 
-#: audit/models.py:325
+#: audit/models.py:336
 msgid "Audit Log Entries"
 msgstr ""
 
-#: audit/models.py:348
+#: audit/models.py:359
 msgid "Parent Content Type"
 msgstr ""
 
-#: audit/models.py:352
+#: audit/models.py:363
 msgid "Parent Object PK"
 msgstr ""
 
-#: audit/models.py:357
+#: audit/models.py:368
 msgid "Actor Username"
 msgstr ""
 
-#: audit/models.py:362
+#: audit/models.py:373
 msgid "Event Type"
 msgstr ""
 
-#: audit/models.py:370
+#: audit/models.py:381
 msgid "Notes associated with this entry"
 msgstr ""
 
@@ -883,10 +883,10 @@ msgstr ""
 msgid "Available"
 msgstr "در دسترس"
 
-#: build/api.py:588 build/serializers.py:1528 company/serializers.py:454
-#: order/serializers.py:1440 order/serializers.py:2778 part/serializers.py:793
-#: part/serializers.py:1148 part/serializers.py:1546
-#: templates/email/low_stock_notification.html:18
+#: build/api.py:588 build/serializers.py:1528 company/api.py:330
+#: company/serializers.py:454 order/serializers.py:1440
+#: order/serializers.py:2778 part/serializers.py:793 part/serializers.py:1148
+#: part/serializers.py:1546 templates/email/low_stock_notification.html:18
 msgid "On Order"
 msgstr ""
 
@@ -911,7 +911,7 @@ msgstr "سفارش ساخت"
 #: stock/serializers.py:1117 stock/serializers.py:1662
 #: stock/serializers.py:1937 stock/serializers.py:2065
 #: stock/serializers.py:2181 templates/email/purchase_order_received.html:17
-#: templates/email/stale_stock_notification.html:18 users/models.py:745
+#: templates/email/stale_stock_notification.html:18 users/models.py:764
 msgid "Location"
 msgstr "مکان"
 
@@ -1843,7 +1843,7 @@ msgid "Project Code Label"
 msgstr ""
 
 #: common/models.py:111 common/models.py:136 common/models.py:3949
-#: users/models.py:834
+#: users/models.py:853
 msgid "Updated"
 msgstr ""
 
@@ -1870,8 +1870,8 @@ msgstr ""
 #: common/models.py:195 common/models.py:1540 common/models.py:2567
 #: common/models.py:2702 company/models.py:231 company/models.py:881
 #: machine/models.py:43 part/models.py:1332 plugin/models.py:69
-#: stock/api.py:704 users/models.py:382 users/models.py:750
-#: users/serializers.py:376 users/serializers.py:507
+#: stock/api.py:704 users/models.py:382 users/models.py:769
+#: users/serializers.py:377 users/serializers.py:508
 msgid "Active"
 msgstr ""
 
@@ -1925,7 +1925,7 @@ msgstr ""
 #: importer/models.py:106 part/models.py:2707 part/models.py:2735
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:252
-#: users/models.py:688 users/models.py:822
+#: users/models.py:707 users/models.py:841
 msgid "User"
 msgstr ""
 
@@ -4771,7 +4771,7 @@ msgid "Contact email address"
 msgstr ""
 
 #: company/models.py:218 company/models.py:363 order/models.py:627
-#: order/models.py:2863 users/models.py:757
+#: order/models.py:2863 users/models.py:776
 msgid "Contact"
 msgstr ""
 
@@ -5107,7 +5107,7 @@ msgstr ""
 msgid "Select export plugin"
 msgstr ""
 
-#: generic/states/api_helpers.py:385
+#: generic/states/api_helpers.py:387
 msgid "User does not have permission to view or change this object"
 msgstr ""
 
@@ -5492,7 +5492,7 @@ msgstr ""
 msgid "Value of the property"
 msgstr ""
 
-#: machine/serializers.py:30 users/models.py:425
+#: machine/serializers.py:30 users/models.py:444
 msgid "Group"
 msgstr ""
 
@@ -5771,7 +5771,7 @@ msgid "Order reference"
 msgstr ""
 
 #: order/models.py:801 order/models.py:1595 order/models.py:3489
-#: order/models.py:3919 stock/serializers.py:986 users/models.py:738
+#: order/models.py:3919 stock/serializers.py:986 users/models.py:757
 msgid "Status"
 msgstr ""
 
@@ -6434,6 +6434,7 @@ msgid "Enter batch code for incoming stock items"
 msgstr ""
 
 #: order/serializers.py:903 stock/models.py:1340
+#: templates/email/api_token_issued.html:18
 #: templates/email/stale_stock_notification.html:22 users/models.py:265
 msgid "Expiry Date"
 msgstr ""
@@ -9334,7 +9335,7 @@ msgid "Required For"
 msgstr ""
 
 #: report/templates/report/inventree_build_order_report.html:151
-#: users/models.py:304
+#: templates/email/api_token_issued.html:17 users/models.py:304
 msgid "Issued By"
 msgstr "صادر شده توسط"
 
@@ -9672,7 +9673,7 @@ msgstr ""
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr ""
 
-#: stock/models.py:217 users/models.py:684
+#: stock/models.py:217 users/models.py:703
 msgid "External"
 msgstr ""
 
@@ -9999,7 +10000,7 @@ msgstr ""
 msgid "The timestamp of the test start"
 msgstr ""
 
-#: stock/models.py:3836 users/models.py:829
+#: stock/models.py:3836 users/models.py:848
 msgid "Finished"
 msgstr ""
 
@@ -10588,6 +10589,18 @@ msgstr ""
 msgid "The %(inventree_title)s server raised a configuration error"
 msgstr ""
 
+#: templates/email/api_token_issued.html:8
+msgid "If you did not request this token, revoke it immediately and contact your administrator."
+msgstr ""
+
+#: templates/email/api_token_issued.html:10
+msgid "Click on the following link to review your API tokens"
+msgstr ""
+
+#: templates/email/api_token_issued.html:16 users/models.py:259
+msgid "Token Name"
+msgstr ""
+
 #: templates/email/build_order_completed.html:9
 #: templates/email/canceled_order_assigned.html:9
 #: templates/email/new_order_assigned.html:9
@@ -10672,19 +10685,19 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/authentication.py:29
+#: users/authentication.py:25
 msgid "Invalid token."
 msgstr ""
 
-#: users/authentication.py:33
+#: users/authentication.py:28
 msgid "User inactive or deleted."
 msgstr ""
 
-#: users/authentication.py:36 users/models.py:279
+#: users/authentication.py:31 users/models.py:279
 msgid "Token has been revoked"
 msgstr ""
 
-#: users/authentication.py:39
+#: users/authentication.py:34
 msgid "Token has expired"
 msgstr ""
 
@@ -10694,10 +10707,6 @@ msgstr ""
 
 #: users/models.py:108
 msgid "API Tokens"
-msgstr ""
-
-#: users/models.py:259
-msgid "Token Name"
 msgstr ""
 
 #: users/models.py:260
@@ -10756,159 +10765,163 @@ msgstr ""
 msgid "Identifier for the pepper used in token hashing"
 msgstr ""
 
-#: users/models.py:416
+#: users/models.py:394
+msgid "Email is not configured on this server - this is a security risk."
+msgstr ""
+
+#: users/models.py:435
 msgid "Permission set"
 msgstr ""
 
-#: users/models.py:429
+#: users/models.py:448
 msgid "View"
 msgstr ""
 
-#: users/models.py:429
+#: users/models.py:448
 msgid "Permission to view items"
 msgstr ""
 
-#: users/models.py:433
+#: users/models.py:452
 msgid "Add"
 msgstr ""
 
-#: users/models.py:433
+#: users/models.py:452
 msgid "Permission to add items"
 msgstr ""
 
-#: users/models.py:437
+#: users/models.py:456
 msgid "Change"
 msgstr ""
 
-#: users/models.py:439
+#: users/models.py:458
 msgid "Permissions to edit items"
 msgstr ""
 
-#: users/models.py:443
+#: users/models.py:462
 msgid "Delete"
 msgstr ""
 
-#: users/models.py:445
+#: users/models.py:464
 msgid "Permission to delete items"
 msgstr ""
 
-#: users/models.py:682
+#: users/models.py:701
 msgid "Bot"
 msgstr ""
 
-#: users/models.py:683
+#: users/models.py:702
 msgid "Internal"
 msgstr ""
 
-#: users/models.py:685
+#: users/models.py:704
 msgid "Guest"
 msgstr ""
 
-#: users/models.py:703
+#: users/models.py:722
 msgid "Language"
 msgstr ""
 
-#: users/models.py:704
+#: users/models.py:723
 msgid "Preferred language for the user"
 msgstr ""
 
-#: users/models.py:709
+#: users/models.py:728
 msgid "Theme"
 msgstr ""
 
-#: users/models.py:710
+#: users/models.py:729
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:715
+#: users/models.py:734
 msgid "Widgets"
 msgstr ""
 
-#: users/models.py:717
+#: users/models.py:736
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr ""
 
-#: users/models.py:724
+#: users/models.py:743
 msgid "Display Name"
 msgstr ""
 
-#: users/models.py:725
+#: users/models.py:744
 msgid "Chosen display name for the user"
 msgstr ""
 
-#: users/models.py:731
+#: users/models.py:750
 msgid "Position"
 msgstr ""
 
-#: users/models.py:732
+#: users/models.py:751
 msgid "Main job title or position"
 msgstr ""
 
-#: users/models.py:739
+#: users/models.py:758
 msgid "User status message"
 msgstr ""
 
-#: users/models.py:746
+#: users/models.py:765
 msgid "User location information"
 msgstr ""
 
-#: users/models.py:751
+#: users/models.py:770
 msgid "User is actively using the system"
 msgstr ""
 
-#: users/models.py:758
+#: users/models.py:777
 msgid "Preferred contact information for the user"
 msgstr ""
 
-#: users/models.py:764
+#: users/models.py:783
 msgid "User Type"
 msgstr ""
 
-#: users/models.py:765
+#: users/models.py:784
 msgid "Which type of user is this?"
 msgstr ""
 
-#: users/models.py:771
+#: users/models.py:790
 msgid "Organisation"
 msgstr ""
 
-#: users/models.py:772
+#: users/models.py:791
 msgid "Users primary organisation/affiliation"
 msgstr ""
 
-#: users/models.py:780
+#: users/models.py:799
 msgid "Primary Group"
 msgstr ""
 
-#: users/models.py:781
+#: users/models.py:800
 msgid "Primary group for the user"
 msgstr ""
 
-#: users/models.py:814
+#: users/models.py:833
 msgid "Tip Result"
 msgstr ""
 
-#: users/models.py:815
+#: users/models.py:834
 msgid "Tip Results"
 msgstr ""
 
-#: users/models.py:824
+#: users/models.py:843
 msgid "Tip ID/Name"
 msgstr ""
 
-#: users/models.py:826
+#: users/models.py:845
 msgid "Shown"
 msgstr ""
 
-#: users/models.py:826
+#: users/models.py:845
 msgid "Was this tip shown?"
 msgstr ""
 
-#: users/models.py:829
+#: users/models.py:848
 msgid "Was this tip finished?"
 msgstr ""
 
-#: users/models.py:835
+#: users/models.py:854
 msgid "The last time this tip result was updated"
 msgstr ""
 
@@ -10940,103 +10953,117 @@ msgstr ""
 msgid "Transfer Orders"
 msgstr ""
 
-#: users/serializers.py:207
+#: users/serializers.py:208
 msgid "Username"
 msgstr ""
 
-#: users/serializers.py:210
+#: users/serializers.py:211
 msgid "First Name"
 msgstr ""
 
-#: users/serializers.py:210
+#: users/serializers.py:211
 msgid "First name of the user"
 msgstr ""
 
-#: users/serializers.py:214
+#: users/serializers.py:215
 msgid "Last Name"
 msgstr ""
 
-#: users/serializers.py:214
+#: users/serializers.py:215
 msgid "Last name of the user"
 msgstr ""
 
-#: users/serializers.py:218
+#: users/serializers.py:219
 msgid "Email address of the user"
 msgstr ""
 
-#: users/serializers.py:267
+#: users/serializers.py:268
 msgid "User must be authenticated"
 msgstr ""
 
-#: users/serializers.py:276
+#: users/serializers.py:277
 msgid "Only a superuser can create a token for another user"
 msgstr ""
 
-#: users/serializers.py:366
+#: users/serializers.py:367
 msgid "Administrator"
 msgstr ""
 
-#: users/serializers.py:367
+#: users/serializers.py:368
 msgid "Does this user have administrative permissions"
 msgstr ""
 
-#: users/serializers.py:372 users/serializers.py:500
+#: users/serializers.py:373 users/serializers.py:501
 msgid "Superuser"
 msgstr ""
 
-#: users/serializers.py:372 users/serializers.py:501
+#: users/serializers.py:373 users/serializers.py:502
 msgid "Is this user a superuser"
 msgstr ""
 
-#: users/serializers.py:376 users/serializers.py:508
+#: users/serializers.py:377 users/serializers.py:509
 msgid "Is this user account active"
 msgstr ""
 
-#: users/serializers.py:397
+#: users/serializers.py:398
 msgid "Only a superuser can adjust this field"
 msgstr ""
 
-#: users/serializers.py:425
+#: users/serializers.py:426
 msgid "Password"
 msgstr ""
 
-#: users/serializers.py:426
+#: users/serializers.py:427
 msgid "Password for the user"
 msgstr ""
 
-#: users/serializers.py:432
+#: users/serializers.py:433
 msgid "Override warning"
 msgstr ""
 
-#: users/serializers.py:433
+#: users/serializers.py:434
 msgid "Override the warning about password rules"
 msgstr ""
 
-#: users/serializers.py:493
+#: users/serializers.py:494
 msgid "Staff"
 msgstr ""
 
-#: users/serializers.py:494
+#: users/serializers.py:495
 msgid "Does this user have staff permissions"
 msgstr ""
 
-#: users/serializers.py:544
+#: users/serializers.py:545
 msgid "You do not have permission to create users"
 msgstr ""
 
-#: users/serializers.py:557
+#: users/serializers.py:558
 msgid "A user with this email address already exists"
 msgstr ""
 
-#: users/serializers.py:592
+#: users/serializers.py:593
 msgid "Your account has been created."
 msgstr ""
 
-#: users/serializers.py:594
+#: users/serializers.py:595
 msgid "Please use the password reset function to login"
 msgstr ""
 
-#: users/serializers.py:600
+#: users/serializers.py:601
 msgid "Welcome to InvenTree"
+msgstr ""
+
+#: users/tasks.py:29
+#, python-brace-format
+msgid "A new API token '{name}' was issued for your account by {issuer}"
+msgstr ""
+
+#: users/tasks.py:32
+#, python-brace-format
+msgid "A new API token '{name}' was issued for your account"
+msgstr ""
+
+#: users/tasks.py:36
+msgid "API Token Issued"
 msgstr ""
 

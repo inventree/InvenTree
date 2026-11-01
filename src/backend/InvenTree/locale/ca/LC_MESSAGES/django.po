@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 23:44+0000\n"
-"PO-Revision-Date: 2026-10-27 23:48\n"
+"POT-Creation-Date: 2026-11-01 23:41+0000\n"
+"PO-Revision-Date: 2026-11-01 23:45\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
@@ -17,43 +17,43 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:394
+#: InvenTree/api.py:392
 msgid "API endpoint not found"
 msgstr "No s'ha trobat el punt final de l'API"
 
-#: InvenTree/api.py:467
+#: InvenTree/api.py:465
 msgid "List of items must be provided for bulk operation"
 msgstr "Cal proporcionar una llista d'elements per a l'operació massiva"
 
-#: InvenTree/api.py:474
+#: InvenTree/api.py:472
 msgid "Items must be provided as a list"
 msgstr "Els elements s'han de proporcionar com a llista"
 
-#: InvenTree/api.py:482
+#: InvenTree/api.py:480
 msgid "Invalid items list provided"
 msgstr "La llista d'elements proporcionada no és vàlida"
 
-#: InvenTree/api.py:487
+#: InvenTree/api.py:485
 msgid "All filter must only be used with true"
 msgstr "El filtre «all» només es pot utilitzar amb «true»"
 
-#: InvenTree/api.py:492
+#: InvenTree/api.py:490
 msgid "No items match the provided criteria"
 msgstr "Cap element coincideix amb els criteris proporcionats"
 
-#: InvenTree/api.py:516
+#: InvenTree/api.py:514
 msgid "No data provided"
 msgstr "No s'han proporcionat dades"
 
-#: InvenTree/api.py:532
+#: InvenTree/api.py:530
 msgid "This field must be unique."
 msgstr "Aquest camp ha de ser únic."
 
-#: InvenTree/api.py:641
+#: InvenTree/api.py:639
 msgid "Item no longer matches the provided criteria"
 msgstr "L'element ja no coincideix amb els criteris proporcionats"
 
-#: InvenTree/api.py:896 InvenTree/models.py:1664
+#: InvenTree/api.py:894 InvenTree/models.py:1664
 msgid "User does not have permission to view this model"
 msgstr "L'usuari no té permís per a veure aquest model"
 
@@ -113,7 +113,7 @@ msgstr "Introduïu la data"
 msgid "Invalid decimal value"
 msgstr "Valor decimal no vàlid"
 
-#: InvenTree/fields.py:286 audit/models.py:369 build/serializers.py:538
+#: InvenTree/fields.py:286 audit/models.py:380 build/serializers.py:538
 #: build/serializers.py:601 build/serializers.py:1788 common/models.py:3246
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
@@ -226,15 +226,15 @@ msgid "Log in to the app"
 msgstr "Inicia la sessió a l'aplicació"
 
 #: InvenTree/magic_login.py:41 company/models.py:212 company/models.py:536
-#: users/serializers.py:218
+#: users/serializers.py:219
 msgid "Email"
 msgstr "Correu electrònic"
 
-#: InvenTree/middleware.py:129
+#: InvenTree/middleware.py:131
 msgid "CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly."
 msgstr "La verificació CSRF ha fallat. Assegureu-vos que INVENTREE_SITE_URL i INVENTREE_TRUSTED_ORIGINS estan configurats correctament."
 
-#: InvenTree/middleware.py:223
+#: InvenTree/middleware.py:226
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "Heu d'activar l'autenticació de dos factors abans de fer res més."
 
@@ -642,31 +642,31 @@ msgstr ""
 msgid "Invalid model type"
 msgstr ""
 
-#: audit/models.py:324
+#: audit/models.py:335
 msgid "Audit Log Entry"
 msgstr ""
 
-#: audit/models.py:325
+#: audit/models.py:336
 msgid "Audit Log Entries"
 msgstr ""
 
-#: audit/models.py:348
+#: audit/models.py:359
 msgid "Parent Content Type"
 msgstr ""
 
-#: audit/models.py:352
+#: audit/models.py:363
 msgid "Parent Object PK"
 msgstr ""
 
-#: audit/models.py:357
+#: audit/models.py:368
 msgid "Actor Username"
 msgstr ""
 
-#: audit/models.py:362
+#: audit/models.py:373
 msgid "Event Type"
 msgstr ""
 
-#: audit/models.py:370
+#: audit/models.py:381
 msgid "Notes associated with this entry"
 msgstr ""
 
@@ -883,10 +883,10 @@ msgstr "Consumit"
 msgid "Available"
 msgstr "Disponible"
 
-#: build/api.py:588 build/serializers.py:1528 company/serializers.py:454
-#: order/serializers.py:1440 order/serializers.py:2778 part/serializers.py:793
-#: part/serializers.py:1148 part/serializers.py:1546
-#: templates/email/low_stock_notification.html:18
+#: build/api.py:588 build/serializers.py:1528 company/api.py:330
+#: company/serializers.py:454 order/serializers.py:1440
+#: order/serializers.py:2778 part/serializers.py:793 part/serializers.py:1148
+#: part/serializers.py:1546 templates/email/low_stock_notification.html:18
 msgid "On Order"
 msgstr "En comanda"
 
@@ -911,7 +911,7 @@ msgstr "Ordre de producció"
 #: stock/serializers.py:1117 stock/serializers.py:1662
 #: stock/serializers.py:1937 stock/serializers.py:2065
 #: stock/serializers.py:2181 templates/email/purchase_order_received.html:17
-#: templates/email/stale_stock_notification.html:18 users/models.py:745
+#: templates/email/stale_stock_notification.html:18 users/models.py:764
 msgid "Location"
 msgstr "Ubicació"
 
@@ -1843,7 +1843,7 @@ msgid "Project Code Label"
 msgstr "Etiqueta del codi de projecte"
 
 #: common/models.py:111 common/models.py:136 common/models.py:3949
-#: users/models.py:834
+#: users/models.py:853
 msgid "Updated"
 msgstr "Actualitzat"
 
@@ -1870,8 +1870,8 @@ msgstr "Descripció del projecte"
 #: common/models.py:195 common/models.py:1540 common/models.py:2567
 #: common/models.py:2702 company/models.py:231 company/models.py:881
 #: machine/models.py:43 part/models.py:1332 plugin/models.py:69
-#: stock/api.py:704 users/models.py:382 users/models.py:750
-#: users/serializers.py:376 users/serializers.py:507
+#: stock/api.py:704 users/models.py:382 users/models.py:769
+#: users/serializers.py:377 users/serializers.py:508
 msgid "Active"
 msgstr "Actiu"
 
@@ -1925,7 +1925,7 @@ msgstr "La cadena de clau ha de ser única"
 #: importer/models.py:106 part/models.py:2707 part/models.py:2735
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:252
-#: users/models.py:688 users/models.py:822
+#: users/models.py:707 users/models.py:841
 msgid "User"
 msgstr "Usuari"
 
@@ -4771,7 +4771,7 @@ msgid "Contact email address"
 msgstr "Adreça de correu electrònic de contacte"
 
 #: company/models.py:218 company/models.py:363 order/models.py:627
-#: order/models.py:2863 users/models.py:757
+#: order/models.py:2863 users/models.py:776
 msgid "Contact"
 msgstr "Contacte"
 
@@ -5107,7 +5107,7 @@ msgstr "Connector d'exportació"
 msgid "Select export plugin"
 msgstr "Seleccioneu el connector d'exportació"
 
-#: generic/states/api_helpers.py:385
+#: generic/states/api_helpers.py:387
 msgid "User does not have permission to view or change this object"
 msgstr ""
 
@@ -5492,7 +5492,7 @@ msgstr "Clau de la propietat"
 msgid "Value of the property"
 msgstr "Valor de la propietat"
 
-#: machine/serializers.py:30 users/models.py:425
+#: machine/serializers.py:30 users/models.py:444
 msgid "Group"
 msgstr "Grup"
 
@@ -5771,7 +5771,7 @@ msgid "Order reference"
 msgstr "Referència de la comanda"
 
 #: order/models.py:801 order/models.py:1595 order/models.py:3489
-#: order/models.py:3919 stock/serializers.py:986 users/models.py:738
+#: order/models.py:3919 stock/serializers.py:986 users/models.py:757
 msgid "Status"
 msgstr "Estat"
 
@@ -6434,6 +6434,7 @@ msgid "Enter batch code for incoming stock items"
 msgstr "Introduïu el codi de lot dels articles d'estoc entrants"
 
 #: order/serializers.py:903 stock/models.py:1340
+#: templates/email/api_token_issued.html:18
 #: templates/email/stale_stock_notification.html:22 users/models.py:265
 msgid "Expiry Date"
 msgstr "Data de caducitat"
@@ -9334,7 +9335,7 @@ msgid "Required For"
 msgstr "Necessari per a"
 
 #: report/templates/report/inventree_build_order_report.html:151
-#: users/models.py:304
+#: templates/email/api_token_issued.html:17 users/models.py:304
 msgid "Issued By"
 msgstr "Emès per"
 
@@ -9672,7 +9673,7 @@ msgstr "Seleccioneu el propietari"
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "Els articles d'estoc no es poden ubicar directament en ubicacions d'estoc estructurals, però sí en les seves ubicacions filles."
 
-#: stock/models.py:217 users/models.py:684
+#: stock/models.py:217 users/models.py:703
 msgid "External"
 msgstr "Extern"
 
@@ -9999,7 +10000,7 @@ msgstr "Iniciada"
 msgid "The timestamp of the test start"
 msgstr "La marca de temps de l'inici de la prova"
 
-#: stock/models.py:3836 users/models.py:829
+#: stock/models.py:3836 users/models.py:848
 msgid "Finished"
 msgstr "Finalitzada"
 
@@ -10588,6 +10589,18 @@ msgstr "Error de configuració"
 msgid "The %(inventree_title)s server raised a configuration error"
 msgstr "El servidor %(inventree_title)s ha generat un error de configuració"
 
+#: templates/email/api_token_issued.html:8
+msgid "If you did not request this token, revoke it immediately and contact your administrator."
+msgstr ""
+
+#: templates/email/api_token_issued.html:10
+msgid "Click on the following link to review your API tokens"
+msgstr ""
+
+#: templates/email/api_token_issued.html:16 users/models.py:259
+msgid "Token Name"
+msgstr "Nom del token"
+
 #: templates/email/build_order_completed.html:9
 #: templates/email/canceled_order_assigned.html:9
 #: templates/email/new_order_assigned.html:9
@@ -10672,19 +10685,19 @@ msgstr "Permisos"
 msgid "Important dates"
 msgstr "Dates importants"
 
-#: users/authentication.py:29
+#: users/authentication.py:25
 msgid "Invalid token."
 msgstr "El token no és vàlid."
 
-#: users/authentication.py:33
+#: users/authentication.py:28
 msgid "User inactive or deleted."
 msgstr "Usuari inactiu o suprimit."
 
-#: users/authentication.py:36 users/models.py:279
+#: users/authentication.py:31 users/models.py:279
 msgid "Token has been revoked"
 msgstr "El token s'ha revocat"
 
-#: users/authentication.py:39
+#: users/authentication.py:34
 msgid "Token has expired"
 msgstr "El token ha caducat"
 
@@ -10695,10 +10708,6 @@ msgstr "Token d'API"
 #: users/models.py:108
 msgid "API Tokens"
 msgstr "Tokens d'API"
-
-#: users/models.py:259
-msgid "Token Name"
-msgstr "Nom del token"
 
 #: users/models.py:260
 msgid "Custom token name"
@@ -10756,159 +10765,163 @@ msgstr "ID del pepper"
 msgid "Identifier for the pepper used in token hashing"
 msgstr "Identificador del pepper utilitzat per a calcular el hash del token"
 
-#: users/models.py:416
+#: users/models.py:394
+msgid "Email is not configured on this server - this is a security risk."
+msgstr ""
+
+#: users/models.py:435
 msgid "Permission set"
 msgstr "Conjunt de permisos"
 
-#: users/models.py:429
+#: users/models.py:448
 msgid "View"
 msgstr "Visualitza"
 
-#: users/models.py:429
+#: users/models.py:448
 msgid "Permission to view items"
 msgstr "Permís per a veure elements"
 
-#: users/models.py:433
+#: users/models.py:452
 msgid "Add"
 msgstr "Afegeix"
 
-#: users/models.py:433
+#: users/models.py:452
 msgid "Permission to add items"
 msgstr "Permís per a afegir elements"
 
-#: users/models.py:437
+#: users/models.py:456
 msgid "Change"
 msgstr "Canvia"
 
-#: users/models.py:439
+#: users/models.py:458
 msgid "Permissions to edit items"
 msgstr "Permisos per a editar elements"
 
-#: users/models.py:443
+#: users/models.py:462
 msgid "Delete"
 msgstr "Suprimeix"
 
-#: users/models.py:445
+#: users/models.py:464
 msgid "Permission to delete items"
 msgstr "Permís per a suprimir elements"
 
-#: users/models.py:682
+#: users/models.py:701
 msgid "Bot"
 msgstr "Bot"
 
-#: users/models.py:683
+#: users/models.py:702
 msgid "Internal"
 msgstr "Intern"
 
-#: users/models.py:685
+#: users/models.py:704
 msgid "Guest"
 msgstr "Convidat"
 
-#: users/models.py:703
+#: users/models.py:722
 msgid "Language"
 msgstr "Llengua"
 
-#: users/models.py:704
+#: users/models.py:723
 msgid "Preferred language for the user"
 msgstr "Llengua preferida de l'usuari"
 
-#: users/models.py:709
+#: users/models.py:728
 msgid "Theme"
 msgstr "Tema"
 
-#: users/models.py:710
+#: users/models.py:729
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr "Paràmetres de la interfície web en format JSON - no ho editeu manualment!"
 
-#: users/models.py:715
+#: users/models.py:734
 msgid "Widgets"
 msgstr "Ginys"
 
-#: users/models.py:717
+#: users/models.py:736
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr "Paràmetres dels ginys del tauler en format JSON - no ho editeu manualment!"
 
-#: users/models.py:724
+#: users/models.py:743
 msgid "Display Name"
 msgstr "Nom a mostrar"
 
-#: users/models.py:725
+#: users/models.py:744
 msgid "Chosen display name for the user"
 msgstr "Nom a mostrar triat per l'usuari"
 
-#: users/models.py:731
+#: users/models.py:750
 msgid "Position"
 msgstr "Càrrec"
 
-#: users/models.py:732
+#: users/models.py:751
 msgid "Main job title or position"
 msgstr "Càrrec o lloc de treball principal"
 
-#: users/models.py:739
+#: users/models.py:758
 msgid "User status message"
 msgstr "Missatge d'estat de l'usuari"
 
-#: users/models.py:746
+#: users/models.py:765
 msgid "User location information"
 msgstr "Informació d'ubicació de l'usuari"
 
-#: users/models.py:751
+#: users/models.py:770
 msgid "User is actively using the system"
 msgstr "L'usuari utilitza activament el sistema"
 
-#: users/models.py:758
+#: users/models.py:777
 msgid "Preferred contact information for the user"
 msgstr "Informació de contacte preferida de l'usuari"
 
-#: users/models.py:764
+#: users/models.py:783
 msgid "User Type"
 msgstr "Tipus d'usuari"
 
-#: users/models.py:765
+#: users/models.py:784
 msgid "Which type of user is this?"
 msgstr "Quin tipus d'usuari és?"
 
-#: users/models.py:771
+#: users/models.py:790
 msgid "Organisation"
 msgstr "Organització"
 
-#: users/models.py:772
+#: users/models.py:791
 msgid "Users primary organisation/affiliation"
 msgstr "Organització o afiliació principal de l'usuari"
 
-#: users/models.py:780
+#: users/models.py:799
 msgid "Primary Group"
 msgstr "Grup principal"
 
-#: users/models.py:781
+#: users/models.py:800
 msgid "Primary group for the user"
 msgstr "Grup principal de l'usuari"
 
-#: users/models.py:814
+#: users/models.py:833
 msgid "Tip Result"
 msgstr ""
 
-#: users/models.py:815
+#: users/models.py:834
 msgid "Tip Results"
 msgstr ""
 
-#: users/models.py:824
+#: users/models.py:843
 msgid "Tip ID/Name"
 msgstr ""
 
-#: users/models.py:826
+#: users/models.py:845
 msgid "Shown"
 msgstr ""
 
-#: users/models.py:826
+#: users/models.py:845
 msgid "Was this tip shown?"
 msgstr ""
 
-#: users/models.py:829
+#: users/models.py:848
 msgid "Was this tip finished?"
 msgstr ""
 
-#: users/models.py:835
+#: users/models.py:854
 msgid "The last time this tip result was updated"
 msgstr ""
 
@@ -10940,103 +10953,117 @@ msgstr "Ordres de devolució"
 msgid "Transfer Orders"
 msgstr "Ordres de transferència"
 
-#: users/serializers.py:207
+#: users/serializers.py:208
 msgid "Username"
 msgstr "Nom d'usuari"
 
-#: users/serializers.py:210
+#: users/serializers.py:211
 msgid "First Name"
 msgstr "Nom"
 
-#: users/serializers.py:210
+#: users/serializers.py:211
 msgid "First name of the user"
 msgstr "Nom de l'usuari"
 
-#: users/serializers.py:214
+#: users/serializers.py:215
 msgid "Last Name"
 msgstr "Cognoms"
 
-#: users/serializers.py:214
+#: users/serializers.py:215
 msgid "Last name of the user"
 msgstr "Cognoms de l'usuari"
 
-#: users/serializers.py:218
+#: users/serializers.py:219
 msgid "Email address of the user"
 msgstr "Adreça electrònica de l'usuari"
 
-#: users/serializers.py:267
+#: users/serializers.py:268
 msgid "User must be authenticated"
 msgstr "L'usuari ha d'estar autenticat"
 
-#: users/serializers.py:276
+#: users/serializers.py:277
 msgid "Only a superuser can create a token for another user"
 msgstr "Només un superusuari pot crear un token per a un altre usuari"
 
-#: users/serializers.py:366
+#: users/serializers.py:367
 msgid "Administrator"
 msgstr "Administrador"
 
-#: users/serializers.py:367
+#: users/serializers.py:368
 msgid "Does this user have administrative permissions"
 msgstr "Indica si aquest usuari té permisos d'administració"
 
-#: users/serializers.py:372 users/serializers.py:500
+#: users/serializers.py:373 users/serializers.py:501
 msgid "Superuser"
 msgstr "Superusuari"
 
-#: users/serializers.py:372 users/serializers.py:501
+#: users/serializers.py:373 users/serializers.py:502
 msgid "Is this user a superuser"
 msgstr "Indica si aquest usuari és un superusuari"
 
-#: users/serializers.py:376 users/serializers.py:508
+#: users/serializers.py:377 users/serializers.py:509
 msgid "Is this user account active"
 msgstr "Indica si aquest compte d'usuari està actiu"
 
-#: users/serializers.py:397
+#: users/serializers.py:398
 msgid "Only a superuser can adjust this field"
 msgstr "Només un superusuari pot modificar aquest camp"
 
-#: users/serializers.py:425
+#: users/serializers.py:426
 msgid "Password"
 msgstr "Contrasenya"
 
-#: users/serializers.py:426
+#: users/serializers.py:427
 msgid "Password for the user"
 msgstr "Contrasenya de l'usuari"
 
-#: users/serializers.py:432
+#: users/serializers.py:433
 msgid "Override warning"
 msgstr "Ignora l'avís"
 
-#: users/serializers.py:433
+#: users/serializers.py:434
 msgid "Override the warning about password rules"
 msgstr "Ignora l'avís sobre les regles de contrasenya"
 
-#: users/serializers.py:493
+#: users/serializers.py:494
 msgid "Staff"
 msgstr "Personal"
 
-#: users/serializers.py:494
+#: users/serializers.py:495
 msgid "Does this user have staff permissions"
 msgstr "Indica si aquest usuari té permisos de personal"
 
-#: users/serializers.py:544
+#: users/serializers.py:545
 msgid "You do not have permission to create users"
 msgstr "No teniu permís per a crear usuaris"
 
-#: users/serializers.py:557
+#: users/serializers.py:558
 msgid "A user with this email address already exists"
 msgstr ""
 
-#: users/serializers.py:592
+#: users/serializers.py:593
 msgid "Your account has been created."
 msgstr "S'ha creat el vostre compte."
 
-#: users/serializers.py:594
+#: users/serializers.py:595
 msgid "Please use the password reset function to login"
 msgstr "Utilitzeu la funció de restabliment de la contrasenya per a iniciar la sessió"
 
-#: users/serializers.py:600
+#: users/serializers.py:601
 msgid "Welcome to InvenTree"
 msgstr "Us donem la benvinguda a InvenTree"
+
+#: users/tasks.py:29
+#, python-brace-format
+msgid "A new API token '{name}' was issued for your account by {issuer}"
+msgstr ""
+
+#: users/tasks.py:32
+#, python-brace-format
+msgid "A new API token '{name}' was issued for your account"
+msgstr ""
+
+#: users/tasks.py:36
+msgid "API Token Issued"
+msgstr ""
 
