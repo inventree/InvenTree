@@ -44,6 +44,15 @@ admin.site.register(Schedule, ReadOnlyScheduleAdmin)
 class InvenTreeUserSessionAdmin(NoEditAdminMixin, UserSessionAdmin):
     """Admin interface for UserSession - view and delete only, no add or edit."""
 
+    def delete_model(self, request, obj):
+        """End the underlying session, not just the tracking record."""
+        obj.end()
+
+    def delete_queryset(self, request, queryset):
+        """End the underlying sessions, not just the tracking records."""
+        for session in queryset:
+            session.end()
+
 
 admin.site.unregister(UserSession)
 admin.site.register(UserSession, InvenTreeUserSessionAdmin)
