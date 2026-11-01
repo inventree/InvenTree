@@ -5,7 +5,6 @@ import hashlib
 import inspect
 import io
 import json
-import os.path
 import re
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
@@ -256,13 +255,15 @@ def checkStaticFile(*args) -> bool:
     return static_storage.exists(str(fn))
 
 
-def getLogoImage(as_file: bool = False, custom: bool = True) -> str:
+def getLogoImage(
+    as_file: bool = False, custom: bool = True, backup: bool = True
+) -> str:
     """Return the InvenTree logo image, or a custom logo if available.
 
     Arguments:
-        as_file: If True, return a base64-encoded data URI of the image contents,
-                 suitable for embedding directly into a generated report (default = False)
-        custom: If True, return a custom logo if one has been provided (default = True)
+        as_file: Return a file path instead of a URL (default = False)
+        custom: Use a custom logo if available (default = True)
+        backup: Use a backup logo if available (default = True)
     """
     # Note: Imported here to avoid circular imports, as the 'report' app also imports from this module
     import report.helpers
@@ -287,15 +288,19 @@ def getLogoImage(as_file: bool = False, custom: bool = True) -> str:
                 )
             return default_storage.url(settings.CUSTOM_LOGO)
 
-    # If we have got to this point, return the default logo
-    if as_file:
-        return report.helpers.encode_file_base64(
-            'img/inventree.png', get_static_file_contents('img/inventree.png')
-        )
-    return getStaticUrl('img/inventree.png')
+    # If we have got to this point, return the default logo (if requested)
+    if backup:
+        if as_file:
+            return report.helpers.encode_file_base64(
+                'img/inventree.png', get_static_file_contents('img/inventree.png')
+            )
+        else:
+            return getStaticUrl('img/inventree.png')
+
+    return None
 
 
-def getSplashScreen(custom=True):
+def getSplashScreen(custom: bool = True):
     """Return the InvenTree splash screen, or a custom splash if available."""
     static_storage = StaticFilesStorage()
 
@@ -314,24 +319,6 @@ def getCustomOption(reference: str):
         reference: Reference key for the custom option
     """
     return settings.CUSTOMIZE.get(reference, None)
-
-
-def TestIfImageURL(url):
-    """Test if an image URL (or filename) looks like a valid image format.
-
-    Simply tests the extension against a set of allowed values
-    """
-    return os.path.splitext(os.path.basename(url))[-1].lower() in [
-        '.jpg',
-        '.jpeg',
-        '.j2k',
-        '.png',
-        '.bmp',
-        '.tif',
-        '.tiff',
-        '.webp',
-        '.gif',
-    ]
 
 
 def str2bool(text, test=True) -> bool:
