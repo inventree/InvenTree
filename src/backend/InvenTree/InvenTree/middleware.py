@@ -17,6 +17,7 @@ import structlog
 from error_report.middleware import ExceptionProcessor
 from rest_framework.exceptions import AuthenticationFailed
 
+import InvenTree.helpers
 from common.settings import get_global_setting
 from InvenTree.cache import create_session_cache, delete_session_cache
 from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
@@ -151,7 +152,12 @@ class AuthRequiredMiddleware:
             # Does the provided token match a valid (active) user?
             try:
                 token = validate_api_token(token)
-            except AuthenticationFailed:
+            except AuthenticationFailed as exc:
+                logger.warning(
+                    'Access denied for token %s: %s',
+                    InvenTree.helpers.sanitize_token(str(token)),
+                    exc.detail,
+                )
                 return False
 
             # Provide the user information to the request

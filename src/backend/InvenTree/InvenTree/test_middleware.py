@@ -137,6 +137,32 @@ class MiddlewareTests(InvenTreeTestCase):
         token.save()
         self.check_path(target, 401, auth_header=f'Token {raw_token}')
 
+    def test_token_auth_rejection_logged(self):
+        """Rejected tokens are logged (sanitized) along with the reason."""
+        target = reverse('auth-check')
+
+        token = ApiToken.objects.create(user=self.user, name='log-test')
+        raw_token = token.token
+        token.revoked = True
+        token.save()
+        self.client.logout()
+
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            self.check_path(target, 401, auth_header=f'Token {raw_token}')
+
+        output = '\n'.join(captured.output)
+        self.assertIn('Access denied for token', output)
+        self.assertIn('Token has been revoked', output)
+        # The secret must not appear in the logs
+        self.assertNotIn(raw_token, output)
+
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            self.check_path(
+                target, 401, auth_header='Token inv-unknown-token-value-0123456789'
+            )
+
+        self.assertIn('Invalid token', '\n'.join(captured.output))
+
     def test_info_view_inactive_staff(self):
         """InfoView must not treat a token for an inactive staff user as staff."""
         self.user.is_staff = True
