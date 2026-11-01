@@ -4,7 +4,7 @@ title: Allocate Mixin
 
 ## AllocateMixin
 
-The `AllocateMixin` class enables plugins to customize how stock items are automatically allocated against [build orders](../../manufacturing/build.md) and [sales orders](../../sales/sales_order.md).
+The `AllocateMixin` class enables plugins to customize how stock items are automatically allocated against [build orders](../../manufacturing/build.md), [sales orders](../../sales/sales_order.md) and [repair orders](../../manufacturing/repair.md).
 
 When a user triggers "auto allocation" of stock against an order, InvenTree first determines a list of candidate stock items for each line, using the default allocation rules (e.g. in-stock, matching part / variant / substitute, location, serialization, etc). Before this candidate list is used to actually create the stock allocations, it is passed through any active plugins which implement the `AllocateMixin` class - allowing a plugin to filter, reorder, or otherwise adjust which stock items are used.
 
@@ -12,7 +12,7 @@ When a user triggers "auto allocation" of stock against an order, InvenTree firs
     If multiple plugins are active which implement the `AllocateMixin` methods, they are called in turn - each plugin receives the (possibly already adjusted) output of the previous plugin.
 
 !!! info "Default Behavior"
-    Neither method needs to be implemented by a plugin. If a method is not overridden - or if it returns `None` - the provided list of stock items is passed through unmodified.
+    None of these methods need to be implemented by a plugin. If a method is not overridden - or if it returns `None` - the provided list of stock items is passed through unmodified.
 
 ### Build Order Allocation
 
@@ -35,6 +35,20 @@ Note that this method is called *once per candidate list* - once for each `Build
 The `filter_sales_order_allocation` method is called when automatically allocating stock against a [sales order](../../sales/sales_order.md).
 
 ::: plugin.base.integration.AllocateMixin.AllocateMixin.filter_sales_order_allocation
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      extra:
+        show_source: True
+      summary: False
+      members: []
+
+### Repair Order Allocation
+
+The `filter_repair_order_allocation` method is called when automatically allocating stock against a [repair order](../../manufacturing/repair.md) - once for each line item which has an outstanding quantity.
+
+::: plugin.base.integration.AllocateMixin.AllocateMixin.filter_repair_order_allocation
     options:
       show_bases: False
       show_root_heading: False

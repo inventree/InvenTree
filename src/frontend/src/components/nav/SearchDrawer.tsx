@@ -391,6 +391,15 @@ export function SearchDrawer({
         enabled:
           user.hasViewVisible(UserRoles.return_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_RETURN_ORDERS')
+      },
+      {
+        model: ModelType.repairorder,
+        parameters: {
+          customer_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.repair_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_REPAIR_ORDERS')
       }
     ];
   }, [user, userSettings]);

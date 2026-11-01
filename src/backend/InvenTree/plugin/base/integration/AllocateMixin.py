@@ -10,7 +10,7 @@ class AllocateMixin:
     """Mixin which allows plugins to customize automatic stock allocation.
 
     This mixin acts as a "shim" during the auto-allocation of stock items
-    against build orders and sales orders. It is called *after* the default
+    against build orders, sales orders and repair orders. It is called *after* the default
     allocation logic has determined a list of candidate stock items, but
     *before* those items are actually used for allocation.
 
@@ -67,6 +67,25 @@ class AllocateMixin:
         """
         return stock_items
 
+    def filter_repair_order_allocation(
+        self, order_line: Model, stock_items: list, **kwargs
+    ) -> list:
+        """Filter the stock items available for auto-allocation against a repair order.
+
+        Arguments:
+            order_line: The RepairOrderLineItem object which is being allocated against
+            stock_items: A list of candidate StockItem objects, which have already
+                been filtered against the default allocation rules (e.g. in-stock,
+                matching part, location, etc)
+
+        Returns:
+            A list of StockItem objects to be used for auto-allocation.
+
+        The default implementation simply returns the provided list of stock items,
+        unmodified.
+        """
+        return stock_items
+
 
 def apply_allocate_mixin(
     hook_name: str, line_item, stock_items: list, **kwargs
@@ -76,7 +95,7 @@ def apply_allocate_mixin(
     Arguments:
         hook_name: Name of the AllocateMixin method to call
             (e.g. 'filter_build_allocation' or 'filter_sales_order_allocation')
-        line_item: The BuildLine / SalesOrderLineItem being allocated against
+        line_item: The BuildLine / SalesOrderLineItem / RepairOrderLineItem being allocated against
         stock_items: The current list of candidate StockItem objects
 
     Returns:
