@@ -1428,6 +1428,7 @@ class LocationSerializer(
             'custom_icon',
             'structural',
             'external',
+            'exclude_from_stock',
             'location_type',
             # Optional fields
             'location_type_detail',

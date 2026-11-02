@@ -1930,6 +1930,27 @@ class StockLocationTest(InvenTreeTestCase):
         loc.save()
         self.assertEqual(loc.icon, '')
 
+    def test_exclude_from_stock(self):
+        """Test that stock items in locations with exclude_from_stock=True are excluded from available stock."""
+        part = Part.objects.create(name='RnD Test Part', description='Part for RnD stock test')
+        normal_loc = StockLocation.objects.create(name='Warehouse A', exclude_from_stock=False)
+        rnd_loc = StockLocation.objects.create(name='RnD Lab', exclude_from_stock=True)
+
+        item_normal = StockItem.objects.create(part=part, location=normal_loc, quantity=10)
+        item_rnd = StockItem.objects.create(part=part, location=rnd_loc, quantity=25)
+
+        self.assertTrue(item_normal.in_stock)
+        self.assertFalse(item_rnd.in_stock)
+        self.assertEqual(part.total_stock, 10)
+        self.assertEqual(part.available_stock, 10)
+
+        rnd_loc.exclude_from_stock = False
+        rnd_loc.save()
+        item_rnd.refresh_from_db()
+        self.assertTrue(item_rnd.in_stock)
+        self.assertEqual(part.total_stock, 35)
+        self.assertEqual(part.available_stock, 35)
+
 
 class AdminTest(AdminTestCase):
     """Tests for the admin interface integration."""

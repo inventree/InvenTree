@@ -310,7 +310,7 @@ class StockLocationFilter(FilterSet):
         """Meta class options for this filterset."""
 
         model = StockLocation
-        fields = ['name', 'structural', 'external']
+        fields = ['name', 'structural', 'external', 'exclude_from_stock']
 
     location_type = rest_filters.ModelChoiceFilter(
         queryset=StockLocationType.objects.all(), field_name='location_type'
