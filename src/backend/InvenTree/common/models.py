@@ -292,6 +292,8 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
                         if not key.startswith('_')
                     ],
                     batch_size=250,
+                    # Concurrent requests may race to create the same keys
+                    ignore_conflicts=True,
                 )
         except Exception as exc:
             logger.exception(
