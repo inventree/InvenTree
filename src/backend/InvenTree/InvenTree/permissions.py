@@ -463,10 +463,7 @@ class DataImporterPermission(OASTokenMixin, permissions.BasePermission):
             session = getattr(obj, 'session', None)
 
         if session:
-            if model_class := session.model_class:
-                return users.permissions.check_user_permission(
-                    request.user, model_class, 'change'
-                )
+            return session.check_import_permission(request.user)
 
         return True
 
