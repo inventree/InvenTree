@@ -1207,8 +1207,10 @@ def get_api_token_pepper_set() -> bool:
 
 def get_api_token_peppers() -> list[str]:
     """Return possible current and past peppers."""
-    return [
+    pepper_sources = (
         settings.API_TOKEN_PEPPER,
         *settings.API_TOKEN_PEPPER_ADDITIONAL,
         settings.SECRET_KEY,
-    ]
+    )
+    pepper_sources = [p.strip() for p in pepper_sources]
+    return [p for p in pepper_sources if p]

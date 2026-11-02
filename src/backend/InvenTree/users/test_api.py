@@ -11,6 +11,7 @@ from allauth.account.models import EmailAddress
 
 import InvenTree.version
 from common.models import NotificationMessage
+from InvenTree.helpers import get_api_token_peppers
 from InvenTree.unit_test import InvenTreeAPITestCase
 from users.models import ApiToken, default_token
 from users.ruleset import RULESET_NAMES, get_ruleset_models
@@ -781,6 +782,11 @@ class UserTokenTests(InvenTreeAPITestCase):
         sk = 'secret-key'
         p1 = 'pepper-1'
         p2 = 'pepper-2'
+
+        with self.settings(
+            SECRET_KEY=sk, API_TOKEN_PEPPER='', API_TOKEN_PEPPER_ADDITIONAL=['', p1]
+        ):
+            self.assertEqual(get_api_token_peppers(), [p1, sk])
 
         # No pepper configured -  SECRET_KEY
         with self.settings(API_TOKEN_PEPPER=sk):
