@@ -439,6 +439,97 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
 
         self.assertEqual(row.errors, {'part': 'No related model found for field: part'})
 
+    def test_field_filters_validation(self):
+        """Test that field filters cannot be used to traverse related models.
+
+        Field filters are applied as ORM filters against the related model,
+        so lookups which traverse relations (or inject Q arguments) must be rejected.
+        """
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        from importer.validators import validate_field_filters
+
+        # Valid filters
+        for filters in [
+            None,
+            {},
+            {'part': {}},
+            {'part': {'supplier': 1, 'active': True}},
+            {'part': {'name': 'abc', 'pk': 1.5, 'category': None}},
+        ]:
+            validate_field_filters(filters)
+
+        # Invalid filters
+        for filters in [
+            [],
+            {'user': []},
+            {'user': {'usersession__session_key__startswith': 'a'}},
+            {'user': {'password__startswith': 'pbkdf2'}},
+            {'part': {'name__icontains': 'abc'}},
+            {'part': {'_negated': True}},
+            {'part': {'_connector': 'OR'}},
+            {'part': {'pk': 1, 'active': True, '': 1}},
+            {'part': {'not a field': 1}},
+            {'part': {'active': [True]}},
+            {'part': {'active': {'a': 1}}},
+        ]:
+            with self.assertRaises(DjangoValidationError, msg=str(filters)):
+                validate_field_filters(filters)
+
+        # Invalid filters are rejected on save
+        session = DataImportSession(
+            data_file=self.helper_file('companies.csv'),
+            model_type='stockitem',
+            field_filters={'part': {'category__parent__name': 'abc'}},
+        )
+
+        with self.assertRaises(DjangoValidationError):
+            session.save()
+
+        # Filters stored before validation was enforced are rejected at lookup time
+        session.field_filters = {}
+        session.save()
+
+        DataImportSession.objects.filter(pk=session.pk).update(
+            field_filters={'part': {'category__parent__name': 'abc'}}
+        )
+        session.refresh_from_db()
+
+        row = DataImportRow(session=session, row_data={})
+        row.related_field_map = {}
+
+        with self.assertRaises(DjangoValidationError):
+            row.lookup_related_field('part', '1')
+
+    def test_field_filters_invalid_field(self):
+        """Test that field filters referencing a non-existent field do not crash the import.
+
+        Regression test: an unknown filter key raises a FieldError from the ORM,
+        which was not caught by lookup_related_field (only ValueError was handled).
+        """
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        session = DataImportSession.objects.create(
+            data_file=self.helper_file('companies.csv'),
+            model_type='stockitem',
+            field_filters={'part': {'not_a_field': 1}},
+        )
+
+        row = DataImportRow(session=session, row_data={'Website': '1'})
+
+        # Auto-lookup: error is recorded against the row, rather than raising FieldError
+        row.extract_data(
+            field_mapping={'part': 'Website'},
+            available_fields={'part': {'type': 'related field'}},
+            commit=False,
+        )
+
+        self.assertEqual(row.errors, {'part': 'Invalid filters for field: part'})
+
+        # Explicit lookup field
+        with self.assertRaises(DjangoValidationError):
+            row.lookup_related_field('part', '1', lookup_field='name')
+
     def test_lookup_field_validation(self):
         """Test that DataImportColumnMap.clean() validates the lookup_field value."""
         from django.core.exceptions import ValidationError as DjangoValidationError

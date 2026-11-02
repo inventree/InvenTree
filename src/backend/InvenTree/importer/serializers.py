@@ -9,6 +9,7 @@ from rest_framework import serializers
 
 import importer.models
 import importer.registry
+import importer.validators
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
@@ -159,6 +160,8 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
 
             if type(filters) is not dict:
                 raise ValidationError(_('Invalid field filters'))
+
+        importer.validators.validate_field_filters(filters)
 
         return filters
 
