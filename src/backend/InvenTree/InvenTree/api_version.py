@@ -1,12 +1,12 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 570
+INVENTREE_API_VERSION = 569
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v570 -> 2026-11-01 : https://github.com/inventree/InvenTree/pull/13072
+v569 -> 2026-11-02 : https://github.com/inventree/InvenTree/pull/13072
     - Adds feature info to contenttype endpoint
 
 v568 -> 2026-10-30 : https://github.com/inventree/InvenTree/pull/13141
