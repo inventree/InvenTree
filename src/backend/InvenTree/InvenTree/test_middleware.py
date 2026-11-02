@@ -163,6 +163,23 @@ class MiddlewareTests(InvenTreeTestCase):
 
         self.assertIn('Invalid token', '\n'.join(captured.output))
 
+    def test_token_auth_case(self):
+        """The auth scheme is case-insensitive, but the token value is not."""
+        target = reverse('auth-check')
+
+        raw_token = ApiToken.objects.create(user=self.user, name='case-test').token
+        self.client.logout()
+
+        for scheme in ['Token', 'TOKEN', 'token', 'bearer', 'Bearer:']:
+            self.check_path(target, auth_header=f'{scheme} {raw_token}')
+
+        self.check_path(target, 401, auth_header=f'Token {raw_token.upper()}')
+
+        # A (legacy) mixed-case key must not be lowercased before lookup
+        key = 'inv-' + 'AbCdEf0123456789' * 2
+        ApiToken.objects.create(user=self.user, name='legacy', key=key)
+        self.check_path(target, auth_header=f'Token {key}')
+
     def test_info_view_inactive_staff(self):
         """InfoView must not treat a token for an inactive staff user as staff."""
         self.user.is_staff = True
