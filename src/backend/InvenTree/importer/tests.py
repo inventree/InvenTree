@@ -865,6 +865,96 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         self.assignRole('purchase_order.change')
         self.post(url, expected_code=200)
 
+    def test_staff_only_models(self):
+        """Test that models with IMPORT_REQUIRES_STAFF cannot be imported by non-staff users.
+
+        The importer must enforce the same restrictions as the API endpoints for these models.
+        """
+        import common.models
+
+        self.user.is_staff = False
+        self.user.save()
+
+        url = reverse('api-importer-session-list')
+
+        for model_type in [
+            'customunit',
+            'projectcode',
+            'parametertemplate',
+            'inventreecustomuserstatemodel',
+        ]:
+            # Non-staff user cannot create an import session for a staff-only model
+            response = self.post(
+                url,
+                {
+                    'model_type': model_type,
+                    'data_file': ContentFile('name\nx', 'x.csv'),
+                },
+                format='multipart',
+                expected_code=400,
+            )
+            self.assertIn('model_type', response.data)
+
+        # A pre-existing session (e.g. created while the user was staff) cannot be accepted
+        self.user.is_staff = True
+        self.user.save()
+
+        data = self.post(
+            url,
+            {
+                'model_type': 'customunit',
+                'data_file': ContentFile(
+                    'name,definition\nimported_unit,2 * kilogram', 'units.csv'
+                ),
+            },
+            format='multipart',
+            expected_code=201,
+        ).data
+
+        accept_url = reverse(
+            'api-import-session-accept-fields', kwargs={'pk': data['pk']}
+        )
+        accept_rows_url = reverse(
+            'api-import-session-accept-rows', kwargs={'pk': data['pk']}
+        )
+
+        self.user.is_staff = False
+        self.user.save()
+
+        self.post(accept_url, expected_code=403)
+        self.post(accept_rows_url, {'rows': []}, expected_code=403)
+
+        # Staff user can accept the mapping
+        self.user.is_staff = True
+        self.user.save()
+
+        self.post(accept_url, expected_code=200)
+
+        row_ids = list(
+            DataImportRow.objects.filter(session__pk=data['pk']).values_list(
+                'pk', flat=True
+            )
+        )
+        self.assertEqual(len(row_ids), 1)
+
+        # Non-staff user cannot accept the rows
+        self.user.is_staff = False
+        self.user.save()
+
+        self.post(accept_rows_url, {'rows': row_ids}, expected_code=403)
+        self.assertFalse(
+            common.models.CustomUnit.objects.filter(name='imported_unit').exists()
+        )
+
+        # Staff user can accept the rows
+        self.user.is_staff = True
+        self.user.save()
+
+        self.post(accept_rows_url, {'rows': row_ids}, expected_code=201)
+        self.assertTrue(
+            common.models.CustomUnit.objects.filter(name='imported_unit').exists()
+        )
+
     def test_field_filters_api(self):
         """Test that the API rejects field filters which traverse related models."""
         import json
@@ -997,8 +1087,10 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         self.post(url, {'rows': []}, expected_code=403)
 
         # Staff can reach the endpoint (rows list is empty so validation rejects with 400, not 403)
+        # Company is part of the purchase_order ruleset
         self.user.is_staff = True
         self.user.save()
+        self.assignRole('purchase_order.change')
         self.post(url, {'rows': []}, expected_code=400)
 
     def test_session_cleanup_on_complete(self):
