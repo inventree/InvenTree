@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 23:44+0000\n"
-"PO-Revision-Date: 2026-10-27 23:48\n"
+"POT-Creation-Date: 2026-11-02 01:10+0000\n"
+"PO-Revision-Date: 2026-11-02 01:15\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "Language: lt_LT\n"
@@ -17,43 +17,43 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:394
+#: InvenTree/api.py:392
 msgid "API endpoint not found"
 msgstr "API galinis taškas nerastas"
 
-#: InvenTree/api.py:467
+#: InvenTree/api.py:465
 msgid "List of items must be provided for bulk operation"
 msgstr ""
 
-#: InvenTree/api.py:474
+#: InvenTree/api.py:472
 msgid "Items must be provided as a list"
 msgstr "Elementai turi būti pateikti kaip sąrašas"
 
-#: InvenTree/api.py:482
+#: InvenTree/api.py:480
 msgid "Invalid items list provided"
 msgstr "Pateiktas neteisingas elementų sąrašas"
 
-#: InvenTree/api.py:487
+#: InvenTree/api.py:485
 msgid "All filter must only be used with true"
 msgstr "Filtras „all“ gali būti naudojamas tik su reikšme „true“"
 
-#: InvenTree/api.py:492
+#: InvenTree/api.py:490
 msgid "No items match the provided criteria"
 msgstr "Nė vienas elementas neatitinka pateiktų kriterijų"
 
-#: InvenTree/api.py:516
+#: InvenTree/api.py:514
 msgid "No data provided"
 msgstr ""
 
-#: InvenTree/api.py:532
+#: InvenTree/api.py:530
 msgid "This field must be unique."
 msgstr ""
 
-#: InvenTree/api.py:641
+#: InvenTree/api.py:639
 msgid "Item no longer matches the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:896 InvenTree/models.py:1664
+#: InvenTree/api.py:894 InvenTree/models.py:1664
 msgid "User does not have permission to view this model"
 msgstr "Vartotojas neturi teisių peržiūrėti šio modelio"
 
@@ -113,8 +113,8 @@ msgstr "Įveskite datą"
 msgid "Invalid decimal value"
 msgstr "Neteisinga dešimtainė reikšmė"
 
-#: InvenTree/fields.py:286 audit/models.py:369 build/serializers.py:538
-#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3246
+#: InvenTree/fields.py:286 audit/models.py:380 build/serializers.py:538
+#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3248
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
 #: stock/models.py:3814 stock/serializers.py:761 stock/serializers.py:945
@@ -226,15 +226,15 @@ msgid "Log in to the app"
 msgstr "Prisijungti prie programos"
 
 #: InvenTree/magic_login.py:41 company/models.py:212 company/models.py:536
-#: users/serializers.py:218
+#: users/serializers.py:219
 msgid "Email"
 msgstr "El. paštas"
 
-#: InvenTree/middleware.py:129
+#: InvenTree/middleware.py:131
 msgid "CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly."
 msgstr ""
 
-#: InvenTree/middleware.py:223
+#: InvenTree/middleware.py:226
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "Prieš atliekant bet kokius veiksmus, privalote įjungti dviejų veiksnių autentifikavimą."
 
@@ -282,17 +282,17 @@ msgstr "Nuorodos numeris per didelis"
 msgid "Invalid choice"
 msgstr "Neteisingas pasirinkimas"
 
-#: InvenTree/models.py:1349 common/api.py:1825 common/models.py:1535
-#: common/models.py:1958 common/models.py:2422 common/models.py:2547
-#: common/models.py:2859 common/serializers.py:704
+#: InvenTree/models.py:1349 common/api.py:1825 common/models.py:1537
+#: common/models.py:1960 common/models.py:2424 common/models.py:2549
+#: common/models.py:2861 common/serializers.py:704
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1141
 #: plugin/models.py:54 report/models.py:234 stock/models.py:91
 msgid "Name"
 msgstr "Pavadinimas"
 
 #: InvenTree/models.py:1355 build/models.py:284 common/models.py:189
-#: common/models.py:2554 common/models.py:2695 common/models.py:2874
-#: common/models.py:3520 company/models.py:641 company/models.py:913
+#: common/models.py:2556 common/models.py:2697 common/models.py:2876
+#: common/models.py:3522 company/models.py:641 company/models.py:913
 #: order/models.py:549 order/models.py:2342 part/models.py:1164
 #: report/models.py:240 report/models.py:971 report/models.py:997
 #: report/templates/report/inventree_build_order_report.html:116
@@ -304,7 +304,7 @@ msgstr "Aprašymas"
 msgid "Description (optional)"
 msgstr "Aprašymas (neprivalomas)"
 
-#: InvenTree/models.py:1371 common/models.py:3609
+#: InvenTree/models.py:1371 common/models.py:3611
 msgid "Path"
 msgstr "Kelias"
 
@@ -340,7 +340,7 @@ msgstr "Serverio klaida"
 msgid "An error has been logged by the server."
 msgstr "Serveris užfiksavo klaidą."
 
-#: InvenTree/models.py:1901 common/models.py:3545
+#: InvenTree/models.py:1901 common/models.py:3547
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -610,7 +610,7 @@ msgstr "Modelio tipas"
 msgid "Model type (e.g. \"order.purchaseorder\" or \"purchaseorder\")"
 msgstr ""
 
-#: audit/api.py:97 common/api.py:499 common/models.py:3179
+#: audit/api.py:97 common/api.py:499 common/models.py:3181
 msgid "Model ID"
 msgstr ""
 
@@ -642,31 +642,31 @@ msgstr ""
 msgid "Invalid model type"
 msgstr ""
 
-#: audit/models.py:324
+#: audit/models.py:335
 msgid "Audit Log Entry"
 msgstr ""
 
-#: audit/models.py:325
+#: audit/models.py:336
 msgid "Audit Log Entries"
 msgstr ""
 
-#: audit/models.py:348
+#: audit/models.py:359
 msgid "Parent Content Type"
 msgstr ""
 
-#: audit/models.py:352
+#: audit/models.py:363
 msgid "Parent Object PK"
 msgstr ""
 
-#: audit/models.py:357
+#: audit/models.py:368
 msgid "Actor Username"
 msgstr ""
 
-#: audit/models.py:362
+#: audit/models.py:373
 msgid "Event Type"
 msgstr ""
 
-#: audit/models.py:370
+#: audit/models.py:381
 msgid "Notes associated with this entry"
 msgstr ""
 
@@ -674,7 +674,7 @@ msgstr ""
 msgid "Field"
 msgstr "Laukas"
 
-#: audit/serializers.py:27 common/models.py:2432 common/models.py:2689
+#: audit/serializers.py:27 common/models.py:2434 common/models.py:2691
 #: generic/states/serializers.py:22
 msgid "Label"
 msgstr "Etiketė"
@@ -883,10 +883,10 @@ msgstr ""
 msgid "Available"
 msgstr "Prieinama"
 
-#: build/api.py:588 build/serializers.py:1528 company/serializers.py:454
-#: order/serializers.py:1440 order/serializers.py:2778 part/serializers.py:793
-#: part/serializers.py:1148 part/serializers.py:1546
-#: templates/email/low_stock_notification.html:18
+#: build/api.py:588 build/serializers.py:1528 company/api.py:330
+#: company/serializers.py:454 order/serializers.py:1440
+#: order/serializers.py:2778 part/serializers.py:793 part/serializers.py:1148
+#: part/serializers.py:1546 templates/email/low_stock_notification.html:18
 msgid "On Order"
 msgstr "Užsakyta"
 
@@ -911,7 +911,7 @@ msgstr "Gamybos užsakymas"
 #: stock/serializers.py:1117 stock/serializers.py:1662
 #: stock/serializers.py:1937 stock/serializers.py:2065
 #: stock/serializers.py:2181 templates/email/purchase_order_received.html:17
-#: templates/email/stale_stock_notification.html:18 users/models.py:745
+#: templates/email/stale_stock_notification.html:18 users/models.py:764
 msgid "Location"
 msgstr "Vieta"
 
@@ -1101,7 +1101,7 @@ msgstr "Vartotojas ar grupė, atsakinga už šį gamybos užsakymą"
 msgid "External Link"
 msgstr "Išorinė nuoroda"
 
-#: build/models.py:446 common/models.py:2239 part/models.py:1216
+#: build/models.py:446 common/models.py:2241 part/models.py:1216
 #: stock/models.py:1275
 msgid "Link to external URL"
 msgstr "Nuoroda į išorinį URL"
@@ -1198,7 +1198,7 @@ msgid "Build object"
 msgstr "Gamybos objektas"
 
 #: build/models.py:2250 build/models.py:2530 build/serializers.py:314
-#: build/serializers.py:367 build/serializers.py:1442 common/models.py:1455
+#: build/serializers.py:367 build/serializers.py:1442 common/models.py:1457
 #: order/models.py:2245 order/models.py:3355 order/models.py:4357
 #: order/serializers.py:1932 order/serializers.py:2437
 #: order/serializers.py:3025 part/models.py:2657 part/models.py:3213
@@ -1842,8 +1842,8 @@ msgstr ""
 msgid "Project Code Label"
 msgstr "Projekto kodo etiketė"
 
-#: common/models.py:111 common/models.py:136 common/models.py:3949
-#: users/models.py:834
+#: common/models.py:111 common/models.py:136 common/models.py:3951
+#: users/models.py:853
 msgid "Updated"
 msgstr "Atnaujinta"
 
@@ -1867,11 +1867,11 @@ msgstr "Unikalus projekto kodas"
 msgid "Project description"
 msgstr "Projekto aprašymas"
 
-#: common/models.py:195 common/models.py:1540 common/models.py:2567
-#: common/models.py:2702 company/models.py:231 company/models.py:881
+#: common/models.py:195 common/models.py:1542 common/models.py:2569
+#: common/models.py:2704 company/models.py:231 company/models.py:881
 #: machine/models.py:43 part/models.py:1332 plugin/models.py:69
-#: stock/api.py:704 users/models.py:382 users/models.py:750
-#: users/serializers.py:376 users/serializers.py:507
+#: stock/api.py:704 users/models.py:382 users/models.py:769
+#: users/serializers.py:377 users/serializers.py:508
 msgid "Active"
 msgstr "Aktyvus"
 
@@ -1883,154 +1883,154 @@ msgstr ""
 msgid "User or group responsible for this project"
 msgstr "Vartotojas arba grupė, atsakinga už šį projektą"
 
-#: common/models.py:827 common/models.py:1387 common/models.py:1425
+#: common/models.py:829 common/models.py:1389 common/models.py:1427
 msgid "Settings key"
 msgstr "Nustatymo raktas"
 
-#: common/models.py:831
+#: common/models.py:833
 msgid "Settings value"
 msgstr "Nustatymo reikšmė"
 
-#: common/models.py:836
+#: common/models.py:838
 msgid "Indicates whether the setting has been modified by the user"
 msgstr ""
 
-#: common/models.py:891
+#: common/models.py:893
 msgid "Chosen value is not a valid option"
 msgstr "Pasirinkta reikšmė yra netinkama"
 
-#: common/models.py:907
+#: common/models.py:909
 msgid "Value must be a boolean value"
 msgstr "Reikšmė turi būti loginė (taip/ne)"
 
-#: common/models.py:915
+#: common/models.py:917
 msgid "Value must be an integer value"
 msgstr "Reikšmė turi būti sveikasis skaičius"
 
-#: common/models.py:923
+#: common/models.py:925
 msgid "Value must be a valid number"
 msgstr "Reikšmė turi būti tinkamas skaičius"
 
-#: common/models.py:948
+#: common/models.py:950
 msgid "Value does not pass validation checks"
 msgstr "Reikšmė neatitinka patikros taisyklių"
 
-#: common/models.py:970
+#: common/models.py:972
 msgid "Key string must be unique"
 msgstr "Raktas turi būti unikalus"
 
-#: common/models.py:1433 common/models.py:1434 common/models.py:1548
-#: common/models.py:1549 common/models.py:1796 common/models.py:1797
-#: common/models.py:2255 common/models.py:2256 common/models.py:3597
+#: common/models.py:1435 common/models.py:1436 common/models.py:1550
+#: common/models.py:1551 common/models.py:1798 common/models.py:1799
+#: common/models.py:2257 common/models.py:2258 common/models.py:3599
 #: importer/models.py:106 part/models.py:2707 part/models.py:2735
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:252
-#: users/models.py:688 users/models.py:822
+#: users/models.py:707 users/models.py:841
 msgid "User"
 msgstr "Vartotojas"
 
-#: common/models.py:1456
+#: common/models.py:1458
 msgid "Price break quantity"
 msgstr "Kiekio ribinis taškas kainai"
 
-#: common/models.py:1463 company/serializers.py:357 order/models.py:2359
+#: common/models.py:1465 company/serializers.py:357 order/models.py:2359
 #: order/models.py:3797
 msgid "Price"
 msgstr "Kaina"
 
-#: common/models.py:1464
+#: common/models.py:1466
 msgid "Unit price at specified quantity"
 msgstr "Vieneto kaina nurodytam kiekiui"
 
-#: common/models.py:1525 common/models.py:1710
+#: common/models.py:1527 common/models.py:1712
 msgid "Endpoint"
 msgstr "Galutinis taškas"
 
-#: common/models.py:1526
+#: common/models.py:1528
 msgid "Endpoint at which this webhook is received"
 msgstr "Galutinis taškas, kuriuo priimamas šis webhook'as"
 
-#: common/models.py:1536
+#: common/models.py:1538
 msgid "Name for this webhook"
 msgstr "Šio webhook'o pavadinimas"
 
-#: common/models.py:1540
+#: common/models.py:1542
 msgid "Is this webhook active"
 msgstr "Ar šis webhook'as aktyvus"
 
-#: common/models.py:1556 users/models.py:353
+#: common/models.py:1558 users/models.py:353
 msgid "Token"
 msgstr "Raktas"
 
-#: common/models.py:1557
+#: common/models.py:1559
 msgid "Token for access"
 msgstr "Prieigos raktas"
 
-#: common/models.py:1565
+#: common/models.py:1567
 msgid "Secret"
 msgstr "Slaptas raktas"
 
-#: common/models.py:1566
+#: common/models.py:1568
 msgid "Shared secret for HMAC"
 msgstr "Bendras slaptas HMAC raktas"
 
-#: common/models.py:1674 common/models.py:3834
+#: common/models.py:1676 common/models.py:3836
 msgid "Message ID"
 msgstr "Pranešimo ID"
 
-#: common/models.py:1675 common/models.py:3824
+#: common/models.py:1677 common/models.py:3826
 msgid "Unique identifier for this message"
 msgstr "Unikalus pranešimo identifikatorius"
 
-#: common/models.py:1683
+#: common/models.py:1685
 msgid "Host"
 msgstr "Pagrindinis serveris"
 
-#: common/models.py:1684
+#: common/models.py:1686
 msgid "Host from which this message was received"
 msgstr "Serveris, iš kurio gautas pranešimas"
 
-#: common/models.py:1692
+#: common/models.py:1694
 msgid "Header"
 msgstr "Antraštė"
 
-#: common/models.py:1693
+#: common/models.py:1695
 msgid "Header of this message"
 msgstr "Šio pranešimo antraštė"
 
-#: common/models.py:1700
+#: common/models.py:1702
 msgid "Body"
 msgstr "Turinys"
 
-#: common/models.py:1701
+#: common/models.py:1703
 msgid "Body of this message"
 msgstr "Šio pranešimo turinys"
 
-#: common/models.py:1711
+#: common/models.py:1713
 msgid "Endpoint on which this message was received"
 msgstr "Galutinis taškas, kuriame gautas pranešimas"
 
-#: common/models.py:1716
+#: common/models.py:1718
 msgid "Worked on"
 msgstr "Apdorota"
 
-#: common/models.py:1717
+#: common/models.py:1719
 msgid "Was the work on this message finished?"
 msgstr "Ar darbas su šiuo pranešimu baigtas?"
 
-#: common/models.py:1812
+#: common/models.py:1814
 msgid "Optional explicit URL associated with this notification"
 msgstr ""
 
-#: common/models.py:1852
+#: common/models.py:1854
 msgid "Id"
 msgstr "ID"
 
-#: common/models.py:1854 common/models.py:3514
+#: common/models.py:1856 common/models.py:3516
 msgid "Title"
 msgstr "Pavadinimas"
 
-#: common/models.py:1856 common/models.py:2238 company/models.py:225
+#: common/models.py:1858 common/models.py:2240 company/models.py:225
 #: company/models.py:557 company/models.py:632 company/models.py:904
 #: order/models.py:564 order/models.py:2295 order/models.py:2918
 #: part/models.py:1215
@@ -2038,477 +2038,477 @@ msgstr "Pavadinimas"
 msgid "Link"
 msgstr "Nuoroda"
 
-#: common/models.py:1858
+#: common/models.py:1860
 msgid "Published"
 msgstr "Paskelbta"
 
-#: common/models.py:1860
+#: common/models.py:1862
 msgid "Author"
 msgstr "Autorius"
 
-#: common/models.py:1862
+#: common/models.py:1864
 msgid "Summary"
 msgstr "Santrauka"
 
-#: common/models.py:1865 common/models.py:3801
+#: common/models.py:1867 common/models.py:3803
 msgid "Read"
 msgstr "Perskaityta"
 
-#: common/models.py:1865
+#: common/models.py:1867
 msgid "Was this news item read?"
 msgstr "Ar ši naujiena buvo perskaityta?"
 
-#: common/models.py:1884
+#: common/models.py:1886
 msgid "Custom Unit"
 msgstr "Pasirinktinis vienetas"
 
-#: common/models.py:1906
+#: common/models.py:1908
 msgid "Unit symbol must be unique"
 msgstr "Vieneto simbolis turi būti unikalus"
 
-#: common/models.py:1924
+#: common/models.py:1926
 msgid "Unit name must be a valid identifier"
 msgstr "Vieneto pavadinimas turi būti tinkamas identifikatorius"
 
-#: common/models.py:1951
+#: common/models.py:1953
 #, python-format
 msgid "Unit definition results in a circular or invalid reference: %(error)s"
 msgstr ""
 
-#: common/models.py:1959
+#: common/models.py:1961
 msgid "Unit name"
 msgstr "Vieneto pavadinimas"
 
-#: common/models.py:1966
+#: common/models.py:1968
 msgid "Symbol"
 msgstr "Simbolis"
 
-#: common/models.py:1967
+#: common/models.py:1969
 msgid "Optional unit symbol"
 msgstr "Nebūtinas vieneto simbolis"
 
-#: common/models.py:1973
+#: common/models.py:1975
 msgid "Definition"
 msgstr "Apibrėžimas"
 
-#: common/models.py:1974
+#: common/models.py:1976
 msgid "Unit definition"
 msgstr "Vieneto apibrėžimas"
 
-#: common/models.py:2049 common/models.py:2221 stock/models.py:3809
+#: common/models.py:2051 common/models.py:2223 stock/models.py:3809
 #: stock/serializers.py:257
 msgid "Attachment"
 msgstr "Priedas"
 
-#: common/models.py:2095
+#: common/models.py:2097
 msgid "Missing file"
 msgstr "Trūksta failo"
 
-#: common/models.py:2096
+#: common/models.py:2098
 msgid "Missing external link"
 msgstr "Trūksta išorinės nuorodos"
 
-#: common/models.py:2161
+#: common/models.py:2163
 msgid "No file attached to rename"
 msgstr ""
 
-#: common/models.py:2164
+#: common/models.py:2166
 msgid "Filename cannot be empty"
 msgstr ""
 
-#: common/models.py:2169 common/models.py:2189
+#: common/models.py:2171 common/models.py:2191
 msgid "Invalid filename"
 msgstr ""
 
-#: common/models.py:2175
+#: common/models.py:2177
 msgid "Cannot change file extension"
 msgstr ""
 
-#: common/models.py:2194
+#: common/models.py:2196
 msgid "A file with this name already exists"
 msgstr ""
 
-#: common/models.py:2201
+#: common/models.py:2203
 msgid "Failed to save renamed file"
 msgstr ""
 
-#: common/models.py:2213 common/models.py:2853
+#: common/models.py:2215 common/models.py:2855
 msgid "Model type"
 msgstr "Modelio tipas"
 
-#: common/models.py:2214
+#: common/models.py:2216
 msgid "Target model type for image"
 msgstr "Modelio tipas, kuriam skirtas paveikslėlis"
 
-#: common/models.py:2223
+#: common/models.py:2225
 msgid "Select file to attach"
 msgstr "Pasirinkite failą priedui"
 
-#: common/models.py:2229
+#: common/models.py:2231
 msgid "Thumbnail"
 msgstr ""
 
-#: common/models.py:2230
+#: common/models.py:2232
 msgid "Thumbnail image for this attachment"
 msgstr ""
 
-#: common/models.py:2246
+#: common/models.py:2248
 msgid "Comment"
 msgstr "Komentaras"
 
-#: common/models.py:2247
+#: common/models.py:2249
 msgid "Attachment comment"
 msgstr "Komentaras prie priedo"
 
-#: common/models.py:2263
+#: common/models.py:2265
 msgid "Upload date"
 msgstr "Įkėlimo data"
 
-#: common/models.py:2264
+#: common/models.py:2266
 msgid "Date the file was uploaded"
 msgstr "Failo įkėlimo data"
 
-#: common/models.py:2269
+#: common/models.py:2271
 msgid "Is image"
 msgstr ""
 
-#: common/models.py:2270
+#: common/models.py:2272
 msgid "True if this attachment is a valid image file"
 msgstr ""
 
-#: common/models.py:2274
+#: common/models.py:2276
 msgid "File size"
 msgstr "Failo dydis"
 
-#: common/models.py:2274
+#: common/models.py:2276
 msgid "File size in bytes"
 msgstr "Failo dydis baitais"
 
-#: common/models.py:2310 common/serializers.py:868
+#: common/models.py:2312 common/serializers.py:868
 msgid "Invalid model type specified for attachment"
 msgstr "Netinkamas modelio tipas priedui"
 
-#: common/models.py:2398
+#: common/models.py:2400
 msgid "Custom State"
 msgstr "Pasirinktinė būsena"
 
-#: common/models.py:2399
+#: common/models.py:2401
 msgid "Custom States"
 msgstr "Pasirinktinės būsenos"
 
-#: common/models.py:2404
+#: common/models.py:2406
 msgid "Reference Status Set"
 msgstr "Nuorodos būsenų rinkinys"
 
-#: common/models.py:2405
+#: common/models.py:2407
 msgid "Status set that is extended with this custom state"
 msgstr "Būsenų rinkinys, papildomas šia pasirinktine būsena"
 
-#: common/models.py:2409 generic/states/serializers.py:18
+#: common/models.py:2411 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "Loginis raktas"
 
-#: common/models.py:2411
+#: common/models.py:2413
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Loginis būsenos raktas, atitinkantis šią pasirinkitinę būseną"
 
-#: common/models.py:2416 common/models.py:2683 machine/serializers.py:27
+#: common/models.py:2418 common/models.py:2685 machine/serializers.py:27
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:3801
 msgid "Value"
 msgstr "Reikšmė"
 
-#: common/models.py:2417
+#: common/models.py:2419
 msgid "Numerical value that will be saved in the models database"
 msgstr "Skaitinė reikšmė, saugoma modelio duomenų bazėje"
 
-#: common/models.py:2423
+#: common/models.py:2425
 msgid "Name of the state"
 msgstr "Būsenos pavadinimas"
 
-#: common/models.py:2433
+#: common/models.py:2435
 msgid "Label that will be displayed in the frontend"
 msgstr "Etiketė, rodoma vartotojo sąsajoje"
 
-#: common/models.py:2440 generic/states/serializers.py:24
+#: common/models.py:2442 generic/states/serializers.py:24
 msgid "Color"
 msgstr "Spalva"
 
-#: common/models.py:2441
+#: common/models.py:2443
 msgid "Color that will be displayed in the frontend"
 msgstr "Spalva, rodoma vartotojo sąsajoje"
 
-#: common/models.py:2449
+#: common/models.py:2451
 msgid "Model"
 msgstr "Modelis"
 
-#: common/models.py:2450
+#: common/models.py:2452
 msgid "Model this state is associated with"
 msgstr "Modelis, su kuriuo susieta būsena"
 
-#: common/models.py:2465
+#: common/models.py:2467
 msgid "Model must be selected"
 msgstr "Turi būti pasirinktas modelis"
 
-#: common/models.py:2468
+#: common/models.py:2470
 msgid "Key must be selected"
 msgstr "Turi būti pasirinktas raktas"
 
-#: common/models.py:2471
+#: common/models.py:2473
 msgid "Logical key must be selected"
 msgstr "Turi būti pasirinktas loginis raktas"
 
-#: common/models.py:2475
+#: common/models.py:2477
 msgid "Key must be different from logical key"
 msgstr "Raktas turi skirtis nuo loginio rakto"
 
-#: common/models.py:2482
+#: common/models.py:2484
 msgid "Valid reference status class must be provided"
 msgstr "Turi būti pateikta tinkama nuorodos būsenos klasė"
 
-#: common/models.py:2488
+#: common/models.py:2490
 msgid "Key must be different from the logical keys of the reference status"
 msgstr "Raktas turi skirtis nuo nuorodos būsenų loginių raktų"
 
-#: common/models.py:2495
+#: common/models.py:2497
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr "Loginis raktas turi būti tarp nuorodos būsenų loginių raktų"
 
-#: common/models.py:2502
+#: common/models.py:2504
 msgid "Name must be different from the names of the reference status"
 msgstr "Pavadinimas turi skirtis nuo nuorodos būsenų pavadinimų"
 
-#: common/models.py:2542 common/models.py:2677 common/models.py:2898
+#: common/models.py:2544 common/models.py:2679 common/models.py:2900
 msgid "Selection List"
 msgstr "Pasirinkimų sąrašas"
 
-#: common/models.py:2543
+#: common/models.py:2545
 msgid "Selection Lists"
 msgstr "Pasirinkimų sąrašai"
 
-#: common/models.py:2548
+#: common/models.py:2550
 msgid "Name of the selection list"
 msgstr "Pasirinkimų sąrašo pavadinimas"
 
-#: common/models.py:2555
+#: common/models.py:2557
 msgid "Description of the selection list"
 msgstr "Pasirinkimų sąrašo aprašymas"
 
-#: common/models.py:2561 part/models.py:1337
+#: common/models.py:2563 part/models.py:1337
 msgid "Locked"
 msgstr "Užrakinta"
 
-#: common/models.py:2562
+#: common/models.py:2564
 msgid "Is this selection list locked?"
 msgstr "Ar šis sąrašas užrakintas?"
 
-#: common/models.py:2568
+#: common/models.py:2570
 msgid "Can this selection list be used?"
 msgstr "Ar šį pasirinkimų sąrašą galima naudoti?"
 
-#: common/models.py:2576
+#: common/models.py:2578
 msgid "Source Plugin"
 msgstr "Šaltinio papildinys"
 
-#: common/models.py:2577
+#: common/models.py:2579
 msgid "Plugin which provides the selection list"
 msgstr "Papildinys, pateikiantis šį pasirinkimų sąrašą"
 
-#: common/models.py:2582
+#: common/models.py:2584
 msgid "Source String"
 msgstr "Šaltinio eilutė"
 
-#: common/models.py:2583
+#: common/models.py:2585
 msgid "Optional string identifying the source used for this list"
 msgstr "Neprivaloma eilutė, identifikuojanti šaltinį, naudotą šiam sąrašui"
 
-#: common/models.py:2592
+#: common/models.py:2594
 msgid "Default Entry"
 msgstr "Numatytasis įrašas"
 
-#: common/models.py:2593
+#: common/models.py:2595
 msgid "Default entry for this selection list"
 msgstr "Numatytasis šio pasirinkimų sąrašo įrašas"
 
-#: common/models.py:2598 common/models.py:3944
+#: common/models.py:2600 common/models.py:3946
 msgid "Created"
 msgstr "Sukurta"
 
-#: common/models.py:2599
+#: common/models.py:2601
 msgid "Date and time that the selection list was created"
 msgstr "Data ir laikas, kada buvo sukurtas pasirinkimų sąrašas"
 
-#: common/models.py:2604
+#: common/models.py:2606
 msgid "Last Updated"
 msgstr "Paskutinį kartą atnaujinta"
 
-#: common/models.py:2605
+#: common/models.py:2607
 msgid "Date and time that the selection list was last updated"
 msgstr "Data ir laikas, kada paskutinį kartą buvo atnaujintas sąrašas"
 
-#: common/models.py:2667
+#: common/models.py:2669
 msgid "Selection List Entry"
 msgstr "Pasirinkimų sąrašo įrašas"
 
-#: common/models.py:2668
+#: common/models.py:2670
 msgid "Selection List Entries"
 msgstr "Pasirinkimų sąrašo įrašai"
 
-#: common/models.py:2678
+#: common/models.py:2680
 msgid "Selection list to which this entry belongs"
 msgstr "Pasirinkimų sąrašas, kuriam priklauso šis įrašas"
 
-#: common/models.py:2684
+#: common/models.py:2686
 msgid "Value of the selection list entry"
 msgstr "Pasirinkimų sąrašo įrašo reikšmė"
 
-#: common/models.py:2690
+#: common/models.py:2692
 msgid "Label for the selection list entry"
 msgstr "Pasirinkimų įrašo etiketė"
 
-#: common/models.py:2696
+#: common/models.py:2698
 msgid "Description of the selection list entry"
 msgstr "Pasirinkimų įrašo aprašymas"
 
-#: common/models.py:2703
+#: common/models.py:2705
 msgid "Is this selection list entry active?"
 msgstr "Ar šis sąrašo įrašas aktyvus?"
 
-#: common/models.py:2739
+#: common/models.py:2741
 msgid "Parameter Template"
 msgstr "Parametro šablonas"
 
-#: common/models.py:2740
+#: common/models.py:2742
 msgid "Parameter Templates"
 msgstr ""
 
-#: common/models.py:2761
+#: common/models.py:2763
 msgid "No uniqueness required"
 msgstr ""
 
-#: common/models.py:2762
+#: common/models.py:2764
 msgid "Unique for model type"
 msgstr ""
 
-#: common/models.py:2763
+#: common/models.py:2765
 msgid "Globally unique"
 msgstr ""
 
-#: common/models.py:2790
+#: common/models.py:2792
 msgid "Checkbox parameters cannot have units"
 msgstr "Žymimojo laukelio parametrai negali turėti matavimo vienetų"
 
-#: common/models.py:2795
+#: common/models.py:2797
 msgid "Checkbox parameters cannot have choices"
 msgstr "Žymimojo laukelio parametrai negali turėti pasirinkimų"
 
-#: common/models.py:2815 part/models.py:2805
+#: common/models.py:2817 part/models.py:2805
 msgid "Choices must be unique"
 msgstr "Pasirinkimai turi būti unikalūs"
 
-#: common/models.py:2832
+#: common/models.py:2834
 msgid "Parameter template name must be unique"
 msgstr "Parametro šablono pavadinimas turi būti unikalus"
 
-#: common/models.py:2854
+#: common/models.py:2856
 msgid "Target model type for this parameter template"
 msgstr ""
 
-#: common/models.py:2860
+#: common/models.py:2862
 msgid "Parameter Name"
 msgstr "Parametro pavadinimas"
 
-#: common/models.py:2866 part/models.py:1290
+#: common/models.py:2868 part/models.py:1290
 msgid "Units"
 msgstr "Vienetai"
 
-#: common/models.py:2867
+#: common/models.py:2869
 msgid "Physical units for this parameter"
 msgstr "Fiziniai šio parametro vienetai"
 
-#: common/models.py:2875
+#: common/models.py:2877
 msgid "Parameter description"
 msgstr "Parametro aprašymas"
 
-#: common/models.py:2881
+#: common/models.py:2883
 msgid "Checkbox"
 msgstr "Žymimasis laukelis"
 
-#: common/models.py:2882
+#: common/models.py:2884
 msgid "Is this parameter a checkbox?"
 msgstr "Ar šis parametras yra žymimasis laukelis?"
 
-#: common/models.py:2887 part/models.py:2892
+#: common/models.py:2889 part/models.py:2892
 msgid "Choices"
 msgstr "Pasirinkimai"
 
-#: common/models.py:2888
+#: common/models.py:2890
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "Galimi pasirinkimai šiam parametrui (atskirti kableliais)"
 
-#: common/models.py:2899
+#: common/models.py:2901
 msgid "Selection list for this parameter"
 msgstr "Pasirinkimų sąrašas šiam parametrui"
 
-#: common/models.py:2904 part/models.py:2867 report/models.py:384
+#: common/models.py:2906 part/models.py:2867 report/models.py:384
 #: scim/models.py:31
 msgid "Enabled"
 msgstr "Įjungta"
 
-#: common/models.py:2905
+#: common/models.py:2907
 msgid "Is this parameter template enabled?"
 msgstr ""
 
-#: common/models.py:2911
+#: common/models.py:2913
 msgid "Uniqueness"
 msgstr ""
 
-#: common/models.py:2913
+#: common/models.py:2915
 msgid "Enforce uniqueness of linked parameter values against this template"
 msgstr ""
 
-#: common/models.py:2968
+#: common/models.py:2970
 msgid "Parameter"
 msgstr ""
 
-#: common/models.py:2969
+#: common/models.py:2971
 msgid "Parameters"
 msgstr ""
 
-#: common/models.py:3031
+#: common/models.py:3033
 msgid "Invalid choice for parameter value"
 msgstr "Neteisingas pasirinkimas parametro reikšmei"
 
-#: common/models.py:3138
+#: common/models.py:3140
 msgid "Parameter value must be unique"
 msgstr ""
 
-#: common/models.py:3147 common/serializers.py:1097
+#: common/models.py:3149 common/serializers.py:1097
 msgid "Invalid model type specified for parameter"
 msgstr ""
 
-#: common/models.py:3180
+#: common/models.py:3182
 msgid "ID of the target model for this parameter"
 msgstr ""
 
-#: common/models.py:3189 common/models.py:3486 common/setting/system.py:515
+#: common/models.py:3191 common/models.py:3488 common/setting/system.py:515
 #: report/models.py:482 report/models.py:816 report/serializers.py:115
 #: report/serializers.py:166 stock/serializers.py:244
 msgid "Template"
 msgstr "Šablonas"
 
-#: common/models.py:3190
+#: common/models.py:3192
 msgid "Parameter template"
 msgstr ""
 
-#: common/models.py:3195 common/models.py:3586 importer/models.py:685
+#: common/models.py:3197 common/models.py:3588 importer/models.py:685
 msgid "Data"
 msgstr "Data"
 
-#: common/models.py:3196
+#: common/models.py:3198
 msgid "Parameter Value"
 msgstr "Parametro reikšmė"
 
-#: common/models.py:3205 common/models.py:3245 company/models.py:921
+#: common/models.py:3207 common/models.py:3247 company/models.py:921
 #: order/serializers.py:931 order/serializers.py:2348 part/models.py:3283
 #: part/models.py:3713
 #: report/templates/report/inventree_bill_of_materials_report.html:140
@@ -2521,226 +2521,226 @@ msgstr "Parametro reikšmė"
 msgid "Note"
 msgstr "Pastaba"
 
-#: common/models.py:3206 stock/serializers.py:762 stock/serializers.py:1126
+#: common/models.py:3208 stock/serializers.py:762 stock/serializers.py:1126
 msgid "Optional note field"
 msgstr "Neprivalomas pastabų laukas"
 
-#: common/models.py:3349 common/models.py:3351 common/serializers.py:970
+#: common/models.py:3351 common/models.py:3353 common/serializers.py:970
 #: common/serializers.py:974
 msgid "This field is required."
 msgstr ""
 
-#: common/models.py:3488
+#: common/models.py:3490
 msgid "Is this note a template (not linked to a specific model instance)?"
 msgstr ""
 
-#: common/models.py:3498
+#: common/models.py:3500
 msgid "Target model type for this note"
 msgstr ""
 
-#: common/models.py:3502
+#: common/models.py:3504
 msgid "Target model instance ID for this note"
 msgstr ""
 
-#: common/models.py:3509 company/models.py:887
+#: common/models.py:3511 company/models.py:887
 msgid "Primary"
 msgstr ""
 
-#: common/models.py:3510
+#: common/models.py:3512
 msgid "Is this the primary note for the associated model?"
 msgstr ""
 
-#: common/models.py:3514
+#: common/models.py:3516
 msgid "Note title"
 msgstr ""
 
-#: common/models.py:3521
+#: common/models.py:3523
 msgid "Optional description field"
 msgstr ""
 
-#: common/models.py:3526
+#: common/models.py:3528
 msgid "Content"
 msgstr ""
 
-#: common/models.py:3527
+#: common/models.py:3529
 msgid "Note content"
 msgstr ""
 
-#: common/models.py:3545
+#: common/models.py:3547
 msgid "Image file"
 msgstr "Paveikslėlio failas"
 
-#: common/models.py:3582
+#: common/models.py:3584
 msgid "Barcode Scan"
 msgstr "Brūkšninio kodo nuskaitymas"
 
-#: common/models.py:3587
+#: common/models.py:3589
 msgid "Barcode data"
 msgstr "Brūkšninio kodo duomenys"
 
-#: common/models.py:3598
+#: common/models.py:3600
 msgid "User who scanned the barcode"
 msgstr "Vartotojas, nuskaitęs brūkšninį kodą"
 
-#: common/models.py:3603 importer/models.py:73
+#: common/models.py:3605 importer/models.py:73
 msgid "Timestamp"
 msgstr "Laiko žymė"
 
-#: common/models.py:3604
+#: common/models.py:3606
 msgid "Date and time of the barcode scan"
 msgstr "Brūkšninio kodo nuskaitymo data ir laikas"
 
-#: common/models.py:3610
+#: common/models.py:3612
 msgid "URL endpoint which processed the barcode"
 msgstr "URL galutinis taškas, kuris apdorojo brūkšninį kodą"
 
-#: common/models.py:3617 order/models.py:2349 plugin/serializers.py:93
+#: common/models.py:3619 order/models.py:2349 plugin/serializers.py:93
 msgid "Context"
 msgstr "Kontekstas"
 
-#: common/models.py:3618
+#: common/models.py:3620
 msgid "Context data for the barcode scan"
 msgstr "Konteksto duomenys brūkšninio kodo nuskaitymui"
 
-#: common/models.py:3625
+#: common/models.py:3627
 msgid "Response"
 msgstr "Atsakas"
 
-#: common/models.py:3626
+#: common/models.py:3628
 msgid "Response data from the barcode scan"
 msgstr "Atsako duomenys iš brūkšninio kodo nuskaitymo"
 
-#: common/models.py:3632 report/templates/report/inventree_test_report.html:103
+#: common/models.py:3634 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:3795
 msgid "Result"
 msgstr "Rezultatas"
 
-#: common/models.py:3633
+#: common/models.py:3635
 msgid "Was the barcode scan successful?"
 msgstr "Ar brūkšninio kodo nuskaitymas buvo sėkmingas?"
 
-#: common/models.py:3715
+#: common/models.py:3717
 msgid "An error occurred"
 msgstr ""
 
-#: common/models.py:3736
+#: common/models.py:3738
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
 msgstr ""
 
-#: common/models.py:3783
+#: common/models.py:3785
 msgid "Email Message"
 msgstr ""
 
-#: common/models.py:3784
+#: common/models.py:3786
 msgid "Email Messages"
 msgstr ""
 
-#: common/models.py:3791
+#: common/models.py:3793
 msgid "Announced"
 msgstr ""
 
-#: common/models.py:3793
+#: common/models.py:3795
 msgid "Sent"
 msgstr ""
 
-#: common/models.py:3794
+#: common/models.py:3796
 msgid "Failed"
 msgstr ""
 
-#: common/models.py:3797
+#: common/models.py:3799
 msgid "Delivered"
 msgstr ""
 
-#: common/models.py:3805
+#: common/models.py:3807
 msgid "Confirmed"
 msgstr ""
 
-#: common/models.py:3811
+#: common/models.py:3813
 msgid "Inbound"
 msgstr ""
 
-#: common/models.py:3812
+#: common/models.py:3814
 msgid "Outbound"
 msgstr ""
 
-#: common/models.py:3817
+#: common/models.py:3819
 msgid "No Reply"
 msgstr ""
 
-#: common/models.py:3818
+#: common/models.py:3820
 msgid "Track Delivery"
 msgstr ""
 
-#: common/models.py:3819
+#: common/models.py:3821
 msgid "Track Read"
 msgstr ""
 
-#: common/models.py:3820
+#: common/models.py:3822
 msgid "Track Click"
 msgstr ""
 
-#: common/models.py:3823 common/models.py:3931
+#: common/models.py:3825 common/models.py:3933
 msgid "Global ID"
 msgstr ""
 
-#: common/models.py:3836
+#: common/models.py:3838
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr ""
 
-#: common/models.py:3843
+#: common/models.py:3845
 msgid "Thread ID"
 msgstr ""
 
-#: common/models.py:3845
+#: common/models.py:3847
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr ""
 
-#: common/models.py:3854
+#: common/models.py:3856
 msgid "Thread"
 msgstr ""
 
-#: common/models.py:3855
+#: common/models.py:3857
 msgid "Linked thread for this message"
 msgstr ""
 
-#: common/models.py:3871
+#: common/models.py:3873
 msgid "Priority"
 msgstr ""
 
-#: common/models.py:3913
+#: common/models.py:3915
 msgid "Email Thread"
 msgstr ""
 
-#: common/models.py:3914
+#: common/models.py:3916
 msgid "Email Threads"
 msgstr ""
 
-#: common/models.py:3925 generic/states/serializers.py:16
+#: common/models.py:3927 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:237
 msgid "Key"
 msgstr "Raktas"
 
-#: common/models.py:3928
+#: common/models.py:3930
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr ""
 
-#: common/models.py:3932
+#: common/models.py:3934
 msgid "Unique identifier for this thread"
 msgstr ""
 
-#: common/models.py:3939
+#: common/models.py:3941
 msgid "Started Internal"
 msgstr ""
 
-#: common/models.py:3940
+#: common/models.py:3942
 msgid "Was this thread started internally?"
 msgstr ""
 
-#: common/models.py:3945
+#: common/models.py:3947
 msgid "Date and time that the thread was created"
 msgstr ""
 
-#: common/models.py:3950
+#: common/models.py:3952
 msgid "Date and time that the thread was last updated"
 msgstr ""
 
@@ -4771,7 +4771,7 @@ msgid "Contact email address"
 msgstr "Kontaktinis el. pašto adresas"
 
 #: company/models.py:218 company/models.py:363 order/models.py:627
-#: order/models.py:2863 users/models.py:757
+#: order/models.py:2863 users/models.py:776
 msgid "Contact"
 msgstr "Kontaktinis asmuo"
 
@@ -5107,7 +5107,7 @@ msgstr "Eksporto įskiepis"
 msgid "Select export plugin"
 msgstr "Pasirinkite eksporto įskiepį"
 
-#: generic/states/api_helpers.py:385
+#: generic/states/api_helpers.py:387
 msgid "User does not have permission to view or change this object"
 msgstr ""
 
@@ -5492,7 +5492,7 @@ msgstr ""
 msgid "Value of the property"
 msgstr ""
 
-#: machine/serializers.py:30 users/models.py:425
+#: machine/serializers.py:30 users/models.py:444
 msgid "Group"
 msgstr "Grupė"
 
@@ -5771,7 +5771,7 @@ msgid "Order reference"
 msgstr "Užsakymo nuoroda"
 
 #: order/models.py:801 order/models.py:1595 order/models.py:3489
-#: order/models.py:3919 stock/serializers.py:986 users/models.py:738
+#: order/models.py:3919 stock/serializers.py:986 users/models.py:757
 msgid "Status"
 msgstr "Būsena"
 
@@ -6434,6 +6434,7 @@ msgid "Enter batch code for incoming stock items"
 msgstr "Įveskite partijos kodą gaunamoms atsargoms"
 
 #: order/serializers.py:903 stock/models.py:1340
+#: templates/email/api_token_issued.html:18
 #: templates/email/stale_stock_notification.html:22 users/models.py:265
 msgid "Expiry Date"
 msgstr "Galiojimo data"
@@ -9334,7 +9335,7 @@ msgid "Required For"
 msgstr "Reikalinga objektui"
 
 #: report/templates/report/inventree_build_order_report.html:151
-#: users/models.py:304
+#: templates/email/api_token_issued.html:17 users/models.py:304
 msgid "Issued By"
 msgstr "Išdavė"
 
@@ -9672,7 +9673,7 @@ msgstr "Pasirinkite savininką"
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "Atsargos negali būti tiesiogiai patalpintos į struktūrines atsargų vietas, bet gali būti patalpinti į jų sub-vietas."
 
-#: stock/models.py:217 users/models.py:684
+#: stock/models.py:217 users/models.py:703
 msgid "External"
 msgstr "Išorinė"
 
@@ -9999,7 +10000,7 @@ msgstr "Pradėta"
 msgid "The timestamp of the test start"
 msgstr "Bandymo pradžios laiko žyma"
 
-#: stock/models.py:3836 users/models.py:829
+#: stock/models.py:3836 users/models.py:848
 msgid "Finished"
 msgstr "Pabaigta"
 
@@ -10588,6 +10589,18 @@ msgstr ""
 msgid "The %(inventree_title)s server raised a configuration error"
 msgstr ""
 
+#: templates/email/api_token_issued.html:8
+msgid "If you did not request this token, revoke it immediately and contact your administrator."
+msgstr ""
+
+#: templates/email/api_token_issued.html:10
+msgid "Click on the following link to review your API tokens"
+msgstr ""
+
+#: templates/email/api_token_issued.html:16 users/models.py:259
+msgid "Token Name"
+msgstr "Rakto pavadinimas"
+
 #: templates/email/build_order_completed.html:9
 #: templates/email/canceled_order_assigned.html:9
 #: templates/email/new_order_assigned.html:9
@@ -10672,19 +10685,19 @@ msgstr "Leidimai"
 msgid "Important dates"
 msgstr "Svarbios datos"
 
-#: users/authentication.py:29
+#: users/authentication.py:25
 msgid "Invalid token."
 msgstr ""
 
-#: users/authentication.py:33
+#: users/authentication.py:28
 msgid "User inactive or deleted."
 msgstr ""
 
-#: users/authentication.py:36 users/models.py:279
+#: users/authentication.py:31 users/models.py:279
 msgid "Token has been revoked"
 msgstr "Raktas buvo atšauktas"
 
-#: users/authentication.py:39
+#: users/authentication.py:34
 msgid "Token has expired"
 msgstr "Raktas nebegalioja"
 
@@ -10695,10 +10708,6 @@ msgstr "API prieigos raktas"
 #: users/models.py:108
 msgid "API Tokens"
 msgstr "API prieigos raktai"
-
-#: users/models.py:259
-msgid "Token Name"
-msgstr "Rakto pavadinimas"
 
 #: users/models.py:260
 msgid "Custom token name"
@@ -10756,159 +10765,163 @@ msgstr ""
 msgid "Identifier for the pepper used in token hashing"
 msgstr ""
 
-#: users/models.py:416
+#: users/models.py:394
+msgid "Email is not configured on this server - this is a security risk."
+msgstr ""
+
+#: users/models.py:435
 msgid "Permission set"
 msgstr "Leidimų rinkinys"
 
-#: users/models.py:429
+#: users/models.py:448
 msgid "View"
 msgstr "Peržiūra"
 
-#: users/models.py:429
+#: users/models.py:448
 msgid "Permission to view items"
 msgstr "Leidimas peržiūrėti objektus"
 
-#: users/models.py:433
+#: users/models.py:452
 msgid "Add"
 msgstr "Pridėti"
 
-#: users/models.py:433
+#: users/models.py:452
 msgid "Permission to add items"
 msgstr "Leidimas pridėti objektus"
 
-#: users/models.py:437
+#: users/models.py:456
 msgid "Change"
 msgstr "Keisti"
 
-#: users/models.py:439
+#: users/models.py:458
 msgid "Permissions to edit items"
 msgstr "Leidimas redaguoti objektus"
 
-#: users/models.py:443
+#: users/models.py:462
 msgid "Delete"
 msgstr "Ištrinti"
 
-#: users/models.py:445
+#: users/models.py:464
 msgid "Permission to delete items"
 msgstr "Leidimas ištrinti objektus"
 
-#: users/models.py:682
+#: users/models.py:701
 msgid "Bot"
 msgstr "Botas"
 
-#: users/models.py:683
+#: users/models.py:702
 msgid "Internal"
 msgstr "Vidinis"
 
-#: users/models.py:685
+#: users/models.py:704
 msgid "Guest"
 msgstr "Svečias"
 
-#: users/models.py:703
+#: users/models.py:722
 msgid "Language"
 msgstr "Kalba"
 
-#: users/models.py:704
+#: users/models.py:723
 msgid "Preferred language for the user"
 msgstr "Pageidaujama vartotojo kalba"
 
-#: users/models.py:709
+#: users/models.py:728
 msgid "Theme"
 msgstr "Tema"
 
-#: users/models.py:710
+#: users/models.py:729
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr "Žiniatinklio sąsajos nustatymai (JSON formatu) - neredaguoti rankiniu būdu!"
 
-#: users/models.py:715
+#: users/models.py:734
 msgid "Widgets"
 msgstr "Valdikliai"
 
-#: users/models.py:717
+#: users/models.py:736
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr "Prietaisų skydelio valdiklių nustatymai (JSON formatu) - neredaguoti rankiniu būdu!"
 
-#: users/models.py:724
+#: users/models.py:743
 msgid "Display Name"
 msgstr "Rodomas vardas"
 
-#: users/models.py:725
+#: users/models.py:744
 msgid "Chosen display name for the user"
 msgstr "Pasirinktas vartotojo rodomas vardas"
 
-#: users/models.py:731
+#: users/models.py:750
 msgid "Position"
 msgstr "Pareigos"
 
-#: users/models.py:732
+#: users/models.py:751
 msgid "Main job title or position"
 msgstr "Pagrindinės pareigos arba darbo pavadinimas"
 
-#: users/models.py:739
+#: users/models.py:758
 msgid "User status message"
 msgstr "Vartotojo būsenos žinutė"
 
-#: users/models.py:746
+#: users/models.py:765
 msgid "User location information"
 msgstr "Vartotojo buvimo vietos informacija"
 
-#: users/models.py:751
+#: users/models.py:770
 msgid "User is actively using the system"
 msgstr "Vartotojas aktyviai naudoja sistemą"
 
-#: users/models.py:758
+#: users/models.py:777
 msgid "Preferred contact information for the user"
 msgstr "Pageidaujama vartotojo kontaktinė informacija"
 
-#: users/models.py:764
+#: users/models.py:783
 msgid "User Type"
 msgstr "Vartotojo tipas"
 
-#: users/models.py:765
+#: users/models.py:784
 msgid "Which type of user is this?"
 msgstr "Kokio tipo tai vartotojas?"
 
-#: users/models.py:771
+#: users/models.py:790
 msgid "Organisation"
 msgstr "Organizacija"
 
-#: users/models.py:772
+#: users/models.py:791
 msgid "Users primary organisation/affiliation"
 msgstr "Pagrindinė vartotojo organizacija / priklausomybė"
 
-#: users/models.py:780
+#: users/models.py:799
 msgid "Primary Group"
 msgstr "Pagrindinė grupė"
 
-#: users/models.py:781
+#: users/models.py:800
 msgid "Primary group for the user"
 msgstr "Pagrindinė vartotojo grupė"
 
-#: users/models.py:814
+#: users/models.py:833
 msgid "Tip Result"
 msgstr ""
 
-#: users/models.py:815
+#: users/models.py:834
 msgid "Tip Results"
 msgstr ""
 
-#: users/models.py:824
+#: users/models.py:843
 msgid "Tip ID/Name"
 msgstr ""
 
-#: users/models.py:826
+#: users/models.py:845
 msgid "Shown"
 msgstr ""
 
-#: users/models.py:826
+#: users/models.py:845
 msgid "Was this tip shown?"
 msgstr ""
 
-#: users/models.py:829
+#: users/models.py:848
 msgid "Was this tip finished?"
 msgstr ""
 
-#: users/models.py:835
+#: users/models.py:854
 msgid "The last time this tip result was updated"
 msgstr ""
 
@@ -10940,103 +10953,117 @@ msgstr "Grąžinimo užsakymai"
 msgid "Transfer Orders"
 msgstr ""
 
-#: users/serializers.py:207
+#: users/serializers.py:208
 msgid "Username"
 msgstr "Vartotojo vardas"
 
-#: users/serializers.py:210
+#: users/serializers.py:211
 msgid "First Name"
 msgstr "Vardas"
 
-#: users/serializers.py:210
+#: users/serializers.py:211
 msgid "First name of the user"
 msgstr "Vartotojo vardas"
 
-#: users/serializers.py:214
+#: users/serializers.py:215
 msgid "Last Name"
 msgstr "Pavardė"
 
-#: users/serializers.py:214
+#: users/serializers.py:215
 msgid "Last name of the user"
 msgstr "Vartotojo pavardė"
 
-#: users/serializers.py:218
+#: users/serializers.py:219
 msgid "Email address of the user"
 msgstr "Vartotojo el. pašto adresas"
 
-#: users/serializers.py:267
+#: users/serializers.py:268
 msgid "User must be authenticated"
 msgstr ""
 
-#: users/serializers.py:276
+#: users/serializers.py:277
 msgid "Only a superuser can create a token for another user"
 msgstr ""
 
-#: users/serializers.py:366
+#: users/serializers.py:367
 msgid "Administrator"
 msgstr ""
 
-#: users/serializers.py:367
+#: users/serializers.py:368
 msgid "Does this user have administrative permissions"
 msgstr ""
 
-#: users/serializers.py:372 users/serializers.py:500
+#: users/serializers.py:373 users/serializers.py:501
 msgid "Superuser"
 msgstr "Supervartotojas"
 
-#: users/serializers.py:372 users/serializers.py:501
+#: users/serializers.py:373 users/serializers.py:502
 msgid "Is this user a superuser"
 msgstr "Ar šis vartotojas yra supervartotojas"
 
-#: users/serializers.py:376 users/serializers.py:508
+#: users/serializers.py:377 users/serializers.py:509
 msgid "Is this user account active"
 msgstr "Ar ši vartotojo paskyra yra aktyvi"
 
-#: users/serializers.py:397
+#: users/serializers.py:398
 msgid "Only a superuser can adjust this field"
 msgstr "Tik supervartotojas gali keisti šį lauką"
 
-#: users/serializers.py:425
+#: users/serializers.py:426
 msgid "Password"
 msgstr ""
 
-#: users/serializers.py:426
+#: users/serializers.py:427
 msgid "Password for the user"
 msgstr ""
 
-#: users/serializers.py:432
+#: users/serializers.py:433
 msgid "Override warning"
 msgstr ""
 
-#: users/serializers.py:433
+#: users/serializers.py:434
 msgid "Override the warning about password rules"
 msgstr ""
 
-#: users/serializers.py:493
+#: users/serializers.py:494
 msgid "Staff"
 msgstr ""
 
-#: users/serializers.py:494
+#: users/serializers.py:495
 msgid "Does this user have staff permissions"
 msgstr ""
 
-#: users/serializers.py:544
+#: users/serializers.py:545
 msgid "You do not have permission to create users"
 msgstr "Neturite leidimo kurti vartotojų"
 
-#: users/serializers.py:557
+#: users/serializers.py:558
 msgid "A user with this email address already exists"
 msgstr ""
 
-#: users/serializers.py:592
+#: users/serializers.py:593
 msgid "Your account has been created."
 msgstr "Jūsų paskyra sukurta."
 
-#: users/serializers.py:594
+#: users/serializers.py:595
 msgid "Please use the password reset function to login"
 msgstr "Prisijungimui naudokite slaptažodžio atstatymo funkciją"
 
-#: users/serializers.py:600
+#: users/serializers.py:601
 msgid "Welcome to InvenTree"
 msgstr "Sveiki atvykę į InvenTree"
+
+#: users/tasks.py:29
+#, python-brace-format
+msgid "A new API token '{name}' was issued for your account by {issuer}"
+msgstr ""
+
+#: users/tasks.py:32
+#, python-brace-format
+msgid "A new API token '{name}' was issued for your account"
+msgstr ""
+
+#: users/tasks.py:36
+msgid "API Token Issued"
+msgstr ""
 
