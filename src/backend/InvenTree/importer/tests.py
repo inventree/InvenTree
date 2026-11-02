@@ -955,6 +955,53 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
             common.models.CustomUnit.objects.filter(name='imported_unit').exists()
         )
 
+    def test_field_filters_api(self):
+        """Test that the API rejects field filters which traverse related models."""
+        import json
+
+        url = reverse('api-importer-session-list')
+
+        for filters in [
+            {'user': {'usersession__session_key__startswith': 'a'}},
+            {'user': {'_negated': True}},
+        ]:
+            response = self.post(
+                url,
+                {
+                    'model_type': 'stockitemtestresult',
+                    'data_file': self.helper_file('companies.csv'),
+                    'field_filters': json.dumps(filters),
+                },
+                format='multipart',
+                expected_code=400,
+            )
+            self.assertIn('field_filters', response.data)
+
+        # Simple equality filters are accepted
+        data = self.post(
+            url,
+            {
+                'model_type': 'purchaseorderlineitem',
+                'data_file': self.helper_file('companies.csv'),
+                'field_filters': json.dumps({'part': {'supplier': 1, 'active': True}}),
+            },
+            format='multipart',
+            expected_code=201,
+        ).data
+
+        self.assertEqual(
+            data['field_filters'], {'part': {'supplier': 1, 'active': True}}
+        )
+
+        # Filters cannot be modified to traverse related models after creation
+        self.assignRole('purchase_order.change')
+
+        self.patch(
+            reverse('api-import-session-detail', kwargs={'pk': data['pk']}),
+            {'field_filters': {'part': {'supplier__name': 'abc'}}},
+            expected_code=400,
+        )
+
     def test_model_type_immutable(self):
         """Test that a session's model_type cannot be changed after creation.
 
