@@ -560,7 +560,7 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'users.authentication.ApiTokenAuthentication',
-        'users.authentication.ConfigurableBasicAuthentication',
+        'users.authentication.InvenTreeBasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'users.authentication.ExtendedOAuth2Authentication',
     ],

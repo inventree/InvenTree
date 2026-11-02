@@ -62,10 +62,11 @@ class ApiTokenAuthentication(TokenAuthentication):
         return (token.user, token)
 
 
-class ConfigurableBasicAuthentication(BasicAuthentication):
-    """BasicAuthentication which is only active if enabled via the BASIC_AUTH_ENABLED setting.
+class InvenTreeBasicAuthentication(BasicAuthentication):
+    """Custom basic auth class.
 
-    The setting is evaluated per request, so it can be overridden in tests.
+    Checks:
+    - Only works if BASIC_AUTH_ENABLED is True
     """
 
     def authenticate(self, request):
