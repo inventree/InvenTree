@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional
 
 from django.contrib.auth.models import User
-from django.core.exceptions import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist, FieldError
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import FileExtensionValidator
@@ -54,6 +54,15 @@ class DataImportSession(models.Model):
     def get_api_url():
         """Return the API URL associated with the DataImportSession model."""
         return reverse('api-importer-session-list')
+
+    def clean(self):
+        """Validate the DataImportSession object."""
+        super().clean()
+
+        try:
+            importer.validators.validate_field_filters(self.field_filters)
+        except DjangoValidationError as exc:
+            raise DjangoValidationError({'field_filters': exc.messages})
 
     def save(self, *args, **kwargs):
         """Save the DataImportSession object."""
@@ -889,12 +898,21 @@ class DataImportRow(models.Model):
             else {}
         )
 
+        # Re-validate filters before applying them to the queryset
+        # (e.g. sessions created before filter validation was enforced)
+        importer.validators.validate_field_filters({field_name: base_filters})
+
         if lookup_field and type(lookup_field) is str:
             # A specific lookup field has been chosen by the user — query only that field
             try:
                 queryset = model.objects.filter(**{lookup_field: value}, **base_filters)
             except ValueError:
                 return value
+            except FieldError:
+                # Field filters reference a field which does not exist on the related model
+                raise DjangoValidationError(
+                    _('Invalid filters for field: {field}').format(field=field_name)
+                )
 
             results = list(queryset[:2])
 
@@ -917,6 +935,11 @@ class DataImportRow(models.Model):
                 queryset = model.objects.filter(**{id_field: value}, **base_filters)
             except ValueError:
                 continue
+            except FieldError:
+                # Field filters reference a field which does not exist on the related model
+                raise DjangoValidationError(
+                    _('Invalid filters for field: {field}').format(field=field_name)
+                )
 
             # Evaluate at most two results to determine if there is exactly one match
             results = list(queryset[:2])
