@@ -158,6 +158,9 @@ class ProjectCode(
 
     IMPORT_ID_FIELDS = ['code']
 
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
+
     class Meta:
         """Class options for the ProjectCode model."""
 
@@ -1880,6 +1883,9 @@ class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
     https://pint.readthedocs.io/en/stable/advanced/defining.html
     """
 
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
+
     class Meta:
         """Class meta options."""
 
@@ -1914,6 +1920,7 @@ class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
         from InvenTree.conversion import (
             build_candidate_unit_registry,
             get_unit_registry,
+            is_base_unit_name,
         )
 
         registry = get_unit_registry()
@@ -1924,6 +1931,19 @@ class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
         # Cannot be zero length
         if not self.name.isidentifier():
             raise ValidationError({'name': _('Unit name must be a valid identifier')})
+
+        # Custom units cannot override built-in unit definitions
+        if is_base_unit_name(self.name):
+            raise ValidationError({
+                'name': _('Unit name conflicts with an existing built-in unit')
+            })
+
+        self.symbol = self.symbol.strip()
+
+        if is_base_unit_name(self.symbol):
+            raise ValidationError({
+                'symbol': _('Unit symbol conflicts with an existing built-in unit')
+            })
 
         self.definition = self.definition.strip()
 
@@ -2394,6 +2414,9 @@ class InvenTreeCustomUserStateModel(models.Model):
 
     """
 
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
+
     class Meta:
         """Metaclass options for this mixin."""
 
@@ -2732,6 +2755,9 @@ class ParameterTemplate(
         selectionlist: Optional link to a SelectionList for this template
         enabled: Is this template enabled?
     """
+
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
 
     IMPORT_ID_FIELDS = ['name']
 

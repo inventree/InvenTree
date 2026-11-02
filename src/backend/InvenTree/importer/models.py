@@ -160,6 +160,27 @@ class DataImportSession(models.Model):
 
         return supported_models().get(self.model_type, None)
 
+    def check_import_permission(self, user) -> bool:
+        """Check if the provided user is allowed to import data into the target model.
+
+        - Models marked with IMPORT_REQUIRES_STAFF require the user to be staff,
+          matching the API write permissions for that model.
+        - The user must also have 'change' permission for the target model.
+        """
+        from users.permissions import check_user_permission
+
+        model_class = self.model_class
+
+        if not model_class:
+            return True
+
+        if getattr(model_class, 'IMPORT_REQUIRES_STAFF', False) and not getattr(
+            user, 'is_staff', False
+        ):
+            return False
+
+        return check_user_permission(user, model_class, 'change')
+
     def get_lookup_fields_for_field(self, field_name: str) -> list:
         """Return the valid lookup fields for a given related (FK) field.
 

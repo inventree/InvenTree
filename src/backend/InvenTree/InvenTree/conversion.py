@@ -18,6 +18,9 @@ _UNIT_REG_CACHE_KEY = 'unit_registry_hash'
 _unit_registry = None
 _unit_registry_hash: str = ''
 
+# Registry of built-in units only (never modified after construction)
+_base_unit_registry = None
+
 # Relative tolerance used when comparing converted (floating point) numeric values
 NUMERIC_RELATIVE_TOLERANCE = 1e-9
 
@@ -117,6 +120,27 @@ def new_base_registry() -> pint.UnitRegistry:
     reg.define('thousand = 1000')
 
     return reg
+
+
+def is_base_unit_name(name: str) -> bool:
+    """Return True if the provided name resolves to a built-in (non-custom) unit.
+
+    This includes prefixed and plural forms (e.g. 'kpound', 'meters'),
+    as pint would resolve these to the existing unit definition.
+    """
+    global _base_unit_registry
+
+    if not name:
+        return False
+
+    if _base_unit_registry is None:
+        _base_unit_registry = new_base_registry()
+
+    # Note: 'name in registry' cannot be used here, as it evaluates expressions (e.g. 'm/A')
+    try:
+        return len(_base_unit_registry.parse_unit_name(name)) > 0
+    except Exception:
+        return False
 
 
 def reload_unit_registry():
