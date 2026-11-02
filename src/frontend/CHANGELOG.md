@@ -2,6 +2,10 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 1.6.0 - November 2026
+
+Removes the `notYetImplemented` notification function, which is no longer used by the InvenTree user interface. Plugins which import this function must be updated.
+
 ### 1.5.0 - August 2026
 
 Updated UI components library to match 1.5.0 InvenTree release.

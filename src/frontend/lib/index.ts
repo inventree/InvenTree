@@ -68,7 +68,6 @@ export {
 } from './functions/Navigation';
 
 export {
-  notYetImplemented,
   permissionDenied,
   invalidResponse,
   showTimeoutNotification
