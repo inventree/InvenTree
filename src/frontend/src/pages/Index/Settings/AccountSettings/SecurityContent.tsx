@@ -1,4 +1,4 @@
-import { DefaultFallback } from '@lib/components/Boundary';
+import { Boundary } from '@lib/components/Boundary';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
@@ -22,7 +22,6 @@ import {
   TextInput
 } from '@mantine/core';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { ErrorBoundary } from '@sentry/react';
 import {
   IconAlertCircle,
   IconAt,
@@ -44,16 +43,6 @@ export function SecurityContent() {
   );
 
   const user = useUserState();
-
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const onError = useCallback(
-    (error: unknown, componentStack: string | undefined, eventId: string) => {
-      console.error(`ERR: Error rendering component: ${error}`);
-      setErrorMessage(error instanceof Error ? error.message : String(error));
-    },
-    []
-  );
 
   return (
     <Stack>
@@ -97,14 +86,9 @@ export function SecurityContent() {
             <StylishText size='lg'>{t`Access Tokens`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
-            <ErrorBoundary
-              fallback={
-                <DefaultFallback title={'API Table'} error={errorMessage} />
-              }
-              onError={onError}
-            >
+            <Boundary label='API Table'>
               <ApiTokenTable only_myself />
-            </ErrorBoundary>
+            </Boundary>
           </Accordion.Panel>
         </Accordion.Item>
         {user.isSuperuser() && (
