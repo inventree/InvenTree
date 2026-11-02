@@ -765,6 +765,16 @@ class StockFilter(FilterSet):
             return queryset.filter(location__external=True)
         return queryset.exclude(location__external=True)
 
+    exclude_from_stock = rest_filters.BooleanFilter(
+        label=_('Exclude from Stock'), method='filter_exclude_from_stock'
+    )
+
+    def filter_exclude_from_stock(self, queryset, name, value):
+        """Filter by whether or not the stock item is located in an exclude_from_stock location."""
+        if str2bool(value):
+            return queryset.filter(location__exclude_from_stock=True)
+        return queryset.exclude(location__exclude_from_stock=True)
+
     in_stock = rest_filters.BooleanFilter(label='In Stock', method='filter_in_stock')
 
     def filter_in_stock(self, queryset, name, value):

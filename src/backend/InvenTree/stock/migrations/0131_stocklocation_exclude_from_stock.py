@@ -15,5 +15,5 @@ class Migration(migrations.Migration):
                 help_text='If checked, stock items in this location will not be counted in available stock',
                 verbose_name='Exclude from Stock',
             ),
-        ),
+        )
     ]
