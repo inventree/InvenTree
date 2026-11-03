@@ -4,7 +4,6 @@ from decimal import Decimal
 from typing import cast
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import F, Q
@@ -20,7 +19,7 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import APIException, NotFound
 from rest_framework.response import Response
 
 import build.models
@@ -71,6 +70,7 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part.models import Part
+from users.authentication import InvenTreeBasicAuthentication
 from users.models import Owner
 from users.permissions import check_user_permission
 
@@ -2519,36 +2519,19 @@ class OrderCalendarExport(ICalFeed):
         https://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django
         https://www.djangosnippets.org/snippets/243/
         """
-        import base64
-        import binascii
-
         if request.user.is_authenticated:
             # Authenticated on first try - maybe normal browser call?
             if forbidden := self.check_permission(request, **kwargs):
                 return forbidden
             return super().__call__(request, *args, **kwargs)
 
-        # No login yet - check in headers (only if basic auth is enabled)
-        if settings.BASIC_AUTH_ENABLED and 'authorization' in request.headers:
-            auth = request.headers['authorization'].split()
-            if len(auth) == 2:
-                # NOTE: We are only support basic authentication for now.
-                #
-                if auth[0].lower() == 'basic':
-                    try:
-                        # Split on the first colon only - passwords may contain ':'
-                        uname, passwd = (
-                            base64.b64decode(auth[1]).decode('utf-8').split(':', 1)
-                        )
-                    except (binascii.Error, UnicodeDecodeError, ValueError):
-                        # Malformed header - fall through to the 401 response
-                        uname = passwd = None
-
-                    if uname is not None:
-                        user = authenticate(username=uname, password=passwd)
-                        if user is not None and user.is_active:
-                            login(request, user)
-                            request.user = user
+        # No login yet - check for basic auth in headers
+        try:
+            if auth := InvenTreeBasicAuthentication().authenticate(request):
+                request.user = auth[0]
+        except APIException:
+            # Malformed or refused credentials - fall through to the 401 response
+            pass
 
         # Check again
         if request.user.is_authenticated:

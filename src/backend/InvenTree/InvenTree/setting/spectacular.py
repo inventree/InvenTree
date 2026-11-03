@@ -18,6 +18,7 @@ def get_spectacular_settings():
         },
         'VERSION': str(inventreeApiVersion()),
         'SERVE_INCLUDE_SCHEMA': False,
+        'SERVE_PERMISSIONS': ['InvenTree.permissions.AllowAnyOrReadScope'],
         'SCHEMA_PATH_PREFIX': '/api/',
         'POSTPROCESSING_HOOKS': [
             'InvenTree.schema.postprocess_schema_enums',

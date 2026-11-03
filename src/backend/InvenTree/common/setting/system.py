@@ -1192,7 +1192,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'confirm': True,
         'confirm_text': _(
-            'Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately.'
+            'Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately, and API tokens of users without multifactor authentication will stop working.'
         ),
         'flags': [SettingFlag.SECURITY],
         'after_save': enforce_mfa,

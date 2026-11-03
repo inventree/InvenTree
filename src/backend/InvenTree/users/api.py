@@ -1,20 +1,25 @@
 """DRF API definition for the 'users' app."""
 
-from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.password_validation import password_changed, validate_password
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.urls import include, path
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
 import django_filters.rest_framework.filters as rest_filters
 import structlog
+from allauth.account.internal.flows.reauthentication import (
+    did_recently_authenticate,
+    get_reauthentication_flows,
+)
+from allauth.mfa.utils import is_mfa_enabled
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import exceptions
+from rest_framework import exceptions, status
 from rest_framework.generics import DestroyAPIView, GenericAPIView
 from rest_framework.response import Response
 
@@ -378,7 +383,7 @@ class RuleSetDetail(RuleSetMixin, RetrieveUpdateDestroyAPI):
 class GetAuthToken(GenericAPIView):
     """Return authentication token for an authenticated user."""
 
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedNotOAuth2]
     serializer_class = GetAuthTokenSerializer
 
     @extend_schema(
@@ -404,6 +409,17 @@ class GetAuthToken(GenericAPIView):
 
         if not user.is_authenticated:
             raise exceptions.NotAuthenticated()  # pragma: no cover
+
+        # does this user have MFA set up? if so: was he recently verified?
+        if is_mfa_enabled(user) and not did_recently_authenticate(request):
+            return Response(
+                {
+                    'id': 'reauthentication_required',
+                    'detail': _('Reauthentication is required to generate a token'),
+                    'data': {'flows': get_reauthentication_flows(user)},
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
         name = ApiToken.sanitize_name(name)
 
@@ -452,17 +468,13 @@ class GetAuthToken(GenericAPIView):
         if warning := check_email_warning():
             data['warning'] = warning
 
-        # Ensure that the users session is logged in
-        if not get_user(request).is_authenticated:
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-
         return Response(data)
 
 
 class TokenMixin:
     """Mixin for API token endpoints."""
 
-    permission_classes = (InvenTree.permissions.IsAuthenticatedOrReadScope,)
+    permission_classes = (InvenTree.permissions.IsAuthenticatedNotOAuth2,)
     serializer_class = ApiTokenSerializer
 
     def get_queryset(self):
