@@ -357,7 +357,7 @@ class InfoView(APIView):
             },
             'system_state': {
                 'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS,
-                'basic_auth_enabled': settings.BASIC_AUTH_ENABLED,
+                'basic_auth_enabled': settings.BASIC_AUTH_ENABLED if is_staff else None,
             },
         }
         if nonce := request.query_params.get('link_nonce'):
