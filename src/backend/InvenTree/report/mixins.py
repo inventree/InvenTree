@@ -5,7 +5,7 @@ from typing import Generic, Optional, TypedDict, TypeVar
 
 from django.db import models
 
-from InvenTree.model_features import ModelFeatureMixin
+from generic.modelfeatures import ModelFeatureMixin
 
 _Model = TypeVar('_Model', bound=models.Model, covariant=True)
 

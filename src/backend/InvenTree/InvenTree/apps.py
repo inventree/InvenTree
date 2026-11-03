@@ -17,8 +17,8 @@ from allauth.socialaccount.signals import social_account_updated
 import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
+from generic.modelfeatures import build_model_features_cache
 from InvenTree.config import get_setting
-from InvenTree.model_features import build_model_features_cache
 from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')

@@ -35,7 +35,7 @@ import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.sentry
 import report.mixins
-from InvenTree.model_features import ModelFeatureMixin
+from generic.modelfeatures import ModelFeatureMixin
 
 logger = structlog.get_logger('inventree')
 

@@ -20,12 +20,12 @@ import common.filters
 import common.models as common_models
 import common.validators
 import generic.states.custom
+from generic.modelfeatures import get_model_features
 from importer.registry import register_importer
 from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.model_features import get_model_features
 from InvenTree.models import InvenTreeNoteMixin, InvenTreeParameterMixin
 from InvenTree.serializers import (
     ContentTypeField,

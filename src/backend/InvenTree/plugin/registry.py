@@ -29,9 +29,9 @@ import structlog
 import InvenTree.cache
 import InvenTree.ready
 from common.settings import get_global_setting, set_global_setting
+from generic.modelfeatures import clear_model_features_cache
 from InvenTree.config import get_plugin_dir
 from InvenTree.exceptions import log_error
-from InvenTree.model_features import clear_model_features_cache
 
 from .helpers import (
     IntegrationPluginError,
