@@ -5,6 +5,7 @@ from typing import Any, Optional, TypedDict
 
 from django.conf import settings
 
+from drf_spectacular.authentication import BasicScheme
 from drf_spectacular.contrib.django_oauth_toolkit import DjangoOAuthToolkitScheme
 from drf_spectacular.drainage import warn
 from drf_spectacular.openapi import AutoSchema
@@ -241,6 +242,12 @@ class ExtendedAutoSchema(AutoSchema):
             }
 
         return data
+
+
+class InvenTreeBasicAuthExtension(BasicScheme):
+    """Fix for custom basic authentication class."""
+
+    target_class = 'users.authentication.InvenTreeBasicAuthentication'
 
 
 def postprocess_schema_enums(result, generator, **kwargs):

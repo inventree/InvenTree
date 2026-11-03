@@ -262,6 +262,11 @@ The `middleware` list provided in the configuration file does not include the au
 
 The middleware has been added automatically. To remove this warning, add it to the `middleware` list in your configuration file (after `django_structlog.middlewares.RequestMiddleware`).
 
+#### INVE-W20
+**Password authentication not allowed due to MFA - Backend**
+
+Password authentication is not allowed if the user has MFA enabled or if MFA is enforced globally. Use token or OAuth2 authentication instead.
+
 #### INVE-W21
 **Unsupported class removed from configuration - Backend**
 

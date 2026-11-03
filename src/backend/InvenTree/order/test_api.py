@@ -9,6 +9,7 @@ from decimal import Decimal
 from typing import Optional
 from unittest import mock
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import connection
@@ -25,6 +26,7 @@ from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
 from company.models import Address, Company, Contact, SupplierPart, SupplierPriceBreak
+from InvenTree.helpers_mfa import get_codes
 from InvenTree.unit_test import InvenTreeAPITestCase, stock_history
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
@@ -1038,6 +1040,25 @@ class PurchaseOrderTest(OrderTest):
             )
             self.assertEqual(response.status_code, 401)
             self.assertEqual(response['WWW-Authenticate'], 'Basic realm="api"')
+
+    def test_po_calendar_auth_mfa(self):
+        """Test that header authorization creates no session, and is refused for users with MFA."""
+        self.client.logout()
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'})
+        base64_token = base64.b64encode(
+            f'{self.username}:{self.password}'.encode('ascii')
+        ).decode('ascii')
+        headers = {'authorization': f'basic {base64_token}'}
+
+        response = self.client.get(url, format='json', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(settings.SESSION_COOKIE_NAME, response.cookies)
+
+        get_codes(self.user)
+
+        response = self.client.get(url, format='json', headers=headers)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response['WWW-Authenticate'], 'Basic realm="api"')
 
     def test_po_calendar_no_permission(self):
         """Test that an authenticated user without purchase_order view permission is denied."""

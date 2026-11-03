@@ -1,6 +1,5 @@
 """DRF API definition for the 'users' app."""
 
-from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.password_validation import password_changed, validate_password
 from django.contrib.contenttypes.models import ContentType
@@ -451,10 +450,6 @@ class GetAuthToken(GenericAPIView):
 
         if warning := check_email_warning():
             data['warning'] = warning
-
-        # Ensure that the users session is logged in
-        if not get_user(request).is_authenticated:
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
         return Response(data)
 

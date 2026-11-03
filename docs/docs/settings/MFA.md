@@ -16,4 +16,6 @@ To make MFA mandatory for all users:
 
 ### Security Consideration
 
+Password based [basic authentication](../api/index.md#basic-auth) against the API is refused for users with MFA configured, and for all users while MFA is enforced. API clients should use tokens (generated in the user interface) or OAuth2 instead.
+
 A user can lock themselves out if they lose access to both the device with their TOTP app and their backup tokens. An admin can delete their tokens from the Database Admin interface (they exist under the 'TOTP devices' / 'static devices' models). This should be a last resort and only done by people knowledgeable about the [Database Admin interface](../settings/db_admin.md), as changes there might circumvent InvenTree's business and security logic.

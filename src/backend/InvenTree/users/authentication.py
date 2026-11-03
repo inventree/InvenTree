@@ -1,13 +1,45 @@
 """Custom token authentication class for InvenTree API."""
 
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from allauth.mfa.utils import is_mfa_enabled
 from oauth2_provider.contrib.rest_framework import OAuth2ProtectedResourceAuthentication
 from rest_framework import exceptions
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import BasicAuthentication, TokenAuthentication
 
 import InvenTree.helpers
 import users.models
+from common.settings import get_global_setting
+
+
+def password_auth_allowed(user) -> bool:
+    """Check if a password alone is allowed to authenticate the user."""
+    if is_mfa_enabled(user):
+        return False
+    return not (
+        settings.MFA_ENABLED
+        and get_global_setting('LOGIN_ENFORCE_MFA', None, 'INVENTREE_LOGIN_ENFORCE_MFA')
+    )
+
+
+class InvenTreeBasicAuthentication(BasicAuthentication):
+    """Custom basic auth class.
+
+    Checks:
+    - If MFA is required and dissalows basic auth
+    """
+
+    def authenticate_credentials(self, userid, password, request=None):
+        """Also check if MFA is required for the user."""
+        user, auth = super().authenticate_credentials(userid, password, request)
+
+        if not password_auth_allowed(user):
+            raise exceptions.AuthenticationFailed(
+                _('INVE-W20: Password authentication not allowed due to MFA')
+            )
+
+        return (user, auth)
 
 
 def validate_api_token(raw_token: str) -> users.models.ApiToken:
