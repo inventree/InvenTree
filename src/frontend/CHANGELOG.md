@@ -49,6 +49,10 @@ Exposes the following additional definitions from the library:
 - `roleToViewSettingMap` - mapping between user roles and the global settings which enable the associated interface
 - `UserTips` - type definition for user tips
 
+### notYetImplemented
+
+Removes the `notYetImplemented` notification function, which is no longer used by the InvenTree user interface. Plugins which import this function must be updated.
+
 ### 1.5.0 - August 2026
 
 Updated UI components library to match 1.5.0 InvenTree release.
