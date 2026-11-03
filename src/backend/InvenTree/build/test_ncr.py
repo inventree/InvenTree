@@ -340,7 +340,7 @@ class NonConformanceAuditTest(InvenTreeTestCase):
         part = Part.objects.get(pk=1)
         ncr = NonConformance.objects.create(part=part, description='Original')
 
-        ncr_entries = AuditLogEntry.objects.get_for_object(ncr)
+        ncr_entries = AuditLogEntry.objects.get_for_object(ncr).order_by('pk')
 
         self.assertEqual(
             ncr_entries.filter(action=AuditLogEntry.Action.CREATE).count(), 1
