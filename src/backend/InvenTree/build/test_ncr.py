@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 
 import InvenTree.helpers
+from audit.models import AuditLogEntry
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part
 from stock.models import StockItem
@@ -327,3 +328,53 @@ class NonConformanceTransitionTest(InvenTreeTestCase):
         self.ncr.complete()
         self.assertEqual(self.ncr.status, NonConformanceStatus.COMPLETE.value)
         self.assertIsNotNone(self.ncr.closed_date)
+
+
+class NonConformanceAuditTest(InvenTreeTestCase):
+    """Tests for audit log entries recorded against NonConformance reports."""
+
+    fixtures = ['category', 'part', 'location', 'stock']
+
+    def test_audit_history(self):
+        """Changes to an NCR (and its linked stock items) are recorded in its history."""
+        part = Part.objects.get(pk=1)
+        ncr = NonConformance.objects.create(part=part, description='Original')
+
+        ncr_entries = AuditLogEntry.objects.get_for_object(ncr)
+
+        self.assertEqual(
+            ncr_entries.filter(action=AuditLogEntry.Action.CREATE).count(), 1
+        )
+
+        # Field changes are recorded
+        ncr.description = 'Updated'
+        ncr.save()
+
+        entry = ncr_entries.filter(action=AuditLogEntry.Action.UPDATE).last()
+        self.assertEqual(entry.changes_dict['description'], ['Original', 'Updated'])
+        self.assertNotIn('reference_int', entry.changes_dict)
+
+        # Status transitions are recorded
+        ncr.investigate()
+
+        entry = ncr_entries.filter(action=AuditLogEntry.Action.UPDATE).last()
+        self.assertIn('status', entry.changes_dict)
+
+        # Changes to linked stock items are included in the history of the NCR
+        item = NonConformanceStockItem.objects.create(
+            ncr=ncr, stock_item=StockItem.objects.filter(part=part).first()
+        )
+        item.disposition = NonConformanceDisposition.SCRAP.value
+        item.save()
+
+        child_entries = AuditLogEntry.objects.filter(
+            parent_content_type=ncr.get_content_type(), parent_object_pk=str(ncr.pk)
+        )
+
+        self.assertEqual(
+            {e.action for e in child_entries},
+            {AuditLogEntry.Action.CREATE, AuditLogEntry.Action.UPDATE},
+        )
+
+        entry = child_entries.filter(action=AuditLogEntry.Action.UPDATE).get()
+        self.assertIn('disposition', entry.changes_dict)

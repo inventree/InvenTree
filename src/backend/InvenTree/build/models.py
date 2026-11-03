@@ -2570,6 +2570,7 @@ class NonConformanceReportContext(report.mixins.BaseReportContext, TypedDict):
 
 
 class NonConformance(
+    InvenTree.models.InvenTreeAuditMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
@@ -2606,6 +2607,11 @@ class NonConformance(
 
     STATUS_CLASS = NonConformanceStatus
     REFERENCE_PATTERN_SETTING = 'NCR_REFERENCE_PATTERN'
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Derived from 'barcode_data'
+        'barcode_hash',
+    )
 
     class Meta:
         """Metaclass options for the NonConformance model."""
@@ -2893,7 +2899,9 @@ class NonConformance(
     # endregion fsm
 
 
-class NonConformanceStockItem(InvenTree.models.InvenTreeMetadataModel):
+class NonConformanceStockItem(
+    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """Links a StockItem to a NonConformance report.
 
     This is a simple association - unlike BuildItem / SalesOrderAllocation, it carries
@@ -2908,6 +2916,9 @@ class NonConformanceStockItem(InvenTree.models.InvenTreeMetadataModel):
             status_codes.NonConformanceDisposition)
         notes: Free-text notes about this specific linkage (optional)
     """
+
+    # Changes to linked stock items (e.g. disposition) are included in the history of the NCR
+    AUDIT_PARENT_FIELD = 'ncr'
 
     class Meta:
         """Model meta options."""

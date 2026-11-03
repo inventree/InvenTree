@@ -21,6 +21,9 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
@@ -62,6 +65,8 @@ export default function NonConformanceDetail() {
     modelType: ModelType.nonconformance,
     modelId: ncr?.pk
   });
+
+  const showHistory = useShowHistoryPanel();
 
   const ncrStatus = useStatusCodes({ modelType: ModelType.nonconformance });
 
@@ -107,9 +112,14 @@ export default function NonConformanceDetail() {
         model_type: ModelType.nonconformance,
         model_id: ncr.pk,
         note_count: instanceInfo.note_count
+      }),
+      HistoryPanel({
+        model_type: ModelType.nonconformance,
+        model_id: ncr.pk,
+        visible: showHistory
       })
     ];
-  }, [ncr, id, user, instanceInfo]);
+  }, [ncr, id, user, instanceInfo, showHistory]);
 
   const ncrBadges: ReactNode[] = useMemo(() => {
     if (instanceQuery.isLoading) {
