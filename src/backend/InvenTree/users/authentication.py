@@ -28,6 +28,38 @@ def password_auth_allowed(user) -> bool:
     return not mfa_enforced()
 
 
+class InvenTreeBasicAuthentication(BasicAuthentication):
+    """Custom basic auth class.
+
+    Checks:
+    - If MFA is required and disallows basic auth
+    - Only works if BASIC_AUTH_ENABLED is True
+    """
+
+    def authenticate(self, request):
+        """Only attempt basic authentication if it is enabled."""
+        if not settings.BASIC_AUTH_ENABLED:
+            return None
+        return super().authenticate(request)
+
+    def authenticate_header(self, request):
+        """Only advertise basic authentication if it is enabled."""
+        if not settings.BASIC_AUTH_ENABLED:
+            return ''
+        return super().authenticate_header(request)
+
+    def authenticate_credentials(self, userid, password, request=None):
+        """Also check if MFA is required for the user."""
+        user, auth = super().authenticate_credentials(userid, password, request)
+
+        if not password_auth_allowed(user):
+            raise exceptions.AuthenticationFailed(
+                _('INVE-W20: Password authentication not allowed due to MFA')
+            )
+
+        return (user, auth)
+
+
 def validate_api_token(raw_token: str) -> users.models.ApiToken:
     """Look up and fully validate a raw API token value.
 
@@ -84,38 +116,6 @@ class ApiTokenAuthentication(TokenAuthentication):
         """Adds additional checks to the default token authentication method."""
         token = validate_api_token(key)
         return (token.user, token)
-
-
-class InvenTreeBasicAuthentication(BasicAuthentication):
-    """Custom basic auth class.
-
-    Checks:
-    - If MFA is required and disallows basic auth
-    - Only works if BASIC_AUTH_ENABLED is True
-    """
-
-    def authenticate(self, request):
-        """Only attempt basic authentication if it is enabled."""
-        if not settings.BASIC_AUTH_ENABLED:
-            return None
-        return super().authenticate(request)
-
-    def authenticate_header(self, request):
-        """Only advertise basic authentication if it is enabled."""
-        if not settings.BASIC_AUTH_ENABLED:
-            return None
-        return super().authenticate_header(request)
-
-    def authenticate_credentials(self, userid, password, request=None):
-        """Also check if MFA is required for the user."""
-        user, auth = super().authenticate_credentials(userid, password, request)
-
-        if not password_auth_allowed(user):
-            raise exceptions.AuthenticationFailed(
-                _('INVE-W20: Password authentication not allowed due to MFA')
-            )
-
-        return (user, auth)
 
 
 class ExtendedOAuth2Authentication(OAuth2ProtectedResourceAuthentication):
