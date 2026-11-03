@@ -96,7 +96,6 @@ pages_mfa_bypass = [
     'api-user-me',
     'api-user-roles',
     'api-inventree-info',
-    'api-token',
     # web platform urls
     'password_reset_confirm',
     'index',

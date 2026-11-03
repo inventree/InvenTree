@@ -89,6 +89,21 @@ class MiddlewareTests(InvenTreeTestCase):
             self.assertEqual(rsp3.status_code, 200)
             self.check_path(url)
 
+    def test_Check2FAMiddleware_token(self):
+        """Test that no API token can be generated before MFA is set up, if MFA is enforced."""
+        url = reverse('api-token')
+
+        with patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}):
+            response = self.check_path(url, 401)
+            self.assertContains(
+                response,
+                'You must enable two-factor authentication before doing anything else.',
+                status_code=401,
+            )
+
+        # Not enforced - token can be generated
+        self.check_path(url)
+
     def test_token_auth(self):
         """Test auth with token auth."""
         target = reverse('api-license')
