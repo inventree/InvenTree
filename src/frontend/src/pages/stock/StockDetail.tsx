@@ -747,6 +747,8 @@ export default function StockDetail() {
           >
             <Stack>
               <PageDetail
+                model={ModelType.stockitem}
+                id={stockitem.pk}
                 title={t`Stock Item`}
                 subtitle={stockitem.part_detail?.full_name}
                 imageUrl={stockitem.part_detail?.thumbnail}
