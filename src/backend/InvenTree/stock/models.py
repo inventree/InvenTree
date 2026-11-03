@@ -45,17 +45,12 @@ from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from InvenTree.helpers_db import bulk_create_and_fetch
-from InvenTree.status_codes import (
-    SalesOrderStatusGroups,
-    StockHistoryCode,
-    StockStatus,
-    StockStatusGroups,
-)
-from order.status_codes import TransferOrderStatusGroups
+from order.status_codes import SalesOrderStatusGroups, TransferOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.events import StockEvents
 from stock.generators import generate_batch_code
+from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
 
 logger = structlog.get_logger('inventree')
