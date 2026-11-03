@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 569
+INVENTREE_API_VERSION = 570
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
+    - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only
+    - Token API (/api/user/tokens/): "expiry" must be between today and 365 days in the future
 
 v569 -> 2026-10-30 : https://github.com/inventree/InvenTree/security/advisories
     - Hardens OAuth2 token usage in the API
