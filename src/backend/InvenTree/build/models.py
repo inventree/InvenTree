@@ -2572,6 +2572,7 @@ class NonConformanceReportContext(report.mixins.BaseReportContext, TypedDict):
 class NonConformance(
     InvenTree.models.InvenTreeAuditMixin,
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeTagsMixin,

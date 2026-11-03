@@ -1891,6 +1891,7 @@ class NonConformanceSerializer(
             'target_date',
             'closed_date',
             'link',
+            'parameters',
             'tags',
             'barcode_hash',
         ]
@@ -1933,6 +1934,8 @@ class NonConformanceSerializer(
         default_include=True,
         prefetch_fields=['raised_by'],
     )
+
+    parameters = common.filters.enable_parameters_filter()
 
     tags = common.filters.enable_tags_filter()
 

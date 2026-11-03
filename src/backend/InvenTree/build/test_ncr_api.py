@@ -1,7 +1,9 @@
 """Unit tests for the NonConformance (NCR) API endpoints."""
 
+from django.core.files.base import ContentFile
 from django.urls import reverse
 
+import common.models
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from stock.models import StockItem
@@ -355,3 +357,131 @@ class NCRStockItemAPITest(InvenTreeAPITestCase):
         self.delete(url, expected_code=204)
 
         self.assertFalse(NonConformanceStockItem.objects.filter(pk=item.pk).exists())
+
+
+class NCRRelatedDataAPITest(InvenTreeAPITestCase):
+    """Tests for parameters, attachments and notes linked to a NonConformance report.
+
+    Creating any of these requires 'change' permission against the NCR itself,
+    which is provided by the 'ncr' role (and *not* the 'build' role).
+    """
+
+    fixtures = ['category', 'part', 'location', 'stock']
+
+    roles = ['ncr.view']
+
+    def setUp(self):
+        """Create an NCR to link data against."""
+        super().setUp()
+
+        self.ncr = NonConformance.objects.create(
+            part=Part.objects.get(pk=1), description='Some problem'
+        )
+
+    def test_parameters(self):
+        """Parameters can be created against an NCR, and returned via the NCR API."""
+        template = common.models.ParameterTemplate.objects.create(
+            name='Defect Length',
+            units='mm',
+            model_type=self.ncr.get_content_type(),
+            enabled=True,
+        )
+
+        url = reverse('api-parameter-list')
+
+        data = {
+            'template': template.pk,
+            'model_type': 'build.nonconformance',
+            'model_id': self.ncr.pk,
+            'data': '12.5',
+        }
+
+        # The 'build' role does not grant access to NCR parameters
+        self.assignRole('build.change')
+        self.post(url, data=data, expected_code=403)
+
+        self.assignRole('ncr.change')
+        self.post(url, data=data, expected_code=201)
+
+        self.assertEqual(self.ncr.parameters.count(), 1)
+
+        # Parameters are available via the NCR detail endpoint
+        response = self.get(
+            reverse('api-ncr-detail', kwargs={'pk': self.ncr.pk}),
+            data={'parameters': True},
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data['parameters']), 1)
+        self.assertEqual(response.data['parameters'][0]['data'], '12.5')
+
+        # ... and can be used to filter the NCR list
+        response = self.get(
+            reverse('api-ncr-list'),
+            data={f'parameter_{template.pk}': '12.5'},
+            expected_code=200,
+        )
+
+        self.assertEqual([ncr['pk'] for ncr in response.data], [self.ncr.pk])
+
+    def test_attachments(self):
+        """Attachments can be uploaded against an NCR."""
+        url = reverse('api-attachment-list')
+
+        def upload(expected_code):
+            return self.post(
+                url,
+                data={
+                    'model_type': 'nonconformance',
+                    'model_id': self.ncr.pk,
+                    'attachment': ContentFile(b'defect photo', name='defect.txt'),
+                    'comment': 'Photo of the defect',
+                },
+                format='multipart',
+                expected_code=expected_code,
+            )
+
+        self.assignRole('build.change')
+        upload(403)
+
+        self.assignRole('ncr.change')
+        upload(201)
+
+        self.assertEqual(self.ncr.attachments.count(), 1)
+
+        response = self.get(
+            url,
+            data={'model_type': 'nonconformance', 'model_id': self.ncr.pk},
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['comment'], 'Photo of the defect')
+
+    def test_notes(self):
+        """Notes can be created against an NCR."""
+        url = reverse('api-note-list')
+
+        data = {
+            'model_type': 'nonconformance',
+            'model_id': self.ncr.pk,
+            'title': 'Investigation notes',
+            'content': 'Supplier contacted',
+        }
+
+        self.assignRole('build.change')
+        self.post(url, data=data, expected_code=403)
+
+        self.assignRole('ncr.change')
+        self.post(url, data=data, expected_code=201)
+
+        self.assertEqual(self.ncr.notes.count(), 1)
+
+        response = self.get(
+            url,
+            data={'model_type': 'nonconformance', 'model_id': self.ncr.pk},
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['title'], 'Investigation notes')

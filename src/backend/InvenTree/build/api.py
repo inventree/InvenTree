@@ -1210,7 +1210,10 @@ class NCRListOutputOptions(OutputConfiguration):
 
 
 class NCRViewSet(
-    SerializerContextMixin, OutputOptionsMixin, RetrieveUpdateDestroyModelViewSet
+    SerializerContextMixin,
+    OutputOptionsMixin,
+    ParameterListMixin,
+    RetrieveUpdateDestroyModelViewSet,
 ):
     """API endpoint for accessing NonConformance (NCR) objects.
 
