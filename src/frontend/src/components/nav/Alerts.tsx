@@ -160,7 +160,7 @@ export function getAlerts(
     {
       key: 'api_token_pepper',
       title: t`API Token Pepper`,
-      code: 'INVE-W18',
+      code: 'INVE-W22',
       message: t`No API token pepper is configured, the secret key is used instead.`,
       condition: server?.system_state?.api_token_pepper_set === false
     }

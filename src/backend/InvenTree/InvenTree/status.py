@@ -73,7 +73,7 @@ def check_system_health(**kwargs):
     if not InvenTree.helpers.get_api_token_pepper_set():  # pragma: no cover
         result = False
         if not settings.DEBUG:
-            logger.warning('INVE-W18: API token pepper not configured')
+            logger.warning('INVE-W22: API token pepper not configured')
 
     if not result:  # pragma: no cover
         if not settings.DEBUG:

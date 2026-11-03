@@ -251,7 +251,7 @@ API tokens are stored as HMAC digests, keyed with a *pepper*. The pepper helps t
 
 Tokens are issued with the primary pepper. If no pepper is configured, the secret key is used.
 
-To rotate the pepper, set a new primary pepper and add the previous one to `INVENTREE_API_TOKEN_PEPPER_ADDITIONAL`. Additional peppers are only used to validate existing tokens, never to issue new ones. Tokens issued with a pepper that is not configured become invalid ([INVE-W19](../settings/error_codes.md#inve-w19)).
+To rotate the pepper, set a new primary pepper and add the previous one to `INVENTREE_API_TOKEN_PEPPER_ADDITIONAL`. Additional peppers are only used to validate existing tokens, never to issue new ones. Tokens issued with a pepper that is not configured become invalid ([INVE-W23](../settings/error_codes.md#INVE-W23)).
 
 {{ configtable() }}
 {{ configsetting("INVENTREE_API_TOKEN_PEPPER") }} Primary pepper used to issue (and validate) API tokens |

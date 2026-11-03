@@ -27,6 +27,7 @@ import InvenTree.backup
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import (
     ensure_middleware,
+    ensure_removed,
     get_boolean_setting,
     get_oidc_private_key,
     get_setting,
@@ -202,7 +203,7 @@ if not API_TOKEN_PEPPER:
     API_TOKEN_PEPPER = SECRET_KEY
     if not TESTING:  # pragma: no cover
         logger.warning(
-            'INVE-W18: No API token pepper configured - falling back to SECRET_KEY. Set INVENTREE_API_TOKEN_PEPPER'
+            'INVE-W22: No API token pepper configured - falling back to SECRET_KEY. Set INVENTREE_API_TOKEN_PEPPER'
         )
 
 # The filesystem location for served static files
@@ -414,7 +415,6 @@ MIDDLEWARE = CONFIG.get(
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'InvenTree.middleware.AuthRequiredMiddleware',
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
-        'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
@@ -431,6 +431,12 @@ MIDDLEWARE = ensure_middleware(
     MIDDLEWARE,
     'audit.middleware.InvenTreeAuditlogMiddleware',
     after='django_structlog.middlewares.RequestMiddleware',
+)
+
+# OAuth2 tokens must only be handled by the API authentication class (which enforces token scopes)
+# The oauth2_provider middleware would turn a token into a full (session) user login - ensure that it is never present
+MIDDLEWARE = ensure_removed(
+    MIDDLEWARE, 'oauth2_provider.middleware.OAuth2TokenMiddleware', 'MIDDLEWARE'
 )
 
 # Audit log configuration (django-auditlog)
@@ -491,7 +497,6 @@ QUERYCOUNT = {
 
 
 default_auth_backends = [
-    'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
     'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
@@ -502,6 +507,13 @@ AUTHENTICATION_BACKENDS = (
     CONFIG.get('authentication_backends', default_auth_backends)
     if CONFIG
     else default_auth_backends
+)
+
+# The oauth2_provider backend accepts an OAuth2 token for *any* authentication attempt (e.g. a login form) - ensure that it is never present
+AUTHENTICATION_BACKENDS = ensure_removed(
+    AUTHENTICATION_BACKENDS,
+    'oauth2_provider.backends.OAuth2Backend',
+    'AUTHENTICATION_BACKENDS',
 )
 
 # LDAP support
@@ -566,7 +578,7 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'users.authentication.ApiTokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'users.authentication.InvenTreeBasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'users.authentication.ExtendedOAuth2Authentication',
     ],
@@ -1247,6 +1259,13 @@ OAUTH2_PROVIDER = {
 OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/method combinations
     '/api/email/generate/:post',
     '/api/webhook/{endpoint}/:post',
+    # API token management is not available to OAuth2 tokens
+    '/api/user/token/:get',
+    '/api/user/me/token/:get',
+    '/api/user/tokens/:get',
+    '/api/user/tokens/:post',
+    '/api/user/tokens/{id}/:get',
+    '/api/user/tokens/{id}/:delete',
 ]
 
 if SITE_URL and not TESTING:  # pragma: no cover

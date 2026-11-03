@@ -5,7 +5,17 @@ All major notable changes to this project will be documented in this file (start
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - xxxx.xx.xx
+## Unreleased - xxxx-xx-xx
+
+### Breaking Changes
+
+### Added
+
+### Changed
+
+### Removed
+
+## 1.7.0 - 2026-11.03
 
 ### Breaking Changes
 
@@ -18,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#13069](https://github.com/inventree/InvenTree/pull/13069) Adds an audit log which tracks changes made to internal data and exposes read-only API endpoints (/api/audit/) for accessing the audit log.
 
 ### Changed
+
+- [#13172](https://github.com/inventree/InvenTree/pull/13172) passes the `target_model` and `target_id` of the current page to plugin primary actions, via the `context` argument of `get_ui_primary_actions`.
 
 ### Removed
 

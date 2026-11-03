@@ -166,7 +166,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
                 return pepper
 
         logger.warning(
-            'INVE-W19: API token %s was issued with an unknown pepper (%s)',
+            'INVE-W23: API token %s was issued with an unknown pepper (%s)',
             self.pk,
             self.pepper_id,
         )

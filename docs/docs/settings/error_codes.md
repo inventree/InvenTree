@@ -269,14 +269,26 @@ The `middleware` list provided in the configuration file does not include the au
 
 The middleware has been added automatically. To remove this warning, add it to the `middleware` list in your configuration file (after `django_structlog.middlewares.RequestMiddleware`).
 
-#### INVE-W18
+#### INVE-W20
+**Password authentication not allowed due to MFA - Backend**
+
+Password authentication is not allowed if the user has MFA enabled or if MFA is enforced globally. Use token or OAuth2 authentication instead.
+
+#### INVE-W21
+**Unsupported class removed from configuration - Backend**
+
+The `middleware` or `authentication_backends` list provided in the configuration file includes a class which is not supported, as it would bypass security checks.
+
+The class has been removed automatically. To remove this warning, remove it from the list in your configuration file.
+
+#### INVE-W22
 **No API token pepper configured - Backend**
 
 No pepper for secure API token generation is configured, so `SECRET_KEY` is used instead. This makes key rotation hard and is not recommended.
 
 Set `INVENTREE_API_TOKEN_PEPPER` (or `INVENTREE_API_TOKEN_PEPPER_FILE`) - see [API token pepper settings](../start/config.md#api-token-pepper). Tokens issued with the secret key remain valid.
 
-#### INVE-W19
+#### INVE-W23
 **API token issued with unknown pepper - Backend**
 
 An API token was used that was issued with a pepper which is no longer configured or unknown. The token was rejected.
