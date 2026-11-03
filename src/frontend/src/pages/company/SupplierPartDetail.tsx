@@ -241,6 +241,8 @@ export default function SupplierPartDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.supplierpart}
+            id={supplierPart.pk}
             title={t`Supplier Part`}
             subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
             breadcrumbs={breadcrumbs}

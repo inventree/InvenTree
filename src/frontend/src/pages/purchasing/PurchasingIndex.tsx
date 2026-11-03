@@ -234,7 +234,7 @@ export default function PurchasingIndex() {
 
   return (
     <Stack>
-      <PageDetail title={t`Purchasing`} />
+      <PageDetail model={PluginPanelKey.purchasing} title={t`Purchasing`} />
       <PanelGroup
         pageKey='purchasing-index'
         panels={panels}

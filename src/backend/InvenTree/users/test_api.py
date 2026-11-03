@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from allauth.account.models import EmailAddress
 
+import InvenTree.helpers
 from common.models import NotificationMessage
 from InvenTree.unit_test import InvenTreeAPITestCase
 from users.models import ApiToken, default_token
@@ -719,6 +720,50 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertIn('token', response.data)
 
         self.assertEqual(ApiToken.objects.count(), 1)
+
+    def test_token_create_fields(self):
+        """Test that protected token fields cannot be set when creating a token."""
+        url = reverse('api-token-list')
+        today = InvenTree.helpers.current_date()
+        other = User.objects.create_user(username='other', password='password')
+
+        # Expiry date must be within the allowed token lifetime
+        for expiry in [today - datetime.timedelta(days=1), datetime.date(9999, 12, 31)]:
+            response = self.post(
+                url, data={'name': 'test', 'expiry': str(expiry)}, expected_code=400
+            )
+            self.assertIn('expiry', response.data)
+
+        for expiry in [today, today + datetime.timedelta(days=365)]:
+            response = self.post(
+                url,
+                data={'name': f'test-{expiry}', 'expiry': str(expiry)},
+                expected_code=201,
+            )
+            self.assertEqual(response.data['expiry'], str(expiry))
+
+        # Read-only fields are ignored
+        response = self.post(
+            url,
+            data={
+                'name': 'protected',
+                'revoked': True,
+                'revoked_by': other.pk,
+                'issued_by': other.pk,
+                'revocation_reason': 'forged',
+                'token_version': 1,
+                'last_seen': str(today),
+            },
+            expected_code=201,
+        )
+
+        token = ApiToken.objects.get(pk=response.data['id'])
+        self.assertFalse(token.revoked)
+        self.assertIsNone(token.revoked_by)
+        self.assertEqual(token.issued_by, self.user)
+        self.assertIsNone(token.revocation_reason)
+        self.assertEqual(token.token_version, 2)
+        self.assertIsNone(token.last_seen)
 
     def test_token_v1(self):
         """Test that v1 API tokens still work."""

@@ -255,6 +255,8 @@ export default function SalesOrderShipmentDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.salesordershipment}
+            id={shipment.pk}
             title={`${t`Sales Order Shipment`}: ${shipment.reference}`}
             subtitle={`${t`Sales Order`}: ${shipment.order_detail?.reference}`}
             breadcrumbs={[

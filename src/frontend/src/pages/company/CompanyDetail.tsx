@@ -271,6 +271,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.company}
+            id={company.pk}
             title={`${t`Company`}: ${company.name}`}
             subtitle={company.description}
             actions={companyActions}

@@ -423,7 +423,11 @@ test('Sales Orders - Shipment Row Actions', async ({ browser }) => {
   // View the parent sales order from the global shipments table
   await navigate(page, 'sales/index/shipments');
   await clearTableFilters(page);
-  await page.getByLabel('table-search-input').fill(shipmentReference);
+  await tableSearch(page, shipmentReference);
+
+  // Wait for the (debounced) search to be applied before opening the row menu,
+  // otherwise the table re-renders underneath the open menu
+  await expect(page.locator('tbody tr')).toHaveCount(1);
   await clickOnRowMenu(page.getByRole('cell', { name: shipmentReference }));
   await page.getByRole('menuitem', { name: 'View Sales Order' }).click();
   await page.getByText('Sales Order: SO0007').first().waitFor();

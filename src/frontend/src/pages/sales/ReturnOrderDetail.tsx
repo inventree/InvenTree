@@ -330,6 +330,8 @@ export default function ReturnOrderDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.returnorder}
+            id={order.pk}
             title={`${t`Return Order`}: ${order.reference}`}
             subtitle={subtitle}
             imageUrl={order.customer_detail?.image}

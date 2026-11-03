@@ -308,6 +308,8 @@ export default function CategoryDetail() {
           >
             <Stack gap='xs'>
               <PageDetail
+                model={ModelType.partcategory}
+                id={category.pk ?? null}
                 title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
                 subtitle={category?.description}
                 icon={category?.icon && <ApiIcon name={category?.icon} />}

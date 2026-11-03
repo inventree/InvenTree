@@ -428,6 +428,8 @@ export default function Stock() {
           >
             <Stack>
               <PageDetail
+                model={ModelType.stocklocation}
+                id={location?.pk}
                 title={(location?.name ?? id) ? t`Stock Location` : t`Stock`}
                 subtitle={location?.description}
                 icon={location?.icon && <ApiIcon name={location?.icon} />}

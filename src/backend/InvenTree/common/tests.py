@@ -2314,6 +2314,45 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         self.assertEqual(a.definition, 'meter')
         self.assertEqual(b.definition, '3 * circular_a')
 
+    def test_validation_builtin_clash(self):
+        """Test that custom units cannot override built-in unit definitions."""
+        import InvenTree.conversion as conversion
+
+        self.user.is_staff = True
+        self.user.save()
+
+        url = reverse('api-custom-unit-list')
+
+        # Names which resolve to a built-in unit (including prefixed / plural forms)
+        for name in ['pound', 'gram', 'kpound', 'meters', 'piece', 'R']:
+            response = self.post(
+                url, {'name': name, 'definition': '2 * kilogram'}, expected_code=400
+            )
+            self.assertIn('name', response.data)
+
+        # Symbols which resolve to a built-in unit
+        for symbol in ['lb', 'kg', 'ea']:
+            response = self.post(
+                url,
+                {'name': 'custom_mass', 'definition': '2 * kilogram', 'symbol': symbol},
+                expected_code=400,
+            )
+            self.assertIn('symbol', response.data)
+
+        self.assertFalse(CustomUnit.objects.filter(name='custom_mass').exists())
+
+        # Built-in conversions are unaffected
+        self.assertAlmostEqual(
+            float(conversion.convert_physical_value('1 lb', 'kg')), 0.45359237
+        )
+
+        # A non-clashing unit is accepted
+        self.post(
+            url,
+            {'name': 'custom_mass', 'definition': '2 * kilogram', 'symbol': 'cm2kg'},
+            expected_code=201,
+        )
+
     def test_api(self):
         """Test the CustomUnit API."""
         response = self.get(reverse('api-custom-unit-all'))
