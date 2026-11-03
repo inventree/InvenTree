@@ -61,7 +61,7 @@ test('Repair Orders - Create and Lifecycle', async ({ browser }) => {
   await page.getByText('E2E Test Repair Order').waitFor();
 
   // Verify the initial status shows "Pending".
-  await page.getByText('Pending').waitFor();
+  await page.getByText('Pending').first().waitFor();
 
   // Navigate through the detail-page tabs.
   await loadTab(page, 'Line Items');

@@ -143,13 +143,14 @@ export const activateCalendarView = async (page: Page) => {
 
 export const tableSearch = async (page: Page, query: string) => {
   await page.getByLabel('table-search-input').fill(query);
-  await page.waitForTimeout(300);
+  // Wait for longer than the SearchInput debounce (500ms)
+  await page.waitForTimeout(600);
   await page.waitForLoadState('networkidle');
 };
 
 export const clearTableSearch = async (page: Page) => {
   await page.getByLabel('table-search-input').clear();
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(600);
   await page.waitForLoadState('networkidle');
 };
 

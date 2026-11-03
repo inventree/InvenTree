@@ -846,6 +846,8 @@ export default function PartDetail() {
           >
             <Stack gap='xs'>
               <PageDetail
+                model={ModelType.part}
+                id={part.pk}
                 title={`${t`Part`}: ${part.full_name}`}
                 icon={
                   lockingEnabled ? (

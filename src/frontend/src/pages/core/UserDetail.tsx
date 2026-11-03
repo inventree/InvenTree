@@ -216,6 +216,8 @@ export default function UserDetail() {
     <InstanceDetail query={instanceQuery}>
       <Stack gap='xs'>
         <PageDetail
+          model={ModelType.user}
+          id={instance.pk}
           title={`${t`User`}: ${instance.username}`}
           imageUrl={instance?.image}
           badges={userBadges}

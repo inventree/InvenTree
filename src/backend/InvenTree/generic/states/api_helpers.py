@@ -5,6 +5,7 @@ from __future__ import annotations
 import inspect
 from typing import Any
 
+from django.apps import apps
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -15,6 +16,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from generic.states import StateTransitionMixin
 from InvenTree.serializers import EmptySerializer
 from users.permissions import check_user_permission
 
@@ -402,6 +404,18 @@ class FSMTransitionMixin:
             for entry in available
         ]
         return Response(AvailableTransitionSerializer(data, many=True).data)
+
+
+def supported_models() -> list:
+    """Return all installed models which have FSM transitions."""
+    return sorted(
+        (
+            model
+            for model in apps.get_models()
+            if issubclass(model, StateTransitionMixin) and not model._meta.abstract
+        ),
+        key=lambda model: model._meta.label_lower,
+    )
 
 
 __all__ = [

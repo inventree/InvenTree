@@ -866,6 +866,32 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
         self.get(url, expected_code=200)
 
+    def test_build_default_values_race(self):
+        """Test that building default values tolerates keys created concurrently."""
+        key = 'DISPLAY_HISTORY_TAB'
+
+        InvenTreeUserSetting.objects.create(key=key, value='True', user=self.user)
+
+        # Simulate another request creating the key after the existing keys are checked
+        mock_qs = mock.Mock()
+        mock_qs.values_list.return_value = []
+
+        with (
+            mock.patch.object(
+                InvenTreeUserSetting.objects, 'filter', return_value=mock_qs
+            ),
+            self.assertNoLogs(logger='inventree', level='ERROR'),
+        ):
+            InvenTreeUserSetting.build_default_values(user=self.user)
+
+        settings = InvenTreeUserSetting.objects.filter(user=self.user)
+
+        self.assertEqual(settings.filter(key=key).count(), 1)
+        self.assertEqual(
+            set(settings.values_list('key', flat=True)),
+            {k for k in InvenTreeUserSetting.SETTINGS if not k.startswith('_')},
+        )
+
     def test_user_setting_invalid(self):
         """Test a user setting with an invalid key."""
         url = reverse('api-user-setting-detail', kwargs={'key': 'DONKEY'})
@@ -2287,6 +2313,45 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         b.refresh_from_db()
         self.assertEqual(a.definition, 'meter')
         self.assertEqual(b.definition, '3 * circular_a')
+
+    def test_validation_builtin_clash(self):
+        """Test that custom units cannot override built-in unit definitions."""
+        import InvenTree.conversion as conversion
+
+        self.user.is_staff = True
+        self.user.save()
+
+        url = reverse('api-custom-unit-list')
+
+        # Names which resolve to a built-in unit (including prefixed / plural forms)
+        for name in ['pound', 'gram', 'kpound', 'meters', 'piece', 'R']:
+            response = self.post(
+                url, {'name': name, 'definition': '2 * kilogram'}, expected_code=400
+            )
+            self.assertIn('name', response.data)
+
+        # Symbols which resolve to a built-in unit
+        for symbol in ['lb', 'kg', 'ea']:
+            response = self.post(
+                url,
+                {'name': 'custom_mass', 'definition': '2 * kilogram', 'symbol': symbol},
+                expected_code=400,
+            )
+            self.assertIn('symbol', response.data)
+
+        self.assertFalse(CustomUnit.objects.filter(name='custom_mass').exists())
+
+        # Built-in conversions are unaffected
+        self.assertAlmostEqual(
+            float(conversion.convert_physical_value('1 lb', 'kg')), 0.45359237
+        )
+
+        # A non-clashing unit is accepted
+        self.post(
+            url,
+            {'name': 'custom_mass', 'definition': '2 * kilogram', 'symbol': 'cm2kg'},
+            expected_code=201,
+        )
 
     def test_api(self):
         """Test the CustomUnit API."""

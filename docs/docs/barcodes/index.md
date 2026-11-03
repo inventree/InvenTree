@@ -69,6 +69,12 @@ To access this page, select *Scan Barcode* from the main navigation menu:
 {{ image("barcode/barcode_nav_menu.png", "Barcode menu item") }}
 {{ image("barcode/barcode_scan_page.png", "Barcode scan page") }}
 
+#### Stock Actions
+
+If all of the selected items are [stock items](../stock/index.md), the *Stock Actions* menu provides access to the [stock adjustment](../stock/adjust.md) actions (such as counting, adding, removing or transferring stock). These actions are only available to users with the *change* permission for stock items.
+
+Stock items cannot be deleted from the scan page. Other model types do not currently support any actions on the scan page.
+
 ## Barcodes in Forms
 
 The InvenTree user interface supports direct scanning of barcodes within certain forms in the web UI. This means that any form field which points to a model which supports barcodes can accept barcode input. If barcode scanning is supported for a particular field, a barcode icon will be displayed next to the input field:

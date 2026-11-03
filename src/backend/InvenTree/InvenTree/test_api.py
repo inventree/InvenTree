@@ -262,6 +262,16 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
         self.assertIn('theme', profile)
         self.assertIn('widgets', profile)
 
+        # The token is limited to its (read) scope - even with a matching CSRF cookie / header
+        self.client.cookies['csrftoken'] = 'A' * 32
+        response = self.patch(
+            reverse('api-user-detail', kwargs={'pk': self.user.pk}),
+            {'first_name': 'Changed'},
+            HTTP_AUTHORIZATION=f'Bearer {access_token}',
+            HTTP_X_CSRFTOKEN='A' * 32,
+            expected_code=403,
+        )
+
 
 class ApiAccessTests(InvenTreeAPITestCase):
     """Tests for various access scenarios with the InvenTree API."""

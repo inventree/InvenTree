@@ -214,7 +214,7 @@ export default function SalesIndex() {
 
   return (
     <Stack>
-      <PageDetail title={t`Sales`} />
+      <PageDetail model={PluginPanelKey.sales} title={t`Sales`} />
       <PanelGroup
         pageKey='sales-index'
         panels={panels}
