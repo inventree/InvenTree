@@ -63,3 +63,25 @@ class ApiTokenAuthentication(TokenAuthentication):
 
 class ExtendedOAuth2Authentication(OAuth2ProtectedResourceAuthentication):
     """Custom implementation of OAuth2Authentication class to support custom scope rendering."""
+
+    def authenticate(self, request):
+        """Authenticate the request, if the requested view enforces OAuth2 token scopes."""
+        result = super().authenticate(request)
+
+        if result is not None and not self.view_enforces_scopes(request):
+            raise exceptions.PermissionDenied(
+                _('OAuth2 tokens are not accepted for this endpoint')
+            )
+
+        return result
+
+    def view_enforces_scopes(self, request) -> bool:
+        """Check if any permission class of the requested view enforces OAuth2 token scopes."""
+        from InvenTree.permissions import OASTokenMixin
+
+        view = (getattr(request, 'parser_context', None) or {}).get('view')
+
+        return view is not None and any(
+            isinstance(permission, OASTokenMixin)
+            for permission in view.get_permissions()
+        )

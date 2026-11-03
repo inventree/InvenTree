@@ -378,7 +378,7 @@ class RuleSetDetail(RuleSetMixin, RetrieveUpdateDestroyAPI):
 class GetAuthToken(GenericAPIView):
     """Return authentication token for an authenticated user."""
 
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedNotOAuth2]
     serializer_class = GetAuthTokenSerializer
 
     @extend_schema(
@@ -462,7 +462,7 @@ class GetAuthToken(GenericAPIView):
 class TokenMixin:
     """Mixin for API token endpoints."""
 
-    permission_classes = (InvenTree.permissions.IsAuthenticatedOrReadScope,)
+    permission_classes = (InvenTree.permissions.IsAuthenticatedNotOAuth2,)
     serializer_class = ApiTokenSerializer
 
     def get_queryset(self):
