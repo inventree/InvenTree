@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 570
 
 INVENTREE_API_TEXT = """
 
-v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/XXXXX
+v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
     - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only
     - Token API (/api/user/tokens/): "expiry" must be between today and 365 days in the future
 
