@@ -27,6 +27,7 @@ Changes to type definitions:
 
 #### New Features
 
+- Modal forms can be launched dynamically from anywhere in the interface (including from the spotlight) - [#13174](https://github.com/inventree/InvenTree/pull/13174)
 - Tables support nested (child) rows via the new `nestedRows` table property ([#12952](https://github.com/inventree/InvenTree/pull/12952))
 - Adds the `tableActionsFullWidth` table property, allowing custom table actions to use the available header width ([#12799](https://github.com/inventree/InvenTree/pull/12799))
 - Adds the `json` form field type ([#12799](https://github.com/inventree/InvenTree/pull/12799))
