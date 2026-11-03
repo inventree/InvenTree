@@ -19,6 +19,8 @@ By default, Non-Conformance Report functionality is disabled - it must be enable
 
 To navigate to the Non-Conformance Report display, select *Manufacturing* from the main navigation menu, and *Non-Conformances* from the sidebar. This shows a table of all Non-Conformance Reports, which can be filtered to only show the reports you are interested in.
 
+{{ image("build/ncr_list.png", title="Non-Conformance Reports") }}
+
 ### NCR Permissions
 
 [Permissions](../settings/permissions.md) for Non-Conformance Reports are managed via the `ncr` permission group. Users are assigned appropriate permissions based on the groups they are part of. Note that this is a distinct permission group from `build` - a user does not require any Build Order permissions to view or raise NCRs.
@@ -37,6 +39,8 @@ NCR Status supports [custom states](../concepts/custom_states.md).
 ## Create a Non-Conformance Report
 
 From the Non-Conformance Report table, click on <span class='badge inventree add'>{{ icon("plus") }} Report Non-Conformance</span> to open the "Report Non-Conformance" form.
+
+{{ image("build/ncr_create.png", title="Report Non-Conformance") }}
 
 ### NCR Reference
 
@@ -62,7 +66,15 @@ The following parameters are available for each NCR, and can be edited by the us
 | Responsible | User (or group of users) responsible for resolving the NCR |
 | Target Date | Target date for resolution of the NCR |
 | External Link | Link to external webpage |
-| Notes | NCR notes, supports markdown |
+
+The following fields are set automatically, and cannot be edited directly:
+
+| Field | Description |
+| --- | --- |
+| Status | Current [status](#ncr-status) of the NCR - changed via the [Investigate](#investigate), [Complete](#complete) and [Cancel](#cancel) actions |
+| Raised By | The user who created the NCR |
+| Creation Date | The date on which the NCR was created |
+| Closed Date | The date on which the NCR was completed or cancelled |
 
 The part is the only mandatory link - an NCR can be raised with no order context at all (for example, one found during a stocktake or a random audit), or optionally linked to whichever order surfaced the problem.
 
@@ -74,6 +86,8 @@ The NCR can be assigned to a responsible *owner*, which is either a user or a gr
 
 Selecting an individual NCR from the table navigates to the NCR detail page, which provides an overview of the report and the available actions.
 
+{{ image("build/ncr_detail.png", title="NCR Details") }}
+
 ### Edit NCR
 
 The NCR details can be edited by selecting the {{ icon("edit", color="blue", title="Edit") }} icon under the {{ icon("tools") }} actions menu.
@@ -81,6 +95,8 @@ The NCR details can be edited by selecting the {{ icon("edit", color="blue", tit
 ### Linked Stock Items
 
 The *Stock Items* tab lists the [stock items](../stock/index.md) affected by this non-conformance. Stock items can be linked (and unlinked) from this tab.
+
+{{ image("build/ncr_stock_items.png", title="Linked Stock Items") }}
 
 !!! info "Matching Part Required"
     Only stock items of the same [part](../part/index.md) as the NCR can be linked - the part is the anchor for the whole report, so a mismatched stock item is rejected.
@@ -104,7 +120,17 @@ File attachments can be uploaded against the NCR, and are displayed in the *Atta
 
 ### Notes
 
-NCR notes (which support markdown formatting) are displayed in the *Notes* tab.
+One or more rich-text notes can be attached to an NCR, and are displayed in the *Notes* tab.
+
+[Read about notes](../concepts/notes.md).
+
+### History
+
+If the [audit log](../concepts/audit.md) is enabled, the *History* tab displays a record of all changes made to the NCR - including status changes, and changes made to any [linked stock items](#linked-stock-items) (such as an updated disposition).
+
+### Barcodes
+
+A [barcode](../barcodes/index.md) can be linked to an NCR, allowing the NCR detail page to be opened by scanning the barcode.
 
 ## Investigate
 
@@ -133,7 +159,20 @@ An NCR can optionally be assigned a *Target Date* for resolution. If the target 
 
 ## Non-Conformance Report Reports
 
-Custom [reports](../report/index.md) can be generated against each Non-Conformance Report.
+Custom [reports](../report/index.md) can be generated against each Non-Conformance Report. Refer to the [report context variables](../report/context_variables.md#non-conformance-report) for the data available when rendering a report against an NCR.
+
+!!! info "No Default Template"
+    InvenTree does not currently provide a default report template for Non-Conformance Reports - a custom template must be uploaded before NCR reports can be printed.
+
+## Events
+
+The following [events](../plugins/mixins/event.md#build-events) are triggered by changes to Non-Conformance Reports, and can be used by plugins to respond to NCR activity:
+
+| Event | Description |
+| --- | --- |
+| `ncr.in_progress` | An NCR has been moved into investigation |
+| `ncr.completed` | An NCR has been completed |
+| `ncr.cancelled` | An NCR has been cancelled |
 
 ## Non-Conformance Report Settings
 

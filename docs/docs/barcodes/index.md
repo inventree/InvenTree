@@ -33,6 +33,7 @@ Barcodes can be linked with the following data model types:
 - [Sales Order](../sales/sales_order.md#sales-orders)
 - [Return Order](../sales/return_order.md#return-orders)
 - [Build Order](../manufacturing/build.md#build-orders)
+- [Non-Conformance Report](../manufacturing/ncr.md)
 
 ### Configuration Options
 

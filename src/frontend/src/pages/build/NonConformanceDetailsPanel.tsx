@@ -77,6 +77,7 @@ export function NonConformanceDetailsPanel({
     {
       type: 'text',
       name: 'severity',
+      icon: 'exclamation',
       label: t`Severity`,
       hidden: !instance?.severity,
       value_formatter: () => severityLabel(instance?.severity)
@@ -102,6 +103,8 @@ export function NonConformanceDetailsPanel({
       icon: 'build_order',
       label: t`Build Order`,
       model: ModelType.build,
+      model_field: 'reference',
+      backup_value: instance?.build_order_reference,
       hidden: !instance?.build_order
     },
     {
@@ -110,6 +113,8 @@ export function NonConformanceDetailsPanel({
       icon: 'sales_orders',
       label: t`Sales Order`,
       model: ModelType.salesorder,
+      model_field: 'reference',
+      backup_value: instance?.sales_order_reference,
       hidden: !instance?.sales_order
     },
     {
@@ -118,6 +123,8 @@ export function NonConformanceDetailsPanel({
       icon: 'purchase_orders',
       label: t`Purchase Order`,
       model: ModelType.purchaseorder,
+      model_field: 'reference',
+      backup_value: instance?.purchase_order_reference,
       hidden: !instance?.purchase_order
     },
     {
@@ -126,6 +133,8 @@ export function NonConformanceDetailsPanel({
       icon: 'return_orders',
       label: t`Return Order`,
       model: ModelType.returnorder,
+      model_field: 'reference',
+      backup_value: instance?.return_order_reference,
       hidden: !instance?.return_order
     }
   ];
@@ -149,12 +158,14 @@ export function NonConformanceDetailsPanel({
     {
       type: 'text',
       name: 'root_cause',
+      icon: 'search',
       label: t`Root Cause`,
       hidden: !instance?.root_cause
     },
     {
       type: 'text',
       name: 'corrective_action',
+      icon: 'check',
       label: t`Corrective Action`,
       hidden: !instance?.corrective_action
     },
