@@ -1,4 +1,4 @@
-import { test } from './baseFixtures';
+import { expect, test } from './baseFixtures';
 
 import { adminuser } from './defaults.js';
 import {
@@ -184,6 +184,16 @@ test('Plugins - Panels', async ({ browser }) => {
 
   await loadTab(page, 'Part Panel');
   await page.getByText('This content has been rendered by a custom plugin');
+
+  // Launch an API form from the plugin, via the plugin context
+  await page.getByRole('button', { name: 'Edit Part' }).click();
+  await page.getByText('Edit Part from Plugin').waitFor();
+  await page.getByRole('textbox', { name: 'text-field-name' }).waitFor();
+  await expect(
+    page.getByRole('textbox', { name: 'text-field-description' })
+  ).not.toHaveValue('');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByText('Edit Part from Plugin')).toBeHidden();
 
   // Disable the plugin, and ensure it is no longer visible
   await setPluginState({
