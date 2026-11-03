@@ -57,7 +57,22 @@ export function renderPartPanel(target, data) {
     <h4>Part Detail Panel</h4>
     <hr>
     <p>This is a custom panel for a Part detail page</p>
+    <button type="button" id="sample-plugin-edit-part">Edit Part</button>
     `;
+
+    // Launch an API form from the plugin, without rendering the modal within the plugin itself
+    target.querySelector('#sample-plugin-edit-part').onclick = () => {
+        data.forms?.openEdit?.({
+            url: 'part/',
+            pk: data.id,
+            title: 'Edit Part from Plugin',
+            fields: {
+                name: {},
+                description: {},
+            },
+            successMessage: 'Part updated from plugin',
+        });
+    };
 }
 
 

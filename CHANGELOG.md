@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [#13172](https://github.com/inventree/InvenTree/pull/13172) passes the `target_model` and `target_id` of the current page to plugin primary actions, via the `context` argument of `get_ui_primary_actions`.
+
 ### Removed
 
 - [#13101](https://github.com/inventree/InvenTree/pull/13101) removes the StockTracking model and its associated API endpoints. Stock history tracking is now handled by the global audit log.
