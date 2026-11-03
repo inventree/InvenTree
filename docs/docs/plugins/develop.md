@@ -12,7 +12,7 @@ We strongly recommend that you use the [Plugin Creator](./creator.md) tool when 
 
 ## Determine Requirements
 
-Before starting, you should have a clear understanding of what you want your plugin to do. In particular, consider the functionality provided by the available [plugin mixins](./index.md#plugin-mixins), and whether your plugin can be built using these mixins.
+Before starting, you should have a clear understanding of what you want your plugin to do. In particular, consider the functionality provided by the available [plugin mixins](#plugin-mixins), and whether your plugin can be built using these mixins.
 
 Consider the use-case for your plugin and define the exact function of the plugin, maybe write it down in a short readme. Then pick the mixins you need (they help reduce custom code and keep the system reliable if internal calls change).
 
@@ -27,7 +27,7 @@ Consider the use-case for your plugin and define the exact function of the plugi
 
 ### Define Metadata
 
-Do not forget to [declare the metadata](./index.md#plugin-options) for your plugin, those will be used in the settings. At least provide a web link so users can file issues / reach you.
+Do not forget to [declare the metadata](#plugin-options) for your plugin, those will be used in the settings. At least provide a web link so users can file issues / reach you.
 
 ### Development Guidelines
 
@@ -36,7 +36,7 @@ If you want to make your life easier, try to follow these guidelines; break wher
 - Keep it simple - more that 1000 LOC are normally to much for a plugin
 - Use mixins where possible - we try to keep coverage high for them so they are not likely to break
 - Do not use internal functions - if a functions name starts with `_` it is internal and might change at any time
-- Keep you imports clean - the APIs for plugins and mixins are young and evolving (see [here](./index.md#imports)). Use
+- Keep you imports clean - the APIs for plugins and mixins are young and evolving (see [here](#imports)). Use
 ```
 from plugin import InvenTreePlugin, registry
 from plugin.mixins import APICallMixin, SettingsMixin, ScheduleMixin, BarcodeMixin

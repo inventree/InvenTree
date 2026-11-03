@@ -1,13 +1,24 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 568
+INVENTREE_API_VERSION = 571
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v568 -> 2026-10-30 : https://github.com/inventree/InvenTree/pull/12682
+v571 -> 2026-11-04 : https://github.com/inventree/InvenTree/pull/12682
     - Adds API endpoints for the NonConformanceReport (NCR) models
+
+v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
+    - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only
+    - Token API (/api/user/tokens/): "expiry" must be between today and 365 days in the future
+
+v569 -> 2026-10-30 : https://github.com/inventree/InvenTree/security/advisories
+    - Hardens OAuth2 token usage in the API
+    - OAuth2 tokens can not be used to issue or manage API tokens (/api/user/me/token/, /api/user/tokens/)
+
+v568 -> 2026-10-30 : https://github.com/inventree/InvenTree/pull/13141
+    - token endpoints now have a warning if notifications cannot be sent
 
 v567 -> 2026-10-28 : https://github.com/inventree/InvenTree/pull/13128
     - Allow ordering of SupplierPart API by "on_order" field

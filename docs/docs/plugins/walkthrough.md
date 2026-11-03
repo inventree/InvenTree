@@ -53,7 +53,7 @@ After the Plugin Creator has finished you should have a new project that looks l
 
 #### A Brief Overview of the Environment
 
-`attachment_carousel` contains several files, but the main file is `core.py` which is the Python entry point for the plugin. Once created, this folder will also contain the bundled frontend code and any [static file assets](./index.md#static-files).
+`attachment_carousel` contains several files, but the main file is `core.py` which is the Python entry point for the plugin. Once created, this folder will also contain the bundled frontend code and any [static file assets](./develop.md#static-files).
 
 `frontend/src` contains `Panel.tsx' which is the frontend React TypeScript code.
 
@@ -511,7 +511,7 @@ function AttachmentCarouselPanel({context}: {context: InvenTreePluginContext;}) 
 ...
 ```
 
-The reference requires the host and the [plugin-name](./index.md##static-files). Rather than statically coding these references, the host reference may be retrieved via the context and the plugin-name may be passed via additional context data. In this example it is passed as the `slug`, as by default the slug is the plugin name. Add this additional context data via `core.py`,
+The reference requires the host and the [plugin-name](./develop.md#static-files). Rather than statically coding these references, the host reference may be retrieved via the context and the plugin-name may be passed via additional context data. In this example it is passed as the `slug`, as by default the slug is the plugin name. Add this additional context data via `core.py`,
 
 ``` diff
 panels.append({

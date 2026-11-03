@@ -8,6 +8,8 @@ from django.urls import reverse
 
 from allauth.account.models import EmailAddress
 
+import InvenTree.helpers
+from common.models import NotificationMessage
 from InvenTree.unit_test import InvenTreeAPITestCase
 from users.models import ApiToken, default_token
 from users.ruleset import RULESET_NAMES, get_ruleset_models
@@ -502,6 +504,53 @@ class UserTokenTests(InvenTreeAPITestCase):
         for k in keys:
             self.assertIn(k, token.metadata)
 
+    def test_token_issued_notification(self):
+        """A notification is sent whenever a token is issued, with a warning if email is unavailable."""
+        self.ensurePluginsLoaded()
+
+        url = reverse('api-token')
+        category = 'users.api_token_issued'
+
+        self.assertEqual(
+            NotificationMessage.objects.filter(category=category).count(), 0
+        )
+
+        # No email configured -> warning is returned, UI notification is still created
+        with self.assertLogs('inventree', level='WARNING') as logs:
+            data = self.get(url, data={'name': 'notify'}, expected_code=200).data
+
+        self.assertIn('warning', data)
+        self.assertIn('Email is not configured', data['warning'])
+        self.assertTrue(any('INVE-W7' in msg for msg in logs.output))
+
+        msgs = NotificationMessage.objects.filter(category=category, user=self.user)
+        self.assertEqual(msgs.count(), 1)
+        self.assertIn("'notify'", msgs.first().message)
+
+        # Re-issuing a token with the same name sends another notification
+        self.get(url, data={'name': 'notify'}, expected_code=200)
+        self.assertEqual(msgs.count(), 2)
+
+        # Email configured -> no warning
+        with self.settings(EMAIL_HOST='localhost', TESTING_BYPASS_MAILCHECK=True):
+            data = self.get(url, data={'name': 'mailed'}, expected_code=200).data
+        self.assertNotIn('warning', data)
+
+        # Superuser issuing a token for another user notifies that user
+        self.user.is_superuser = True
+        self.user.save()
+        other = User.objects.exclude(pk=self.user.pk).first()
+
+        data = self.post(
+            reverse('api-token-list'),
+            data={'name': 'for-other', 'user': other.pk},
+            expected_code=201,
+        ).data
+        self.assertIn('warning', data)
+
+        msg = NotificationMessage.objects.get(category=category, user=other)
+        self.assertIn(self.user.username, msg.message)
+
     def test_token_auth(self):
         """Test user token authentication."""
         # Create a new token
@@ -629,6 +678,23 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertEqual(token.revoked_by, self.user)
         self.assertEqual(token.revocation_reason, 'No longer needed')
 
+        # Revoking again must not overwrite the original revocation record
+        other_user = User.objects.create_user(username='other-revoker', password='x')
+        other_user.is_superuser = True
+        other_user.save()
+        self.client.force_authenticate(user=other_user)
+        self.delete(
+            reverse('api-token-detail', kwargs={'pk': token_id}) + '?all_users=true',
+            data={'revocation_reason': 'Overwritten reason'},
+            expected_code=204,
+        )
+        self.client.force_authenticate(user=None)
+
+        token.refresh_from_db()
+        self.assertTrue(token.revoked)
+        self.assertEqual(token.revoked_by, self.user)
+        self.assertEqual(token.revocation_reason, 'No longer needed')
+
         # Get token without auth (should fail)
         self.client.logout()
         self.get(reverse('api-token'), expected_code=401)
@@ -654,6 +720,50 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertIn('token', response.data)
 
         self.assertEqual(ApiToken.objects.count(), 1)
+
+    def test_token_create_fields(self):
+        """Test that protected token fields cannot be set when creating a token."""
+        url = reverse('api-token-list')
+        today = InvenTree.helpers.current_date()
+        other = User.objects.create_user(username='other', password='password')
+
+        # Expiry date must be within the allowed token lifetime
+        for expiry in [today - datetime.timedelta(days=1), datetime.date(9999, 12, 31)]:
+            response = self.post(
+                url, data={'name': 'test', 'expiry': str(expiry)}, expected_code=400
+            )
+            self.assertIn('expiry', response.data)
+
+        for expiry in [today, today + datetime.timedelta(days=365)]:
+            response = self.post(
+                url,
+                data={'name': f'test-{expiry}', 'expiry': str(expiry)},
+                expected_code=201,
+            )
+            self.assertEqual(response.data['expiry'], str(expiry))
+
+        # Read-only fields are ignored
+        response = self.post(
+            url,
+            data={
+                'name': 'protected',
+                'revoked': True,
+                'revoked_by': other.pk,
+                'issued_by': other.pk,
+                'revocation_reason': 'forged',
+                'token_version': 1,
+                'last_seen': str(today),
+            },
+            expected_code=201,
+        )
+
+        token = ApiToken.objects.get(pk=response.data['id'])
+        self.assertFalse(token.revoked)
+        self.assertIsNone(token.revoked_by)
+        self.assertEqual(token.issued_by, self.user)
+        self.assertIsNone(token.revocation_reason)
+        self.assertEqual(token.token_version, 2)
+        self.assertIsNone(token.last_seen)
 
     def test_token_v1(self):
         """Test that v1 API tokens still work."""

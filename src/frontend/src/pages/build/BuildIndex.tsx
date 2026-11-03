@@ -133,7 +133,11 @@ export default function BuildIndex() {
 
   return (
     <Stack>
-      <PageDetail title={t`Manufacturing`} actions={[]} />
+      <PageDetail
+        model={PluginPanelKey.manufacturing}
+        title={t`Manufacturing`}
+        actions={[]}
+      />
       <PanelGroup
         pageKey='build-index'
         panels={panels}

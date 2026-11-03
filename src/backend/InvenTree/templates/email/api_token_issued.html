@@ -1,0 +1,27 @@
+{% extends "email/email.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block title %}
+{{ message }}
+<p>{% trans "If you did not request this token, revoke it immediately and contact your administrator." %}</p>
+{% if link %}
+<p>{% trans "Click on the following link to review your API tokens" %}: <a href="{{ link }}">{{ link }}</a></p>
+{% endif %}
+{% endblock title %}
+
+{% block body %}
+<tr style="height: 3rem; border-bottom: 1px solid">
+    <th>{% trans "Token Name" %}</th>
+    <th>{% trans "Issued By" %}</th>
+    <th>{% trans "Expiry Date" %}</th>
+</tr>
+
+<tr style="height: 3rem">
+    <td style="text-align: center;">{{ token.name }}</td>
+    <td style="text-align: center;">{{ token.issued_by|default:"-" }}</td>
+    <td style="text-align: center;">{{ token.expiry }}</td>
+</tr>
+
+{% endblock body %}

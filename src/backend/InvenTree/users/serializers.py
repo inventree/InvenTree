@@ -10,13 +10,21 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
+import InvenTree.helpers
 from InvenTree.serializers import (
     FilterableSerializerMixin,
     InvenTreeModelSerializer,
     OptionalField,
 )
 
-from .models import ApiToken, Owner, RuleSet, TipResult, UserProfile
+from .models import (
+    ApiToken,
+    Owner,
+    RuleSet,
+    TipResult,
+    UserProfile,
+    default_token_expiry,
+)
 from .permissions import check_user_role, prefetch_rule_sets
 from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS, RuleSetEnum
 
@@ -142,11 +150,12 @@ class GetAuthTokenSerializer(serializers.Serializer):
         """Meta options for GetAuthTokenSerializer."""
 
         model = ApiToken
-        fields = ['token', 'name', 'expiry']
+        fields = ['token', 'name', 'expiry', 'warning']
 
     token = serializers.CharField(read_only=True)
     name = serializers.CharField()
     expiry = serializers.DateField(read_only=True)
+    warning = serializers.CharField(read_only=True, required=False)
 
 
 class BriefUserProfileSerializer(InvenTreeModelSerializer):
@@ -258,6 +267,26 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'token_version',
             'revocation_reason',
         ]
+        read_only_fields = [
+            'last_seen',
+            'revoked',
+            'revoked_by',
+            'issued_by',
+            'token_version',
+            'revocation_reason',
+        ]
+
+    def validate_expiry(self, expiry):
+        """Ensure that the expiry date is within the allowed token lifetime."""
+        if expiry < InvenTree.helpers.current_date():
+            raise serializers.ValidationError(_('Expiry date cannot be in the past'))
+
+        if expiry > default_token_expiry():
+            raise serializers.ValidationError(
+                _('Expiry date cannot be more than 365 days in the future')
+            )
+
+        return expiry
 
     def validate(self, data):
         """Validate the data for the serializer."""
