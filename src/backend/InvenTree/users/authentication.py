@@ -13,21 +13,26 @@ import users.models
 from common.settings import get_global_setting
 
 
+def mfa_enforced() -> bool:
+    """Check if MFA is enforced globally for all users."""
+    return bool(
+        settings.MFA_ENABLED
+        and get_global_setting('LOGIN_ENFORCE_MFA', None, 'INVENTREE_LOGIN_ENFORCE_MFA')
+    )
+
+
 def password_auth_allowed(user) -> bool:
     """Check if a password alone is allowed to authenticate the user."""
     if is_mfa_enabled(user):
         return False
-    return not (
-        settings.MFA_ENABLED
-        and get_global_setting('LOGIN_ENFORCE_MFA', None, 'INVENTREE_LOGIN_ENFORCE_MFA')
-    )
+    return not mfa_enforced()
 
 
 class InvenTreeBasicAuthentication(BasicAuthentication):
     """Custom basic auth class.
 
     Checks:
-    - If MFA is required and dissalows basic auth
+    - If MFA is required and disallows basic auth
     """
 
     def authenticate_credentials(self, userid, password, request=None):
@@ -49,7 +54,8 @@ def validate_api_token(raw_token: str) -> users.models.ApiToken:
     used by both the DRF authentication class and the middleware stack.
 
     Raises:
-        AuthenticationFailed: If the token is unknown, revoked, expired, or belongs to an inactive user
+        AuthenticationFailed: If the token is unknown, revoked, expired, belongs to an inactive user,
+            or belongs to a user without MFA while MFA is enforced
     """
     token = users.models.ApiToken.get_from_string(raw_token) if raw_token else None
 
@@ -64,6 +70,12 @@ def validate_api_token(raw_token: str) -> users.models.ApiToken:
 
     if token.expired:
         raise exceptions.AuthenticationFailed(_('Token has expired'))
+
+    # Tokens issued before MFA was enforced must not outlive the enforcement
+    if mfa_enforced() and not is_mfa_enabled(token.user):
+        raise exceptions.AuthenticationFailed(
+            _('Multi-factor authentication must be enabled for this account')
+        )
 
     today = InvenTree.helpers.current_date()
 

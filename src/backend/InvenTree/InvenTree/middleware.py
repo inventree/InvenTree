@@ -18,7 +18,6 @@ from error_report.middleware import ExceptionProcessor
 from rest_framework.exceptions import AuthenticationFailed
 
 import InvenTree.helpers
-from common.settings import get_global_setting
 from InvenTree.cache import create_session_cache, delete_session_cache
 from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
 from InvenTree.version import (
@@ -26,7 +25,7 @@ from InvenTree.version import (
     inventreePythonVersion,
     inventreeVersion,
 )
-from users.authentication import validate_api_token
+from users.authentication import mfa_enforced, validate_api_token
 
 logger = structlog.get_logger('inventree')
 
@@ -47,6 +46,32 @@ def get_token_from_request(request):
                     return token
 
     return None
+
+
+def get_api_token(request):
+    """Return the validated ApiToken provided in the request headers, if any.
+
+    A valid token is cached on the request as 'request.token'.
+    This attribute is *only* set once the token has been fully validated.
+    """
+    if token := getattr(request, 'token', None):
+        return token
+
+    if not (raw_token := get_token_from_request(request)):
+        return None
+
+    try:
+        token = validate_api_token(raw_token)
+    except AuthenticationFailed as exc:
+        logger.warning(
+            'Access denied for token %s: %s',
+            InvenTree.helpers.sanitize_token(str(raw_token)),
+            exc.detail,
+        )
+        return None
+
+    request.token = token
+    return token
 
 
 def ensure_slashes(path: str):
@@ -147,19 +172,7 @@ class AuthRequiredMiddleware:
 
     def check_token(self, request) -> bool:
         """Check if the user is authenticated via token."""
-        if token := get_token_from_request(request):
-            request.token = token
-            # Does the provided token match a valid (active) user?
-            try:
-                token = validate_api_token(token)
-            except AuthenticationFailed as exc:
-                logger.warning(
-                    'Access denied for token %s: %s',
-                    InvenTree.helpers.sanitize_token(str(token)),
-                    exc.detail,
-                )
-                return False
-
+        if token := get_api_token(request):
             # Provide the user information to the request
             request.user = token.user
             return True
@@ -271,9 +284,9 @@ class Check2FAMiddleware(MiddlewareMixin):
             return None
         if self.is_multifactor_logged_in(request):
             return None
-        if getattr(
-            request, 'token', get_token_from_request(request)
-        ):  # Token based login can not do MFA
+        # Token based login can not do MFA - but the token must be valid,
+        # and belong to the same user (otherwise a junk header bypasses MFA)
+        if (token := get_api_token(request)) and token.user_id == request.user.pk:
             return None
 
         if self.enforce_2fa(request):
@@ -282,9 +295,7 @@ class Check2FAMiddleware(MiddlewareMixin):
 
     def enforce_2fa(self, request):
         """Use setting to check if MFA should be enforced."""
-        return get_global_setting(
-            'LOGIN_ENFORCE_MFA', None, 'INVENTREE_LOGIN_ENFORCE_MFA'
-        )
+        return mfa_enforced()
 
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
