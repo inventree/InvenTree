@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 01:10+0000\n"
-"PO-Revision-Date: 2026-11-02 01:15\n"
+"POT-Creation-Date: 2026-11-04 03:14+0000\n"
+"PO-Revision-Date: 2026-11-04 03:19\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -77,21 +77,21 @@ msgstr "L'indirizzo email principale fornito non è valido."
 msgid "The provided email domain is not approved."
 msgstr "L'indirizzo di posta elettronica fornito non è approvato."
 
-#: InvenTree/conversion.py:288
+#: InvenTree/conversion.py:312
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
 msgstr "Unità fornita non valida ({unit})"
 
-#: InvenTree/conversion.py:305
+#: InvenTree/conversion.py:329
 msgid "No value provided"
 msgstr "Nessun valore specificato"
 
-#: InvenTree/conversion.py:332
+#: InvenTree/conversion.py:356
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
 msgstr "Impossibile convertire {original} in {unit}"
 
-#: InvenTree/conversion.py:334 InvenTree/conversion.py:348
+#: InvenTree/conversion.py:358 InvenTree/conversion.py:372
 #: InvenTree/helpers.py:645 order/models.py:924 order/models.py:1216
 #: part/models.py:3089 stock/models.py:2152
 msgid "Invalid quantity provided"
@@ -114,7 +114,7 @@ msgid "Invalid decimal value"
 msgstr "Valore decimale non valido"
 
 #: InvenTree/fields.py:286 audit/models.py:380 build/serializers.py:538
-#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3248
+#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3274
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
 #: stock/models.py:3814 stock/serializers.py:761 stock/serializers.py:945
@@ -226,15 +226,15 @@ msgid "Log in to the app"
 msgstr "Accedi all'app"
 
 #: InvenTree/magic_login.py:41 company/models.py:212 company/models.py:536
-#: users/serializers.py:219
+#: users/serializers.py:227
 msgid "Email"
 msgstr "Email"
 
-#: InvenTree/middleware.py:131
+#: InvenTree/middleware.py:155
 msgid "CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly."
 msgstr ""
 
-#: InvenTree/middleware.py:226
+#: InvenTree/middleware.py:238
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "Devi abilitare l'autenticazione a due fattori prima di fare qualsiasi altra cosa."
 
@@ -282,17 +282,17 @@ msgstr "Numero di riferimento troppo grande"
 msgid "Invalid choice"
 msgstr "Scelta non valida"
 
-#: InvenTree/models.py:1349 common/api.py:1825 common/models.py:1537
-#: common/models.py:1960 common/models.py:2424 common/models.py:2549
-#: common/models.py:2861 common/serializers.py:704
+#: InvenTree/models.py:1349 common/api.py:1825 common/models.py:1540
+#: common/models.py:1980 common/models.py:2447 common/models.py:2572
+#: common/models.py:2887 common/serializers.py:704
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1141
 #: plugin/models.py:54 report/models.py:234 stock/models.py:91
 msgid "Name"
 msgstr "Nome"
 
-#: InvenTree/models.py:1355 build/models.py:284 common/models.py:189
-#: common/models.py:2556 common/models.py:2697 common/models.py:2876
-#: common/models.py:3522 company/models.py:641 company/models.py:913
+#: InvenTree/models.py:1355 build/models.py:284 common/models.py:192
+#: common/models.py:2579 common/models.py:2720 common/models.py:2902
+#: common/models.py:3548 company/models.py:641 company/models.py:913
 #: order/models.py:549 order/models.py:2342 part/models.py:1164
 #: report/models.py:240 report/models.py:971 report/models.py:997
 #: report/templates/report/inventree_build_order_report.html:116
@@ -304,7 +304,7 @@ msgstr "Descrizione"
 msgid "Description (optional)"
 msgstr "Descrizione (opzionale)"
 
-#: InvenTree/models.py:1371 common/models.py:3611
+#: InvenTree/models.py:1371 common/models.py:3637
 msgid "Path"
 msgstr "Percorso"
 
@@ -340,7 +340,7 @@ msgstr "Errore del server"
 msgid "An error has been logged by the server."
 msgstr "Un errore è stato loggato dal server."
 
-#: InvenTree/models.py:1901 common/models.py:3547
+#: InvenTree/models.py:1901 common/models.py:3573
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -601,7 +601,7 @@ msgstr "Non è un codice valuta valido"
 
 #: audit/api.py:91 audit/serializers.py:107 common/serializers.py:841
 #: common/serializers.py:997 common/serializers.py:1043
-#: common/serializers.py:1111 importer/models.py:95 report/api.py:42
+#: common/serializers.py:1111 importer/models.py:104 report/api.py:42
 #: report/models.py:390 report/serializers.py:69
 msgid "Model Type"
 msgstr "Tipo di modello"
@@ -610,7 +610,7 @@ msgstr "Tipo di modello"
 msgid "Model type (e.g. \"order.purchaseorder\" or \"purchaseorder\")"
 msgstr ""
 
-#: audit/api.py:97 common/api.py:499 common/models.py:3181
+#: audit/api.py:97 common/api.py:499 common/models.py:3207
 msgid "Model ID"
 msgstr "ID Modello"
 
@@ -670,11 +670,11 @@ msgstr ""
 msgid "Notes associated with this entry"
 msgstr ""
 
-#: audit/serializers.py:26 importer/models.py:588
+#: audit/serializers.py:26 importer/models.py:618
 msgid "Field"
 msgstr "Campo"
 
-#: audit/serializers.py:27 common/models.py:2434 common/models.py:2691
+#: audit/serializers.py:27 common/models.py:2457 common/models.py:2714
 #: generic/states/serializers.py:22
 msgid "Label"
 msgstr "Etichetta"
@@ -1087,7 +1087,7 @@ msgstr "Rilasciato da"
 msgid "User who issued this build order"
 msgstr "Utente che ha emesso questo ordine di costruzione"
 
-#: build/models.py:438 common/models.py:204 order/api.py:198
+#: build/models.py:438 common/models.py:207 order/api.py:198
 #: order/models.py:618 part/models.py:1401
 #: report/templates/report/inventree_build_order_report.html:157
 msgid "Responsible"
@@ -1101,7 +1101,7 @@ msgstr "Utente o gruppo responsabile di questo ordine di produzione"
 msgid "External Link"
 msgstr "Collegamento esterno"
 
-#: build/models.py:446 common/models.py:2241 part/models.py:1216
+#: build/models.py:446 common/models.py:2261 part/models.py:1216
 #: stock/models.py:1275
 msgid "Link to external URL"
 msgstr "Link a URL esterno"
@@ -1114,7 +1114,7 @@ msgstr "Priorità di produzione"
 msgid "Priority of this build order"
 msgstr "Priorità di questo ordine di produzione"
 
-#: build/models.py:462 common/models.py:164 common/models.py:182
+#: build/models.py:462 common/models.py:167 common/models.py:185
 #: order/api.py:184 order/models.py:558 order/models.py:2314
 msgid "Project Code"
 msgstr "Codice del progetto"
@@ -1198,7 +1198,7 @@ msgid "Build object"
 msgstr "Crea oggetto"
 
 #: build/models.py:2250 build/models.py:2530 build/serializers.py:314
-#: build/serializers.py:367 build/serializers.py:1442 common/models.py:1457
+#: build/serializers.py:367 build/serializers.py:1442 common/models.py:1460
 #: order/models.py:2245 order/models.py:3355 order/models.py:4357
 #: order/serializers.py:1932 order/serializers.py:2437
 #: order/serializers.py:3025 part/models.py:2657 part/models.py:3213
@@ -1697,7 +1697,7 @@ msgstr "In Attesa"
 msgid "Cancelled"
 msgstr "Annullato"
 
-#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:694
+#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:724
 #: importer/status_codes.py:23 order/status_codes.py:24
 #: order/status_codes.py:68 order/status_codes.py:103 order/status_codes.py:153
 msgid "Complete"
@@ -1842,7 +1842,7 @@ msgstr ""
 msgid "Project Code Label"
 msgstr "Etichetta Codice Progetto"
 
-#: common/models.py:111 common/models.py:136 common/models.py:3951
+#: common/models.py:111 common/models.py:136 common/models.py:3977
 #: users/models.py:853
 msgid "Updated"
 msgstr "Aggiornato"
@@ -1859,178 +1859,178 @@ msgstr "Aggiornato da"
 msgid "User who last updated this object"
 msgstr "Utente che per ultimo ha aggiornato questo oggetto"
 
-#: common/models.py:183
+#: common/models.py:186
 msgid "Unique project code"
 msgstr "Codice unico del progetto"
 
-#: common/models.py:190
+#: common/models.py:193
 msgid "Project description"
 msgstr "Descrizione del progetto"
 
-#: common/models.py:195 common/models.py:1542 common/models.py:2569
-#: common/models.py:2704 company/models.py:231 company/models.py:881
+#: common/models.py:198 common/models.py:1545 common/models.py:2592
+#: common/models.py:2727 company/models.py:231 company/models.py:881
 #: machine/models.py:43 part/models.py:1332 plugin/models.py:69
 #: stock/api.py:704 users/models.py:382 users/models.py:769
-#: users/serializers.py:377 users/serializers.py:508
+#: users/serializers.py:405 users/serializers.py:536
 msgid "Active"
 msgstr "Attivo"
 
-#: common/models.py:196
+#: common/models.py:199
 msgid "Is this project code active?"
 msgstr ""
 
-#: common/models.py:205
+#: common/models.py:208
 msgid "User or group responsible for this project"
 msgstr "Utente o gruppo responsabile di questo progetto"
 
-#: common/models.py:829 common/models.py:1389 common/models.py:1427
+#: common/models.py:832 common/models.py:1392 common/models.py:1430
 msgid "Settings key"
 msgstr "Tasto impostazioni"
 
-#: common/models.py:833
+#: common/models.py:836
 msgid "Settings value"
 msgstr "Valore impostazioni"
 
-#: common/models.py:838
+#: common/models.py:841
 msgid "Indicates whether the setting has been modified by the user"
 msgstr ""
 
-#: common/models.py:893
+#: common/models.py:896
 msgid "Chosen value is not a valid option"
 msgstr "Il valore specificato non è un opzione valida"
 
-#: common/models.py:909
+#: common/models.py:912
 msgid "Value must be a boolean value"
 msgstr "Il valore deve essere un valore booleano"
 
-#: common/models.py:917
+#: common/models.py:920
 msgid "Value must be an integer value"
 msgstr "Il valore deve essere un intero"
 
-#: common/models.py:925
+#: common/models.py:928
 msgid "Value must be a valid number"
 msgstr "Il valore deve essere un numero valido"
 
-#: common/models.py:950
+#: common/models.py:953
 msgid "Value does not pass validation checks"
 msgstr "Il valore non supera i controlli di convalida"
 
-#: common/models.py:972
+#: common/models.py:975
 msgid "Key string must be unique"
 msgstr "La stringa chiave deve essere univoca"
 
-#: common/models.py:1435 common/models.py:1436 common/models.py:1550
-#: common/models.py:1551 common/models.py:1798 common/models.py:1799
-#: common/models.py:2257 common/models.py:2258 common/models.py:3599
-#: importer/models.py:106 part/models.py:2707 part/models.py:2735
+#: common/models.py:1438 common/models.py:1439 common/models.py:1553
+#: common/models.py:1554 common/models.py:1801 common/models.py:1802
+#: common/models.py:2277 common/models.py:2278 common/models.py:3625
+#: importer/models.py:115 part/models.py:2707 part/models.py:2735
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:252
 #: users/models.py:707 users/models.py:841
 msgid "User"
 msgstr "Utente"
 
-#: common/models.py:1458
+#: common/models.py:1461
 msgid "Price break quantity"
 msgstr "Quantità prezzo limite"
 
-#: common/models.py:1465 company/serializers.py:357 order/models.py:2359
+#: common/models.py:1468 company/serializers.py:357 order/models.py:2359
 #: order/models.py:3797
 msgid "Price"
 msgstr "Prezzo"
 
-#: common/models.py:1466
+#: common/models.py:1469
 msgid "Unit price at specified quantity"
 msgstr "Prezzo unitario in quantità specificata"
 
-#: common/models.py:1527 common/models.py:1712
+#: common/models.py:1530 common/models.py:1715
 msgid "Endpoint"
 msgstr "Scadenza"
 
-#: common/models.py:1528
+#: common/models.py:1531
 msgid "Endpoint at which this webhook is received"
 msgstr "Scadenza in cui questa notifica viene ricevuta"
 
-#: common/models.py:1538
+#: common/models.py:1541
 msgid "Name for this webhook"
 msgstr "Nome per questa notifica"
 
-#: common/models.py:1542
+#: common/models.py:1545
 msgid "Is this webhook active"
 msgstr "È questa notifica attiva"
 
-#: common/models.py:1558 users/models.py:353
+#: common/models.py:1561 users/models.py:353
 msgid "Token"
 msgstr "Token"
 
-#: common/models.py:1559
+#: common/models.py:1562
 msgid "Token for access"
 msgstr "Token per l'accesso"
 
-#: common/models.py:1567
+#: common/models.py:1570
 msgid "Secret"
 msgstr "Segreto"
 
-#: common/models.py:1568
+#: common/models.py:1571
 msgid "Shared secret for HMAC"
 msgstr "Segreto condiviso per HMAC"
 
-#: common/models.py:1676 common/models.py:3836
+#: common/models.py:1679 common/models.py:3862
 msgid "Message ID"
 msgstr "ID Messaggio"
 
-#: common/models.py:1677 common/models.py:3826
+#: common/models.py:1680 common/models.py:3852
 msgid "Unique identifier for this message"
 msgstr "Identificatore unico per questo messaggio"
 
-#: common/models.py:1685
+#: common/models.py:1688
 msgid "Host"
 msgstr "Host"
 
-#: common/models.py:1686
+#: common/models.py:1689
 msgid "Host from which this message was received"
 msgstr "Host da cui questo messaggio è stato ricevuto"
 
-#: common/models.py:1694
+#: common/models.py:1697
 msgid "Header"
 msgstr "Intestazione"
 
-#: common/models.py:1695
+#: common/models.py:1698
 msgid "Header of this message"
 msgstr "Intestazione di questo messaggio"
 
-#: common/models.py:1702
+#: common/models.py:1705
 msgid "Body"
 msgstr "Contenuto"
 
-#: common/models.py:1703
+#: common/models.py:1706
 msgid "Body of this message"
 msgstr "Contenuto di questo messaggio"
 
-#: common/models.py:1713
+#: common/models.py:1716
 msgid "Endpoint on which this message was received"
 msgstr "Scadenza in cui questo messaggio è stato ricevuto"
 
-#: common/models.py:1718
+#: common/models.py:1721
 msgid "Worked on"
 msgstr "Lavorato il"
 
-#: common/models.py:1719
+#: common/models.py:1722
 msgid "Was the work on this message finished?"
 msgstr "Il lavoro su questo messaggio è terminato?"
 
-#: common/models.py:1814
+#: common/models.py:1817
 msgid "Optional explicit URL associated with this notification"
 msgstr ""
 
-#: common/models.py:1854
+#: common/models.py:1857
 msgid "Id"
 msgstr "Id"
 
-#: common/models.py:1856 common/models.py:3516
+#: common/models.py:1859 common/models.py:3542
 msgid "Title"
 msgstr "Titolo"
 
-#: common/models.py:1858 common/models.py:2240 company/models.py:225
+#: common/models.py:1861 common/models.py:2260 company/models.py:225
 #: company/models.py:557 company/models.py:632 company/models.py:904
 #: order/models.py:564 order/models.py:2295 order/models.py:2918
 #: part/models.py:1215
@@ -2038,477 +2038,485 @@ msgstr "Titolo"
 msgid "Link"
 msgstr "Collegamento"
 
-#: common/models.py:1860
+#: common/models.py:1863
 msgid "Published"
 msgstr "Pubblicato"
 
-#: common/models.py:1862
+#: common/models.py:1865
 msgid "Author"
 msgstr "Autore"
 
-#: common/models.py:1864
+#: common/models.py:1867
 msgid "Summary"
 msgstr "Riepilogo"
 
-#: common/models.py:1867 common/models.py:3803
+#: common/models.py:1870 common/models.py:3829
 msgid "Read"
 msgstr "Letto"
 
-#: common/models.py:1867
+#: common/models.py:1870
 msgid "Was this news item read?"
 msgstr "Queste notizie sull'elemento sono state lette?"
 
-#: common/models.py:1886
+#: common/models.py:1892
 msgid "Custom Unit"
 msgstr "Unità Personalizzata"
 
-#: common/models.py:1908
+#: common/models.py:1914
 msgid "Unit symbol must be unique"
 msgstr "Il simbolo dell'unità deve essere univoco"
 
-#: common/models.py:1926
+#: common/models.py:1933
 msgid "Unit name must be a valid identifier"
 msgstr "Il nome dell'unità deve essere un identificatore valido"
 
-#: common/models.py:1953
+#: common/models.py:1938
+msgid "Unit name conflicts with an existing built-in unit"
+msgstr ""
+
+#: common/models.py:1945
+msgid "Unit symbol conflicts with an existing built-in unit"
+msgstr ""
+
+#: common/models.py:1973
 #, python-format
 msgid "Unit definition results in a circular or invalid reference: %(error)s"
 msgstr ""
 
-#: common/models.py:1961
+#: common/models.py:1981
 msgid "Unit name"
 msgstr "Nome dell'unità"
 
-#: common/models.py:1968
+#: common/models.py:1988
 msgid "Symbol"
 msgstr "Simbolo"
 
-#: common/models.py:1969
+#: common/models.py:1989
 msgid "Optional unit symbol"
 msgstr "Simbolo unità opzionale"
 
-#: common/models.py:1975
+#: common/models.py:1995
 msgid "Definition"
 msgstr "Definizione"
 
-#: common/models.py:1976
+#: common/models.py:1996
 msgid "Unit definition"
 msgstr "Definizione unità"
 
-#: common/models.py:2051 common/models.py:2223 stock/models.py:3809
+#: common/models.py:2071 common/models.py:2243 stock/models.py:3809
 #: stock/serializers.py:257
 msgid "Attachment"
 msgstr "Allegato"
 
-#: common/models.py:2097
+#: common/models.py:2117
 msgid "Missing file"
 msgstr "File mancante"
 
-#: common/models.py:2098
+#: common/models.py:2118
 msgid "Missing external link"
 msgstr "Link esterno mancante"
 
-#: common/models.py:2163
+#: common/models.py:2183
 msgid "No file attached to rename"
 msgstr ""
 
-#: common/models.py:2166
+#: common/models.py:2186
 msgid "Filename cannot be empty"
 msgstr ""
 
-#: common/models.py:2171 common/models.py:2191
+#: common/models.py:2191 common/models.py:2211
 msgid "Invalid filename"
 msgstr ""
 
-#: common/models.py:2177
+#: common/models.py:2197
 msgid "Cannot change file extension"
 msgstr ""
 
-#: common/models.py:2196
+#: common/models.py:2216
 msgid "A file with this name already exists"
 msgstr ""
 
-#: common/models.py:2203
+#: common/models.py:2223
 msgid "Failed to save renamed file"
 msgstr ""
 
-#: common/models.py:2215 common/models.py:2855
+#: common/models.py:2235 common/models.py:2881
 msgid "Model type"
 msgstr "Tipo modello"
 
-#: common/models.py:2216
+#: common/models.py:2236
 msgid "Target model type for image"
 msgstr "Tipo di modello di destinazione per l'immagine"
 
-#: common/models.py:2225
+#: common/models.py:2245
 msgid "Select file to attach"
 msgstr "Seleziona file da allegare"
 
-#: common/models.py:2231
+#: common/models.py:2251
 msgid "Thumbnail"
 msgstr ""
 
-#: common/models.py:2232
+#: common/models.py:2252
 msgid "Thumbnail image for this attachment"
 msgstr ""
 
-#: common/models.py:2248
+#: common/models.py:2268
 msgid "Comment"
 msgstr "Commento"
 
-#: common/models.py:2249
+#: common/models.py:2269
 msgid "Attachment comment"
 msgstr "Commento allegato"
 
-#: common/models.py:2265
+#: common/models.py:2285
 msgid "Upload date"
 msgstr "Data caricamento"
 
-#: common/models.py:2266
+#: common/models.py:2286
 msgid "Date the file was uploaded"
 msgstr "Data di caricamento del file"
 
-#: common/models.py:2271
+#: common/models.py:2291
 msgid "Is image"
 msgstr ""
 
-#: common/models.py:2272
+#: common/models.py:2292
 msgid "True if this attachment is a valid image file"
 msgstr ""
 
-#: common/models.py:2276
+#: common/models.py:2296
 msgid "File size"
 msgstr "Dimensione file"
 
-#: common/models.py:2276
+#: common/models.py:2296
 msgid "File size in bytes"
 msgstr "Dimensioni file in byte"
 
-#: common/models.py:2312 common/serializers.py:868
+#: common/models.py:2332 common/serializers.py:868
 msgid "Invalid model type specified for attachment"
 msgstr "Tipo di modello specificato per l'allegato non valido"
 
-#: common/models.py:2400
+#: common/models.py:2423
 msgid "Custom State"
 msgstr "Stato Personalizzato"
 
-#: common/models.py:2401
+#: common/models.py:2424
 msgid "Custom States"
 msgstr "Stati Personalizzati"
 
-#: common/models.py:2406
+#: common/models.py:2429
 msgid "Reference Status Set"
 msgstr "Imposta Stato Di Riferimento"
 
-#: common/models.py:2407
+#: common/models.py:2430
 msgid "Status set that is extended with this custom state"
 msgstr "Set di stato esteso con questo stato personalizzato"
 
-#: common/models.py:2411 generic/states/serializers.py:18
+#: common/models.py:2434 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "Chiave Logica"
 
-#: common/models.py:2413
+#: common/models.py:2436
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Chiave logica dello stato che è uguale a questo stato personalizzato nella logica commerciale"
 
-#: common/models.py:2418 common/models.py:2685 machine/serializers.py:27
+#: common/models.py:2441 common/models.py:2708 machine/serializers.py:27
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:3801
 msgid "Value"
 msgstr "Valore"
 
-#: common/models.py:2419
+#: common/models.py:2442
 msgid "Numerical value that will be saved in the models database"
 msgstr "Valore numerico che verrà salvato nel database dei modelli"
 
-#: common/models.py:2425
+#: common/models.py:2448
 msgid "Name of the state"
 msgstr "Nome dello Stato"
 
-#: common/models.py:2435
+#: common/models.py:2458
 msgid "Label that will be displayed in the frontend"
 msgstr "Etichetta che verrà visualizzata nel frontend"
 
-#: common/models.py:2442 generic/states/serializers.py:24
+#: common/models.py:2465 generic/states/serializers.py:24
 msgid "Color"
 msgstr "Colore"
 
-#: common/models.py:2443
+#: common/models.py:2466
 msgid "Color that will be displayed in the frontend"
 msgstr "Colore che verrà visualizzato nel frontend"
 
-#: common/models.py:2451
+#: common/models.py:2474
 msgid "Model"
 msgstr "Modello"
 
-#: common/models.py:2452
+#: common/models.py:2475
 msgid "Model this state is associated with"
 msgstr "Modello a cui questo stato è associato"
 
-#: common/models.py:2467
+#: common/models.py:2490
 msgid "Model must be selected"
 msgstr "Il modello deve essere selezionato"
 
-#: common/models.py:2470
+#: common/models.py:2493
 msgid "Key must be selected"
 msgstr "La chiave deve essere selezionata"
 
-#: common/models.py:2473
+#: common/models.py:2496
 msgid "Logical key must be selected"
 msgstr "La chiave logica deve essere selezionata"
 
-#: common/models.py:2477
+#: common/models.py:2500
 msgid "Key must be different from logical key"
 msgstr "La chiave deve essere diversa dalla chiave logica"
 
-#: common/models.py:2484
+#: common/models.py:2507
 msgid "Valid reference status class must be provided"
 msgstr "Deve essere fornita una classe di stato di riferimento valida"
 
-#: common/models.py:2490
+#: common/models.py:2513
 msgid "Key must be different from the logical keys of the reference status"
 msgstr "La chiave deve essere diversa dalle chiavi logiche dello stato di riferimento"
 
-#: common/models.py:2497
+#: common/models.py:2520
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr "La chiave logica deve essere nelle chiavi logiche dello stato di riferimento"
 
-#: common/models.py:2504
+#: common/models.py:2527
 msgid "Name must be different from the names of the reference status"
 msgstr "Il nome deve essere diverso dai nomi dello stato di riferimento"
 
-#: common/models.py:2544 common/models.py:2679 common/models.py:2900
+#: common/models.py:2567 common/models.py:2702 common/models.py:2926
 msgid "Selection List"
 msgstr "Elenco Selezioni"
 
-#: common/models.py:2545
+#: common/models.py:2568
 msgid "Selection Lists"
 msgstr "Elenchi di Selezione"
 
-#: common/models.py:2550
+#: common/models.py:2573
 msgid "Name of the selection list"
 msgstr "Nome dell'elenco di selezione"
 
-#: common/models.py:2557
+#: common/models.py:2580
 msgid "Description of the selection list"
 msgstr "Descrizione della lista di selezione"
 
-#: common/models.py:2563 part/models.py:1337
+#: common/models.py:2586 part/models.py:1337
 msgid "Locked"
 msgstr "Bloccato"
 
-#: common/models.py:2564
+#: common/models.py:2587
 msgid "Is this selection list locked?"
 msgstr "Questa lista di selezione è bloccata?"
 
-#: common/models.py:2570
+#: common/models.py:2593
 msgid "Can this selection list be used?"
 msgstr "Questo elenco di selezione può essere utilizzato?"
 
-#: common/models.py:2578
+#: common/models.py:2601
 msgid "Source Plugin"
 msgstr "Plugin Sorgente"
 
-#: common/models.py:2579
+#: common/models.py:2602
 msgid "Plugin which provides the selection list"
 msgstr "Plugin che fornisce l'elenco di selezione"
 
-#: common/models.py:2584
+#: common/models.py:2607
 msgid "Source String"
 msgstr "Stringa Sorgente"
 
-#: common/models.py:2585
+#: common/models.py:2608
 msgid "Optional string identifying the source used for this list"
 msgstr "Stringa opzionale che identifica il sorgente usato per questa lista"
 
-#: common/models.py:2594
+#: common/models.py:2617
 msgid "Default Entry"
 msgstr "Voce Predefinita"
 
-#: common/models.py:2595
+#: common/models.py:2618
 msgid "Default entry for this selection list"
 msgstr "Voce predefinita per questo elenco di selezione"
 
-#: common/models.py:2600 common/models.py:3946
+#: common/models.py:2623 common/models.py:3972
 msgid "Created"
 msgstr "Creato"
 
-#: common/models.py:2601
+#: common/models.py:2624
 msgid "Date and time that the selection list was created"
 msgstr "Data e ora in cui è stato creato l'elenco di selezione"
 
-#: common/models.py:2606
+#: common/models.py:2629
 msgid "Last Updated"
 msgstr "Ultimo aggiornamento"
 
-#: common/models.py:2607
+#: common/models.py:2630
 msgid "Date and time that the selection list was last updated"
 msgstr "Data e ora in cui l'elenco di selezione è stato aggiornato"
 
-#: common/models.py:2669
+#: common/models.py:2692
 msgid "Selection List Entry"
 msgstr "Voce Lista Selezione"
 
-#: common/models.py:2670
+#: common/models.py:2693
 msgid "Selection List Entries"
 msgstr "Voci Lista Selezione"
 
-#: common/models.py:2680
+#: common/models.py:2703
 msgid "Selection list to which this entry belongs"
 msgstr "Elenco di selezione a cui appartiene questa voce"
 
-#: common/models.py:2686
+#: common/models.py:2709
 msgid "Value of the selection list entry"
 msgstr "Valore della voce della lista di selezione"
 
-#: common/models.py:2692
+#: common/models.py:2715
 msgid "Label for the selection list entry"
 msgstr "Etichetta per la voce elenco di selezione"
 
-#: common/models.py:2698
+#: common/models.py:2721
 msgid "Description of the selection list entry"
 msgstr "Descrizione della voce della lista di selezione"
 
-#: common/models.py:2705
+#: common/models.py:2728
 msgid "Is this selection list entry active?"
 msgstr "Questa voce della lista di selezione è attiva?"
 
-#: common/models.py:2741
+#: common/models.py:2767
 msgid "Parameter Template"
 msgstr "Modello Parametro"
 
-#: common/models.py:2742
+#: common/models.py:2768
 msgid "Parameter Templates"
 msgstr "Modelli parametro"
 
-#: common/models.py:2763
+#: common/models.py:2789
 msgid "No uniqueness required"
 msgstr ""
 
-#: common/models.py:2764
+#: common/models.py:2790
 msgid "Unique for model type"
 msgstr ""
 
-#: common/models.py:2765
+#: common/models.py:2791
 msgid "Globally unique"
 msgstr ""
 
-#: common/models.py:2792
+#: common/models.py:2818
 msgid "Checkbox parameters cannot have units"
 msgstr "I parametri della casella di controllo non possono avere unità"
 
-#: common/models.py:2797
+#: common/models.py:2823
 msgid "Checkbox parameters cannot have choices"
 msgstr "I parametri della casella di controllo non possono avere scelte"
 
-#: common/models.py:2817 part/models.py:2805
+#: common/models.py:2843 part/models.py:2805
 msgid "Choices must be unique"
 msgstr "Le scelte devono essere uniche"
 
-#: common/models.py:2834
+#: common/models.py:2860
 msgid "Parameter template name must be unique"
 msgstr "Il nome del modello del parametro deve essere univoco"
 
-#: common/models.py:2856
+#: common/models.py:2882
 msgid "Target model type for this parameter template"
 msgstr "Tipo di modello di destinazione per questo modello di parametro"
 
-#: common/models.py:2862
+#: common/models.py:2888
 msgid "Parameter Name"
 msgstr "Nome Parametro"
 
-#: common/models.py:2868 part/models.py:1290
+#: common/models.py:2894 part/models.py:1290
 msgid "Units"
 msgstr "Unità"
 
-#: common/models.py:2869
+#: common/models.py:2895
 msgid "Physical units for this parameter"
 msgstr "Unità fisiche per questo parametro"
 
-#: common/models.py:2877
+#: common/models.py:2903
 msgid "Parameter description"
 msgstr "Descrizione del parametro"
 
-#: common/models.py:2883
+#: common/models.py:2909
 msgid "Checkbox"
 msgstr "Casella di spunta"
 
-#: common/models.py:2884
+#: common/models.py:2910
 msgid "Is this parameter a checkbox?"
 msgstr "Questo parametro è una casella di spunta?"
 
-#: common/models.py:2889 part/models.py:2892
+#: common/models.py:2915 part/models.py:2892
 msgid "Choices"
 msgstr "Scelte"
 
-#: common/models.py:2890
+#: common/models.py:2916
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "Scelte valide per questo parametro (separato da virgola)"
 
-#: common/models.py:2901
+#: common/models.py:2927
 msgid "Selection list for this parameter"
 msgstr "Lista di selezione per questo parametro"
 
-#: common/models.py:2906 part/models.py:2867 report/models.py:384
+#: common/models.py:2932 part/models.py:2867 report/models.py:384
 #: scim/models.py:31
 msgid "Enabled"
 msgstr "Abilitato"
 
-#: common/models.py:2907
+#: common/models.py:2933
 msgid "Is this parameter template enabled?"
 msgstr "Questo modello di parametro è abilitato?"
 
-#: common/models.py:2913
+#: common/models.py:2939
 msgid "Uniqueness"
 msgstr ""
 
-#: common/models.py:2915
+#: common/models.py:2941
 msgid "Enforce uniqueness of linked parameter values against this template"
 msgstr ""
 
-#: common/models.py:2970
+#: common/models.py:2996
 msgid "Parameter"
 msgstr "Parametro"
 
-#: common/models.py:2971
+#: common/models.py:2997
 msgid "Parameters"
 msgstr "Parametri"
 
-#: common/models.py:3033
+#: common/models.py:3059
 msgid "Invalid choice for parameter value"
 msgstr "Scelta non valida per il valore del parametro"
 
-#: common/models.py:3140
+#: common/models.py:3166
 msgid "Parameter value must be unique"
 msgstr ""
 
-#: common/models.py:3149 common/serializers.py:1097
+#: common/models.py:3175 common/serializers.py:1097
 msgid "Invalid model type specified for parameter"
 msgstr "Tipo di modello specificato per parametro non valido"
 
-#: common/models.py:3182
+#: common/models.py:3208
 msgid "ID of the target model for this parameter"
 msgstr "ID del modello di destinazione per questo parametro"
 
-#: common/models.py:3191 common/models.py:3488 common/setting/system.py:515
+#: common/models.py:3217 common/models.py:3514 common/setting/system.py:515
 #: report/models.py:482 report/models.py:816 report/serializers.py:115
 #: report/serializers.py:166 stock/serializers.py:244
 msgid "Template"
 msgstr "Modello"
 
-#: common/models.py:3192
+#: common/models.py:3218
 msgid "Parameter template"
 msgstr "Modello Parametro"
 
-#: common/models.py:3197 common/models.py:3588 importer/models.py:685
+#: common/models.py:3223 common/models.py:3614 importer/models.py:715
 msgid "Data"
 msgstr "Dati"
 
-#: common/models.py:3198
+#: common/models.py:3224
 msgid "Parameter Value"
 msgstr "Valore del Parametro"
 
-#: common/models.py:3207 common/models.py:3247 company/models.py:921
+#: common/models.py:3233 common/models.py:3273 company/models.py:921
 #: order/serializers.py:931 order/serializers.py:2348 part/models.py:3283
 #: part/models.py:3713
 #: report/templates/report/inventree_bill_of_materials_report.html:140
@@ -2521,226 +2529,226 @@ msgstr "Valore del Parametro"
 msgid "Note"
 msgstr "Nota"
 
-#: common/models.py:3208 stock/serializers.py:762 stock/serializers.py:1126
+#: common/models.py:3234 stock/serializers.py:762 stock/serializers.py:1126
 msgid "Optional note field"
 msgstr "Note opzionali elemento"
 
-#: common/models.py:3351 common/models.py:3353 common/serializers.py:970
+#: common/models.py:3377 common/models.py:3379 common/serializers.py:970
 #: common/serializers.py:974
 msgid "This field is required."
 msgstr ""
 
-#: common/models.py:3490
+#: common/models.py:3516
 msgid "Is this note a template (not linked to a specific model instance)?"
 msgstr ""
 
-#: common/models.py:3500
+#: common/models.py:3526
 msgid "Target model type for this note"
 msgstr ""
 
-#: common/models.py:3504
+#: common/models.py:3530
 msgid "Target model instance ID for this note"
 msgstr ""
 
-#: common/models.py:3511 company/models.py:887
+#: common/models.py:3537 company/models.py:887
 msgid "Primary"
 msgstr ""
 
-#: common/models.py:3512
+#: common/models.py:3538
 msgid "Is this the primary note for the associated model?"
 msgstr ""
 
-#: common/models.py:3516
+#: common/models.py:3542
 msgid "Note title"
 msgstr ""
 
-#: common/models.py:3523
+#: common/models.py:3549
 msgid "Optional description field"
 msgstr ""
 
-#: common/models.py:3528
+#: common/models.py:3554
 msgid "Content"
 msgstr ""
 
-#: common/models.py:3529
+#: common/models.py:3555
 msgid "Note content"
 msgstr ""
 
-#: common/models.py:3547
+#: common/models.py:3573
 msgid "Image file"
 msgstr "File immagine"
 
-#: common/models.py:3584
+#: common/models.py:3610
 msgid "Barcode Scan"
 msgstr "Scansione Codice A Barre"
 
-#: common/models.py:3589
+#: common/models.py:3615
 msgid "Barcode data"
 msgstr "Dati del Codice a Barre"
 
-#: common/models.py:3600
+#: common/models.py:3626
 msgid "User who scanned the barcode"
 msgstr "Utente che ha scannerizzato il codice a barre"
 
-#: common/models.py:3605 importer/models.py:73
+#: common/models.py:3631 importer/models.py:82
 msgid "Timestamp"
 msgstr "Data e ora"
 
-#: common/models.py:3606
+#: common/models.py:3632
 msgid "Date and time of the barcode scan"
 msgstr "Data e ora della scansione del codice a barre"
 
-#: common/models.py:3612
+#: common/models.py:3638
 msgid "URL endpoint which processed the barcode"
 msgstr "Endpoint URL che ha elaborato il codice a barre"
 
-#: common/models.py:3619 order/models.py:2349 plugin/serializers.py:93
+#: common/models.py:3645 order/models.py:2349 plugin/serializers.py:93
 msgid "Context"
 msgstr "Contesto"
 
-#: common/models.py:3620
+#: common/models.py:3646
 msgid "Context data for the barcode scan"
 msgstr "Dati contestuali per la scansione del codice a barre"
 
-#: common/models.py:3627
+#: common/models.py:3653
 msgid "Response"
 msgstr "Risposta"
 
-#: common/models.py:3628
+#: common/models.py:3654
 msgid "Response data from the barcode scan"
 msgstr "Dati di risposta dalla scansione del codice a barre"
 
-#: common/models.py:3634 report/templates/report/inventree_test_report.html:103
+#: common/models.py:3660 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:3795
 msgid "Result"
 msgstr "Risultato"
 
-#: common/models.py:3635
+#: common/models.py:3661
 msgid "Was the barcode scan successful?"
 msgstr "La scansione del codice a barre è riuscita?"
 
-#: common/models.py:3717
+#: common/models.py:3743
 msgid "An error occurred"
 msgstr "Si è verificato un errore"
 
-#: common/models.py:3738
+#: common/models.py:3764
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
 msgstr "INVE-E8: La cancellazione del log email è protetta. Imposta INVENTREE_PROTECT_EMAIL_LOG a Falso per consentire la cancellazione."
 
-#: common/models.py:3785
+#: common/models.py:3811
 msgid "Email Message"
 msgstr "Messaggio email"
 
-#: common/models.py:3786
+#: common/models.py:3812
 msgid "Email Messages"
 msgstr "Messaggi email"
 
-#: common/models.py:3793
+#: common/models.py:3819
 msgid "Announced"
 msgstr "Annunciato"
 
-#: common/models.py:3795
+#: common/models.py:3821
 msgid "Sent"
 msgstr "Inviato"
 
-#: common/models.py:3796
+#: common/models.py:3822
 msgid "Failed"
 msgstr "Fallito"
 
-#: common/models.py:3799
+#: common/models.py:3825
 msgid "Delivered"
 msgstr "Consegnato"
 
-#: common/models.py:3807
+#: common/models.py:3833
 msgid "Confirmed"
 msgstr "Confermato"
 
-#: common/models.py:3813
+#: common/models.py:3839
 msgid "Inbound"
 msgstr "Ricevuti"
 
-#: common/models.py:3814
+#: common/models.py:3840
 msgid "Outbound"
 msgstr "In uscita"
 
-#: common/models.py:3819
+#: common/models.py:3845
 msgid "No Reply"
 msgstr "Nessuna risposta"
 
-#: common/models.py:3820
+#: common/models.py:3846
 msgid "Track Delivery"
 msgstr "Traccia La Consegna"
 
-#: common/models.py:3821
+#: common/models.py:3847
 msgid "Track Read"
 msgstr "Conferma di lettura"
 
-#: common/models.py:3822
+#: common/models.py:3848
 msgid "Track Click"
 msgstr "Tracciare i clic delle email"
 
-#: common/models.py:3825 common/models.py:3933
+#: common/models.py:3851 common/models.py:3959
 msgid "Global ID"
 msgstr "ID Globale"
 
-#: common/models.py:3838
+#: common/models.py:3864
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr "Identificatore per questo messaggio (potrebbe essere fornito da un sistema esterno)"
 
-#: common/models.py:3845
+#: common/models.py:3871
 msgid "Thread ID"
 msgstr "ID discussione"
 
-#: common/models.py:3847
+#: common/models.py:3873
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr "Identificatore per questo thread del messaggio (potrebbe essere fornito da un sistema esterno)"
 
-#: common/models.py:3856
+#: common/models.py:3882
 msgid "Thread"
 msgstr "Discussione"
 
-#: common/models.py:3857
+#: common/models.py:3883
 msgid "Linked thread for this message"
 msgstr "Thread collegato a questo messaggio"
 
-#: common/models.py:3873
+#: common/models.py:3899
 msgid "Priority"
 msgstr "Priorità"
 
-#: common/models.py:3915
+#: common/models.py:3941
 msgid "Email Thread"
 msgstr "Discussione Email"
 
-#: common/models.py:3916
+#: common/models.py:3942
 msgid "Email Threads"
 msgstr "Discussioni Email"
 
-#: common/models.py:3927 generic/states/serializers.py:16
+#: common/models.py:3953 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:237
 msgid "Key"
 msgstr "Chiave"
 
-#: common/models.py:3930
+#: common/models.py:3956
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr "Chiave univoca per questa discussione (usata per identificare la discussione)"
 
-#: common/models.py:3934
+#: common/models.py:3960
 msgid "Unique identifier for this thread"
 msgstr "Identificatore univoco per questa discussione"
 
-#: common/models.py:3941
+#: common/models.py:3967
 msgid "Started Internal"
 msgstr "Avviato internamente"
 
-#: common/models.py:3942
+#: common/models.py:3968
 msgid "Was this thread started internally?"
 msgstr "Questa discussione è iniziata internamente?"
 
-#: common/models.py:3947
+#: common/models.py:3973
 msgid "Date and time that the thread was created"
 msgstr "Data e ora in cui la discussione è stata creata"
 
-#: common/models.py:3952
+#: common/models.py:3978
 msgid "Date and time that the thread was last updated"
 msgstr "Data e ora in cui la discussione è stata aggiornata"
 
@@ -2763,14 +2771,14 @@ msgid "A order that is assigned to you was canceled"
 msgstr "Un ordine assegnato a te è stato annullato"
 
 #: common/notifications.py:73 common/notifications.py:80
-#: common/test_notifications.py:82 common/test_notifications.py:86
-#: common/test_notifications.py:137 common/test_notifications.py:161
+#: common/test_notifications.py:78 common/test_notifications.py:82
+#: common/test_notifications.py:133 common/test_notifications.py:157
 #: order/api.py:591
 msgid "Items Received"
 msgstr "Elemento ricevuto"
 
-#: common/notifications.py:75 common/test_notifications.py:83
-#: common/test_notifications.py:139 common/test_notifications.py:162
+#: common/notifications.py:75 common/test_notifications.py:79
+#: common/test_notifications.py:135 common/test_notifications.py:158
 msgid "Items have been received against a purchase order"
 msgstr "Gli elementi sono stati ricevuti a fronte di un ordine di acquisto"
 
@@ -4015,8 +4023,8 @@ msgid "Users must use multifactor security."
 msgstr "Gli utenti devono utilizzare la sicurezza a due fattori."
 
 #: common/setting/system.py:1195
-msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately."
-msgstr "Abilitare questa impostazione richiederà a tutti gli utenti di impostare l'autenticazione multi fattore. Tutte le sessioni saranno disconnesse immediatamente."
+msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately, and API tokens of users without multifactor authentication will stop working."
+msgstr ""
 
 #: common/setting/system.py:1201
 msgid "Check plugins on startup"
@@ -5143,144 +5151,149 @@ msgstr ""
 msgid "Invalid status code"
 msgstr "Codice di stato non valido"
 
-#: importer/models.py:77
+#: importer/models.py:86
 msgid "Data File"
 msgstr "File dati"
 
-#: importer/models.py:78
+#: importer/models.py:87
 msgid "Data file to import"
 msgstr "File dati da importare"
 
-#: importer/models.py:88
+#: importer/models.py:97
 msgid "Columns"
 msgstr "Colonne"
 
-#: importer/models.py:96
+#: importer/models.py:105
 msgid "Target model type for this import session"
 msgstr "Tipo di modello di destinazione per questa sessione di importazione"
 
-#: importer/models.py:102
+#: importer/models.py:111
 msgid "Import status"
 msgstr "Stato importazione"
 
-#: importer/models.py:112
+#: importer/models.py:121
 msgid "Field Defaults"
 msgstr "Valori predefiniti del campo"
 
-#: importer/models.py:120
+#: importer/models.py:129
 msgid "Field Overrides"
 msgstr "Sostituisci campo"
 
-#: importer/models.py:128
+#: importer/models.py:137
 msgid "Field Filters"
 msgstr "Filtri campo"
 
-#: importer/models.py:135
+#: importer/models.py:144
 msgid "Update Existing Records"
 msgstr "Aggiorna i record esistenti"
 
-#: importer/models.py:136
+#: importer/models.py:145
 msgid "If enabled, existing records will be updated with new data"
 msgstr "Se abilitato, i record esistenti verranno aggiornati con i nuovi dati"
 
-#: importer/models.py:326
+#: importer/models.py:356
 msgid "Some required fields have not been mapped"
 msgstr "Alcuni campi richiesti non sono stati mappati"
 
-#: importer/models.py:428
+#: importer/models.py:458
 msgid "Completed Row Count History"
 msgstr ""
 
-#: importer/models.py:431
+#: importer/models.py:461
 msgid "Row Count History"
 msgstr ""
 
-#: importer/models.py:454
+#: importer/models.py:484
 msgid "ID"
 msgstr "ID"
 
-#: importer/models.py:455
+#: importer/models.py:485
 msgid "Existing database identifier for the record"
 msgstr "Identificatore del database esistente per il record"
 
-#: importer/models.py:533
+#: importer/models.py:563
 msgid "Column is already mapped to a database field"
 msgstr "La colonna è già mappata a un campo del database"
 
-#: importer/models.py:538
+#: importer/models.py:568
 msgid "Field is already mapped to a data column"
 msgstr "Il campo è già mappato a una colonna di dati"
 
-#: importer/models.py:547
+#: importer/models.py:577
 msgid "Column mapping must be linked to a valid import session"
 msgstr "La mappatura delle colonne deve essere collegata a una sessione di importazione valida"
 
-#: importer/models.py:552
+#: importer/models.py:582
 msgid "Column does not exist in the data file"
 msgstr "La colonna non esiste nel file dati"
 
-#: importer/models.py:559
+#: importer/models.py:589
 msgid "Field does not exist in the target model"
 msgstr "Il campo non esiste nel modello di destinazione"
 
-#: importer/models.py:563
+#: importer/models.py:593
 msgid "Selected field is read-only"
 msgstr "Il campo selezionato è di sola lettura"
 
-#: importer/models.py:569
+#: importer/models.py:599
 msgid "Lookup field can only be set for related (foreign-key) fields"
 msgstr ""
 
-#: importer/models.py:577
+#: importer/models.py:607
 #, python-brace-format
 msgid "Invalid lookup field. Valid options are: {options}"
 msgstr ""
 
-#: importer/models.py:584 importer/models.py:671
+#: importer/models.py:614 importer/models.py:701
 msgid "Import Session"
 msgstr "Sessione d'importazione"
 
-#: importer/models.py:590
+#: importer/models.py:620
 msgid "Column"
 msgstr "Colonna"
 
-#: importer/models.py:596
+#: importer/models.py:626
 msgid "Lookup Field"
 msgstr ""
 
-#: importer/models.py:598
+#: importer/models.py:628
 msgid "Database field to use for foreign-key lookup. Leave blank for automatic lookup."
 msgstr ""
 
-#: importer/models.py:675
+#: importer/models.py:705
 msgid "Row Index"
 msgstr "Indice riga"
 
-#: importer/models.py:680
+#: importer/models.py:710
 msgid "Original row data"
 msgstr "Dati riga originali"
 
-#: importer/models.py:689 machine/models.py:114
+#: importer/models.py:719 machine/models.py:114
 msgid "Errors"
 msgstr "Errori"
 
-#: importer/models.py:692 part/serializers.py:1110
+#: importer/models.py:722 part/serializers.py:1110
 msgid "Valid"
 msgstr "Valido"
 
-#: importer/models.py:933
+#: importer/models.py:936 importer/models.py:963
+#, python-brace-format
+msgid "Invalid filters for field: {field}"
+msgstr ""
+
+#: importer/models.py:977
 msgid "Multiple matches found for value - please ensure the value is unique, or select a specific lookup field"
 msgstr ""
 
-#: importer/models.py:986
+#: importer/models.py:1030
 msgid "No record found with the provided ID"
 msgstr "Nessun record trovato con l'ID fornito"
 
-#: importer/models.py:991
+#: importer/models.py:1035
 msgid "Invalid ID format provided"
 msgstr "Formato ID fornito non valido"
 
-#: importer/models.py:1059
+#: importer/models.py:1103
 msgid "ID is required for updating existing records."
 msgstr "L'ID è richiesto per aggiornare i record esistenti."
 
@@ -5300,43 +5313,47 @@ msgstr ""
 msgid "Invalid data file dimensions"
 msgstr "Dimensioni file dati non valida"
 
-#: importer/serializers.py:98
+#: importer/serializers.py:99
 msgid "Model type cannot be changed after the import session has been created"
 msgstr ""
 
-#: importer/serializers.py:113 importer/serializers.py:116
+#: importer/serializers.py:113
+msgid "Only staff users can import data for this model"
+msgstr ""
+
+#: importer/serializers.py:127 importer/serializers.py:130
 msgid "Invalid field defaults"
 msgstr "Campi predefiniti non validi"
 
-#: importer/serializers.py:129 importer/serializers.py:132
+#: importer/serializers.py:143 importer/serializers.py:146
 msgid "Invalid field overrides"
 msgstr "Sostituzione campo non valida"
 
-#: importer/serializers.py:145 importer/serializers.py:148
+#: importer/serializers.py:159 importer/serializers.py:162
 msgid "Invalid field filters"
 msgstr "Filtri campo non validi"
 
-#: importer/serializers.py:229
+#: importer/serializers.py:245
 msgid "Rows"
 msgstr "Righe"
 
-#: importer/serializers.py:230
+#: importer/serializers.py:246
 msgid "List of row IDs to accept"
 msgstr "Elenco degli ID delle righe da accettare"
 
-#: importer/serializers.py:243
+#: importer/serializers.py:259
 msgid "No rows provided"
 msgstr "Nessuna riga fornita"
 
-#: importer/serializers.py:247
+#: importer/serializers.py:263
 msgid "Row does not belong to this session"
 msgstr "La riga non appartiene a questa sessione"
 
-#: importer/serializers.py:250
+#: importer/serializers.py:266
 msgid "Row contains invalid data"
 msgstr "La riga contiene dati non validi"
 
-#: importer/serializers.py:253
+#: importer/serializers.py:269
 msgid "Row has already been completed"
 msgstr "La riga è già stata completata"
 
@@ -5373,8 +5390,24 @@ msgid "Data file contains too many rows"
 msgstr "Il file di dati contiene troppe righe"
 
 #: importer/validators.py:53 importer/validators.py:56
+#: importer/validators.py:74
 msgid "Value must be a valid dictionary object"
 msgstr "Il valore deve essere un oggetto dizionario valido"
+
+#: importer/validators.py:79
+#, python-brace-format
+msgid "Filters for field {field} must be a valid dictionary object"
+msgstr ""
+
+#: importer/validators.py:92
+#, python-brace-format
+msgid "Invalid filter key for field {field}: {key}"
+msgstr ""
+
+#: importer/validators.py:104
+#, python-brace-format
+msgid "Invalid filter value for field {field}: {key}"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:216
 msgid "Copies"
@@ -5388,7 +5421,7 @@ msgstr "Numero di copie da stampare per ogni etichetta"
 msgid "Connected"
 msgstr "Connesso"
 
-#: machine/machine_types/label_printer.py:236 order/api.py:2591
+#: machine/machine_types/label_printer.py:236 order/api.py:2574
 msgid "Unknown"
 msgstr "Sconosciuto"
 
@@ -5639,14 +5672,14 @@ msgstr ""
 msgid "Transfer order not found"
 msgstr ""
 
-#: order/api.py:2583 order/models.py:699 order/models.py:2456
+#: order/api.py:2566 order/models.py:699 order/models.py:2456
 #: order/models.py:2582
 #: report/templates/report/inventree_purchase_order_report.html:13
 #: stock/serializers.py:128 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "Ordine D'Acquisto"
 
-#: order/api.py:2585 order/models.py:1507 order/models.py:2642
+#: order/api.py:2568 order/models.py:1507 order/models.py:2642
 #: order/models.py:2845 order/models.py:3232
 #: report/templates/report/inventree_build_order_report.html:134
 #: report/templates/report/inventree_sales_order_report.html:13
@@ -5655,14 +5688,14 @@ msgstr "Ordine D'Acquisto"
 msgid "Sales Order"
 msgstr "Ordini di Vendita"
 
-#: order/api.py:2587 order/models.py:3398 order/models.py:3754
+#: order/api.py:2570 order/models.py:3398 order/models.py:3754
 #: order/models.py:3820
 #: report/templates/report/inventree_return_order_report.html:12
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "Restituisci ordine"
 
-#: order/api.py:2589 order/models.py:3842 order/models.py:4195
+#: order/api.py:2572 order/models.py:3842 order/models.py:4195
 #: report/templates/report/inventree_transfer_order_report.html:11
 msgid "Transfer Order"
 msgstr ""
@@ -10685,21 +10718,37 @@ msgstr "Permessi"
 msgid "Important dates"
 msgstr "Date Importanti"
 
-#: users/authentication.py:25
+#: users/api.py:418
+msgid "Reauthentication is required to generate a token"
+msgstr ""
+
+#: users/authentication.py:44
+msgid "INVE-W20: Password authentication not allowed due to MFA"
+msgstr ""
+
+#: users/authentication.py:63
 msgid "Invalid token."
 msgstr ""
 
-#: users/authentication.py:28
+#: users/authentication.py:66
 msgid "User inactive or deleted."
 msgstr ""
 
-#: users/authentication.py:31 users/models.py:279
+#: users/authentication.py:69 users/models.py:279
 msgid "Token has been revoked"
 msgstr "Il token è stato revocato"
 
-#: users/authentication.py:34
+#: users/authentication.py:72
 msgid "Token has expired"
 msgstr "Il token è scaduto"
+
+#: users/authentication.py:77
+msgid "Multi-factor authentication must be enabled for this account"
+msgstr ""
+
+#: users/authentication.py:117
+msgid "OAuth2 tokens are not accepted for this endpoint"
+msgstr ""
 
 #: users/models.py:107
 msgid "API Token"
@@ -10953,103 +11002,111 @@ msgstr "Ordini di reso"
 msgid "Transfer Orders"
 msgstr ""
 
-#: users/serializers.py:208
+#: users/serializers.py:216
 msgid "Username"
 msgstr "Nome utente"
 
-#: users/serializers.py:211
+#: users/serializers.py:219
 msgid "First Name"
 msgstr "Nome"
 
-#: users/serializers.py:211
+#: users/serializers.py:219
 msgid "First name of the user"
 msgstr "Nome dell'utente"
 
-#: users/serializers.py:215
+#: users/serializers.py:223
 msgid "Last Name"
 msgstr "Cognome"
 
-#: users/serializers.py:215
+#: users/serializers.py:223
 msgid "Last name of the user"
 msgstr "Cognome dell'utente"
 
-#: users/serializers.py:219
+#: users/serializers.py:227
 msgid "Email address of the user"
 msgstr "Indirizzo email dell'utente"
 
-#: users/serializers.py:268
+#: users/serializers.py:282
+msgid "Expiry date cannot be in the past"
+msgstr ""
+
+#: users/serializers.py:286
+msgid "Expiry date cannot be more than 365 days in the future"
+msgstr ""
+
+#: users/serializers.py:296
 msgid "User must be authenticated"
 msgstr ""
 
-#: users/serializers.py:277
+#: users/serializers.py:305
 msgid "Only a superuser can create a token for another user"
 msgstr ""
 
-#: users/serializers.py:367
+#: users/serializers.py:395
 msgid "Administrator"
 msgstr ""
 
-#: users/serializers.py:368
+#: users/serializers.py:396
 msgid "Does this user have administrative permissions"
 msgstr ""
 
-#: users/serializers.py:373 users/serializers.py:501
+#: users/serializers.py:401 users/serializers.py:529
 msgid "Superuser"
 msgstr "Superuser"
 
-#: users/serializers.py:373 users/serializers.py:502
+#: users/serializers.py:401 users/serializers.py:530
 msgid "Is this user a superuser"
 msgstr "Questo utente è un superutente"
 
-#: users/serializers.py:377 users/serializers.py:509
+#: users/serializers.py:405 users/serializers.py:537
 msgid "Is this user account active"
 msgstr "Questo account utente è attivo"
 
-#: users/serializers.py:398
+#: users/serializers.py:426
 msgid "Only a superuser can adjust this field"
 msgstr ""
 
-#: users/serializers.py:426
+#: users/serializers.py:454
 msgid "Password"
 msgstr ""
 
-#: users/serializers.py:427
+#: users/serializers.py:455
 msgid "Password for the user"
 msgstr ""
 
-#: users/serializers.py:433
+#: users/serializers.py:461
 msgid "Override warning"
 msgstr ""
 
-#: users/serializers.py:434
+#: users/serializers.py:462
 msgid "Override the warning about password rules"
 msgstr ""
 
-#: users/serializers.py:494
+#: users/serializers.py:522
 msgid "Staff"
 msgstr ""
 
-#: users/serializers.py:495
+#: users/serializers.py:523
 msgid "Does this user have staff permissions"
 msgstr ""
 
-#: users/serializers.py:545
+#: users/serializers.py:573
 msgid "You do not have permission to create users"
 msgstr ""
 
-#: users/serializers.py:558
+#: users/serializers.py:586
 msgid "A user with this email address already exists"
 msgstr ""
 
-#: users/serializers.py:593
+#: users/serializers.py:621
 msgid "Your account has been created."
 msgstr "Il tuo account è stato creato."
 
-#: users/serializers.py:595
+#: users/serializers.py:623
 msgid "Please use the password reset function to login"
 msgstr "Si prega di utilizzare la funzione di reimpostazione password per accedere"
 
-#: users/serializers.py:601
+#: users/serializers.py:629
 msgid "Welcome to InvenTree"
 msgstr "Benvenuto in InvenTree"
 
