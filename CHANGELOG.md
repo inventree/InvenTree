@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12682](https://github.com/inventree/InvenTree/pull/12682) adds support for NonConformanceReport (NCR), including new database models, API endpoints, and user interface components.
+
 ### Changed
 
 ### Removed
