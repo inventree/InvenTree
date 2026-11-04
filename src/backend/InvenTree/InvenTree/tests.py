@@ -1489,6 +1489,17 @@ class TestSettings(InvenTreeTestCase):
         legacy_path.unlink(missing_ok=True)
         new_path.rename(trgt_path)  # restore original path for current config
 
+    def test_helpers_pepper_file(self):
+        """Test get_api_token_peppers with pepper file."""
+        test_file = config.get_testfolder_dir() / 'my_api_token_pepper.txt'
+        test_file.write_text('file-pepper\n')
+        with in_env_context({'INVENTREE_API_TOKEN_PEPPER_FILE': str(test_file)}):
+            self.assertEqual(config.get_api_token_peppers(), ('file-pepper', []))
+        test_file.unlink(missing_ok=True)
+        with in_env_context({'INVENTREE_API_TOKEN_PEPPER_FILE': 'abcd'}):
+            with self.assertRaisesRegex(FileNotFoundError, 'INVE-E21'):
+                config.get_api_token_peppers()
+
     def test_helpers_setting(self):
         """Test get_setting."""
         TEST_ENV_NAME = '123TEST'

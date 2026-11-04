@@ -265,6 +265,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'issued_by',
             'issued_by_detail',
             'token_version',
+            'issued_version',
             'revocation_reason',
         ]
         read_only_fields = [
@@ -272,6 +273,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'revoked',
             'revoked_by',
             'issued_by',
+            'issued_version',
             'token_version',
             'revocation_reason',
         ]

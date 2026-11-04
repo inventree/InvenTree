@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 570
+INVENTREE_API_VERSION = 571
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v571 -> 2026-11-04 : https://github.com/inventree/InvenTree/pull/13139
+    - Extends token model for better hashing (pepper) management
 
 v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
     - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only

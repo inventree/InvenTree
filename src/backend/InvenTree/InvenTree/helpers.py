@@ -1197,4 +1197,20 @@ def sanitize_token(token_value: str, front=8, back=12) -> str:
 
 def get_api_token_pepper() -> str:
     """Return the secret 'pepper' used to compute v2 tokens."""
-    return settings.SECRET_KEY
+    return settings.API_TOKEN_PEPPER
+
+
+def get_api_token_pepper_set() -> bool:
+    """Return True if a dedicated pepper is set."""
+    return settings.API_TOKEN_PEPPER != settings.SECRET_KEY
+
+
+def get_api_token_peppers() -> list[str]:
+    """Return possible current and past peppers."""
+    pepper_sources = (
+        settings.API_TOKEN_PEPPER,
+        *settings.API_TOKEN_PEPPER_ADDITIONAL,
+        settings.SECRET_KEY,
+    )
+    pepper_sources = [p.strip() for p in pepper_sources]
+    return [p for p in pepper_sources if p]
