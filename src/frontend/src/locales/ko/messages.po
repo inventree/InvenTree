@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-01 03:16\n"
+"PO-Revision-Date: 2026-11-03 06:29\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -18,27 +18,35 @@ msgstr ""
 "X-Crowdin-File: /src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 252\n"
 
-#: lib/components/Boundary.tsx:16
-msgid "Error rendering component"
-msgstr "컴포넌트를 렌더링하는 중 오류가 발생했습니다"
-
 #: lib/components/Boundary.tsx:18
 #~ msgid "An error occurred while rendering this component. Refer to the console for more information."
 #~ msgstr "An error occurred while rendering this component. Refer to the console for more information."
 
-#: lib/components/Boundary.tsx:20
+#: lib/components/Boundary.tsx:60
+msgid "Error rendering component"
+msgstr "컴포넌트를 렌더링하는 중 오류가 발생했습니다"
+
+#: lib/components/Boundary.tsx:64
 msgid "An error occurred while rendering this component."
 msgstr ""
 
-#: lib/components/Boundary.tsx:23
+#: lib/components/Boundary.tsx:67
 msgid "Try reloading the page, or contact your administrator if the problem persists."
 msgstr "페이지를 다시 로드하거나 문제가 계속되면 관리자에게 문의하세요."
 
-#: lib/components/Boundary.tsx:28
+#: lib/components/Boundary.tsx:72
 #: src/tables/settings/ErrorTable.tsx:146
 #: src/tables/settings/FailedTasksTable.tsx:65
 msgid "Error Details"
 msgstr "오류 상세 정보"
+
+#: lib/components/Boundary.tsx:79
+msgid "Copy error information"
+msgstr ""
+
+#: lib/components/Boundary.tsx:80
+msgid "Copy full error information to the clipboard"
+msgstr ""
 
 #: lib/components/CopyButton.tsx:49
 msgid "Copied"
@@ -50,13 +58,13 @@ msgstr "복사"
 
 #: lib/components/RowActions.tsx:46
 #: src/components/items/ActionDropdown.tsx:297
-#: src/pages/Index/Scan.tsx:62
+#: src/pages/Index/Scan.tsx:73
 msgid "Duplicate"
 msgstr "복제"
 
 #: lib/components/RowActions.tsx:56
 #: src/components/items/ActionDropdown.tsx:251
-#: src/components/nav/PageDetail.tsx:63
+#: src/components/nav/PageDetail.tsx:69
 msgid "Edit"
 msgstr "편집"
 
@@ -91,12 +99,12 @@ msgstr "취소"
 #: src/components/nav/NavigationDrawer.tsx:185
 #: src/forms/PurchaseOrderForms.tsx:1001
 #: src/forms/StockForms.tsx:949
-#: src/forms/StockForms.tsx:1516
-#: src/forms/StockForms.tsx:1564
-#: src/forms/StockForms.tsx:1633
-#: src/forms/StockForms.tsx:1682
-#: src/forms/StockForms.tsx:1721
-#: src/forms/StockForms.tsx:1839
+#: src/forms/StockForms.tsx:1517
+#: src/forms/StockForms.tsx:1565
+#: src/forms/StockForms.tsx:1634
+#: src/forms/StockForms.tsx:1683
+#: src/forms/StockForms.tsx:1722
+#: src/forms/StockForms.tsx:1840
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:977
 msgid "Actions"
 msgstr "작업"
@@ -164,18 +172,18 @@ msgstr "아니요"
 #: src/forms/ReturnOrderForms.tsx:242
 #: src/forms/SalesOrderForms.tsx:435
 #: src/forms/StockForms.tsx:431
-#: src/forms/StockForms.tsx:1511
-#: src/forms/StockForms.tsx:1559
-#: src/forms/StockForms.tsx:1628
-#: src/forms/StockForms.tsx:1677
-#: src/forms/StockForms.tsx:1716
-#: src/forms/StockForms.tsx:1765
-#: src/forms/StockForms.tsx:1835
-#: src/forms/StockForms.tsx:1882
-#: src/forms/StockForms.tsx:1926
+#: src/forms/StockForms.tsx:1512
+#: src/forms/StockForms.tsx:1560
+#: src/forms/StockForms.tsx:1629
+#: src/forms/StockForms.tsx:1678
+#: src/forms/StockForms.tsx:1717
+#: src/forms/StockForms.tsx:1766
+#: src/forms/StockForms.tsx:1836
+#: src/forms/StockForms.tsx:1883
+#: src/forms/StockForms.tsx:1927
 #: src/forms/TransferOrderForms.tsx:239
 #: src/pages/build/BuildOrderDetailsPanel.tsx:45
-#: src/pages/part/PartDetail.tsx:837
+#: src/pages/part/PartDetail.tsx:839
 #: src/pages/part/bom/BomCompare.tsx:203
 #: src/tables/build/BuildOrderParametricTable.tsx:29
 #: src/tables/general/AuditLogTable.tsx:247
@@ -191,7 +199,7 @@ msgstr "부품"
 #: src/pages/Index/Settings/SystemSettings.tsx:219
 #: src/pages/part/CategoryDetail.tsx:223
 #: src/pages/part/CategoryDetail.tsx:290
-#: src/pages/part/CategoryDetail.tsx:335
+#: src/pages/part/CategoryDetail.tsx:337
 #: src/pages/part/PartCategoryDetailsPanel.tsx:69
 #: src/pages/part/PartDetail.tsx:548
 msgid "Parts"
@@ -232,7 +240,7 @@ msgstr "부품 테스트 템플릿 목록"
 #: lib/enums/ModelInformation.tsx:90
 #: src/components/previews/models/SupplierPartPreview.tsx:15
 #: src/components/wizards/OrderPartsWizard.tsx:298
-#: src/pages/company/SupplierPartDetail.tsx:278
+#: src/pages/company/SupplierPartDetail.tsx:280
 #: src/pages/stock/StockDetailsPanel.tsx:228
 #: src/tables/build/BuildAllocatedStockTable.tsx:155
 #: src/tables/part/PartPurchaseOrdersTable.tsx:59
@@ -249,7 +257,7 @@ msgstr "공급업체 부품 목록"
 
 #: lib/enums/ModelInformation.tsx:105
 #: src/components/previews/models/ManufacturerPartPreview.tsx:16
-#: src/pages/company/ManufacturerPartDetail.tsx:224
+#: src/pages/company/ManufacturerPartDetail.tsx:226
 #: src/pages/company/SupplierPartDetailsPanel.tsx:115
 #: src/tables/part/PartPurchaseOrdersTable.tsx:65
 #: src/tables/stock/StockItemTable.tsx:119
@@ -264,7 +272,7 @@ msgstr "제조업체 부품"
 #: lib/enums/ModelInformation.tsx:116
 #: src/components/previews/models/PartCategoryPreview.tsx:12
 #: src/components/tables/Filter.tsx:496
-#: src/pages/part/CategoryDetail.tsx:335
+#: src/pages/part/CategoryDetail.tsx:337
 msgid "Part Category"
 msgstr "부품 카테고리"
 
@@ -291,7 +299,7 @@ msgstr "부품 카테고리 목록"
 #: src/forms/BuildForms.tsx:868
 #: src/forms/SalesOrderForms.tsx:437
 #: src/forms/TransferOrderForms.tsx:241
-#: src/pages/stock/StockDetail.tsx:750
+#: src/pages/stock/StockDetail.tsx:752
 #: src/tables/general/AuditLogTable.tsx:253
 #: src/tables/part/PartTestResultTable.tsx:260
 #: src/tables/stock/InstalledItemsTable.tsx:72
@@ -311,7 +319,7 @@ msgstr "재고 품목"
 #: lib/enums/ModelInformation.tsx:136
 #: lib/enums/Roles.tsx:54
 #: src/components/previews/models/StockLocationPreview.tsx:12
-#: src/pages/stock/LocationDetail.tsx:444
+#: src/pages/stock/LocationDetail.tsx:446
 msgid "Stock Location"
 msgstr "재고 위치"
 
@@ -341,7 +349,7 @@ msgstr "재고 이력"
 
 #: lib/enums/ModelInformation.tsx:158
 #: src/components/previews/models/BuildOrderPreview.tsx:15
-#: src/pages/build/BuildDetail.tsx:608
+#: src/pages/build/BuildDetail.tsx:610
 #: src/pages/stock/StockDetailsPanel.tsx:280
 #: src/tables/build/BuildAllocatedStockTable.tsx:88
 #: src/tables/general/AuditLogTable.tsx:243
@@ -379,7 +387,7 @@ msgstr "생산 아이템"
 
 #: lib/enums/ModelInformation.tsx:182
 #: src/components/previews/models/CompanyPreview.tsx:15
-#: src/pages/company/CompanyDetail.tsx:308
+#: src/pages/company/CompanyDetail.tsx:310
 #: src/tables/company/CompanyTable.tsx:74
 #: src/tables/company/ContactTable.tsx:67
 #: src/tables/company/ParametricCompanyTable.tsx:32
@@ -414,7 +422,7 @@ msgstr "프로젝트 코드 목록"
 #: src/components/previews/models/PurchaseOrderPreview.tsx:15
 #: src/components/wizards/OrderPartsWizard.tsx:351
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:34
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:387
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:389
 #: src/pages/stock/StockDetailsPanel.tsx:288
 #: src/tables/general/AuditLogTable.tsx:248
 #: src/tables/part/PartPurchaseOrdersTable.tsx:40
@@ -445,8 +453,8 @@ msgstr "발주서 항목"
 #: src/components/previews/models/SalesOrderPreview.tsx:15
 #: src/pages/build/BuildOrderDetailsPanel.tsx:143
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:25
-#: src/pages/sales/SalesOrderDetail.tsx:437
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:293
+#: src/pages/sales/SalesOrderDetail.tsx:439
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:295
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:58
 #: src/pages/stock/StockDetailsPanel.tsx:297
 #: src/tables/general/AuditLogTable.tsx:252
@@ -468,7 +476,7 @@ msgid "Sales Orders"
 msgstr "판매 주문서"
 
 #: lib/enums/ModelInformation.tsx:224
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:292
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:294
 msgid "Sales Order Shipment"
 msgstr "판매 주문 배송"
 
@@ -478,7 +486,7 @@ msgstr "판매 주문 출하 목록"
 
 #: lib/enums/ModelInformation.tsx:235
 #: src/components/previews/models/ReturnOrderPreview.tsx:15
-#: src/pages/sales/ReturnOrderDetail.tsx:367
+#: src/pages/sales/ReturnOrderDetail.tsx:369
 #: src/tables/general/AuditLogTable.tsx:251
 msgid "Return Order"
 msgstr "반품 주문"
@@ -503,7 +511,7 @@ msgstr "반품 주문 라인 항목 목록"
 
 #: lib/enums/ModelInformation.tsx:252
 #: src/components/previews/models/TransferOrderPreview.tsx:15
-#: src/pages/stock/TransferOrderDetail.tsx:385
+#: src/pages/stock/TransferOrderDetail.tsx:387
 #: src/tables/general/AuditLogTable.tsx:254
 #: src/tables/stock/TransferOrderAllocationTable.tsx:98
 msgid "Transfer Order"
@@ -566,7 +574,7 @@ msgstr "소유자 목록"
 #: src/components/tables/ColumnRenderers.tsx:637
 #: src/components/tables/Filter.tsx:441
 #: src/pages/Auth/ChangePassword.tsx:36
-#: src/pages/core/UserDetail.tsx:219
+#: src/pages/core/UserDetail.tsx:221
 #: src/tables/general/AuditLogTable.tsx:503
 #: src/tables/general/AuditLogTable.tsx:593
 #: src/tables/settings/ApiTokenTable.tsx:145
@@ -582,12 +590,12 @@ msgstr "사용자"
 #: src/defaults/actions.tsx:220
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
 #: src/pages/core/CoreIndex.tsx:22
-#: src/pages/core/UserDetail.tsx:225
+#: src/pages/core/UserDetail.tsx:227
 msgid "Users"
 msgstr "사용자 목록"
 
 #: lib/enums/ModelInformation.tsx:293
-#: src/pages/core/GroupDetail.tsx:76
+#: src/pages/core/GroupDetail.tsx:78
 msgid "Group"
 msgstr "그룹"
 
@@ -595,7 +603,7 @@ msgstr "그룹"
 #: src/components/nav/NavigationDrawer.tsx:111
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
 #: src/pages/core/CoreIndex.tsx:28
-#: src/pages/core/GroupDetail.tsx:80
+#: src/pages/core/GroupDetail.tsx:82
 #: src/pages/core/UserDetail.tsx:96
 #: src/tables/settings/UserTable.tsx:277
 msgid "Groups"
@@ -679,7 +687,7 @@ msgstr "선택 항목"
 #: src/components/importer/ImporterDrawer.tsx:91
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:434
-#: src/components/nav/NotificationDrawer.tsx:239
+#: src/components/nav/NotificationDrawer.tsx:257
 #: src/components/nav/SearchDrawer.tsx:612
 #: src/components/settings/SettingList.tsx:158
 #: src/components/tables/InvenTreeTableHeader.tsx:164
@@ -692,7 +700,7 @@ msgstr "선택 항목"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:638
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:831
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:194
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:178
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
@@ -737,36 +745,36 @@ msgstr "관리"
 msgid "Pricing"
 msgstr "가격"
 
-#: lib/functions/Notification.tsx:11
-msgid "Not implemented"
-msgstr "구현되지 않음"
-
-#: lib/functions/Notification.tsx:12
-msgid "This feature is not yet implemented"
-msgstr "이 기능은 아직 구현되지 않았습니다."
-
-#: lib/functions/Notification.tsx:23
+#: lib/functions/Notification.tsx:9
 #: src/components/errors/PermissionDenied.tsx:8
 msgid "Permission Denied"
 msgstr "권한이 거부되었습니다"
 
-#: lib/functions/Notification.tsx:24
+#: lib/functions/Notification.tsx:10
 msgid "You do not have permission to perform this action"
 msgstr "이 작업을 수행할 권한이 없습니다."
 
-#: lib/functions/Notification.tsx:35
+#: lib/functions/Notification.tsx:11
+#~ msgid "Not implemented"
+#~ msgstr "Not implemented"
+
+#: lib/functions/Notification.tsx:12
+#~ msgid "This feature is not yet implemented"
+#~ msgstr "This feature is not yet implemented"
+
+#: lib/functions/Notification.tsx:21
 msgid "Invalid Return Code"
 msgstr "잘못된 반품 코드"
 
-#: lib/functions/Notification.tsx:36
+#: lib/functions/Notification.tsx:22
 msgid "Server returned status {returnCode}"
 msgstr "서버가 상태 {returnCode}를 반환했습니다."
 
-#: lib/functions/Notification.tsx:46
+#: lib/functions/Notification.tsx:32
 msgid "Timeout"
 msgstr "시간초과"
 
-#: lib/functions/Notification.tsx:47
+#: lib/functions/Notification.tsx:33
 msgid "The request timed out"
 msgstr "요청 시간이 초과되었습니다."
 
@@ -784,42 +792,42 @@ msgstr "프로세스가 성공적으로 완료되었습니다."
 #~ msgid "Title"
 #~ msgstr "Title"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:202
-#: src/components/barcodes/BarcodeCameraInput.tsx:304
+#: src/components/barcodes/BarcodeCameraInput.tsx:210
+#: src/components/barcodes/BarcodeCameraInput.tsx:312
 msgid "Error while scanning"
 msgstr "스캔하는 동안 오류가 발생했습니다."
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:267
+#: src/components/barcodes/BarcodeCameraInput.tsx:275
 msgid "Flashlight"
 msgstr ""
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:268
+#: src/components/barcodes/BarcodeCameraInput.tsx:276
 msgid "Flashlight control is not supported on this device"
 msgstr ""
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:319
+#: src/components/barcodes/BarcodeCameraInput.tsx:327
 msgid "Error while stopping"
 msgstr "중지 중 오류 발생"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:366
+#: src/components/barcodes/BarcodeCameraInput.tsx:374
 msgid "Start scanning by selecting a camera and pressing the play button."
 msgstr "카메라를 선택하고 재생 버튼을 눌러 스캔을 시작합니다."
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:384
-#: src/components/barcodes/BarcodeCameraInput.tsx:391
+#: src/components/barcodes/BarcodeCameraInput.tsx:392
+#: src/components/barcodes/BarcodeCameraInput.tsx:399
 msgid "Turn off flashlight"
 msgstr ""
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:384
-#: src/components/barcodes/BarcodeCameraInput.tsx:391
+#: src/components/barcodes/BarcodeCameraInput.tsx:392
+#: src/components/barcodes/BarcodeCameraInput.tsx:399
 msgid "Turn on flashlight"
 msgstr ""
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:403
+#: src/components/barcodes/BarcodeCameraInput.tsx:411
 msgid "Stop scanning"
 msgstr "스캔<x id=\"11\"/>중지"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:413
+#: src/components/barcodes/BarcodeCameraInput.tsx:421
 msgid "Start scanning"
 msgstr "스캔 시작"
 
@@ -891,7 +899,7 @@ msgid "Failed to handle barcode"
 msgstr "바코드 처리에 실패했습니다"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:183
-#: src/pages/Index/Scan.tsx:127
+#: src/pages/Index/Scan.tsx:135
 msgid "Failed to scan barcode"
 msgstr "바코드 스캔 실패"
 
@@ -1447,7 +1455,7 @@ msgid "Change the language of the user interface"
 msgstr "사용자 인터페이스 언어를 변경합니다"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:60
-#: src/components/nav/NotificationDrawer.tsx:98
+#: src/components/nav/NotificationDrawer.tsx:116
 #: src/pages/Notifications.tsx:53
 msgid "Mark as read"
 msgstr "읽음으로 표시"
@@ -1557,12 +1565,12 @@ msgid "Remove the associated image from this item?"
 msgstr "이 항목에 연결된 이미지를 제거하시겠습니까?"
 
 #: src/components/details/DetailsImage.tsx:82
-#: src/forms/StockForms.tsx:1632
+#: src/forms/StockForms.tsx:1633
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:899
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:918
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:273
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:257
 #: src/tables/build/BuildAllocatedStockTable.tsx:183
 #: src/tables/build/BuildAllocatedStockTable.tsx:278
 #: src/tables/build/BuildLineTable.tsx:181
@@ -1865,7 +1873,7 @@ msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:701
 #: src/components/panels/NotesPanel.tsx:24
-#: src/forms/StockForms.tsx:1584
+#: src/forms/StockForms.tsx:1585
 #: src/tables/part/PartTestResultTable.tsx:218
 msgid "Notes"
 msgstr "메모"
@@ -2395,7 +2403,7 @@ msgid "Uncategorized"
 msgstr "분류되지 않음"
 
 #: src/components/forms/fields/IconField.tsx:221
-#: src/components/nav/Layout.tsx:146
+#: src/components/nav/Layout.tsx:147
 #: src/tables/part/PartThumbTable.tsx:209
 msgid "Search..."
 msgstr "찾다..."
@@ -2411,7 +2419,7 @@ msgstr "{0} 아이콘"
 
 #: src/components/forms/fields/RelatedModelField.tsx:550
 #: src/components/modals/AboutInvenTreeModal.tsx:92
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:402
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:386
 msgid "Loading"
 msgstr "불러오는 중"
 
@@ -2456,7 +2464,7 @@ msgstr "선택..."
 
 #: src/components/forms/fields/TreeField.tsx:414
 #: src/components/wizards/ImportPartWizard.tsx:221
-#: src/forms/StockForms.tsx:1305
+#: src/forms/StockForms.tsx:1306
 msgid "Loading..."
 msgstr "불러오는 중..."
 
@@ -2839,7 +2847,7 @@ msgid "Change"
 msgstr "변화"
 
 #: src/components/items/RoleTable.tsx:150
-#: src/forms/StockForms.tsx:1681
+#: src/forms/StockForms.tsx:1682
 #: src/tables/stock/StockItemTestResultTable.tsx:372
 msgid "Add"
 msgstr "추가하다"
@@ -3193,7 +3201,7 @@ msgstr ""
 #: src/components/nav/FirstUseTour.tsx:85
 #: src/components/nav/Header.tsx:209
 #: src/components/nav/NavigationDrawer.tsx:134
-#: src/components/nav/NotificationDrawer.tsx:185
+#: src/components/nav/NotificationDrawer.tsx:203
 #: src/pages/Index/Settings/SystemSettings.tsx:147
 #: src/pages/Index/Settings/UserSettings.tsx:113
 #: src/pages/Notifications.tsx:45
@@ -3294,7 +3302,7 @@ msgstr "관리 모드"
 msgid "The current user has elevated privileges and should not be used for regular usage."
 msgstr "현재 사용자는 높은 권한을 가지고 있으므로 일반적인 용도로 사용하면 안 됩니다"
 
-#: src/components/nav/Layout.tsx:149
+#: src/components/nav/Layout.tsx:150
 msgid "Nothing found..."
 msgstr "찾을 수 없음..."
 
@@ -3355,13 +3363,13 @@ msgstr "로그아웃"
 #: src/components/render/Part.tsx:36
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:47
-#: src/forms/StockForms.tsx:1514
+#: src/forms/StockForms.tsx:1515
 #: src/pages/Index/Settings/SystemSettings.tsx:261
 #: src/pages/part/PartDetail.tsx:309
 #: src/pages/stock/LocationDetail.tsx:401
-#: src/pages/stock/LocationDetail.tsx:444
+#: src/pages/stock/LocationDetail.tsx:446
 #: src/pages/stock/StockDetail.tsx:336
-#: src/pages/stock/TransferOrderDetail.tsx:391
+#: src/pages/stock/TransferOrderDetail.tsx:393
 #: src/tables/stock/StockItemTable.tsx:79
 msgid "Stock"
 msgstr "재고"
@@ -3369,8 +3377,8 @@ msgstr "재고"
 #: src/components/nav/NavigationDrawer.tsx:84
 #: src/defaults/links.tsx:56
 #: src/pages/Index/Settings/SystemSettings.tsx:314
-#: src/pages/build/BuildDetail.tsx:614
-#: src/pages/build/BuildIndex.tsx:121
+#: src/pages/build/BuildDetail.tsx:616
+#: src/pages/build/BuildIndex.tsx:123
 msgid "Manufacturing"
 msgstr "조작"
 
@@ -3381,7 +3389,7 @@ msgstr "조작"
 #: src/pages/company/ManufacturerPartDetail.tsx:203
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:221
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:390
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:392
 #: src/pages/purchasing/PurchasingIndex.tsx:237
 msgid "Purchasing"
 msgstr "구매"
@@ -3390,10 +3398,10 @@ msgstr "구매"
 #: src/defaults/links.tsx:68
 #: src/pages/Index/Settings/SystemSettings.tsx:362
 #: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:372
+#: src/pages/sales/ReturnOrderDetail.tsx:374
 #: src/pages/sales/SalesIndex.tsx:214
-#: src/pages/sales/SalesOrderDetail.tsx:442
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:295
+#: src/pages/sales/SalesOrderDetail.tsx:444
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:297
 msgid "Sales"
 msgstr "매상"
 
@@ -3425,20 +3433,20 @@ msgstr "검색 지우기"
 msgid "Error loading navigation tree."
 msgstr "탐색 트리를 불러오는 중 오류가 발생했습니다"
 
-#: src/components/nav/NotificationDrawer.tsx:187
+#: src/components/nav/NotificationDrawer.tsx:205
 #: src/pages/Notifications.tsx:74
 msgid "Mark all as read"
 msgstr "모두 읽음으로 표시"
 
-#: src/components/nav/NotificationDrawer.tsx:197
+#: src/components/nav/NotificationDrawer.tsx:215
 msgid "View all notifications"
 msgstr "모든 알림 보기"
 
-#: src/components/nav/NotificationDrawer.tsx:220
+#: src/components/nav/NotificationDrawer.tsx:238
 msgid "You have no unread notifications."
 msgstr "읽지 않은 알림이 없습니다"
 
-#: src/components/nav/NotificationDrawer.tsx:242
+#: src/components/nav/NotificationDrawer.tsx:260
 msgid "Error loading notifications."
 msgstr "알림을 불러오는 중 오류가 발생했습니다"
 
@@ -3446,7 +3454,7 @@ msgstr "알림을 불러오는 중 오류가 발생했습니다"
 #~ msgid "Edit {title}"
 #~ msgstr "Edit {title}"
 
-#: src/components/nav/PageDetail.tsx:265
+#: src/components/nav/PageDetail.tsx:275
 msgid "Primary Action"
 msgstr "기본 작업"
 
@@ -3852,15 +3860,15 @@ msgstr "카테고리"
 #: src/forms/PurchaseOrderForms.tsx:755
 #: src/forms/StockForms.tsx:673
 #: src/forms/StockForms.tsx:711
-#: src/forms/StockForms.tsx:1512
-#: src/forms/StockForms.tsx:1560
-#: src/forms/StockForms.tsx:1629
-#: src/forms/StockForms.tsx:1678
-#: src/forms/StockForms.tsx:1717
-#: src/forms/StockForms.tsx:1766
-#: src/forms/StockForms.tsx:1836
-#: src/forms/StockForms.tsx:1883
-#: src/forms/StockForms.tsx:1927
+#: src/forms/StockForms.tsx:1513
+#: src/forms/StockForms.tsx:1561
+#: src/forms/StockForms.tsx:1630
+#: src/forms/StockForms.tsx:1679
+#: src/forms/StockForms.tsx:1718
+#: src/forms/StockForms.tsx:1767
+#: src/forms/StockForms.tsx:1837
+#: src/forms/StockForms.tsx:1884
+#: src/forms/StockForms.tsx:1928
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:155
 #: src/pages/stock/StockDetailsPanel.tsx:237
@@ -3889,7 +3897,7 @@ msgstr "시리얼 번호"
 #: src/forms/SalesOrderForms.tsx:438
 #: src/forms/StockForms.tsx:723
 #: src/forms/StockForms.tsx:947
-#: src/forms/StockForms.tsx:1562
+#: src/forms/StockForms.tsx:1563
 #: src/forms/TransferOrderForms.tsx:242
 #: src/pages/build/BuildIndex.tsx:47
 #: src/pages/part/PartStockHistoryDetail.tsx:63
@@ -3916,15 +3924,15 @@ msgstr "수량"
 #: src/forms/BuildForms.tsx:385
 #: src/forms/BuildForms.tsx:468
 #: src/forms/BuildForms.tsx:543
-#: src/forms/StockForms.tsx:1513
-#: src/forms/StockForms.tsx:1561
-#: src/forms/StockForms.tsx:1630
-#: src/forms/StockForms.tsx:1679
-#: src/forms/StockForms.tsx:1718
-#: src/forms/StockForms.tsx:1767
-#: src/forms/StockForms.tsx:1837
-#: src/forms/StockForms.tsx:1884
-#: src/forms/StockForms.tsx:1928
+#: src/forms/StockForms.tsx:1514
+#: src/forms/StockForms.tsx:1562
+#: src/forms/StockForms.tsx:1631
+#: src/forms/StockForms.tsx:1680
+#: src/forms/StockForms.tsx:1719
+#: src/forms/StockForms.tsx:1768
+#: src/forms/StockForms.tsx:1838
+#: src/forms/StockForms.tsx:1885
+#: src/forms/StockForms.tsx:1929
 #: src/tables/build/BuildLineTable.tsx:161
 msgid "Batch"
 msgstr "일괄"
@@ -4298,13 +4306,13 @@ msgstr "배치 코드로 항목 필터링"
 
 #: src/components/tables/Filter.tsx:134
 #: src/components/wizards/OrderPartsWizard.tsx:130
-#: src/forms/StockForms.tsx:1631
-#: src/forms/StockForms.tsx:1680
-#: src/forms/StockForms.tsx:1719
-#: src/forms/StockForms.tsx:1768
-#: src/forms/StockForms.tsx:1838
-#: src/forms/StockForms.tsx:1885
-#: src/forms/StockForms.tsx:1929
+#: src/forms/StockForms.tsx:1632
+#: src/forms/StockForms.tsx:1681
+#: src/forms/StockForms.tsx:1720
+#: src/forms/StockForms.tsx:1769
+#: src/forms/StockForms.tsx:1839
+#: src/forms/StockForms.tsx:1886
+#: src/forms/StockForms.tsx:1930
 #: src/pages/company/SupplierPartDetail.tsx:240
 #: src/pages/company/SupplierPartDetailsPanel.tsx:144
 #: src/pages/part/PartDetail.tsx:584
@@ -4511,7 +4519,7 @@ msgstr "부품 변형 결과 포함"
 #: src/forms/ReturnOrderForms.tsx:196
 #: src/forms/ReturnOrderForms.tsx:244
 #: src/forms/StockForms.tsx:688
-#: src/forms/StockForms.tsx:1426
+#: src/forms/StockForms.tsx:1427
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:104
 #: src/pages/build/BuildOrderDetailsPanel.tsx:75
@@ -6284,13 +6292,13 @@ msgid "Set Expiry Date"
 msgstr "만료일 설정"
 
 #: src/forms/PurchaseOrderForms.tsx:687
-#: src/forms/StockForms.tsx:1396
+#: src/forms/StockForms.tsx:1397
 msgid "Adjust Packaging"
 msgstr "포장 조정"
 
 #: src/forms/PurchaseOrderForms.tsx:696
 #: src/forms/StockForms.tsx:623
-#: src/forms/StockForms.tsx:1387
+#: src/forms/StockForms.tsx:1388
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "상태 변경"
@@ -6335,7 +6343,7 @@ msgid "Enter an expiry date for received items"
 msgstr "입고된 항목의 만료일을 입력하세요"
 
 #: src/forms/PurchaseOrderForms.tsx:877
-#: src/forms/StockForms.tsx:1442
+#: src/forms/StockForms.tsx:1443
 #: src/pages/company/SupplierPartDetailsPanel.tsx:126
 #: src/pages/company/SupplierPartDetailsPanel.tsx:184
 #: src/pages/stock/StockDetailsPanel.tsx:350
@@ -6537,189 +6545,188 @@ msgstr ""
 msgid "Confirm Stock Transfer"
 msgstr "재고 이전 확인"
 
-#: src/forms/StockForms.tsx:1180
+#: src/forms/StockForms.tsx:1181
 msgid "Confirm Stock Return"
 msgstr "재고 반품 확인"
 
-#: src/forms/StockForms.tsx:1192
-#: src/forms/StockForms.tsx:1375
+#: src/forms/StockForms.tsx:1193
+#: src/forms/StockForms.tsx:1376
 msgid "Move to default location"
 msgstr "기본 위치로 이동"
 
-#: src/forms/StockForms.tsx:1405
-#: src/forms/StockForms.tsx:1578
+#: src/forms/StockForms.tsx:1406
+#: src/forms/StockForms.tsx:1579
 msgid "Merge into existing stock"
 msgstr "기존 재고에 병합"
 
-#: src/forms/StockForms.tsx:1515
+#: src/forms/StockForms.tsx:1516
 msgid "Move"
 msgstr "이동하다"
 
-#: src/forms/StockForms.tsx:1563
+#: src/forms/StockForms.tsx:1564
 msgid "Return"
 msgstr "반품"
 
-#: src/forms/StockForms.tsx:1579
+#: src/forms/StockForms.tsx:1580
 msgid "Merge returned items into existing stock items if possible"
 msgstr "가능한 경우 반품된 항목을 기존 재고 항목에 병합"
 
-#: src/forms/StockForms.tsx:1585
+#: src/forms/StockForms.tsx:1586
 msgid "Stock transaction notes"
 msgstr "재고 트랜잭션 메모"
 
-#: src/forms/StockForms.tsx:1720
-#: src/pages/Index/Scan.tsx:180
+#: src/forms/StockForms.tsx:1721
 msgid "Count"
 msgstr "실사"
 
-#: src/forms/StockForms.tsx:1998
+#: src/forms/StockForms.tsx:1999
 #: src/hooks/UseStockAdjustActions.tsx:112
 msgid "Add Stock"
 msgstr "재고 추가"
 
-#: src/forms/StockForms.tsx:1999
+#: src/forms/StockForms.tsx:2000
 msgid "Stock added"
 msgstr "재고 추가됨"
 
-#: src/forms/StockForms.tsx:2002
+#: src/forms/StockForms.tsx:2003
 msgid "Increase the quantity of the selected stock items by a given amount."
 msgstr "선택한 재고 품목의 수량을 지정한 만큼 늘립니다"
 
-#: src/forms/StockForms.tsx:2013
+#: src/forms/StockForms.tsx:2014
 #: src/hooks/UseStockAdjustActions.tsx:122
 msgid "Remove Stock"
 msgstr "재고 차감"
 
-#: src/forms/StockForms.tsx:2014
+#: src/forms/StockForms.tsx:2015
 msgid "Stock removed"
 msgstr "재고가 차감되었습니다"
 
-#: src/forms/StockForms.tsx:2017
+#: src/forms/StockForms.tsx:2018
 msgid "Decrease the quantity of the selected stock items by a given amount."
 msgstr "선택한 재고 품목의 수량을 지정한 만큼 줄입니다"
 
-#: src/forms/StockForms.tsx:2039
+#: src/forms/StockForms.tsx:2040
 #: src/hooks/UseStockAdjustActions.tsx:132
 msgid "Transfer Stock"
 msgstr "재고 이전"
 
-#: src/forms/StockForms.tsx:2040
+#: src/forms/StockForms.tsx:2041
 msgid "Stock transferred"
 msgstr "재고양도"
 
-#: src/forms/StockForms.tsx:2043
+#: src/forms/StockForms.tsx:2044
 msgid "Transfer selected items to the specified location."
 msgstr "선택한 항목을 지정한 위치로 이동합니다"
 
-#: src/forms/StockForms.tsx:2054
+#: src/forms/StockForms.tsx:2055
 #: src/hooks/UseStockAdjustActions.tsx:182
 msgid "Return Stock"
 msgstr "재고 반환"
 
-#: src/forms/StockForms.tsx:2055
+#: src/forms/StockForms.tsx:2056
 msgid "Stock returned"
 msgstr "재고가 반환되었습니다"
 
-#: src/forms/StockForms.tsx:2058
+#: src/forms/StockForms.tsx:2059
 msgid "Return selected items into stock, to the specified location."
 msgstr "선택한 항목을 지정한 위치의 재고로 반환합니다"
 
-#: src/forms/StockForms.tsx:2074
+#: src/forms/StockForms.tsx:2075
 #: src/hooks/UseStockAdjustActions.tsx:102
 msgid "Count Stock"
 msgstr "재고 수량"
 
-#: src/forms/StockForms.tsx:2075
+#: src/forms/StockForms.tsx:2076
 msgid "Stock counted"
 msgstr "재고 계산"
 
-#: src/forms/StockForms.tsx:2078
+#: src/forms/StockForms.tsx:2079
 msgid "Count the selected stock items, and adjust the quantity accordingly."
 msgstr "선택한 재고 품목을 실사하고 수량을 그에 맞게 조정합니다"
 
-#: src/forms/StockForms.tsx:2089
+#: src/forms/StockForms.tsx:2090
 msgid "Change Stock Status"
 msgstr "재고현황 변경"
 
-#: src/forms/StockForms.tsx:2090
+#: src/forms/StockForms.tsx:2091
 msgid "Stock status changed"
 msgstr "재고 상태가 변경되었습니다."
 
-#: src/forms/StockForms.tsx:2093
+#: src/forms/StockForms.tsx:2094
 msgid "Change the status of the selected stock items."
 msgstr "선택한 재고 품목의 상태를 변경합니다"
 
-#: src/forms/StockForms.tsx:2116
+#: src/forms/StockForms.tsx:2117
 #: src/hooks/UseStockAdjustActions.tsx:162
 msgid "Change Batch Code"
 msgstr "배치 코드 변경"
 
-#: src/forms/StockForms.tsx:2119
+#: src/forms/StockForms.tsx:2120
 msgid "Change batch code for the selected stock items"
 msgstr "선택한 재고 품목의 배치 코드를 변경합니다"
 
-#: src/forms/StockForms.tsx:2136
+#: src/forms/StockForms.tsx:2137
 #: src/hooks/UseStockAdjustActions.tsx:142
 msgid "Merge Stock"
 msgstr "재고 병합"
 
-#: src/forms/StockForms.tsx:2137
+#: src/forms/StockForms.tsx:2138
 msgid "Stock merged"
 msgstr "재고 병합"
 
-#: src/forms/StockForms.tsx:2139
+#: src/forms/StockForms.tsx:2140
 msgid "Merge Stock Items"
 msgstr "재고 품목 병합"
 
-#: src/forms/StockForms.tsx:2141
+#: src/forms/StockForms.tsx:2142
 msgid "Merge operation cannot be reversed"
 msgstr "병합 작업은 되돌릴 수 없습니다."
 
-#: src/forms/StockForms.tsx:2142
+#: src/forms/StockForms.tsx:2143
 msgid "Tracking information may be lost when merging items"
 msgstr "항목을 병합하면 추적 정보가 손실될 수 있습니다."
 
-#: src/forms/StockForms.tsx:2143
+#: src/forms/StockForms.tsx:2144
 msgid "Supplier information may be lost when merging items"
 msgstr "품목을 병합하면 공급업체 정보가 손실될 수 있습니다."
 
-#: src/forms/StockForms.tsx:2161
+#: src/forms/StockForms.tsx:2162
 msgid "Assign Stock to Customer"
 msgstr "고객에게 재고 할당"
 
-#: src/forms/StockForms.tsx:2162
+#: src/forms/StockForms.tsx:2163
 msgid "Stock assigned to customer"
 msgstr "고객에게 할당된 재고"
 
-#: src/forms/StockForms.tsx:2172
+#: src/forms/StockForms.tsx:2173
 msgid "Delete Stock Items"
 msgstr "재고 품목 삭제"
 
-#: src/forms/StockForms.tsx:2173
+#: src/forms/StockForms.tsx:2174
 msgid "Stock deleted"
 msgstr "재고가 삭제되었습니다."
 
-#: src/forms/StockForms.tsx:2176
+#: src/forms/StockForms.tsx:2177
 msgid "This operation will permanently delete the selected stock items."
 msgstr "이 작업은 선택한 재고 품목을 영구적으로 삭제합니다"
 
-#: src/forms/StockForms.tsx:2187
+#: src/forms/StockForms.tsx:2188
 msgid "Parent stock location"
 msgstr "모재 위치"
 
-#: src/forms/StockForms.tsx:2323
+#: src/forms/StockForms.tsx:2324
 msgid "Find Serial Number"
 msgstr "일련번호 찾기"
 
-#: src/forms/StockForms.tsx:2334
+#: src/forms/StockForms.tsx:2335
 msgid "No matching items"
 msgstr "일치하는 항목이 없습니다."
 
-#: src/forms/StockForms.tsx:2340
+#: src/forms/StockForms.tsx:2341
 msgid "Multiple matching items"
 msgstr "일치하는 항목이 여러 개 있습니다"
 
-#: src/forms/StockForms.tsx:2349
+#: src/forms/StockForms.tsx:2350
 msgid "Invalid response from server"
 msgstr "서버의 응답이 올바르지 않습니다"
 
@@ -7012,6 +7019,7 @@ msgid "Delete selected stock items"
 msgstr "선택한 재고 품목 삭제"
 
 #: src/hooks/UseStockAdjustActions.tsx:219
+#: src/pages/Index/Scan.tsx:258
 #: src/pages/part/PartDetail.tsx:766
 msgid "Stock Actions"
 msgstr "재고 작업"
@@ -7123,7 +7131,7 @@ msgstr "계정이 없나요?"
 #~ msgstr "Enter your TOTP or recovery code"
 
 #: src/pages/Auth/MFA.tsx:29
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:89
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:78
 msgid "Multi-Factor Authentication"
 msgstr "다단계 인증"
 
@@ -7410,60 +7418,29 @@ msgstr "예상치 못한 오류가 발생했습니다."
 #~ msgid "Design <0/>"
 #~ msgstr "Design <0/>"
 
-#: src/pages/Index/Scan.tsx:63
+#: src/pages/Index/Scan.tsx:74
 msgid "Item already scanned"
 msgstr "항목이 이미 스캔되었습니다"
 
-#: src/pages/Index/Scan.tsx:80
+#: src/pages/Index/Scan.tsx:88
 msgid "API Error"
 msgstr "API 오류"
 
-#: src/pages/Index/Scan.tsx:81
+#: src/pages/Index/Scan.tsx:89
 msgid "Failed to fetch instance data"
 msgstr "인스턴스 데이터를 불러오지 못했습니다"
 
-#: src/pages/Index/Scan.tsx:128
+#: src/pages/Index/Scan.tsx:136
 msgid "Scan Error"
 msgstr "스캔 오류"
 
-#: src/pages/Index/Scan.tsx:160
-msgid "Selected elements are not known"
-msgstr "선택한 요소를 알 수 없습니다."
-
-#: src/pages/Index/Scan.tsx:167
-msgid "Multiple object types selected"
-msgstr "여러 개체 유형이 선택됨"
-
 #: src/pages/Index/Scan.tsx:175
-msgid "Actions ... "
-msgstr "작업 ..."
+#~ msgid "Actions ... "
+#~ msgstr "Actions ... "
 
 #: src/pages/Index/Scan.tsx:175
 #~ msgid "Actions ..."
 #~ msgstr "Actions ..."
-
-#: src/pages/Index/Scan.tsx:192
-#: src/pages/Index/Scan.tsx:196
-msgid "Barcode Scanning"
-msgstr "바코드 스캐닝"
-
-#: src/pages/Index/Scan.tsx:205
-msgid "Barcode Input"
-msgstr "바코드 입력"
-
-#: src/pages/Index/Scan.tsx:212
-#: src/tables/general/AuditLogTable.tsx:492
-#: src/tables/general/AuditLogTable.tsx:542
-msgid "Action"
-msgstr "행동"
-
-#: src/pages/Index/Scan.tsx:215
-msgid "No Items Selected"
-msgstr "선택한 항목이 없습니다."
-
-#: src/pages/Index/Scan.tsx:216
-msgid "Scan and select items to perform actions"
-msgstr "작업을 수행할 항목을 스캔하고 선택하세요."
 
 #: src/pages/Index/Scan.tsx:217
 #~ msgid "Manual input"
@@ -7473,18 +7450,49 @@ msgstr "작업을 수행할 항목을 스캔하고 선택하세요."
 #~ msgid "Image Barcode"
 #~ msgstr "Image Barcode"
 
-#. placeholder {0}: selection.length
-#: src/pages/Index/Scan.tsx:221
-msgid "{0} items selected"
-msgstr "{0}개 항목 선택됨"
+#: src/pages/Index/Scan.tsx:232
+msgid "Multiple object types selected"
+msgstr "여러 개체 유형이 선택됨"
 
-#: src/pages/Index/Scan.tsx:233
-msgid "Scanned Items"
-msgstr "스캔한 항목"
+#: src/pages/Index/Scan.tsx:239
+msgid "Selected elements are not known"
+msgstr "선택한 요소를 알 수 없습니다."
+
+#: src/pages/Index/Scan.tsx:250
+msgid "No actions available for the selected items"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:268
+#: src/pages/Index/Scan.tsx:272
+msgid "Barcode Scanning"
+msgstr "바코드 스캐닝"
 
 #: src/pages/Index/Scan.tsx:276
 #~ msgid "Actions for {0}"
 #~ msgstr "Actions for {0}"
+
+#: src/pages/Index/Scan.tsx:281
+msgid "Barcode Input"
+msgstr "바코드 입력"
+
+#: src/pages/Index/Scan.tsx:288
+#: src/tables/general/AuditLogTable.tsx:492
+#: src/tables/general/AuditLogTable.tsx:542
+msgid "Action"
+msgstr "행동"
+
+#: src/pages/Index/Scan.tsx:291
+msgid "No Items Selected"
+msgstr "선택한 항목이 없습니다."
+
+#: src/pages/Index/Scan.tsx:292
+msgid "Scan and select items to perform actions"
+msgstr "작업을 수행할 항목을 스캔하고 선택하세요."
+
+#. placeholder {0}: selection.length
+#: src/pages/Index/Scan.tsx:297
+msgid "{0} items selected"
+msgstr "{0}개 항목 선택됨"
 
 #: src/pages/Index/Scan.tsx:298
 #~ msgid "Scan Page"
@@ -7497,6 +7505,10 @@ msgstr "스캔한 항목"
 #: src/pages/Index/Scan.tsx:308
 #~ msgid "Toggle Fullscreen"
 #~ msgstr "Toggle Fullscreen"
+
+#: src/pages/Index/Scan.tsx:309
+msgid "Scanned Items"
+msgstr "스캔한 항목"
 
 #: src/pages/Index/Scan.tsx:321
 #~ msgid "Select the input method you want to use to scan items."
@@ -7903,8 +7915,8 @@ msgid "Created at"
 msgstr "생성 시각"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:985
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:209
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:367
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:193
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:351
 msgid "Not Configured"
 msgstr "구성되지 않음"
 
@@ -7936,47 +7948,47 @@ msgstr "일회용 비밀번호"
 msgid "Enter the TOTP code to ensure it registered correctly"
 msgstr "정상적으로 등록되었는지 확인하려면 TOTP 코드를 입력하세요"
 
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:52
+msgid "Email Addresses"
+msgstr "이메일 주소"
+
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:55
 #~ msgid "Single Sign On Accounts"
 #~ msgstr "Single Sign On Accounts"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:63
-msgid "Email Addresses"
-msgstr "이메일 주소"
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:60
+msgid "Single Sign On"
+msgstr "단일 로그인"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:68
+msgid "Not enabled"
+msgstr "활성화되지 않음"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:69
 #~ msgid "Multifactor"
 #~ msgstr "Multifactor"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:71
-msgid "Single Sign On"
-msgstr "단일 로그인"
+msgid "Single Sign On is not enabled for this server "
+msgstr "이 서버에서는 단일 로그인이 활성화되어 있지 않습니다"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:71
 #~ msgid "Single Sign On is not enabled for this server"
 #~ msgstr "Single Sign On is not enabled for this server"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:79
-msgid "Not enabled"
-msgstr "활성화되지 않음"
-
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:82
-msgid "Single Sign On is not enabled for this server "
-msgstr "이 서버에서는 단일 로그인이 활성화되어 있지 않습니다"
-
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:83
 #~ msgid "Multifactor authentication is not configured for your account"
 #~ msgstr "Multifactor authentication is not configured for your account"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:97
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:86
 msgid "Access Tokens"
 msgstr "액세스 토큰"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:113
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:97
 msgid "Session Information"
 msgstr "세션 정보"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:151
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:135
 #: src/tables/general/BarcodeScanTable.tsx:62
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:75
 #: src/tables/settings/EmailTable.tsx:131
@@ -7984,88 +7996,88 @@ msgstr "세션 정보"
 msgid "Timestamp"
 msgstr "타임스탬프"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:152
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:136
 msgid "Method"
 msgstr "방법"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:195
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:179
 msgid "Error while updating email"
 msgstr "이메일 업데이트 중 오류 발생"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:212
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:196
 msgid "Currently no email addresses are registered."
 msgstr "현재 등록된 이메일 주소가 없습니다"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:220
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:204
 msgid "The following email addresses are associated with your account:"
 msgstr "다음 이메일 주소가 계정에 연결되어 있습니다:"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:233
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:217
 #: src/tables/purchasing/SupplierPartTable.tsx:267
 msgid "Primary"
 msgstr "주요한"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:238
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:222
 msgid "Verified"
 msgstr "확인됨"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:242
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:226
 msgid "Unverified"
 msgstr "미확인"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:260
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:244
 msgid "Make Primary"
 msgstr "기본으로 만들기"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:266
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:250
 msgid "Re-send Verification"
 msgstr "확인 메일 다시 보내기"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:264
+msgid "Add Email Address"
+msgstr "이메일 주소 추가"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:266
+msgid "E-Mail"
+msgstr "이메일"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:267
+msgid "E-Mail address"
+msgstr "이메일 주소"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:270
 #~ msgid "Provider has not been configured"
 #~ msgstr "Provider has not been configured"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:280
-msgid "Add Email Address"
-msgstr "이메일 주소 추가"
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:279
+msgid "Error while adding email"
+msgstr "이메일 추가 중 오류 발생"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:280
 #~ msgid "Not configured"
 #~ msgstr "Not configured"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:282
-msgid "E-Mail"
-msgstr "이메일"
-
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:283
-msgid "E-Mail address"
-msgstr "이메일 주소"
-
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:283
 #~ msgid "There are no social network accounts connected to this account."
 #~ msgstr "There are no social network accounts connected to this account."
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:290
+msgid "Add Email"
+msgstr "이메일 추가"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:293
 #~ msgid "You can sign in to your account using any of the following third party accounts"
 #~ msgstr "You can sign in to your account using any of the following third party accounts"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:295
-msgid "Error while adding email"
-msgstr "이메일 추가 중 오류 발생"
-
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:306
-msgid "Add Email"
-msgstr "이메일 추가"
-
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:370
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:354
 msgid "There are no providers connected to this account."
 msgstr "이 계정에 연결된 제공업체가 없습니다"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:379
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:363
 msgid "You can sign in to your account using any of the following providers"
 msgstr "다음 제공업체를 사용해 계정에 로그인할 수 있습니다"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:392
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:376
 msgid "Remove Provider Link"
 msgstr "제공업체 연결 제거"
 
@@ -9685,8 +9697,8 @@ msgid "Availability"
 msgstr "재고 현황"
 
 #: src/pages/core/CoreIndex.tsx:47
-#: src/pages/core/GroupDetail.tsx:79
-#: src/pages/core/UserDetail.tsx:223
+#: src/pages/core/GroupDetail.tsx:81
+#: src/pages/core/UserDetail.tsx:225
 msgid "System Overview"
 msgstr "시스템 개요"
 
@@ -9954,11 +9966,11 @@ msgstr "시리얼 번호로 검색"
 msgid "Part Actions"
 msgstr "부품 작업"
 
-#: src/pages/part/PartDetail.tsx:855
+#: src/pages/part/PartDetail.tsx:857
 msgid "Part locked"
 msgstr "부품 잠김"
 
-#: src/pages/part/PartDetail.tsx:856
+#: src/pages/part/PartDetail.tsx:858
 msgid "Part unlocked"
 msgstr "부품 잠금 해제됨"
 

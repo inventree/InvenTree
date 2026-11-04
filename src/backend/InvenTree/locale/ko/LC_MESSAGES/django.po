@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 01:10+0000\n"
-"PO-Revision-Date: 2026-11-02 01:15\n"
+"POT-Creation-Date: 2026-11-04 03:14+0000\n"
+"PO-Revision-Date: 2026-11-04 03:19\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -77,21 +77,21 @@ msgstr "제공된 기본 이메일 주소가 유효하지 않습니다."
 msgid "The provided email domain is not approved."
 msgstr "제공된 이메일 도메인이 승인되지 않았습니다."
 
-#: InvenTree/conversion.py:288
+#: InvenTree/conversion.py:312
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
 msgstr "잘못된 단위가 제공되었습니다 ({unit})"
 
-#: InvenTree/conversion.py:305
+#: InvenTree/conversion.py:329
 msgid "No value provided"
 msgstr "값이 제공되지 않았습니다"
 
-#: InvenTree/conversion.py:332
+#: InvenTree/conversion.py:356
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
 msgstr "{original}을(를) {unit}(으)로 변환할 수 없습니다"
 
-#: InvenTree/conversion.py:334 InvenTree/conversion.py:348
+#: InvenTree/conversion.py:358 InvenTree/conversion.py:372
 #: InvenTree/helpers.py:645 order/models.py:924 order/models.py:1216
 #: part/models.py:3089 stock/models.py:2152
 msgid "Invalid quantity provided"
@@ -114,7 +114,7 @@ msgid "Invalid decimal value"
 msgstr "잘못된 소수 값"
 
 #: InvenTree/fields.py:286 audit/models.py:380 build/serializers.py:538
-#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3248
+#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3274
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
 #: stock/models.py:3814 stock/serializers.py:761 stock/serializers.py:945
@@ -226,15 +226,15 @@ msgid "Log in to the app"
 msgstr "앱에 로그인"
 
 #: InvenTree/magic_login.py:41 company/models.py:212 company/models.py:536
-#: users/serializers.py:219
+#: users/serializers.py:227
 msgid "Email"
 msgstr "이메일"
 
-#: InvenTree/middleware.py:131
+#: InvenTree/middleware.py:155
 msgid "CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly."
 msgstr "CSRF 검증에 실패했습니다. INVENTREE_SITE_URL 및 INVENTREE_TRUSTED_ORIGINS가 올바르게 설정되었는지 확인하세요."
 
-#: InvenTree/middleware.py:226
+#: InvenTree/middleware.py:238
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "다른 작업을 하기 전에 먼저 2단계 인증을 활성화해야 합니다."
 
@@ -282,17 +282,17 @@ msgstr "참조 번호가 너무 큽니다"
 msgid "Invalid choice"
 msgstr "잘못된 선택입니다"
 
-#: InvenTree/models.py:1349 common/api.py:1825 common/models.py:1537
-#: common/models.py:1960 common/models.py:2424 common/models.py:2549
-#: common/models.py:2861 common/serializers.py:704
+#: InvenTree/models.py:1349 common/api.py:1825 common/models.py:1540
+#: common/models.py:1980 common/models.py:2447 common/models.py:2572
+#: common/models.py:2887 common/serializers.py:704
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1141
 #: plugin/models.py:54 report/models.py:234 stock/models.py:91
 msgid "Name"
 msgstr "이름"
 
-#: InvenTree/models.py:1355 build/models.py:284 common/models.py:189
-#: common/models.py:2556 common/models.py:2697 common/models.py:2876
-#: common/models.py:3522 company/models.py:641 company/models.py:913
+#: InvenTree/models.py:1355 build/models.py:284 common/models.py:192
+#: common/models.py:2579 common/models.py:2720 common/models.py:2902
+#: common/models.py:3548 company/models.py:641 company/models.py:913
 #: order/models.py:549 order/models.py:2342 part/models.py:1164
 #: report/models.py:240 report/models.py:971 report/models.py:997
 #: report/templates/report/inventree_build_order_report.html:116
@@ -304,7 +304,7 @@ msgstr "설명"
 msgid "Description (optional)"
 msgstr "설명 (선택 사항)"
 
-#: InvenTree/models.py:1371 common/models.py:3611
+#: InvenTree/models.py:1371 common/models.py:3637
 msgid "Path"
 msgstr "경로"
 
@@ -340,7 +340,7 @@ msgstr "서버 오류"
 msgid "An error has been logged by the server."
 msgstr "서버에 오류가 기록되었습니다."
 
-#: InvenTree/models.py:1901 common/models.py:3547
+#: InvenTree/models.py:1901 common/models.py:3573
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -601,7 +601,7 @@ msgstr "유효한 통화 코드가 아닙니다"
 
 #: audit/api.py:91 audit/serializers.py:107 common/serializers.py:841
 #: common/serializers.py:997 common/serializers.py:1043
-#: common/serializers.py:1111 importer/models.py:95 report/api.py:42
+#: common/serializers.py:1111 importer/models.py:104 report/api.py:42
 #: report/models.py:390 report/serializers.py:69
 msgid "Model Type"
 msgstr "모델 유형"
@@ -610,7 +610,7 @@ msgstr "모델 유형"
 msgid "Model type (e.g. \"order.purchaseorder\" or \"purchaseorder\")"
 msgstr ""
 
-#: audit/api.py:97 common/api.py:499 common/models.py:3181
+#: audit/api.py:97 common/api.py:499 common/models.py:3207
 msgid "Model ID"
 msgstr "모델 ID"
 
@@ -670,11 +670,11 @@ msgstr ""
 msgid "Notes associated with this entry"
 msgstr ""
 
-#: audit/serializers.py:26 importer/models.py:588
+#: audit/serializers.py:26 importer/models.py:618
 msgid "Field"
 msgstr "필드"
 
-#: audit/serializers.py:27 common/models.py:2434 common/models.py:2691
+#: audit/serializers.py:27 common/models.py:2457 common/models.py:2714
 #: generic/states/serializers.py:22
 msgid "Label"
 msgstr "라벨"
@@ -1087,7 +1087,7 @@ msgstr "발행자"
 msgid "User who issued this build order"
 msgstr "이 작업 지시서를 발행한 사용자"
 
-#: build/models.py:438 common/models.py:204 order/api.py:198
+#: build/models.py:438 common/models.py:207 order/api.py:198
 #: order/models.py:618 part/models.py:1401
 #: report/templates/report/inventree_build_order_report.html:157
 msgid "Responsible"
@@ -1101,7 +1101,7 @@ msgstr "이 작업 지시서를 담당하는 사용자 또는 그룹"
 msgid "External Link"
 msgstr "외부 링크"
 
-#: build/models.py:446 common/models.py:2241 part/models.py:1216
+#: build/models.py:446 common/models.py:2261 part/models.py:1216
 #: stock/models.py:1275
 msgid "Link to external URL"
 msgstr "외부 URL로 연결"
@@ -1114,7 +1114,7 @@ msgstr "빌드 우선순위"
 msgid "Priority of this build order"
 msgstr "이 빌드 주문의 우선순위"
 
-#: build/models.py:462 common/models.py:164 common/models.py:182
+#: build/models.py:462 common/models.py:167 common/models.py:185
 #: order/api.py:184 order/models.py:558 order/models.py:2314
 msgid "Project Code"
 msgstr "프로젝트 코드"
@@ -1198,7 +1198,7 @@ msgid "Build object"
 msgstr "빌드 객체"
 
 #: build/models.py:2250 build/models.py:2530 build/serializers.py:314
-#: build/serializers.py:367 build/serializers.py:1442 common/models.py:1457
+#: build/serializers.py:367 build/serializers.py:1442 common/models.py:1460
 #: order/models.py:2245 order/models.py:3355 order/models.py:4357
 #: order/serializers.py:1932 order/serializers.py:2437
 #: order/serializers.py:3025 part/models.py:2657 part/models.py:3213
@@ -1697,7 +1697,7 @@ msgstr "보류"
 msgid "Cancelled"
 msgstr "취소됨"
 
-#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:694
+#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:724
 #: importer/status_codes.py:23 order/status_codes.py:24
 #: order/status_codes.py:68 order/status_codes.py:103 order/status_codes.py:153
 msgid "Complete"
@@ -1842,7 +1842,7 @@ msgstr "태그"
 msgid "Project Code Label"
 msgstr "프로젝트 코드 라벨"
 
-#: common/models.py:111 common/models.py:136 common/models.py:3951
+#: common/models.py:111 common/models.py:136 common/models.py:3977
 #: users/models.py:853
 msgid "Updated"
 msgstr "업데이트됨"
@@ -1859,178 +1859,178 @@ msgstr "업데이트 사용자"
 msgid "User who last updated this object"
 msgstr "이 객체를 마지막으로 업데이트한 사용자"
 
-#: common/models.py:183
+#: common/models.py:186
 msgid "Unique project code"
 msgstr "고유 프로젝트 코드"
 
-#: common/models.py:190
+#: common/models.py:193
 msgid "Project description"
 msgstr "프로젝트 설명"
 
-#: common/models.py:195 common/models.py:1542 common/models.py:2569
-#: common/models.py:2704 company/models.py:231 company/models.py:881
+#: common/models.py:198 common/models.py:1545 common/models.py:2592
+#: common/models.py:2727 company/models.py:231 company/models.py:881
 #: machine/models.py:43 part/models.py:1332 plugin/models.py:69
 #: stock/api.py:704 users/models.py:382 users/models.py:769
-#: users/serializers.py:377 users/serializers.py:508
+#: users/serializers.py:405 users/serializers.py:536
 msgid "Active"
 msgstr "활성"
 
-#: common/models.py:196
+#: common/models.py:199
 msgid "Is this project code active?"
 msgstr "이 프로젝트 코드가 활성 상태입니까?"
 
-#: common/models.py:205
+#: common/models.py:208
 msgid "User or group responsible for this project"
 msgstr "이 프로젝트의 담당 사용자 또는 그룹"
 
-#: common/models.py:829 common/models.py:1389 common/models.py:1427
+#: common/models.py:832 common/models.py:1392 common/models.py:1430
 msgid "Settings key"
 msgstr "설정 키"
 
-#: common/models.py:833
+#: common/models.py:836
 msgid "Settings value"
 msgstr "설정 값"
 
-#: common/models.py:838
+#: common/models.py:841
 msgid "Indicates whether the setting has been modified by the user"
 msgstr ""
 
-#: common/models.py:893
+#: common/models.py:896
 msgid "Chosen value is not a valid option"
 msgstr "선택한 값이 유효한 옵션이 아닙니다"
 
-#: common/models.py:909
+#: common/models.py:912
 msgid "Value must be a boolean value"
 msgstr "값은 불리언(Boolean)이어야 합니다"
 
-#: common/models.py:917
+#: common/models.py:920
 msgid "Value must be an integer value"
 msgstr "값은 정수여야 합니다"
 
-#: common/models.py:925
+#: common/models.py:928
 msgid "Value must be a valid number"
 msgstr "값은 유효한 숫자여야 합니다"
 
-#: common/models.py:950
+#: common/models.py:953
 msgid "Value does not pass validation checks"
 msgstr "값이 유효성 검사 기준을 통과하지 못했습니다"
 
-#: common/models.py:972
+#: common/models.py:975
 msgid "Key string must be unique"
 msgstr "키 문자열은 고유해야 합니다"
 
-#: common/models.py:1435 common/models.py:1436 common/models.py:1550
-#: common/models.py:1551 common/models.py:1798 common/models.py:1799
-#: common/models.py:2257 common/models.py:2258 common/models.py:3599
-#: importer/models.py:106 part/models.py:2707 part/models.py:2735
+#: common/models.py:1438 common/models.py:1439 common/models.py:1553
+#: common/models.py:1554 common/models.py:1801 common/models.py:1802
+#: common/models.py:2277 common/models.py:2278 common/models.py:3625
+#: importer/models.py:115 part/models.py:2707 part/models.py:2735
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:252
 #: users/models.py:707 users/models.py:841
 msgid "User"
 msgstr "사용자"
 
-#: common/models.py:1458
+#: common/models.py:1461
 msgid "Price break quantity"
 msgstr "가격 구간 수량"
 
-#: common/models.py:1465 company/serializers.py:357 order/models.py:2359
+#: common/models.py:1468 company/serializers.py:357 order/models.py:2359
 #: order/models.py:3797
 msgid "Price"
 msgstr "가격"
 
-#: common/models.py:1466
+#: common/models.py:1469
 msgid "Unit price at specified quantity"
 msgstr "지정 수량에서의 단가"
 
-#: common/models.py:1527 common/models.py:1712
+#: common/models.py:1530 common/models.py:1715
 msgid "Endpoint"
 msgstr "엔드포인트"
 
-#: common/models.py:1528
+#: common/models.py:1531
 msgid "Endpoint at which this webhook is received"
 msgstr "이 웹훅을 수신하는 엔드포인트"
 
-#: common/models.py:1538
+#: common/models.py:1541
 msgid "Name for this webhook"
 msgstr "이 웹훅의 이름"
 
-#: common/models.py:1542
+#: common/models.py:1545
 msgid "Is this webhook active"
 msgstr "이 웹훅이 활성 상태인가요"
 
-#: common/models.py:1558 users/models.py:353
+#: common/models.py:1561 users/models.py:353
 msgid "Token"
 msgstr "토큰"
 
-#: common/models.py:1559
+#: common/models.py:1562
 msgid "Token for access"
 msgstr "접근용 토큰"
 
-#: common/models.py:1567
+#: common/models.py:1570
 msgid "Secret"
 msgstr "시크릿"
 
-#: common/models.py:1568
+#: common/models.py:1571
 msgid "Shared secret for HMAC"
 msgstr "HMAC용 공유 시크릿"
 
-#: common/models.py:1676 common/models.py:3836
+#: common/models.py:1679 common/models.py:3862
 msgid "Message ID"
 msgstr "메시지 ID"
 
-#: common/models.py:1677 common/models.py:3826
+#: common/models.py:1680 common/models.py:3852
 msgid "Unique identifier for this message"
 msgstr "이 메시지의 고유 식별자"
 
-#: common/models.py:1685
+#: common/models.py:1688
 msgid "Host"
 msgstr "호스트"
 
-#: common/models.py:1686
+#: common/models.py:1689
 msgid "Host from which this message was received"
 msgstr "이 메시지를 수신한 호스트"
 
-#: common/models.py:1694
+#: common/models.py:1697
 msgid "Header"
 msgstr "헤더"
 
-#: common/models.py:1695
+#: common/models.py:1698
 msgid "Header of this message"
 msgstr "이 메시지의 헤더"
 
-#: common/models.py:1702
+#: common/models.py:1705
 msgid "Body"
 msgstr "본문"
 
-#: common/models.py:1703
+#: common/models.py:1706
 msgid "Body of this message"
 msgstr "이 메시지의 본문"
 
-#: common/models.py:1713
+#: common/models.py:1716
 msgid "Endpoint on which this message was received"
 msgstr "이 메시지를 수신한 엔드포인트"
 
-#: common/models.py:1718
+#: common/models.py:1721
 msgid "Worked on"
 msgstr "처리됨"
 
-#: common/models.py:1719
+#: common/models.py:1722
 msgid "Was the work on this message finished?"
 msgstr "이 메시지 처리가 완료되었나요?"
 
-#: common/models.py:1814
+#: common/models.py:1817
 msgid "Optional explicit URL associated with this notification"
 msgstr ""
 
-#: common/models.py:1854
+#: common/models.py:1857
 msgid "Id"
 msgstr "ID"
 
-#: common/models.py:1856 common/models.py:3516
+#: common/models.py:1859 common/models.py:3542
 msgid "Title"
 msgstr "제목"
 
-#: common/models.py:1858 common/models.py:2240 company/models.py:225
+#: common/models.py:1861 common/models.py:2260 company/models.py:225
 #: company/models.py:557 company/models.py:632 company/models.py:904
 #: order/models.py:564 order/models.py:2295 order/models.py:2918
 #: part/models.py:1215
@@ -2038,477 +2038,485 @@ msgstr "제목"
 msgid "Link"
 msgstr "링크"
 
-#: common/models.py:1860
+#: common/models.py:1863
 msgid "Published"
 msgstr "게시됨"
 
-#: common/models.py:1862
+#: common/models.py:1865
 msgid "Author"
 msgstr "작성자"
 
-#: common/models.py:1864
+#: common/models.py:1867
 msgid "Summary"
 msgstr "요약"
 
-#: common/models.py:1867 common/models.py:3803
+#: common/models.py:1870 common/models.py:3829
 msgid "Read"
 msgstr "읽음"
 
-#: common/models.py:1867
+#: common/models.py:1870
 msgid "Was this news item read?"
 msgstr "이 뉴스 항목을 읽었나요?"
 
-#: common/models.py:1886
+#: common/models.py:1892
 msgid "Custom Unit"
 msgstr "사용자 정의 단위"
 
-#: common/models.py:1908
+#: common/models.py:1914
 msgid "Unit symbol must be unique"
 msgstr "단위 기호는 고유해야 합니다"
 
-#: common/models.py:1926
+#: common/models.py:1933
 msgid "Unit name must be a valid identifier"
 msgstr "단위 이름은 유효한 식별자여야 합니다"
 
-#: common/models.py:1953
+#: common/models.py:1938
+msgid "Unit name conflicts with an existing built-in unit"
+msgstr ""
+
+#: common/models.py:1945
+msgid "Unit symbol conflicts with an existing built-in unit"
+msgstr ""
+
+#: common/models.py:1973
 #, python-format
 msgid "Unit definition results in a circular or invalid reference: %(error)s"
 msgstr ""
 
-#: common/models.py:1961
+#: common/models.py:1981
 msgid "Unit name"
 msgstr "단위 이름"
 
-#: common/models.py:1968
+#: common/models.py:1988
 msgid "Symbol"
 msgstr "기호"
 
-#: common/models.py:1969
+#: common/models.py:1989
 msgid "Optional unit symbol"
 msgstr "선택 단위 기호"
 
-#: common/models.py:1975
+#: common/models.py:1995
 msgid "Definition"
 msgstr "정의"
 
-#: common/models.py:1976
+#: common/models.py:1996
 msgid "Unit definition"
 msgstr "단위 정의"
 
-#: common/models.py:2051 common/models.py:2223 stock/models.py:3809
+#: common/models.py:2071 common/models.py:2243 stock/models.py:3809
 #: stock/serializers.py:257
 msgid "Attachment"
 msgstr "첨부파일"
 
-#: common/models.py:2097
+#: common/models.py:2117
 msgid "Missing file"
 msgstr "파일 누락"
 
-#: common/models.py:2098
+#: common/models.py:2118
 msgid "Missing external link"
 msgstr "외부 링크 누락"
 
-#: common/models.py:2163
+#: common/models.py:2183
 msgid "No file attached to rename"
 msgstr "이름을 변경할 첨부 파일이 없습니다"
 
-#: common/models.py:2166
+#: common/models.py:2186
 msgid "Filename cannot be empty"
 msgstr "파일 이름은 비워둘 수 없습니다"
 
-#: common/models.py:2171 common/models.py:2191
+#: common/models.py:2191 common/models.py:2211
 msgid "Invalid filename"
 msgstr "잘못된 파일 이름입니다"
 
-#: common/models.py:2177
+#: common/models.py:2197
 msgid "Cannot change file extension"
 msgstr "파일 확장자를 변경할 수 없습니다"
 
-#: common/models.py:2196
+#: common/models.py:2216
 msgid "A file with this name already exists"
 msgstr "이 이름의 파일이 이미 존재합니다"
 
-#: common/models.py:2203
+#: common/models.py:2223
 msgid "Failed to save renamed file"
 msgstr "이름이 변경된 파일을 저장하지 못했습니다"
 
-#: common/models.py:2215 common/models.py:2855
+#: common/models.py:2235 common/models.py:2881
 msgid "Model type"
 msgstr "모델 유형"
 
-#: common/models.py:2216
+#: common/models.py:2236
 msgid "Target model type for image"
 msgstr "이미지의 대상 모델 유형"
 
-#: common/models.py:2225
+#: common/models.py:2245
 msgid "Select file to attach"
 msgstr "첨부할 파일을 선택하세요"
 
-#: common/models.py:2231
+#: common/models.py:2251
 msgid "Thumbnail"
 msgstr "썸네일"
 
-#: common/models.py:2232
+#: common/models.py:2252
 msgid "Thumbnail image for this attachment"
 msgstr "이 첨부파일의 썸네일 이미지"
 
-#: common/models.py:2248
+#: common/models.py:2268
 msgid "Comment"
 msgstr "댓글"
 
-#: common/models.py:2249
+#: common/models.py:2269
 msgid "Attachment comment"
 msgstr "첨부파일 댓글"
 
-#: common/models.py:2265
+#: common/models.py:2285
 msgid "Upload date"
 msgstr "업로드 날짜"
 
-#: common/models.py:2266
+#: common/models.py:2286
 msgid "Date the file was uploaded"
 msgstr "파일이 업로드된 날짜"
 
-#: common/models.py:2271
+#: common/models.py:2291
 msgid "Is image"
 msgstr "이미지 여부"
 
-#: common/models.py:2272
+#: common/models.py:2292
 msgid "True if this attachment is a valid image file"
 msgstr "이 첨부 파일이 유효한 이미지 파일인지 여부"
 
-#: common/models.py:2276
+#: common/models.py:2296
 msgid "File size"
 msgstr "파일 크기"
 
-#: common/models.py:2276
+#: common/models.py:2296
 msgid "File size in bytes"
 msgstr "바이트 단위의 파일 크기"
 
-#: common/models.py:2312 common/serializers.py:868
+#: common/models.py:2332 common/serializers.py:868
 msgid "Invalid model type specified for attachment"
 msgstr "첨부파일에 대해 유효하지 않은 모델 유형이 지정되었습니다"
 
-#: common/models.py:2400
+#: common/models.py:2423
 msgid "Custom State"
 msgstr "사용자 정의 상태"
 
-#: common/models.py:2401
+#: common/models.py:2424
 msgid "Custom States"
 msgstr "사용자 정의 상태"
 
-#: common/models.py:2406
+#: common/models.py:2429
 msgid "Reference Status Set"
 msgstr "참조 상태 세트"
 
-#: common/models.py:2407
+#: common/models.py:2430
 msgid "Status set that is extended with this custom state"
 msgstr "이 사용자 정의 상태로 확장되는 상태 세트"
 
-#: common/models.py:2411 generic/states/serializers.py:18
+#: common/models.py:2434 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "논리 키"
 
-#: common/models.py:2413
+#: common/models.py:2436
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "업무 로직에서 이 사용자 정의 상태와 동일한 상태 논리 키"
 
-#: common/models.py:2418 common/models.py:2685 machine/serializers.py:27
+#: common/models.py:2441 common/models.py:2708 machine/serializers.py:27
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:3801
 msgid "Value"
 msgstr "값"
 
-#: common/models.py:2419
+#: common/models.py:2442
 msgid "Numerical value that will be saved in the models database"
 msgstr "모델 데이터베이스에 저장될 숫자 값"
 
-#: common/models.py:2425
+#: common/models.py:2448
 msgid "Name of the state"
 msgstr "상태 이름"
 
-#: common/models.py:2435
+#: common/models.py:2458
 msgid "Label that will be displayed in the frontend"
 msgstr "프론트엔드에 표시될 라벨"
 
-#: common/models.py:2442 generic/states/serializers.py:24
+#: common/models.py:2465 generic/states/serializers.py:24
 msgid "Color"
 msgstr "색상"
 
-#: common/models.py:2443
+#: common/models.py:2466
 msgid "Color that will be displayed in the frontend"
 msgstr "프론트엔드에 표시될 색상"
 
-#: common/models.py:2451
+#: common/models.py:2474
 msgid "Model"
 msgstr "모델"
 
-#: common/models.py:2452
+#: common/models.py:2475
 msgid "Model this state is associated with"
 msgstr "이 상태가 연결된 모델"
 
-#: common/models.py:2467
+#: common/models.py:2490
 msgid "Model must be selected"
 msgstr "모델을 선택해야 합니다"
 
-#: common/models.py:2470
+#: common/models.py:2493
 msgid "Key must be selected"
 msgstr "키를 선택해야 합니다"
 
-#: common/models.py:2473
+#: common/models.py:2496
 msgid "Logical key must be selected"
 msgstr "논리 키를 선택해야 합니다"
 
-#: common/models.py:2477
+#: common/models.py:2500
 msgid "Key must be different from logical key"
 msgstr "키는 논리 키와 달라야 합니다"
 
-#: common/models.py:2484
+#: common/models.py:2507
 msgid "Valid reference status class must be provided"
 msgstr "유효한 참조 상태 클래스가 제공되어야 합니다"
 
-#: common/models.py:2490
+#: common/models.py:2513
 msgid "Key must be different from the logical keys of the reference status"
 msgstr "키는 참조 상태의 논리 키들과 달라야 합니다"
 
-#: common/models.py:2497
+#: common/models.py:2520
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr "논리 키는 참조 상태의 논리 키 목록에 포함되어야 합니다"
 
-#: common/models.py:2504
+#: common/models.py:2527
 msgid "Name must be different from the names of the reference status"
 msgstr "이름은 참조 상태의 이름들과 달라야 합니다"
 
-#: common/models.py:2544 common/models.py:2679 common/models.py:2900
+#: common/models.py:2567 common/models.py:2702 common/models.py:2926
 msgid "Selection List"
 msgstr "선택 목록"
 
-#: common/models.py:2545
+#: common/models.py:2568
 msgid "Selection Lists"
 msgstr "선택 목록"
 
-#: common/models.py:2550
+#: common/models.py:2573
 msgid "Name of the selection list"
 msgstr "선택 목록 이름"
 
-#: common/models.py:2557
+#: common/models.py:2580
 msgid "Description of the selection list"
 msgstr "선택 목록 설명"
 
-#: common/models.py:2563 part/models.py:1337
+#: common/models.py:2586 part/models.py:1337
 msgid "Locked"
 msgstr "잠김"
 
-#: common/models.py:2564
+#: common/models.py:2587
 msgid "Is this selection list locked?"
 msgstr "이 선택 목록이 잠겨 있나요?"
 
-#: common/models.py:2570
+#: common/models.py:2593
 msgid "Can this selection list be used?"
 msgstr "이 선택 목록을 사용할 수 있나요?"
 
-#: common/models.py:2578
+#: common/models.py:2601
 msgid "Source Plugin"
 msgstr "소스 플러그인"
 
-#: common/models.py:2579
+#: common/models.py:2602
 msgid "Plugin which provides the selection list"
 msgstr "선택 목록을 제공하는 플러그인"
 
-#: common/models.py:2584
+#: common/models.py:2607
 msgid "Source String"
 msgstr "소스 문자열"
 
-#: common/models.py:2585
+#: common/models.py:2608
 msgid "Optional string identifying the source used for this list"
 msgstr "이 목록에 사용된 소스를 식별하는 선택 문자열"
 
-#: common/models.py:2594
+#: common/models.py:2617
 msgid "Default Entry"
 msgstr "기본 항목"
 
-#: common/models.py:2595
+#: common/models.py:2618
 msgid "Default entry for this selection list"
 msgstr "이 선택 목록의 기본 항목"
 
-#: common/models.py:2600 common/models.py:3946
+#: common/models.py:2623 common/models.py:3972
 msgid "Created"
 msgstr "생성됨"
 
-#: common/models.py:2601
+#: common/models.py:2624
 msgid "Date and time that the selection list was created"
 msgstr "선택 목록이 생성된 날짜 및 시간"
 
-#: common/models.py:2606
+#: common/models.py:2629
 msgid "Last Updated"
 msgstr "마지막 업데이트"
 
-#: common/models.py:2607
+#: common/models.py:2630
 msgid "Date and time that the selection list was last updated"
 msgstr "선택 목록이 마지막으로 업데이트된 날짜 및 시간"
 
-#: common/models.py:2669
+#: common/models.py:2692
 msgid "Selection List Entry"
 msgstr "선택 목록 항목"
 
-#: common/models.py:2670
+#: common/models.py:2693
 msgid "Selection List Entries"
 msgstr "선택 목록 항목"
 
-#: common/models.py:2680
+#: common/models.py:2703
 msgid "Selection list to which this entry belongs"
 msgstr "이 항목이 속한 선택 목록"
 
-#: common/models.py:2686
+#: common/models.py:2709
 msgid "Value of the selection list entry"
 msgstr "선택 목록 항목의 값"
 
-#: common/models.py:2692
+#: common/models.py:2715
 msgid "Label for the selection list entry"
 msgstr "선택 목록 항목 라벨"
 
-#: common/models.py:2698
+#: common/models.py:2721
 msgid "Description of the selection list entry"
 msgstr "선택 목록 항목 설명"
 
-#: common/models.py:2705
+#: common/models.py:2728
 msgid "Is this selection list entry active?"
 msgstr "이 선택 목록 항목이 활성 상태인가요?"
 
-#: common/models.py:2741
+#: common/models.py:2767
 msgid "Parameter Template"
 msgstr "매개변수 템플릿"
 
-#: common/models.py:2742
+#: common/models.py:2768
 msgid "Parameter Templates"
 msgstr "매개변수 템플릿"
 
-#: common/models.py:2763
+#: common/models.py:2789
 msgid "No uniqueness required"
 msgstr ""
 
-#: common/models.py:2764
+#: common/models.py:2790
 msgid "Unique for model type"
 msgstr ""
 
-#: common/models.py:2765
+#: common/models.py:2791
 msgid "Globally unique"
 msgstr ""
 
-#: common/models.py:2792
+#: common/models.py:2818
 msgid "Checkbox parameters cannot have units"
 msgstr "체크박스 매개변수에는 단위를 지정할 수 없습니다"
 
-#: common/models.py:2797
+#: common/models.py:2823
 msgid "Checkbox parameters cannot have choices"
 msgstr "체크박스 매개변수에는 선택지를 지정할 수 없습니다"
 
-#: common/models.py:2817 part/models.py:2805
+#: common/models.py:2843 part/models.py:2805
 msgid "Choices must be unique"
 msgstr "선택지는 고유해야 합니다"
 
-#: common/models.py:2834
+#: common/models.py:2860
 msgid "Parameter template name must be unique"
 msgstr "매개변수 템플릿 이름은 고유해야 합니다"
 
-#: common/models.py:2856
+#: common/models.py:2882
 msgid "Target model type for this parameter template"
 msgstr "이 매개변수 템플릿의 대상 모델 유형"
 
-#: common/models.py:2862
+#: common/models.py:2888
 msgid "Parameter Name"
 msgstr "매개변수 이름"
 
-#: common/models.py:2868 part/models.py:1290
+#: common/models.py:2894 part/models.py:1290
 msgid "Units"
 msgstr "단위"
 
-#: common/models.py:2869
+#: common/models.py:2895
 msgid "Physical units for this parameter"
 msgstr "이 매개변수의 물리 단위"
 
-#: common/models.py:2877
+#: common/models.py:2903
 msgid "Parameter description"
 msgstr "매개변수 설명"
 
-#: common/models.py:2883
+#: common/models.py:2909
 msgid "Checkbox"
 msgstr "체크박스"
 
-#: common/models.py:2884
+#: common/models.py:2910
 msgid "Is this parameter a checkbox?"
 msgstr "이 매개변수는 체크박스인가요?"
 
-#: common/models.py:2889 part/models.py:2892
+#: common/models.py:2915 part/models.py:2892
 msgid "Choices"
 msgstr "선택지"
 
-#: common/models.py:2890
+#: common/models.py:2916
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "이 매개변수에 대한 유효한 선택지(쉼표로 구분)"
 
-#: common/models.py:2901
+#: common/models.py:2927
 msgid "Selection list for this parameter"
 msgstr "이 매개변수의 선택 목록"
 
-#: common/models.py:2906 part/models.py:2867 report/models.py:384
+#: common/models.py:2932 part/models.py:2867 report/models.py:384
 #: scim/models.py:31
 msgid "Enabled"
 msgstr "사용"
 
-#: common/models.py:2907
+#: common/models.py:2933
 msgid "Is this parameter template enabled?"
 msgstr "이 매개변수 템플릿을 사용하나요?"
 
-#: common/models.py:2913
+#: common/models.py:2939
 msgid "Uniqueness"
 msgstr ""
 
-#: common/models.py:2915
+#: common/models.py:2941
 msgid "Enforce uniqueness of linked parameter values against this template"
 msgstr ""
 
-#: common/models.py:2970
+#: common/models.py:2996
 msgid "Parameter"
 msgstr "매개변수"
 
-#: common/models.py:2971
+#: common/models.py:2997
 msgid "Parameters"
 msgstr "매개변수"
 
-#: common/models.py:3033
+#: common/models.py:3059
 msgid "Invalid choice for parameter value"
 msgstr "매개변수 값에 대한 선택지가 올바르지 않습니다"
 
-#: common/models.py:3140
+#: common/models.py:3166
 msgid "Parameter value must be unique"
 msgstr ""
 
-#: common/models.py:3149 common/serializers.py:1097
+#: common/models.py:3175 common/serializers.py:1097
 msgid "Invalid model type specified for parameter"
 msgstr "매개변수에 지정된 모델 유형이 올바르지 않습니다"
 
-#: common/models.py:3182
+#: common/models.py:3208
 msgid "ID of the target model for this parameter"
 msgstr "이 매개변수의 대상 모델 ID"
 
-#: common/models.py:3191 common/models.py:3488 common/setting/system.py:515
+#: common/models.py:3217 common/models.py:3514 common/setting/system.py:515
 #: report/models.py:482 report/models.py:816 report/serializers.py:115
 #: report/serializers.py:166 stock/serializers.py:244
 msgid "Template"
 msgstr "템플릿"
 
-#: common/models.py:3192
+#: common/models.py:3218
 msgid "Parameter template"
 msgstr "매개변수 템플릿"
 
-#: common/models.py:3197 common/models.py:3588 importer/models.py:685
+#: common/models.py:3223 common/models.py:3614 importer/models.py:715
 msgid "Data"
 msgstr "데이터"
 
-#: common/models.py:3198
+#: common/models.py:3224
 msgid "Parameter Value"
 msgstr "매개변수 값"
 
-#: common/models.py:3207 common/models.py:3247 company/models.py:921
+#: common/models.py:3233 common/models.py:3273 company/models.py:921
 #: order/serializers.py:931 order/serializers.py:2348 part/models.py:3283
 #: part/models.py:3713
 #: report/templates/report/inventree_bill_of_materials_report.html:140
@@ -2521,226 +2529,226 @@ msgstr "매개변수 값"
 msgid "Note"
 msgstr "메모"
 
-#: common/models.py:3208 stock/serializers.py:762 stock/serializers.py:1126
+#: common/models.py:3234 stock/serializers.py:762 stock/serializers.py:1126
 msgid "Optional note field"
 msgstr "선택적 메모 필드"
 
-#: common/models.py:3351 common/models.py:3353 common/serializers.py:970
+#: common/models.py:3377 common/models.py:3379 common/serializers.py:970
 #: common/serializers.py:974
 msgid "This field is required."
 msgstr ""
 
-#: common/models.py:3490
+#: common/models.py:3516
 msgid "Is this note a template (not linked to a specific model instance)?"
 msgstr ""
 
-#: common/models.py:3500
+#: common/models.py:3526
 msgid "Target model type for this note"
 msgstr ""
 
-#: common/models.py:3504
+#: common/models.py:3530
 msgid "Target model instance ID for this note"
 msgstr ""
 
-#: common/models.py:3511 company/models.py:887
+#: common/models.py:3537 company/models.py:887
 msgid "Primary"
 msgstr "기본"
 
-#: common/models.py:3512
+#: common/models.py:3538
 msgid "Is this the primary note for the associated model?"
 msgstr ""
 
-#: common/models.py:3516
+#: common/models.py:3542
 msgid "Note title"
 msgstr ""
 
-#: common/models.py:3523
+#: common/models.py:3549
 msgid "Optional description field"
 msgstr ""
 
-#: common/models.py:3528
+#: common/models.py:3554
 msgid "Content"
 msgstr ""
 
-#: common/models.py:3529
+#: common/models.py:3555
 msgid "Note content"
 msgstr ""
 
-#: common/models.py:3547
+#: common/models.py:3573
 msgid "Image file"
 msgstr "이미지 파일"
 
-#: common/models.py:3584
+#: common/models.py:3610
 msgid "Barcode Scan"
 msgstr "바코드 스캔"
 
-#: common/models.py:3589
+#: common/models.py:3615
 msgid "Barcode data"
 msgstr "바코드 데이터"
 
-#: common/models.py:3600
+#: common/models.py:3626
 msgid "User who scanned the barcode"
 msgstr "바코드를 스캔한 사용자"
 
-#: common/models.py:3605 importer/models.py:73
+#: common/models.py:3631 importer/models.py:82
 msgid "Timestamp"
 msgstr "타임스탬프"
 
-#: common/models.py:3606
+#: common/models.py:3632
 msgid "Date and time of the barcode scan"
 msgstr "바코드 스캔 날짜 및 시간"
 
-#: common/models.py:3612
+#: common/models.py:3638
 msgid "URL endpoint which processed the barcode"
 msgstr "바코드를 처리한 URL 엔드포인트"
 
-#: common/models.py:3619 order/models.py:2349 plugin/serializers.py:93
+#: common/models.py:3645 order/models.py:2349 plugin/serializers.py:93
 msgid "Context"
 msgstr "컨텍스트"
 
-#: common/models.py:3620
+#: common/models.py:3646
 msgid "Context data for the barcode scan"
 msgstr "바코드 스캔의 컨텍스트 데이터"
 
-#: common/models.py:3627
+#: common/models.py:3653
 msgid "Response"
 msgstr "응답"
 
-#: common/models.py:3628
+#: common/models.py:3654
 msgid "Response data from the barcode scan"
 msgstr "바코드 스캔의 응답 데이터"
 
-#: common/models.py:3634 report/templates/report/inventree_test_report.html:103
+#: common/models.py:3660 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:3795
 msgid "Result"
 msgstr "결과"
 
-#: common/models.py:3635
+#: common/models.py:3661
 msgid "Was the barcode scan successful?"
 msgstr "바코드 스캔이 성공했나요?"
 
-#: common/models.py:3717
+#: common/models.py:3743
 msgid "An error occurred"
 msgstr "오류가 발생했습니다"
 
-#: common/models.py:3738
+#: common/models.py:3764
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
 msgstr "INVE-E8: 이메일 로그 삭제가 보호되어 있습니다. 삭제를 허용하려면 INVENTREE_PROTECT_EMAIL_LOG를 False로 설정하세요."
 
-#: common/models.py:3785
+#: common/models.py:3811
 msgid "Email Message"
 msgstr "이메일 메시지"
 
-#: common/models.py:3786
+#: common/models.py:3812
 msgid "Email Messages"
 msgstr "이메일 메시지"
 
-#: common/models.py:3793
+#: common/models.py:3819
 msgid "Announced"
 msgstr "공지됨"
 
-#: common/models.py:3795
+#: common/models.py:3821
 msgid "Sent"
 msgstr "전송됨"
 
-#: common/models.py:3796
+#: common/models.py:3822
 msgid "Failed"
 msgstr "실패"
 
-#: common/models.py:3799
+#: common/models.py:3825
 msgid "Delivered"
 msgstr "전달됨"
 
-#: common/models.py:3807
+#: common/models.py:3833
 msgid "Confirmed"
 msgstr "확인됨"
 
-#: common/models.py:3813
+#: common/models.py:3839
 msgid "Inbound"
 msgstr "수신"
 
-#: common/models.py:3814
+#: common/models.py:3840
 msgid "Outbound"
 msgstr "발신"
 
-#: common/models.py:3819
+#: common/models.py:3845
 msgid "No Reply"
 msgstr "회신 없음"
 
-#: common/models.py:3820
+#: common/models.py:3846
 msgid "Track Delivery"
 msgstr "전달 추적"
 
-#: common/models.py:3821
+#: common/models.py:3847
 msgid "Track Read"
 msgstr "읽음 추적"
 
-#: common/models.py:3822
+#: common/models.py:3848
 msgid "Track Click"
 msgstr "클릭 추적"
 
-#: common/models.py:3825 common/models.py:3933
+#: common/models.py:3851 common/models.py:3959
 msgid "Global ID"
 msgstr "전역 ID"
 
-#: common/models.py:3838
+#: common/models.py:3864
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr "이 메시지의 식별자(외부 시스템에서 제공될 수 있음)"
 
-#: common/models.py:3845
+#: common/models.py:3871
 msgid "Thread ID"
 msgstr "스레드 ID"
 
-#: common/models.py:3847
+#: common/models.py:3873
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr "이 메시지 스레드의 식별자(외부 시스템에서 제공될 수 있음)"
 
-#: common/models.py:3856
+#: common/models.py:3882
 msgid "Thread"
 msgstr "스레드"
 
-#: common/models.py:3857
+#: common/models.py:3883
 msgid "Linked thread for this message"
 msgstr "이 메시지에 연결된 스레드"
 
-#: common/models.py:3873
+#: common/models.py:3899
 msgid "Priority"
 msgstr "우선순위"
 
-#: common/models.py:3915
+#: common/models.py:3941
 msgid "Email Thread"
 msgstr "이메일 스레드"
 
-#: common/models.py:3916
+#: common/models.py:3942
 msgid "Email Threads"
 msgstr "이메일 스레드"
 
-#: common/models.py:3927 generic/states/serializers.py:16
+#: common/models.py:3953 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:237
 msgid "Key"
 msgstr "키"
 
-#: common/models.py:3930
+#: common/models.py:3956
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr "이 스레드의 고유 키(스레드 식별에 사용)"
 
-#: common/models.py:3934
+#: common/models.py:3960
 msgid "Unique identifier for this thread"
 msgstr "이 스레드의 고유 식별자"
 
-#: common/models.py:3941
+#: common/models.py:3967
 msgid "Started Internal"
 msgstr "내부 시작"
 
-#: common/models.py:3942
+#: common/models.py:3968
 msgid "Was this thread started internally?"
 msgstr "이 스레드는 내부에서 시작되었나요?"
 
-#: common/models.py:3947
+#: common/models.py:3973
 msgid "Date and time that the thread was created"
 msgstr "스레드가 생성된 날짜 및 시간"
 
-#: common/models.py:3952
+#: common/models.py:3978
 msgid "Date and time that the thread was last updated"
 msgstr "스레드가 마지막으로 업데이트된 날짜 및 시간"
 
@@ -2763,14 +2771,14 @@ msgid "A order that is assigned to you was canceled"
 msgstr "귀하에게 할당된 주문이 취소되었습니다"
 
 #: common/notifications.py:73 common/notifications.py:80
-#: common/test_notifications.py:82 common/test_notifications.py:86
-#: common/test_notifications.py:137 common/test_notifications.py:161
+#: common/test_notifications.py:78 common/test_notifications.py:82
+#: common/test_notifications.py:133 common/test_notifications.py:157
 #: order/api.py:591
 msgid "Items Received"
 msgstr "항목 수령됨"
 
-#: common/notifications.py:75 common/test_notifications.py:83
-#: common/test_notifications.py:139 common/test_notifications.py:162
+#: common/notifications.py:75 common/test_notifications.py:79
+#: common/test_notifications.py:135 common/test_notifications.py:158
 msgid "Items have been received against a purchase order"
 msgstr "구매 주문에 대한 항목을 수령했습니다"
 
@@ -4015,8 +4023,8 @@ msgid "Users must use multifactor security."
 msgstr "사용자는 다중 요소 보안을 사용해야 합니다."
 
 #: common/setting/system.py:1195
-msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately."
-msgstr "이 설정을 활성화하면 모든 사용자가 다중 요소 인증을 설정해야 합니다. 모든 세션이 즉시 연결 해제됩니다."
+msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately, and API tokens of users without multifactor authentication will stop working."
+msgstr ""
 
 #: common/setting/system.py:1201
 msgid "Check plugins on startup"
@@ -5143,144 +5151,149 @@ msgstr ""
 msgid "Invalid status code"
 msgstr "잘못된 상태 코드"
 
-#: importer/models.py:77
+#: importer/models.py:86
 msgid "Data File"
 msgstr "데이터 파일"
 
-#: importer/models.py:78
+#: importer/models.py:87
 msgid "Data file to import"
 msgstr "가져올 데이터 파일"
 
-#: importer/models.py:88
+#: importer/models.py:97
 msgid "Columns"
 msgstr "열"
 
-#: importer/models.py:96
+#: importer/models.py:105
 msgid "Target model type for this import session"
 msgstr "이 가져오기 세션의 대상 모델 유형"
 
-#: importer/models.py:102
+#: importer/models.py:111
 msgid "Import status"
 msgstr "가져오기 상태"
 
-#: importer/models.py:112
+#: importer/models.py:121
 msgid "Field Defaults"
 msgstr "필드 기본값"
 
-#: importer/models.py:120
+#: importer/models.py:129
 msgid "Field Overrides"
 msgstr "필드 재정의"
 
-#: importer/models.py:128
+#: importer/models.py:137
 msgid "Field Filters"
 msgstr "필드 필터"
 
-#: importer/models.py:135
+#: importer/models.py:144
 msgid "Update Existing Records"
 msgstr "기존 레코드 업데이트"
 
-#: importer/models.py:136
+#: importer/models.py:145
 msgid "If enabled, existing records will be updated with new data"
 msgstr "활성화하면 기존 레코드가 새 데이터로 업데이트됩니다"
 
-#: importer/models.py:326
+#: importer/models.py:356
 msgid "Some required fields have not been mapped"
 msgstr "일부 필수 필드가 매핑되지 않았습니다"
 
-#: importer/models.py:428
+#: importer/models.py:458
 msgid "Completed Row Count History"
 msgstr "완료된 행 수 기록"
 
-#: importer/models.py:431
+#: importer/models.py:461
 msgid "Row Count History"
 msgstr "행 수 기록"
 
-#: importer/models.py:454
+#: importer/models.py:484
 msgid "ID"
 msgstr "ID"
 
-#: importer/models.py:455
+#: importer/models.py:485
 msgid "Existing database identifier for the record"
 msgstr "레코드의 기존 데이터베이스 식별자"
 
-#: importer/models.py:533
+#: importer/models.py:563
 msgid "Column is already mapped to a database field"
 msgstr "열이 이미 데이터베이스 필드에 매핑되어 있습니다"
 
-#: importer/models.py:538
+#: importer/models.py:568
 msgid "Field is already mapped to a data column"
 msgstr "필드가 이미 데이터 열에 매핑되어 있습니다"
 
-#: importer/models.py:547
+#: importer/models.py:577
 msgid "Column mapping must be linked to a valid import session"
 msgstr "열 매핑은 유효한 가져오기 세션에 연결되어야 합니다"
 
-#: importer/models.py:552
+#: importer/models.py:582
 msgid "Column does not exist in the data file"
 msgstr "데이터 파일에 해당 열이 없습니다"
 
-#: importer/models.py:559
+#: importer/models.py:589
 msgid "Field does not exist in the target model"
 msgstr "대상 모델에 해당 필드가 없습니다"
 
-#: importer/models.py:563
+#: importer/models.py:593
 msgid "Selected field is read-only"
 msgstr "선택한 필드는 읽기 전용입니다"
 
-#: importer/models.py:569
+#: importer/models.py:599
 msgid "Lookup field can only be set for related (foreign-key) fields"
 msgstr "조회 필드는 관련(외래 키) 필드에만 설정할 수 있음"
 
-#: importer/models.py:577
+#: importer/models.py:607
 #, python-brace-format
 msgid "Invalid lookup field. Valid options are: {options}"
 msgstr "잘못된 조회 필드입니다. 사용 가능한 옵션: {options}"
 
-#: importer/models.py:584 importer/models.py:671
+#: importer/models.py:614 importer/models.py:701
 msgid "Import Session"
 msgstr "가져오기 세션"
 
-#: importer/models.py:590
+#: importer/models.py:620
 msgid "Column"
 msgstr "열"
 
-#: importer/models.py:596
+#: importer/models.py:626
 msgid "Lookup Field"
 msgstr "조회 필드"
 
-#: importer/models.py:598
+#: importer/models.py:628
 msgid "Database field to use for foreign-key lookup. Leave blank for automatic lookup."
 msgstr "외래 키 조회에 사용할 데이터베이스 필드. 자동 조회를 사용하려면 비워두세요."
 
-#: importer/models.py:675
+#: importer/models.py:705
 msgid "Row Index"
 msgstr "행 인덱스"
 
-#: importer/models.py:680
+#: importer/models.py:710
 msgid "Original row data"
 msgstr "원본 행 데이터"
 
-#: importer/models.py:689 machine/models.py:114
+#: importer/models.py:719 machine/models.py:114
 msgid "Errors"
 msgstr "오류"
 
-#: importer/models.py:692 part/serializers.py:1110
+#: importer/models.py:722 part/serializers.py:1110
 msgid "Valid"
 msgstr "유효"
 
-#: importer/models.py:933
+#: importer/models.py:936 importer/models.py:963
+#, python-brace-format
+msgid "Invalid filters for field: {field}"
+msgstr ""
+
+#: importer/models.py:977
 msgid "Multiple matches found for value - please ensure the value is unique, or select a specific lookup field"
 msgstr "값에 대해 여러 항목이 일치합니다. 값이 고유한지 확인하거나 특정 조회 필드를 선택하세요"
 
-#: importer/models.py:986
+#: importer/models.py:1030
 msgid "No record found with the provided ID"
 msgstr "제공된 ID로 레코드를 찾을 수 없습니다"
 
-#: importer/models.py:991
+#: importer/models.py:1035
 msgid "Invalid ID format provided"
 msgstr "잘못된 ID 형식이 제공되었습니다"
 
-#: importer/models.py:1059
+#: importer/models.py:1103
 msgid "ID is required for updating existing records."
 msgstr "기존 레코드를 업데이트하려면 ID가 필요합니다."
 
@@ -5300,43 +5313,47 @@ msgstr ""
 msgid "Invalid data file dimensions"
 msgstr "잘못된 데이터 파일 크기입니다"
 
-#: importer/serializers.py:98
+#: importer/serializers.py:99
 msgid "Model type cannot be changed after the import session has been created"
 msgstr ""
 
-#: importer/serializers.py:113 importer/serializers.py:116
+#: importer/serializers.py:113
+msgid "Only staff users can import data for this model"
+msgstr ""
+
+#: importer/serializers.py:127 importer/serializers.py:130
 msgid "Invalid field defaults"
 msgstr "잘못된 필드 기본값"
 
-#: importer/serializers.py:129 importer/serializers.py:132
+#: importer/serializers.py:143 importer/serializers.py:146
 msgid "Invalid field overrides"
 msgstr "잘못된 필드 재정의"
 
-#: importer/serializers.py:145 importer/serializers.py:148
+#: importer/serializers.py:159 importer/serializers.py:162
 msgid "Invalid field filters"
 msgstr "잘못된 필드 필터"
 
-#: importer/serializers.py:229
+#: importer/serializers.py:245
 msgid "Rows"
 msgstr "행"
 
-#: importer/serializers.py:230
+#: importer/serializers.py:246
 msgid "List of row IDs to accept"
 msgstr "승인할 행 ID 목록"
 
-#: importer/serializers.py:243
+#: importer/serializers.py:259
 msgid "No rows provided"
 msgstr "제공된 행이 없습니다"
 
-#: importer/serializers.py:247
+#: importer/serializers.py:263
 msgid "Row does not belong to this session"
 msgstr "행이 이 세션에 속하지 않습니다"
 
-#: importer/serializers.py:250
+#: importer/serializers.py:266
 msgid "Row contains invalid data"
 msgstr "행에 잘못된 데이터가 포함되어 있습니다"
 
-#: importer/serializers.py:253
+#: importer/serializers.py:269
 msgid "Row has already been completed"
 msgstr "행이 이미 완료되었습니다"
 
@@ -5373,8 +5390,24 @@ msgid "Data file contains too many rows"
 msgstr "데이터 파일에 행이 너무 많습니다"
 
 #: importer/validators.py:53 importer/validators.py:56
+#: importer/validators.py:74
 msgid "Value must be a valid dictionary object"
 msgstr "값은 유효한 사전(dictionary) 객체여야 합니다"
+
+#: importer/validators.py:79
+#, python-brace-format
+msgid "Filters for field {field} must be a valid dictionary object"
+msgstr ""
+
+#: importer/validators.py:92
+#, python-brace-format
+msgid "Invalid filter key for field {field}: {key}"
+msgstr ""
+
+#: importer/validators.py:104
+#, python-brace-format
+msgid "Invalid filter value for field {field}: {key}"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:216
 msgid "Copies"
@@ -5388,7 +5421,7 @@ msgstr "각 라벨에 대해 인쇄할 복사본 수"
 msgid "Connected"
 msgstr "연결됨"
 
-#: machine/machine_types/label_printer.py:236 order/api.py:2591
+#: machine/machine_types/label_printer.py:236 order/api.py:2574
 msgid "Unknown"
 msgstr "알 수 없음"
 
@@ -5639,14 +5672,14 @@ msgstr ""
 msgid "Transfer order not found"
 msgstr ""
 
-#: order/api.py:2583 order/models.py:699 order/models.py:2456
+#: order/api.py:2566 order/models.py:699 order/models.py:2456
 #: order/models.py:2582
 #: report/templates/report/inventree_purchase_order_report.html:13
 #: stock/serializers.py:128 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "구매 주문"
 
-#: order/api.py:2585 order/models.py:1507 order/models.py:2642
+#: order/api.py:2568 order/models.py:1507 order/models.py:2642
 #: order/models.py:2845 order/models.py:3232
 #: report/templates/report/inventree_build_order_report.html:134
 #: report/templates/report/inventree_sales_order_report.html:13
@@ -5655,14 +5688,14 @@ msgstr "구매 주문"
 msgid "Sales Order"
 msgstr "판매 주문"
 
-#: order/api.py:2587 order/models.py:3398 order/models.py:3754
+#: order/api.py:2570 order/models.py:3398 order/models.py:3754
 #: order/models.py:3820
 #: report/templates/report/inventree_return_order_report.html:12
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "반품 주문"
 
-#: order/api.py:2589 order/models.py:3842 order/models.py:4195
+#: order/api.py:2572 order/models.py:3842 order/models.py:4195
 #: report/templates/report/inventree_transfer_order_report.html:11
 msgid "Transfer Order"
 msgstr "전송 주문"
@@ -10685,21 +10718,37 @@ msgstr "권한"
 msgid "Important dates"
 msgstr "중요 날짜"
 
-#: users/authentication.py:25
+#: users/api.py:418
+msgid "Reauthentication is required to generate a token"
+msgstr ""
+
+#: users/authentication.py:44
+msgid "INVE-W20: Password authentication not allowed due to MFA"
+msgstr ""
+
+#: users/authentication.py:63
 msgid "Invalid token."
 msgstr ""
 
-#: users/authentication.py:28
+#: users/authentication.py:66
 msgid "User inactive or deleted."
 msgstr ""
 
-#: users/authentication.py:31 users/models.py:279
+#: users/authentication.py:69 users/models.py:279
 msgid "Token has been revoked"
 msgstr "토큰이 취소되었습니다"
 
-#: users/authentication.py:34
+#: users/authentication.py:72
 msgid "Token has expired"
 msgstr "토큰이 만료되었습니다"
+
+#: users/authentication.py:77
+msgid "Multi-factor authentication must be enabled for this account"
+msgstr ""
+
+#: users/authentication.py:117
+msgid "OAuth2 tokens are not accepted for this endpoint"
+msgstr ""
 
 #: users/models.py:107
 msgid "API Token"
@@ -10953,103 +11002,111 @@ msgstr "반품 주문"
 msgid "Transfer Orders"
 msgstr "이동 주문"
 
-#: users/serializers.py:208
+#: users/serializers.py:216
 msgid "Username"
 msgstr "사용자 이름"
 
-#: users/serializers.py:211
+#: users/serializers.py:219
 msgid "First Name"
 msgstr "이름"
 
-#: users/serializers.py:211
+#: users/serializers.py:219
 msgid "First name of the user"
 msgstr "사용자의 이름"
 
-#: users/serializers.py:215
+#: users/serializers.py:223
 msgid "Last Name"
 msgstr "성"
 
-#: users/serializers.py:215
+#: users/serializers.py:223
 msgid "Last name of the user"
 msgstr "사용자의 성"
 
-#: users/serializers.py:219
+#: users/serializers.py:227
 msgid "Email address of the user"
 msgstr "사용자의 이메일 주소"
 
-#: users/serializers.py:268
+#: users/serializers.py:282
+msgid "Expiry date cannot be in the past"
+msgstr ""
+
+#: users/serializers.py:286
+msgid "Expiry date cannot be more than 365 days in the future"
+msgstr ""
+
+#: users/serializers.py:296
 msgid "User must be authenticated"
 msgstr "사용자가 인증되어야 합니다"
 
-#: users/serializers.py:277
+#: users/serializers.py:305
 msgid "Only a superuser can create a token for another user"
 msgstr "슈퍼유저만 다른 사용자의 토큰을 만들 수 있습니다"
 
-#: users/serializers.py:367
+#: users/serializers.py:395
 msgid "Administrator"
 msgstr "관리자"
 
-#: users/serializers.py:368
+#: users/serializers.py:396
 msgid "Does this user have administrative permissions"
 msgstr "이 사용자에게 관리자 권한이 있습니까"
 
-#: users/serializers.py:373 users/serializers.py:501
+#: users/serializers.py:401 users/serializers.py:529
 msgid "Superuser"
 msgstr "슈퍼유저"
 
-#: users/serializers.py:373 users/serializers.py:502
+#: users/serializers.py:401 users/serializers.py:530
 msgid "Is this user a superuser"
 msgstr "이 사용자는 슈퍼유저입니까"
 
-#: users/serializers.py:377 users/serializers.py:509
+#: users/serializers.py:405 users/serializers.py:537
 msgid "Is this user account active"
 msgstr "이 사용자 계정이 활성 상태입니까"
 
-#: users/serializers.py:398
+#: users/serializers.py:426
 msgid "Only a superuser can adjust this field"
 msgstr "슈퍼유저만 이 필드를 조정할 수 있습니다"
 
-#: users/serializers.py:426
+#: users/serializers.py:454
 msgid "Password"
 msgstr "비밀번호"
 
-#: users/serializers.py:427
+#: users/serializers.py:455
 msgid "Password for the user"
 msgstr "사용자의 비밀번호"
 
-#: users/serializers.py:433
+#: users/serializers.py:461
 msgid "Override warning"
 msgstr "경고 무시"
 
-#: users/serializers.py:434
+#: users/serializers.py:462
 msgid "Override the warning about password rules"
 msgstr "비밀번호 규칙에 대한 경고를 무시합니다"
 
-#: users/serializers.py:494
+#: users/serializers.py:522
 msgid "Staff"
 msgstr "스태프"
 
-#: users/serializers.py:495
+#: users/serializers.py:523
 msgid "Does this user have staff permissions"
 msgstr "이 사용자에게 스태프 권한이 있습니까"
 
-#: users/serializers.py:545
+#: users/serializers.py:573
 msgid "You do not have permission to create users"
 msgstr "사용자를 생성할 권한이 없습니다"
 
-#: users/serializers.py:558
+#: users/serializers.py:586
 msgid "A user with this email address already exists"
 msgstr ""
 
-#: users/serializers.py:593
+#: users/serializers.py:621
 msgid "Your account has been created."
 msgstr "계정이 생성되었습니다."
 
-#: users/serializers.py:595
+#: users/serializers.py:623
 msgid "Please use the password reset function to login"
 msgstr "로그인하려면 비밀번호 재설정 기능을 사용하세요"
 
-#: users/serializers.py:601
+#: users/serializers.py:629
 msgid "Welcome to InvenTree"
 msgstr "InvenTree에 오신 것을 환영합니다"
 
