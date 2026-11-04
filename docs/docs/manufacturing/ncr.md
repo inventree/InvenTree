@@ -114,6 +114,10 @@ Each linked stock item has its own *Disposition*, recording what has been decide
 
 Disposition is set by editing a linked stock item directly - it is not a status transition of its own.
 
+### Parameters
+
+Custom [parameters](../concepts/parameters.md) can be recorded against an NCR in the *Parameters* tab - for example a measured defect size, or a supplier batch code. To restrict a parameter template to NCRs only, set its *Model Type* to *Non-Conformance Report*.
+
 ### Attachments
 
 File attachments can be uploaded against the NCR, and are displayed in the *Attachments* tab - for example, photos of the defect or supporting inspection documents.
