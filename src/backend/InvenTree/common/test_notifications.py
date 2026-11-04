@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from common.models import InvenTreeUserSetting, NotificationMessage
+from common.models import NotificationMessage
 from common.notifications import get_user_language
 from InvenTree.unit_test import InvenTreeTestCase
 from plugin.builtin.integration.core_notifications import (
@@ -54,7 +54,7 @@ class NotificationLocaleTest(InvenTreeTestCase):
         cls.user_it2.profile.save()
 
     def test_get_user_language(self):
-        """Test resolving user language from profile, settings, and defaults."""
+        """Test resolving user language from profile and defaults."""
         self.assertEqual(get_user_language(self.user_en), 'en')
         self.assertEqual(get_user_language(self.user_it), 'it')
 
@@ -68,10 +68,6 @@ class NotificationLocaleTest(InvenTreeTestCase):
         self.assertEqual(
             get_user_language(user_no_lang), getattr(settings, 'LANGUAGE_CODE', 'en-us')
         )
-
-        # Test user with InvenTreeUserSetting LANGUAGE override
-        with patch.object(InvenTreeUserSetting, 'get_setting', return_value='de'):
-            self.assertEqual(get_user_language(user_no_lang), 'de')
 
     @patch('InvenTree.helpers_email.send_email')
     def test_email_notifications_locale_translation(self, mock_send_email):
