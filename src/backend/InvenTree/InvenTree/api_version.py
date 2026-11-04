@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 570
+INVENTREE_API_VERSION = 571
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v571 -> 2026-11-01 : https://github.com/inventree/InvenTree/pull/12072
+    - Adds API endpoints for RepairOrder, RepairOrderLineItem, and RepairOrderAllocation models
+    - RepairOrder status transitions use the generic transition API (adds /api/build/repair/<id>/_transitions/)
 
 v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
     - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only

@@ -267,8 +267,10 @@ class ApiTests(InvenTreeAPITestCase):
         """Test the API endpoint for listing all status models."""
         response = self.get(reverse('api-status-all'))
 
-        # 11 built-in state classes, plus the added GeneralState class.
+        # Keep this tolerant of upstream state additions, while ensuring the
+        # locally-added RepairOrderStatus remains registered.
         self.assertGreaterEqual(len(response.data), 12)
+        self.assertIn('RepairOrderStatus', response.data)
 
         # Test the BuildStatus model
         build_status = response.data['BuildStatus']

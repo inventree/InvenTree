@@ -117,6 +117,8 @@ class AuditRegistryTest(TestCase):
             [model._meta.label_lower for model in audited_models()],
             [
                 'build.build',
+                'build.repairorder',
+                'build.repairorderlineitem',
                 'common.attachment',
                 'common.customunit',
                 'common.inventreesetting',

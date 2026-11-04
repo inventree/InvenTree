@@ -267,6 +267,9 @@ class AllocateMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(
             self.mixin.filter_sales_order_allocation(None, stock_items), stock_items
         )
+        self.assertEqual(
+            self.mixin.filter_repair_order_allocation(None, stock_items), stock_items
+        )
 
 
 class APICallMixinTest(BaseMixinDefinition, TestCase):

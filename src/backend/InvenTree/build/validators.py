@@ -23,6 +23,27 @@ def validate_build_order_reference(value):
     Build.validate_reference_field(value)
 
 
+def generate_next_repair_order_reference():
+    """Generate the next available RepairOrder reference."""
+    from build.models import RepairOrder
+
+    return RepairOrder.generate_reference()
+
+
+def validate_repair_order_reference_pattern(pattern):
+    """Validate the RepairOrder reference 'pattern' setting."""
+    from build.models import RepairOrder
+
+    RepairOrder.validate_reference_pattern(pattern)
+
+
+def validate_repair_order_reference(value):
+    """Validate that the RepairOrder reference field matches the required pattern."""
+    from build.models import RepairOrder
+
+    RepairOrder.validate_reference_field(value)
+
+
 def check_build_output(output, quantity=None):
     """Run a validation check against each output before accepting it for completion.
 
