@@ -40,6 +40,7 @@ import type {
   ApiFormFieldType,
   ApiFormProps
 } from '@lib/types/Forms';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { isEquivalent } from '../../functions/comparison';
 import { constructField, extractAvailableFields } from '../../functions/forms';
@@ -569,12 +570,34 @@ export function ApiForm({
             case 400:
               // Data validation errors
               const _nonFieldErrors: string[] = [];
+              let _fieldErrorCount = 0;
+
+              const setFieldError = (path: string, message: string) => {
+                _fieldErrorCount += 1;
+                form.setError(path, { message: message });
+              };
+
+              // Response keys which carry a general (non-field) error message
+              const NON_FIELD_ERROR_KEYS: string[] = [
+                'non_field_errors',
+                '__all__',
+                'error',
+                'detail',
+                'reason'
+              ];
 
               const processErrors = (errors: any, _path?: string) => {
+                // Ignore empty values
+                if (errors === null || errors === undefined) {
+                  return;
+                }
+
                 // Handle an array of errors
                 if (Array.isArray(errors)) {
                   errors.forEach((error: any) => {
-                    _nonFieldErrors.push(error.toString());
+                    if (typeof error === 'string') {
+                      _nonFieldErrors.push(error);
+                    }
                   });
                   return;
                 }
@@ -585,14 +608,30 @@ export function ApiForm({
                   return;
                 }
 
+                // Ignore any other non-object values (numbers, booleans)
+                if (typeof errors !== 'object') {
+                  return;
+                }
+
                 for (const [k, v] of Object.entries(errors)) {
                   const path = _path ? `${_path}.${k}` : k;
 
-                  // Determine if field "k" is valid (exists and is visible)
-                  const field = fields[k];
-                  const valid = field && !field.hidden;
+                  // Known error keys are displayed as non-field errors
+                  if (NON_FIELD_ERROR_KEYS.includes(k)) {
+                    processErrors(v);
+                    continue;
+                  }
 
-                  if (!valid || k == 'non_field_errors' || k == '__all__') {
+                  const field = fields[k];
+
+                  // Ignore keys which do not correspond to a form field
+                  // (e.g. response metadata such as "transition" or "state")
+                  if (!field) {
+                    continue;
+                  }
+
+                  // Errors against hidden fields are displayed as non-field errors
+                  if (field.hidden) {
                     processErrors(v);
                     continue;
                   }
@@ -604,23 +643,36 @@ export function ApiForm({
                         for (const [key, value] of Object.entries(item)) {
                           const path: string = `${k}.${idx}.${key}`;
                           if (Array.isArray(value)) {
-                            form.setError(path, { message: value.join(', ') });
+                            setFieldError(path, value.join(', '));
                           }
                         }
                       });
                     } else {
                       // Standard error handling for other fields
-                      form.setError(path, { message: v.join(', ') });
+                      setFieldError(path, v.join(', '));
                     }
                   } else if (typeof v === 'string') {
-                    form.setError(path, { message: v });
+                    setFieldError(path, v);
                   } else {
                     processErrors(v, path);
                   }
                 }
               };
 
-              processErrors(error.response.data);
+              try {
+                processErrors(error.response.data);
+              } catch (err) {
+                // Malformed error response - fall through to the generic message below
+                console.error('Failed to process form errors:', err);
+              }
+
+              // No errors could be extracted from the response
+              if (_nonFieldErrors.length == 0 && _fieldErrorCount == 0) {
+                _nonFieldErrors.push(
+                  t`An unknown error occurred. Refer to the browser console for details.`
+                );
+              }
+
               setNonFieldErrors(_nonFieldErrors);
               props.onFormError?.(error, form);
 
@@ -710,7 +762,12 @@ export function ApiForm({
             {/* Form Fields */}
             <Stack gap='sm'>
               {(!isValid || nonFieldErrors.length > 0) && (
-                <Alert radius='sm' color='red' title={t`Form Error`}>
+                <Alert
+                  icon={<IconExclamationCircle size='sm' />}
+                  radius='sm'
+                  color='red'
+                  title={t`Form Error`}
+                >
                   {nonFieldErrors.length > 0 ? (
                     <Stack gap='xs'>
                       {nonFieldErrors
