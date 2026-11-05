@@ -623,9 +623,16 @@ export function ApiForm({
                     continue;
                   }
 
+                  // Nested errors (below the top level) cannot be mapped to a form field,
+                  // so they are displayed as non-field errors rather than being dropped
+                  if (_path) {
+                    processErrors(v);
+                    continue;
+                  }
+
                   const field = fields[k];
 
-                  // Ignore keys which do not correspond to a form field
+                  // Ignore top-level keys which do not correspond to a form field
                   // (e.g. response metadata such as "transition" or "state")
                   if (!field) {
                     continue;
@@ -637,21 +644,43 @@ export function ApiForm({
                     continue;
                   }
 
-                  if (typeof v === 'object' && Array.isArray(v)) {
-                    if (field?.field_type == 'table') {
-                      // Special handling for "table" fields - they have nested errors
-                      v.forEach((item: any, idx: number) => {
-                        for (const [key, value] of Object.entries(item)) {
-                          const path: string = `${k}.${idx}.${key}`;
-                          if (Array.isArray(value)) {
-                            setFieldError(path, value.join(', '));
-                          }
+                  if (
+                    field.field_type == 'table' &&
+                    typeof v === 'object' &&
+                    v !== null
+                  ) {
+                    // Special handling for "table" fields - they have nested (per-row) errors.
+                    // DRF may return these as an array (one entry per row),
+                    // or as an object keyed by row index (only rows with errors)
+                    const rows: [string, any][] = Array.isArray(v)
+                      ? v.map((item: any, idx: number) => [`${idx}`, item])
+                      : Object.entries(v);
+
+                    rows.forEach(([idx, item]) => {
+                      // Row-level error (not associated with a particular column)
+                      if (
+                        typeof item !== 'object' ||
+                        item === null ||
+                        Array.isArray(item)
+                      ) {
+                        processErrors(item);
+                        return;
+                      }
+
+                      for (const [key, value] of Object.entries(item)) {
+                        const rowPath: string = `${k}.${idx}.${key}`;
+                        if (Array.isArray(value)) {
+                          setFieldError(rowPath, value.join(', '));
+                        } else if (typeof value === 'string') {
+                          setFieldError(rowPath, value);
+                        } else {
+                          processErrors(value);
                         }
-                      });
-                    } else {
-                      // Standard error handling for other fields
-                      setFieldError(path, v.join(', '));
-                    }
+                      }
+                    });
+                  } else if (Array.isArray(v)) {
+                    // Standard error handling for other fields
+                    setFieldError(path, v.join(', '));
                   } else if (typeof v === 'string') {
                     setFieldError(path, v);
                   } else {
@@ -764,7 +793,7 @@ export function ApiForm({
             <Stack gap='sm'>
               {(!isValid || nonFieldErrors.length > 0) && (
                 <Alert
-                  icon={<IconExclamationCircle size='sm' />}
+                  icon={<IconExclamationCircle />}
                   radius='sm'
                   color='red'
                   title={t`Form Error`}
