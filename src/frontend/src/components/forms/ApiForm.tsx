@@ -581,8 +581,9 @@ export function ApiForm({
               const NON_FIELD_ERROR_KEYS: string[] = [
                 'non_field_errors',
                 '__all__',
-                'error',
                 'detail',
+                'error',
+                'message',
                 'reason'
               ];
 
