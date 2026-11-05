@@ -981,6 +981,14 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(external=False)
         self.assertEqual(len(response), 28)
 
+    def test_filter_exclude_from_stock(self):
+        """Filter StockItem by exclude_from_stock."""
+        response = self.get_stock(exclude_from_stock=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(exclude_from_stock=False)
+        self.assertEqual(len(response), 29)
+
     def test_filter_available(self):
         """Filter StockItem by available."""
         response = self.get_stock(available=True)
