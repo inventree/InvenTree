@@ -43,7 +43,7 @@ services:
     # Use PostgreSQL as the database backend
     inventree-db:
         image: postgres:17
-        container_name: inventree-db
+        container_name: ${COMPOSE_PROJECT_NAME:+${COMPOSE_PROJECT_NAME}-}inventree-db
         expose:
             - ${INVENTREE_DB_PORT:-5432}/tcp
         environment:
@@ -65,7 +65,7 @@ services:
     # redis acts as database cache manager
     inventree-cache:
         image: redis:7-alpine
-        container_name: inventree-cache
+        container_name: ${COMPOSE_PROJECT_NAME:+${COMPOSE_PROJECT_NAME}-}inventree-cache
         # Disable disk persistence to avoid permission errors on Windows bind mounts.
         # The /data volume is retained for layout consistency (#11100); cache data is ephemeral.
         command: redis-server --save "" --appendonly no
@@ -88,7 +88,7 @@ services:
     inventree-server:
         # If you wish to specify a particular InvenTree version, do so here
         image: inventree/inventree:${INVENTREE_TAG:-stable}
-        container_name: inventree-server
+        container_name: ${COMPOSE_PROJECT_NAME:+${COMPOSE_PROJECT_NAME}-}inventree-server
         # Only change this port if you understand the stack.
         expose:
             - ${INVENTREE_WEB_PORT:-8000}
@@ -120,7 +120,7 @@ services:
     inventree-worker:
         # If you wish to specify a particular InvenTree version, do so here
         image: inventree/inventree:${INVENTREE_TAG:-stable}
-        container_name: inventree-worker
+        container_name: ${COMPOSE_PROJECT_NAME:+${COMPOSE_PROJECT_NAME}-}inventree-worker
         command: invoke worker
         depends_on:
             inventree-server:
@@ -142,7 +142,7 @@ services:
     # You can adjust the ports that the proxy listens on via the .env file
     # https://hub.docker.com/_/caddy
     inventree-proxy:
-        container_name: inventree-proxy
+      container_name: ${COMPOSE_PROJECT_NAME:+${COMPOSE_PROJECT_NAME}-}inventree-proxy
         image: caddy:alpine
         restart: always
         depends_on:
