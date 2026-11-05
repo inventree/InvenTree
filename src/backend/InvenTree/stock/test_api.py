@@ -3403,6 +3403,164 @@ class StocktakeTest(StockAPITestCase):
         self.assertEqual(len(response.data['items']), 100)
 
 
+class StockAdjustmentCustomStatusTest(StockAPITestCase):
+    """Tests for applying custom status values via the stock adjustment endpoints.
+
+    Regression tests for https://github.com/inventree/InvenTree/issues/13191
+    The available status choices for stock adjustment items were evaluated once
+    (at import time), so custom states created afterwards were rejected as invalid.
+    """
+
+    def setUp(self):
+        """Create a custom stock status *after* the serializer module has been imported."""
+        super().setUp()
+
+        self.custom_status = InvenTreeCustomUserStateModel.objects.create(
+            key=160,
+            name='Custom attention',
+            label='Custom attention',
+            color='warning',
+            logical_key=StockStatus.ATTENTION.value,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+
+        self.part = Part.objects.get(pk=1)
+        self.source = StockLocation.objects.get(pk=5)
+        self.dest = StockLocation.objects.get(pk=2)
+
+    def test_serializer_choices(self):
+        """The adjustment item serializer must offer the runtime custom state."""
+        from stock.serializers import StockAdjustmentItemSerializer
+
+        choices = StockAdjustmentItemSerializer().fields['status'].choices
+
+        self.assertIn(None, choices)
+        self.assertIn(StockStatus.OK.value, choices)
+        self.assertIn(self.custom_status.key, choices)
+
+        # A state created later must also be picked up by a new serializer instance
+        later_status = InvenTreeCustomUserStateModel.objects.create(
+            key=170,
+            name='Custom later',
+            label='Custom later',
+            color='info',
+            logical_key=StockStatus.OK.value,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+
+        choices = StockAdjustmentItemSerializer().fields['status'].choices
+        self.assertIn(later_status.key, choices)
+
+    def test_adjust_with_custom_status(self):
+        """Each stock adjustment endpoint must accept a custom status."""
+        # Note: transfer the full quantity, so that the original item is moved
+        for endpoint, quantity, extra in [
+            ('api-stock-transfer', 10, {'location': self.dest.pk}),
+            ('api-stock-count', 5, {}),
+            ('api-stock-add', 5, {}),
+            ('api-stock-remove', 5, {}),
+        ]:
+            with self.subTest(endpoint=endpoint):
+                item = StockItem.objects.create(
+                    part=self.part, location=self.source, quantity=10
+                )
+
+                self.assertEqual(item.status, StockStatus.OK.value)
+
+                self.post(
+                    reverse(endpoint),
+                    {
+                        'items': [
+                            {
+                                'pk': item.pk,
+                                'quantity': quantity,
+                                'status': self.custom_status.key,
+                            }
+                        ],
+                        'notes': 'Custom status adjustment',
+                        **extra,
+                    },
+                    expected_code=201,
+                )
+
+                item.refresh_from_db()
+                self.assertEqual(item.status_custom_key, self.custom_status.key)
+                self.assertEqual(item.status, StockStatus.ATTENTION.value)
+
+    def test_partial_transfer_with_custom_status(self):
+        """A partial transfer applies the custom status to the split item only."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+
+        self.post(
+            reverse('api-stock-transfer'),
+            {
+                'items': [
+                    {'pk': item.pk, 'quantity': 4, 'status': self.custom_status.key}
+                ],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 6)
+        self.assertEqual(item.location, self.source)
+        self.assertEqual(item.status, StockStatus.OK.value)
+        self.assertIsNone(item.status_custom_key)
+
+        new_item = StockItem.objects.get(
+            part=self.part, location=self.dest, parent=item
+        )
+        self.assertEqual(new_item.quantity, 4)
+        self.assertEqual(new_item.location, self.dest)
+        self.assertEqual(new_item.status_custom_key, self.custom_status.key)
+        self.assertEqual(new_item.status, StockStatus.ATTENTION.value)
+
+    def test_invalid_status_rejected(self):
+        """Unknown status values must still be rejected."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+
+        response = self.post(
+            reverse('api-stock-transfer'),
+            {
+                'items': [{'pk': item.pk, 'quantity': 5, 'status': 999}],
+                'location': self.dest.pk,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('is not a valid choice', str(response.data))
+
+        item.refresh_from_db()
+        self.assertEqual(item.location, self.source)
+        self.assertEqual(item.quantity, 10)
+
+    def test_no_status_change(self):
+        """Omitting the status (or passing a blank value) leaves the status unchanged."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+        item.set_status(self.custom_status.key)
+        item.save()
+
+        for idx, line in enumerate([{}, {'status': ''}]):
+            with self.subTest(line=line):
+                self.post(
+                    reverse('api-stock-count'),
+                    {'items': [{'pk': item.pk, 'quantity': 8 - idx, **line}]},
+                    expected_code=201,
+                )
+
+                item.refresh_from_db()
+                self.assertEqual(item.status_custom_key, self.custom_status.key)
+
+
 class StockTransferMergeTest(StockAPITestCase):
     """Tests for optional merge-on-transfer behavior."""
 
