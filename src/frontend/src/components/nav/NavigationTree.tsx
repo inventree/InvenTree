@@ -172,10 +172,17 @@ export default function NavigationTree({
     treeState.collapseAllNodes();
   }, [debouncedSearch]);
 
-  // Expand all nodes once search results have fully arrived
+  // Expand all nodes once search results have fully arrived.
+  // Note: treeState.expandAllNodes() only expands nodes which are already present
+  // in the (possibly stale) expanded state, so nodes which only appear in the search
+  // results would remain collapsed. Instead, explicitly expand every returned node.
   useEffect(() => {
     if (debouncedSearch && !query.isFetching && query.data?.length) {
-      treeState.expandAllNodes();
+      const expanded: Record<string, boolean> = {};
+      for (const node of query.data) {
+        expanded[node.pk.toString()] = true;
+      }
+      treeState.setExpandedState(expanded);
     }
   }, [debouncedSearch, query.data, query.isFetching]);
 
