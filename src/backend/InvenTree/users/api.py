@@ -39,7 +39,6 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.schema import exclude_from_schema
-from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import (
     ApiToken,
     Owner,
@@ -584,7 +583,7 @@ class LoginRedirect(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         """Return the URL to redirect to."""
-        return f'/{FRONTEND_URL_BASE}/logged-in/'
+        return InvenTree.helpers.pui_url('logged-in/')
 
 
 class UserProfileDetail(RetrieveUpdateAPI):

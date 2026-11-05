@@ -79,6 +79,11 @@ export function StockLocationDetailsPanel({
       label: t`External`
     },
     {
+      type: 'boolean',
+      name: 'exclude_from_stock',
+      label: t`Exclude from Stock`
+    },
+    {
       type: 'string',
       name: 'location_type_detail.name',
       label: t`Location Type`,
