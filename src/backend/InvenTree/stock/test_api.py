@@ -1260,13 +1260,64 @@ class StockItemListTest(StockAPITestCase):
         self.assertIn(stock_1.pk, ids)
         self.assertIn(stock_2.pk, ids)
 
+    def test_consumed_by_reference(self):
+        """Child stock exposes nullable, read-only consuming build references."""
+        assembly = Part.objects.create(name='Reference assembly', assembly=True)
+        part = Part.objects.first()
+        parent = StockItem.objects.create(part=part, quantity=10)
+        builds = [
+            build.models.Build.objects.create(part=assembly, quantity=1)
+            for _ in range(2)
+        ]
+        consuming_builds = [*builds, None]
+        children = [
+            StockItem.objects.create(
+                part=part, quantity=1, parent=parent, consumed_by=build_order
+            )
+            for build_order in consuming_builds
+        ]
+
+        # Check references for consumed children and null for unconsumed stock.
+        response = self.get(self.list_url, {'parent': parent.pk})
+        records = {item['pk']: item for item in response.data}
+        self.assertEqual(set(records), {item.pk for item in children})
+        for item, build_order in zip(children, consuming_builds, strict=True):
+            self.assertEqual(
+                records[item.pk]['consumed_by'], build_order.pk if build_order else None
+            )
+            self.assertEqual(
+                records[item.pk]['consumed_by_reference'],
+                build_order.reference if build_order else None,
+            )
+
+        detail_url = reverse('api-stock-detail', kwargs={'pk': children[0].pk})
+        detail = self.get(detail_url)
+        self.assertEqual(detail.data['consumed_by_reference'], builds[0].reference)
+
+        # The display-only field must not modify the associated build.
+        original_reference = builds[0].reference
+        self.patch(detail_url, {'consumed_by_reference': 'Cannot overwrite'})
+        builds[0].refresh_from_db()
+        self.assertEqual(builds[0].reference, original_reference)
+        self.assertEqual(
+            self.get(detail_url).data['consumed_by_reference'], builds[0].reference
+        )
+
     def test_query_count(self):
         """Test that the number of queries required to fetch stock items is reasonable."""
         # Create a bunch of StockItem objects
         prt = Part.objects.first()
 
+        assembly = Part.objects.create(name='Query assembly', assembly=True)
+        builds = [
+            build.models.Build.objects.create(part=assembly, quantity=1)
+            for _ in range(10)
+        ]
+        # Include consuming builds so missing prefetches exceed the query budget.
         StockItem.objects.bulk_create([
-            StockItem(part=prt, quantity=1) for _ in range(100)
+            StockItem(part=prt, quantity=1, consumed_by=bo)
+            for bo in builds
+            for _ in range(10)
         ])
 
         # List *all* stock items
