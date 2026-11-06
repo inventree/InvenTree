@@ -64,7 +64,7 @@ msgid "Edit"
 msgstr "Edit"
 
 #: lib/components/RowActions.tsx:66
-#: src/components/forms/ApiForm.tsx:852
+#: src/components/forms/ApiForm.tsx:939
 #: src/components/items/ActionDropdown.tsx:263
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:174
@@ -155,7 +155,7 @@ msgstr "No"
 
 #: lib/enums/ModelInformation.tsx:61
 #: src/components/details/LineItemOverviewTable.tsx:80
-#: src/components/tables/ColumnRenderers.tsx:93
+#: src/components/tables/ColumnRenderers.tsx:80
 #: src/components/wizards/OrderPartsWizard.tsx:286
 #: src/forms/BuildForms.tsx:382
 #: src/forms/BuildForms.tsx:465
@@ -288,7 +288,7 @@ msgstr "Part Categories"
 #~ msgstr "Builds"
 
 #: lib/enums/ModelInformation.tsx:125
-#: src/components/tables/ColumnRenderers.tsx:151
+#: src/components/tables/ColumnRenderers.tsx:138
 #: src/forms/BuildForms.tsx:542
 #: src/forms/BuildForms.tsx:706
 #: src/forms/BuildForms.tsx:868
@@ -396,7 +396,7 @@ msgstr "Companies"
 
 #: lib/enums/ModelInformation.tsx:190
 #: src/components/calendar/OrderCalendarToolTip.tsx:33
-#: src/components/tables/ColumnRenderers.tsx:602
+#: src/components/tables/ColumnRenderers.tsx:568
 #: src/components/tables/Filter.tsx:364
 #: src/components/tables/TableHoverCard.tsx:103
 #: src/forms/CommonFields.tsx:47
@@ -557,7 +557,7 @@ msgid "Contacts"
 msgstr "Contacts"
 
 #: lib/enums/ModelInformation.tsx:280
-#: src/components/tables/ColumnRenderers.tsx:687
+#: src/components/tables/ColumnRenderers.tsx:653
 msgid "Owner"
 msgstr "Owner"
 
@@ -566,7 +566,7 @@ msgid "Owners"
 msgstr "Owners"
 
 #: lib/enums/ModelInformation.tsx:286
-#: src/components/tables/ColumnRenderers.tsx:637
+#: src/components/tables/ColumnRenderers.tsx:603
 #: src/components/tables/Filter.tsx:441
 #: src/pages/Auth/ChangePassword.tsx:36
 #: src/pages/core/UserDetail.tsx:221
@@ -681,7 +681,7 @@ msgstr "Selection Entries"
 #: src/components/importer/ImporterColumnSelector.tsx:330
 #: src/components/importer/ImporterDrawer.tsx:91
 #: src/components/modals/LicenseModal.tsx:85
-#: src/components/nav/NavigationTree.tsx:434
+#: src/components/nav/NavigationTree.tsx:441
 #: src/components/nav/NotificationDrawer.tsx:257
 #: src/components/nav/SearchDrawer.tsx:612
 #: src/components/settings/SettingList.tsx:158
@@ -880,7 +880,7 @@ msgstr "Barcode does not match the expected model type"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:161
 #: src/components/editors/NotesEditor.tsx:392
-#: src/components/forms/ApiForm.tsx:550
+#: src/components/forms/ApiForm.tsx:551
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
@@ -1135,7 +1135,7 @@ msgid "Overdue"
 msgstr "Overdue"
 
 #: src/components/calendar/OrderCalendarToolTip.tsx:58
-#: src/components/tables/ColumnRenderers.tsx:731
+#: src/components/tables/ColumnRenderers.tsx:697
 #: src/pages/build/BuildOrderDetailsPanel.tsx:213
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:221
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:212
@@ -1145,7 +1145,7 @@ msgid "Start Date"
 msgstr "Start Date"
 
 #: src/components/calendar/OrderCalendarToolTip.tsx:64
-#: src/components/tables/ColumnRenderers.tsx:740
+#: src/components/tables/ColumnRenderers.tsx:706
 #: src/pages/build/BuildOrderDetailsPanel.tsx:221
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:229
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:220
@@ -1160,7 +1160,7 @@ msgid "Target Date"
 msgstr "Target Date"
 
 #: src/components/calendar/OrderCalendarToolTip.tsx:75
-#: src/components/tables/ColumnRenderers.tsx:707
+#: src/components/tables/ColumnRenderers.tsx:673
 #: src/components/tables/Filter.tsx:400
 #: src/pages/build/BuildOrderDetailsPanel.tsx:163
 #: src/pages/part/PartDetailsPanel.tsx:291
@@ -1539,7 +1539,7 @@ msgstr "Administrator"
 #: src/components/render/Part.tsx:28
 #: src/components/render/Plugin.tsx:17
 #: src/components/render/User.tsx:37
-#: src/components/tables/ColumnRenderers.tsx:652
+#: src/components/tables/ColumnRenderers.tsx:618
 #: src/pages/company/CompanyDetail.tsx:289
 #: src/pages/company/SupplierPartDetail.tsx:234
 #: src/pages/core/UserDetail.tsx:210
@@ -1617,7 +1617,7 @@ msgid "Clear"
 msgstr "Clear"
 
 #: src/components/details/DetailsImage.tsx:305
-#: src/components/forms/ApiForm.tsx:794
+#: src/components/forms/ApiForm.tsx:881
 #: src/contexts/ThemeContext.tsx:56
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:569
@@ -1704,7 +1704,7 @@ msgstr "View all {count} line items"
 #: src/components/editors/NotesEditor.tsx:89
 #: src/components/items/RoleTable.tsx:118
 #: src/components/settings/ConfigValueList.tsx:42
-#: src/components/tables/ColumnRenderers.tsx:776
+#: src/components/tables/ColumnRenderers.tsx:742
 #: src/pages/part/pricing/BomPricingPanel.tsx:160
 #: src/pages/part/pricing/VariantPricingPanel.tsx:54
 #: src/tables/general/AuditLogTable.tsx:76
@@ -2035,8 +2035,8 @@ msgstr "Server Error"
 msgid "A server error occurred"
 msgstr "A server error occurred"
 
-#: src/components/forms/ApiForm.tsx:112
-#: src/components/forms/ApiForm.tsx:713
+#: src/components/forms/ApiForm.tsx:113
+#: src/components/forms/ApiForm.tsx:799
 msgid "Form Error"
 msgstr "Form Error"
 
@@ -2044,15 +2044,19 @@ msgstr "Form Error"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:674
+#: src/components/forms/ApiForm.tsx:702
+msgid "An unknown error occurred. Refer to the browser console for details."
+msgstr "An unknown error occurred. Refer to the browser console for details."
+
+#: src/components/forms/ApiForm.tsx:756
 msgid "Submit form"
 msgstr "Submit form"
 
-#: src/components/forms/ApiForm.tsx:723
+#: src/components/forms/ApiForm.tsx:810
 msgid "Errors exist for one or more form fields"
 msgstr "Errors exist for one or more form fields"
 
-#: src/components/forms/ApiForm.tsx:832
+#: src/components/forms/ApiForm.tsx:919
 #: src/hooks/UseForm.tsx:143
 #: src/tables/plugin/PluginListTable.tsx:216
 msgid "Update"
@@ -2420,7 +2424,7 @@ msgstr "Loading"
 
 #: src/components/forms/fields/RelatedModelField.tsx:552
 #: src/components/forms/fields/TreeField.tsx:414
-#: src/components/nav/NavigationTree.tsx:439
+#: src/components/nav/NavigationTree.tsx:446
 msgid "No results found"
 msgstr "No results found"
 
@@ -2865,7 +2869,7 @@ msgstr "No items"
 
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:98
-#: src/components/tables/ColumnRenderers.tsx:265
+#: src/components/tables/ColumnRenderers.tsx:252
 #: src/components/tables/PartStockCell.tsx:85
 #: src/pages/part/PartDetail.tsx:591
 #: src/pages/stock/StockDetail.tsx:681
@@ -3408,23 +3412,23 @@ msgstr "Navigation"
 msgid "About"
 msgstr "About"
 
-#: src/components/nav/NavigationTree.tsx:397
+#: src/components/nav/NavigationTree.tsx:404
 msgid "Unpin"
 msgstr "Unpin"
 
-#: src/components/nav/NavigationTree.tsx:397
+#: src/components/nav/NavigationTree.tsx:404
 msgid "Pin"
 msgstr "Pin"
 
-#: src/components/nav/NavigationTree.tsx:414
+#: src/components/nav/NavigationTree.tsx:421
 msgid "Filter {title}..."
 msgstr "Filter {title}..."
 
-#: src/components/nav/NavigationTree.tsx:424
+#: src/components/nav/NavigationTree.tsx:431
 msgid "Clear search"
 msgstr "Clear search"
 
-#: src/components/nav/NavigationTree.tsx:435
+#: src/components/nav/NavigationTree.tsx:442
 msgid "Error loading navigation tree."
 msgstr "Error loading navigation tree."
 
@@ -3449,7 +3453,7 @@ msgstr "Error loading notifications."
 #~ msgid "Edit {title}"
 #~ msgstr "Edit {title}"
 
-#: src/components/nav/PageDetail.tsx:275
+#: src/components/nav/PageDetail.tsx:281
 msgid "Primary Action"
 msgstr "Primary Action"
 
@@ -3598,7 +3602,7 @@ msgid "Plugin Information"
 msgstr "Plugin Information"
 
 #: src/components/plugins/PluginDrawer.tsx:88
-#: src/components/tables/ColumnRenderers.tsx:495
+#: src/components/tables/ColumnRenderers.tsx:482
 #: src/pages/build/BuildOrderDetailsPanel.tsx:104
 #: src/pages/company/CompanyDetailsPanel.tsx:29
 #: src/pages/company/ManufacturerPartDetailsPanel.tsx:46
@@ -3623,7 +3627,7 @@ msgid "Author"
 msgstr "Author"
 
 #: src/components/plugins/PluginDrawer.tsx:98
-#: src/components/tables/ColumnRenderers.tsx:717
+#: src/components/tables/ColumnRenderers.tsx:683
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:42
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:39
 #: src/tables/general/AuditLogTable.tsx:536
@@ -3836,8 +3840,8 @@ msgid "Details"
 msgstr "Details"
 
 #: src/components/render/Part.tsx:116
-#: src/components/tables/ColumnRenderers.tsx:433
-#: src/components/tables/ColumnRenderers.tsx:442
+#: src/components/tables/ColumnRenderers.tsx:420
+#: src/components/tables/ColumnRenderers.tsx:429
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/part/PartDetailsPanel.tsx:114
 #: src/tables/notifications/NotificationTable.tsx:32
@@ -3848,8 +3852,8 @@ msgstr "Category"
 #: src/components/render/Stock.tsx:37
 #: src/components/render/Stock.tsx:112
 #: src/components/render/Stock.tsx:137
-#: src/components/tables/ColumnRenderers.tsx:385
-#: src/components/tables/ColumnRenderers.tsx:394
+#: src/components/tables/ColumnRenderers.tsx:372
+#: src/components/tables/ColumnRenderers.tsx:381
 #: src/components/tables/Filter.tsx:507
 #: src/forms/BuildForms.tsx:869
 #: src/forms/PurchaseOrderForms.tsx:755
@@ -4072,22 +4076,22 @@ msgstr "There are no configurable settings available"
 msgid "No settings specified"
 msgstr "No settings specified"
 
-#: src/components/tables/ColumnRenderers.tsx:70
+#: src/components/tables/ColumnRenderers.tsx:57
 msgid "Part is not active"
 msgstr "Part is not active"
 
-#: src/components/tables/ColumnRenderers.tsx:75
+#: src/components/tables/ColumnRenderers.tsx:62
 #: src/pages/part/PartDetail.tsx:501
 #: src/tables/bom/BomTable.tsx:848
 #: src/tables/part/PartTestTemplateTable.tsx:262
 msgid "Part is Locked"
 msgstr "Part is Locked"
 
-#: src/components/tables/ColumnRenderers.tsx:80
+#: src/components/tables/ColumnRenderers.tsx:67
 msgid "You are subscribed to notifications for this part"
 msgstr "You are subscribed to notifications for this part"
 
-#: src/components/tables/ColumnRenderers.tsx:125
+#: src/components/tables/ColumnRenderers.tsx:112
 #: src/forms/BuildForms.tsx:704
 #: src/pages/build/BuildOrderDetailsPanel.tsx:52
 #: src/pages/company/ManufacturerPartDetailsPanel.tsx:38
@@ -4100,7 +4104,7 @@ msgstr "You are subscribed to notifications for this part"
 msgid "IPN"
 msgstr "IPN"
 
-#: src/components/tables/ColumnRenderers.tsx:137
+#: src/components/tables/ColumnRenderers.tsx:124
 #: src/pages/build/BuildOrderDetailsPanel.tsx:60
 #: src/pages/part/PartDetailsPanel.tsx:107
 #: src/pages/stock/StockDetailsPanel.tsx:99
@@ -4110,62 +4114,62 @@ msgstr "IPN"
 msgid "Revision"
 msgstr "Revision"
 
-#: src/components/tables/ColumnRenderers.tsx:184
+#: src/components/tables/ColumnRenderers.tsx:171
 msgid "This stock item is in production"
 msgstr "This stock item is in production"
 
-#: src/components/tables/ColumnRenderers.tsx:191
+#: src/components/tables/ColumnRenderers.tsx:178
 msgid "This stock item has been assigned to a sales order"
 msgstr "This stock item has been assigned to a sales order"
 
-#: src/components/tables/ColumnRenderers.tsx:198
+#: src/components/tables/ColumnRenderers.tsx:185
 msgid "This stock item has been assigned to a customer"
 msgstr "This stock item has been assigned to a customer"
 
-#: src/components/tables/ColumnRenderers.tsx:205
+#: src/components/tables/ColumnRenderers.tsx:192
 msgid "This stock item is installed in another stock item"
 msgstr "This stock item is installed in another stock item"
 
-#: src/components/tables/ColumnRenderers.tsx:212
+#: src/components/tables/ColumnRenderers.tsx:199
 msgid "This stock item has been consumed by a build order"
 msgstr "This stock item has been consumed by a build order"
 
-#: src/components/tables/ColumnRenderers.tsx:219
+#: src/components/tables/ColumnRenderers.tsx:206
 msgid "This stock item is unavailable"
 msgstr "This stock item is unavailable"
 
-#: src/components/tables/ColumnRenderers.tsx:225
+#: src/components/tables/ColumnRenderers.tsx:212
 msgid "This stock item has expired"
 msgstr "This stock item has expired"
 
-#: src/components/tables/ColumnRenderers.tsx:229
+#: src/components/tables/ColumnRenderers.tsx:216
 msgid "This stock item is stale"
 msgstr "This stock item is stale"
 
-#: src/components/tables/ColumnRenderers.tsx:241
+#: src/components/tables/ColumnRenderers.tsx:228
 msgid "This stock item is over-allocated"
 msgstr "This stock item is over-allocated"
 
-#: src/components/tables/ColumnRenderers.tsx:249
+#: src/components/tables/ColumnRenderers.tsx:236
 msgid "This stock item is fully allocated"
 msgstr "This stock item is fully allocated"
 
-#: src/components/tables/ColumnRenderers.tsx:256
+#: src/components/tables/ColumnRenderers.tsx:243
 msgid "This stock item is partially allocated"
 msgstr "This stock item is partially allocated"
 
-#: src/components/tables/ColumnRenderers.tsx:274
+#: src/components/tables/ColumnRenderers.tsx:261
 #: src/tables/build/BuildLineTable.tsx:374
 #: src/tables/sales/SalesOrderLineItemTable.tsx:198
 #: src/tables/stock/TransferOrderLineItemTable.tsx:143
 msgid "No stock available"
 msgstr "No stock available"
 
-#: src/components/tables/ColumnRenderers.tsx:284
+#: src/components/tables/ColumnRenderers.tsx:271
 msgid "This stock item has been depleted"
 msgstr "This stock item has been depleted"
 
-#: src/components/tables/ColumnRenderers.tsx:301
+#: src/components/tables/ColumnRenderers.tsx:288
 #: src/components/tables/PartStockCell.tsx:134
 #: src/tables/bom/BomTable.tsx:481
 #: src/tables/sales/SalesOrderLineItemTable.tsx:227
@@ -4173,7 +4177,7 @@ msgstr "This stock item has been depleted"
 msgid "Stock Information"
 msgstr "Stock Information"
 
-#: src/components/tables/ColumnRenderers.tsx:355
+#: src/components/tables/ColumnRenderers.tsx:342
 #: src/pages/part/PartCategoryDetailsPanel.tsx:34
 #: src/pages/stock/StockLocationDetailsPanel.tsx:32
 #: src/tables/settings/ErrorTable.tsx:63
@@ -4181,13 +4185,13 @@ msgstr "Stock Information"
 msgid "Path"
 msgstr "Path"
 
-#: src/components/tables/ColumnRenderers.tsx:409
-#: src/components/tables/ColumnRenderers.tsx:418
+#: src/components/tables/ColumnRenderers.tsx:396
+#: src/components/tables/ColumnRenderers.tsx:405
 #: src/pages/part/PartDetailsPanel.tsx:120
 msgid "Default Location"
 msgstr "Default Location"
 
-#: src/components/tables/ColumnRenderers.tsx:541
+#: src/components/tables/ColumnRenderers.tsx:507
 #: src/pages/build/BuildOrderDetailsPanel.tsx:98
 #: src/pages/part/bom/BomCompare.tsx:34
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:46
@@ -4199,23 +4203,23 @@ msgstr "Default Location"
 msgid "Reference"
 msgstr "Reference"
 
-#: src/components/tables/ColumnRenderers.tsx:553
+#: src/components/tables/ColumnRenderers.tsx:519
 #: src/forms/PurchaseOrderForms.tsx:901
 #: src/pages/company/SupplierPartDetailsPanel.tsx:74
 msgid "Note"
 msgstr "Note"
 
-#: src/components/tables/ColumnRenderers.tsx:581
+#: src/components/tables/ColumnRenderers.tsx:547
 #: src/tables/build/BuildOutputTable.tsx:715
 msgid "Allocated Lines"
 msgstr "Allocated Lines"
 
-#: src/components/tables/ColumnRenderers.tsx:660
+#: src/components/tables/ColumnRenderers.tsx:626
 #: src/pages/core/UserDetail.tsx:173
 msgid "User Information"
 msgstr "User Information"
 
-#: src/components/tables/ColumnRenderers.tsx:677
+#: src/components/tables/ColumnRenderers.tsx:643
 #: src/components/tables/Filter.tsx:480
 #: src/pages/part/PartDetailsPanel.tsx:283
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:195
@@ -4224,7 +4228,7 @@ msgstr "User Information"
 msgid "Created By"
 msgstr "Created By"
 
-#: src/components/tables/ColumnRenderers.tsx:749
+#: src/components/tables/ColumnRenderers.tsx:715
 #: src/pages/part/PartDetailsPanel.tsx:278
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:206
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:196
@@ -4233,7 +4237,7 @@ msgstr "Created By"
 msgid "Creation Date"
 msgstr "Creation Date"
 
-#: src/components/tables/ColumnRenderers.tsx:758
+#: src/components/tables/ColumnRenderers.tsx:724
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:238
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:228
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:228
@@ -4242,7 +4246,7 @@ msgstr "Creation Date"
 msgid "Completion Date"
 msgstr "Completion Date"
 
-#: src/components/tables/ColumnRenderers.tsx:767
+#: src/components/tables/ColumnRenderers.tsx:733
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:160
 #: src/tables/part/PartSalesOrdersTable.tsx:77
 #: src/tables/sales/SalesOrderAllocationTable.tsx:187
@@ -4250,12 +4254,12 @@ msgstr "Completion Date"
 msgid "Shipment Date"
 msgstr "Shipment Date"
 
-#: src/components/tables/ColumnRenderers.tsx:799
+#: src/components/tables/ColumnRenderers.tsx:765
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:28
 msgid "Currency"
 msgstr "Currency"
 
-#: src/components/tables/ColumnRenderers.tsx:813
+#: src/components/tables/ColumnRenderers.tsx:779
 #: src/pages/part/pricing/BomPricingPanel.tsx:61
 #: src/pages/part/pricing/BomPricingPanel.tsx:144
 #: src/tables/bom/BomTable.tsx:367
@@ -4268,7 +4272,7 @@ msgstr "Currency"
 msgid "Total Price"
 msgstr "Total Price"
 
-#: src/components/tables/ColumnRenderers.tsx:820
+#: src/components/tables/ColumnRenderers.tsx:786
 msgid "Line Item"
 msgstr "Line Item"
 
@@ -6454,8 +6458,8 @@ msgstr "Stock Status"
 
 #: src/forms/StockForms.tsx:387
 #: src/pages/stock/StockDetail.tsx:403
-#: src/tables/stock/StockItemTable.tsx:423
-#: src/tables/stock/StockItemTable.tsx:467
+#: src/tables/stock/StockItemTable.tsx:428
+#: src/tables/stock/StockItemTable.tsx:472
 msgid "Add Stock Item"
 msgstr "Add Stock Item"
 
@@ -6709,19 +6713,19 @@ msgstr "This operation will permanently delete the selected stock items."
 msgid "Parent stock location"
 msgstr "Parent stock location"
 
-#: src/forms/StockForms.tsx:2324
+#: src/forms/StockForms.tsx:2325
 msgid "Find Serial Number"
 msgstr "Find Serial Number"
 
-#: src/forms/StockForms.tsx:2335
+#: src/forms/StockForms.tsx:2336
 msgid "No matching items"
 msgstr "No matching items"
 
-#: src/forms/StockForms.tsx:2341
+#: src/forms/StockForms.tsx:2342
 msgid "Multiple matching items"
 msgstr "Multiple matching items"
 
-#: src/forms/StockForms.tsx:2350
+#: src/forms/StockForms.tsx:2351
 msgid "Invalid response from server"
 msgstr "Invalid response from server"
 
@@ -10904,7 +10908,7 @@ msgstr "Default Parts"
 
 #: src/pages/stock/LocationDetail.tsx:224
 #: src/pages/stock/LocationDetail.tsx:385
-#: src/tables/stock/StockLocationTable.tsx:128
+#: src/tables/stock/StockLocationTable.tsx:137
 msgid "Edit Stock Location"
 msgstr "Edit Stock Location"
 
@@ -10931,7 +10935,7 @@ msgstr "Action for stock items in this location"
 
 #: src/pages/stock/LocationDetail.tsx:255
 #: src/pages/stock/LocationDetail.tsx:381
-#: src/tables/stock/StockLocationTable.tsx:149
+#: src/tables/stock/StockLocationTable.tsx:158
 msgid "Location Actions"
 msgstr "Location Actions"
 
@@ -11236,7 +11240,13 @@ msgid "Parent Location"
 msgstr "Parent Location"
 
 #: src/pages/stock/StockLocationDetailsPanel.tsx:84
-#: src/tables/stock/StockLocationTable.tsx:60
+#: src/tables/stock/StockItemTable.tsx:325
+#: src/tables/stock/StockLocationTable.tsx:56
+msgid "Exclude from Stock"
+msgstr "Exclude from Stock"
+
+#: src/pages/stock/StockLocationDetailsPanel.tsx:89
+#: src/tables/stock/StockLocationTable.tsx:65
 msgid "Location Type"
 msgstr "Location Type"
 
@@ -12777,7 +12787,7 @@ msgid "Set Parent Category"
 msgstr "Set Parent Category"
 
 #: src/tables/part/PartCategoryTable.tsx:150
-#: src/tables/stock/StockLocationTable.tsx:154
+#: src/tables/stock/StockLocationTable.tsx:163
 msgid "Set Parent"
 msgstr "Set Parent"
 
@@ -14616,6 +14626,10 @@ msgstr "External Location"
 msgid "Show items in an external location"
 msgstr "Show items in an external location"
 
+#: src/tables/stock/StockItemTable.tsx:326
+msgid "Show items in a location excluded from stock calculations"
+msgstr "Show items in a location excluded from stock calculations"
+
 #: src/tables/stock/StockItemTable.tsx:362
 #~ msgid "Include stock items for variant parts"
 #~ msgstr "Include stock items for variant parts"
@@ -14628,11 +14642,11 @@ msgstr "Show items in an external location"
 #~ msgid "Serial Number GTE"
 #~ msgstr "Serial Number GTE"
 
-#: src/tables/stock/StockItemTable.tsx:432
+#: src/tables/stock/StockItemTable.tsx:437
 msgid "Stock item created"
 msgstr "Stock item created"
 
-#: src/tables/stock/StockItemTable.tsx:454
+#: src/tables/stock/StockItemTable.tsx:459
 msgid "Order items"
 msgstr "Order items"
 
@@ -14782,24 +14796,28 @@ msgstr "Show structural locations"
 msgid "Show external locations"
 msgstr "Show external locations"
 
-#: src/tables/stock/StockLocationTable.tsx:56
+#: src/tables/stock/StockLocationTable.tsx:57
+msgid "Show locations excluded from stock calculations"
+msgstr "Show locations excluded from stock calculations"
+
+#: src/tables/stock/StockLocationTable.tsx:61
 msgid "Has location type"
 msgstr "Has location type"
 
-#: src/tables/stock/StockLocationTable.tsx:61
+#: src/tables/stock/StockLocationTable.tsx:66
 msgid "Filter by location type"
 msgstr "Filter by location type"
 
-#: src/tables/stock/StockLocationTable.tsx:111
-#: src/tables/stock/StockLocationTable.tsx:167
+#: src/tables/stock/StockLocationTable.tsx:120
+#: src/tables/stock/StockLocationTable.tsx:176
 msgid "Add Stock Location"
 msgstr "Add Stock Location"
 
-#: src/tables/stock/StockLocationTable.tsx:136
+#: src/tables/stock/StockLocationTable.tsx:145
 msgid "Set Parent Location"
 msgstr "Set Parent Location"
 
-#: src/tables/stock/StockLocationTable.tsx:156
+#: src/tables/stock/StockLocationTable.tsx:165
 msgid "Set parent location for the selected items"
 msgstr "Set parent location for the selected items"
 
