@@ -353,6 +353,7 @@ class StockItemSerializer(
             'belongs_to',
             'build',
             'consumed_by',
+            'consumed_by_reference',
             'customer',
             'delete_on_deplete',
             'expiry_date',
@@ -684,6 +685,10 @@ class StockItemSerializer(
 
     purchase_price_currency = InvenTreeCurrencySerializer(
         help_text=_('Purchase currency of this stock item')
+    )
+
+    consumed_by_reference = serializers.CharField(
+        source='consumed_by.reference', read_only=True, allow_null=True
     )
 
     purchase_order_reference = serializers.CharField(
