@@ -3,6 +3,7 @@
 import json
 import logging
 import os
+import shlex
 import subprocess
 import textwrap
 from pathlib import Path
@@ -256,16 +257,16 @@ def define_env(env):
     def invoke_commands(command: str = '--list'):
         """Provides an output of the available commands."""
         tasks = here.parent.joinpath('tasks.py')
-        output = gen_base.joinpath('invoke-commands.txt')
 
-        command = f'invoke -f {tasks} {command} > {output}'
+        # Capture output directly (rather than via a shared file, which concurrent builds may overwrite)
+        result = subprocess.run(
+            ['invoke', '-f', str(tasks), *shlex.split(command)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
 
-        assert subprocess.call(command, shell=True) == 0
-
-        with open(output, encoding='utf-8') as f:
-            content = f.read()
-
-        return content
+        return result.stdout
 
     @env.macro
     def listimages(subdir):
@@ -472,6 +473,9 @@ def define_env(env):
                     .replace('\n', ' ')
                     .replace('<', '&lt;')
                     .replace('>', '&gt;')
+                    # Prevent the 'attr_list' extension from treating '{...}' as attributes
+                    .replace('{', '&#123;')
+                    .replace('}', '&#125;')
                 )
                 ret_data += f'| {value["library"]} | {value["name"]} | {title} |\n'
             ret_data += '\n'

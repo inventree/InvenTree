@@ -2633,7 +2633,7 @@ def build_docs(c, mkdocs=False):
     doc_schema(c)
 
     if mkdocs:
-        run(c, 'properdocs build  -f docs/mkdocs.yml')
+        run(c, 'properdocs build -f docs/mkdocs.yml')
         info('Documentation build complete')
     else:
         info('Documentation build complete, but mkdocs not requested')

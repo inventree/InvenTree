@@ -7,7 +7,7 @@ The API schema as documented below is generated using the [drf-spectactular](htt
 
 ## API Version
 
-This documentation is for API version: `568`
+This documentation is for API version: `571`
 
 !!! tip "API Schema History"
     We track API schema changes, and provide a snapshot of each API schema version in the [API schema repository](https://github.com/inventree/schema/).
