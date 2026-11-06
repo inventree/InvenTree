@@ -376,10 +376,16 @@ class UserAPITests(InvenTreeAPITestCase):
         ]:
             self.assertIn(field, response.data)
 
-        # Change their own username
-        for name in ['Henry', 'Sally']:
-            response = self.patch(url, data={'username': name}, expected_code=200)
-            self.assertEqual(response.data['username'], name)
+        # Username and email are read-only
+        for name in ['username', 'email']:
+            self.assertTrue(fields[name]['read_only'])
+
+        # Users can change their own name
+        response = self.patch(
+            url, data={'first_name': 'Henry', 'last_name': 'Sally'}, expected_code=200
+        )
+        self.assertEqual(response.data['first_name'], 'Henry')
+        self.assertEqual(response.data['last_name'], 'Sally')
 
         # Defined starting point for the user
         for v in [True, False]:
@@ -403,6 +409,144 @@ class UserAPITests(InvenTreeAPITestCase):
 
         # User cannot fetch their own details if they are not active
         response = self.get(url, expected_code=401)
+
+    def test_me_endpoint_identity_fields_read_only(self):
+        """A user must not be able to change their own username or email via '/api/user/me/'.
+
+        - Setting another user's email breaks email-based flows (login link) for that user
+        - Changing email bypasses allauth email verification
+        - Claiming an unused username hijacks a future LDAP / remote-user login
+        """
+        url = reverse('api-user-me')
+
+        victim = User.objects.create_user(
+            username='victim', email='victim@example.com', password='password'
+        )
+
+        original_username = self.user.username
+        original_email = self.user.email
+
+        for data in [
+            {'email': victim.email},
+            {'email': 'unverified@example.com'},
+            {'username': 'not_yet_logged_in'},
+            {'username': 'not_yet_logged_in', 'email': 'other@example.com'},
+        ]:
+            # Read-only fields are silently ignored
+            response = self.patch(url, data=data, expected_code=200)
+            self.assertEqual(response.data['username'], original_username)
+            self.assertEqual(response.data['email'], original_email)
+
+            self.user.refresh_from_db()
+            self.assertEqual(self.user.username, original_username)
+            self.assertEqual(self.user.email, original_email)
+
+        # The victim's email must still be unique
+        self.assertEqual(User.objects.filter(email__iexact=victim.email).count(), 1)
+        self.assertFalse(User.objects.filter(username='not_yet_logged_in').exists())
+
+        # Full update (PUT) must not change the fields either
+        response = self.put(
+            url,
+            data={
+                'username': 'not_yet_logged_in',
+                'email': victim.email,
+                'first_name': 'A',
+                'last_name': 'B',
+            },
+            expected_code=200,
+        )
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, original_username)
+        self.assertEqual(self.user.email, original_email)
+        self.assertEqual(self.user.first_name, 'A')
+
+    def test_admin_can_edit_user_identity(self):
+        """A staff user with the 'admin' role can still change another user's username and email."""
+        other = User.objects.create_user(
+            username='other', email='other@example.com', password='password'
+        )
+        url = reverse('api-user-detail', kwargs={'pk': other.pk})
+
+        # Without staff + admin role, no write access
+        self.patch(url, data={'username': 'renamed'}, expected_code=403)
+
+        self.assignRole('admin.change')
+        self.user.is_staff = True
+        self.user.save()
+
+        response = self.patch(
+            url,
+            data={'username': 'renamed', 'email': 'renamed@example.com'},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['username'], 'renamed')
+        self.assertEqual(response.data['email'], 'renamed@example.com')
+
+        other.refresh_from_db()
+        self.assertEqual(other.username, 'renamed')
+        self.assertEqual(other.email, 'renamed@example.com')
+
+    def test_admin_cannot_set_duplicate_email(self):
+        """An admin cannot assign an email address which is already in use by another user.
+
+        Email-based flows (password reset, login link) fail silently for
+        a user whose email address is shared with another account.
+        """
+        self.assignRole('admin.change')
+        self.assignRole('admin.add')
+        self.user.is_staff = True
+        self.user.save()
+
+        first = User.objects.create_user(
+            username='first', email='first@example.com', password='password'
+        )
+        second = User.objects.create_user(
+            username='second', email='second@example.com', password='password'
+        )
+
+        # An address known only to allauth (e.g. a secondary address) is also taken
+        EmailAddress.objects.create(
+            user=first, email='first.alt@example.com', verified=True
+        )
+
+        url = reverse('api-user-detail', kwargs={'pk': second.pk})
+
+        for email in [
+            'first@example.com',
+            'FIRST@Example.com',  # Case-insensitive match
+            'first.alt@example.com',
+        ]:
+            response = self.patch(url, data={'email': email}, expected_code=400)
+            self.assertIn(
+                'A user with this email address already exists',
+                str(response.data['email']),
+            )
+
+        second.refresh_from_db()
+        self.assertEqual(second.email, 'second@example.com')
+
+        # Re-submitting the user's own address (e.g. a full PUT from the edit form) is fine
+        response = self.patch(
+            url,
+            data={'email': 'SECOND@example.com', 'first_name': 'Sec'},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['first_name'], 'Sec')
+
+        # As is a new, unused address, or a blank one
+        for email in ['new@example.com', '']:
+            response = self.patch(url, data={'email': email}, expected_code=200)
+            self.assertEqual(response.data['email'], email)
+
+        # User creation also rejects duplicates
+        response = self.post(
+            reverse('api-user-list'),
+            data={'username': 'third', 'email': 'First@example.com'},
+            expected_code=400,
+        )
+        self.assertIn('email', response.data)
+        self.assertFalse(User.objects.filter(username='third').exists())
 
     def test_me_endpoint_delete_is_blocked(self):
         """A user must not be able to delete their own account via '/api/user/me/'."""
