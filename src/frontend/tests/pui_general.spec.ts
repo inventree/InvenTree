@@ -1,5 +1,5 @@
 import { expect, test } from './baseFixtures.js';
-import { adminuser, stevenuser } from './defaults.js';
+import { adminuser, apiUrl, stevenuser } from './defaults.js';
 import { globalSearch } from './helpers.js';
 import { doCachedLogin } from './login.js';
 
@@ -91,4 +91,29 @@ test('General - Search', async ({ browser }) => {
     .click();
   await page.waitForURL('**/purchasing/index/manufacturer-parts**');
   await page.getByRole('cell', { name: 'RT0402BRD07100KL' }).waitFor();
+});
+
+/**
+ * Test that the API documentation page actually renders.
+ *
+ * The /api-doc/ view is a thin HTML shell which loads Redoc from a CDN;
+ * a 200 response does not mean that the documentation is displayed.
+ * Ref: https://github.com/inventree/InvenTree/issues/13200
+ */
+test('General - API Documentation', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+
+  const docUrl = new URL('../api-doc/', apiUrl).toString();
+  const response = await page.goto(docUrl);
+  expect(response?.status()).toBe(200);
+
+  // Redoc renders the schema title and the generated API endpoints
+  await page
+    .getByRole('heading', { name: /InvenTree API/ })
+    .first()
+    .waitFor({ timeout: 30000 });
+  await page.getByText('/api/part/', { exact: false }).first().waitFor();
+
+  expect(errors).toEqual([]);
 });
