@@ -1269,23 +1269,32 @@ class StockItemListTest(StockAPITestCase):
             build.models.Build.objects.create(part=assembly, quantity=1)
             for _ in range(2)
         ]
+        consuming_builds = [*builds, None]
         children = [
             StockItem.objects.create(
-                part=part, quantity=1, parent=parent, consumed_by=bo
+                part=part, quantity=1, parent=parent, consumed_by=build_order
             )
-            for bo in [*builds, None]
+            for build_order in consuming_builds
         ]
+
+        # Check references for consumed children and null for unconsumed stock.
         response = self.get(self.list_url, {'parent': parent.pk})
         records = {item['pk']: item for item in response.data}
         self.assertEqual(set(records), {item.pk for item in children})
-        for item, bo in zip(children, [*builds, None], strict=True):
-            self.assertEqual(records[item.pk]['consumed_by'], bo.pk if bo else None)
+        for item, build_order in zip(children, consuming_builds, strict=True):
             self.assertEqual(
-                records[item.pk]['consumed_by_reference'], bo.reference if bo else None
+                records[item.pk]['consumed_by'], build_order.pk if build_order else None
             )
+            self.assertEqual(
+                records[item.pk]['consumed_by_reference'],
+                build_order.reference if build_order else None,
+            )
+
         detail_url = reverse('api-stock-detail', kwargs={'pk': children[0].pk})
         detail = self.get(detail_url)
         self.assertEqual(detail.data['consumed_by_reference'], builds[0].reference)
+
+        # The display-only field must not modify the associated build.
         original_reference = builds[0].reference
         self.patch(detail_url, {'consumed_by_reference': 'Cannot overwrite'})
         builds[0].refresh_from_db()

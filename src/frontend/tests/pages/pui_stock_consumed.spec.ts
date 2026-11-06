@@ -14,12 +14,14 @@ for (const savedFilter of [false, true]) {
     const buildIds: number[] = [];
     let locationId: number | undefined;
     let partId: number | undefined;
+
     const create = async (url: string, data: object) => {
       const response = await api.post(url, { data });
       expect(response.status(), await response.text()).toBe(201);
       const body = await response.json();
       return Array.isArray(body) ? body[0] : body;
     };
+
     try {
       const part = await create('part/', {
         name: `Consumed reference ${generateUUID().slice(0, 8)}`,
@@ -29,6 +31,7 @@ for (const savedFilter of [false, true]) {
       partId = part.pk;
       const parent = await create('stock/', { part: partId, quantity: 10 });
       stockIds.push(parent.pk);
+
       const builds = [];
       for (let index = 0; index < 2; index++) {
         const build = await create('build/', {
@@ -39,10 +42,13 @@ for (const savedFilter of [false, true]) {
         builds.push(build);
         buildIds.push(build.pk);
       }
+
       const location = await create('stock/location/', {
         name: `Reference location ${generateUUID().slice(0, 8)}`
       });
       locationId = location.pk;
+
+      // Partial transfers create children; the parent field is read-only.
       const children = [];
       for (const build of [...builds, null]) {
         const response = await api.post('stock/transfer/', {
@@ -69,7 +75,11 @@ for (const savedFilter of [false, true]) {
         expect(patch.ok(), await patch.text()).toBeTruthy();
         children.push(await patch.json());
       }
+
+      const unconsumedChild = children[builds.length];
       const page = await doCachedLogin(browser);
+
+      // Cover fresh table preferences and a previously saved in-stock filter.
       await page.evaluate((saved) => {
         localStorage.removeItem('inventree-filterset-table-child-stock');
         if (saved)
@@ -85,22 +95,24 @@ for (const savedFilter of [false, true]) {
         exact: true
       });
       await expect(header).toBeVisible();
+
       if (savedFilter) {
         await expect(
-          page.getByRole('cell', { name: children[2].batch, exact: true })
+          page.getByRole('cell', { name: unconsumedChild.batch, exact: true })
         ).toBeVisible();
         await expect(
           page.getByRole('link', { name: builds[0].reference, exact: true })
         ).toHaveCount(0);
         await page.reload();
         await expect(
-          page.getByRole('cell', { name: children[2].batch, exact: true })
+          page.getByRole('cell', { name: unconsumedChild.batch, exact: true })
         ).toBeVisible();
         await expect(
           page.getByRole('link', { name: builds[0].reference, exact: true })
         ).toHaveCount(0);
         await clearTableFilters(page);
       }
+
       for (const [index, build] of builds.entries()) {
         const row = page.getByRole('row').filter({
           has: page.getByRole('cell', {
@@ -116,14 +128,19 @@ for (const savedFilter of [false, true]) {
           `/web/manufacturing/build-order/${build.pk}/`
         );
       }
+
       const unconsumed = page.getByRole('row').filter({
-        has: page.getByRole('cell', { name: children[2].batch, exact: true })
+        has: page.getByRole('cell', {
+          name: unconsumedChild.batch,
+          exact: true
+        })
       });
       await expect(unconsumed).toBeVisible();
       const columnIndex = await header.evaluate((element) =>
         Array.from(element.parentElement!.children).indexOf(element)
       );
       await expect(unconsumed.getByRole('cell').nth(columnIndex)).toBeEmpty();
+
       if (!savedFilter) {
         await page.getByLabel('table-select-columns').click();
         await page
@@ -156,6 +173,7 @@ for (const savedFilter of [false, true]) {
         const cleanup = async (response: APIResponse) => {
           if (!response.ok()) cleanupFailures.push(await response.text());
         };
+
         for (const pk of stockIds.reverse())
           await cleanup(await api.delete(`stock/${pk}/`));
         for (const pk of buildIds) {
@@ -176,18 +194,21 @@ for (const savedFilter of [false, true]) {
             .toBe(30);
           await cleanup(await api.delete(`build/${pk}/`));
         }
+
         if (partId) {
           await cleanup(
             await api.patch(`part/${partId}/`, { data: { active: false } })
           );
           await cleanup(await api.delete(`part/${partId}/`));
         }
+
         if (locationId)
           await cleanup(
             await api.delete(`stock/location/${locationId}/`, {
               data: { delete_stock_items: false, delete_sub_locations: false }
             })
           );
+
         expect(cleanupFailures).toEqual([]);
       } finally {
         await api.dispose();
