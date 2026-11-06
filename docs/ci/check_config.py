@@ -25,6 +25,7 @@ from docs_checks import (
     Page,
     check_macro_errors,
     find_macro_calls,
+    find_tables,
     iter_pages,
     normalize,
     run,
@@ -132,12 +133,7 @@ def check_config(site_dir: Path, checker: Checker):
 
         check_macro_errors(page, checker)
 
-        rendered_tables = [
-            table
-            for table in page.soup.select('table')
-            if [th.get_text(' ', strip=True) for th in table.select('thead th')]
-            == TABLE_HEADERS
-        ]
+        rendered_tables = find_tables(page.soup, TABLE_HEADERS)
 
         checker.check(
             len(rendered_tables) == len(tables),

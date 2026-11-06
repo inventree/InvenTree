@@ -24,3 +24,7 @@ build:
       - python docs/ci/check_images.py
       - python docs/ci/check_settings.py
       - python docs/ci/check_config.py
+      - python docs/ci/check_data_tables.py
+      - python docs/ci/check_invoke_commands.py
+      - python docs/ci/check_included_files.py
+      - python docs/ci/check_rendering.py

@@ -202,9 +202,27 @@ def table_row(element) -> TableRow | None:
     if row is None or table is None:
         return None
 
-    headers = [th.get_text(' ', strip=True) for th in table.select('thead th')]
+    return TableRow(
+        cells=row.find_all('td', recursive=False), headers=table_headers(table)
+    )
 
-    return TableRow(cells=row.find_all('td', recursive=False), headers=headers)
+
+def table_headers(table) -> list[str]:
+    """Return the header text of a rendered table."""
+    return [th.get_text(' ', strip=True) for th in table.select('thead th')]
+
+
+def table_rows(table) -> list[list[str]]:
+    """Return the (normalized) cell text of each body row in a rendered table."""
+    return [
+        [normalize(td.get_text(' ')) for td in tr.find_all('td', recursive=False)]
+        for tr in table.select('tbody tr')
+    ]
+
+
+def find_tables(soup, headers: list[str]) -> list:
+    """Return all tables (within the provided element) which have the specified headers."""
+    return [table for table in soup.select('table') if table_headers(table) == headers]
 
 
 def check_macro_errors(page: Page, checker: Checker):
