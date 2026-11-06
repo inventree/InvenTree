@@ -317,7 +317,7 @@ def check_missing_pricing(limit=250):
 
 
 @receiver(post_currency_change, dispatch_uid='dispatch_check_missing_pricing')
-def dispatch_check_missing_pricing():
+def dispatch_check_missing_pricing(*args, **kwargs):
     """Trigger pricing update."""
     offload_task(check_missing_pricing, force_async=True, group='pricing')
 

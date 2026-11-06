@@ -1098,7 +1098,7 @@ def update_exchange_rates(force: bool = False):
 
 
 @receiver(post_currency_change, dispatch_uid='receive_update_exchange_rates')
-def receive_update_exchange_rates(setting):
+def receive_update_exchange_rates(*args, **kwargs):
     """Trigger exchange rate update."""
     update_exchange_rates(True)
 
