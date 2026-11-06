@@ -17,3 +17,10 @@ build:
       - pip install -U invoke
       - echo "Generating API schema file"
       - invoke build-docs
+    post_build:
+      - echo "Checking built documentation"
+      - python docs/ci/check_api_schema.py
+      - python docs/ci/check_mkdocstrings.py
+      - python docs/ci/check_images.py
+      - python docs/ci/check_settings.py
+      - python docs/ci/check_config.py
