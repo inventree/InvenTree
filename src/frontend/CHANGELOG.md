@@ -2,6 +2,13 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 1.8.0 - Unreleased
+
+#### New Features
+
+- Adds `renderLink` helper function, which renders a validated external URL (`http` / `https` only) as an `<Anchor>` element with a link icon
+- Adds `sanitizeLinkUrl` helper function, which validates a URL for use as an external link
+
 ### 1.7.0 - November 2026
 
 Updated UI components library to match 1.7.0 InvenTree release.

@@ -977,10 +977,23 @@ class UninstallStockItemSerializer(serializers.Serializer):
 class StockStatusCustomSerializer(serializers.ChoiceField):
     """Serializer to allow annotating the schema to use int where custom values may be entered."""
 
-    def __init__(self, *args, **kwargs):
-        """Initialize the status selector."""
+    def __init__(self, *args, include_no_change: bool = False, **kwargs):
+        """Initialize the status selector.
+
+        Arguments:
+            include_no_change: If True, prepend a null "No Change" option to the choices
+
+        Note: Choices are evaluated here (rather than being passed in) so that
+        custom states which are added at runtime are available. Declared serializer
+        fields are deep-copied (re-initialized) for each serializer instance.
+        """
         if 'choices' not in kwargs:
-            kwargs['choices'] = stock.status_codes.StockStatus.items(custom=True)
+            choices = list(stock.status_codes.StockStatus.items(custom=True))
+
+            if include_no_change:
+                choices = [(None, _('No Change')), *choices]
+
+            kwargs['choices'] = choices
 
         if 'label' not in kwargs:
             kwargs['label'] = _('Status')
@@ -1428,6 +1441,7 @@ class LocationSerializer(
             'custom_icon',
             'structural',
             'external',
+            'exclude_from_stock',
             'location_type',
             # Optional fields
             'location_type_detail',
@@ -1752,14 +1766,6 @@ class StockMergeSerializer(serializers.Serializer):
         )
 
 
-def stock_item_adjust_status_options():
-    """Return a custom set of options for the StockItem status adjustment field.
-
-    In particular, include a Null option for the status field.
-    """
-    return [(None, _('No Change')), *stock.status_codes.StockStatus.items(custom=True)]
-
-
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """Serializer for a single StockItem within a stock adjustment request.
 
@@ -1839,10 +1845,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     )
 
     status = StockStatusCustomSerializer(
-        choices=stock_item_adjust_status_options(),
-        default=None,
-        required=False,
-        allow_blank=True,
+        include_no_change=True, default=None, required=False, allow_blank=True
     )
 
     packaging = serializers.CharField(
