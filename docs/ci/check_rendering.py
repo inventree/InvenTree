@@ -25,11 +25,11 @@ JINJA_RE = re.compile(r'{{.*?}}|{%.*?%}', re.DOTALL)
 
 # Paragraph-level patterns which indicate a block element was not rendered
 PARAGRAPH_PATTERNS = {
-    'markdown table row': re.compile(r'^\|.*\|.*\|'),
-    'admonition': re.compile(r'^!!!\s'),
-    'collapsible block': re.compile(r'^\?\?\?\+?\s'),
-    'content tab': re.compile(r'^===\+?\s+"'),
-    'mkdocstrings directive': re.compile(r'^:::\s'),
+    'markdown table row': re.compile(r'^\|.*\|.*\|', re.MULTILINE),
+    'admonition': re.compile(r'^!!!\s', re.MULTILINE),
+    'collapsible block': re.compile(r'^\?\?\?\+?\s', re.MULTILINE),
+    'content tab': re.compile(r'^===\+?\s+"', re.MULTILINE),
+    'mkdocstrings directive': re.compile(r'^:::\s', re.MULTILINE),
 }
 
 # Elements whose content is not checked (code is expected to contain raw markup)
@@ -83,7 +83,9 @@ def check_rendering(site_dir: Path, checker: Checker):
         paragraphs = [p.get_text(' ', strip=True) for p in content.find_all('p')]
 
         for name, pattern in PARAGRAPH_PATTERNS.items():
-            matches = [text for text in paragraphs if pattern.match(text)]
+            # Match at the start of any line, as the broken markup may follow other text
+            # in the same paragraph (e.g. a table with no blank line before it)
+            matches = [text for text in paragraphs if pattern.search(text)]
             checker.check(
                 not matches,
                 f'{page.label}: Unrendered {name}: {[text[:80] for text in matches[:3]]}',
