@@ -8,7 +8,7 @@ msgstr ""
 "Language: el\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-05 07:46\n"
+"PO-Revision-Date: 2026-11-07 02:43\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -69,7 +69,7 @@ msgid "Edit"
 msgstr "Επεξεργασία"
 
 #: lib/components/RowActions.tsx:66
-#: src/components/forms/ApiForm.tsx:939
+#: src/components/forms/ApiForm.tsx:957
 #: src/components/items/ActionDropdown.tsx:263
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:174
@@ -83,15 +83,15 @@ msgstr "Διαγραφή"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:201
 #: src/components/items/ActionDropdown.tsx:284
 #: src/components/items/ActionDropdown.tsx:285
+#: src/components/modals/ReauthenticateModal.tsx:128
 #: src/components/tables/FilterSelectDrawer.tsx:679
 #: src/components/tables/FilterSelectDrawer.tsx:731
 #: src/contexts/ThemeContext.tsx:57
 #: src/hooks/UseForm.tsx:39
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:141
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:232
 #: src/tables/build/BuildOutputTable.tsx:665
-#: src/tables/settings/ApiTokenTable.tsx:284
+#: src/tables/settings/ApiTokenTable.tsx:292
 msgid "Cancel"
 msgstr "Ακύρωση"
 
@@ -105,7 +105,7 @@ msgstr "Ακύρωση"
 #: src/forms/StockForms.tsx:1683
 #: src/forms/StockForms.tsx:1722
 #: src/forms/StockForms.tsx:1840
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:977
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:774
 msgid "Actions"
 msgstr "Ενέργειες"
 
@@ -577,8 +577,8 @@ msgstr "Ιδιοκτήτες"
 #: src/pages/core/UserDetail.tsx:221
 #: src/tables/general/AuditLogTable.tsx:503
 #: src/tables/general/AuditLogTable.tsx:593
-#: src/tables/settings/ApiTokenTable.tsx:145
-#: src/tables/settings/ApiTokenTable.tsx:165
+#: src/tables/settings/ApiTokenTable.tsx:152
+#: src/tables/settings/ApiTokenTable.tsx:172
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:44
 #: src/tables/settings/ImportSessionTable.tsx:88
@@ -696,10 +696,10 @@ msgstr ""
 #: src/forms/BomForms.tsx:87
 #: src/functions/auth.tsx:729
 #: src/pages/ErrorPage.tsx:11
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:638
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:831
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:226
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:456
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:635
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:178
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
@@ -1566,10 +1566,10 @@ msgstr "Αφαίρεση της σχετικής εικόνας από αυτό 
 
 #: src/components/details/DetailsImage.tsx:82
 #: src/forms/StockForms.tsx:1633
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:899
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:918
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:144
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:235
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:703
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:722
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:257
 #: src/tables/build/BuildAllocatedStockTable.tsx:183
 #: src/tables/build/BuildAllocatedStockTable.tsx:278
@@ -1622,10 +1622,10 @@ msgid "Clear"
 msgstr "Εκκαθάριση"
 
 #: src/components/details/DetailsImage.tsx:305
-#: src/components/forms/ApiForm.tsx:881
+#: src/components/forms/ApiForm.tsx:899
+#: src/components/modals/ReauthenticateModal.tsx:131
 #: src/contexts/ThemeContext.tsx:56
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:569
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:387
 msgid "Submit"
 msgstr "Υποβολή"
 
@@ -2041,7 +2041,7 @@ msgid "A server error occurred"
 msgstr "Προέκυψε σφάλμα διακομιστή"
 
 #: src/components/forms/ApiForm.tsx:113
-#: src/components/forms/ApiForm.tsx:799
+#: src/components/forms/ApiForm.tsx:817
 msgid "Form Error"
 msgstr "Σφάλμα Φόρμας"
 
@@ -2053,15 +2053,19 @@ msgstr "Σφάλμα Φόρμας"
 msgid "An unknown error occurred. Refer to the browser console for details."
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:756
+#: src/components/forms/ApiForm.tsx:719
+msgid "Reauthentication is required to continue"
+msgstr ""
+
+#: src/components/forms/ApiForm.tsx:774
 msgid "Submit form"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:810
+#: src/components/forms/ApiForm.tsx:828
 msgid "Errors exist for one or more form fields"
 msgstr "Υπάρχουν σφάλματα σε ένα ή περισσότερα πεδία της φόρμας"
 
-#: src/components/forms/ApiForm.tsx:919
+#: src/components/forms/ApiForm.tsx:937
 #: src/hooks/UseForm.tsx:143
 #: src/tables/plugin/PluginListTable.tsx:216
 msgid "Update"
@@ -2147,8 +2151,8 @@ msgstr "Το όνομα χρήστη σας"
 
 #: src/components/forms/AuthenticationForm.tsx:143
 #: src/components/forms/AuthenticationForm.tsx:311
+#: src/components/modals/ReauthenticateModal.tsx:175
 #: src/pages/Auth/ResetPassword.tsx:34
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
 msgid "Password"
 msgstr "Κωδικός πρόσβασης"
 
@@ -2267,7 +2271,7 @@ msgstr "Υπολογιστής/Host"
 #: src/tables/machine/MachineTypeTable.tsx:255
 #: src/tables/machine/MachineTypeTable.tsx:358
 #: src/tables/plugin/PluginErrorTable.tsx:35
-#: src/tables/settings/ApiTokenTable.tsx:76
+#: src/tables/settings/ApiTokenTable.tsx:83
 #: src/tables/settings/GroupTable.tsx:96
 #: src/tables/settings/GroupTable.tsx:149
 #: src/tables/settings/GroupTable.tsx:257
@@ -2647,7 +2651,7 @@ msgstr "Τα δεδομένα εισήχθησαν με επιτυχία"
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
 #: src/forms/BomForms.tsx:150
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:686
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:504
 msgid "Close"
 msgstr "Κλείσιμο"
 
@@ -2842,7 +2846,7 @@ msgid "Role"
 msgstr "Ρόλος"
 
 #: src/components/items/RoleTable.tsx:140
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:907
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:711
 msgid "View"
 msgstr "Προβολή"
 
@@ -3007,6 +3011,48 @@ msgstr "Πακέτα {key}"
 #: src/components/modals/QrCodeModal.tsx:57
 #~ msgid "Close modal"
 #~ msgstr "Close modal"
+
+#: src/components/modals/ReauthenticateModal.tsx:85
+msgid "Reauthentication Succeeded"
+msgstr ""
+
+#: src/components/modals/ReauthenticateModal.tsx:86
+msgid "You have been reauthenticated successfully."
+msgstr ""
+
+#: src/components/modals/ReauthenticateModal.tsx:94
+msgid "Error during reauthentication"
+msgstr ""
+
+#: src/components/modals/ReauthenticateModal.tsx:97
+msgid "Reauthentication Failed"
+msgstr ""
+
+#: src/components/modals/ReauthenticateModal.tsx:98
+msgid "Failed to reauthenticate"
+msgstr ""
+
+#: src/components/modals/ReauthenticateModal.tsx:113
+#: src/components/modals/ReauthenticateModal.tsx:153
+msgid "Reauthenticate"
+msgstr ""
+
+#: src/components/modals/ReauthenticateModal.tsx:115
+msgid "Reauthentication is required to continue."
+msgstr ""
+
+#: src/components/modals/ReauthenticateModal.tsx:177
+msgid "Enter your password"
+msgstr "Εισαγάγετε τον κωδικό σας"
+
+#: src/components/modals/ReauthenticateModal.tsx:199
+#: src/pages/Auth/MFA.tsx:33
+msgid "TOTP Code"
+msgstr "Κωδικός TOTP"
+
+#: src/components/modals/ReauthenticateModal.tsx:201
+msgid "Enter one of your TOTP codes"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:22
 msgid "Instance Name"
@@ -3657,7 +3703,7 @@ msgstr "Ημερομηνία"
 #: src/tables/plugin/PluginListTable.tsx:431
 #: src/tables/purchasing/SupplierPartTable.tsx:139
 #: src/tables/purchasing/SupplierPartTable.tsx:262
-#: src/tables/settings/ApiTokenTable.tsx:81
+#: src/tables/settings/ApiTokenTable.tsx:88
 #: src/tables/settings/ProjectCodeTable.tsx:104
 #: src/tables/settings/UserTable.tsx:402
 #: src/tables/stock/StockItemTable.tsx:197
@@ -4571,7 +4617,7 @@ msgid "Select tags"
 msgstr ""
 
 #: src/components/tables/Filter.tsx:442
-#: src/tables/settings/ApiTokenTable.tsx:166
+#: src/tables/settings/ApiTokenTable.tsx:173
 msgid "Filter by user"
 msgstr "Φιλτράρισμα ανά χρήστη"
 
@@ -4619,8 +4665,8 @@ msgstr "Φιλτράρισμα ανά χρήστη που δημιούργησε
 #: src/components/tables/Filter.tsx:488
 #: src/pages/build/BuildOrderDetailsPanel.tsx:155
 #: src/tables/build/BuildOrderTable.tsx:130
-#: src/tables/settings/ApiTokenTable.tsx:121
-#: src/tables/settings/ApiTokenTable.tsx:170
+#: src/tables/settings/ApiTokenTable.tsx:128
+#: src/tables/settings/ApiTokenTable.tsx:177
 msgid "Issued By"
 msgstr "Εκδόθηκε Από"
 
@@ -7139,11 +7185,6 @@ msgstr "Δεν έχετε λογαριασμό;"
 msgid "Multi-Factor Authentication"
 msgstr "Έλεγχος Ταυτότητας Πολλαπλών Παραγόντων"
 
-#: src/pages/Auth/MFA.tsx:33
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:219
-msgid "TOTP Code"
-msgstr "Κωδικός TOTP"
-
 #: src/pages/Auth/MFA.tsx:35
 msgid "Enter one of your codes: {mfa_types}"
 msgstr "Εισαγάγετε έναν από τους κωδικούς σας: {mfa_types}"
@@ -7675,7 +7716,7 @@ msgid "Position"
 msgstr "Θέση"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:968
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:765
 msgid "Type"
 msgstr "Τύπος"
 
@@ -7722,61 +7763,24 @@ msgstr "Επεξεργασία Προφίλ"
 msgid "{0}"
 msgstr "{0}"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:105
-msgid "Reauthentication Succeeded"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:106
-msgid "You have been reauthenticated successfully."
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:114
-msgid "Error during reauthentication"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:117
-msgid "Reauthentication Failed"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:118
-msgid "Failed to reauthenticate"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:133
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:173
-msgid "Reauthenticate"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
-msgid "Reauthentiction is required to continue."
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:197
-msgid "Enter your password"
-msgstr "Εισαγάγετε τον κωδικό σας"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:221
-msgid "Enter one of your TOTP codes"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:273
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:91
 msgid "WebAuthn Credential Removed"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:274
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:92
 msgid "WebAuthn credential removed successfully."
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:283
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:101
 msgid "Error removing WebAuthn credential"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:304
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:122
 msgid "Remove WebAuthn Credential"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:312
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:403
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:130
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:221
 #: src/tables/build/BuildAllocatedStockTable.tsx:186
 #: src/tables/build/BuildLineTable.tsx:787
 #: src/tables/sales/SalesOrderAllocationTable.tsx:225
@@ -7784,159 +7788,163 @@ msgstr ""
 msgid "Confirm Removal"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:314
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:132
 msgid "Confirm removal of webauth credential"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:366
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
+#~ msgid "Reauthentiction is required to continue."
+#~ msgstr "Reauthentiction is required to continue."
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:184
 msgid "TOTP Removed"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:367
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:185
 msgid "TOTP token removed successfully."
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:377
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
 msgid "Error removing TOTP token"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:396
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:214
 msgid "Remove TOTP Token"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:405
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:223
 msgid "Confirm removal of TOTP code"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:465
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:283
 msgid "TOTP Already Registered"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:466
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:284
 msgid "A TOTP token is already registered for this account."
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:299
 msgid "Error Fetching TOTP Registration"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:341
+msgid "TOTP Registered"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:342
+msgid "TOTP token registered successfully."
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:351
+msgid "Error registering TOTP token"
+msgstr "Σφάλμα κατά την καταχώριση του TOTP token"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:370
+msgid "Register TOTP Token"
+msgstr "Καταχώριση TOTP Token"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:415
+msgid "Error fetching recovery codes"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:451
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:467
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:671
+msgid "Recovery Codes"
+msgstr "Κωδικοί Ανάκτησης"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:469
+msgid "The following one time recovery codes are available for use"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
 #~ msgid "An unexpected error occurred while fetching TOTP registration data."
 #~ msgstr "An unexpected error occurred while fetching TOTP registration data."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:523
-msgid "TOTP Registered"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:524
-msgid "TOTP token registered successfully."
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:533
-msgid "Error registering TOTP token"
-msgstr "Σφάλμα κατά την καταχώριση του TOTP token"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:552
-msgid "Register TOTP Token"
-msgstr "Καταχώριση TOTP Token"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:597
-msgid "Error fetching recovery codes"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:633
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:649
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:867
-msgid "Recovery Codes"
-msgstr "Κωδικοί Ανάκτησης"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:651
-msgid "The following one time recovery codes are available for use"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:668
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:486
 msgid "Copy recovery codes to clipboard"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:678
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:496
 msgid "No Unused Codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:680
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:498
 msgid "There are no available recovery codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:783
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:587
 msgid "WebAuthn Registered"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:784
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:588
 msgid "WebAuthn credential registered successfully"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:793
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:597
 msgid "Error registering WebAuthn credential"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:796
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:600
 msgid "WebAuthn Registration Failed"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:797
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:601
 msgid "Failed to register WebAuthn credential"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:820
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:624
 msgid "Error fetching WebAuthn registration"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:860
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:664
 msgid "TOTP"
 msgstr "TOTP"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:861
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:665
 msgid "Time-based One-Time Password"
 msgstr "Κωδικός μίας χρήσης βασισμένος στον χρόνο"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:868
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:672
 msgid "One-Time pre-generated recovery codes"
 msgstr "Προ-δημιουργημένοι κωδικοί ανάκτησης μίας χρήσης"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:874
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:678
 msgid "WebAuthn"
 msgstr "WebAuthn"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:875
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:679
 msgid "Web Authentication (WebAuthn) is a web standard for secure authentication"
 msgstr "Το Web Authentication (WebAuthn) είναι ένα πρότυπο ιστού για ασφαλή ταυτοποίηση"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:971
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:768
 msgid "Last used at"
 msgstr "Τελευταία χρήση στις"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:974
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:771
 msgid "Created at"
 msgstr "Δημιουργήθηκε στις"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:985
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:782
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:193
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:351
 msgid "Not Configured"
 msgstr "Μη Διαμορφωμένο"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:989
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:786
 msgid "No multi-factor tokens configured for this account"
 msgstr "Δεν έχουν ρυθμιστεί multi-factor tokens για αυτόν τον λογαριασμό"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:994
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:791
 msgid "Register Authentication Method"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1010
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:807
 msgid "No MFA Methods Available"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1014
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:811
 msgid "There are no MFA methods available for configuration"
 msgstr ""
 
@@ -9468,7 +9476,7 @@ msgstr "Τοποθεσία Προορισμού"
 #: src/pages/stock/StockDetailsPanel.tsx:357
 #: src/tables/general/AuditLogTable.tsx:74
 #: src/tables/general/AuditLogTable.tsx:496
-#: src/tables/settings/ApiTokenTable.tsx:116
+#: src/tables/settings/ApiTokenTable.tsx:123
 #: src/tables/settings/PendingTasksTable.tsx:41
 #: src/tables/stock/StockItemTable.tsx:160
 msgid "Created"
@@ -10461,7 +10469,7 @@ msgstr "Τιμολόγηση Αγορών"
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:235
 #: src/pages/stock/StockDetailsPanel.tsx:364
 #: src/tables/general/ParameterTable.tsx:101
-#: src/tables/general/ParametricDataTable.tsx:101
+#: src/tables/general/ParametricDataTable.tsx:102
 #: src/tables/settings/TemplateTable.tsx:261
 #: src/tables/stock/StockItemTable.tsx:166
 msgid "Last Updated"
@@ -12376,7 +12384,7 @@ msgstr "Εσωτερικές μονάδες"
 
 #: src/tables/general/ParameterTable.tsx:109
 #: src/tables/general/ParameterTable.tsx:124
-#: src/tables/general/ParametricDataTable.tsx:110
+#: src/tables/general/ParametricDataTable.tsx:111
 #: src/tables/settings/TemplateTable.tsx:273
 msgid "Updated By"
 msgstr "Ενημερώθηκε από"
@@ -12394,14 +12402,14 @@ msgid "Import Parameters"
 msgstr ""
 
 #: src/tables/general/ParameterTable.tsx:161
-#: src/tables/general/ParametricDataTable.tsx:331
-#: src/tables/general/ParametricDataTable.tsx:462
+#: src/tables/general/ParametricDataTable.tsx:338
+#: src/tables/general/ParametricDataTable.tsx:469
 msgid "Add Parameter"
 msgstr "Προσθήκη παραμέτρου"
 
 #: src/tables/general/ParameterTable.tsx:172
 #: src/tables/general/ParameterTable.tsx:219
-#: src/tables/general/ParametricDataTable.tsx:355
+#: src/tables/general/ParametricDataTable.tsx:362
 msgid "Edit Parameter"
 msgstr "Επεξεργασία παραμέτρου"
 
@@ -12476,7 +12484,7 @@ msgstr ""
 msgid "Filter by model type"
 msgstr ""
 
-#: src/tables/general/ParametricDataTable.tsx:121
+#: src/tables/general/ParametricDataTable.tsx:122
 msgid "Click to edit"
 msgstr "Κάντε κλικ για επεξεργασία"
 
@@ -13752,72 +13760,72 @@ msgstr "Εμφάνιση αποστολών που έχουν σταλεί"
 msgid "Show shipments which have been delivered"
 msgstr "Εμφάνιση παραδομένων αποστολών"
 
-#: src/tables/settings/ApiTokenTable.tsx:48
-#: src/tables/settings/ApiTokenTable.tsx:63
+#: src/tables/settings/ApiTokenTable.tsx:51
+#: src/tables/settings/ApiTokenTable.tsx:70
 msgid "Generate Token"
 msgstr "Δημιουργία token"
 
-#: src/tables/settings/ApiTokenTable.tsx:50
+#: src/tables/settings/ApiTokenTable.tsx:53
 msgid "Token generated"
 msgstr "Το token δημιουργήθηκε"
 
-#: src/tables/settings/ApiTokenTable.tsx:86
-#: src/tables/settings/ApiTokenTable.tsx:156
+#: src/tables/settings/ApiTokenTable.tsx:93
+#: src/tables/settings/ApiTokenTable.tsx:163
 msgid "Revoked"
 msgstr "Ανακλημένο"
 
-#: src/tables/settings/ApiTokenTable.tsx:90
-#: src/tables/settings/ApiTokenTable.tsx:230
+#: src/tables/settings/ApiTokenTable.tsx:97
+#: src/tables/settings/ApiTokenTable.tsx:238
 msgid "Token"
 msgstr "Token"
 
-#: src/tables/settings/ApiTokenTable.tsx:97
+#: src/tables/settings/ApiTokenTable.tsx:104
 msgid "In Use"
 msgstr "Σε χρήση"
 
-#: src/tables/settings/ApiTokenTable.tsx:106
+#: src/tables/settings/ApiTokenTable.tsx:113
 msgid "Last Seen"
 msgstr "Τελευταία εμφάνιση"
 
-#: src/tables/settings/ApiTokenTable.tsx:111
+#: src/tables/settings/ApiTokenTable.tsx:118
 msgid "Expiry"
 msgstr "Λήξη"
 
-#: src/tables/settings/ApiTokenTable.tsx:127
-#: src/tables/settings/ApiTokenTable.tsx:174
+#: src/tables/settings/ApiTokenTable.tsx:134
+#: src/tables/settings/ApiTokenTable.tsx:181
 msgid "Revoked By"
 msgstr ""
 
-#: src/tables/settings/ApiTokenTable.tsx:157
+#: src/tables/settings/ApiTokenTable.tsx:164
 msgid "Show revoked tokens"
 msgstr "Εμφάνιση ανακλημένων tokens"
 
-#: src/tables/settings/ApiTokenTable.tsx:184
-#: src/tables/settings/ApiTokenTable.tsx:287
+#: src/tables/settings/ApiTokenTable.tsx:191
+#: src/tables/settings/ApiTokenTable.tsx:295
 msgid "Revoke"
 msgstr "Ανάκληση"
 
-#: src/tables/settings/ApiTokenTable.tsx:212
+#: src/tables/settings/ApiTokenTable.tsx:219
 msgid "Error revoking token"
 msgstr "Σφάλμα κατά την ανάκληση token"
 
-#: src/tables/settings/ApiTokenTable.tsx:235
+#: src/tables/settings/ApiTokenTable.tsx:243
 msgid "Tokens are only shown once - make sure to note it down."
 msgstr "Τα tokens εμφανίζονται μόνο μία φορά — σημειώστε τα."
 
-#: src/tables/settings/ApiTokenTable.tsx:244
+#: src/tables/settings/ApiTokenTable.tsx:252
 msgid "Notification could not be sent"
 msgstr ""
 
-#: src/tables/settings/ApiTokenTable.tsx:265
+#: src/tables/settings/ApiTokenTable.tsx:273
 msgid "Revoke Token"
 msgstr ""
 
-#: src/tables/settings/ApiTokenTable.tsx:269
+#: src/tables/settings/ApiTokenTable.tsx:277
 msgid "Revocation Reason"
 msgstr ""
 
-#: src/tables/settings/ApiTokenTable.tsx:270
+#: src/tables/settings/ApiTokenTable.tsx:278
 msgid "Enter a reason for revoking this token"
 msgstr ""
 
