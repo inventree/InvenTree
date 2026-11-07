@@ -64,7 +64,7 @@ msgid "Edit"
 msgstr "Edit"
 
 #: lib/components/RowActions.tsx:66
-#: src/components/forms/ApiForm.tsx:939
+#: src/components/forms/ApiForm.tsx:957
 #: src/components/items/ActionDropdown.tsx:263
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:174
@@ -78,15 +78,15 @@ msgstr "Delete"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:201
 #: src/components/items/ActionDropdown.tsx:284
 #: src/components/items/ActionDropdown.tsx:285
+#: src/components/modals/ReauthenticateModal.tsx:128
 #: src/components/tables/FilterSelectDrawer.tsx:679
 #: src/components/tables/FilterSelectDrawer.tsx:731
 #: src/contexts/ThemeContext.tsx:57
 #: src/hooks/UseForm.tsx:39
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:141
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:232
 #: src/tables/build/BuildOutputTable.tsx:665
-#: src/tables/settings/ApiTokenTable.tsx:284
+#: src/tables/settings/ApiTokenTable.tsx:292
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -100,7 +100,7 @@ msgstr "Cancel"
 #: src/forms/StockForms.tsx:1683
 #: src/forms/StockForms.tsx:1722
 #: src/forms/StockForms.tsx:1840
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:977
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:774
 msgid "Actions"
 msgstr "Actions"
 
@@ -572,8 +572,8 @@ msgstr "Owners"
 #: src/pages/core/UserDetail.tsx:221
 #: src/tables/general/AuditLogTable.tsx:503
 #: src/tables/general/AuditLogTable.tsx:593
-#: src/tables/settings/ApiTokenTable.tsx:145
-#: src/tables/settings/ApiTokenTable.tsx:165
+#: src/tables/settings/ApiTokenTable.tsx:152
+#: src/tables/settings/ApiTokenTable.tsx:172
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:44
 #: src/tables/settings/ImportSessionTable.tsx:88
@@ -691,10 +691,10 @@ msgstr "Selection Entries"
 #: src/forms/BomForms.tsx:87
 #: src/functions/auth.tsx:729
 #: src/pages/ErrorPage.tsx:11
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:638
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:831
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:226
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:456
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:635
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:178
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
@@ -1561,10 +1561,10 @@ msgstr "Remove the associated image from this item?"
 
 #: src/components/details/DetailsImage.tsx:82
 #: src/forms/StockForms.tsx:1633
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:899
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:918
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:144
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:235
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:703
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:722
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:257
 #: src/tables/build/BuildAllocatedStockTable.tsx:183
 #: src/tables/build/BuildAllocatedStockTable.tsx:278
@@ -1617,10 +1617,10 @@ msgid "Clear"
 msgstr "Clear"
 
 #: src/components/details/DetailsImage.tsx:305
-#: src/components/forms/ApiForm.tsx:881
+#: src/components/forms/ApiForm.tsx:899
+#: src/components/modals/ReauthenticateModal.tsx:131
 #: src/contexts/ThemeContext.tsx:56
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:569
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:387
 msgid "Submit"
 msgstr "Submit"
 
@@ -2036,7 +2036,7 @@ msgid "A server error occurred"
 msgstr "A server error occurred"
 
 #: src/components/forms/ApiForm.tsx:113
-#: src/components/forms/ApiForm.tsx:799
+#: src/components/forms/ApiForm.tsx:817
 msgid "Form Error"
 msgstr "Form Error"
 
@@ -2048,15 +2048,19 @@ msgstr "Form Error"
 msgid "An unknown error occurred. Refer to the browser console for details."
 msgstr "An unknown error occurred. Refer to the browser console for details."
 
-#: src/components/forms/ApiForm.tsx:756
+#: src/components/forms/ApiForm.tsx:719
+msgid "Reauthentication is required to continue"
+msgstr "Reauthentication is required to continue"
+
+#: src/components/forms/ApiForm.tsx:774
 msgid "Submit form"
 msgstr "Submit form"
 
-#: src/components/forms/ApiForm.tsx:810
+#: src/components/forms/ApiForm.tsx:828
 msgid "Errors exist for one or more form fields"
 msgstr "Errors exist for one or more form fields"
 
-#: src/components/forms/ApiForm.tsx:919
+#: src/components/forms/ApiForm.tsx:937
 #: src/hooks/UseForm.tsx:143
 #: src/tables/plugin/PluginListTable.tsx:216
 msgid "Update"
@@ -2142,8 +2146,8 @@ msgstr "Your username"
 
 #: src/components/forms/AuthenticationForm.tsx:143
 #: src/components/forms/AuthenticationForm.tsx:311
+#: src/components/modals/ReauthenticateModal.tsx:175
 #: src/pages/Auth/ResetPassword.tsx:34
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
 msgid "Password"
 msgstr "Password"
 
@@ -2262,7 +2266,7 @@ msgstr "Host"
 #: src/tables/machine/MachineTypeTable.tsx:255
 #: src/tables/machine/MachineTypeTable.tsx:358
 #: src/tables/plugin/PluginErrorTable.tsx:35
-#: src/tables/settings/ApiTokenTable.tsx:76
+#: src/tables/settings/ApiTokenTable.tsx:83
 #: src/tables/settings/GroupTable.tsx:96
 #: src/tables/settings/GroupTable.tsx:149
 #: src/tables/settings/GroupTable.tsx:257
@@ -2642,7 +2646,7 @@ msgstr "Data has been imported successfully"
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
 #: src/forms/BomForms.tsx:150
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:686
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:504
 msgid "Close"
 msgstr "Close"
 
@@ -2837,7 +2841,7 @@ msgid "Role"
 msgstr "Role"
 
 #: src/components/items/RoleTable.tsx:140
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:907
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:711
 msgid "View"
 msgstr "View"
 
@@ -3002,6 +3006,48 @@ msgstr "{key} Packages"
 #: src/components/modals/QrCodeModal.tsx:57
 #~ msgid "Close modal"
 #~ msgstr "Close modal"
+
+#: src/components/modals/ReauthenticateModal.tsx:85
+msgid "Reauthentication Succeeded"
+msgstr "Reauthentication Succeeded"
+
+#: src/components/modals/ReauthenticateModal.tsx:86
+msgid "You have been reauthenticated successfully."
+msgstr "You have been reauthenticated successfully."
+
+#: src/components/modals/ReauthenticateModal.tsx:94
+msgid "Error during reauthentication"
+msgstr "Error during reauthentication"
+
+#: src/components/modals/ReauthenticateModal.tsx:97
+msgid "Reauthentication Failed"
+msgstr "Reauthentication Failed"
+
+#: src/components/modals/ReauthenticateModal.tsx:98
+msgid "Failed to reauthenticate"
+msgstr "Failed to reauthenticate"
+
+#: src/components/modals/ReauthenticateModal.tsx:113
+#: src/components/modals/ReauthenticateModal.tsx:153
+msgid "Reauthenticate"
+msgstr "Reauthenticate"
+
+#: src/components/modals/ReauthenticateModal.tsx:115
+msgid "Reauthentication is required to continue."
+msgstr "Reauthentication is required to continue."
+
+#: src/components/modals/ReauthenticateModal.tsx:177
+msgid "Enter your password"
+msgstr "Enter your password"
+
+#: src/components/modals/ReauthenticateModal.tsx:199
+#: src/pages/Auth/MFA.tsx:33
+msgid "TOTP Code"
+msgstr "TOTP Code"
+
+#: src/components/modals/ReauthenticateModal.tsx:201
+msgid "Enter one of your TOTP codes"
+msgstr "Enter one of your TOTP codes"
 
 #: src/components/modals/ServerInfoModal.tsx:22
 msgid "Instance Name"
@@ -3652,7 +3698,7 @@ msgstr "Date"
 #: src/tables/plugin/PluginListTable.tsx:431
 #: src/tables/purchasing/SupplierPartTable.tsx:139
 #: src/tables/purchasing/SupplierPartTable.tsx:262
-#: src/tables/settings/ApiTokenTable.tsx:81
+#: src/tables/settings/ApiTokenTable.tsx:88
 #: src/tables/settings/ProjectCodeTable.tsx:104
 #: src/tables/settings/UserTable.tsx:402
 #: src/tables/stock/StockItemTable.tsx:197
@@ -4566,7 +4612,7 @@ msgid "Select tags"
 msgstr "Select tags"
 
 #: src/components/tables/Filter.tsx:442
-#: src/tables/settings/ApiTokenTable.tsx:166
+#: src/tables/settings/ApiTokenTable.tsx:173
 msgid "Filter by user"
 msgstr "Filter by user"
 
@@ -4614,8 +4660,8 @@ msgstr "Filter by user who created the order"
 #: src/components/tables/Filter.tsx:488
 #: src/pages/build/BuildOrderDetailsPanel.tsx:155
 #: src/tables/build/BuildOrderTable.tsx:130
-#: src/tables/settings/ApiTokenTable.tsx:121
-#: src/tables/settings/ApiTokenTable.tsx:170
+#: src/tables/settings/ApiTokenTable.tsx:128
+#: src/tables/settings/ApiTokenTable.tsx:177
 msgid "Issued By"
 msgstr "Issued By"
 
@@ -7134,11 +7180,6 @@ msgstr "Don't have an account?"
 msgid "Multi-Factor Authentication"
 msgstr "Multi-Factor Authentication"
 
-#: src/pages/Auth/MFA.tsx:33
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:219
-msgid "TOTP Code"
-msgstr "TOTP Code"
-
 #: src/pages/Auth/MFA.tsx:35
 msgid "Enter one of your codes: {mfa_types}"
 msgstr "Enter one of your codes: {mfa_types}"
@@ -7670,7 +7711,7 @@ msgid "Position"
 msgstr "Position"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:968
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:765
 msgid "Type"
 msgstr "Type"
 
@@ -7717,61 +7758,24 @@ msgstr "Edit Profile"
 msgid "{0}"
 msgstr "{0}"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:105
-msgid "Reauthentication Succeeded"
-msgstr "Reauthentication Succeeded"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:106
-msgid "You have been reauthenticated successfully."
-msgstr "You have been reauthenticated successfully."
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:114
-msgid "Error during reauthentication"
-msgstr "Error during reauthentication"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:117
-msgid "Reauthentication Failed"
-msgstr "Reauthentication Failed"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:118
-msgid "Failed to reauthenticate"
-msgstr "Failed to reauthenticate"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:133
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:173
-msgid "Reauthenticate"
-msgstr "Reauthenticate"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
-msgid "Reauthentiction is required to continue."
-msgstr "Reauthentiction is required to continue."
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:197
-msgid "Enter your password"
-msgstr "Enter your password"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:221
-msgid "Enter one of your TOTP codes"
-msgstr "Enter one of your TOTP codes"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:273
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:91
 msgid "WebAuthn Credential Removed"
 msgstr "WebAuthn Credential Removed"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:274
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:92
 msgid "WebAuthn credential removed successfully."
 msgstr "WebAuthn credential removed successfully."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:283
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:101
 msgid "Error removing WebAuthn credential"
 msgstr "Error removing WebAuthn credential"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:304
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:122
 msgid "Remove WebAuthn Credential"
 msgstr "Remove WebAuthn Credential"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:312
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:403
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:130
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:221
 #: src/tables/build/BuildAllocatedStockTable.tsx:186
 #: src/tables/build/BuildLineTable.tsx:787
 #: src/tables/sales/SalesOrderAllocationTable.tsx:225
@@ -7779,159 +7783,163 @@ msgstr "Remove WebAuthn Credential"
 msgid "Confirm Removal"
 msgstr "Confirm Removal"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:314
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:132
 msgid "Confirm removal of webauth credential"
 msgstr "Confirm removal of webauth credential"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:366
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
+#~ msgid "Reauthentiction is required to continue."
+#~ msgstr "Reauthentiction is required to continue."
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:184
 msgid "TOTP Removed"
 msgstr "TOTP Removed"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:367
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:185
 msgid "TOTP token removed successfully."
 msgstr "TOTP token removed successfully."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:377
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
 msgid "Error removing TOTP token"
 msgstr "Error removing TOTP token"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:396
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:214
 msgid "Remove TOTP Token"
 msgstr "Remove TOTP Token"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:405
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:223
 msgid "Confirm removal of TOTP code"
 msgstr "Confirm removal of TOTP code"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:465
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:283
 msgid "TOTP Already Registered"
 msgstr "TOTP Already Registered"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:466
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:284
 msgid "A TOTP token is already registered for this account."
 msgstr "A TOTP token is already registered for this account."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:299
 msgid "Error Fetching TOTP Registration"
 msgstr "Error Fetching TOTP Registration"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:341
+msgid "TOTP Registered"
+msgstr "TOTP Registered"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:342
+msgid "TOTP token registered successfully."
+msgstr "TOTP token registered successfully."
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:351
+msgid "Error registering TOTP token"
+msgstr "Error registering TOTP token"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:370
+msgid "Register TOTP Token"
+msgstr "Register TOTP Token"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:415
+msgid "Error fetching recovery codes"
+msgstr "Error fetching recovery codes"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:451
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:467
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:671
+msgid "Recovery Codes"
+msgstr "Recovery Codes"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:469
+msgid "The following one time recovery codes are available for use"
+msgstr "The following one time recovery codes are available for use"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
 #~ msgid "An unexpected error occurred while fetching TOTP registration data."
 #~ msgstr "An unexpected error occurred while fetching TOTP registration data."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:523
-msgid "TOTP Registered"
-msgstr "TOTP Registered"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:524
-msgid "TOTP token registered successfully."
-msgstr "TOTP token registered successfully."
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:533
-msgid "Error registering TOTP token"
-msgstr "Error registering TOTP token"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:552
-msgid "Register TOTP Token"
-msgstr "Register TOTP Token"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:597
-msgid "Error fetching recovery codes"
-msgstr "Error fetching recovery codes"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:633
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:649
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:867
-msgid "Recovery Codes"
-msgstr "Recovery Codes"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:651
-msgid "The following one time recovery codes are available for use"
-msgstr "The following one time recovery codes are available for use"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:668
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:486
 msgid "Copy recovery codes to clipboard"
 msgstr "Copy recovery codes to clipboard"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:678
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:496
 msgid "No Unused Codes"
 msgstr "No Unused Codes"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:680
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:498
 msgid "There are no available recovery codes"
 msgstr "There are no available recovery codes"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:783
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:587
 msgid "WebAuthn Registered"
 msgstr "WebAuthn Registered"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:784
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:588
 msgid "WebAuthn credential registered successfully"
 msgstr "WebAuthn credential registered successfully"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:793
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:597
 msgid "Error registering WebAuthn credential"
 msgstr "Error registering WebAuthn credential"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:796
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:600
 msgid "WebAuthn Registration Failed"
 msgstr "WebAuthn Registration Failed"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:797
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:601
 msgid "Failed to register WebAuthn credential"
 msgstr "Failed to register WebAuthn credential"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:820
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:624
 msgid "Error fetching WebAuthn registration"
 msgstr "Error fetching WebAuthn registration"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:860
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:664
 msgid "TOTP"
 msgstr "TOTP"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:861
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:665
 msgid "Time-based One-Time Password"
 msgstr "Time-based One-Time Password"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:868
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:672
 msgid "One-Time pre-generated recovery codes"
 msgstr "One-Time pre-generated recovery codes"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:874
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:678
 msgid "WebAuthn"
 msgstr "WebAuthn"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:875
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:679
 msgid "Web Authentication (WebAuthn) is a web standard for secure authentication"
 msgstr "Web Authentication (WebAuthn) is a web standard for secure authentication"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:971
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:768
 msgid "Last used at"
 msgstr "Last used at"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:974
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:771
 msgid "Created at"
 msgstr "Created at"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:985
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:782
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:193
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:351
 msgid "Not Configured"
 msgstr "Not Configured"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:989
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:786
 msgid "No multi-factor tokens configured for this account"
 msgstr "No multi-factor tokens configured for this account"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:994
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:791
 msgid "Register Authentication Method"
 msgstr "Register Authentication Method"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1010
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:807
 msgid "No MFA Methods Available"
 msgstr "No MFA Methods Available"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1014
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:811
 msgid "There are no MFA methods available for configuration"
 msgstr "There are no MFA methods available for configuration"
 
@@ -9463,7 +9471,7 @@ msgstr "Destination Location"
 #: src/pages/stock/StockDetailsPanel.tsx:357
 #: src/tables/general/AuditLogTable.tsx:74
 #: src/tables/general/AuditLogTable.tsx:496
-#: src/tables/settings/ApiTokenTable.tsx:116
+#: src/tables/settings/ApiTokenTable.tsx:123
 #: src/tables/settings/PendingTasksTable.tsx:41
 #: src/tables/stock/StockItemTable.tsx:160
 msgid "Created"
@@ -10456,7 +10464,7 @@ msgstr "Purchase Pricing"
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:235
 #: src/pages/stock/StockDetailsPanel.tsx:364
 #: src/tables/general/ParameterTable.tsx:101
-#: src/tables/general/ParametricDataTable.tsx:101
+#: src/tables/general/ParametricDataTable.tsx:102
 #: src/tables/settings/TemplateTable.tsx:261
 #: src/tables/stock/StockItemTable.tsx:166
 msgid "Last Updated"
@@ -12371,7 +12379,7 @@ msgstr "Internal Units"
 
 #: src/tables/general/ParameterTable.tsx:109
 #: src/tables/general/ParameterTable.tsx:124
-#: src/tables/general/ParametricDataTable.tsx:110
+#: src/tables/general/ParametricDataTable.tsx:111
 #: src/tables/settings/TemplateTable.tsx:273
 msgid "Updated By"
 msgstr "Updated By"
@@ -12389,14 +12397,14 @@ msgid "Import Parameters"
 msgstr "Import Parameters"
 
 #: src/tables/general/ParameterTable.tsx:161
-#: src/tables/general/ParametricDataTable.tsx:331
-#: src/tables/general/ParametricDataTable.tsx:462
+#: src/tables/general/ParametricDataTable.tsx:338
+#: src/tables/general/ParametricDataTable.tsx:469
 msgid "Add Parameter"
 msgstr "Add Parameter"
 
 #: src/tables/general/ParameterTable.tsx:172
 #: src/tables/general/ParameterTable.tsx:219
-#: src/tables/general/ParametricDataTable.tsx:355
+#: src/tables/general/ParametricDataTable.tsx:362
 msgid "Edit Parameter"
 msgstr "Edit Parameter"
 
@@ -12471,7 +12479,7 @@ msgstr "Show enabled templates"
 msgid "Filter by model type"
 msgstr "Filter by model type"
 
-#: src/tables/general/ParametricDataTable.tsx:121
+#: src/tables/general/ParametricDataTable.tsx:122
 msgid "Click to edit"
 msgstr "Click to edit"
 
@@ -13747,72 +13755,72 @@ msgstr "Show shipments which have been shipped"
 msgid "Show shipments which have been delivered"
 msgstr "Show shipments which have been delivered"
 
-#: src/tables/settings/ApiTokenTable.tsx:48
-#: src/tables/settings/ApiTokenTable.tsx:63
+#: src/tables/settings/ApiTokenTable.tsx:51
+#: src/tables/settings/ApiTokenTable.tsx:70
 msgid "Generate Token"
 msgstr "Generate Token"
 
-#: src/tables/settings/ApiTokenTable.tsx:50
+#: src/tables/settings/ApiTokenTable.tsx:53
 msgid "Token generated"
 msgstr "Token generated"
 
-#: src/tables/settings/ApiTokenTable.tsx:86
-#: src/tables/settings/ApiTokenTable.tsx:156
+#: src/tables/settings/ApiTokenTable.tsx:93
+#: src/tables/settings/ApiTokenTable.tsx:163
 msgid "Revoked"
 msgstr "Revoked"
 
-#: src/tables/settings/ApiTokenTable.tsx:90
-#: src/tables/settings/ApiTokenTable.tsx:230
+#: src/tables/settings/ApiTokenTable.tsx:97
+#: src/tables/settings/ApiTokenTable.tsx:238
 msgid "Token"
 msgstr "Token"
 
-#: src/tables/settings/ApiTokenTable.tsx:97
+#: src/tables/settings/ApiTokenTable.tsx:104
 msgid "In Use"
 msgstr "In Use"
 
-#: src/tables/settings/ApiTokenTable.tsx:106
+#: src/tables/settings/ApiTokenTable.tsx:113
 msgid "Last Seen"
 msgstr "Last Seen"
 
-#: src/tables/settings/ApiTokenTable.tsx:111
+#: src/tables/settings/ApiTokenTable.tsx:118
 msgid "Expiry"
 msgstr "Expiry"
 
-#: src/tables/settings/ApiTokenTable.tsx:127
-#: src/tables/settings/ApiTokenTable.tsx:174
+#: src/tables/settings/ApiTokenTable.tsx:134
+#: src/tables/settings/ApiTokenTable.tsx:181
 msgid "Revoked By"
 msgstr "Revoked By"
 
-#: src/tables/settings/ApiTokenTable.tsx:157
+#: src/tables/settings/ApiTokenTable.tsx:164
 msgid "Show revoked tokens"
 msgstr "Show revoked tokens"
 
-#: src/tables/settings/ApiTokenTable.tsx:184
-#: src/tables/settings/ApiTokenTable.tsx:287
+#: src/tables/settings/ApiTokenTable.tsx:191
+#: src/tables/settings/ApiTokenTable.tsx:295
 msgid "Revoke"
 msgstr "Revoke"
 
-#: src/tables/settings/ApiTokenTable.tsx:212
+#: src/tables/settings/ApiTokenTable.tsx:219
 msgid "Error revoking token"
 msgstr "Error revoking token"
 
-#: src/tables/settings/ApiTokenTable.tsx:235
+#: src/tables/settings/ApiTokenTable.tsx:243
 msgid "Tokens are only shown once - make sure to note it down."
 msgstr "Tokens are only shown once - make sure to note it down."
 
-#: src/tables/settings/ApiTokenTable.tsx:244
+#: src/tables/settings/ApiTokenTable.tsx:252
 msgid "Notification could not be sent"
 msgstr "Notification could not be sent"
 
-#: src/tables/settings/ApiTokenTable.tsx:265
+#: src/tables/settings/ApiTokenTable.tsx:273
 msgid "Revoke Token"
 msgstr "Revoke Token"
 
-#: src/tables/settings/ApiTokenTable.tsx:269
+#: src/tables/settings/ApiTokenTable.tsx:277
 msgid "Revocation Reason"
 msgstr "Revocation Reason"
 
-#: src/tables/settings/ApiTokenTable.tsx:270
+#: src/tables/settings/ApiTokenTable.tsx:278
 msgid "Enter a reason for revoking this token"
 msgstr "Enter a reason for revoking this token"
 

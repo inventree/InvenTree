@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-05 07:46\n"
+"PO-Revision-Date: 2026-11-07 02:43\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -69,7 +69,7 @@ msgid "Edit"
 msgstr "Bewerken"
 
 #: lib/components/RowActions.tsx:66
-#: src/components/forms/ApiForm.tsx:939
+#: src/components/forms/ApiForm.tsx:957
 #: src/components/items/ActionDropdown.tsx:263
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:174
@@ -83,15 +83,15 @@ msgstr "Verwijderen"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:201
 #: src/components/items/ActionDropdown.tsx:284
 #: src/components/items/ActionDropdown.tsx:285
+#: src/components/modals/ReauthenticateModal.tsx:128
 #: src/components/tables/FilterSelectDrawer.tsx:679
 #: src/components/tables/FilterSelectDrawer.tsx:731
 #: src/contexts/ThemeContext.tsx:57
 #: src/hooks/UseForm.tsx:39
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:141
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:232
 #: src/tables/build/BuildOutputTable.tsx:665
-#: src/tables/settings/ApiTokenTable.tsx:284
+#: src/tables/settings/ApiTokenTable.tsx:292
 msgid "Cancel"
 msgstr "Annuleer"
 
@@ -105,7 +105,7 @@ msgstr "Annuleer"
 #: src/forms/StockForms.tsx:1683
 #: src/forms/StockForms.tsx:1722
 #: src/forms/StockForms.tsx:1840
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:977
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:774
 msgid "Actions"
 msgstr "Acties"
 
@@ -577,8 +577,8 @@ msgstr "Eigenaren"
 #: src/pages/core/UserDetail.tsx:221
 #: src/tables/general/AuditLogTable.tsx:503
 #: src/tables/general/AuditLogTable.tsx:593
-#: src/tables/settings/ApiTokenTable.tsx:145
-#: src/tables/settings/ApiTokenTable.tsx:165
+#: src/tables/settings/ApiTokenTable.tsx:152
+#: src/tables/settings/ApiTokenTable.tsx:172
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:44
 #: src/tables/settings/ImportSessionTable.tsx:88
@@ -696,10 +696,10 @@ msgstr ""
 #: src/forms/BomForms.tsx:87
 #: src/functions/auth.tsx:729
 #: src/pages/ErrorPage.tsx:11
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:638
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:831
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:226
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:456
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:635
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:178
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
@@ -1566,10 +1566,10 @@ msgstr "De bijbehorende afbeelding van dit item verwijderen?"
 
 #: src/components/details/DetailsImage.tsx:82
 #: src/forms/StockForms.tsx:1633
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:899
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:918
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:144
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:235
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:703
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:722
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:257
 #: src/tables/build/BuildAllocatedStockTable.tsx:183
 #: src/tables/build/BuildAllocatedStockTable.tsx:278
@@ -1622,10 +1622,10 @@ msgid "Clear"
 msgstr "Wis"
 
 #: src/components/details/DetailsImage.tsx:305
-#: src/components/forms/ApiForm.tsx:881
+#: src/components/forms/ApiForm.tsx:899
+#: src/components/modals/ReauthenticateModal.tsx:131
 #: src/contexts/ThemeContext.tsx:56
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:569
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:387
 msgid "Submit"
 msgstr "Versturen"
 
@@ -2041,7 +2041,7 @@ msgid "A server error occurred"
 msgstr "Er is een serverfout opgetreden"
 
 #: src/components/forms/ApiForm.tsx:113
-#: src/components/forms/ApiForm.tsx:799
+#: src/components/forms/ApiForm.tsx:817
 msgid "Form Error"
 msgstr "Formulier fout"
 
@@ -2053,15 +2053,19 @@ msgstr "Formulier fout"
 msgid "An unknown error occurred. Refer to the browser console for details."
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:756
+#: src/components/forms/ApiForm.tsx:719
+msgid "Reauthentication is required to continue"
+msgstr ""
+
+#: src/components/forms/ApiForm.tsx:774
 msgid "Submit form"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:810
+#: src/components/forms/ApiForm.tsx:828
 msgid "Errors exist for one or more form fields"
 msgstr "Er staan fouten in één of meer formuliervelden"
 
-#: src/components/forms/ApiForm.tsx:919
+#: src/components/forms/ApiForm.tsx:937
 #: src/hooks/UseForm.tsx:143
 #: src/tables/plugin/PluginListTable.tsx:216
 msgid "Update"
@@ -2147,8 +2151,8 @@ msgstr "Je gebruikersnaam"
 
 #: src/components/forms/AuthenticationForm.tsx:143
 #: src/components/forms/AuthenticationForm.tsx:311
+#: src/components/modals/ReauthenticateModal.tsx:175
 #: src/pages/Auth/ResetPassword.tsx:34
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
 msgid "Password"
 msgstr "Wachtwoord"
 
@@ -2267,7 +2271,7 @@ msgstr "Hostnaam"
 #: src/tables/machine/MachineTypeTable.tsx:255
 #: src/tables/machine/MachineTypeTable.tsx:358
 #: src/tables/plugin/PluginErrorTable.tsx:35
-#: src/tables/settings/ApiTokenTable.tsx:76
+#: src/tables/settings/ApiTokenTable.tsx:83
 #: src/tables/settings/GroupTable.tsx:96
 #: src/tables/settings/GroupTable.tsx:149
 #: src/tables/settings/GroupTable.tsx:257
@@ -2647,7 +2651,7 @@ msgstr "De gegevens zijn met succes geïmporteerd"
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
 #: src/forms/BomForms.tsx:150
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:686
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:504
 msgid "Close"
 msgstr "Sluiten"
 
@@ -2842,7 +2846,7 @@ msgid "Role"
 msgstr "Rol"
 
 #: src/components/items/RoleTable.tsx:140
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:907
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:711
 msgid "View"
 msgstr "Bekijken"
 
@@ -3007,6 +3011,48 @@ msgstr "{key} pakketten"
 #: src/components/modals/QrCodeModal.tsx:57
 #~ msgid "Close modal"
 #~ msgstr "Close modal"
+
+#: src/components/modals/ReauthenticateModal.tsx:85
+msgid "Reauthentication Succeeded"
+msgstr "Opnieuw aanmelden succesvol"
+
+#: src/components/modals/ReauthenticateModal.tsx:86
+msgid "You have been reauthenticated successfully."
+msgstr "U bent succesvol opnieuw aangemeld"
+
+#: src/components/modals/ReauthenticateModal.tsx:94
+msgid "Error during reauthentication"
+msgstr "Fout bij Opnieuw aanmelden"
+
+#: src/components/modals/ReauthenticateModal.tsx:97
+msgid "Reauthentication Failed"
+msgstr "Opnieuw aanmelden mislukt"
+
+#: src/components/modals/ReauthenticateModal.tsx:98
+msgid "Failed to reauthenticate"
+msgstr "Opnieuw verifiëren mislukt"
+
+#: src/components/modals/ReauthenticateModal.tsx:113
+#: src/components/modals/ReauthenticateModal.tsx:153
+msgid "Reauthenticate"
+msgstr "Opnieuw verifiëren"
+
+#: src/components/modals/ReauthenticateModal.tsx:115
+msgid "Reauthentication is required to continue."
+msgstr ""
+
+#: src/components/modals/ReauthenticateModal.tsx:177
+msgid "Enter your password"
+msgstr "Voer je wachtwoord in"
+
+#: src/components/modals/ReauthenticateModal.tsx:199
+#: src/pages/Auth/MFA.tsx:33
+msgid "TOTP Code"
+msgstr "TOTP Code"
+
+#: src/components/modals/ReauthenticateModal.tsx:201
+msgid "Enter one of your TOTP codes"
+msgstr "Voer een van Uw TOTP-codes in"
 
 #: src/components/modals/ServerInfoModal.tsx:22
 msgid "Instance Name"
@@ -3657,7 +3703,7 @@ msgstr "Datum"
 #: src/tables/plugin/PluginListTable.tsx:431
 #: src/tables/purchasing/SupplierPartTable.tsx:139
 #: src/tables/purchasing/SupplierPartTable.tsx:262
-#: src/tables/settings/ApiTokenTable.tsx:81
+#: src/tables/settings/ApiTokenTable.tsx:88
 #: src/tables/settings/ProjectCodeTable.tsx:104
 #: src/tables/settings/UserTable.tsx:402
 #: src/tables/stock/StockItemTable.tsx:197
@@ -4571,7 +4617,7 @@ msgid "Select tags"
 msgstr ""
 
 #: src/components/tables/Filter.tsx:442
-#: src/tables/settings/ApiTokenTable.tsx:166
+#: src/tables/settings/ApiTokenTable.tsx:173
 msgid "Filter by user"
 msgstr "Filter op gebruiker"
 
@@ -4619,8 +4665,8 @@ msgstr "Filter op gebruiker die de bestelling heeft aangemaakt"
 #: src/components/tables/Filter.tsx:488
 #: src/pages/build/BuildOrderDetailsPanel.tsx:155
 #: src/tables/build/BuildOrderTable.tsx:130
-#: src/tables/settings/ApiTokenTable.tsx:121
-#: src/tables/settings/ApiTokenTable.tsx:170
+#: src/tables/settings/ApiTokenTable.tsx:128
+#: src/tables/settings/ApiTokenTable.tsx:177
 msgid "Issued By"
 msgstr "Uitgegeven door"
 
@@ -7139,11 +7185,6 @@ msgstr "Heb je geen account?"
 msgid "Multi-Factor Authentication"
 msgstr "Multi-Factor authenticatie"
 
-#: src/pages/Auth/MFA.tsx:33
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:219
-msgid "TOTP Code"
-msgstr "TOTP Code"
-
 #: src/pages/Auth/MFA.tsx:35
 msgid "Enter one of your codes: {mfa_types}"
 msgstr "Voer een van uw codes in: {mfa_types}"
@@ -7675,7 +7716,7 @@ msgid "Position"
 msgstr "Positie"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:968
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:765
 msgid "Type"
 msgstr "Type"
 
@@ -7722,61 +7763,24 @@ msgstr "Bewerk profiel"
 msgid "{0}"
 msgstr "{0}"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:105
-msgid "Reauthentication Succeeded"
-msgstr "Opnieuw aanmelden succesvol"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:106
-msgid "You have been reauthenticated successfully."
-msgstr "U bent succesvol opnieuw aangemeld"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:114
-msgid "Error during reauthentication"
-msgstr "Fout bij Opnieuw aanmelden"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:117
-msgid "Reauthentication Failed"
-msgstr "Opnieuw aanmelden mislukt"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:118
-msgid "Failed to reauthenticate"
-msgstr "Opnieuw verifiëren mislukt"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:133
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:173
-msgid "Reauthenticate"
-msgstr "Opnieuw verifiëren"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
-msgid "Reauthentiction is required to continue."
-msgstr "U moet zich opnieuw aanmelden om door te kunnen gaan."
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:197
-msgid "Enter your password"
-msgstr "Voer je wachtwoord in"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:221
-msgid "Enter one of your TOTP codes"
-msgstr "Voer een van Uw TOTP-codes in"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:273
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:91
 msgid "WebAuthn Credential Removed"
 msgstr "WebAuthn inloggegevens verwijderd"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:274
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:92
 msgid "WebAuthn credential removed successfully."
 msgstr "WebAuthn inloggegevens succesvol verwijderd."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:283
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:101
 msgid "Error removing WebAuthn credential"
 msgstr "Fout bij verwijderen van WebAuthn aanmeldgegevens"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:304
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:122
 msgid "Remove WebAuthn Credential"
 msgstr "Verwijder WebAuthn aanmeldgegevens"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:312
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:403
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:130
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:221
 #: src/tables/build/BuildAllocatedStockTable.tsx:186
 #: src/tables/build/BuildLineTable.tsx:787
 #: src/tables/sales/SalesOrderAllocationTable.tsx:225
@@ -7784,159 +7788,163 @@ msgstr "Verwijder WebAuthn aanmeldgegevens"
 msgid "Confirm Removal"
 msgstr "Bevestig verwijderen"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:314
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:132
 msgid "Confirm removal of webauth credential"
 msgstr "Verwijderen van webauth-inloggegevens bevestigen"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:366
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
+#~ msgid "Reauthentiction is required to continue."
+#~ msgstr "Reauthentiction is required to continue."
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:184
 msgid "TOTP Removed"
 msgstr "TOTP Verwijderd"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:367
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:185
 msgid "TOTP token removed successfully."
 msgstr "TOTP-token succesvol verwijderd."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:377
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
 msgid "Error removing TOTP token"
 msgstr "Fout bij verwijderen van TOTP-token"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:396
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:214
 msgid "Remove TOTP Token"
 msgstr "TOTP-Token verwijderen"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:405
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:223
 msgid "Confirm removal of TOTP code"
 msgstr "Verwijderen van TOTP-Code bevestigen"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:465
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:283
 msgid "TOTP Already Registered"
 msgstr "TOTP is al geregistreerd"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:466
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:284
 msgid "A TOTP token is already registered for this account."
 msgstr "Er is al een TOTP-token geregistreerd voor dit account."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:299
 msgid "Error Fetching TOTP Registration"
 msgstr "Fout bij ophalen van TOTP-registratie"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:341
+msgid "TOTP Registered"
+msgstr "TOTP geregistreerd"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:342
+msgid "TOTP token registered successfully."
+msgstr "TOTP-token succesvol geregistreerd."
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:351
+msgid "Error registering TOTP token"
+msgstr "Fout bij het registreren van TOTP token"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:370
+msgid "Register TOTP Token"
+msgstr "TOTP Token registreren"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:415
+msgid "Error fetching recovery codes"
+msgstr "Fout bij ophalen herstelcodes"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:451
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:467
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:671
+msgid "Recovery Codes"
+msgstr "Herstel codes"
+
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:469
+msgid "The following one time recovery codes are available for use"
+msgstr "De volgende eenmalige herstelcodes zijn beschikbaar"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
 #~ msgid "An unexpected error occurred while fetching TOTP registration data."
 #~ msgstr "An unexpected error occurred while fetching TOTP registration data."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:523
-msgid "TOTP Registered"
-msgstr "TOTP geregistreerd"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:524
-msgid "TOTP token registered successfully."
-msgstr "TOTP-token succesvol geregistreerd."
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:533
-msgid "Error registering TOTP token"
-msgstr "Fout bij het registreren van TOTP token"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:552
-msgid "Register TOTP Token"
-msgstr "TOTP Token registreren"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:597
-msgid "Error fetching recovery codes"
-msgstr "Fout bij ophalen herstelcodes"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:633
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:649
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:867
-msgid "Recovery Codes"
-msgstr "Herstel codes"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:651
-msgid "The following one time recovery codes are available for use"
-msgstr "De volgende eenmalige herstelcodes zijn beschikbaar"
-
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:668
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:486
 msgid "Copy recovery codes to clipboard"
 msgstr "Herstelcodes kopiëren naar klembord"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:678
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:496
 msgid "No Unused Codes"
 msgstr "Geen ongebruikte codes"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:680
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:498
 msgid "There are no available recovery codes"
 msgstr "Er zijn geen herstelcodes beschikbaar"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:783
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:587
 msgid "WebAuthn Registered"
 msgstr "WebAuthn Geregistreerd"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:784
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:588
 msgid "WebAuthn credential registered successfully"
 msgstr "WebAuthn inloggegevens succesvol geregistreerd"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:793
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:597
 msgid "Error registering WebAuthn credential"
 msgstr "Fout bij het registreren van WebAuthn inloggegevens"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:796
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:600
 msgid "WebAuthn Registration Failed"
 msgstr "WebAuthn Registratie Mislukt"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:797
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:601
 msgid "Failed to register WebAuthn credential"
 msgstr "Registreren van WebAuthn inloggegevens mislukt"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:820
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:624
 msgid "Error fetching WebAuthn registration"
 msgstr "Fout bij ophalen van WebAuth-registratie"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:860
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:664
 msgid "TOTP"
 msgstr "TOTP"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:861
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:665
 msgid "Time-based One-Time Password"
 msgstr "Tijdgebonden eenmalige wachtwoord"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:868
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:672
 msgid "One-Time pre-generated recovery codes"
 msgstr "Eenmalige vooraf gegenereerde recovery codes"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:874
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:678
 msgid "WebAuthn"
 msgstr "WebAuthn"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:875
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:679
 msgid "Web Authentication (WebAuthn) is a web standard for secure authentication"
 msgstr "Web Authentication (WebAuthn) is een web-standaard voor beveiligde authenticatie"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:971
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:768
 msgid "Last used at"
 msgstr "Laatst gebruikt op"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:974
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:771
 msgid "Created at"
 msgstr "Gemaakt op"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:985
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:782
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:193
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:351
 msgid "Not Configured"
 msgstr "Niet geconfigureerd"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:989
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:786
 msgid "No multi-factor tokens configured for this account"
 msgstr "Geen multi-factor tokens geconfigureerd voor dit account"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:994
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:791
 msgid "Register Authentication Method"
 msgstr "Registreer verificatiemethode"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1010
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:807
 msgid "No MFA Methods Available"
 msgstr "Geen MFA-methoden beschikbaar"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1014
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:811
 msgid "There are no MFA methods available for configuration"
 msgstr "Er zijn geen MFA-methoden beschikbaar voor configuratie"
 
@@ -9468,7 +9476,7 @@ msgstr "Doel Locatie"
 #: src/pages/stock/StockDetailsPanel.tsx:357
 #: src/tables/general/AuditLogTable.tsx:74
 #: src/tables/general/AuditLogTable.tsx:496
-#: src/tables/settings/ApiTokenTable.tsx:116
+#: src/tables/settings/ApiTokenTable.tsx:123
 #: src/tables/settings/PendingTasksTable.tsx:41
 #: src/tables/stock/StockItemTable.tsx:160
 msgid "Created"
@@ -10461,7 +10469,7 @@ msgstr "Inkoopprijs"
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:235
 #: src/pages/stock/StockDetailsPanel.tsx:364
 #: src/tables/general/ParameterTable.tsx:101
-#: src/tables/general/ParametricDataTable.tsx:101
+#: src/tables/general/ParametricDataTable.tsx:102
 #: src/tables/settings/TemplateTable.tsx:261
 #: src/tables/stock/StockItemTable.tsx:166
 msgid "Last Updated"
@@ -12376,7 +12384,7 @@ msgstr "Interne eenheden"
 
 #: src/tables/general/ParameterTable.tsx:109
 #: src/tables/general/ParameterTable.tsx:124
-#: src/tables/general/ParametricDataTable.tsx:110
+#: src/tables/general/ParametricDataTable.tsx:111
 #: src/tables/settings/TemplateTable.tsx:273
 msgid "Updated By"
 msgstr "Bijgewerkt Door"
@@ -12394,14 +12402,14 @@ msgid "Import Parameters"
 msgstr "Parameters import"
 
 #: src/tables/general/ParameterTable.tsx:161
-#: src/tables/general/ParametricDataTable.tsx:331
-#: src/tables/general/ParametricDataTable.tsx:462
+#: src/tables/general/ParametricDataTable.tsx:338
+#: src/tables/general/ParametricDataTable.tsx:469
 msgid "Add Parameter"
 msgstr "Parameter toevoegen"
 
 #: src/tables/general/ParameterTable.tsx:172
 #: src/tables/general/ParameterTable.tsx:219
-#: src/tables/general/ParametricDataTable.tsx:355
+#: src/tables/general/ParametricDataTable.tsx:362
 msgid "Edit Parameter"
 msgstr "Parameter bewerken"
 
@@ -12476,7 +12484,7 @@ msgstr "Ingeschakelde sjablonen weergeven"
 msgid "Filter by model type"
 msgstr "Sorteren op model type"
 
-#: src/tables/general/ParametricDataTable.tsx:121
+#: src/tables/general/ParametricDataTable.tsx:122
 msgid "Click to edit"
 msgstr "Klik om te bewerken"
 
@@ -13752,72 +13760,72 @@ msgstr "Toon verzendingen die zijn verzonden"
 msgid "Show shipments which have been delivered"
 msgstr "Toon verzendingen die afgeleverd zijn"
 
-#: src/tables/settings/ApiTokenTable.tsx:48
-#: src/tables/settings/ApiTokenTable.tsx:63
+#: src/tables/settings/ApiTokenTable.tsx:51
+#: src/tables/settings/ApiTokenTable.tsx:70
 msgid "Generate Token"
 msgstr "Token genereren"
 
-#: src/tables/settings/ApiTokenTable.tsx:50
+#: src/tables/settings/ApiTokenTable.tsx:53
 msgid "Token generated"
 msgstr "Token gegenereerd"
 
-#: src/tables/settings/ApiTokenTable.tsx:86
-#: src/tables/settings/ApiTokenTable.tsx:156
+#: src/tables/settings/ApiTokenTable.tsx:93
+#: src/tables/settings/ApiTokenTable.tsx:163
 msgid "Revoked"
 msgstr "Intrekken"
 
-#: src/tables/settings/ApiTokenTable.tsx:90
-#: src/tables/settings/ApiTokenTable.tsx:230
+#: src/tables/settings/ApiTokenTable.tsx:97
+#: src/tables/settings/ApiTokenTable.tsx:238
 msgid "Token"
 msgstr "Sleutel"
 
-#: src/tables/settings/ApiTokenTable.tsx:97
+#: src/tables/settings/ApiTokenTable.tsx:104
 msgid "In Use"
 msgstr "In gebruik"
 
-#: src/tables/settings/ApiTokenTable.tsx:106
+#: src/tables/settings/ApiTokenTable.tsx:113
 msgid "Last Seen"
 msgstr "Laatst gezien"
 
-#: src/tables/settings/ApiTokenTable.tsx:111
+#: src/tables/settings/ApiTokenTable.tsx:118
 msgid "Expiry"
 msgstr "Vervaldatum"
 
-#: src/tables/settings/ApiTokenTable.tsx:127
-#: src/tables/settings/ApiTokenTable.tsx:174
+#: src/tables/settings/ApiTokenTable.tsx:134
+#: src/tables/settings/ApiTokenTable.tsx:181
 msgid "Revoked By"
 msgstr ""
 
-#: src/tables/settings/ApiTokenTable.tsx:157
+#: src/tables/settings/ApiTokenTable.tsx:164
 msgid "Show revoked tokens"
 msgstr "Toon ingetrokken tokens"
 
-#: src/tables/settings/ApiTokenTable.tsx:184
-#: src/tables/settings/ApiTokenTable.tsx:287
+#: src/tables/settings/ApiTokenTable.tsx:191
+#: src/tables/settings/ApiTokenTable.tsx:295
 msgid "Revoke"
 msgstr "Intrekken"
 
-#: src/tables/settings/ApiTokenTable.tsx:212
+#: src/tables/settings/ApiTokenTable.tsx:219
 msgid "Error revoking token"
 msgstr "Fout bij intrekken token"
 
-#: src/tables/settings/ApiTokenTable.tsx:235
+#: src/tables/settings/ApiTokenTable.tsx:243
 msgid "Tokens are only shown once - make sure to note it down."
 msgstr "Tokens worden slechts één keer getoond - zorg ervoor dat je deze onthoudt."
 
-#: src/tables/settings/ApiTokenTable.tsx:244
+#: src/tables/settings/ApiTokenTable.tsx:252
 msgid "Notification could not be sent"
 msgstr ""
 
-#: src/tables/settings/ApiTokenTable.tsx:265
+#: src/tables/settings/ApiTokenTable.tsx:273
 msgid "Revoke Token"
 msgstr ""
 
-#: src/tables/settings/ApiTokenTable.tsx:269
+#: src/tables/settings/ApiTokenTable.tsx:277
 msgid "Revocation Reason"
 msgstr ""
 
-#: src/tables/settings/ApiTokenTable.tsx:270
+#: src/tables/settings/ApiTokenTable.tsx:278
 msgid "Enter a reason for revoking this token"
 msgstr ""
 
