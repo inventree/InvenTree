@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
 import { adminuser, apiUrl, stevenuser } from './defaults.js';
-import { globalSearch } from './helpers.js';
+import { globalSearch, openInNewTab } from './helpers.js';
 import { doCachedLogin } from './login.js';
 
 /**
@@ -45,10 +45,7 @@ test('General - Search', async ({ browser }) => {
     .first();
   await expect(customerResult).toHaveAttribute('href', /\/web\/company\/\d+/);
 
-  const popupPromise = page.context().waitForEvent('page');
-  await customerResult.click({ modifiers: ['Control'] });
-  const popup = await popupPromise;
-  await popup.waitForURL('**/web/company/**');
+  const popup = await openInNewTab(page, customerResult, '**/web/company/**');
   await popup.close();
 
   // Click through to the "Customer" results
@@ -60,10 +57,9 @@ test('General - Search', async ({ browser }) => {
     /\/web\/sales\/index\/customers\?search=another\+customer/
   );
 
-  const overviewPopupPromise = page.context().waitForEvent('page');
-  await viewAllCustomers.click({ modifiers: ['Control'] });
-  const overviewPopup = await overviewPopupPromise;
-  await overviewPopup.waitForURL(
+  const overviewPopup = await openInNewTab(
+    page,
+    viewAllCustomers,
     '**/web/sales/index/customers?search=another+customer'
   );
   await overviewPopup.close();
