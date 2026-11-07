@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 571
+INVENTREE_API_VERSION = 572
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v572 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13212
+    - Username and email fields on the /api/user/me endpoint are now read-only
 
 v571 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13166
     - Adds "exclude_from_stock" field and filter to the StockLocation API endpoint
