@@ -1058,6 +1058,7 @@ class PurchaseOrderTest(OrderTest):
             self.assertEqual(response.status_code, 401)
             self.assertEqual(response['WWW-Authenticate'], 'Basic realm="api"')
 
+    @override_settings(BASIC_AUTH_ENABLED=True)
     def test_po_calendar_auth_mfa(self):
         """Test that header authorization creates no session, and is refused for users with MFA."""
         self.client.logout()
