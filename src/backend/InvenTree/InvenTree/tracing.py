@@ -173,7 +173,7 @@ def setup_tracing(
     TRACE_PID = os.getpid()
 
 
-def ensure_middleware(middleware):
+def ensure_otel_middleware(middleware):
     """Ensure the OTELmiddleware is the first entry in MIDDLEWARE."""
     if not DjangoInstrumentor().is_instrumented_by_opentelemetry:
         return list(middleware)
