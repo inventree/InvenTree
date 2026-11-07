@@ -707,6 +707,24 @@ export function ApiForm({
               props.onFormError?.(error, form);
 
               break;
+            case 401:
+              // The server may require the user to re-authenticate (e.g. MFA)
+              // before the action can be performed
+              if (
+                error.response.data?.id === 'reauthentication_required' &&
+                !!props.onFormError
+              ) {
+                setNonFieldErrors([
+                  error.response.data?.detail ??
+                    t`Reauthentication is required to continue`
+                ]);
+                props.onFormError(error, form);
+                break;
+              }
+
+              invalidResponse(error.response.status);
+              props.onFormError?.(error, form);
+              break;
             default:
               // Unexpected state on form error
               invalidResponse(error.response.status);

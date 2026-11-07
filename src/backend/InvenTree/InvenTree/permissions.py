@@ -550,6 +550,17 @@ class ContentTypePermission(OASTokenMixin, permissions.BasePermission):
             return obj.check_permission(permission, request.user)
 
         if model_class := obj.__class__:
+            table_name = f'{model_class._meta.app_label}_{model_class._meta.model_name}'
+
+            if table_name in users.ruleset.get_ruleset_ignore():
+                # Ignore-listed models have no RuleSet permissions of their own,
+                # so check_user_permission() would grant access to every active user.
+                # Without an explicit check_permission() on the model, fail safe:
+                # allow read access only, and restrict writes to staff users.
+                return permission == 'view' or bool(
+                    request.user.is_staff or request.user.is_superuser
+                )
+
             return users.permissions.check_user_permission(
                 request.user, model_class, 'change'
             )
