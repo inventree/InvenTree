@@ -320,6 +320,11 @@ function stockItemTableFilters({
       label: t`External Location`,
       description: t`Show items in an external location`
     },
+    {
+      name: 'exclude_from_stock',
+      label: t`Exclude from Stock`,
+      description: t`Show items in a location excluded from stock calculations`
+    },
     TagsFilter({ modelType: ModelType.stockitem })
   ];
 }

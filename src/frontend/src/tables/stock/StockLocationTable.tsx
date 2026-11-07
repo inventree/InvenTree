@@ -52,6 +52,11 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
         description: t`Show external locations`
       },
       {
+        name: 'exclude_from_stock',
+        label: t`Exclude from Stock`,
+        description: t`Show locations excluded from stock calculations`
+      },
+      {
         name: 'has_location_type',
         label: t`Has location type`
       },
@@ -95,6 +100,10 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
       }),
       BooleanColumn({
         accessor: 'external',
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'exclude_from_stock',
         defaultVisible: false
       }),
       {
