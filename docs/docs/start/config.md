@@ -95,13 +95,15 @@ The following debugging / logging options are available:
 {{ configsetting("INVENTREE_DEBUG") }} Enable [debug mode](./index.md#debug-mode) |
 {{ configsetting("INVENTREE_DB_LOGGING") }} Enable logging of database messages |
 {{ configsetting("INVENTREE_LOG_LEVEL") }} Set level of logging to terminal |
-{{ configsetting("INVENTREE_JSON_LOG") }} Log messages as json |
+{{ configsetting("INVENTREE_JSON_LOG") }} Log messages as json (console, log file and gunicorn) |
 {{ configsetting("INVENTREE_WRITE_LOG") }} Enable writing of log messages to file at config base |
 {{ configsetting("INVENTREE_CONSOLE_LOG") }} Enable logging to console |
 {{ configsetting("INVENTREE_SCHEMA_LEVEL") }} Set level of added schema extensions detail (0-3) 0 = including no additional detail |
 {{ configsetting("INVENTREE_DEBUG_QUERYCOUNT") }} Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. |
 {{ configsetting("INVENTREE_DEBUG_SILK") }} Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. |
 | `INVENTREE_DEBUG_SILK_PROFILING` | `debug_silk_profiling` | False | Enable detailed profiling in django-silk |
+| `INVENTREE_GUNICORN_LOG` | - | True | Enable log messages of the gunicorn web server (startup, worker errors, access log) |
+| `INVENTREE_GUNICORN_ACCESS_LOG` | - | True | Enable gunicorn access logging |
 
 ### Debug Mode
 
