@@ -8,12 +8,8 @@ import InvenTree.models
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 
-from .func import (
-    ModelFeatureMixin,
-    _model_features_cache,
-    clear_model_features_cache,
-    get_model_features,
-)
+from . import func
+from .func import ModelFeatureMixin, clear_model_features_cache, get_model_features
 
 
 class ContentTypeFeatureAPITests(InvenTreeAPITestCase):
@@ -48,13 +44,14 @@ class ContentTypeFeatureAPITests(InvenTreeAPITestCase):
         self.assertIn('org.inventree.i.modelfeatures.report', features)
 
         # The cache is built for all models on first access, and reused afterwards
-        self.assertIsNotNone(_model_features_cache)
+        self.assertIsNotNone(func._model_features_cache)
         self.assertIs(features, get_model_features(Part))
 
         # Clearing the cache (e.g. after a plugin reload) rebuilds it
         clear_model_features_cache()
-        self.assertIsNone(_model_features_cache)
+        self.assertIsNone(func._model_features_cache)
         self.assertEqual(features, get_model_features(Part))
+        self.assertIsNotNone(func._model_features_cache)
 
         self.assertEqual(get_model_features(None), [])
         self.assertEqual(get_model_features(Tag), [])
