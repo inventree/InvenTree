@@ -687,9 +687,9 @@ django-flags==5.2.0 \
     --hash=sha256:a3aee5e0d11e24e35f5ae4a423d52cad721f639181c1b1251e0148d8530a3f81 \
     --hash=sha256:aa22543410f68a4082c576f3be469ea67a51c933f8a43eb8b10f6236f158e17e
     # via -r src/backend/requirements.in
-django-fsm-2==4.3.0 \
-    --hash=sha256:1e47a4b29904c201df16a68208f8e337db826df1488670447d5d0ade87ae7d7f \
-    --hash=sha256:6f578e5dda9738418bef12b94d20bcbde4751f12fbf41f7c4bdf10bff5e616a7
+django-fsm-2==4.2.4 \
+    --hash=sha256:0072be359520075eee4baead3873e5eb8f1700b4f91e41208058cbea0ceae9b9 \
+    --hash=sha256:0e395afd03ff504afd476e8568ca213aafc3324bd4e5427e5b3287f7b1e7d979
     # via -r src/backend/requirements.in
 django-ical==1.9.2 \
     --hash=sha256:44c9b6fa90d09f25e9ebaa91ed9eb007f079afbc23d6aac909cfc18188a8e90c \
