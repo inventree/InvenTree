@@ -136,11 +136,19 @@ export function PageDetail({
           leftSection={<ApiIcon name={icon as string} />}
           color={options?.color}
           onClick={click}
-          key={title}
+          key={`plugin-action-${title}`}
         />
       );
     });
-    return [...(extraActionArray ?? []), ...(actions ?? [])];
+
+    // Wrap page actions with stable keys which are independent of the plugin actions.
+    // Plugin actions are loaded asynchronously - if keyed by overall index, the page
+    // actions would be remounted when the plugin actions arrive (closing any open menus).
+    const pageActionArray: ReactNode[] = (actions ?? []).map((action, idx) => (
+      <Fragment key={`page-action-${idx}`}>{action}</Fragment>
+    ));
+
+    return [...extraActionArray, ...pageActionArray];
   }, [extraActions, actions]);
 
   return (
@@ -198,9 +206,7 @@ export function PageDetail({
             </Group>
             {computedActions.length > 0 && (
               <Group gap={5} justify='right' wrap='nowrap' align='center'>
-                {computedActions.map((action, idx) => (
-                  <Fragment key={idx}>{action}</Fragment>
-                ))}
+                {computedActions.map((action) => action)}
               </Group>
             )}
           </Group>

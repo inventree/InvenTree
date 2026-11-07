@@ -213,6 +213,14 @@ class StockLocation(
         help_text=_('This is an external stock location'),
     )
 
+    exclude_from_stock = models.BooleanField(
+        default=False,
+        verbose_name=_('Exclude from Stock'),
+        help_text=_(
+            'If checked, stock items in this location will not be counted in available stock'
+        ),
+    )
+
     location_type = models.ForeignKey(
         StockLocationType,
         on_delete=models.SET_NULL,
@@ -658,7 +666,7 @@ class StockItem(
         consumed_by=None,
         is_building=False,
         status__in=StockStatusGroups.AVAILABLE_CODES,
-    )
+    ) & (Q(location=None) | Q(location__exclude_from_stock=False))
 
     @classmethod
     def get_expired_filter(cls):
@@ -2316,6 +2324,9 @@ class StockItem(
             check_in_production: If True, check if the item is in production. Defaults to True.
         """
         if check_status and self.status not in StockStatusGroups.AVAILABLE_CODES:
+            return False
+
+        if check_status and self.location and self.location.exclude_from_stock:
             return False
 
         if check_quantity and self.quantity <= 0:
