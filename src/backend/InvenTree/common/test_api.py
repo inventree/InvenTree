@@ -3473,3 +3473,122 @@ class GenericMetadataAuthorizationTests(InvenTreeAPITestCase):
         self.user.is_staff = True
         self.user.save()
         self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
+    def _check_staff_only_write(self, model, pk, detail_url):
+        """Metadata for a staff-write model is readable by all, writable only by staff."""
+        url = self._metadata_url(model, pk)
+
+        self.user.is_staff = False
+        self.user.save()
+
+        # The dedicated endpoint refuses writes from a non-staff user...
+        self.patch(detail_url, {'description': 'x'}, expected_code=403)
+
+        # ...and so must the generic metadata endpoint
+        self.get(url, expected_code=200)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+        self.put(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.user.is_staff = True
+        self.user.save()
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
+    def test_parameter_template_metadata_requires_staff_for_write(self):
+        """ParameterTemplate metadata mirrors the staff-only write restriction of its own endpoint."""
+        template = self.parameter.template
+        self._check_staff_only_write(
+            'parametertemplate',
+            template.pk,
+            reverse('api-parameter-template-detail', kwargs={'pk': template.pk}),
+        )
+
+    def test_selection_list_metadata_requires_staff_for_write(self):
+        """SelectionList metadata mirrors the staff-only write restriction of its own endpoint."""
+        selection_list = SelectionList.objects.create(name='Metadata Perm Test List')
+        self._check_staff_only_write(
+            'selectionlist',
+            selection_list.pk,
+            reverse('api-selectionlist-detail', kwargs={'pk': selection_list.pk}),
+        )
+
+    def test_tip_result_metadata_owner_only(self):
+        """TipResult metadata is only accessible to the owning user (mirrors TipResultDetail)."""
+        from django.contrib.auth import get_user_model
+
+        from users.models import TipResult
+
+        other_user = get_user_model().objects.create_user(
+            username='tip-other', password='tip-other-pw'
+        )
+
+        own_tip = TipResult.objects.create(user=self.user, tip_id='own-tip')
+        other_tip = TipResult.objects.create(user=other_user, tip_id='other-tip')
+
+        own_url = self._metadata_url('tipresult', own_tip.pk)
+        other_url = self._metadata_url('tipresult', other_tip.pk)
+
+        self.get(own_url, expected_code=200)
+        self.patch(own_url, {'metadata': {'x': 1}}, expected_code=200)
+
+        # Staff status does not grant access to another user's tip results
+        self.assertTrue(self.user.is_staff)
+        self.get(other_url, expected_code=403)
+        self.patch(other_url, {'metadata': {'x': 1}}, expected_code=403)
+
+        other_tip.refresh_from_db()
+        self.assertNotIn('x', other_tip.metadata or {})
+
+    def test_ignore_listed_metadata_models_define_check_permission(self):
+        """Every ignore-listed model with metadata must define check_permission().
+
+        Otherwise the generic metadata endpoint falls back to the (read-only for
+        non-staff) default in ContentTypePermission, which may not match the
+        restriction enforced by the model's own API endpoint.
+        """
+        from django.apps import apps
+
+        from users.ruleset import get_ruleset_ignore
+
+        ignored = set(get_ruleset_ignore())
+        missing = []
+
+        for model in apps.get_models():
+            table = f'{model._meta.app_label}_{model._meta.model_name}'
+            if table not in ignored:
+                continue
+            if not any(f.name == 'metadata' for f in model._meta.get_fields()):
+                continue
+            if not hasattr(model, 'check_permission'):
+                missing.append(table)
+
+        self.assertEqual(missing, [])
+
+    def test_ignore_listed_fallback_denies_non_staff_write(self):
+        """ContentTypePermission fails safe for ignore-listed models without check_permission()."""
+        from rest_framework.test import APIRequestFactory
+
+        from InvenTree.permissions import ContentTypePermission
+
+        # CustomUnit is ignore-listed and does not define check_permission()
+        unit = common.models.CustomUnit.objects.create(
+            name='metadata_perm_unit', definition='1 m'
+        )
+        self.assertFalse(hasattr(unit, 'check_permission'))
+
+        factory = APIRequestFactory()
+        perm = ContentTypePermission()
+
+        self.user.is_staff = False
+        self.user.save()
+
+        for method, expected in [('get', True), ('patch', False), ('put', False)]:
+            request = getattr(factory, method)('/')
+            request.user = self.user
+            self.assertEqual(perm.has_object_permission(request, None, unit), expected)
+
+        self.user.is_staff = True
+        self.user.save()
+
+        request = factory.patch('/')
+        request.user = self.user
+        self.assertTrue(perm.has_object_permission(request, None, unit))
