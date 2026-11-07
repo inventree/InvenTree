@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 572
+INVENTREE_API_VERSION = 573
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v572 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13169
+v573 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13169
     - breaking: Basic authentication is disabled by default - re-enable with INVENTREE_BASIC_AUTH_ENABLED
+
+v572 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13212
+    - Username and email fields on the /api/user/me endpoint are now read-only
 
 v571 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13166
     - Adds "exclude_from_stock" field and filter to the StockLocation API endpoint
