@@ -1,12 +1,15 @@
 """API tests for various user / auth API endpoints."""
 
 import datetime
+import time
 from unittest import mock
 
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
 
+from allauth.account.internal.flows.login import AUTHENTICATION_METHODS_SESSION_KEY
 from allauth.account.models import EmailAddress
+from allauth.mfa.models import Authenticator
 
 import InvenTree.helpers
 from common.models import NotificationMessage
@@ -764,6 +767,70 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertIsNone(token.revocation_reason)
         self.assertEqual(token.token_version, 2)
         self.assertIsNone(token.last_seen)
+
+    def set_auth_time(self, age: float):
+        """Record an allauth authentication event in the test client session.
+
+        Arguments:
+            age: How many seconds ago the authentication occurred
+        """
+        session = self.client.session
+        session[AUTHENTICATION_METHODS_SESSION_KEY] = [
+            {'method': 'mfa', 'type': 'totp', 'at': time.time() - age}
+        ]
+        session.save()
+
+    def test_token_mfa_reauthentication(self):
+        """Test that MFA users must have recently authenticated to mint a token.
+
+        Every endpoint which issues a new API token must enforce this check.
+        Otherwise an aged (or stolen) session could be converted into a
+        long-lived API token without the second factor.
+        """
+        Authenticator.objects.create(
+            user=self.user, type=Authenticator.Type.TOTP, data={'secret': 'abc'}
+        )
+
+        n_tokens = ApiToken.objects.filter(user=self.user).count()
+
+        endpoints = [
+            lambda name: self.get(
+                reverse('api-token'), data={'name': name}, expected_code=None
+            ),
+            lambda name: self.get(
+                reverse('api-token_legacy'), data={'name': name}, expected_code=None
+            ),
+            lambda name: self.post(
+                reverse('api-token-list'), data={'name': name}, expected_code=None
+            ),
+        ]
+
+        # No authentication record, or an aged one: reauthentication is required
+        for age in [None, 600]:
+            if age is not None:
+                self.set_auth_time(age)
+
+            for idx, mint in enumerate(endpoints):
+                response = mint(f'mfa-{age}-{idx}')
+                self.assertEqual(response.status_code, 401, response.data)
+                self.assertEqual(response.data['id'], 'reauthentication_required')
+
+                flows = [flow['id'] for flow in response.data['data']['flows']]
+                self.assertIn('mfa_reauthenticate', flows)
+
+        # No tokens were issued
+        self.assertEqual(ApiToken.objects.filter(user=self.user).count(), n_tokens)
+
+        # After recent (re)authentication, tokens can be issued
+        self.set_auth_time(10)
+
+        self.get(reverse('api-token'), data={'name': 'mfa-ok-0'}, expected_code=200)
+        response = self.post(
+            reverse('api-token-list'), data={'name': 'mfa-ok-1'}, expected_code=201
+        )
+        self.assertIn('token', response.data)
+
+        self.assertEqual(ApiToken.objects.filter(user=self.user).count(), n_tokens + 2)
 
     def test_token_v1(self):
         """Test that v1 API tokens still work."""
