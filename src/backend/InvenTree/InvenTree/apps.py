@@ -17,6 +17,7 @@ from allauth.socialaccount.signals import social_account_updated
 import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
+from generic.modelfeatures import build_model_features_cache
 from InvenTree.config import get_setting
 from InvenTree.ready import ignore_ready_warning
 
@@ -96,6 +97,7 @@ class InvenTreeConfig(AppConfig):
 
         self.update_site_url()
         self.load_unit_registry()
+        build_model_features_cache()
 
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
