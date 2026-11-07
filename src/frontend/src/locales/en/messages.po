@@ -4789,6 +4789,10 @@ msgstr "Custom table filters are active"
 msgid "Delete selected records"
 msgstr "Delete selected records"
 
+#: src/components/tables/InvenTreeTableHeader.tsx:309
+msgid "Plugin action failed"
+msgstr "Plugin action failed"
+
 #: src/components/tables/InvenTreeTableHeader.tsx:276
 msgid "Refresh data"
 msgstr "Refresh data"
