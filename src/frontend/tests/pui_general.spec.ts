@@ -100,12 +100,18 @@ test('General - Search', async ({ browser }) => {
  * a 200 response does not mean that the documentation is displayed.
  * Ref: https://github.com/inventree/InvenTree/issues/13200
  */
-test('General - API Documentation', async ({ page }) => {
+test('General - API Documentation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: stevenuser
+  });
+
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
 
-  const docUrl = new URL('../api-doc/', apiUrl).toString();
+  // Note: api-doc page is not forwarded to port 5173
+  const docUrl = new URL('http://localhost:8000/api-doc/', apiUrl).toString();
   const response = await page.goto(docUrl);
+  await page.waitForLoadState('networkidle');
   expect(response?.status()).toBe(200);
 
   // Redoc renders the schema title and the generated API endpoints
@@ -113,6 +119,8 @@ test('General - API Documentation', async ({ page }) => {
     .getByRole('heading', { name: /InvenTree API/ })
     .first()
     .waitFor({ timeout: 30000 });
+
+  await page.getByText('Download OpenAPI specification').first().waitFor();
   await page.getByText('/api/part/', { exact: false }).first().waitFor();
 
   expect(errors).toEqual([]);
