@@ -584,6 +584,15 @@ TEMPLATES = [
     }
 ]
 
+# Basic (username:password) authentication against the API - disabled by default
+BASIC_AUTH_ENABLED = get_boolean_setting(
+    'INVENTREE_BASIC_AUTH_ENABLED', 'basic_auth_enabled', False
+)
+if BASIC_AUTH_ENABLED:
+    logger.warning(
+        'INVE-W18: Basic (username:password) authentication is enabled for the API - this is not recommended'
+    )
+
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',

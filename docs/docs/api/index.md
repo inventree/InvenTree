@@ -49,6 +49,10 @@ Token authentication is recommended as it provides much faster API access and is
 
 Users can authenticate against the API using basic authentication - specifically a valid combination of `username` and `password` credentials.
 
+!!! warning "Disabled by default"
+    Basic authentication is disabled by default. It can be re-enabled by setting `INVENTREE_BASIC_AUTH_ENABLED` (or `basic_auth_enabled` in the [configuration file](../start/config.md#authentication)) to `True`. A warning ([INVE-W18](../settings/error_codes.md#inve-w18)) is logged and shown to staff users while it is enabled.
+
+
 Basic authentication attempts might run into rate limits during authentication on busy instances, as this is a likely place of attacks. Prefer Token or OAuth2 authentication instead.
 
 !!! warning "Multi factor authentication"
@@ -63,7 +67,7 @@ Each user is assigned an authentication token which can be used to access the AP
 
 #### Requesting a Token
 
-If a user does not already have an access token, they can request one via the user interface under the security user settings or the API interface, using a basic authentication request.
+If a user does not already have an access token, they can request one via the user interface under the security user settings or the API interface, using a basic authentication request (only if [basic authentication](#basic-auth) is enabled).
 
 !!! warning "Tokens are only available once"
     Regardless of the request path used to obtain the token, it will only be displayed or provided once. Ensure that you copy and store it securely when it is first issued. Requesting a token with the same name will re-issue a new token, invalidating all previous ones of the same name.

@@ -262,6 +262,13 @@ The `middleware` list provided in the configuration file does not include the au
 
 The middleware has been added automatically. To remove this warning, add it to the `middleware` list in your configuration file (after `django_structlog.middlewares.RequestMiddleware`).
 
+#### INVE-W18
+**Basic authentication is enabled - Backend**
+
+Basic (username:password) authentication against the API is enabled via the `INVENTREE_BASIC_AUTH_ENABLED` / `basic_auth_enabled` setting. Sending the user password with every request increases the impact of leaked credentials and makes the API a target for brute-force attacks. Basic authentication also bypasses the interactive login flow and does not work for users with multi-factor authentication enabled.
+
+It is recommended to disable basic authentication and use [Token or OAuth2 authentication](../api/index.md#authentication) instead - see the [Authentication settings](../start/config.md#authentication).
+
 #### INVE-W20
 **Password authentication not allowed due to MFA - Backend**
 
