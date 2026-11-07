@@ -4,12 +4,22 @@ import logging
 import multiprocessing
 import os
 
+
+def _env_flag(name: str):
+    """Read a boolean environment variable."""
+    value = os.environ.get(name, str(True))
+    return value.strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
+
+
 # Logger configuration
+GUNICORN_ACCESS_LOG = _env_flag('INVENTREE_GUNICORN_ACCESS_LOG')
+GUNICORN_ERROR_LOG = _env_flag('INVENTREE_GUNICORN_ERROR_LOG')
+
 logger = logging.getLogger('inventree')
-accesslog = '-'
-errorlog = '-'
+accesslog = '-' if GUNICORN_ACCESS_LOG else None
+errorlog = '-' if GUNICORN_ERROR_LOG else None
 loglevel = os.environ.get('INVENTREE_LOG_LEVEL', 'warning').lower()
-capture_output = True
+capture_output = GUNICORN_ERROR_LOG
 
 # Worker configuration
 #  TODO: Implement support for gevent
