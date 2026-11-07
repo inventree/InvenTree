@@ -266,6 +266,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'issued_by_detail',
             'token_version',
             'revocation_reason',
+            'warning',
         ]
         read_only_fields = [
             'last_seen',
@@ -274,6 +275,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'issued_by',
             'token_version',
             'revocation_reason',
+            'warning',
         ]
 
     def validate_expiry(self, expiry):
@@ -314,6 +316,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
     issued_by_detail = UserSerializer(
         source='issued_by', read_only=True, allow_null=True
     )
+    warning = serializers.CharField(read_only=True, allow_null=True)
 
 
 class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
