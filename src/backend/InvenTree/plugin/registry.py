@@ -9,6 +9,7 @@ import importlib
 import importlib.util
 import os
 import sys
+import threading
 import time
 from collections import OrderedDict
 from importlib.machinery import SourceFileLoader
@@ -92,6 +93,9 @@ class PluginsRegistry:
     # before the mismatch is reported as an error (and reloading for that hash stops)
     MAX_MISMATCH_RELOADS = 2
 
+    # Maximum number of times a reload is repeated, if further reloads are requested while loading
+    MAX_PENDING_RELOADS = 3
+
     # This list of plugins are *always* enabled, and are loaded by default
     # This is because they provide core functionality to the InvenTree system
     # Other 'builtin' plugins are automatically loaded, but can be disabled by the user
@@ -141,6 +145,8 @@ class PluginsRegistry:
         self.errors: dict[str, list[Any]] = {}  # Holds errors discovered during loading
 
         self.loading_lock = Lock()  # Lock to prevent multiple loading at the same time
+        self._loading_thread: Optional[int] = None  # Thread currently holding the lock
+        self._reload_pending: bool = False  # Reload requested while lock was held
 
         # flags
         self.plugins_loaded = (
@@ -492,15 +498,86 @@ class PluginsRegistry:
         Returns:
             bool: True if the registry was reloaded, False if the reload was skipped or failed
         """
-        # Do not reload when currently loading
-        if self.is_loading:
-            logger.debug('Skipping reload - plugin registry is currently loading')
-            return False
-
         if not self.loading_lock.acquire(blocking=False):
-            logger.exception('Could not acquire lock for reload_plugins')
+            if self._loading_thread != threading.get_ident():
+                # Another thread is currently reloading the registry.
+                # Request that it reloads again once complete - otherwise any state
+                # change made in the meantime (e.g. activating a plugin) would be lost,
+                # as the registry hash would no longer reflect the database state.
+                self._reload_pending = True
+                logger.info(
+                    'Plugin registry is currently loading - deferring reload request'
+                )
+            else:
+                logger.debug('Skipping reload - plugin registry is currently loading')
+
             return False
 
+        result = False
+
+        try:
+            self._loading_thread = threading.get_ident()
+
+            for attempt in range(self.MAX_PENDING_RELOADS + 1):
+                self._reload_pending = False
+
+                if attempt > 0:
+                    logger.info(
+                        'Plugin registry state changed during reload - reloading again'
+                    )
+
+                    # Discard any PluginConfig objects cached during the previous pass
+                    self._clear_plugin_config_cache()
+
+                    # A deferred request may have required a full reload
+                    full_reload = force_reload = collect = True
+
+                result = self._reload_plugins(
+                    full_reload=full_reload,
+                    force_reload=force_reload,
+                    collect=collect,
+                    clear_errors=clear_errors and attempt == 0,
+                    update_hash=update_hash,
+                    _internal=_internal,
+                )
+
+                if not self._reload_pending:
+                    break
+            else:
+                logger.warning(
+                    'Plugin registry reload requested repeatedly during reload - giving up'
+                )
+                self._reload_pending = False
+        finally:
+            self._loading_thread = None
+            self.loading_lock.release()
+
+        if self._reload_pending:
+            # A request arrived between the final check and releasing the lock
+            return self.reload_plugins(
+                full_reload=True,
+                force_reload=True,
+                collect=True,
+                update_hash=update_hash,
+                _internal=_internal,
+            )
+
+        return result
+
+    def _clear_plugin_config_cache(self) -> None:
+        """Discard the per-request cache of PluginConfig objects (see get_plugin_configs)."""
+        InvenTree.cache.set_session_cache(f'plugin_configs:{self.registry_hash}', None)
+
+    def _reload_plugins(
+        self,
+        full_reload: bool,
+        force_reload: bool,
+        collect: bool,
+        clear_errors: bool,
+        update_hash: bool,
+        _internal: Optional[list],
+    ) -> bool:
+        """Perform the plugin registry reload - the caller must hold the loading lock."""
         # Reset the loading error state
         if clear_errors:
             self.errors = {}
@@ -563,10 +640,6 @@ class PluginsRegistry:
             logger.exception('Unexpected error during plugin reload: %s', e)
             log_error('reload_plugins', scope='plugins')
             return False
-
-        finally:
-            # Ensure the lock is released always
-            self.loading_lock.release()
 
         return True
 
