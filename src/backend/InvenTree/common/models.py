@@ -2567,6 +2567,14 @@ class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeMo
         verbose_name = _('Selection List')
         verbose_name_plural = _('Selection Lists')
 
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this selection list.
+
+        SelectionList has no RuleSet permissions of its own (it is ignore-listed),
+        so mirror the IsStaffOrReadOnlyScope restriction of its own API endpoint.
+        """
+        return permission == 'view' or user.is_staff
+
     name = models.CharField(
         max_length=100,
         verbose_name=_('Name'),
@@ -2789,6 +2797,14 @@ class ParameterTemplate(
         NONE = 0, _('No uniqueness required')
         MODEL_TYPE = 1, _('Unique for model type')
         GLOBAL = 2, _('Globally unique')
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this parameter template.
+
+        ParameterTemplate has no RuleSet permissions of its own (it is ignore-listed),
+        so mirror the IsStaffOrReadOnlyScope restriction of its own API endpoint.
+        """
+        return permission == 'view' or user.is_staff
 
     @staticmethod
     def get_api_url() -> str:

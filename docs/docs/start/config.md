@@ -102,6 +102,8 @@ The following debugging / logging options are available:
 {{ configsetting("INVENTREE_DEBUG_QUERYCOUNT") }} Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. |
 {{ configsetting("INVENTREE_DEBUG_SILK") }} Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. |
 | `INVENTREE_DEBUG_SILK_PROFILING` | `debug_silk_profiling` | False | Enable detailed profiling in django-silk |
+| `INVENTREE_GUNICORN_ACCESS_LOG` | - | True | Enable gunicorn access logging |
+| `INVENTREE_GUNICORN_ERROR_LOG` | - | True | Enable gunicorn error logging |
 
 ### Debug Mode
 
