@@ -34,20 +34,8 @@ try:
         main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
         main_commit = main_repo[main_repo.head()]
     except NotGitRepository:
-        is_docker = False
-        try:
-            from django.conf import settings
-
-            if settings.DOCKER:
-                is_docker = True
-
-        except Exception:
-            # We may not have access to settings at this point
-            pass
-
-        if not is_docker:
+        if os.environ.get('INVENTREE_DOCKER', 'false') != 'true':
             logger.warning(git_warning_txt)
-
         main_repo = None
         main_commit = None
 
