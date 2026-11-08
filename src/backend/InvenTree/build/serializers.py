@@ -536,7 +536,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         label=_('Notes'),
-        max_length=stock_models.StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=stock_models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         help_text=_('Reason for scrapping build output(s)'),
         required=True,
         allow_blank=False,
@@ -599,7 +599,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         label=_('Notes'),
-        max_length=stock_models.StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=stock_models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         required=False,
         allow_blank=True,
     )
@@ -1786,7 +1786,7 @@ class BuildConsumeSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         label=_('Notes'),
-        max_length=stock_models.StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=stock_models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         help_text=_('Optional notes for the stock consumption'),
         required=False,
         allow_blank=True,

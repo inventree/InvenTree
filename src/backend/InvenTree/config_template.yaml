@@ -186,10 +186,10 @@ background:
   max_attempts: 5
 
 # External cache configuration (refer to the documentation for full list of options)
-cache:
-  enabled: false
-  host: 'inventree-cache'
-  port: 6379
+#cache:
+#  enabled: false
+#  host: 'inventree-cache'
+#  port: 6379
 
 # Login configuration
 login_confirm_days: 3

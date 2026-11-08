@@ -150,7 +150,7 @@ Validation of the Part IPN (Internal Part Number) field is exposed to custom plu
 
 ### Batch Codes
 
-[Batch codes](../../stock/tracking.md#batch-codes) can be generated and/or validated by custom plugins.
+[Batch codes](../../stock/traceability.md#batch-codes) can be generated and/or validated by custom plugins.
 
 #### Validate Batch Code
 
@@ -184,7 +184,7 @@ The `generate_batch_code` method can be implemented to generate a new batch code
 
 Requirements for serial numbers can vary greatly depending on the application. Rather than attempting to provide a "one size fits all" serial number implementation, InvenTree allows custom serial number schemes to be implemented via plugins.
 
-The default InvenTree [serial numbering system](../../stock/tracking.md#serial-numbers) uses a simple algorithm to validate and increment serial numbers. More complex behaviors can be implemented using the `ValidationMixin` plugin class and the following custom methods:
+The default InvenTree [serial numbering system](../../stock/traceability.md#serial-numbers) uses a simple algorithm to validate and increment serial numbers. More complex behaviors can be implemented using the `ValidationMixin` plugin class and the following custom methods:
 
 #### Serial Number Validation
 

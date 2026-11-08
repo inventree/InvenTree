@@ -1674,11 +1674,15 @@ class BomItemSerializer(
         # Annotate with the 'total pricing' information based on unit pricing and quantity
         queryset = queryset.annotate(
             pricing_min_total=ExpressionWrapper(
-                F('quantity') * F('sub_part__pricing_data__overall_min'),
+                F('quantity')
+                * F('piece_count')
+                * F('sub_part__pricing_data__overall_min'),
                 output_field=models.DecimalField(),
             ),
             pricing_max_total=ExpressionWrapper(
-                F('quantity') * F('sub_part__pricing_data__overall_max'),
+                F('quantity')
+                * F('piece_count')
+                * F('sub_part__pricing_data__overall_max'),
                 output_field=models.DecimalField(),
             ),
         )

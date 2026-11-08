@@ -1,10 +1,55 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 562
+INVENTREE_API_VERSION = 573
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v573 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13221
+    - Mark audit log changes_detail field as nullable
+    - Add warning field to ApiToken
+
+v572 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13212
+    - Username and email fields on the /api/user/me endpoint are now read-only
+
+v571 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13166
+    - Adds "exclude_from_stock" field and filter to the StockLocation API endpoint
+    - Adds "exclude_from_stock" filter to the StockItem API endpoint
+
+v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
+    - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only
+    - Token API (/api/user/tokens/): "expiry" must be between today and 365 days in the future
+
+v569 -> 2026-10-30 : https://github.com/inventree/InvenTree/security/advisories
+    - Hardens OAuth2 token usage in the API
+    - OAuth2 tokens can not be used to issue or manage API tokens (/api/user/me/token/, /api/user/tokens/)
+
+v568 -> 2026-10-30 : https://github.com/inventree/InvenTree/pull/13141
+    - token endpoints now have a warning if notifications cannot be sent
+
+v567 -> 2026-10-28 : https://github.com/inventree/InvenTree/pull/13128
+    - Allow ordering of SupplierPart API by "on_order" field
+
+v566 -> 2026-10-25 : https://github.com/inventree/InvenTree/pull/13101
+    - Audit log API (/api/audit/) is available to all authenticated users (entries are filtered by model permissions)
+    - Adds "event_type", "event_label", "notes" and "deltas" fields to the audit log API
+    - Adds "event_type" filter to the audit log API
+    - Stock item history is recorded in the audit log (StockItem events, with event_type values from StockHistoryCode)
+    - Breaking: Removes the stock tracking API endpoints (/api/stock/track/, /api/stock/track/<id>/, /api/stock/track/status/) - use /api/audit/ instead
+    - Breaking: Removes the "tracking_items" field from the StockItem API
+    - Breaking: Removes the "copy_history" option when duplicating a StockItem
+
+v565 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/13069
+    - Adds read-only audit log API endpoints (/api/audit/)
+    - OPTIONS metadata includes a "filters" entry, listing the available choices for choice-based list filters
+
+v564 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/13090
+    - BomItem "can_build", "pricing_min_total" and "pricing_max_total" fields now account for "piece_count"
+    - BuildLine "unit_quantity" ordering now accounts for the BOM "piece_count"
+
+v563 -> 2026-10-22 : https://github.com/inventree/InvenTree/pull/13030
+    - Adds optional 'link_nonce' mechanism to the API root
 
 v562 -> 2026-10-21 : https://github.com/inventree/InvenTree/pull/13034
     - Adds new "pricing" user role, covering the PartPricing, PartSellPriceBreak and PartInternalPriceBreak models

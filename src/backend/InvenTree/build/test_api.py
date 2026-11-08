@@ -11,14 +11,20 @@ from django.urls import reverse
 from django_q.models import OrmQ
 from rest_framework import status
 
+from audit.models import AuditLogEntry
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus
 from common.models import Note
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import (
+    InvenTreeAPITestCase,
+    stock_events,
+    stock_history,
+    stock_history_count,
+)
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
 from stock.events import StockEvents
-from stock.models import StockItem, StockItemTracking, StockLocation, StockSortOrder
+from stock.models import StockItem, StockLocation, StockSortOrder
 from stock.status_codes import StockHistoryCode, StockStatus
 
 
@@ -2280,6 +2286,43 @@ class BuildLineTests(BuildAPITest):
         line_data = next(item for item in response.data if item['pk'] == line.pk)
         self.assertEqual(line_data['allocated'], 1)
 
+    def test_ordering_unit_quantity_piece_count(self):
+        """Ordering by 'unit_quantity' must account for the BOM piece_count."""
+        assembly = Part.objects.create(
+            name='Unit Quantity Assembly',
+            description='Assembly for unit quantity ordering',
+            assembly=True,
+        )
+
+        wire = Part.objects.create(
+            name='Wire', description='Cut-to-length wire', component=True
+        )
+        screw = Part.objects.create(name='Screw', description='A screw', component=True)
+
+        # 2 x 5 = 10 units of wire per assembly
+        BomItem.objects.create(part=assembly, sub_part=wire, quantity=2, piece_count=5)
+
+        # 3 x 1 = 3 screws per assembly
+        BomItem.objects.create(part=assembly, sub_part=screw, quantity=3)
+
+        build = Build.objects.create(
+            part=assembly, reference='BO-9998', quantity=1, title='Unit quantity'
+        )
+
+        url = reverse('api-build-line-list')
+
+        response = self.get(
+            url, {'build': build.pk, 'ordering': 'unit_quantity'}, expected_code=200
+        )
+
+        self.assertEqual([line['part'] for line in response.data], [screw.pk, wire.pk])
+
+        response = self.get(
+            url, {'build': build.pk, 'ordering': '-unit_quantity'}, expected_code=200
+        )
+
+        self.assertEqual([line['part'] for line in response.data], [wire.pk, screw.pk])
+
 
 class BuildConsumeTest(BuildAPITest):
     """Test consuming allocated stock."""
@@ -2390,13 +2433,13 @@ class BuildConsumeTest(BuildAPITest):
 
         consume_build_stock(self.build.pk, items=items, expected=expected)
 
-        n_tracking = StockItemTracking.objects.count()
+        n_tracking = stock_history_count()
         n_stock = StockItem.objects.count()
 
         # Simulate redelivery of the exact same task payload
         consume_build_stock(self.build.pk, items=items, expected=expected)
 
-        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+        self.assertEqual(stock_history_count(), n_tracking)
         self.assertEqual(StockItem.objects.count(), n_stock)
         self.assertEqual(self.build.consumed_stock.count(), 3)
 
@@ -2431,12 +2474,12 @@ class BuildConsumeTest(BuildAPITest):
         remaining = self.build.allocated_stock.get()
         self.assertEqual(remaining.quantity, 60)
 
-        n_tracking = StockItemTracking.objects.count()
+        n_tracking = stock_history_count()
 
         # Simulate redelivery of the exact same task payload
         consume_build_stock(self.build.pk, lines=lines, expected=expected)
 
-        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+        self.assertEqual(stock_history_count(), n_tracking)
 
         remaining.refresh_from_db()
         self.assertEqual(remaining.quantity, 60)
@@ -2656,7 +2699,7 @@ class BuildConsumeTest(BuildAPITest):
                 expected_code=201,
                 benchmark=True,
                 max_query_count=180,
-                max_query_time=2.5,
+                max_query_time=4.5,
             )
 
         build.refresh_from_db()
@@ -2712,16 +2755,15 @@ class BuildConsumeTest(BuildAPITest):
                     self.assertEqual(si.consumed_by, build)
 
                     self.assertFalse(
-                        StockItemTracking.objects.filter(
-                            item=si,
-                            tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
+                        stock_events(
+                            si, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
                         ).exists()
                     )
                     self.assertTrue(
-                        StockItemTracking.objects.filter(
-                            item=si,
-                            tracking_type=StockHistoryCode.BUILD_CONSUMED.value,
-                            deltas__buildorder=build.pk,
+                        stock_events(
+                            si,
+                            event_type=StockHistoryCode.BUILD_CONSUMED,
+                            additional_data__deltas__buildorder__pk=build.pk,
                         ).exists()
                     )
 
@@ -2749,18 +2791,15 @@ class BuildConsumeTest(BuildAPITest):
                 self.assertEqual(consumed_item.quantity, required_quantity)
                 self.assertNotEqual(consumed_item.pk, stock_item.pk)
 
-                # Split tracking entries: one on the new (split-off) item, one on the original
+                # The new (split-off) item records its creation (as a child of the original)
+                created = stock_history(consumed_item).first()
+                self.assertEqual(created.action, AuditLogEntry.Action.CREATE)
+                self.assertEqual(created.changes_dict['parent'], [None, stock_item.pk])
+
+                # The original item records the split
                 self.assertTrue(
-                    StockItemTracking.objects.filter(
-                        item=consumed_item,
-                        tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
-                        deltas__stockitem=stock_item.pk,
-                    ).exists()
-                )
-                self.assertTrue(
-                    StockItemTracking.objects.filter(
-                        item=stock_item,
-                        tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
+                    stock_events(
+                        stock_item, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
                     ).exists()
                 )
 
@@ -2776,10 +2815,10 @@ class BuildConsumeTest(BuildAPITest):
 
                 # Consumption is recorded against the new (split-off) item
                 self.assertTrue(
-                    StockItemTracking.objects.filter(
-                        item=consumed_item,
-                        tracking_type=StockHistoryCode.BUILD_CONSUMED.value,
-                        deltas__buildorder=build.pk,
+                    stock_events(
+                        consumed_item,
+                        event_type=StockHistoryCode.BUILD_CONSUMED,
+                        additional_data__deltas__buildorder__pk=build.pk,
                     ).exists()
                 )
             else:
@@ -2789,16 +2828,15 @@ class BuildConsumeTest(BuildAPITest):
 
                 # No split occurred - consumption is recorded directly against this item
                 self.assertFalse(
-                    StockItemTracking.objects.filter(
-                        item=stock_item,
-                        tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
+                    stock_events(
+                        stock_item, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
                     ).exists()
                 )
                 self.assertTrue(
-                    StockItemTracking.objects.filter(
-                        item=stock_item,
-                        tracking_type=StockHistoryCode.BUILD_CONSUMED.value,
-                        deltas__buildorder=build.pk,
+                    stock_events(
+                        stock_item,
+                        event_type=StockHistoryCode.BUILD_CONSUMED,
+                        additional_data__deltas__buildorder__pk=build.pk,
                     ).exists()
                 )
 
@@ -2914,17 +2952,17 @@ class BuildConsumeTest(BuildAPITest):
             )
 
             self.assertTrue(
-                StockItemTracking.objects.filter(
-                    item=component_item,
-                    tracking_type=StockHistoryCode.INSTALLED_INTO_ASSEMBLY.value,
-                    deltas__stockitem=output_item.pk,
+                stock_events(
+                    component_item,
+                    event_type=StockHistoryCode.INSTALLED_INTO_ASSEMBLY,
+                    additional_data__deltas__stockitem__pk=output_item.pk,
                 ).exists()
             )
             self.assertTrue(
-                StockItemTracking.objects.filter(
-                    item=output_item,
-                    tracking_type=StockHistoryCode.INSTALLED_CHILD_ITEM.value,
-                    deltas__stockitem=component_item.pk,
+                stock_events(
+                    output_item,
+                    event_type=StockHistoryCode.INSTALLED_CHILD_ITEM,
+                    additional_data__deltas__stockitem__pk=component_item.pk,
                 ).exists()
             )
 

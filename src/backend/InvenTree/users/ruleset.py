@@ -148,11 +148,7 @@ def get_ruleset_models() -> dict:
             'pricing_partinternalpricebreak',
         ],
         RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
-        RuleSetEnum.STOCK: [
-            'stock_stockitem',
-            'stock_stockitemtracking',
-            'stock_stockitemtestresult',
-        ],
+        RuleSetEnum.STOCK: ['stock_stockitem', 'stock_stockitemtestresult'],
         RuleSetEnum.PURCHASE_ORDER: [
             'company_company',
             'company_contact',
@@ -200,6 +196,8 @@ def get_ruleset_ignore() -> list[str]:
     return [
         # Core django models (not user configurable)
         'admin_logentry',
+        # Audit log - access is determined by the permissions of the audited model
+        'audit_auditlogentry',
         'contenttypes_contenttype',
         # Models which currently do not require permissions
         'common_attachment',

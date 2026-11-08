@@ -5,15 +5,37 @@ All major notable changes to this project will be documented in this file (start
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - xxxx.xx.xx
+## Unreleased - xxxx-xx-xx
 
 ### Breaking Changes
 
 ### Added
 
+- [#13166](https://github.com/inventree/InvenTree/pull/13166) Adds an "exclude_from_stock" attribute to the StockLocation model, allowing stock items in specified locations to be excluded from stock availability calculations.
+
 ### Changed
 
 ### Removed
+
+## 1.7.0 - 2026-11.03
+
+### Breaking Changes
+
+- [#13034](https://github.com/inventree/InvenTree/pull/13034) moves pricing models into a new dedicated "pricing" model, and provides new API endpoints for managing pricing separately from other models.
+- [#13101](https://github.com/inventree/InvenTree/pull/13101) removes the StockTracking model and its associated API endpoints. Stock history tracking is now handled by the global audit log.
+
+### Added
+
+- [#13141](https://github.com/inventree/InvenTree/pull/13141) Adds a notification when a token is issued and warns if that notification can not be send
+- [#13069](https://github.com/inventree/InvenTree/pull/13069) Adds an audit log which tracks changes made to internal data and exposes read-only API endpoints (/api/audit/) for accessing the audit log.
+
+### Changed
+
+- [#13172](https://github.com/inventree/InvenTree/pull/13172) passes the `target_model` and `target_id` of the current page to plugin primary actions, via the `context` argument of `get_ui_primary_actions`.
+
+### Removed
+
+- [#13101](https://github.com/inventree/InvenTree/pull/13101) removes the StockTracking model and its associated API endpoints. Stock history tracking is now handled by the global audit log.
 
 ## 1.6.0 - 2026-10-18
 

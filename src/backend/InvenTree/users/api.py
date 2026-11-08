@@ -1,25 +1,29 @@
 """DRF API definition for the 'users' app."""
 
-import datetime
-
-from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.password_validation import password_changed, validate_password
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.urls import include, path
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
 import django_filters.rest_framework.filters as rest_filters
 import structlog
+from allauth.account.internal.flows.reauthentication import (
+    did_recently_authenticate,
+    get_reauthentication_flows,
+)
+from allauth.mfa.utils import is_mfa_enabled
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import exceptions
+from rest_framework import exceptions, status
 from rest_framework.generics import DestroyAPIView, GenericAPIView
 from rest_framework.response import Response
 
+import InvenTree.helpers
 import InvenTree.permissions
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER
@@ -35,8 +39,14 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.schema import exclude_from_schema
-from InvenTree.settings import FRONTEND_URL_BASE
-from users.models import ApiToken, Owner, RuleSet, TipResult, UserProfile
+from users.models import (
+    ApiToken,
+    Owner,
+    RuleSet,
+    TipResult,
+    UserProfile,
+    check_email_warning,
+)
 from users.serializers import (
     ApiTokenSerializer,
     ExtendedUserSerializer,
@@ -191,6 +201,8 @@ class UserDetail(RetrieveUpdateDestroyAPI):
         """Override destroy method to ensure sessions are deleted first."""
         # Remove all sessions for this user
         if sessions := instance.usersession_set.all():
+            for session in sessions:
+                session.end()
             sessions.delete()
         # Normally delete the user
         return super().perform_destroy(instance)
@@ -367,10 +379,38 @@ class RuleSetDetail(RuleSetMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular RuleSet instance."""
 
 
+def check_token_reauthentication(request) -> Response | None:
+    """Check that a user is allowed to be issued a new API token.
+
+    If the user has MFA enabled, they must have recently (re)authenticated
+    before a new token can be issued. Otherwise a stolen (or aged) session
+    could be converted into a long-lived API token without the second factor.
+
+    This check must be applied to *every* API endpoint which issues new tokens.
+
+    Returns:
+        None if the user may be issued a token, or a 401 response
+        describing the required reauthentication flows.
+    """
+    user = request.user
+
+    if is_mfa_enabled(user) and not did_recently_authenticate(request):
+        return Response(
+            {
+                'id': 'reauthentication_required',
+                'detail': _('Reauthentication is required to generate a token'),
+                'data': {'flows': get_reauthentication_flows(user)},
+            },
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    return None
+
+
 class GetAuthToken(GenericAPIView):
     """Return authentication token for an authenticated user."""
 
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedNotOAuth2]
     serializer_class = GetAuthTokenSerializer
 
     @extend_schema(
@@ -397,9 +437,12 @@ class GetAuthToken(GenericAPIView):
         if not user.is_authenticated:
             raise exceptions.NotAuthenticated()  # pragma: no cover
 
+        if reauth_response := check_token_reauthentication(request):
+            return reauth_response
+
         name = ApiToken.sanitize_name(name)
 
-        today = datetime.date.today()
+        today = InvenTree.helpers.current_date()
         reissue_token = request.resolver_match.url_name == 'api-token'
 
         token = ApiToken.objects.filter(
@@ -441,9 +484,8 @@ class GetAuthToken(GenericAPIView):
             'expiry': token.expiry,
         }
 
-        # Ensure that the users session is logged in
-        if not get_user(request).is_authenticated:
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        if warning := check_email_warning():
+            data['warning'] = warning
 
         return Response(data)
 
@@ -451,7 +493,7 @@ class GetAuthToken(GenericAPIView):
 class TokenMixin:
     """Mixin for API token endpoints."""
 
-    permission_classes = (InvenTree.permissions.IsAuthenticatedOrReadScope,)
+    permission_classes = (InvenTree.permissions.IsAuthenticatedNotOAuth2,)
     serializer_class = ApiTokenSerializer
 
     def get_queryset(self):
@@ -511,8 +553,15 @@ class TokenListView(TokenMixin, ListCreateAPI):
 
     def create(self, request, *args, **kwargs):
         """Create token and show key to user."""
+        if reauth_response := check_token_reauthentication(request):
+            return reauth_response
+
         resp = super().create(request, *args, **kwargs)
         resp.data['token'] = self._created_token.token
+
+        if warning := check_email_warning():
+            resp.data['warning'] = warning
+
         return resp
 
     def get(self, request, *args, **kwargs):
@@ -539,6 +588,10 @@ class TokenDetailView(CleanBase, TokenMixin, DestroyAPIView, RetrieveAPI):
 
     def perform_destroy(self, instance):
         """Revoke token."""
+        # Do not overwrite the record of an earlier revocation
+        if instance.revoked:
+            return
+
         instance.revoked = True
         instance.revoked_by = self.request.user
         request_data = getattr(self.request, 'data', {})
@@ -553,7 +606,7 @@ class LoginRedirect(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         """Return the URL to redirect to."""
-        return f'/{FRONTEND_URL_BASE}/logged-in/'
+        return InvenTree.helpers.pui_url('logged-in/')
 
 
 class UserProfileDetail(RetrieveUpdateAPI):

@@ -1,6 +1,6 @@
-import { test } from './baseFixtures.js';
-import { adminuser, stevenuser } from './defaults.js';
-import { globalSearch } from './helpers.js';
+import { expect, test } from './baseFixtures.js';
+import { adminuser, apiUrl, stevenuser } from './defaults.js';
+import { globalSearch, openInNewTab } from './helpers.js';
 import { doCachedLogin } from './login.js';
 
 /**
@@ -39,8 +39,32 @@ test('General - Search', async ({ browser }) => {
   await page.locator('a').filter({ hasText: 'Customer D' }).first().waitFor();
   await page.locator('a').filter({ hasText: 'Customer E' }).first().waitFor();
 
+  const customerResult = page
+    .locator('a')
+    .filter({ hasText: 'Customer B' })
+    .first();
+  await expect(customerResult).toHaveAttribute('href', /\/web\/company\/\d+/);
+
+  const popup = await openInNewTab(page, customerResult, '**/web/company/**');
+  await popup.close();
+
   // Click through to the "Customer" results
-  await page.getByRole('button', { name: 'view-all-results-customer' }).click();
+  const viewAllCustomers = page.getByRole('link', {
+    name: 'view-all-results-customer'
+  });
+  await expect(viewAllCustomers).toHaveAttribute(
+    'href',
+    /\/web\/sales\/index\/customers\?search=another\+customer/
+  );
+
+  const overviewPopup = await openInNewTab(
+    page,
+    viewAllCustomers,
+    '**/web/sales/index/customers?search=another+customer'
+  );
+  await overviewPopup.close();
+
+  await viewAllCustomers.click();
 
   await page.waitForURL('**/sales/index/customers**');
   await page.getByText('Custom table filters are active').waitFor();
@@ -58,7 +82,42 @@ test('General - Search', async ({ browser }) => {
     .first()
     .waitFor();
 
-  await page.getByLabel('view-all-results-manufacturerpart').click();
+  await page
+    .getByRole('link', { name: 'view-all-results-manufacturerpart' })
+    .click();
   await page.waitForURL('**/purchasing/index/manufacturer-parts**');
   await page.getByRole('cell', { name: 'RT0402BRD07100KL' }).waitFor();
+});
+
+/**
+ * Test that the API documentation page actually renders.
+ *
+ * The /api-doc/ view is a thin HTML shell which loads Redoc from a CDN;
+ * a 200 response does not mean that the documentation is displayed.
+ * Ref: https://github.com/inventree/InvenTree/issues/13200
+ */
+test('General - API Documentation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: stevenuser
+  });
+
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+
+  // Note: api-doc page is not forwarded to port 5173
+  const docUrl = new URL('http://localhost:8000/api-doc/', apiUrl).toString();
+  const response = await page.goto(docUrl);
+  await page.waitForLoadState('networkidle');
+  expect(response?.status()).toBe(200);
+
+  // Redoc renders the schema title and the generated API endpoints
+  await page
+    .getByRole('heading', { name: /InvenTree API/ })
+    .first()
+    .waitFor({ timeout: 30000 });
+
+  await page.getByText('Download OpenAPI specification').first().waitFor();
+  await page.getByText('/api/part/', { exact: false }).first().waitFor();
+
+  expect(errors).toEqual([]);
 });

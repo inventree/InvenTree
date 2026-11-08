@@ -9,6 +9,7 @@ from django.db import transaction
 from django.test import TestCase
 
 import build.models
+import part.filters
 import stock.models
 from common.settings import set_global_setting
 
@@ -782,6 +783,67 @@ class BomItemTest(TestCase):
 
         # 200 * 10 * 10 = 20000
         self.assertEqual(item.get_required_quantity(10), 20000)
+
+    def test_piece_count_unit_quantity(self):
+        """Test that unit_quantity accounts for piece_count."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        item.set_quantity(2)
+        item.piece_count = 1
+        self.assertEqual(item.unit_quantity, 2)
+
+        item.piece_count = 5
+        self.assertEqual(item.unit_quantity, 10)
+
+        # Attrition and setup quantity are not included
+        item.attrition = 10
+        item.setup_quantity = 3
+        self.assertEqual(item.unit_quantity, 10)
+
+    def test_piece_count_can_build_quantity(self):
+        """Test that BomItem.can_build_quantity accounts for piece_count."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+
+        item.set_quantity(2)
+        item.piece_count = 5
+        item.attrition = 0
+        item.setup_quantity = 0
+
+        # 20 / (2 * 5) = 2
+        self.assertEqual(item.can_build_quantity(20), 2)
+
+        # With setup quantity and attrition: (25 - 5) / (2 * 5 * 1.25) = 1.6
+        item.setup_quantity = 5
+        item.attrition = 25
+        self.assertEqual(item.can_build_quantity(25), 1)
+
+    def test_piece_count_can_build(self):
+        """Test that the 'can_build' annotation accounts for piece_count."""
+        assembly = Part.objects.create(
+            name='Cable assembly', description='Made with wire', assembly=True
+        )
+
+        wire = Part.objects.create(name='Wire', description='Cut-to-length wire')
+        stock.models.StockItem.objects.create(part=wire, quantity=20)
+
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=wire, quantity=2, piece_count=5
+        )
+
+        # 20 / (2 * 5) = 2
+        self.assertEqual(assembly.can_build, 2)
+
+        item = part.filters.annotate_bom_item_can_build(
+            BomItem.objects.filter(pk=bom_item.pk)
+        ).first()
+
+        self.assertAlmostEqual(item.can_build, 2)
+
+        # Without piece_count, 10 assemblies could be built
+        bom_item.piece_count = 1
+        bom_item.save()
+
+        self.assertEqual(assembly.can_build, 10)
 
     def test_piece_count_with_attrition(self):
         """Test piece_count combined with attrition percentage."""

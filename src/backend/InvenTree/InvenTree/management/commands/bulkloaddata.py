@@ -31,7 +31,7 @@ def _suspend_auto_now(model):
     use the fixture's own value. bulk_create() has no equivalent of that
     raw=True path - it always calls Field.pre_save(), which unconditionally
     stamps such fields with timezone.now(), discarding whatever value the
-    fixture provided (e.g. stock.StockItemTracking.date). Clearing the flags
+    fixture provided (e.g. stock.StockItem.creation_date). Clearing the flags
     for the duration of the bulk_create() call restores the raw=True
     behaviour for this model.
     """
@@ -65,7 +65,7 @@ class Command(LoadDataCommand):
       auto_now / auto_now_add fields are a partial exception: they are
       temporarily disabled around the bulk_create() call (see
       _suspend_auto_now()) so that fixture-provided values for fields such as
-      stock.StockItemTracking.date survive the import, matching what a
+      stock.StockItem.creation_date survive the import, matching what a
       normal, non-bulk fixture load does via raw=True.
     - Multi-table inheritance is not supported by bulk_create() and will fail
       loudly rather than being silently mishandled. Natural-key foreign key /
@@ -74,7 +74,7 @@ class Command(LoadDataCommand):
       sped up by caching each resolved natural key for the life of the command
       (see _cached_natural_keys()), since 'export_records' uses
       --natural-foreign and a large fixture can have many rows referencing the
-      same handful of natural-keyed objects (e.g. stock.StockItemTracking.user
+      same handful of natural-keyed objects (e.g. audit.AuditLogEntry.actor
       -> auth.User) - without caching, each one costs a separate DB query.
 
     Based on the django forum thread:
@@ -135,7 +135,7 @@ class Command(LoadDataCommand):
         Django's deserializer (deserialize_fk_value) issues a fresh DB query
         every time it resolves a natural-key FK reference, with no caching of
         its own. A fixture with many rows referencing the same handful of
-        natural-keyed objects (e.g. thousands of stock.StockItemTracking rows
+        natural-keyed objects (e.g. thousands of audit.AuditLogEntry rows
         all pointing at a few auth.User accounts) would otherwise cost one
         query per row instead of one query per distinct value.
         """

@@ -11,6 +11,7 @@ import {
   IconExclamationCircle,
   IconFileCode,
   IconFileDownload,
+  IconFileSearch,
   IconFileUpload,
   IconHome,
   IconList,
@@ -80,6 +81,10 @@ const NoteTemplatePanel = Loadable(lazy(() => import('./NoteTemplatePanel')));
 
 const IdentityManagementPanel = Loadable(
   lazy(() => import('./IdentityManagementPanel'))
+);
+
+const AuditLogManagementPanel = Loadable(
+  lazy(() => import('./AuditLogManagementPanel'))
 );
 
 const ErrorReportTable = Loadable(
@@ -177,6 +182,12 @@ export default function AdminCenter() {
         label: t`Error Reports`,
         icon: <IconExclamationCircle />,
         content: <ErrorReportTable />
+      },
+      {
+        name: 'audit-log',
+        label: t`Audit Log`,
+        icon: <IconFileSearch />,
+        content: <AuditLogManagementPanel />
       },
       {
         name: 'companies',
@@ -312,6 +323,7 @@ export default function AdminCenter() {
           'barcode-history',
           'background',
           'errors',
+          'audit-log',
           'companies',
           'currencies',
           'email'

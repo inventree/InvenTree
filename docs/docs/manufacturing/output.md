@@ -41,7 +41,7 @@ The following options are available when creating a new build output:
 
 ### Specifying Serial Numbers
 
-Refer to the [serial number generation guide](../stock/tracking.md#generating-serial-numbers) for further information on serial number input.
+Refer to the [serial number generation guide](../stock/traceability.md#generating-serial-numbers) for further information on serial number input.
 
 ### Creating Outputs Without Serial Numbers
 
@@ -75,7 +75,7 @@ The following options are available when completing a build output:
 | Option | Description |
 | --- | --- |
 | Status | The [stock status](../stock/status.md) for the completed outputs |
-| Location | The [stock location](../stock/index.md#stock-location) where the outputs will be located |
+| Location | The [stock location](../stock/index.md#stock-locations) where the outputs will be located |
 | Notes | Any additional notes associated with the completion of these outputs |
 | Accept Incomplete Allocation | If selected, this option allows [tracked build outputs](./allocate.md#tracked-build-outputs) to be completed in the case where required BOM items have not been fully allocated |
 

@@ -2,7 +2,13 @@ import type { Page } from '@playwright/test';
 import { createApi } from './api.js';
 import { expect, test } from './baseFixtures.js';
 import { adminuser, allaccessuser, stevenuser } from './defaults.js';
-import { getRowFromCell, loadTab, navigate } from './helpers.js';
+import {
+  clearTableSearch,
+  getRowFromCell,
+  loadTab,
+  navigate,
+  tableSearch
+} from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
 
@@ -417,10 +423,8 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
   await page.waitForTimeout(500);
 
   const checkBarcode = async (barcode: string) => {
-    await page.getByRole('textbox', { name: 'table-search-input' }).clear();
-    await page
-      .getByRole('textbox', { name: 'table-search-input' })
-      .fill(barcode);
+    await clearTableSearch(page);
+    await tableSearch(page, barcode);
     await page.waitForLoadState('networkidle');
     await page.getByText(barcode).first().waitFor();
   };
@@ -441,16 +445,14 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await loadTab(page, 'Selection Lists');
 
   // Check for expected entry
-  await page
-    .getByRole('textbox', { name: 'table-search-input' })
-    .fill('Animals');
+  await tableSearch(page, 'Animals');
   await page.getByRole('cell', { name: 'Animals', exact: true }).waitFor();
   await page.getByText('Various animals and descriptions thereof').waitFor();
 
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(250);
 
-  await page.getByRole('textbox', { name: 'table-search-input' }).fill('some');
+  await tableSearch(page, 'some');
   await page.waitForTimeout(500);
   await page.waitForLoadState('networkidle');
 

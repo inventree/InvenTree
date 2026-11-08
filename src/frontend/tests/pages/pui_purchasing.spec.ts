@@ -16,6 +16,7 @@ import {
   showCalendarView,
   showParametricView,
   showTableView,
+  tableSearch,
   waitForDataOutput
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
@@ -53,9 +54,7 @@ test('Purchasing - Index', async ({ browser }) => {
 
   // Check for expected values
   await clearTableFilters(page);
-  await page
-    .getByRole('textbox', { name: 'table-search-input' })
-    .fill('R_100K_0402');
+  await tableSearch(page, 'R_100K_0402');
   await page.getByText('R_100K_0402_1%').first().waitFor();
   await page.getByRole('cell', { name: 'RR05P100KDTR-ND' }).first().waitFor();
 
@@ -155,9 +154,7 @@ test('Purchasing - Manufacturer Parts', async ({ browser }) => {
     url: 'purchasing/index/manufacturer-parts'
   });
 
-  await page
-    .getByRole('textbox', { name: 'table-search-input' })
-    .fill('CPF0402B100KE1');
+  await tableSearch(page, 'CPF0402B100KE1');
   await page.getByText('R_100K_0402_1%').first().waitFor();
   await page.getByRole('cell', { name: 'CPF0402B100KE1' }).waitFor();
 
@@ -609,9 +606,7 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await loadTab(page, 'Received Stock');
   await clearTableFilters(page);
 
-  await page
-    .getByRole('textbox', { name: 'table-search-input' })
-    .fill('my-batch-code');
+  await tableSearch(page, 'my-batch-code');
   await page.getByRole('cell', { name: 'my-batch-code' }).first().waitFor();
 });
 
@@ -669,9 +664,7 @@ test('Purchase Orders - Custom Location', async ({ browser }) => {
   await loadTab(page, 'Received Stock');
   await clearTableFilters(page);
 
-  await page
-    .getByRole('textbox', { name: 'table-search-input' })
-    .fill('po-custom-location-test');
+  await tableSearch(page, 'po-custom-location-test');
 
   const receivedRow = page
     .getByRole('row')

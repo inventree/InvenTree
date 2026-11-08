@@ -22,6 +22,7 @@ env:
   INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
   INVENTREE_SITE_URL: http://localhost:8000
   INVENTREE_DEBUG: true
+  INVENTREE_GUNICORN_ACCESS_LOG: false
 
 permissions:
   contents: read
@@ -106,12 +107,12 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
       - name: Run pre commit hook Checks
-        uses: j178/prek-action@1382ad72dea72f9d53832f2bcb65b3e87a947204 # v3.0.1
+        uses: j178/prek-action@44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d # v3.1.0
       - name: Check Version
         run: |
           pip install --require-hashes --only-binary :all: -r contrib/dev_reqs/requirements.txt
@@ -150,7 +151,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -216,7 +217,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@b9325c9e0a27ab65b0da3b766522cedec6be81dc # v0.1.18
+        uses: oasdiff/oasdiff-action/diff@9e56cf8b3aff7edb326d5767d3d23f96127e20c3 # v0.1.21
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"
@@ -295,7 +296,7 @@ jobs:
           echo "after move"
           ls -la artifact
           rm -rf artifact
-      - uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
+      - uses: stefanzweifel/git-auto-commit-action@d0b01107b5db882071f96de5dd4b54961ea93f4c # v7.2.1
         name: Commit schema changes
         with:
           commit_message: "Update API schema for ${{ env.version }} / ${{ github.sha }}"
@@ -357,7 +358,7 @@ jobs:
           pip install . --only-binary :all:
         if: needs.paths-filter.outputs.submit-performance == 'true'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@821a40cd6c80e3cfe387caf55668287addd808da # v5.5.0
+        uses: CodSpeedHQ/action@78102a468f96d8e0ccb92d0ec49425753fc42062 # v5.6.0
         # check if we are in inventree/inventree - reporting only works in that OIDC context
         if: github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
         with:
@@ -450,7 +451,7 @@ jobs:
         env:
           node_version: '>=24'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@821a40cd6c80e3cfe387caf55668287addd808da # v5.5.0
+        uses: CodSpeedHQ/action@78102a468f96d8e0ccb92d0ec49425753fc42062 # v5.6.0
         with:
           mode: walltime
           run: inv dev.test --pytest
@@ -567,4 +568,4 @@ jobs:
         with:
           persist-credentials: false
       - name: Run zizmor 🌈
-        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        uses: zizmorcore/zizmor-action@53290badfa369cb0bf7ad16342cb62c2fa47ac7b # v0.8.0

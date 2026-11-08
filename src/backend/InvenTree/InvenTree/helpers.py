@@ -510,6 +510,30 @@ def GetExportFormats() -> list:
     return [opt[0] for opt in GetExportOptions()]
 
 
+def escape_export_value(value):
+    """Escape a value for export to a tabular data file, to prevent formula injection.
+
+    String values which start with a character that a spreadsheet application
+    may interpret as a formula are prefixed with a single quote character.
+    Non-string values are returned unchanged, as are strictly numeric
+    strings (e.g. "-222", "+1.5", "12e6"), which are not a formula risk.
+
+    Ref: https://owasp.org/www-community/attacks/CSV_Injection
+    """
+    if not isinstance(value, str):
+        return value
+
+    if value.startswith(('+', '-')) and re.fullmatch(
+        r'[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?', value
+    ):
+        return value
+
+    if value.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + value
+
+    return value
+
+
 def DownloadFile(
     data, filename, content_type='application/text', inline=False
 ) -> StreamingHttpResponse:
@@ -1156,8 +1180,18 @@ def sanitize_token(token_value: str, front=8, back=12) -> str:
 
     Returns:
         The sanitized token string
+
+    Note:
+        Values too short to keep the 'front' and 'back' sections visible
+        are almost entirely masked, so that the full value is never exposed.
     """
-    middle = len(token_value) - (front + back)
+    length = len(token_value)
+
+    if length <= front + back:
+        visible = min(front, length // 4)
+        return token_value[:visible] + '*' * (length - visible)
+
+    middle = length - (front + back)
     return token_value[:front] + '*' * middle + token_value[-back:]
 
 

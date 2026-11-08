@@ -19,6 +19,7 @@ import order.models
 import part.filters as part_filters
 import stock.models
 import stock.serializers
+from audit.helpers import write_batched
 from common.settings import get_global_setting
 from company.serializers import (
     AddressBriefSerializer,
@@ -53,7 +54,6 @@ from order.status_codes import (
 )
 from part.serializers import PartBriefSerializer
 from plugin.base.event.events import batch_events
-from stock.models import batch_tracking_entries
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
@@ -927,7 +927,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=stock.models.StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=stock.models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Additional note for incoming stock items'),
         required=False,
@@ -1127,7 +1127,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
             with (
                 transaction.atomic(),
                 batch_events(),
-                batch_tracking_entries(),
+                write_batched(),
                 batch_offload_tasks(),
             ):
                 items = order.receive_line_items(
@@ -2344,7 +2344,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=stock.models.StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=stock.models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Additional note for incoming stock items'),
         required=False,

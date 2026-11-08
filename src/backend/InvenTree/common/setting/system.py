@@ -237,6 +237,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'INVENTREE_LINK_PROOF': {
+        'name': _('Allow Link Proof'),
+        'description': _(
+            'Allow other instances to verify the server identity without revealing the instance ID'
+        ),
+        'default': True,
+        'validator': bool,
+    },
     'INVENTREE_INSTANCE': {
         'name': _('Server Instance Name'),
         'default': 'InvenTree',
@@ -1184,7 +1192,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'confirm': True,
         'confirm_text': _(
-            'Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately.'
+            'Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately, and API tokens of users without multifactor authentication will stop working.'
         ),
         'flags': [SettingFlag.SECURITY],
         'after_save': enforce_mfa,
@@ -1309,22 +1317,36 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'units': _('days'),
         'validator': [int, MinValueValidator(30)],
     },
-    'STOCK_TRACKING_DELETE_OLD_ENTRIES': {
-        'name': _('Delete Old Stock Tracking Entries'),
+    'AUDIT_LOG_ENABLED': {
+        'name': _('Enable Audit Log'),
+        'description': _('Record a history of changes made to supported models'),
+        'default': True,
+        'validator': bool,
+    },
+    'AUDIT_LOG_DELETE_OLD_ENTRIES': {
+        'name': _('Delete Old Audit Log Entries'),
         'description': _(
-            'Delete stock tracking entries older than the specified number of days'
+            'Delete audit log entries older than the specified number of days'
         ),
         'default': False,
         'validator': bool,
     },
-    'STOCK_TRACKING_DELETE_DAYS': {
-        'name': _('Stock Tracking Deletion Interval'),
+    'AUDIT_LOG_DELETE_KEEP_SUMMARY': {
+        'name': _('Retain Audit Log Summary'),
         'description': _(
-            'Stock tracking entries will be deleted after specified number of days'
+            'When deleting old audit log entries, always keep the creation entry and the most recent entry for each item'
+        ),
+        'default': True,
+        'validator': bool,
+    },
+    'AUDIT_LOG_DELETE_DAYS': {
+        'name': _('Audit Log Deletion Interval'),
+        'description': _(
+            'Audit log entries will be deleted after specified number of days'
         ),
         'default': 365,
         'units': _('days'),
-        'validator': [int, MinValueValidator(30)],
+        'validator': [int, MinValueValidator(7)],
     },
     'DISPLAY_FULL_NAMES': {
         'name': _('Display Users full names'),

@@ -333,6 +333,33 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertEqual(pricing.overall_max, Money(expected_max, 'USD'))
 
     @override_settings(TESTING_PRICING=True)
+    def test_bom_pricing_piece_count(self):
+        """BOM pricing must account for the piece_count of each BOM item."""
+        sub_part = part.models.Part.objects.create(
+            name='Wire',
+            description='Cut-to-length wire',
+            component=True,
+            assembly=False,
+        )
+
+        sub_part_pricing = sub_part.pricing
+        sub_part_pricing.internal_cost_min = Money(2, 'USD')
+        sub_part_pricing.internal_cost_max = Money(3, 'USD')
+        sub_part_pricing.save()
+
+        part.models.BomItem.objects.create(
+            part=self.part, sub_part=sub_part, quantity=4, piece_count=5
+        )
+
+        self.part.refresh_from_db()
+        pricing = self.part.pricing
+        pricing.update_bom_cost()
+
+        # 4 x 5 = 20 units required per assembly
+        self.assertEqual(pricing.bom_cost_min, Money(40, 'USD'))
+        self.assertEqual(pricing.bom_cost_max, Money(60, 'USD'))
+
+    @override_settings(TESTING_PRICING=True)
     def test_purchase_pricing(self):
         """Unit tests for historical purchase pricing."""
         self.create_price_breaks()

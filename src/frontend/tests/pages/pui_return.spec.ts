@@ -1,6 +1,11 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures';
-import { loadTab } from '../helpers';
+import {
+  clearTableFilters,
+  loadTab,
+  showParametricView,
+  tableSearch
+} from '../helpers';
 import { doCachedLogin } from '../login';
 
 test('Return Orders - Receive Items', async ({ browser }) => {
@@ -28,4 +33,22 @@ test('Return Orders - Receive Items', async ({ browser }) => {
   await page.getByRole('button', { name: 'action-button-receive-' }).click();
   await page.getByRole('banner').getByText('Receive Items').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Return Orders - Parametric View', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'sales/index/returnorders'
+  });
+
+  await showParametricView(page);
+  await clearTableFilters(page);
+
+  // Columns and data are rendered in the parametric table
+  await page.getByRole('button', { name: 'Customer' }).waitFor();
+  await page.getByRole('cell', { name: 'RMA-0002' }).waitFor();
+
+  // Search within the parametric table
+  await tableSearch(page, 'RMA-0002');
+  await page.getByRole('cell', { name: 'RMA-0002' }).waitFor();
+  await expect(page.getByRole('cell', { name: 'RMA-0001' })).toHaveCount(0);
 });

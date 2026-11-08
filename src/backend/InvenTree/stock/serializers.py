@@ -28,6 +28,7 @@ import part.models as part_models
 import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
+from audit.helpers import audit_event, write_batched
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
@@ -44,14 +45,7 @@ from InvenTree.tasks import batch_offload_tasks
 from plugin.base.event.events import batch_events
 from users.serializers import UserSerializer
 
-from .models import (
-    StockItem,
-    StockItemTestResult,
-    StockItemTracking,
-    StockLocation,
-    StockLocationType,
-    batch_tracking_entries,
-)
+from .models import StockItem, StockItemTestResult, StockLocation, StockLocationType
 
 logger = structlog.get_logger('inventree')
 
@@ -326,7 +320,7 @@ class StockItemSerializer(
     - Includes serialization for the item location
     """
 
-    export_exclude_fields = ['tags', 'tracking_items']
+    export_exclude_fields = ['tags']
 
     SKIP_CREATE_FIELDS = ['duplicate']
 
@@ -400,7 +394,6 @@ class StockItemSerializer(
             'supplier_part_detail',
             'tags',
             'tests',
-            'tracking_items',
         ]
         read_only_fields = [
             'allocated',
@@ -486,13 +479,7 @@ class StockItemSerializer(
                 'label': _('Copy Test Results'),
                 'help_text': _('Copy test results from the original stock item'),
                 'default': False,
-            },
-            {
-                'name': 'copy_history',
-                'label': _('Copy History'),
-                'help_text': _('Copy stock history from the original stock item'),
-                'default': False,
-            },
+            }
         ],
     )
 
@@ -559,7 +546,6 @@ class StockItemSerializer(
         )
 
         # Annotate the queryset with the number of tracking items
-        queryset = queryset.annotate(tracking_items=SubqueryCount('tracking_info'))
 
         # Add flag to indicate if the StockItem has expired
         queryset = queryset.annotate(
@@ -689,9 +675,6 @@ class StockItemSerializer(
         read_only=True, allow_null=True, label=_('Child Items')
     )
     stale = serializers.BooleanField(read_only=True, allow_null=True, label=_('Stale'))
-    tracking_items = serializers.IntegerField(
-        read_only=True, allow_null=True, label=_('Tracking Items')
-    )
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
@@ -773,7 +756,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Optional note field'),
@@ -841,7 +824,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
         with (
             transaction.atomic(),
             batch_events(),
-            batch_tracking_entries(),
+            write_batched(),
             batch_offload_tasks(),
         ):
             return (
@@ -877,7 +860,7 @@ class InstallStockItemSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Add transaction note (optional)'),
         required=False,
@@ -958,7 +941,7 @@ class UninstallStockItemSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Notes'),
         help_text=_('Add transaction note (optional)'),
         required=False,
@@ -994,10 +977,23 @@ class UninstallStockItemSerializer(serializers.Serializer):
 class StockStatusCustomSerializer(serializers.ChoiceField):
     """Serializer to allow annotating the schema to use int where custom values may be entered."""
 
-    def __init__(self, *args, **kwargs):
-        """Initialize the status selector."""
+    def __init__(self, *args, include_no_change: bool = False, **kwargs):
+        """Initialize the status selector.
+
+        Arguments:
+            include_no_change: If True, prepend a null "No Change" option to the choices
+
+        Note: Choices are evaluated here (rather than being passed in) so that
+        custom states which are added at runtime are available. Declared serializer
+        fields are deep-copied (re-initialized) for each serializer instance.
+        """
         if 'choices' not in kwargs:
-            kwargs['choices'] = stock.status_codes.StockStatus.items(custom=True)
+            choices = list(stock.status_codes.StockStatus.items(custom=True))
+
+            if include_no_change:
+                choices = [(None, _('No Change')), *choices]
+
+            kwargs['choices'] = choices
 
         if 'label' not in kwargs:
             kwargs['label'] = _('Status')
@@ -1137,7 +1133,7 @@ class DisassembleStockItemSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Optional note field'),
@@ -1305,7 +1301,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Notes'),
         help_text=_('Add transaction note (optional)'),
         required=False,
@@ -1325,55 +1321,25 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         note = data.get('note', '')
 
-        transaction_notes = []
-
-        now = InvenTree.helpers.current_time()
-
-        # Instead of performing database updates for each item,
-        # perform bulk database updates (much more efficient)
-
         # Pre-cache the custom status values (to reduce DB hits)
         custom_status_codes = StockItem.STATUS_CLASS.custom_values()
 
-        for item in items:
-            # Ignore items which are already in the desired status
+        # Audit log entries are written in a single query
+        with write_batched():
+            for item in items:
+                # Ignore items which are already in the desired status
 
-            # Careful check for custom status codes also
-            if item.compare_status(status):
-                custom_status = item.get_custom_status()
-                if status == custom_status or custom_status is None:
-                    continue
+                # Careful check for custom status codes also
+                if item.compare_status(status):
+                    custom_status = item.get_custom_status()
+                    if status == custom_status or custom_status is None:
+                        continue
 
-            deltas = {'status': status}
+                item.set_status(status, custom_values=custom_status_codes)
 
-            # before save, track old status logical
-            deltas['old_status_logical'] = item.status
-
-            if item.get_custom_status():
-                deltas['old_status'] = item.get_custom_status()
-            else:
-                deltas['old_status'] = item.status
-
-            item.set_status(status, custom_values=custom_status_codes)
-            item.save(add_note=False)
-
-            # after save, can track new status_logical
-            deltas['status_logical'] = item.status
-
-            # Create a new transaction note for each item
-            transaction_notes.append(
-                StockItemTracking(
-                    item=item,
-                    tracking_type=stock.status_codes.StockHistoryCode.EDITED.value,
-                    date=now,
-                    deltas=deltas,
-                    user=user,
-                    notes=note,
-                )
-            )
-
-        # Create tracking entries
-        StockItemTracking.objects.bulk_create(transaction_notes, batch_size=250)
+                # The status change is recorded as a regular update (with the provided note)
+                with audit_event(item, None, notes=note, actor=user):
+                    item.save(add_note=False)
 
 
 class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -1475,6 +1441,7 @@ class LocationSerializer(
             'custom_icon',
             'structural',
             'external',
+            'exclude_from_stock',
             'location_type',
             # Optional fields
             'location_type_detail',
@@ -1536,73 +1503,6 @@ class LocationSerializer(
     location_type_detail = StockLocationTypeSerializer(
         source='location_type', read_only=True, allow_null=True, many=False
     )
-
-
-@register_importer()
-class StockTrackingSerializer(
-    InvenTree.serializers.FilterableSerializerMixin,
-    DataImportExportSerializerMixin,
-    InvenTree.serializers.InvenTreeModelSerializer,
-):
-    """Serializer for StockItemTracking model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItemTracking
-        fields = [
-            'pk',
-            'item',
-            'item_detail',
-            'part',
-            'part_detail',
-            'date',
-            'deltas',
-            'label',
-            'notes',
-            'tracking_type',
-            'user',
-            'user_detail',
-        ]
-        read_only_fields = ['date', 'part', 'user', 'label', 'tracking_type']
-
-    label = serializers.CharField(read_only=True)
-
-    item_detail = OptionalField(
-        serializer_class=StockItemSerializer,
-        serializer_kwargs={
-            'source': 'item',
-            'many': False,
-            'read_only': True,
-            'allow_null': True,
-        },
-        prefetch_fields=['item', 'item__part'],
-    )
-
-    part_detail = OptionalField(
-        serializer_class=part_serializers.PartBriefSerializer,
-        serializer_kwargs={
-            'source': 'part',
-            'many': False,
-            'read_only': True,
-            'allow_null': True,
-        },
-        default_include=False,
-        prefetch_fields=['part'],
-    )
-
-    user_detail = OptionalField(
-        serializer_class=UserSerializer,
-        serializer_kwargs={
-            'source': 'user',
-            'many': False,
-            'read_only': True,
-            'allow_null': True,
-        },
-        prefetch_fields=['user'],
-    )
-
-    deltas = serializers.JSONField(read_only=True)
 
 
 class StockAssignmentItemSerializer(serializers.Serializer):
@@ -1689,7 +1589,7 @@ class StockAssignmentSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Stock assignment notes'),
@@ -1779,7 +1679,7 @@ class StockMergeSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Stock merging notes'),
@@ -1866,14 +1766,6 @@ class StockMergeSerializer(serializers.Serializer):
         )
 
 
-def stock_item_adjust_status_options():
-    """Return a custom set of options for the StockItem status adjustment field.
-
-    In particular, include a Null option for the status field.
-    """
-    return [(None, _('No Change')), *stock.status_codes.StockStatus.items(custom=True)]
-
-
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """Serializer for a single StockItem within a stock adjustment request.
 
@@ -1953,10 +1845,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     )
 
     status = StockStatusCustomSerializer(
-        choices=stock_item_adjust_status_options(),
-        default=None,
-        required=False,
-        allow_blank=True,
+        include_no_change=True, default=None, required=False, allow_blank=True
     )
 
     packaging = serializers.CharField(
@@ -1989,7 +1878,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Stock transaction notes'),
@@ -2073,7 +1962,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
         with (
             transaction.atomic(),
             batch_events(),
-            batch_tracking_entries(),
+            write_batched(),
             batch_offload_tasks(),
         ):
             for item in items:
@@ -2106,7 +1995,7 @@ class StockAddSerializer(StockAdjustmentSerializer):
         with (
             transaction.atomic(),
             batch_events(),
-            batch_tracking_entries(),
+            write_batched(),
             batch_offload_tasks(),
         ):
             for item in data['items']:
@@ -2140,7 +2029,7 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
         with (
             transaction.atomic(),
             batch_events(),
-            batch_tracking_entries(),
+            write_batched(),
             batch_offload_tasks(),
         ):
             for item in data['items']:
@@ -2202,7 +2091,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         with (
             transaction.atomic(),
             batch_events(),
-            batch_tracking_entries(),
+            write_batched(),
             batch_offload_tasks(),
         ):
             for item in items:
@@ -2219,7 +2108,9 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                         kwargs[field_name] = field_value
 
                 if merge:
-                    target = stock_item.find_merge_target(location)
+                    target = stock_item.find_merge_target(
+                        location, status=kwargs.get('status')
+                    )
 
                     if target:
                         merge_kwargs = {
@@ -2249,14 +2140,19 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                             merge_kwargs['transfer_deltas'] = transfer_deltas
                             target.merge_stock_items([piece], **merge_kwargs)
                         else:
-                            transfer_deltas = {'stockitem': stock_item.pk}
+                            transfer_deltas = {'stockitem': stock_item}
 
                             if location:
-                                transfer_deltas['location'] = location.pk
+                                transfer_deltas['location'] = location
 
                             for field_name in StockItem.optional_transfer_fields():
                                 if field_name in kwargs:
                                     transfer_deltas[field_name] = kwargs[field_name]
+
+                            # Apply the new status (in memory only, as the item is about to be merged)
+                            # so that the merge checks compare against the requested status
+                            if status := kwargs.get('status'):
+                                stock_item.set_status(status)
 
                             merge_kwargs['transfer_deltas'] = transfer_deltas
                             target.merge_stock_items([stock_item], **merge_kwargs)

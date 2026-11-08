@@ -489,7 +489,7 @@ def check_build_stock(build):
 
         available = max(0, in_stock - allocated)
 
-        required = Decimal(bom_item.quantity) * Decimal(build.quantity)
+        required = bom_item.unit_quantity * Decimal(build.quantity)
 
         if available < required:
             # There is not sufficient stock for this part

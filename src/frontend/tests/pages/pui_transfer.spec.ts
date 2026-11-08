@@ -86,7 +86,7 @@ test('Transfer Order - Reference', async ({ browser }) => {
   await page.getByText('Item Created').waitFor();
 
   // go back to stock page
-  await page.getByRole('link', { name: 'Stock', exact: true }).click();
+  await page.getByRole('tab', { name: 'Stock', exact: true }).click();
   await page
     .getByRole('button', { name: 'action-button-add-transfer-' })
     .click();
