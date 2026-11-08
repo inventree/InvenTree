@@ -34,6 +34,7 @@ from InvenTree.config import (
 )
 from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
+from InvenTree.tracing import ensure_otel_middleware
 from InvenTree.validators import invalid_site_url_hint
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
@@ -702,6 +703,7 @@ TRACING_ENABLED = (
 TRACING_DETAILS: Optional[dict] = tracing.configure_tracing(
     DB_ENGINE, TRACING_ENABLED, inventree_tags
 )
+MIDDLEWARE = ensure_otel_middleware(MIDDLEWARE)
 
 # Cache configuration
 GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
