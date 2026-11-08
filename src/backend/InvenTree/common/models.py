@@ -158,6 +158,9 @@ class ProjectCode(
 
     IMPORT_ID_FIELDS = ['code']
 
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
+
     class Meta:
         """Class options for the ProjectCode model."""
 
@@ -292,6 +295,8 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
                         if not key.startswith('_')
                     ],
                     batch_size=250,
+                    # Concurrent requests may race to create the same keys
+                    ignore_conflicts=True,
                 )
         except Exception as exc:
             logger.exception(
@@ -1878,6 +1883,9 @@ class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
     https://pint.readthedocs.io/en/stable/advanced/defining.html
     """
 
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
+
     class Meta:
         """Class meta options."""
 
@@ -1912,6 +1920,7 @@ class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
         from InvenTree.conversion import (
             build_candidate_unit_registry,
             get_unit_registry,
+            is_base_unit_name,
         )
 
         registry = get_unit_registry()
@@ -1922,6 +1931,19 @@ class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
         # Cannot be zero length
         if not self.name.isidentifier():
             raise ValidationError({'name': _('Unit name must be a valid identifier')})
+
+        # Custom units cannot override built-in unit definitions
+        if is_base_unit_name(self.name):
+            raise ValidationError({
+                'name': _('Unit name conflicts with an existing built-in unit')
+            })
+
+        self.symbol = self.symbol.strip()
+
+        if is_base_unit_name(self.symbol):
+            raise ValidationError({
+                'symbol': _('Unit symbol conflicts with an existing built-in unit')
+            })
 
         self.definition = self.definition.strip()
 
@@ -2392,6 +2414,9 @@ class InvenTreeCustomUserStateModel(models.Model):
 
     """
 
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
+
     class Meta:
         """Metaclass options for this mixin."""
 
@@ -2541,6 +2566,14 @@ class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeMo
 
         verbose_name = _('Selection List')
         verbose_name_plural = _('Selection Lists')
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this selection list.
+
+        SelectionList has no RuleSet permissions of its own (it is ignore-listed),
+        so mirror the IsStaffOrReadOnlyScope restriction of its own API endpoint.
+        """
+        return permission == 'view' or user.is_staff
 
     name = models.CharField(
         max_length=100,
@@ -2731,6 +2764,9 @@ class ParameterTemplate(
         enabled: Is this template enabled?
     """
 
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
+
     IMPORT_ID_FIELDS = ['name']
 
     class Meta:
@@ -2761,6 +2797,14 @@ class ParameterTemplate(
         NONE = 0, _('No uniqueness required')
         MODEL_TYPE = 1, _('Unique for model type')
         GLOBAL = 2, _('Globally unique')
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this parameter template.
+
+        ParameterTemplate has no RuleSet permissions of its own (it is ignore-listed),
+        so mirror the IsStaffOrReadOnlyScope restriction of its own API endpoint.
+        """
+        return permission == 'view' or user.is_staff
 
     @staticmethod
     def get_api_url() -> str:

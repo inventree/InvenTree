@@ -2,6 +2,65 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 1.8.0 - Unreleased
+
+#### New Features
+
+- Adds `renderLink` helper function, which renders a validated external URL (`http` / `https` only) as an `<Anchor>` element with a link icon
+- Adds `sanitizeLinkUrl` helper function, which validates a URL for use as an external link
+
+### 1.7.0 - November 2026
+
+Updated UI components library to match 1.7.0 InvenTree release.
+
+#### Breaking Changes
+
+Changes to `ApiEndpoints`:
+- Pricing endpoints have moved to a dedicated `pricing/` API ([#13034](https://github.com/inventree/InvenTree/pull/13034)):
+  - `part_pricing` is now `pricing/part/:id/`
+  - `part_pricing_internal` is now `pricing/internal-price/`
+  - `part_pricing_sale` is now `pricing/sale-price/`
+- Removed `stock_tracking_list` - stock history is now provided by the audit log (`audit_log_list`) ([#13101](https://github.com/inventree/InvenTree/pull/13101))
+- Removed `notes_image_upload` - replaced by `notes_image_list` (`note/image/`) ([#11971](https://github.com/inventree/InvenTree/pull/11971))
+
+Changes to `ModelInformationDict`:
+- The `stockhistory` model now uses the `audit_log_list` API endpoint
+- The `url_detail` entry has been removed for the following models, which do not have a dedicated detail page: `parttesttemplate`, `buildline`, `projectcode`, `address`, `contact`, `owner`, `importsession`
+
+Changes to type definitions:
+- `AuthContext`: The `status`, `data` and `meta` fields have been removed, and replaced with an optional top-level `flows` field
+- `Flow`: The `is_pending` field is now a `boolean` (previously `boolean[]`), and an optional `provider` field has been added
+- `Setting`: Adds a required `flags` field (see `SettingFlag`)
+
+#### New Features
+
+- Modal forms can be launched dynamically from anywhere in the interface (including from the spotlight) - [#13174](https://github.com/inventree/InvenTree/pull/13174)
+- Tables support nested (child) rows via the new `nestedRows` table property ([#12952](https://github.com/inventree/InvenTree/pull/12952))
+- Adds the `tableActionsFullWidth` table property, allowing custom table actions to use the available header width ([#12799](https://github.com/inventree/InvenTree/pull/12799))
+- Adds the `json` form field type ([#12799](https://github.com/inventree/InvenTree/pull/12799))
+- `SearchInput` now has a minimum width of 150px ([#12810](https://github.com/inventree/InvenTree/pull/12810))
+
+New user state functions and data, available via the `user` plugin context:
+- `hasViewVisible` - check if a user has view permission for a role, *and* the associated interface is enabled ([#12842](https://github.com/inventree/InvenTree/pull/12842))
+- `tips`, `done_tips` and `setTips` - first time user guide tips ([#12978](https://github.com/inventree/InvenTree/pull/12978))
+
+New enum values:
+- `ModelType.notetemplate` (and associated `ModelInformationDict` entry) ([#11971](https://github.com/inventree/InvenTree/pull/11971))
+- `UserRoles.pricing` ([#13034](https://github.com/inventree/InvenTree/pull/13034))
+- New `ApiEndpoints` values: `user_me_tips`, `auth_provider_signup`, `audit_log_list`, `instance_info`, `note_list`, `notes_image_list`, `admin_oauth`, `admin_oauth_regenerate`, `scim_config`, `scim_generate`, `scim_disable`, `sso_list`
+
+#### New Exports
+
+Exposes the following additional definitions from the library:
+- `InvenTreeTableNestedRowProps` - type definition for nested table rows
+- `SettingFlag` - enumeration of setting flags
+- `roleToViewSettingMap` - mapping between user roles and the global settings which enable the associated interface
+- `UserTips` - type definition for user tips
+
+### notYetImplemented
+
+Removes the `notYetImplemented` notification function, which is no longer used by the InvenTree user interface. Plugins which import this function must be updated.
+
 ### 1.5.0 - August 2026
 
 Updated UI components library to match 1.5.0 InvenTree release.

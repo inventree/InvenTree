@@ -854,6 +854,14 @@ class TipResult(InvenTree.models.MetadataMixin):
         help_text=_('The last time this tip result was updated'),
     )
 
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this tip result.
+
+        TipResult has no RuleSet permissions of its own (it is ignore-listed),
+        so only the owning user may access it (mirrors TipResultDetail).
+        """
+        return self.user_id == user.pk
+
     def __str__(self):
         """Return string representation of the tip result."""
         if self.finished:
@@ -878,9 +886,11 @@ class TipResult(InvenTree.models.MetadataMixin):
         # bulk create
         missing_ids = set(known_ids) - existing_ids
         if missing_ids:
-            cls.objects.bulk_create([
-                cls(user=user, tip_id=tip_id) for tip_id in missing_ids
-            ])
+            cls.objects.bulk_create(
+                [cls(user=user, tip_id=tip_id) for tip_id in missing_ids],
+                # Concurrent requests may race to create the same records
+                ignore_conflicts=True,
+            )
 
 
 # Validate groups

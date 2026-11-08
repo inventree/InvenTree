@@ -27,12 +27,14 @@ import InvenTree.backup
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import (
     ensure_middleware,
+    ensure_removed,
     get_boolean_setting,
     get_oidc_private_key,
     get_setting,
 )
 from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
+from InvenTree.tracing import ensure_otel_middleware
 from InvenTree.validators import invalid_site_url_hint
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
@@ -107,7 +109,29 @@ JSON_LOG = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
 WRITE_LOG = get_boolean_setting('INVENTREE_WRITE_LOG', 'write_log', False)
 CONSOLE_LOG = get_boolean_setting('INVENTREE_CONSOLE_LOG', 'console_log', True)
 
-logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s %(levelname)s %(message)s')
+# Ensure all log records have the same shape
+LOG_FOREIGN_PRE_CHAIN = [
+    structlog.processors.TimeStamper(fmt='iso'),
+    structlog.stdlib.add_logger_name,
+    structlog.stdlib.add_log_level,
+]
+LOG_JSON_PROCESSORS = [
+    structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+    structlog.processors.format_exc_info,
+    structlog.processors.JSONRenderer(),
+]
+
+if JSON_LOG:
+    # startup logging
+    _early_log_handler = logging.StreamHandler()
+    _early_log_handler.setFormatter(
+        structlog.stdlib.ProcessorFormatter(
+            processors=LOG_JSON_PROCESSORS, foreign_pre_chain=LOG_FOREIGN_PRE_CHAIN
+        )
+    )
+    logging.basicConfig(level=LOG_LEVEL, handlers=[_early_log_handler])
+else:
+    logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s %(levelname)s %(message)s')
 
 if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
     LOG_LEVEL = 'WARNING'  # pragma: no cover
@@ -123,27 +147,34 @@ LOGGING = {
     'formatters': {
         'json_formatter': {
             '()': structlog.stdlib.ProcessorFormatter,
-            'processor': structlog.processors.JSONRenderer(),
+            'processors': LOG_JSON_PROCESSORS,
+            'foreign_pre_chain': LOG_FOREIGN_PRE_CHAIN,
         },
         'plain_console': {
             '()': structlog.stdlib.ProcessorFormatter,
             'processor': structlog.dev.ConsoleRenderer(),
+            'foreign_pre_chain': LOG_FOREIGN_PRE_CHAIN,
         },
         'key_value': {
             '()': structlog.stdlib.ProcessorFormatter,
             'processor': structlog.processors.KeyValueRenderer(
                 key_order=['timestamp', 'level', 'event', 'logger']
             ),
+            'foreign_pre_chain': LOG_FOREIGN_PRE_CHAIN,
         },
     },
     'handlers': {
-        'console': {'class': 'logging.StreamHandler', 'formatter': 'plain_console'}
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json_formatter' if JSON_LOG else 'plain_console',
+        }
     }
     if CONSOLE_LOG
     else {},
+    'root': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
     'loggers': {
-        'django_structlog': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
-        'inventree': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
+        'django_structlog': {'level': LOG_LEVEL},
+        'inventree': {'level': LOG_LEVEL},
     },
 }
 
@@ -399,7 +430,6 @@ MIDDLEWARE = CONFIG.get(
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'InvenTree.middleware.AuthRequiredMiddleware',
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
-        'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
@@ -416,6 +446,12 @@ MIDDLEWARE = ensure_middleware(
     MIDDLEWARE,
     'audit.middleware.InvenTreeAuditlogMiddleware',
     after='django_structlog.middlewares.RequestMiddleware',
+)
+
+# OAuth2 tokens must only be handled by the API authentication class (which enforces token scopes)
+# The oauth2_provider middleware would turn a token into a full (session) user login - ensure that it is never present
+MIDDLEWARE = ensure_removed(
+    MIDDLEWARE, 'oauth2_provider.middleware.OAuth2TokenMiddleware', 'MIDDLEWARE'
 )
 
 # Audit log configuration (django-auditlog)
@@ -476,7 +512,6 @@ QUERYCOUNT = {
 
 
 default_auth_backends = [
-    'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
     'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
@@ -487,6 +522,13 @@ AUTHENTICATION_BACKENDS = (
     CONFIG.get('authentication_backends', default_auth_backends)
     if CONFIG
     else default_auth_backends
+)
+
+# The oauth2_provider backend accepts an OAuth2 token for *any* authentication attempt (e.g. a login form) - ensure that it is never present
+AUTHENTICATION_BACKENDS = ensure_removed(
+    AUTHENTICATION_BACKENDS,
+    'oauth2_provider.backends.OAuth2Backend',
+    'AUTHENTICATION_BACKENDS',
 )
 
 # LDAP support
@@ -502,10 +544,7 @@ if LDAP_AUTH:  # pragma: no cover
     if LDAP_DEBUG:
         if 'loggers' not in LOGGING:
             LOGGING['loggers'] = {}
-        LOGGING['loggers']['django_auth_ldap'] = {
-            'level': 'DEBUG',
-            'handlers': DEFAULT_LOG_HANDLER,
-        }
+        LOGGING['loggers']['django_auth_ldap'] = {'level': 'DEBUG'}
 
     # Determine LDAP settings
     ldap_settings = ldap.get_ldap_config(debug=LDAP_DEBUG)
@@ -551,7 +590,7 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'users.authentication.ApiTokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'users.authentication.InvenTreeBasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'users.authentication.ExtendedOAuth2Authentication',
     ],
@@ -664,6 +703,7 @@ TRACING_ENABLED = (
 TRACING_DETAILS: Optional[dict] = tracing.configure_tracing(
     DB_ENGINE, TRACING_ENABLED, inventree_tags
 )
+MIDDLEWARE = ensure_otel_middleware(MIDDLEWARE)
 
 # Cache configuration
 GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
@@ -1232,6 +1272,13 @@ OAUTH2_PROVIDER = {
 OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/method combinations
     '/api/email/generate/:post',
     '/api/webhook/{endpoint}/:post',
+    # API token management is not available to OAuth2 tokens
+    '/api/user/token/:get',
+    '/api/user/me/token/:get',
+    '/api/user/tokens/:get',
+    '/api/user/tokens/:post',
+    '/api/user/tokens/{id}/:get',
+    '/api/user/tokens/{id}/:delete',
 ]
 
 if SITE_URL and not TESTING:  # pragma: no cover

@@ -10,13 +10,21 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
+import InvenTree.helpers
 from InvenTree.serializers import (
     FilterableSerializerMixin,
     InvenTreeModelSerializer,
     OptionalField,
 )
 
-from .models import ApiToken, Owner, RuleSet, TipResult, UserProfile
+from .models import (
+    ApiToken,
+    Owner,
+    RuleSet,
+    TipResult,
+    UserProfile,
+    default_token_expiry,
+)
 from .permissions import check_user_role, prefetch_rule_sets
 from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS, RuleSetEnum
 
@@ -258,7 +266,29 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'issued_by_detail',
             'token_version',
             'revocation_reason',
+            'warning',
         ]
+        read_only_fields = [
+            'last_seen',
+            'revoked',
+            'revoked_by',
+            'issued_by',
+            'token_version',
+            'revocation_reason',
+            'warning',
+        ]
+
+    def validate_expiry(self, expiry):
+        """Ensure that the expiry date is within the allowed token lifetime."""
+        if expiry < InvenTree.helpers.current_date():
+            raise serializers.ValidationError(_('Expiry date cannot be in the past'))
+
+        if expiry > default_token_expiry():
+            raise serializers.ValidationError(
+                _('Expiry date cannot be more than 365 days in the future')
+            )
+
+        return expiry
 
     def validate(self, data):
         """Validate the data for the serializer."""
@@ -286,6 +316,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
     issued_by_detail = UserSerializer(
         source='issued_by', read_only=True, allow_null=True
     )
+    warning = serializers.CharField(read_only=True, allow_null=True)
 
 
 class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
@@ -400,6 +431,32 @@ class ExtendedUserSerializer(UserSerializer):
 
         return value
 
+    def validate_email(self, value):
+        """Ensure that the email address is not already in use by another user.
+
+        Email-based flows (password reset, login link) look users up by email,
+        and fail silently if more than one user has the same address.
+        """
+        if not value:
+            return value
+
+        from allauth.account.models import EmailAddress
+
+        users = User.objects.filter(email__iexact=value)
+        addresses = EmailAddress.objects.filter(email__iexact=value)
+
+        # Ignore addresses which already belong to the user being updated
+        if self.instance is not None:
+            users = users.exclude(pk=self.instance.pk)
+            addresses = addresses.exclude(user=self.instance)
+
+        if users.exists() or addresses.exists():
+            raise serializers.ValidationError(
+                _('A user with this email address already exists')
+            )
+
+        return value
+
     def update(self, instance, validated_data):
         """Update the user instance with the provided data."""
         # Update the groups associated with the user
@@ -489,7 +546,21 @@ class MeUserSerializer(FilterableSerializerMixin, ExtendedUserSerializer):
         """Permissions associated with the user."""
         return get_user_permissions(user)
 
-    # Redefine the fields from ExtendedUserSerializer, to ensure they are marked as read-only
+    # Redefine the fields from ExtendedUserSerializer, to ensure they are marked as read-only.
+    # Note: Meta.read_only_fields has no effect on explicitly declared fields.
+
+    # Username is used as the identity key by LDAP / remote-user login,
+    # so a user must not be able to change their own username.
+    username = serializers.CharField(
+        label=_('Username'), help_text=_('Username'), read_only=True
+    )
+
+    # Email changes must not bypass email verification or the uniqueness checks
+    # relied upon by email-based flows (password reset, login link)
+    email = serializers.EmailField(
+        label=_('Email'), help_text=_('Email address of the user'), read_only=True
+    )
+
     is_staff = serializers.BooleanField(
         label=_('Staff'),
         help_text=_('Does this user have staff permissions'),
@@ -545,18 +616,7 @@ class UserCreateSerializer(ExtendedUserSerializer):
                 _('You do not have permission to create users')
             )
 
-        # Email-based flows (password reset, login link) look users up by email,
-        # and fail silently if more than one user has the same address
-        if email := attrs.get('email'):
-            from allauth.account.models import EmailAddress
-
-            if (
-                User.objects.filter(email__iexact=email).exists()
-                or EmailAddress.objects.filter(email__iexact=email).exists()
-            ):
-                raise serializers.ValidationError({
-                    'email': _('A user with this email address already exists')
-                })
+        # Note: duplicate email addresses are rejected by ExtendedUserSerializer.validate_email
 
         # Generate a random password
         password = make_random_password(length=14)

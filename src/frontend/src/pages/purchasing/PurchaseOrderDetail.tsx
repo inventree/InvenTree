@@ -384,6 +384,8 @@ export default function PurchaseOrderDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.purchaseorder}
+            id={order.pk}
             title={`${t`Purchase Order`}: ${order.reference}`}
             subtitle={subtitle}
             imageUrl={order.supplier_detail?.image}

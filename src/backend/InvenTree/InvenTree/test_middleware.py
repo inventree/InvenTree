@@ -2,6 +2,7 @@
 
 from unittest.mock import patch
 
+from django.contrib.auth.models import User
 from django.http import Http404, HttpRequest
 from django.urls import reverse
 
@@ -88,6 +89,74 @@ class MiddlewareTests(InvenTreeTestCase):
             )
             self.assertEqual(rsp3.status_code, 200)
             self.check_path(url)
+
+    def test_Check2FAMiddleware_token(self):
+        """Test that no API token can be generated before MFA is set up, if MFA is enforced."""
+        url = reverse('api-token')
+
+        with patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}):
+            response = self.check_path(url, 401)
+            self.assertContains(
+                response,
+                'You must enable two-factor authentication before doing anything else.',
+                status_code=401,
+            )
+
+        # Not enforced - token can be generated
+        self.check_path(url)
+
+    def test_Check2FAMiddleware_token_header(self):
+        """Test that a token header only bypasses MFA if it validly authenticates the same user."""
+        target = reverse('api-license')
+        token_url = reverse('api-token')
+
+        other_user = User.objects.create_user(username='other', password='password')
+        other_token = ApiToken.objects.create(user=other_user, name='other').token
+
+        with patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}):
+            for header in [
+                'Bearer junk',
+                'token: junk',
+                'Token junk',
+                f'Token {other_token}',
+                f'Bearer {other_token}',
+            ]:
+                response = self.check_path(target, 401, auth_header=header)
+                self.assertContains(response, 'mfa_register', status_code=401)
+
+                # Token issuance must not be reachable either
+                response = self.check_path(token_url, 401, auth_header=header)
+                self.assertContains(response, 'mfa_register', status_code=401)
+
+            self.assertFalse(ApiToken.objects.filter(user=self.user).exists())
+
+    def test_token_auth_mfa_enforced(self):
+        """Test that tokens of users without MFA are refused while MFA is enforced."""
+        api_target = reverse('api-license')
+        target = reverse('auth-check')
+
+        raw_token = ApiToken.objects.create(user=self.user, name='mfa-test').token
+        self.client.logout()
+
+        self.check_path(api_target, auth_header=f'Token {raw_token}')
+        self.check_path(target, auth_header=f'Token {raw_token}')
+
+        with patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}):
+            # User has no MFA set up - token is refused
+            response = self.check_path(
+                api_target, 401, auth_header=f'Token {raw_token}'
+            )
+            self.assertContains(
+                response,
+                'Multi-factor authentication must be enabled for this account',
+                status_code=401,
+            )
+            self.check_path(target, 401, auth_header=f'Token {raw_token}')
+
+            # User sets up MFA - token works again
+            get_codes(self.user)
+            self.check_path(api_target, auth_header=f'Token {raw_token}')
+            self.check_path(target, auth_header=f'Token {raw_token}')
 
     def test_token_auth(self):
         """Test auth with token auth."""
