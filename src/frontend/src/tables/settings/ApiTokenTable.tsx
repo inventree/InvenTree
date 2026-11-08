@@ -24,6 +24,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconAlertTriangle, IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
+import { useReauthenticate } from '../../components/modals/ReauthenticateModal';
 import {
   BooleanColumn,
   UserColumn
@@ -42,12 +43,18 @@ export function ApiTokenTable({
   const [revokeTokenId, setRevokeTokenId] = useState<string | null>(null);
   const [revocationReason, setRevocationReason] = useState<string>('');
 
+  const { handleReauthError, modals: reauthModals } = useReauthenticate();
+
   const generateToken = useCreateApiFormModal({
     url: ApiEndpoints.user_me_token,
     method: 'GET',
     title: t`Generate Token`,
     fields: { name: {} },
     successMessage: t`Token generated`,
+    onFormError: (error: any) => {
+      // MFA users must have recently authenticated to generate a token
+      handleReauthError(error);
+    },
     onFormSuccess: (data: any) => {
       setToken(data.token);
       setTokenWarning(data.warning ?? '');
@@ -228,6 +235,7 @@ export function ApiTokenTable({
       {only_myself && (
         <>
           {generateToken.modal}
+          {reauthModals}
           <Modal
             opened={opened}
             onClose={close}
