@@ -34,18 +34,19 @@ try:
         main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
         main_commit = main_repo[main_repo.head()]
     except NotGitRepository:
-        output = logger.warning
-
+        is_docker = False
         try:
             from django.conf import settings
 
             if settings.DOCKER:
-                output = logger.info
+                is_docker = True
+
         except Exception:
             # We may not have access to settings at this point
             pass
 
-        output(git_warning_txt)
+        if not is_docker:
+            logger.warning(git_warning_txt)
 
         main_repo = None
         main_commit = None
