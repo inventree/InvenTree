@@ -41,6 +41,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import HistoryPanel, {
   useShowHistoryPanel
 } from '../../components/panels/HistoryPanel';
+import NonConformancePanel from '../../components/panels/NonConformancePanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
@@ -366,6 +367,10 @@ export default function BuildDetail() {
           <Skeleton />
         )
       },
+      NonConformancePanel({
+        hidden: !user.hasViewVisible(UserRoles.ncr),
+        buildOrderId: build.pk
+      }),
       ParametersPanel({
         model_type: ModelType.build,
         model_id: build.pk,

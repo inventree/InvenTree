@@ -1,4 +1,5 @@
-import { test } from '../baseFixtures.js';
+import { createApi } from '../api.js';
+import { expect, generateUUID, test } from '../baseFixtures.js';
 import { adminuser } from '../defaults.js';
 import { clickOnRowMenu, loadTab, navigate } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
@@ -110,4 +111,67 @@ test('NCR - Workflow', async ({ browser }) => {
   // Check the other panels load
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
+});
+
+test('NCR - Linked Panels', async ({ browser }) => {
+  await setSettingState({ setting: 'NCR_ENABLED', value: true });
+
+  const api = await createApi({});
+
+  // Find a stock item which was received against a purchase order
+  const orders = await (
+    await api.get('order/po/', { params: { limit: 25 } })
+  ).json();
+
+  let item: any = undefined;
+
+  for (const order of orders.results) {
+    const items = await (
+      await api.get('stock/', {
+        params: { purchase_order: order.pk, limit: 1 }
+      })
+    ).json();
+
+    if (items.results.length > 0) {
+      item = items.results[0];
+      break;
+    }
+  }
+
+  expect(item).toBeDefined();
+
+  // Raise an NCR against the item (via the API)
+  const description = `Linked NCR ${generateUUID()}`;
+
+  const response = await api.post('build/non-conformance/', {
+    data: {
+      part: item.part,
+      purchase_order: item.purchase_order,
+      description: description
+    }
+  });
+
+  expect(response.status()).toBe(201);
+  const ncr = await response.json();
+
+  const link = await api.post('build/non-conformance/stock-item/', {
+    data: { ncr: ncr.pk, stock_item: item.pk }
+  });
+
+  expect(link.status()).toBe(201);
+
+  // The NCR is displayed on each linked record
+  const page = await doCachedLogin(browser, { user: adminuser });
+
+  for (const url of [
+    `part/${item.part}/non-conformances`,
+    `purchasing/purchase-order/${item.purchase_order}/non-conformances`,
+    `stock/item/${item.pk}/non-conformances`
+  ]) {
+    await navigate(page, url);
+    await page
+      .getByRole('cell', { name: ncr.reference, exact: true })
+      .waitFor();
+    await page.getByRole('cell', { name: description }).waitFor();
+  }
 });

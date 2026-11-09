@@ -244,7 +244,9 @@ class NonConformanceTransitionTest(InvenTreeTestCase):
         with self.assertRaises(ValidationError) as exc:
             self.ncr.complete()
 
-        self.assertIn('disposition', exc.exception.message_dict)
+        self.assertIn(
+            'All linked stock items must be assigned a disposition', str(exc.exception)
+        )
 
         # Status must not have moved
         self.ncr.refresh_from_db()

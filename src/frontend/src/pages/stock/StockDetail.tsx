@@ -43,6 +43,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import HistoryPanel, {
   useShowHistoryPanel
 } from '../../components/panels/HistoryPanel';
+import NonConformancePanel from '../../components/panels/NonConformancePanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
@@ -283,6 +284,11 @@ export default function StockDetail() {
           <Skeleton />
         )
       },
+      NonConformancePanel({
+        hidden: !user.hasViewVisible(UserRoles.ncr),
+        partId: stockitem?.part,
+        stockItemId: stockitem?.pk
+      }),
       {
         name: 'installed_items',
         label: t`Installed Items`,

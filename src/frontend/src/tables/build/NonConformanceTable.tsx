@@ -22,21 +22,55 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
 import NonConformanceFilters from './NonConformanceFilters';
 
+/**
+ * Table of NonConformance (NCR) reports.
+ *
+ * When rendered against a particular record (e.g. on a detail page),
+ * the table is filtered to NCRs linked to that record, and new NCRs
+ * are created with the link pre-filled.
+ */
 export function NonConformanceTable({
-  partId
+  partId,
+  buildOrderId,
+  salesOrderId,
+  purchaseOrderId,
+  returnOrderId,
+  stockItemId
 }: Readonly<{
   partId?: number;
+  buildOrderId?: number;
+  salesOrderId?: number;
+  purchaseOrderId?: number;
+  returnOrderId?: number;
+  stockItemId?: number;
 }>) {
   const user = useUserState();
 
-  const table = useTable(!!partId ? 'ncr-part' : 'ncr-index');
+  const tableKey: string = useMemo(() => {
+    if (stockItemId) return 'ncr-stock-item';
+    if (buildOrderId) return 'ncr-build-order';
+    if (salesOrderId) return 'ncr-sales-order';
+    if (purchaseOrderId) return 'ncr-purchase-order';
+    if (returnOrderId) return 'ncr-return-order';
+    if (partId) return 'ncr-part';
+    return 'ncr-index';
+  }, [
+    partId,
+    buildOrderId,
+    salesOrderId,
+    purchaseOrderId,
+    returnOrderId,
+    stockItemId
+  ]);
+
+  const table = useTable(tableKey);
 
   const tableFilters = useMemo(() => NonConformanceFilters(), []);
 
   const tableColumns = useMemo(() => {
     return [
       ReferenceColumn({}),
-      PartColumn({}),
+      PartColumn({ hidden: !!partId }),
       DescriptionColumn({}),
       StatusColumn({ model: ModelType.nonconformance }),
       TargetDateColumn({}),
@@ -45,7 +79,7 @@ export function NonConformanceTable({
       }),
       ResponsibleColumn({})
     ];
-  }, []);
+  }, [partId]);
 
   const ncrFields = useNonConformanceFields({ partId });
 
@@ -54,7 +88,11 @@ export function NonConformanceTable({
     title: t`Report Non-Conformance`,
     fields: ncrFields,
     initialData: {
-      part: partId
+      part: partId,
+      build_order: buildOrderId,
+      sales_order: salesOrderId,
+      purchase_order: purchaseOrderId,
+      return_order: returnOrderId
     },
     follow: true,
     modelType: ModelType.nonconformance
@@ -81,6 +119,11 @@ export function NonConformanceTable({
         props={{
           params: {
             part: partId,
+            build_order: buildOrderId,
+            sales_order: salesOrderId,
+            purchase_order: purchaseOrderId,
+            return_order: returnOrderId,
+            stock_item: stockItemId,
             part_detail: true
           },
           tableFilters: tableFilters,

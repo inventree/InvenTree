@@ -8,6 +8,7 @@ INVENTREE_API_TEXT = """
 
 v574 -> 2026-11-09 : https://github.com/inventree/InvenTree/pull/12682
     - Adds API endpoints for the NonConformanceReport (NCR) models
+    - NCR list can be filtered by linked part, order, or stock item
 
 v573 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13221
     - Mark audit log changes_detail field as nullable

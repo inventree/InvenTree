@@ -1158,6 +1158,16 @@ class NCRFilter(FilterSet):
         queryset=Owner.objects.all(), field_name='responsible', label=_('Assigned To')
     )
 
+    stock_item = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockItem.objects.all(),
+        method='filter_stock_item',
+        label=_('Stock Item'),
+    )
+
+    def filter_stock_item(self, queryset, name, stock_item):
+        """Filter by NCRs which are linked to the provided stock item."""
+        return queryset.filter(stock_items__stock_item=stock_item).distinct()
+
     overdue = rest_filters.BooleanFilter(
         label=_('NCR is overdue'), method='filter_overdue'
     )

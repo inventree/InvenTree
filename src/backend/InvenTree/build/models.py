@@ -2879,11 +2879,10 @@ class NonConformance(
         )
 
         if pending.exists():
-            raise ValidationError({
-                'disposition': _(
-                    'All linked stock items must be assigned a disposition'
-                )
-            })
+            # Note: raised as a non-field error, as the 'complete' action has no form fields
+            raise ValidationError(
+                _('All linked stock items must be assigned a disposition')
+            )
 
         self.closed_date = InvenTree.helpers.current_date()
 

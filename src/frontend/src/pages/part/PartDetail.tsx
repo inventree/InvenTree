@@ -67,6 +67,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import HistoryPanel, {
   useShowHistoryPanel
 } from '../../components/panels/HistoryPanel';
+import NonConformancePanel from '../../components/panels/NonConformancePanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
@@ -441,6 +442,10 @@ export default function PartDetail() {
           <Skeleton />
         )
       },
+      NonConformancePanel({
+        hidden: !user.hasViewVisible(UserRoles.ncr),
+        partId: part.pk
+      }),
       {
         name: 'stocktake',
         label: t`Stock History`,

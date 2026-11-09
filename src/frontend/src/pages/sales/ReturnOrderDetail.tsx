@@ -27,6 +27,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import HistoryPanel, {
   useShowHistoryPanel
 } from '../../components/panels/HistoryPanel';
+import NonConformancePanel from '../../components/panels/NonConformancePanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
@@ -159,6 +160,10 @@ export default function ReturnOrderDetail() {
           </Accordion>
         )
       },
+      NonConformancePanel({
+        hidden: !user.hasViewVisible(UserRoles.ncr),
+        returnOrderId: order.pk
+      }),
       ParametersPanel({
         model_type: ModelType.returnorder,
         model_id: order.pk,

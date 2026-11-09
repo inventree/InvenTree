@@ -193,7 +193,10 @@ class NCRAPITest(InvenTreeAPITestCase):
         # ValidationError here (not a bare message), so it surfaces under its
         # field name rather than 'non_field_errors'.
         response = self.post(complete_url, expected_code=400)
-        self.assertIn('disposition', response.data)
+        self.assertIn(
+            'All linked stock items must be assigned a disposition',
+            str(response.data['non_field_errors']),
+        )
 
         # Set the item's disposition via the stock-item endpoint
         item_url = reverse('api-ncr-stock-item-detail', kwargs={'pk': item.pk})
@@ -315,6 +318,34 @@ class NCRStockItemAPITest(InvenTreeAPITestCase):
 
         item.refresh_from_db()
         self.assertEqual(item.disposition, NonConformanceDisposition.SCRAP.value)
+
+    def test_ncr_list_filter_by_stock_item(self):
+        """The NCR list can be filtered by linked stock item."""
+        item_1 = StockItem.objects.get(pk=1)
+        item_2 = StockItem.objects.get(pk=2)
+
+        # A second NCR, linked to both stock items
+        other_ncr = NonConformance.objects.create(
+            part=self.part, description='Another problem'
+        )
+
+        NonConformanceStockItem.objects.create(ncr=self.ncr, stock_item=item_1)
+        NonConformanceStockItem.objects.create(ncr=other_ncr, stock_item=item_1)
+        NonConformanceStockItem.objects.create(ncr=other_ncr, stock_item=item_2)
+
+        url = reverse('api-ncr-list')
+
+        data = self.get(url, {'stock_item': item_1.pk}, expected_code=200).data
+        self.assertEqual({r['pk'] for r in data}, {self.ncr.pk, other_ncr.pk})
+
+        # Each NCR is only returned once, even if linked to multiple items
+        data = self.get(url, {'stock_item': item_2.pk}, expected_code=200).data
+        self.assertEqual([r['pk'] for r in data], [other_ncr.pk])
+
+        # Unlinked stock item - no results
+        unlinked = StockItem.objects.exclude(pk__in=[item_1.pk, item_2.pk]).first()
+        data = self.get(url, {'stock_item': unlinked.pk}, expected_code=200).data
+        self.assertEqual(len(data), 0)
 
     def test_filter_by_disposition(self):
         """Test filtering the stock-item list by disposition."""
