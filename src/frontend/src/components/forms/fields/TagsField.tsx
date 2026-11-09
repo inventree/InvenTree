@@ -58,7 +58,8 @@ function TagsField({
     return {
       ...definition,
       allow_null: undefined,
-      allow_blank: undefined
+      allow_blank: undefined,
+      fetchParams: undefined
     };
   }, [definition]);
 
