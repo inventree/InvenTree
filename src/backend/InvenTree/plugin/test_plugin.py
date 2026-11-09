@@ -736,6 +736,58 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             self.assertIsNone(registry.mismatch_hash)
             self.assertEqual(registry.mismatch_count, 0)
 
+    def test_reload_requested_during_reload(self):
+        """Test that a reload requested by another thread while loading is not lost.
+
+        Previously, a reload requested while another thread held the loading lock
+        was silently dropped. If a plugin was activated in that window, the registry
+        (and its hash) would not reflect the new state until the server restarted.
+        """
+        import threading
+
+        from plugin.models import PluginConfig
+
+        slug = 'sample-printer-machine-plugin'
+
+        PluginConfig.objects.filter(key=slug).update(active=False)
+        registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
+        self.assertNotIn(slug, [p.slug for p in registry.with_mixin('machine')])
+
+        original_load = registry._load_plugins
+        calls = []
+
+        def load_plugins(*args, **kwargs):
+            """Activate the plugin from 'another thread' during the first reload."""
+            calls.append(1)
+
+            if len(calls) == 1:
+                PluginConfig.objects.filter(key=slug).update(active=True)
+
+                # The reload request from the other thread cannot acquire the lock
+                results = []
+                thread = threading.Thread(
+                    target=lambda: results.append(
+                        registry.reload_plugins(full_reload=True, collect=True)
+                    )
+                )
+                thread.start()
+                thread.join()
+                self.assertEqual(results, [False])
+
+            return original_load(*args, **kwargs)
+
+        with patch.object(registry, '_load_plugins', side_effect=load_plugins):
+            self.assertTrue(
+                registry.reload_plugins(
+                    full_reload=True, collect=True, force_reload=True
+                )
+            )
+
+        # The deferred request caused a second reload pass
+        self.assertEqual(len(calls), 2)
+        self.assertFalse(registry._reload_pending)
+        self.assertIn(slug, [p.slug for p in registry.with_mixin('machine')])
+
     def test_registry_hash_order_independence(self):
         """Test that the registry hash does not depend on plugin iteration order.
 

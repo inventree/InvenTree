@@ -1,4 +1,4 @@
-import { type Page, expect } from '@playwright/test';
+import { type Locator, type Page, expect } from '@playwright/test';
 import { createApi } from './api';
 
 export const clickOnParamFilter = async (page: Page, name: string) => {
@@ -115,6 +115,31 @@ export const navigate = async (
     : url;
 
   await page.goto(path, { waitUntil: options?.waitUntil ?? 'load' });
+};
+
+/**
+ * Ctrl+click a link, and return the new tab which it opens (in the same browser context).
+ *
+ * A modified click occasionally fails to open a new tab in CI - so the
+ * click is retried (with a short per-attempt timeout) rather than
+ * waiting for the entire test timeout on a single attempt.
+ */
+export const openInNewTab = async (
+  page: Page,
+  link: Locator,
+  url: string | RegExp
+): Promise<Page> => {
+  const context = page.context();
+  let popup: Page | undefined;
+
+  await expect(async () => {
+    const popupPromise = context.waitForEvent('page', { timeout: 5000 });
+    await link.click({ modifiers: ['ControlOrMeta'], timeout: 5000 });
+    popup = await popupPromise;
+  }).toPass({ timeout: 30000 });
+
+  await popup!.waitForURL(url);
+  return popup!;
 };
 
 /**

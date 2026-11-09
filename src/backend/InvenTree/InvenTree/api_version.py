@@ -1,16 +1,25 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 571
+INVENTREE_API_VERSION = 574
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v571 -> 2026-11-04 : https://github.com/inventree/InvenTree/pull/12682
+v574 -> 2026-11-09 : https://github.com/inventree/InvenTree/pull/12682
     - Adds API endpoints for the NonConformanceReport (NCR) models
 
+v573 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13221
+    - Mark audit log changes_detail field as nullable
+
+v572 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13212
+    - Username and email fields on the /api/user/me endpoint are now read-only
+
+v571 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13166
+    - Adds "exclude_from_stock" field and filter to the StockLocation API endpoint
+    - Adds "exclude_from_stock" filter to the StockItem API endpoint
+
 v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
-    - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only
     - Token API (/api/user/tokens/): "expiry" must be between today and 365 days in the future
 
 v569 -> 2026-10-30 : https://github.com/inventree/InvenTree/security/advisories

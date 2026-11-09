@@ -2,27 +2,14 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/core/macro';
-import {
-  Anchor,
-  Badge,
-  Center,
-  Group,
-  Skeleton,
-  Text,
-  Tooltip
-} from '@mantine/core';
-import {
-  IconBell,
-  IconExclamationCircle,
-  IconLink,
-  IconLock
-} from '@tabler/icons-react';
+import { Badge, Center, Group, Skeleton, Text, Tooltip } from '@mantine/core';
+import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import type { ModelType } from '@lib/enums/ModelType';
 import { resolveItem } from '@lib/functions/Conversion';
-import { cancelEvent } from '@lib/functions/Events';
+import { renderLink } from '@lib/functions/Links';
 import type { TableColumn, TableColumnProps } from '@lib/types/Tables';
 import type { ReactNode } from 'react';
 import {
@@ -508,29 +495,8 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
     defaultVisible: false,
     copyable: true,
     copyAccessor: props.accessor ?? 'link',
-    render: (record: any) => {
-      const url = resolveItem(record, props.accessor ?? 'link');
-
-      if (!url) {
-        return '-';
-      }
-
-      return (
-        <Anchor
-          href={url}
-          target='_blank'
-          rel='noreferrer noopener'
-          onClick={(event: any) => {
-            cancelEvent(event);
-
-            window.open(url, '_blank', 'noopener,noreferrer');
-          }}
-          title={url}
-        >
-          <IconLink size={18} />
-        </Anchor>
-      );
-    },
+    render: (record: any) =>
+      renderLink(resolveItem(record, props.accessor ?? 'link')),
     ...props
   };
 }

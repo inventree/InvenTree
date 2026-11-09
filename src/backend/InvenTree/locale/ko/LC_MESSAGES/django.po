@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 01:10+0000\n"
-"PO-Revision-Date: 2026-11-02 01:15\n"
+"POT-Creation-Date: 2026-11-05 03:18+0000\n"
+"PO-Revision-Date: 2026-11-05 03:23\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -77,23 +77,23 @@ msgstr "제공된 기본 이메일 주소가 유효하지 않습니다."
 msgid "The provided email domain is not approved."
 msgstr "제공된 이메일 도메인이 승인되지 않았습니다."
 
-#: InvenTree/conversion.py:288
+#: InvenTree/conversion.py:312
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
 msgstr "잘못된 단위가 제공되었습니다 ({unit})"
 
-#: InvenTree/conversion.py:305
+#: InvenTree/conversion.py:329
 msgid "No value provided"
 msgstr "값이 제공되지 않았습니다"
 
-#: InvenTree/conversion.py:332
+#: InvenTree/conversion.py:356
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
 msgstr "{original}을(를) {unit}(으)로 변환할 수 없습니다"
 
-#: InvenTree/conversion.py:334 InvenTree/conversion.py:348
+#: InvenTree/conversion.py:358 InvenTree/conversion.py:372
 #: InvenTree/helpers.py:645 order/models.py:924 order/models.py:1216
-#: part/models.py:3089 stock/models.py:2152
+#: part/models.py:3089 stock/models.py:2155
 msgid "Invalid quantity provided"
 msgstr "잘못된 수량이 제공되었습니다"
 
@@ -114,13 +114,13 @@ msgid "Invalid decimal value"
 msgstr "잘못된 소수 값"
 
 #: InvenTree/fields.py:286 audit/models.py:380 build/serializers.py:538
-#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3248
+#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3274
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
-#: stock/models.py:3814 stock/serializers.py:761 stock/serializers.py:945
-#: stock/serializers.py:1125 stock/serializers.py:1292
-#: stock/serializers.py:1580 stock/serializers.py:1670
-#: stock/serializers.py:1880
+#: stock/models.py:3820 stock/serializers.py:761 stock/serializers.py:945
+#: stock/serializers.py:1138 stock/serializers.py:1305
+#: stock/serializers.py:1594 stock/serializers.py:1684
+#: stock/serializers.py:1883
 msgid "Notes"
 msgstr "메모"
 
@@ -226,15 +226,15 @@ msgid "Log in to the app"
 msgstr "앱에 로그인"
 
 #: InvenTree/magic_login.py:41 company/models.py:212 company/models.py:536
-#: users/serializers.py:219
+#: users/serializers.py:227
 msgid "Email"
 msgstr "이메일"
 
-#: InvenTree/middleware.py:131
+#: InvenTree/middleware.py:155
 msgid "CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly."
 msgstr "CSRF 검증에 실패했습니다. INVENTREE_SITE_URL 및 INVENTREE_TRUSTED_ORIGINS가 올바르게 설정되었는지 확인하세요."
 
-#: InvenTree/middleware.py:226
+#: InvenTree/middleware.py:238
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "다른 작업을 하기 전에 먼저 2단계 인증을 활성화해야 합니다."
 
@@ -282,29 +282,29 @@ msgstr "참조 번호가 너무 큽니다"
 msgid "Invalid choice"
 msgstr "잘못된 선택입니다"
 
-#: InvenTree/models.py:1349 common/api.py:1825 common/models.py:1537
-#: common/models.py:1960 common/models.py:2424 common/models.py:2549
-#: common/models.py:2861 common/serializers.py:704
+#: InvenTree/models.py:1349 common/api.py:1825 common/models.py:1540
+#: common/models.py:1980 common/models.py:2447 common/models.py:2572
+#: common/models.py:2887 common/serializers.py:704
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1141
-#: plugin/models.py:54 report/models.py:234 stock/models.py:91
+#: plugin/models.py:54 report/models.py:234 stock/models.py:86
 msgid "Name"
 msgstr "이름"
 
-#: InvenTree/models.py:1355 build/models.py:284 common/models.py:189
-#: common/models.py:2556 common/models.py:2697 common/models.py:2876
-#: common/models.py:3522 company/models.py:641 company/models.py:913
+#: InvenTree/models.py:1355 build/models.py:284 common/models.py:192
+#: common/models.py:2579 common/models.py:2720 common/models.py:2902
+#: common/models.py:3548 company/models.py:641 company/models.py:913
 #: order/models.py:549 order/models.py:2342 part/models.py:1164
 #: report/models.py:240 report/models.py:971 report/models.py:997
 #: report/templates/report/inventree_build_order_report.html:116
-#: stock/models.py:97
+#: stock/models.py:92
 msgid "Description"
 msgstr "설명"
 
-#: InvenTree/models.py:1356 stock/models.py:98
+#: InvenTree/models.py:1356 stock/models.py:93
 msgid "Description (optional)"
 msgstr "설명 (선택 사항)"
 
-#: InvenTree/models.py:1371 common/models.py:3611
+#: InvenTree/models.py:1371 common/models.py:3637
 msgid "Path"
 msgstr "경로"
 
@@ -340,7 +340,7 @@ msgstr "서버 오류"
 msgid "An error has been logged by the server."
 msgstr "서버에 오류가 기록되었습니다."
 
-#: InvenTree/models.py:1901 common/models.py:3547
+#: InvenTree/models.py:1901 common/models.py:3573
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -601,7 +601,7 @@ msgstr "유효한 통화 코드가 아닙니다"
 
 #: audit/api.py:91 audit/serializers.py:107 common/serializers.py:841
 #: common/serializers.py:997 common/serializers.py:1043
-#: common/serializers.py:1111 importer/models.py:95 report/api.py:42
+#: common/serializers.py:1111 importer/models.py:104 report/api.py:42
 #: report/models.py:390 report/serializers.py:69
 msgid "Model Type"
 msgstr "모델 유형"
@@ -610,7 +610,7 @@ msgstr "모델 유형"
 msgid "Model type (e.g. \"order.purchaseorder\" or \"purchaseorder\")"
 msgstr ""
 
-#: audit/api.py:97 common/api.py:499 common/models.py:3181
+#: audit/api.py:97 common/api.py:499 common/models.py:3207
 msgid "Model ID"
 msgstr "모델 ID"
 
@@ -670,11 +670,11 @@ msgstr ""
 msgid "Notes associated with this entry"
 msgstr ""
 
-#: audit/serializers.py:26 importer/models.py:588
+#: audit/serializers.py:26 importer/models.py:618
 msgid "Field"
 msgstr "필드"
 
-#: audit/serializers.py:27 common/models.py:2434 common/models.py:2691
+#: audit/serializers.py:27 common/models.py:2457 common/models.py:2714
 #: generic/states/serializers.py:22
 msgid "Label"
 msgstr "라벨"
@@ -763,7 +763,7 @@ msgstr "변형(Variant) 포함"
 #: report/templates/report/inventree_stock_location_report.html:102
 #: report/templates/report/inventree_transfer_order_report.html:24
 #: stock/api.py:648 stock/serializers.py:119 stock/serializers.py:171
-#: stock/serializers.py:423 stock/serializers.py:624 stock/serializers.py:1209
+#: stock/serializers.py:423 stock/serializers.py:624 stock/serializers.py:1222
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
@@ -776,7 +776,7 @@ msgstr "부품"
 
 #: build/api.py:131 build/api.py:134 build/serializers.py:1497 part/api.py:953
 #: part/api.py:1351 part/models.py:413 part/models.py:1182 part/models.py:2728
-#: part/serializers.py:1297 part/serializers.py:1537 stock/api.py:926
+#: part/serializers.py:1297 part/serializers.py:1537 stock/api.py:936
 msgid "Category"
 msgstr "분류"
 
@@ -792,11 +792,11 @@ msgstr "나에게 할당 됨"
 msgid "Assigned To"
 msgstr "할당 대상"
 
-#: build/api.py:213 stock/api.py:969
+#: build/api.py:213 stock/api.py:979
 msgid "Created before"
 msgstr "생성일 이전"
 
-#: build/api.py:217 stock/api.py:973
+#: build/api.py:217 stock/api.py:983
 msgid "Created after"
 msgstr "생성일 이후"
 
@@ -906,11 +906,11 @@ msgstr "작업 지시서"
 #: build/serializers.py:1270 order/api.py:1372 order/api.py:1377
 #: order/api.py:2205 order/api.py:2210 order/serializers.py:878
 #: order/serializers.py:1022 order/serializers.py:2342 part/serializers.py:1307
-#: stock/api.py:1041 stock/serializers.py:110 stock/serializers.py:636
-#: stock/serializers.py:753 stock/serializers.py:939 stock/serializers.py:1049
-#: stock/serializers.py:1117 stock/serializers.py:1662
-#: stock/serializers.py:1937 stock/serializers.py:2065
-#: stock/serializers.py:2181 templates/email/purchase_order_received.html:17
+#: stock/api.py:1051 stock/serializers.py:110 stock/serializers.py:636
+#: stock/serializers.py:753 stock/serializers.py:939 stock/serializers.py:1062
+#: stock/serializers.py:1130 stock/serializers.py:1676
+#: stock/serializers.py:1940 stock/serializers.py:2068
+#: stock/serializers.py:2184 templates/email/purchase_order_received.html:17
 #: templates/email/stale_stock_notification.html:18 users/models.py:764
 msgid "Location"
 msgstr "위치"
@@ -1040,8 +1040,8 @@ msgid "Build status code"
 msgstr "빌드 상태 코드"
 
 #: build/models.py:375 build/serializers.py:407 order/serializers.py:895
-#: order/serializers.py:1028 stock/models.py:1280 stock/serializers.py:84
-#: stock/serializers.py:1837
+#: order/serializers.py:1028 stock/models.py:1283 stock/serializers.py:84
+#: stock/serializers.py:1843
 msgid "Batch Code"
 msgstr "배치 코드"
 
@@ -1050,7 +1050,7 @@ msgid "Batch code for this build output"
 msgstr "이 빌드 산출물의 배치 코드"
 
 #: build/models.py:383 order/models.py:586 order/serializers.py:163
-#: part/models.py:1384 stock/models.py:1361
+#: part/models.py:1384 stock/models.py:1364
 msgid "Creation Date"
 msgstr "생성일"
 
@@ -1087,7 +1087,7 @@ msgstr "발행자"
 msgid "User who issued this build order"
 msgstr "이 작업 지시서를 발행한 사용자"
 
-#: build/models.py:438 common/models.py:204 order/api.py:198
+#: build/models.py:438 common/models.py:207 order/api.py:198
 #: order/models.py:618 part/models.py:1401
 #: report/templates/report/inventree_build_order_report.html:157
 msgid "Responsible"
@@ -1097,12 +1097,12 @@ msgstr "담당"
 msgid "User or group responsible for this build order"
 msgstr "이 작업 지시서를 담당하는 사용자 또는 그룹"
 
-#: build/models.py:444 stock/models.py:1273
+#: build/models.py:444 stock/models.py:1276
 msgid "External Link"
 msgstr "외부 링크"
 
-#: build/models.py:446 common/models.py:2241 part/models.py:1216
-#: stock/models.py:1275
+#: build/models.py:446 common/models.py:2261 part/models.py:1216
+#: stock/models.py:1278
 msgid "Link to external URL"
 msgstr "외부 URL로 연결"
 
@@ -1114,7 +1114,7 @@ msgstr "빌드 우선순위"
 msgid "Priority of this build order"
 msgstr "이 빌드 주문의 우선순위"
 
-#: build/models.py:462 common/models.py:164 common/models.py:182
+#: build/models.py:462 common/models.py:167 common/models.py:185
 #: order/api.py:184 order/models.py:558 order/models.py:2314
 msgid "Project Code"
 msgstr "프로젝트 코드"
@@ -1154,10 +1154,10 @@ msgstr ""
 #: build/models.py:1363 build/models.py:1463 build/serializers.py:328
 #: build/serializers.py:382 build/serializers.py:932 build/serializers.py:1739
 #: order/models.py:921 order/serializers.py:654 order/serializers.py:889
-#: part/models.py:3073 stock/models.py:1120 stock/models.py:1545
-#: stock/models.py:1628 stock/models.py:1945 stock/models.py:2155
-#: stock/models.py:2523 stock/serializers.py:731 stock/serializers.py:1040
-#: stock/serializers.py:1102 stock/serializers.py:1826
+#: part/models.py:3073 stock/models.py:1123 stock/models.py:1548
+#: stock/models.py:1631 stock/models.py:1948 stock/models.py:2158
+#: stock/models.py:2529 stock/serializers.py:731 stock/serializers.py:1053
+#: stock/serializers.py:1115 stock/serializers.py:1832
 msgid "Quantity must be greater than zero"
 msgstr "수량은 0보다 커야 합니다"
 
@@ -1178,8 +1178,8 @@ msgid "Cannot partially complete a build output with allocated items"
 msgstr "할당된 항목이 있는 빌드 산출물은 부분 완료할 수 없습니다"
 
 #: build/models.py:1639 order/models.py:4390 order/serializers.py:2045
-#: order/serializers.py:2899 stock/models.py:1535 stock/models.py:1937
-#: stock/models.py:2159 stock/models.py:2527 stock/models.py:2804
+#: order/serializers.py:2899 stock/models.py:1538 stock/models.py:1940
+#: stock/models.py:2162 stock/models.py:2533 stock/models.py:2810
 msgid "Stock item no longer exists"
 msgstr ""
 
@@ -1198,7 +1198,7 @@ msgid "Build object"
 msgstr "빌드 객체"
 
 #: build/models.py:2250 build/models.py:2530 build/serializers.py:314
-#: build/serializers.py:367 build/serializers.py:1442 common/models.py:1457
+#: build/serializers.py:367 build/serializers.py:1442 common/models.py:1460
 #: order/models.py:2245 order/models.py:3355 order/models.py:4357
 #: order/serializers.py:1932 order/serializers.py:2437
 #: order/serializers.py:3025 part/models.py:2657 part/models.py:3213
@@ -1215,7 +1215,7 @@ msgstr "빌드 객체"
 #: report/templates/report/inventree_test_report.html:169
 #: report/templates/report/inventree_transfer_order_report.html:26
 #: stock/serializers.py:135 stock/serializers.py:179 stock/serializers.py:719
-#: stock/serializers.py:1033 stock/serializers.py:1090
+#: stock/serializers.py:1046 stock/serializers.py:1103
 #: templates/email/build_order_completed.html:18
 #: templates/email/purchase_order_received.html:16
 #: templates/email/stale_stock_notification.html:19
@@ -1259,8 +1259,8 @@ msgstr "재고 항목이 과다 할당되었습니다"
 #: order/serializers.py:1760 order/serializers.py:1781
 #: order/serializers.py:2801 order/serializers.py:2822
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
-#: stock/api.py:1497 stock/models.py:494 stock/serializers.py:101
-#: stock/serializers.py:850 stock/serializers.py:1513 stock/serializers.py:1630
+#: stock/api.py:1507 stock/models.py:497 stock/serializers.py:101
+#: stock/serializers.py:850 stock/serializers.py:1527 stock/serializers.py:1644
 msgid "Stock Item"
 msgstr "재고 항목"
 
@@ -1341,8 +1341,8 @@ msgstr "시리얼 번호 자동 할당"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "일치하는 시리얼 번호로 필요한 항목을 자동으로 할당합니다"
 
-#: build/serializers.py:464 order/serializers.py:1000 stock/api.py:1243
-#: stock/models.py:732 stock/models.py:2550
+#: build/serializers.py:464 order/serializers.py:1000 stock/api.py:1253
+#: stock/models.py:735 stock/models.py:2556
 msgid "The following serial numbers already exist or are invalid"
 msgstr "다음 시리얼 번호는 이미 존재하거나 유효하지 않습니다"
 
@@ -1370,8 +1370,8 @@ msgstr "빌드 산출물 폐기 사유"
 msgid "Location for completed build outputs"
 msgstr "완료된 빌드 산출물의 위치"
 
-#: build/serializers.py:586 stock/serializers.py:955 stock/serializers.py:1945
-#: stock/serializers.py:2073 stock/serializers.py:2189
+#: build/serializers.py:586 stock/serializers.py:955 stock/serializers.py:1948
+#: stock/serializers.py:2076 stock/serializers.py:2192
 msgid "Structural locations cannot be assigned stock items"
 msgstr "구조적 위치에는 재고 항목을 할당할 수 없습니다"
 
@@ -1479,7 +1479,7 @@ msgstr "빌드 라인 항목"
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part는 빌드 주문과 동일한 부품을 가리켜야 합니다"
 
-#: build/serializers.py:921 stock/serializers.py:1526
+#: build/serializers.py:921 stock/serializers.py:1540
 msgid "Item must be in stock"
 msgstr "항목은 재고에 있어야 합니다"
 
@@ -1590,7 +1590,7 @@ msgstr "빌드"
 
 #: build/serializers.py:1302 company/models.py:731 order/api.py:340
 #: order/api.py:345 order/api.py:540 order/serializers.py:646
-#: stock/models.py:1216 stock/serializers.py:603
+#: stock/models.py:1219 stock/serializers.py:603
 msgid "Supplier Part"
 msgstr "공급업체 부품"
 
@@ -1619,7 +1619,7 @@ msgid "Allow Variants"
 msgstr "변형(Variant) 허용"
 
 #: build/serializers.py:1445 build/serializers.py:1451 part/models.py:2947
-#: part/models.py:3673 stock/api.py:939 stock/serializers.py:1024
+#: part/models.py:3673 stock/api.py:949 stock/serializers.py:1037
 msgid "BOM Item"
 msgstr "BOM 항목"
 
@@ -1697,7 +1697,7 @@ msgstr "보류"
 msgid "Cancelled"
 msgstr "취소됨"
 
-#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:694
+#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:724
 #: importer/status_codes.py:23 order/status_codes.py:24
 #: order/status_codes.py:68 order/status_codes.py:103 order/status_codes.py:153
 msgid "Complete"
@@ -1842,7 +1842,7 @@ msgstr "태그"
 msgid "Project Code Label"
 msgstr "프로젝트 코드 라벨"
 
-#: common/models.py:111 common/models.py:136 common/models.py:3951
+#: common/models.py:111 common/models.py:136 common/models.py:3977
 #: users/models.py:853
 msgid "Updated"
 msgstr "업데이트됨"
@@ -1859,178 +1859,178 @@ msgstr "업데이트 사용자"
 msgid "User who last updated this object"
 msgstr "이 객체를 마지막으로 업데이트한 사용자"
 
-#: common/models.py:183
+#: common/models.py:186
 msgid "Unique project code"
 msgstr "고유 프로젝트 코드"
 
-#: common/models.py:190
+#: common/models.py:193
 msgid "Project description"
 msgstr "프로젝트 설명"
 
-#: common/models.py:195 common/models.py:1542 common/models.py:2569
-#: common/models.py:2704 company/models.py:231 company/models.py:881
+#: common/models.py:198 common/models.py:1545 common/models.py:2592
+#: common/models.py:2727 company/models.py:231 company/models.py:881
 #: machine/models.py:43 part/models.py:1332 plugin/models.py:69
 #: stock/api.py:704 users/models.py:382 users/models.py:769
-#: users/serializers.py:377 users/serializers.py:508
+#: users/serializers.py:405 users/serializers.py:536
 msgid "Active"
 msgstr "활성"
 
-#: common/models.py:196
+#: common/models.py:199
 msgid "Is this project code active?"
 msgstr "이 프로젝트 코드가 활성 상태입니까?"
 
-#: common/models.py:205
+#: common/models.py:208
 msgid "User or group responsible for this project"
 msgstr "이 프로젝트의 담당 사용자 또는 그룹"
 
-#: common/models.py:829 common/models.py:1389 common/models.py:1427
+#: common/models.py:832 common/models.py:1392 common/models.py:1430
 msgid "Settings key"
 msgstr "설정 키"
 
-#: common/models.py:833
+#: common/models.py:836
 msgid "Settings value"
 msgstr "설정 값"
 
-#: common/models.py:838
+#: common/models.py:841
 msgid "Indicates whether the setting has been modified by the user"
 msgstr ""
 
-#: common/models.py:893
+#: common/models.py:896
 msgid "Chosen value is not a valid option"
 msgstr "선택한 값이 유효한 옵션이 아닙니다"
 
-#: common/models.py:909
+#: common/models.py:912
 msgid "Value must be a boolean value"
 msgstr "값은 불리언(Boolean)이어야 합니다"
 
-#: common/models.py:917
+#: common/models.py:920
 msgid "Value must be an integer value"
 msgstr "값은 정수여야 합니다"
 
-#: common/models.py:925
+#: common/models.py:928
 msgid "Value must be a valid number"
 msgstr "값은 유효한 숫자여야 합니다"
 
-#: common/models.py:950
+#: common/models.py:953
 msgid "Value does not pass validation checks"
 msgstr "값이 유효성 검사 기준을 통과하지 못했습니다"
 
-#: common/models.py:972
+#: common/models.py:975
 msgid "Key string must be unique"
 msgstr "키 문자열은 고유해야 합니다"
 
-#: common/models.py:1435 common/models.py:1436 common/models.py:1550
-#: common/models.py:1551 common/models.py:1798 common/models.py:1799
-#: common/models.py:2257 common/models.py:2258 common/models.py:3599
-#: importer/models.py:106 part/models.py:2707 part/models.py:2735
+#: common/models.py:1438 common/models.py:1439 common/models.py:1553
+#: common/models.py:1554 common/models.py:1801 common/models.py:1802
+#: common/models.py:2277 common/models.py:2278 common/models.py:3625
+#: importer/models.py:115 part/models.py:2707 part/models.py:2735
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:252
 #: users/models.py:707 users/models.py:841
 msgid "User"
 msgstr "사용자"
 
-#: common/models.py:1458
+#: common/models.py:1461
 msgid "Price break quantity"
 msgstr "가격 구간 수량"
 
-#: common/models.py:1465 company/serializers.py:357 order/models.py:2359
+#: common/models.py:1468 company/serializers.py:357 order/models.py:2359
 #: order/models.py:3797
 msgid "Price"
 msgstr "가격"
 
-#: common/models.py:1466
+#: common/models.py:1469
 msgid "Unit price at specified quantity"
 msgstr "지정 수량에서의 단가"
 
-#: common/models.py:1527 common/models.py:1712
+#: common/models.py:1530 common/models.py:1715
 msgid "Endpoint"
 msgstr "엔드포인트"
 
-#: common/models.py:1528
+#: common/models.py:1531
 msgid "Endpoint at which this webhook is received"
 msgstr "이 웹훅을 수신하는 엔드포인트"
 
-#: common/models.py:1538
+#: common/models.py:1541
 msgid "Name for this webhook"
 msgstr "이 웹훅의 이름"
 
-#: common/models.py:1542
+#: common/models.py:1545
 msgid "Is this webhook active"
 msgstr "이 웹훅이 활성 상태인가요"
 
-#: common/models.py:1558 users/models.py:353
+#: common/models.py:1561 users/models.py:353
 msgid "Token"
 msgstr "토큰"
 
-#: common/models.py:1559
+#: common/models.py:1562
 msgid "Token for access"
 msgstr "접근용 토큰"
 
-#: common/models.py:1567
+#: common/models.py:1570
 msgid "Secret"
 msgstr "시크릿"
 
-#: common/models.py:1568
+#: common/models.py:1571
 msgid "Shared secret for HMAC"
 msgstr "HMAC용 공유 시크릿"
 
-#: common/models.py:1676 common/models.py:3836
+#: common/models.py:1679 common/models.py:3862
 msgid "Message ID"
 msgstr "메시지 ID"
 
-#: common/models.py:1677 common/models.py:3826
+#: common/models.py:1680 common/models.py:3852
 msgid "Unique identifier for this message"
 msgstr "이 메시지의 고유 식별자"
 
-#: common/models.py:1685
+#: common/models.py:1688
 msgid "Host"
 msgstr "호스트"
 
-#: common/models.py:1686
+#: common/models.py:1689
 msgid "Host from which this message was received"
 msgstr "이 메시지를 수신한 호스트"
 
-#: common/models.py:1694
+#: common/models.py:1697
 msgid "Header"
 msgstr "헤더"
 
-#: common/models.py:1695
+#: common/models.py:1698
 msgid "Header of this message"
 msgstr "이 메시지의 헤더"
 
-#: common/models.py:1702
+#: common/models.py:1705
 msgid "Body"
 msgstr "본문"
 
-#: common/models.py:1703
+#: common/models.py:1706
 msgid "Body of this message"
 msgstr "이 메시지의 본문"
 
-#: common/models.py:1713
+#: common/models.py:1716
 msgid "Endpoint on which this message was received"
 msgstr "이 메시지를 수신한 엔드포인트"
 
-#: common/models.py:1718
+#: common/models.py:1721
 msgid "Worked on"
 msgstr "처리됨"
 
-#: common/models.py:1719
+#: common/models.py:1722
 msgid "Was the work on this message finished?"
 msgstr "이 메시지 처리가 완료되었나요?"
 
-#: common/models.py:1814
+#: common/models.py:1817
 msgid "Optional explicit URL associated with this notification"
 msgstr ""
 
-#: common/models.py:1854
+#: common/models.py:1857
 msgid "Id"
 msgstr "ID"
 
-#: common/models.py:1856 common/models.py:3516
+#: common/models.py:1859 common/models.py:3542
 msgid "Title"
 msgstr "제목"
 
-#: common/models.py:1858 common/models.py:2240 company/models.py:225
+#: common/models.py:1861 common/models.py:2260 company/models.py:225
 #: company/models.py:557 company/models.py:632 company/models.py:904
 #: order/models.py:564 order/models.py:2295 order/models.py:2918
 #: part/models.py:1215
@@ -2038,477 +2038,485 @@ msgstr "제목"
 msgid "Link"
 msgstr "링크"
 
-#: common/models.py:1860
+#: common/models.py:1863
 msgid "Published"
 msgstr "게시됨"
 
-#: common/models.py:1862
+#: common/models.py:1865
 msgid "Author"
 msgstr "작성자"
 
-#: common/models.py:1864
+#: common/models.py:1867
 msgid "Summary"
 msgstr "요약"
 
-#: common/models.py:1867 common/models.py:3803
+#: common/models.py:1870 common/models.py:3829
 msgid "Read"
 msgstr "읽음"
 
-#: common/models.py:1867
+#: common/models.py:1870
 msgid "Was this news item read?"
 msgstr "이 뉴스 항목을 읽었나요?"
 
-#: common/models.py:1886
+#: common/models.py:1892
 msgid "Custom Unit"
 msgstr "사용자 정의 단위"
 
-#: common/models.py:1908
+#: common/models.py:1914
 msgid "Unit symbol must be unique"
 msgstr "단위 기호는 고유해야 합니다"
 
-#: common/models.py:1926
+#: common/models.py:1933
 msgid "Unit name must be a valid identifier"
 msgstr "단위 이름은 유효한 식별자여야 합니다"
 
-#: common/models.py:1953
+#: common/models.py:1938
+msgid "Unit name conflicts with an existing built-in unit"
+msgstr ""
+
+#: common/models.py:1945
+msgid "Unit symbol conflicts with an existing built-in unit"
+msgstr ""
+
+#: common/models.py:1973
 #, python-format
 msgid "Unit definition results in a circular or invalid reference: %(error)s"
 msgstr ""
 
-#: common/models.py:1961
+#: common/models.py:1981
 msgid "Unit name"
 msgstr "단위 이름"
 
-#: common/models.py:1968
+#: common/models.py:1988
 msgid "Symbol"
 msgstr "기호"
 
-#: common/models.py:1969
+#: common/models.py:1989
 msgid "Optional unit symbol"
 msgstr "선택 단위 기호"
 
-#: common/models.py:1975
+#: common/models.py:1995
 msgid "Definition"
 msgstr "정의"
 
-#: common/models.py:1976
+#: common/models.py:1996
 msgid "Unit definition"
 msgstr "단위 정의"
 
-#: common/models.py:2051 common/models.py:2223 stock/models.py:3809
+#: common/models.py:2071 common/models.py:2243 stock/models.py:3815
 #: stock/serializers.py:257
 msgid "Attachment"
 msgstr "첨부파일"
 
-#: common/models.py:2097
+#: common/models.py:2117
 msgid "Missing file"
 msgstr "파일 누락"
 
-#: common/models.py:2098
+#: common/models.py:2118
 msgid "Missing external link"
 msgstr "외부 링크 누락"
 
-#: common/models.py:2163
+#: common/models.py:2183
 msgid "No file attached to rename"
 msgstr "이름을 변경할 첨부 파일이 없습니다"
 
-#: common/models.py:2166
+#: common/models.py:2186
 msgid "Filename cannot be empty"
 msgstr "파일 이름은 비워둘 수 없습니다"
 
-#: common/models.py:2171 common/models.py:2191
+#: common/models.py:2191 common/models.py:2211
 msgid "Invalid filename"
 msgstr "잘못된 파일 이름입니다"
 
-#: common/models.py:2177
+#: common/models.py:2197
 msgid "Cannot change file extension"
 msgstr "파일 확장자를 변경할 수 없습니다"
 
-#: common/models.py:2196
+#: common/models.py:2216
 msgid "A file with this name already exists"
 msgstr "이 이름의 파일이 이미 존재합니다"
 
-#: common/models.py:2203
+#: common/models.py:2223
 msgid "Failed to save renamed file"
 msgstr "이름이 변경된 파일을 저장하지 못했습니다"
 
-#: common/models.py:2215 common/models.py:2855
+#: common/models.py:2235 common/models.py:2881
 msgid "Model type"
 msgstr "모델 유형"
 
-#: common/models.py:2216
+#: common/models.py:2236
 msgid "Target model type for image"
 msgstr "이미지의 대상 모델 유형"
 
-#: common/models.py:2225
+#: common/models.py:2245
 msgid "Select file to attach"
 msgstr "첨부할 파일을 선택하세요"
 
-#: common/models.py:2231
+#: common/models.py:2251
 msgid "Thumbnail"
 msgstr "썸네일"
 
-#: common/models.py:2232
+#: common/models.py:2252
 msgid "Thumbnail image for this attachment"
 msgstr "이 첨부파일의 썸네일 이미지"
 
-#: common/models.py:2248
+#: common/models.py:2268
 msgid "Comment"
 msgstr "댓글"
 
-#: common/models.py:2249
+#: common/models.py:2269
 msgid "Attachment comment"
 msgstr "첨부파일 댓글"
 
-#: common/models.py:2265
+#: common/models.py:2285
 msgid "Upload date"
 msgstr "업로드 날짜"
 
-#: common/models.py:2266
+#: common/models.py:2286
 msgid "Date the file was uploaded"
 msgstr "파일이 업로드된 날짜"
 
-#: common/models.py:2271
+#: common/models.py:2291
 msgid "Is image"
 msgstr "이미지 여부"
 
-#: common/models.py:2272
+#: common/models.py:2292
 msgid "True if this attachment is a valid image file"
 msgstr "이 첨부 파일이 유효한 이미지 파일인지 여부"
 
-#: common/models.py:2276
+#: common/models.py:2296
 msgid "File size"
 msgstr "파일 크기"
 
-#: common/models.py:2276
+#: common/models.py:2296
 msgid "File size in bytes"
 msgstr "바이트 단위의 파일 크기"
 
-#: common/models.py:2312 common/serializers.py:868
+#: common/models.py:2332 common/serializers.py:868
 msgid "Invalid model type specified for attachment"
 msgstr "첨부파일에 대해 유효하지 않은 모델 유형이 지정되었습니다"
 
-#: common/models.py:2400
+#: common/models.py:2423
 msgid "Custom State"
 msgstr "사용자 정의 상태"
 
-#: common/models.py:2401
+#: common/models.py:2424
 msgid "Custom States"
 msgstr "사용자 정의 상태"
 
-#: common/models.py:2406
+#: common/models.py:2429
 msgid "Reference Status Set"
 msgstr "참조 상태 세트"
 
-#: common/models.py:2407
+#: common/models.py:2430
 msgid "Status set that is extended with this custom state"
 msgstr "이 사용자 정의 상태로 확장되는 상태 세트"
 
-#: common/models.py:2411 generic/states/serializers.py:18
+#: common/models.py:2434 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "논리 키"
 
-#: common/models.py:2413
+#: common/models.py:2436
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "업무 로직에서 이 사용자 정의 상태와 동일한 상태 논리 키"
 
-#: common/models.py:2418 common/models.py:2685 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3801
+#: common/models.py:2441 common/models.py:2708 machine/serializers.py:27
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3807
 msgid "Value"
 msgstr "값"
 
-#: common/models.py:2419
+#: common/models.py:2442
 msgid "Numerical value that will be saved in the models database"
 msgstr "모델 데이터베이스에 저장될 숫자 값"
 
-#: common/models.py:2425
+#: common/models.py:2448
 msgid "Name of the state"
 msgstr "상태 이름"
 
-#: common/models.py:2435
+#: common/models.py:2458
 msgid "Label that will be displayed in the frontend"
 msgstr "프론트엔드에 표시될 라벨"
 
-#: common/models.py:2442 generic/states/serializers.py:24
+#: common/models.py:2465 generic/states/serializers.py:24
 msgid "Color"
 msgstr "색상"
 
-#: common/models.py:2443
+#: common/models.py:2466
 msgid "Color that will be displayed in the frontend"
 msgstr "프론트엔드에 표시될 색상"
 
-#: common/models.py:2451
+#: common/models.py:2474
 msgid "Model"
 msgstr "모델"
 
-#: common/models.py:2452
+#: common/models.py:2475
 msgid "Model this state is associated with"
 msgstr "이 상태가 연결된 모델"
 
-#: common/models.py:2467
+#: common/models.py:2490
 msgid "Model must be selected"
 msgstr "모델을 선택해야 합니다"
 
-#: common/models.py:2470
+#: common/models.py:2493
 msgid "Key must be selected"
 msgstr "키를 선택해야 합니다"
 
-#: common/models.py:2473
+#: common/models.py:2496
 msgid "Logical key must be selected"
 msgstr "논리 키를 선택해야 합니다"
 
-#: common/models.py:2477
+#: common/models.py:2500
 msgid "Key must be different from logical key"
 msgstr "키는 논리 키와 달라야 합니다"
 
-#: common/models.py:2484
+#: common/models.py:2507
 msgid "Valid reference status class must be provided"
 msgstr "유효한 참조 상태 클래스가 제공되어야 합니다"
 
-#: common/models.py:2490
+#: common/models.py:2513
 msgid "Key must be different from the logical keys of the reference status"
 msgstr "키는 참조 상태의 논리 키들과 달라야 합니다"
 
-#: common/models.py:2497
+#: common/models.py:2520
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr "논리 키는 참조 상태의 논리 키 목록에 포함되어야 합니다"
 
-#: common/models.py:2504
+#: common/models.py:2527
 msgid "Name must be different from the names of the reference status"
 msgstr "이름은 참조 상태의 이름들과 달라야 합니다"
 
-#: common/models.py:2544 common/models.py:2679 common/models.py:2900
+#: common/models.py:2567 common/models.py:2702 common/models.py:2926
 msgid "Selection List"
 msgstr "선택 목록"
 
-#: common/models.py:2545
+#: common/models.py:2568
 msgid "Selection Lists"
 msgstr "선택 목록"
 
-#: common/models.py:2550
+#: common/models.py:2573
 msgid "Name of the selection list"
 msgstr "선택 목록 이름"
 
-#: common/models.py:2557
+#: common/models.py:2580
 msgid "Description of the selection list"
 msgstr "선택 목록 설명"
 
-#: common/models.py:2563 part/models.py:1337
+#: common/models.py:2586 part/models.py:1337
 msgid "Locked"
 msgstr "잠김"
 
-#: common/models.py:2564
+#: common/models.py:2587
 msgid "Is this selection list locked?"
 msgstr "이 선택 목록이 잠겨 있나요?"
 
-#: common/models.py:2570
+#: common/models.py:2593
 msgid "Can this selection list be used?"
 msgstr "이 선택 목록을 사용할 수 있나요?"
 
-#: common/models.py:2578
+#: common/models.py:2601
 msgid "Source Plugin"
 msgstr "소스 플러그인"
 
-#: common/models.py:2579
+#: common/models.py:2602
 msgid "Plugin which provides the selection list"
 msgstr "선택 목록을 제공하는 플러그인"
 
-#: common/models.py:2584
+#: common/models.py:2607
 msgid "Source String"
 msgstr "소스 문자열"
 
-#: common/models.py:2585
+#: common/models.py:2608
 msgid "Optional string identifying the source used for this list"
 msgstr "이 목록에 사용된 소스를 식별하는 선택 문자열"
 
-#: common/models.py:2594
+#: common/models.py:2617
 msgid "Default Entry"
 msgstr "기본 항목"
 
-#: common/models.py:2595
+#: common/models.py:2618
 msgid "Default entry for this selection list"
 msgstr "이 선택 목록의 기본 항목"
 
-#: common/models.py:2600 common/models.py:3946
+#: common/models.py:2623 common/models.py:3972
 msgid "Created"
 msgstr "생성됨"
 
-#: common/models.py:2601
+#: common/models.py:2624
 msgid "Date and time that the selection list was created"
 msgstr "선택 목록이 생성된 날짜 및 시간"
 
-#: common/models.py:2606
+#: common/models.py:2629
 msgid "Last Updated"
 msgstr "마지막 업데이트"
 
-#: common/models.py:2607
+#: common/models.py:2630
 msgid "Date and time that the selection list was last updated"
 msgstr "선택 목록이 마지막으로 업데이트된 날짜 및 시간"
 
-#: common/models.py:2669
+#: common/models.py:2692
 msgid "Selection List Entry"
 msgstr "선택 목록 항목"
 
-#: common/models.py:2670
+#: common/models.py:2693
 msgid "Selection List Entries"
 msgstr "선택 목록 항목"
 
-#: common/models.py:2680
+#: common/models.py:2703
 msgid "Selection list to which this entry belongs"
 msgstr "이 항목이 속한 선택 목록"
 
-#: common/models.py:2686
+#: common/models.py:2709
 msgid "Value of the selection list entry"
 msgstr "선택 목록 항목의 값"
 
-#: common/models.py:2692
+#: common/models.py:2715
 msgid "Label for the selection list entry"
 msgstr "선택 목록 항목 라벨"
 
-#: common/models.py:2698
+#: common/models.py:2721
 msgid "Description of the selection list entry"
 msgstr "선택 목록 항목 설명"
 
-#: common/models.py:2705
+#: common/models.py:2728
 msgid "Is this selection list entry active?"
 msgstr "이 선택 목록 항목이 활성 상태인가요?"
 
-#: common/models.py:2741
+#: common/models.py:2767
 msgid "Parameter Template"
 msgstr "매개변수 템플릿"
 
-#: common/models.py:2742
+#: common/models.py:2768
 msgid "Parameter Templates"
 msgstr "매개변수 템플릿"
 
-#: common/models.py:2763
+#: common/models.py:2789
 msgid "No uniqueness required"
 msgstr ""
 
-#: common/models.py:2764
+#: common/models.py:2790
 msgid "Unique for model type"
 msgstr ""
 
-#: common/models.py:2765
+#: common/models.py:2791
 msgid "Globally unique"
 msgstr ""
 
-#: common/models.py:2792
+#: common/models.py:2818
 msgid "Checkbox parameters cannot have units"
 msgstr "체크박스 매개변수에는 단위를 지정할 수 없습니다"
 
-#: common/models.py:2797
+#: common/models.py:2823
 msgid "Checkbox parameters cannot have choices"
 msgstr "체크박스 매개변수에는 선택지를 지정할 수 없습니다"
 
-#: common/models.py:2817 part/models.py:2805
+#: common/models.py:2843 part/models.py:2805
 msgid "Choices must be unique"
 msgstr "선택지는 고유해야 합니다"
 
-#: common/models.py:2834
+#: common/models.py:2860
 msgid "Parameter template name must be unique"
 msgstr "매개변수 템플릿 이름은 고유해야 합니다"
 
-#: common/models.py:2856
+#: common/models.py:2882
 msgid "Target model type for this parameter template"
 msgstr "이 매개변수 템플릿의 대상 모델 유형"
 
-#: common/models.py:2862
+#: common/models.py:2888
 msgid "Parameter Name"
 msgstr "매개변수 이름"
 
-#: common/models.py:2868 part/models.py:1290
+#: common/models.py:2894 part/models.py:1290
 msgid "Units"
 msgstr "단위"
 
-#: common/models.py:2869
+#: common/models.py:2895
 msgid "Physical units for this parameter"
 msgstr "이 매개변수의 물리 단위"
 
-#: common/models.py:2877
+#: common/models.py:2903
 msgid "Parameter description"
 msgstr "매개변수 설명"
 
-#: common/models.py:2883
+#: common/models.py:2909
 msgid "Checkbox"
 msgstr "체크박스"
 
-#: common/models.py:2884
+#: common/models.py:2910
 msgid "Is this parameter a checkbox?"
 msgstr "이 매개변수는 체크박스인가요?"
 
-#: common/models.py:2889 part/models.py:2892
+#: common/models.py:2915 part/models.py:2892
 msgid "Choices"
 msgstr "선택지"
 
-#: common/models.py:2890
+#: common/models.py:2916
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "이 매개변수에 대한 유효한 선택지(쉼표로 구분)"
 
-#: common/models.py:2901
+#: common/models.py:2927
 msgid "Selection list for this parameter"
 msgstr "이 매개변수의 선택 목록"
 
-#: common/models.py:2906 part/models.py:2867 report/models.py:384
+#: common/models.py:2932 part/models.py:2867 report/models.py:384
 #: scim/models.py:31
 msgid "Enabled"
 msgstr "사용"
 
-#: common/models.py:2907
+#: common/models.py:2933
 msgid "Is this parameter template enabled?"
 msgstr "이 매개변수 템플릿을 사용하나요?"
 
-#: common/models.py:2913
+#: common/models.py:2939
 msgid "Uniqueness"
 msgstr ""
 
-#: common/models.py:2915
+#: common/models.py:2941
 msgid "Enforce uniqueness of linked parameter values against this template"
 msgstr ""
 
-#: common/models.py:2970
+#: common/models.py:2996
 msgid "Parameter"
 msgstr "매개변수"
 
-#: common/models.py:2971
+#: common/models.py:2997
 msgid "Parameters"
 msgstr "매개변수"
 
-#: common/models.py:3033
+#: common/models.py:3059
 msgid "Invalid choice for parameter value"
 msgstr "매개변수 값에 대한 선택지가 올바르지 않습니다"
 
-#: common/models.py:3140
+#: common/models.py:3166
 msgid "Parameter value must be unique"
 msgstr ""
 
-#: common/models.py:3149 common/serializers.py:1097
+#: common/models.py:3175 common/serializers.py:1097
 msgid "Invalid model type specified for parameter"
 msgstr "매개변수에 지정된 모델 유형이 올바르지 않습니다"
 
-#: common/models.py:3182
+#: common/models.py:3208
 msgid "ID of the target model for this parameter"
 msgstr "이 매개변수의 대상 모델 ID"
 
-#: common/models.py:3191 common/models.py:3488 common/setting/system.py:515
+#: common/models.py:3217 common/models.py:3514 common/setting/system.py:515
 #: report/models.py:482 report/models.py:816 report/serializers.py:115
 #: report/serializers.py:166 stock/serializers.py:244
 msgid "Template"
 msgstr "템플릿"
 
-#: common/models.py:3192
+#: common/models.py:3218
 msgid "Parameter template"
 msgstr "매개변수 템플릿"
 
-#: common/models.py:3197 common/models.py:3588 importer/models.py:685
+#: common/models.py:3223 common/models.py:3614 importer/models.py:715
 msgid "Data"
 msgstr "데이터"
 
-#: common/models.py:3198
+#: common/models.py:3224
 msgid "Parameter Value"
 msgstr "매개변수 값"
 
-#: common/models.py:3207 common/models.py:3247 company/models.py:921
+#: common/models.py:3233 common/models.py:3273 company/models.py:921
 #: order/serializers.py:931 order/serializers.py:2348 part/models.py:3283
 #: part/models.py:3713
 #: report/templates/report/inventree_bill_of_materials_report.html:140
@@ -2521,226 +2529,226 @@ msgstr "매개변수 값"
 msgid "Note"
 msgstr "메모"
 
-#: common/models.py:3208 stock/serializers.py:762 stock/serializers.py:1126
+#: common/models.py:3234 stock/serializers.py:762 stock/serializers.py:1139
 msgid "Optional note field"
 msgstr "선택적 메모 필드"
 
-#: common/models.py:3351 common/models.py:3353 common/serializers.py:970
+#: common/models.py:3377 common/models.py:3379 common/serializers.py:970
 #: common/serializers.py:974
 msgid "This field is required."
 msgstr ""
 
-#: common/models.py:3490
+#: common/models.py:3516
 msgid "Is this note a template (not linked to a specific model instance)?"
 msgstr ""
 
-#: common/models.py:3500
+#: common/models.py:3526
 msgid "Target model type for this note"
 msgstr ""
 
-#: common/models.py:3504
+#: common/models.py:3530
 msgid "Target model instance ID for this note"
 msgstr ""
 
-#: common/models.py:3511 company/models.py:887
+#: common/models.py:3537 company/models.py:887
 msgid "Primary"
 msgstr "기본"
 
-#: common/models.py:3512
+#: common/models.py:3538
 msgid "Is this the primary note for the associated model?"
 msgstr ""
 
-#: common/models.py:3516
+#: common/models.py:3542
 msgid "Note title"
 msgstr ""
 
-#: common/models.py:3523
+#: common/models.py:3549
 msgid "Optional description field"
 msgstr ""
 
-#: common/models.py:3528
+#: common/models.py:3554
 msgid "Content"
 msgstr ""
 
-#: common/models.py:3529
+#: common/models.py:3555
 msgid "Note content"
 msgstr ""
 
-#: common/models.py:3547
+#: common/models.py:3573
 msgid "Image file"
 msgstr "이미지 파일"
 
-#: common/models.py:3584
+#: common/models.py:3610
 msgid "Barcode Scan"
 msgstr "바코드 스캔"
 
-#: common/models.py:3589
+#: common/models.py:3615
 msgid "Barcode data"
 msgstr "바코드 데이터"
 
-#: common/models.py:3600
+#: common/models.py:3626
 msgid "User who scanned the barcode"
 msgstr "바코드를 스캔한 사용자"
 
-#: common/models.py:3605 importer/models.py:73
+#: common/models.py:3631 importer/models.py:82
 msgid "Timestamp"
 msgstr "타임스탬프"
 
-#: common/models.py:3606
+#: common/models.py:3632
 msgid "Date and time of the barcode scan"
 msgstr "바코드 스캔 날짜 및 시간"
 
-#: common/models.py:3612
+#: common/models.py:3638
 msgid "URL endpoint which processed the barcode"
 msgstr "바코드를 처리한 URL 엔드포인트"
 
-#: common/models.py:3619 order/models.py:2349 plugin/serializers.py:93
+#: common/models.py:3645 order/models.py:2349 plugin/serializers.py:93
 msgid "Context"
 msgstr "컨텍스트"
 
-#: common/models.py:3620
+#: common/models.py:3646
 msgid "Context data for the barcode scan"
 msgstr "바코드 스캔의 컨텍스트 데이터"
 
-#: common/models.py:3627
+#: common/models.py:3653
 msgid "Response"
 msgstr "응답"
 
-#: common/models.py:3628
+#: common/models.py:3654
 msgid "Response data from the barcode scan"
 msgstr "바코드 스캔의 응답 데이터"
 
-#: common/models.py:3634 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3795
+#: common/models.py:3660 report/templates/report/inventree_test_report.html:103
+#: stock/models.py:3801
 msgid "Result"
 msgstr "결과"
 
-#: common/models.py:3635
+#: common/models.py:3661
 msgid "Was the barcode scan successful?"
 msgstr "바코드 스캔이 성공했나요?"
 
-#: common/models.py:3717
+#: common/models.py:3743
 msgid "An error occurred"
 msgstr "오류가 발생했습니다"
 
-#: common/models.py:3738
+#: common/models.py:3764
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
 msgstr "INVE-E8: 이메일 로그 삭제가 보호되어 있습니다. 삭제를 허용하려면 INVENTREE_PROTECT_EMAIL_LOG를 False로 설정하세요."
 
-#: common/models.py:3785
+#: common/models.py:3811
 msgid "Email Message"
 msgstr "이메일 메시지"
 
-#: common/models.py:3786
+#: common/models.py:3812
 msgid "Email Messages"
 msgstr "이메일 메시지"
 
-#: common/models.py:3793
+#: common/models.py:3819
 msgid "Announced"
 msgstr "공지됨"
 
-#: common/models.py:3795
+#: common/models.py:3821
 msgid "Sent"
 msgstr "전송됨"
 
-#: common/models.py:3796
+#: common/models.py:3822
 msgid "Failed"
 msgstr "실패"
 
-#: common/models.py:3799
+#: common/models.py:3825
 msgid "Delivered"
 msgstr "전달됨"
 
-#: common/models.py:3807
+#: common/models.py:3833
 msgid "Confirmed"
 msgstr "확인됨"
 
-#: common/models.py:3813
+#: common/models.py:3839
 msgid "Inbound"
 msgstr "수신"
 
-#: common/models.py:3814
+#: common/models.py:3840
 msgid "Outbound"
 msgstr "발신"
 
-#: common/models.py:3819
+#: common/models.py:3845
 msgid "No Reply"
 msgstr "회신 없음"
 
-#: common/models.py:3820
+#: common/models.py:3846
 msgid "Track Delivery"
 msgstr "전달 추적"
 
-#: common/models.py:3821
+#: common/models.py:3847
 msgid "Track Read"
 msgstr "읽음 추적"
 
-#: common/models.py:3822
+#: common/models.py:3848
 msgid "Track Click"
 msgstr "클릭 추적"
 
-#: common/models.py:3825 common/models.py:3933
+#: common/models.py:3851 common/models.py:3959
 msgid "Global ID"
 msgstr "전역 ID"
 
-#: common/models.py:3838
+#: common/models.py:3864
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr "이 메시지의 식별자(외부 시스템에서 제공될 수 있음)"
 
-#: common/models.py:3845
+#: common/models.py:3871
 msgid "Thread ID"
 msgstr "스레드 ID"
 
-#: common/models.py:3847
+#: common/models.py:3873
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr "이 메시지 스레드의 식별자(외부 시스템에서 제공될 수 있음)"
 
-#: common/models.py:3856
+#: common/models.py:3882
 msgid "Thread"
 msgstr "스레드"
 
-#: common/models.py:3857
+#: common/models.py:3883
 msgid "Linked thread for this message"
 msgstr "이 메시지에 연결된 스레드"
 
-#: common/models.py:3873
+#: common/models.py:3899
 msgid "Priority"
 msgstr "우선순위"
 
-#: common/models.py:3915
+#: common/models.py:3941
 msgid "Email Thread"
 msgstr "이메일 스레드"
 
-#: common/models.py:3916
+#: common/models.py:3942
 msgid "Email Threads"
 msgstr "이메일 스레드"
 
-#: common/models.py:3927 generic/states/serializers.py:16
+#: common/models.py:3953 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:237
 msgid "Key"
 msgstr "키"
 
-#: common/models.py:3930
+#: common/models.py:3956
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr "이 스레드의 고유 키(스레드 식별에 사용)"
 
-#: common/models.py:3934
+#: common/models.py:3960
 msgid "Unique identifier for this thread"
 msgstr "이 스레드의 고유 식별자"
 
-#: common/models.py:3941
+#: common/models.py:3967
 msgid "Started Internal"
 msgstr "내부 시작"
 
-#: common/models.py:3942
+#: common/models.py:3968
 msgid "Was this thread started internally?"
 msgstr "이 스레드는 내부에서 시작되었나요?"
 
-#: common/models.py:3947
+#: common/models.py:3973
 msgid "Date and time that the thread was created"
 msgstr "스레드가 생성된 날짜 및 시간"
 
-#: common/models.py:3952
+#: common/models.py:3978
 msgid "Date and time that the thread was last updated"
 msgstr "스레드가 마지막으로 업데이트된 날짜 및 시간"
 
@@ -2763,14 +2771,14 @@ msgid "A order that is assigned to you was canceled"
 msgstr "귀하에게 할당된 주문이 취소되었습니다"
 
 #: common/notifications.py:73 common/notifications.py:80
-#: common/test_notifications.py:82 common/test_notifications.py:86
-#: common/test_notifications.py:137 common/test_notifications.py:161
+#: common/test_notifications.py:78 common/test_notifications.py:82
+#: common/test_notifications.py:133 common/test_notifications.py:157
 #: order/api.py:591
 msgid "Items Received"
 msgstr "항목 수령됨"
 
-#: common/notifications.py:75 common/test_notifications.py:83
-#: common/test_notifications.py:139 common/test_notifications.py:162
+#: common/notifications.py:75 common/test_notifications.py:79
+#: common/test_notifications.py:135 common/test_notifications.py:158
 msgid "Items have been received against a purchase order"
 msgstr "구매 주문에 대한 항목을 수령했습니다"
 
@@ -4015,8 +4023,8 @@ msgid "Users must use multifactor security."
 msgstr "사용자는 다중 요소 보안을 사용해야 합니다."
 
 #: common/setting/system.py:1195
-msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately."
-msgstr "이 설정을 활성화하면 모든 사용자가 다중 요소 인증을 설정해야 합니다. 모든 세션이 즉시 연결 해제됩니다."
+msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately, and API tokens of users without multifactor authentication will stop working."
+msgstr ""
 
 #: common/setting/system.py:1201
 msgid "Check plugins on startup"
@@ -4730,7 +4738,7 @@ msgid "Manufacturer"
 msgstr "제조사"
 
 #: company/api.py:310 company/models.py:138 company/models.py:469
-#: stock/api.py:957
+#: stock/api.py:967
 msgid "Company"
 msgstr "회사"
 
@@ -4936,7 +4944,7 @@ msgstr "주소 정보 링크(외부)"
 msgid "Manufacturer Part"
 msgstr "제조사 부품"
 
-#: company/models.py:607 company/models.py:859 stock/models.py:1205
+#: company/models.py:607 company/models.py:859 stock/models.py:1208
 #: stock/serializers.py:422
 msgid "Base Part"
 msgstr "기본 부품"
@@ -5022,8 +5030,8 @@ msgstr "기본 비용"
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "최소 요금(예: 보관 수수료)"
 
-#: company/models.py:938 order/serializers.py:922 stock/models.py:1236
-#: stock/serializers.py:1852
+#: company/models.py:938 order/serializers.py:922 stock/models.py:1239
+#: stock/serializers.py:1855
 msgid "Packaging"
 msgstr "포장"
 
@@ -5143,144 +5151,149 @@ msgstr ""
 msgid "Invalid status code"
 msgstr "잘못된 상태 코드"
 
-#: importer/models.py:77
+#: importer/models.py:86
 msgid "Data File"
 msgstr "데이터 파일"
 
-#: importer/models.py:78
+#: importer/models.py:87
 msgid "Data file to import"
 msgstr "가져올 데이터 파일"
 
-#: importer/models.py:88
+#: importer/models.py:97
 msgid "Columns"
 msgstr "열"
 
-#: importer/models.py:96
+#: importer/models.py:105
 msgid "Target model type for this import session"
 msgstr "이 가져오기 세션의 대상 모델 유형"
 
-#: importer/models.py:102
+#: importer/models.py:111
 msgid "Import status"
 msgstr "가져오기 상태"
 
-#: importer/models.py:112
+#: importer/models.py:121
 msgid "Field Defaults"
 msgstr "필드 기본값"
 
-#: importer/models.py:120
+#: importer/models.py:129
 msgid "Field Overrides"
 msgstr "필드 재정의"
 
-#: importer/models.py:128
+#: importer/models.py:137
 msgid "Field Filters"
 msgstr "필드 필터"
 
-#: importer/models.py:135
+#: importer/models.py:144
 msgid "Update Existing Records"
 msgstr "기존 레코드 업데이트"
 
-#: importer/models.py:136
+#: importer/models.py:145
 msgid "If enabled, existing records will be updated with new data"
 msgstr "활성화하면 기존 레코드가 새 데이터로 업데이트됩니다"
 
-#: importer/models.py:326
+#: importer/models.py:356
 msgid "Some required fields have not been mapped"
 msgstr "일부 필수 필드가 매핑되지 않았습니다"
 
-#: importer/models.py:428
+#: importer/models.py:458
 msgid "Completed Row Count History"
 msgstr "완료된 행 수 기록"
 
-#: importer/models.py:431
+#: importer/models.py:461
 msgid "Row Count History"
 msgstr "행 수 기록"
 
-#: importer/models.py:454
+#: importer/models.py:484
 msgid "ID"
 msgstr "ID"
 
-#: importer/models.py:455
+#: importer/models.py:485
 msgid "Existing database identifier for the record"
 msgstr "레코드의 기존 데이터베이스 식별자"
 
-#: importer/models.py:533
+#: importer/models.py:563
 msgid "Column is already mapped to a database field"
 msgstr "열이 이미 데이터베이스 필드에 매핑되어 있습니다"
 
-#: importer/models.py:538
+#: importer/models.py:568
 msgid "Field is already mapped to a data column"
 msgstr "필드가 이미 데이터 열에 매핑되어 있습니다"
 
-#: importer/models.py:547
+#: importer/models.py:577
 msgid "Column mapping must be linked to a valid import session"
 msgstr "열 매핑은 유효한 가져오기 세션에 연결되어야 합니다"
 
-#: importer/models.py:552
+#: importer/models.py:582
 msgid "Column does not exist in the data file"
 msgstr "데이터 파일에 해당 열이 없습니다"
 
-#: importer/models.py:559
+#: importer/models.py:589
 msgid "Field does not exist in the target model"
 msgstr "대상 모델에 해당 필드가 없습니다"
 
-#: importer/models.py:563
+#: importer/models.py:593
 msgid "Selected field is read-only"
 msgstr "선택한 필드는 읽기 전용입니다"
 
-#: importer/models.py:569
+#: importer/models.py:599
 msgid "Lookup field can only be set for related (foreign-key) fields"
 msgstr "조회 필드는 관련(외래 키) 필드에만 설정할 수 있음"
 
-#: importer/models.py:577
+#: importer/models.py:607
 #, python-brace-format
 msgid "Invalid lookup field. Valid options are: {options}"
 msgstr "잘못된 조회 필드입니다. 사용 가능한 옵션: {options}"
 
-#: importer/models.py:584 importer/models.py:671
+#: importer/models.py:614 importer/models.py:701
 msgid "Import Session"
 msgstr "가져오기 세션"
 
-#: importer/models.py:590
+#: importer/models.py:620
 msgid "Column"
 msgstr "열"
 
-#: importer/models.py:596
+#: importer/models.py:626
 msgid "Lookup Field"
 msgstr "조회 필드"
 
-#: importer/models.py:598
+#: importer/models.py:628
 msgid "Database field to use for foreign-key lookup. Leave blank for automatic lookup."
 msgstr "외래 키 조회에 사용할 데이터베이스 필드. 자동 조회를 사용하려면 비워두세요."
 
-#: importer/models.py:675
+#: importer/models.py:705
 msgid "Row Index"
 msgstr "행 인덱스"
 
-#: importer/models.py:680
+#: importer/models.py:710
 msgid "Original row data"
 msgstr "원본 행 데이터"
 
-#: importer/models.py:689 machine/models.py:114
+#: importer/models.py:719 machine/models.py:114
 msgid "Errors"
 msgstr "오류"
 
-#: importer/models.py:692 part/serializers.py:1110
+#: importer/models.py:722 part/serializers.py:1110
 msgid "Valid"
 msgstr "유효"
 
-#: importer/models.py:933
+#: importer/models.py:936 importer/models.py:963
+#, python-brace-format
+msgid "Invalid filters for field: {field}"
+msgstr ""
+
+#: importer/models.py:977
 msgid "Multiple matches found for value - please ensure the value is unique, or select a specific lookup field"
 msgstr "값에 대해 여러 항목이 일치합니다. 값이 고유한지 확인하거나 특정 조회 필드를 선택하세요"
 
-#: importer/models.py:986
+#: importer/models.py:1030
 msgid "No record found with the provided ID"
 msgstr "제공된 ID로 레코드를 찾을 수 없습니다"
 
-#: importer/models.py:991
+#: importer/models.py:1035
 msgid "Invalid ID format provided"
 msgstr "잘못된 ID 형식이 제공되었습니다"
 
-#: importer/models.py:1059
+#: importer/models.py:1103
 msgid "ID is required for updating existing records."
 msgstr "기존 레코드를 업데이트하려면 ID가 필요합니다."
 
@@ -5300,43 +5313,47 @@ msgstr ""
 msgid "Invalid data file dimensions"
 msgstr "잘못된 데이터 파일 크기입니다"
 
-#: importer/serializers.py:98
+#: importer/serializers.py:99
 msgid "Model type cannot be changed after the import session has been created"
 msgstr ""
 
-#: importer/serializers.py:113 importer/serializers.py:116
+#: importer/serializers.py:113
+msgid "Only staff users can import data for this model"
+msgstr ""
+
+#: importer/serializers.py:127 importer/serializers.py:130
 msgid "Invalid field defaults"
 msgstr "잘못된 필드 기본값"
 
-#: importer/serializers.py:129 importer/serializers.py:132
+#: importer/serializers.py:143 importer/serializers.py:146
 msgid "Invalid field overrides"
 msgstr "잘못된 필드 재정의"
 
-#: importer/serializers.py:145 importer/serializers.py:148
+#: importer/serializers.py:159 importer/serializers.py:162
 msgid "Invalid field filters"
 msgstr "잘못된 필드 필터"
 
-#: importer/serializers.py:229
+#: importer/serializers.py:245
 msgid "Rows"
 msgstr "행"
 
-#: importer/serializers.py:230
+#: importer/serializers.py:246
 msgid "List of row IDs to accept"
 msgstr "승인할 행 ID 목록"
 
-#: importer/serializers.py:243
+#: importer/serializers.py:259
 msgid "No rows provided"
 msgstr "제공된 행이 없습니다"
 
-#: importer/serializers.py:247
+#: importer/serializers.py:263
 msgid "Row does not belong to this session"
 msgstr "행이 이 세션에 속하지 않습니다"
 
-#: importer/serializers.py:250
+#: importer/serializers.py:266
 msgid "Row contains invalid data"
 msgstr "행에 잘못된 데이터가 포함되어 있습니다"
 
-#: importer/serializers.py:253
+#: importer/serializers.py:269
 msgid "Row has already been completed"
 msgstr "행이 이미 완료되었습니다"
 
@@ -5373,8 +5390,24 @@ msgid "Data file contains too many rows"
 msgstr "데이터 파일에 행이 너무 많습니다"
 
 #: importer/validators.py:53 importer/validators.py:56
+#: importer/validators.py:74
 msgid "Value must be a valid dictionary object"
 msgstr "값은 유효한 사전(dictionary) 객체여야 합니다"
+
+#: importer/validators.py:79
+#, python-brace-format
+msgid "Filters for field {field} must be a valid dictionary object"
+msgstr ""
+
+#: importer/validators.py:92
+#, python-brace-format
+msgid "Invalid filter key for field {field}: {key}"
+msgstr ""
+
+#: importer/validators.py:104
+#, python-brace-format
+msgid "Invalid filter value for field {field}: {key}"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:216
 msgid "Copies"
@@ -5388,7 +5421,7 @@ msgstr "각 라벨에 대해 인쇄할 복사본 수"
 msgid "Connected"
 msgstr "연결됨"
 
-#: machine/machine_types/label_printer.py:236 order/api.py:2591
+#: machine/machine_types/label_printer.py:236 order/api.py:2574
 msgid "Unknown"
 msgstr "알 수 없음"
 
@@ -5639,14 +5672,14 @@ msgstr ""
 msgid "Transfer order not found"
 msgstr ""
 
-#: order/api.py:2583 order/models.py:699 order/models.py:2456
+#: order/api.py:2566 order/models.py:699 order/models.py:2456
 #: order/models.py:2582
 #: report/templates/report/inventree_purchase_order_report.html:13
 #: stock/serializers.py:128 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "구매 주문"
 
-#: order/api.py:2585 order/models.py:1507 order/models.py:2642
+#: order/api.py:2568 order/models.py:1507 order/models.py:2642
 #: order/models.py:2845 order/models.py:3232
 #: report/templates/report/inventree_build_order_report.html:134
 #: report/templates/report/inventree_sales_order_report.html:13
@@ -5655,14 +5688,14 @@ msgstr "구매 주문"
 msgid "Sales Order"
 msgstr "판매 주문"
 
-#: order/api.py:2587 order/models.py:3398 order/models.py:3754
+#: order/api.py:2570 order/models.py:3398 order/models.py:3754
 #: order/models.py:3820
 #: report/templates/report/inventree_return_order_report.html:12
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "반품 주문"
 
-#: order/api.py:2589 order/models.py:3842 order/models.py:4195
+#: order/api.py:2572 order/models.py:3842 order/models.py:4195
 #: report/templates/report/inventree_transfer_order_report.html:11
 msgid "Transfer Order"
 msgstr "전송 주문"
@@ -5771,7 +5804,7 @@ msgid "Order reference"
 msgstr "주문 참조"
 
 #: order/models.py:801 order/models.py:1595 order/models.py:3489
-#: order/models.py:3919 stock/serializers.py:986 users/models.py:757
+#: order/models.py:3919 stock/serializers.py:999 users/models.py:757
 msgid "Status"
 msgstr "상태"
 
@@ -5863,8 +5896,8 @@ msgstr "일련번호가 있는 재고만"
 msgid "Unserialized stock only"
 msgstr "일련번호가 없는 재고만"
 
-#: order/models.py:1582 order/models.py:3476 stock/models.py:1258
-#: stock/models.py:1259 stock/serializers.py:1565
+#: order/models.py:1582 order/models.py:3476 stock/models.py:1261
+#: stock/models.py:1262 stock/serializers.py:1579
 #: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
@@ -6019,8 +6052,8 @@ msgstr "수령됨"
 msgid "Number of items received"
 msgstr "수령된 품목 수"
 
-#: order/models.py:2491 stock/models.py:1388 stock/serializers.py:680
-#: stock/serializers.py:1058
+#: order/models.py:2491 stock/models.py:1391 stock/serializers.py:680
+#: stock/serializers.py:1071
 msgid "Purchase Price"
 msgstr "구매 가격"
 
@@ -6381,7 +6414,7 @@ msgstr "자동 가격 책정"
 msgid "Automatically calculate purchase price based on supplier part data"
 msgstr "공급업체 부품 데이터를 기반으로 구매 가격을 자동으로 계산"
 
-#: order/serializers.py:720 stock/serializers.py:1068
+#: order/serializers.py:720 stock/serializers.py:1081
 msgid "Purchase price currency"
 msgstr "구매 가격 통화"
 
@@ -6433,7 +6466,7 @@ msgstr "수령 품목의 목적지 위치를 선택하세요"
 msgid "Enter batch code for incoming stock items"
 msgstr "입고 재고 품목의 배치 코드를 입력하세요"
 
-#: order/serializers.py:903 stock/models.py:1340
+#: order/serializers.py:903 stock/models.py:1343
 #: templates/email/api_token_issued.html:18
 #: templates/email/stale_stock_notification.html:22 users/models.py:265
 msgid "Expiry Date"
@@ -6472,7 +6505,7 @@ msgid "Enter batch code for incoming stock items - applied to any line item whic
 msgstr ""
 
 #: order/serializers.py:1052 order/serializers.py:2368
-#: stock/serializers.py:1149
+#: stock/serializers.py:1162
 msgid "Line items must be provided"
 msgstr "라인 항목을 제공해야 합니다"
 
@@ -6811,7 +6844,7 @@ msgstr "기본 위치"
 msgid "Default location for parts in this category"
 msgstr "이 카테고리의 부품 기본 위치"
 
-#: part/models.py:118 stock/models.py:208
+#: part/models.py:118 stock/models.py:203
 msgid "Structural"
 msgstr "구조적"
 
@@ -6827,12 +6860,12 @@ msgstr "기본 키워드"
 msgid "Default keywords for parts in this category"
 msgstr "이 카테고리의 부품 기본 키워드"
 
-#: part/models.py:137 stock/models.py:104 stock/models.py:190
+#: part/models.py:137 stock/models.py:99 stock/models.py:185
 msgid "Icon"
 msgstr "아이콘"
 
 #: part/models.py:138 part/serializers.py:170 part/serializers.py:202
-#: stock/models.py:191
+#: stock/models.py:186
 msgid "Icon (optional)"
 msgstr "아이콘(선택)"
 
@@ -7113,7 +7146,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "재고 조사 시점의 사용 가능한 총 재고"
 
 #: part/models.py:2662 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3841
+#: stock/models.py:3847
 msgid "Date"
 msgstr "날짜"
 
@@ -7325,7 +7358,7 @@ msgstr "이 BOM 항목은 변형 부품의 BOM에 상속됩니다"
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "변형 부품의 재고 항목을 이 BOM 항목에 사용할 수 있습니다"
 
-#: part/models.py:3463 stock/models.py:1105
+#: part/models.py:3463 stock/models.py:1108
 msgid "Quantity must be integer value for trackable parts"
 msgstr "추적 가능한 부품의 수량은 정수여야 합니다"
 
@@ -7478,7 +7511,7 @@ msgstr "현재 생산 중인 이 부품의 수량"
 msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "제작 예정인 이 부품의 미완료 수량"
 
-#: part/serializers.py:805 stock/serializers.py:1275 stock/serializers.py:1462
+#: part/serializers.py:805 stock/serializers.py:1288 stock/serializers.py:1476
 #: users/ruleset.py:50
 msgid "Stock Items"
 msgstr "재고 항목"
@@ -9366,7 +9399,7 @@ msgstr "합계"
 #: report/templates/report/inventree_return_order_report.html:24
 #: report/templates/report/inventree_sales_order_shipment_report.html:44
 #: report/templates/report/inventree_stock_report_merge.html:88
-#: report/templates/report/inventree_test_report.html:88 stock/models.py:1263
+#: report/templates/report/inventree_test_report.html:88 stock/models.py:1266
 #: stock/serializers.py:163 templates/email/stale_stock_notification.html:21
 msgid "Serial Number"
 msgstr "시리얼 번호"
@@ -9500,7 +9533,7 @@ msgstr "최상위 위치로 필터"
 msgid "Include sub-locations in filtered results"
 msgstr "필터 결과에 하위 위치를 포함합니다"
 
-#: stock/api.py:386 stock/serializers.py:1458
+#: stock/api.py:386 stock/serializers.py:1472
 msgid "Parent Location"
 msgstr "상위 위치"
 
@@ -9548,463 +9581,471 @@ msgstr "상태 코드"
 msgid "External Location"
 msgstr "외부 위치"
 
-#: stock/api.py:858
+#: stock/api.py:769 stock/models.py:218
+msgid "Exclude from Stock"
+msgstr ""
+
+#: stock/api.py:868
 msgid "Consumed by Build Order"
 msgstr "작업 지시서에서 소비됨"
 
-#: stock/api.py:868
+#: stock/api.py:878
 msgid "Installed in other stock item"
 msgstr "다른 재고 품목에 설치됨"
 
-#: stock/api.py:948
+#: stock/api.py:958
 msgid "Part Tree"
 msgstr "부품 트리"
 
-#: stock/api.py:977
+#: stock/api.py:987
 msgid "Updated before"
 msgstr "업데이트 날짜 이전"
 
-#: stock/api.py:981
+#: stock/api.py:991
 msgid "Updated after"
 msgstr "업데이트 날짜 이후"
 
-#: stock/api.py:985
+#: stock/api.py:995
 msgid "Stocktake Before"
 msgstr "재고조사 날짜 이전"
 
-#: stock/api.py:989
+#: stock/api.py:999
 msgid "Stocktake After"
 msgstr "재고조사 날짜 이후"
 
-#: stock/api.py:993
+#: stock/api.py:1003
 msgid "Has Stocktake Date"
 msgstr "재고 실사일 있음"
 
-#: stock/api.py:1004
+#: stock/api.py:1014
 msgid "Expiry date before"
 msgstr "유효기간 날짜 이전"
 
-#: stock/api.py:1008
+#: stock/api.py:1018
 msgid "Expiry date after"
 msgstr "유효기간 날짜 이후"
 
-#: stock/api.py:1011 stock/serializers.py:677
+#: stock/api.py:1021 stock/serializers.py:677
 msgid "Stale"
 msgstr "장기 재고"
 
-#: stock/api.py:1035
+#: stock/api.py:1045
 msgid "Cascade Locations"
 msgstr "위치 계단식 적용"
 
-#: stock/api.py:1036
+#: stock/api.py:1046
 msgid "If true, include items in child locations of the given location"
 msgstr "true이면 지정한 위치의 하위 위치에 있는 항목을 포함합니다"
 
-#: stock/api.py:1042
+#: stock/api.py:1052
 msgid "Filter by numeric Location ID or the literal 'null'"
 msgstr "숫자 Location ID 또는 'null' 리터럴로 필터"
 
-#: stock/api.py:1144
+#: stock/api.py:1154
 msgid "Quantity is required"
 msgstr "수량이 필요합니다"
 
-#: stock/api.py:1149
+#: stock/api.py:1159
 msgid "Valid part must be supplied"
 msgstr "유효한 부품을 제공해야 합니다"
 
-#: stock/api.py:1180
+#: stock/api.py:1190
 msgid "The given supplier part does not exist"
 msgstr "지정한 공급업체 부품이 존재하지 않습니다"
 
-#: stock/api.py:1190
+#: stock/api.py:1200
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "공급업체 부품에 포장 단위가 정의되어 있지만 use_pack_size 플래그가 설정되지 않았습니다"
 
-#: stock/api.py:1222
+#: stock/api.py:1232
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "추적 불가능한 부품에는 시리얼 번호를 제공할 수 없습니다"
 
-#: stock/api.py:1489
+#: stock/api.py:1499
 msgid "Include Installed"
 msgstr "설치된 항목 포함"
 
-#: stock/api.py:1491
+#: stock/api.py:1501
 msgid "If true, include test results for items installed underneath the given stock item"
 msgstr "true이면 지정한 재고 품목 아래에 설치된 항목의 테스트 결과를 포함합니다"
 
-#: stock/api.py:1498
+#: stock/api.py:1508
 msgid "Filter by numeric Stock Item ID"
 msgstr "숫자 재고 품목 ID로 필터"
 
-#: stock/api.py:1519
+#: stock/api.py:1529
 #, python-brace-format
 msgid "Stock item with ID {id} does not exist"
 msgstr "ID가 {id}인 재고 품목이 존재하지 않습니다"
 
-#: stock/models.py:78
+#: stock/models.py:73
 msgid "Stock Location type"
 msgstr "재고 위치 유형"
 
-#: stock/models.py:79
+#: stock/models.py:74
 msgid "Stock Location types"
 msgstr "재고 위치 유형"
 
-#: stock/models.py:105
+#: stock/models.py:100
 msgid "Default icon for all locations that have no icon set (optional)"
 msgstr "아이콘이 설정되지 않은 모든 위치에 대한 기본 아이콘(선택)"
 
-#: stock/models.py:153 stock/models.py:1225
+#: stock/models.py:148 stock/models.py:1228
 msgid "Stock Location"
 msgstr "재고 위치"
 
-#: stock/models.py:154 users/ruleset.py:49
+#: stock/models.py:149 users/ruleset.py:49
 msgid "Stock Locations"
 msgstr "재고 위치"
 
-#: stock/models.py:201 stock/models.py:1397
+#: stock/models.py:196 stock/models.py:1400
 msgid "Owner"
 msgstr "소유자"
 
-#: stock/models.py:202 stock/models.py:1398
+#: stock/models.py:197 stock/models.py:1401
 msgid "Select Owner"
 msgstr "소유자 선택"
 
-#: stock/models.py:210
+#: stock/models.py:205
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "재고 품목은 구조적 재고 위치에 직접 배치할 수 없으며, 하위 위치에 배치할 수 있습니다."
 
-#: stock/models.py:217 users/models.py:703
+#: stock/models.py:212 users/models.py:703
 msgid "External"
 msgstr "외부"
 
-#: stock/models.py:218
+#: stock/models.py:213
 msgid "This is an external stock location"
 msgstr "외부 재고 위치입니다"
 
-#: stock/models.py:224
+#: stock/models.py:220
+msgid "If checked, stock items in this location will not be counted in available stock"
+msgstr ""
+
+#: stock/models.py:227
 msgid "Location type"
 msgstr "위치 유형"
 
-#: stock/models.py:228
+#: stock/models.py:231
 msgid "Stock location type of this location"
 msgstr "이 위치의 재고 위치 유형"
 
-#: stock/models.py:301
+#: stock/models.py:304
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
 msgstr "일부 재고 품목이 이미 이 위치에 있으므로 이 재고 위치를 구조적 위치로 만들 수 없습니다!"
 
-#: stock/models.py:418
+#: stock/models.py:421
 msgid "Oldest stock first (FIFO)"
 msgstr "오래된 재고 우선(FIFO)"
 
-#: stock/models.py:419
+#: stock/models.py:422
 msgid "Newest stock first (LIFO)"
 msgstr "최신 재고 우선(LIFO)"
 
-#: stock/models.py:420
+#: stock/models.py:423
 msgid "Smallest quantity first"
 msgstr "적은 수량 우선"
 
-#: stock/models.py:421
+#: stock/models.py:424
 msgid "Largest quantity first"
 msgstr "많은 수량 우선"
 
-#: stock/models.py:422
+#: stock/models.py:425
 msgid "Soonest expiry date first"
 msgstr "만료일 임박 우선"
 
-#: stock/models.py:578
+#: stock/models.py:581
 msgid "Serialized stock items cannot be deleted"
 msgstr "일련번호가 있는 재고 항목은 삭제할 수 없음"
 
-#: stock/models.py:797
+#: stock/models.py:800
 #, python-brace-format
 msgid "{field} does not exist"
 msgstr "{field}이(가) 존재하지 않습니다"
 
-#: stock/models.py:810
+#: stock/models.py:813
 msgid "Part must be specified"
 msgstr "부품을 지정해야 합니다"
 
-#: stock/models.py:1065
+#: stock/models.py:1068
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr "재고 품목은 구조적 재고 위치에 배치할 수 없습니다!"
 
-#: stock/models.py:1094
+#: stock/models.py:1097
 msgid "Editing of serial numbers is not allowed - this item has already been assigned a serial number"
 msgstr "일련번호 편집이 허용되지 않음 - 이 항목에는 이미 일련번호가 할당되어 있습니다"
 
-#: stock/models.py:1111 stock/serializers.py:489
+#: stock/models.py:1114 stock/serializers.py:489
 msgid "Stock item cannot be created for virtual parts"
 msgstr "가상 부품에 대해 재고 품목을 생성할 수 없습니다"
 
-#: stock/models.py:1128
+#: stock/models.py:1131
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
 msgstr "부품 유형('{self.supplier_part.part}')은(는) {self.part}여야 합니다"
 
-#: stock/models.py:1138 stock/models.py:1151
+#: stock/models.py:1141 stock/models.py:1154
 msgid "Quantity must be 1 for item with a serial number"
 msgstr "시리얼 번호가 있는 품목의 수량은 1이어야 합니다"
 
-#: stock/models.py:1141
+#: stock/models.py:1144
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr "수량이 1보다 크면 시리얼 번호를 설정할 수 없습니다"
 
-#: stock/models.py:1163
+#: stock/models.py:1166
 msgid "Item cannot belong to itself"
 msgstr "항목은 자기 자신에 속할 수 없습니다"
 
-#: stock/models.py:1168
+#: stock/models.py:1171
 msgid "Item must have a build reference if is_building=True"
 msgstr "is_building=True인 경우 항목에는 제조 참조가 있어야 합니다"
 
-#: stock/models.py:1181
+#: stock/models.py:1184
 msgid "Build reference does not point to the same part object"
 msgstr "제조 참조가 동일한 부품 객체를 가리키지 않습니다"
 
-#: stock/models.py:1195
+#: stock/models.py:1198
 msgid "Parent Stock Item"
 msgstr "상위 재고 품목"
 
-#: stock/models.py:1207
+#: stock/models.py:1210
 msgid "Base part"
 msgstr "기본 부품"
 
-#: stock/models.py:1217
+#: stock/models.py:1220
 msgid "Select a matching supplier part for this stock item"
 msgstr "이 재고 품목에 맞는 공급업체 부품을 선택하세요"
 
-#: stock/models.py:1229
+#: stock/models.py:1232
 msgid "Where is this stock item located?"
 msgstr "이 재고 품목은 어디에 있습니까?"
 
-#: stock/models.py:1237 stock/serializers.py:1853
+#: stock/models.py:1240 stock/serializers.py:1856
 msgid "Packaging this stock item is stored in"
 msgstr "이 재고 품목이 보관된 포장재"
 
-#: stock/models.py:1243
+#: stock/models.py:1246
 msgid "Installed In"
 msgstr "설치 위치"
 
-#: stock/models.py:1248
+#: stock/models.py:1251
 msgid "Is this item installed in another item?"
 msgstr "이 항목이 다른 항목에 설치되어 있습니까?"
 
-#: stock/models.py:1267
+#: stock/models.py:1270
 msgid "Serial number for this item"
 msgstr "이 항목의 시리얼 번호"
 
-#: stock/models.py:1284 stock/serializers.py:1838
+#: stock/models.py:1287 stock/serializers.py:1844
 msgid "Batch code for this stock item"
 msgstr "이 재고 품목의 배치 코드"
 
-#: stock/models.py:1289
+#: stock/models.py:1292
 msgid "Stock Quantity"
 msgstr "재고 수량"
 
-#: stock/models.py:1299
+#: stock/models.py:1302
 msgid "Source Build"
 msgstr "원본 제조"
 
-#: stock/models.py:1302
+#: stock/models.py:1305
 msgid "Build for this stock item"
 msgstr "이 재고 품목의 제조"
 
-#: stock/models.py:1309
+#: stock/models.py:1312
 msgid "Consumed By"
 msgstr "소비한 대상"
 
-#: stock/models.py:1312
+#: stock/models.py:1315
 msgid "Build order which consumed this stock item"
 msgstr "이 재고 품목을 소비한 제조 주문"
 
-#: stock/models.py:1321
+#: stock/models.py:1324
 msgid "Source Purchase Order"
 msgstr "원본 구매 주문"
 
-#: stock/models.py:1325
+#: stock/models.py:1328
 msgid "Purchase order for this stock item"
 msgstr "이 재고 품목의 구매 주문"
 
-#: stock/models.py:1331
+#: stock/models.py:1334
 msgid "Destination Sales Order"
 msgstr "대상 판매 주문"
 
-#: stock/models.py:1342
+#: stock/models.py:1345
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr "재고 품목의 유효기간입니다. 이 날짜 이후 재고는 만료로 간주됩니다"
 
-#: stock/models.py:1362
+#: stock/models.py:1365
 msgid "Date that this stock item was created"
 msgstr "이 재고 항목이 생성된 날짜"
 
-#: stock/models.py:1367
+#: stock/models.py:1370
 msgid "Delete on deplete"
 msgstr "소진 시 삭제"
 
-#: stock/models.py:1368
+#: stock/models.py:1371
 msgid "Delete this Stock Item when stock is depleted"
 msgstr "재고가 소진되면 이 재고 품목을 삭제합니다"
 
-#: stock/models.py:1389
+#: stock/models.py:1392
 msgid "Single unit purchase price at time of purchase"
 msgstr "구매 시점의 단위 구매 가격"
 
-#: stock/models.py:1419
+#: stock/models.py:1422
 msgid "Converted to part"
 msgstr "부품으로 변환됨"
 
-#: stock/models.py:1633
+#: stock/models.py:1636
 msgid "Quantity exceeds available stock"
 msgstr "수량이 사용 가능한 재고를 초과합니다"
 
-#: stock/models.py:1942
+#: stock/models.py:1945
 msgid "Invalid quantity value"
 msgstr ""
 
-#: stock/models.py:2008 stock/models.py:2561
+#: stock/models.py:2011 stock/models.py:2567
 msgid "Cannot assign stock to structural location"
 msgstr "구조적 위치에 재고를 할당할 수 없습니다"
 
-#: stock/models.py:2163 stock/serializers.py:1106
+#: stock/models.py:2166 stock/serializers.py:1119
 msgid "Quantity must not exceed available stock quantity"
 msgstr ""
 
-#: stock/models.py:2169
+#: stock/models.py:2172
 msgid "Serialized stock item must be disassembled in its entirety"
 msgstr ""
 
-#: stock/models.py:2174
+#: stock/models.py:2177
 msgid "No BOM lines provided"
 msgstr ""
 
-#: stock/models.py:2183
+#: stock/models.py:2186
 msgid "Stock item with installed items must be disassembled in its entirety"
 msgstr ""
 
-#: stock/models.py:2514
+#: stock/models.py:2520
 msgid "Part is not set as trackable"
 msgstr "부품이 추적으로 설정되어 있지 않습니다"
 
-#: stock/models.py:2520
+#: stock/models.py:2526
 msgid "Quantity must be integer"
 msgstr "수량은 정수여야 합니다"
 
-#: stock/models.py:2532
+#: stock/models.py:2538
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr "수량은 사용 가능한 재고 수량({self.quantity})을 초과할 수 없습니다"
 
-#: stock/models.py:2538
+#: stock/models.py:2544
 msgid "Serial numbers must be provided as a list"
 msgstr "시리얼 번호는 목록으로 제공되어야 합니다"
 
-#: stock/models.py:2543
+#: stock/models.py:2549
 msgid "Quantity does not match serial numbers"
 msgstr "수량이 시리얼 번호와 일치하지 않습니다"
 
-#: stock/models.py:2657 stock/models.py:3759
+#: stock/models.py:2663 stock/models.py:3765
 msgid "Test template does not exist"
 msgstr "테스트 템플릿이 존재하지 않습니다"
 
-#: stock/models.py:2675
+#: stock/models.py:2681
 msgid "Stock item has been assigned to a sales order"
 msgstr "재고 품목이 판매 주문에 할당되었습니다"
 
-#: stock/models.py:2679
+#: stock/models.py:2685
 msgid "Stock item is installed in another item"
 msgstr "재고 품목이 다른 품목에 설치되어 있습니다"
 
-#: stock/models.py:2682
+#: stock/models.py:2688
 msgid "Stock item contains other items"
 msgstr "재고 품목에 다른 품목이 포함되어 있습니다"
 
-#: stock/models.py:2685
+#: stock/models.py:2691
 msgid "Stock item has been assigned to a customer"
 msgstr "재고 품목이 고객에게 할당되었습니다"
 
-#: stock/models.py:2688 stock/models.py:2957
+#: stock/models.py:2694 stock/models.py:2963
 msgid "Stock item is currently in production"
 msgstr "재고 품목이 현재 생산 중입니다"
 
-#: stock/models.py:2691
+#: stock/models.py:2697
 msgid "Serialized stock cannot be merged"
 msgstr "시리얼 추적 재고는 병합할 수 없습니다"
 
-#: stock/models.py:2698 stock/serializers.py:1707
+#: stock/models.py:2704 stock/serializers.py:1721
 msgid "Duplicate stock items"
 msgstr "중복 재고 품목"
 
-#: stock/models.py:2702
+#: stock/models.py:2708
 msgid "Stock items must refer to the same part"
 msgstr "재고 품목은 동일한 부품을 참조해야 합니다"
 
-#: stock/models.py:2710
+#: stock/models.py:2716
 msgid "Stock items must refer to the same supplier part"
 msgstr "재고 항목은 동일한 공급업체 부품을 참조해야 합니다"
 
-#: stock/models.py:2715
+#: stock/models.py:2721
 msgid "Stock status codes must match"
 msgstr "재고 상태 코드는 일치해야 합니다"
 
-#: stock/models.py:3159
+#: stock/models.py:3165
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "재고에 없으므로 재고 항목을 이동할 수 없습니다"
 
-#: stock/models.py:3729
+#: stock/models.py:3735
 msgid "Stock Item Test Result"
 msgstr "재고 항목 테스트 결과"
 
-#: stock/models.py:3762
+#: stock/models.py:3768
 msgid "Value must be provided for this test"
 msgstr "이 테스트에는 값을 제공해야 합니다"
 
-#: stock/models.py:3766
+#: stock/models.py:3772
 msgid "Attachment must be uploaded for this test"
 msgstr "이 테스트에는 첨부 파일을 업로드해야 합니다"
 
-#: stock/models.py:3771
+#: stock/models.py:3777
 msgid "Invalid value for this test"
 msgstr "이 테스트의 값이 올바르지 않습니다"
 
-#: stock/models.py:3795
+#: stock/models.py:3801
 msgid "Test result"
 msgstr "테스트 결과"
 
-#: stock/models.py:3802
+#: stock/models.py:3808
 msgid "Test output value"
 msgstr "테스트 출력 값"
 
-#: stock/models.py:3810 stock/serializers.py:258
+#: stock/models.py:3816 stock/serializers.py:258
 msgid "Test result attachment"
 msgstr "테스트 결과 첨부 파일"
 
-#: stock/models.py:3814
+#: stock/models.py:3820
 msgid "Test notes"
 msgstr "테스트 메모"
 
-#: stock/models.py:3822
+#: stock/models.py:3828
 msgid "Test station"
 msgstr "테스트 스테이션"
 
-#: stock/models.py:3823
+#: stock/models.py:3829
 msgid "The identifier of the test station where the test was performed"
 msgstr "테스트가 수행된 테스트 스테이션의 식별자"
 
-#: stock/models.py:3829
+#: stock/models.py:3835
 msgid "Started"
 msgstr "시작됨"
 
-#: stock/models.py:3830
+#: stock/models.py:3836
 msgid "The timestamp of the test start"
 msgstr "테스트 시작 시각"
 
-#: stock/models.py:3836 users/models.py:848
+#: stock/models.py:3842 users/models.py:848
 msgid "Finished"
 msgstr "완료됨"
 
-#: stock/models.py:3837
+#: stock/models.py:3843
 msgid "The timestamp of the test finish"
 msgstr "테스트 종료 시각"
 
@@ -10125,7 +10166,7 @@ msgid "Enter number of stock items to serialize"
 msgstr "일련 번호를 부여할 재고 항목 수를 입력하세요"
 
 #: stock/serializers.py:728 stock/serializers.py:772 stock/serializers.py:810
-#: stock/serializers.py:965 stock/serializers.py:1099 stock/serializers.py:1141
+#: stock/serializers.py:965 stock/serializers.py:1112 stock/serializers.py:1154
 msgid "No stock item provided"
 msgstr "재고 항목이 제공되지 않았습니다"
 
@@ -10134,8 +10175,8 @@ msgstr "재고 항목이 제공되지 않았습니다"
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr "수량은 사용 가능한 재고 수량({q})을(를) 초과할 수 없습니다"
 
-#: stock/serializers.py:754 stock/serializers.py:1663 stock/serializers.py:2066
-#: stock/serializers.py:2182
+#: stock/serializers.py:754 stock/serializers.py:1677 stock/serializers.py:2069
+#: stock/serializers.py:2185
 msgid "Destination stock location"
 msgstr "대상 재고 위치"
 
@@ -10159,7 +10200,7 @@ msgstr "설치 수량"
 msgid "Enter the quantity of items to install"
 msgstr "설치할 항목 수량을 입력하세요"
 
-#: stock/serializers.py:865 stock/serializers.py:946 stock/serializers.py:1293
+#: stock/serializers.py:865 stock/serializers.py:946 stock/serializers.py:1306
 msgid "Add transaction note (optional)"
 msgstr "거래 메모 추가(선택 사항)"
 
@@ -10167,7 +10208,7 @@ msgstr "거래 메모 추가(선택 사항)"
 msgid "Quantity to install must be at least 1"
 msgstr "설치 수량은 최소 1이어야 합니다"
 
-#: stock/serializers.py:881 stock/serializers.py:1144
+#: stock/serializers.py:881 stock/serializers.py:1157
 msgid "Stock item is unavailable"
 msgstr "재고 항목을 사용할 수 없습니다"
 
@@ -10183,191 +10224,191 @@ msgstr "설치 수량은 사용 가능한 수량을 초과할 수 없습니다"
 msgid "Destination location for uninstalled item"
 msgstr "미설치 항목의 대상 위치"
 
-#: stock/serializers.py:989
-msgid "Stock item status code"
-msgstr "재고 항목 상태 코드"
-
-#: stock/serializers.py:1025
-msgid "BOM line which defines the component part to break out"
-msgstr ""
-
-#: stock/serializers.py:1034
-msgid "Quantity of the component part to create"
-msgstr ""
-
-#: stock/serializers.py:1050
-msgid "Destination location for the component items"
-msgstr ""
-
-#: stock/serializers.py:1054
-msgid "Status code for the component items"
-msgstr ""
-
-#: stock/serializers.py:1063
-msgid "Unit purchase price for the component items (leave blank for automatic cost allocation)"
-msgstr ""
-
-#: stock/serializers.py:1091
-msgid "Number of assemblies to disassemble"
-msgstr ""
-
-#: stock/serializers.py:1118
-msgid "Default destination location for the component items"
-msgstr ""
-
-#: stock/serializers.py:1165
-msgid "BOM item is not valid for the selected stock item"
-msgstr ""
-
-#: stock/serializers.py:1169
-msgid "Duplicate BOM items provided"
-msgstr ""
-
-#: stock/serializers.py:1210
-msgid "Select part to convert stock item into"
-msgstr "재고 항목을 변환할 부품을 선택하세요"
-
-#: stock/serializers.py:1223
-msgid "Selected part is not a valid option for conversion"
-msgstr "선택한 부품은 변환에 사용할 수 없는 옵션입니다"
-
-#: stock/serializers.py:1240
-msgid "Cannot convert stock item with assigned SupplierPart"
-msgstr "공급업체 부품이 할당된 재고 항목은 변환할 수 없습니다"
-
-#: stock/serializers.py:1276
-msgid "Select stock items to change status"
-msgstr "상태를 변경할 재고 항목을 선택하세요"
-
-#: stock/serializers.py:1282
-msgid "No stock items selected"
-msgstr "선택된 재고 항목이 없습니다"
-
-#: stock/serializers.py:1371 stock/serializers.py:1464
-msgid "Sublocations"
-msgstr "하위 위치"
-
-#: stock/serializers.py:1389
-msgid "Delete Stock Items"
-msgstr "재고 항목 삭제"
-
-#: stock/serializers.py:1390
-msgid "Delete all stock items contained within this location"
-msgstr "이 위치에 포함된 모든 재고 항목 삭제"
-
-#: stock/serializers.py:1395
-msgid "Delete Sublocations"
-msgstr "하위 위치 삭제"
-
-#: stock/serializers.py:1396
-msgid "Delete all sub-locations contained within this location"
-msgstr "이 위치에 포함된 모든 하위 위치 삭제"
-
-#: stock/serializers.py:1459
-msgid "Parent stock location"
-msgstr "상위 재고 위치"
-
-#: stock/serializers.py:1530
-msgid "Part must be salable"
-msgstr "부품은 판매 가능해야 합니다"
-
-#: stock/serializers.py:1534
-msgid "Item is allocated to a sales order"
-msgstr "항목이 판매 주문에 할당되어 있습니다"
-
-#: stock/serializers.py:1538
-msgid "Item is allocated to a transfer order"
-msgstr "항목이 이동 주문에 할당됨"
-
-#: stock/serializers.py:1542
-msgid "Item is allocated to a build order"
-msgstr "항목이 제조 주문에 할당되어 있습니다"
-
-#: stock/serializers.py:1566
-msgid "Customer to assign stock items"
-msgstr "재고 항목을 할당할 고객"
-
-#: stock/serializers.py:1572
-msgid "Selected company is not a customer"
-msgstr "선택한 회사는 고객이 아닙니다"
-
-#: stock/serializers.py:1581
-msgid "Stock assignment notes"
-msgstr "재고 할당 메모"
-
-#: stock/serializers.py:1591 stock/serializers.py:1915
-msgid "A list of stock items must be provided"
-msgstr "재고 항목 목록을 제공해야 합니다"
-
-#: stock/serializers.py:1671
-msgid "Stock merging notes"
-msgstr "재고 병합 메모"
-
-#: stock/serializers.py:1676
-msgid "Allow mismatched suppliers"
-msgstr "공급업체 불일치 허용"
-
-#: stock/serializers.py:1677
-msgid "Allow stock items with different supplier parts to be merged"
-msgstr "공급업체 부품이 다른 재고 항목의 병합을 허용합니다"
-
-#: stock/serializers.py:1682
-msgid "Allow mismatched status"
-msgstr "상태 불일치 허용"
-
-#: stock/serializers.py:1683
-msgid "Allow stock items with different status codes to be merged"
-msgstr "상태 코드가 다른 재고 항목의 병합을 허용합니다"
-
-#: stock/serializers.py:1693
-msgid "At least two stock items must be provided"
-msgstr "최소 두 개의 재고 항목을 제공해야 합니다"
-
-#: stock/serializers.py:1760
+#: stock/serializers.py:994
 msgid "No Change"
 msgstr "변경 없음"
 
-#: stock/serializers.py:1799
+#: stock/serializers.py:1002
+msgid "Stock item status code"
+msgstr "재고 항목 상태 코드"
+
+#: stock/serializers.py:1038
+msgid "BOM line which defines the component part to break out"
+msgstr ""
+
+#: stock/serializers.py:1047
+msgid "Quantity of the component part to create"
+msgstr ""
+
+#: stock/serializers.py:1063
+msgid "Destination location for the component items"
+msgstr ""
+
+#: stock/serializers.py:1067
+msgid "Status code for the component items"
+msgstr ""
+
+#: stock/serializers.py:1076
+msgid "Unit purchase price for the component items (leave blank for automatic cost allocation)"
+msgstr ""
+
+#: stock/serializers.py:1104
+msgid "Number of assemblies to disassemble"
+msgstr ""
+
+#: stock/serializers.py:1131
+msgid "Default destination location for the component items"
+msgstr ""
+
+#: stock/serializers.py:1178
+msgid "BOM item is not valid for the selected stock item"
+msgstr ""
+
+#: stock/serializers.py:1182
+msgid "Duplicate BOM items provided"
+msgstr ""
+
+#: stock/serializers.py:1223
+msgid "Select part to convert stock item into"
+msgstr "재고 항목을 변환할 부품을 선택하세요"
+
+#: stock/serializers.py:1236
+msgid "Selected part is not a valid option for conversion"
+msgstr "선택한 부품은 변환에 사용할 수 없는 옵션입니다"
+
+#: stock/serializers.py:1253
+msgid "Cannot convert stock item with assigned SupplierPart"
+msgstr "공급업체 부품이 할당된 재고 항목은 변환할 수 없습니다"
+
+#: stock/serializers.py:1289
+msgid "Select stock items to change status"
+msgstr "상태를 변경할 재고 항목을 선택하세요"
+
+#: stock/serializers.py:1295
+msgid "No stock items selected"
+msgstr "선택된 재고 항목이 없습니다"
+
+#: stock/serializers.py:1384 stock/serializers.py:1478
+msgid "Sublocations"
+msgstr "하위 위치"
+
+#: stock/serializers.py:1402
+msgid "Delete Stock Items"
+msgstr "재고 항목 삭제"
+
+#: stock/serializers.py:1403
+msgid "Delete all stock items contained within this location"
+msgstr "이 위치에 포함된 모든 재고 항목 삭제"
+
+#: stock/serializers.py:1408
+msgid "Delete Sublocations"
+msgstr "하위 위치 삭제"
+
+#: stock/serializers.py:1409
+msgid "Delete all sub-locations contained within this location"
+msgstr "이 위치에 포함된 모든 하위 위치 삭제"
+
+#: stock/serializers.py:1473
+msgid "Parent stock location"
+msgstr "상위 재고 위치"
+
+#: stock/serializers.py:1544
+msgid "Part must be salable"
+msgstr "부품은 판매 가능해야 합니다"
+
+#: stock/serializers.py:1548
+msgid "Item is allocated to a sales order"
+msgstr "항목이 판매 주문에 할당되어 있습니다"
+
+#: stock/serializers.py:1552
+msgid "Item is allocated to a transfer order"
+msgstr "항목이 이동 주문에 할당됨"
+
+#: stock/serializers.py:1556
+msgid "Item is allocated to a build order"
+msgstr "항목이 제조 주문에 할당되어 있습니다"
+
+#: stock/serializers.py:1580
+msgid "Customer to assign stock items"
+msgstr "재고 항목을 할당할 고객"
+
+#: stock/serializers.py:1586
+msgid "Selected company is not a customer"
+msgstr "선택한 회사는 고객이 아닙니다"
+
+#: stock/serializers.py:1595
+msgid "Stock assignment notes"
+msgstr "재고 할당 메모"
+
+#: stock/serializers.py:1605 stock/serializers.py:1918
+msgid "A list of stock items must be provided"
+msgstr "재고 항목 목록을 제공해야 합니다"
+
+#: stock/serializers.py:1685
+msgid "Stock merging notes"
+msgstr "재고 병합 메모"
+
+#: stock/serializers.py:1690
+msgid "Allow mismatched suppliers"
+msgstr "공급업체 불일치 허용"
+
+#: stock/serializers.py:1691
+msgid "Allow stock items with different supplier parts to be merged"
+msgstr "공급업체 부품이 다른 재고 항목의 병합을 허용합니다"
+
+#: stock/serializers.py:1696
+msgid "Allow mismatched status"
+msgstr "상태 불일치 허용"
+
+#: stock/serializers.py:1697
+msgid "Allow stock items with different status codes to be merged"
+msgstr "상태 코드가 다른 재고 항목의 병합을 허용합니다"
+
+#: stock/serializers.py:1707
+msgid "At least two stock items must be provided"
+msgstr "최소 두 개의 재고 항목을 제공해야 합니다"
+
+#: stock/serializers.py:1805
 msgid "StockItem primary key value"
 msgstr "재고 항목 기본 키 값"
 
-#: stock/serializers.py:1812
+#: stock/serializers.py:1818
 msgid "Stock item is not in stock"
 msgstr "재고 항목이 재고에 없습니다"
 
-#: stock/serializers.py:1815
+#: stock/serializers.py:1821
 msgid "Stock item is already in stock"
 msgstr "재고 항목이 이미 재고에 있습니다"
 
-#: stock/serializers.py:1829
+#: stock/serializers.py:1835
 msgid "Quantity must not be negative"
 msgstr "수량은 음수일 수 없습니다"
 
-#: stock/serializers.py:1859 stock/serializers.py:2197
+#: stock/serializers.py:1862 stock/serializers.py:2200
 msgid "Merge into existing stock"
 msgstr "기존 재고로 병합"
 
-#: stock/serializers.py:1861
+#: stock/serializers.py:1864
 msgid "Merge this item into existing stock at the destination if possible"
 msgstr "가능한 경우 이 항목을 대상 위치의 기존 재고에 병합"
 
-#: stock/serializers.py:1881
+#: stock/serializers.py:1884
 msgid "Stock transaction notes"
 msgstr "재고 거래 메모"
 
-#: stock/serializers.py:1938
+#: stock/serializers.py:1941
 msgid "Set stock location for counted items (optional)"
 msgstr "카운트된 항목의 재고 위치 설정(선택 사항)"
 
-#: stock/serializers.py:2198
+#: stock/serializers.py:2201
 msgid "Merge returned items into existing stock items if possible"
 msgstr "가능하면 반품된 항목을 기존 재고 항목에 병합합니다"
 
-#: stock/serializers.py:2241
+#: stock/serializers.py:2244
 msgid "Next Serial Number"
 msgstr "다음 일련 번호"
 
-#: stock/serializers.py:2247
+#: stock/serializers.py:2250
 msgid "Previous Serial Number"
 msgstr "이전 일련 번호"
 
@@ -10685,21 +10726,37 @@ msgstr "권한"
 msgid "Important dates"
 msgstr "중요 날짜"
 
-#: users/authentication.py:25
+#: users/api.py:417
+msgid "Reauthentication is required to generate a token"
+msgstr ""
+
+#: users/authentication.py:44
+msgid "INVE-W20: Password authentication not allowed due to MFA"
+msgstr ""
+
+#: users/authentication.py:63
 msgid "Invalid token."
 msgstr ""
 
-#: users/authentication.py:28
+#: users/authentication.py:66
 msgid "User inactive or deleted."
 msgstr ""
 
-#: users/authentication.py:31 users/models.py:279
+#: users/authentication.py:69 users/models.py:279
 msgid "Token has been revoked"
 msgstr "토큰이 취소되었습니다"
 
-#: users/authentication.py:34
+#: users/authentication.py:72
 msgid "Token has expired"
 msgstr "토큰이 만료되었습니다"
+
+#: users/authentication.py:77
+msgid "Multi-factor authentication must be enabled for this account"
+msgstr ""
+
+#: users/authentication.py:117
+msgid "OAuth2 tokens are not accepted for this endpoint"
+msgstr ""
 
 #: users/models.py:107
 msgid "API Token"
@@ -10953,103 +11010,111 @@ msgstr "반품 주문"
 msgid "Transfer Orders"
 msgstr "이동 주문"
 
-#: users/serializers.py:208
+#: users/serializers.py:216
 msgid "Username"
 msgstr "사용자 이름"
 
-#: users/serializers.py:211
+#: users/serializers.py:219
 msgid "First Name"
 msgstr "이름"
 
-#: users/serializers.py:211
+#: users/serializers.py:219
 msgid "First name of the user"
 msgstr "사용자의 이름"
 
-#: users/serializers.py:215
+#: users/serializers.py:223
 msgid "Last Name"
 msgstr "성"
 
-#: users/serializers.py:215
+#: users/serializers.py:223
 msgid "Last name of the user"
 msgstr "사용자의 성"
 
-#: users/serializers.py:219
+#: users/serializers.py:227
 msgid "Email address of the user"
 msgstr "사용자의 이메일 주소"
 
-#: users/serializers.py:268
+#: users/serializers.py:282
+msgid "Expiry date cannot be in the past"
+msgstr ""
+
+#: users/serializers.py:286
+msgid "Expiry date cannot be more than 365 days in the future"
+msgstr ""
+
+#: users/serializers.py:296
 msgid "User must be authenticated"
 msgstr "사용자가 인증되어야 합니다"
 
-#: users/serializers.py:277
+#: users/serializers.py:305
 msgid "Only a superuser can create a token for another user"
 msgstr "슈퍼유저만 다른 사용자의 토큰을 만들 수 있습니다"
 
-#: users/serializers.py:367
+#: users/serializers.py:395
 msgid "Administrator"
 msgstr "관리자"
 
-#: users/serializers.py:368
+#: users/serializers.py:396
 msgid "Does this user have administrative permissions"
 msgstr "이 사용자에게 관리자 권한이 있습니까"
 
-#: users/serializers.py:373 users/serializers.py:501
+#: users/serializers.py:401 users/serializers.py:529
 msgid "Superuser"
 msgstr "슈퍼유저"
 
-#: users/serializers.py:373 users/serializers.py:502
+#: users/serializers.py:401 users/serializers.py:530
 msgid "Is this user a superuser"
 msgstr "이 사용자는 슈퍼유저입니까"
 
-#: users/serializers.py:377 users/serializers.py:509
+#: users/serializers.py:405 users/serializers.py:537
 msgid "Is this user account active"
 msgstr "이 사용자 계정이 활성 상태입니까"
 
-#: users/serializers.py:398
+#: users/serializers.py:426
 msgid "Only a superuser can adjust this field"
 msgstr "슈퍼유저만 이 필드를 조정할 수 있습니다"
 
-#: users/serializers.py:426
+#: users/serializers.py:454
 msgid "Password"
 msgstr "비밀번호"
 
-#: users/serializers.py:427
+#: users/serializers.py:455
 msgid "Password for the user"
 msgstr "사용자의 비밀번호"
 
-#: users/serializers.py:433
+#: users/serializers.py:461
 msgid "Override warning"
 msgstr "경고 무시"
 
-#: users/serializers.py:434
+#: users/serializers.py:462
 msgid "Override the warning about password rules"
 msgstr "비밀번호 규칙에 대한 경고를 무시합니다"
 
-#: users/serializers.py:494
+#: users/serializers.py:522
 msgid "Staff"
 msgstr "스태프"
 
-#: users/serializers.py:495
+#: users/serializers.py:523
 msgid "Does this user have staff permissions"
 msgstr "이 사용자에게 스태프 권한이 있습니까"
 
-#: users/serializers.py:545
+#: users/serializers.py:573
 msgid "You do not have permission to create users"
 msgstr "사용자를 생성할 권한이 없습니다"
 
-#: users/serializers.py:558
+#: users/serializers.py:586
 msgid "A user with this email address already exists"
 msgstr ""
 
-#: users/serializers.py:593
+#: users/serializers.py:621
 msgid "Your account has been created."
 msgstr "계정이 생성되었습니다."
 
-#: users/serializers.py:595
+#: users/serializers.py:623
 msgid "Please use the password reset function to login"
 msgstr "로그인하려면 비밀번호 재설정 기능을 사용하세요"
 
-#: users/serializers.py:601
+#: users/serializers.py:629
 msgid "Welcome to InvenTree"
 msgstr "InvenTree에 오신 것을 환영합니다"
 
