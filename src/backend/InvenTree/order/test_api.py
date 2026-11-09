@@ -1009,6 +1009,7 @@ class PurchaseOrderTest(OrderTest):
         )
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(BASIC_AUTH_ENABLED=False)
     def test_po_calendar_auth_disabled(self):
         """Test that header authorization is rejected if basic auth is disabled."""
         self.client.logout()
