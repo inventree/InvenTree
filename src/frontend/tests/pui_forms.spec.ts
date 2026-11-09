@@ -331,41 +331,48 @@ test('Forms - Nested Object Field', async ({ browser }) => {
 test('Forms - Initial Stock Field', async ({ browser }) => {
   await setSettingState({ setting: 'PART_CREATE_INITIAL', value: true });
 
-  const partName = `Initial Stock Part ${Date.now()}`;
-  await deletePart(partName);
+  try {
+    const partName = `Initial Stock Part ${Date.now()}`;
+    await deletePart(partName);
 
-  const page = await doCachedLogin(browser, {
-    user: stevenuser,
-    url: 'part/category/index/parts'
-  });
-  await page.waitForURL('**/part/category/index/**');
+    const page = await doCachedLogin(browser, {
+      user: stevenuser,
+      url: 'part/category/index/parts'
+    });
+    await page.waitForURL('**/part/category/index/**');
 
-  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
-  await page
-    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
-    .click();
+    await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+    await page
+      .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+      .click();
 
-  await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+    await page.getByLabel('text-field-name', { exact: true }).fill(partName);
 
-  const quantityField = page.getByLabel('number-field-initial_stock.quantity');
-  await expect(quantityField).toBeVisible();
+    const quantityField = page.getByLabel(
+      'number-field-initial_stock.quantity'
+    );
+    await expect(quantityField).toBeVisible();
 
-  await quantityField.fill('25');
-  await page.getByLabel('tree-field-initial_stock.location').fill('production');
-  await page.getByText('Electronics production facility').click();
+    await quantityField.fill('25');
+    await page
+      .getByLabel('tree-field-initial_stock.location')
+      .fill('production');
+    await page.getByText('Electronics production facility').click();
 
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('Item Created').waitFor();
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.getByText('Item Created').waitFor();
 
-  await page.getByText(partName).first().click();
-  await page
-    .getByLabel('panel-tabs-part')
-    .getByRole('tab', { name: 'Stock', exact: true })
-    .click();
-  await page.getByText('25').first().waitFor();
+    await page.getByText(partName).first().click();
+    await page
+      .getByLabel('panel-tabs-part')
+      .getByRole('tab', { name: 'Stock', exact: true })
+      .click();
+    await page.getByText('25').first().waitFor();
 
-  await deletePart(partName);
-  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+    await deletePart(partName);
+  } finally {
+    await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+  }
 });
 
 test('Forms - Default Part Location', async ({ browser }) => {
