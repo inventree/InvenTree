@@ -10,25 +10,23 @@ fi
 
 # Create required directory structure (if it does not already exist)
 if [[ ! -d "$INVENTREE_STATIC_ROOT" ]]; then
-    echo "Creating directory $INVENTREE_STATIC_ROOT"
+    echo "INFO: Creating directory $INVENTREE_STATIC_ROOT"
     mkdir -p $INVENTREE_STATIC_ROOT
 fi
 
 if [[ ! -d "$INVENTREE_MEDIA_ROOT" ]]; then
-    echo "Creating directory $INVENTREE_MEDIA_ROOT"
+    echo "INFO: Creating directory $INVENTREE_MEDIA_ROOT"
     mkdir -p $INVENTREE_MEDIA_ROOT
 fi
 
 if [[ ! -d "$INVENTREE_BACKUP_DIR" ]]; then
-    echo "Creating directory $INVENTREE_BACKUP_DIR"
+    echo "INFO: Creating directory $INVENTREE_BACKUP_DIR"
     mkdir -p $INVENTREE_BACKUP_DIR
 fi
 
 # Check if "config.yaml" has been copied into the correct location
-if [[ -f "$INVENTREE_CONFIG_FILE" ]]; then
-    echo "Loading config file : $INVENTREE_CONFIG_FILE"
-else
-    echo "Copying config file from $INVENTREE_BACKEND_DIR/InvenTree/config_template.yml to $INVENTREE_CONFIG_FILE"
+if [[ ! -f "$INVENTREE_CONFIG_FILE" ]]; then
+    echo "INFO: Copying config file from $INVENTREE_BACKEND_DIR/InvenTree/config_template.yml to $INVENTREE_CONFIG_FILE"
     cp $INVENTREE_BACKEND_DIR/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
 fi
 
@@ -39,11 +37,11 @@ if [[ -n "$INVENTREE_PY_ENV" ]]; then
 
     if [[ -d "$INVENTREE_PY_ENV" ]]; then
         # venv already exists
-        echo "Using Python virtual environment: ${INVENTREE_PY_ENV}"
+        echo "INFO: Using Python virtual environment: ${INVENTREE_PY_ENV}"
         source ${INVENTREE_PY_ENV}/bin/activate
     else
         # Setup a virtual environment (within the provided directory)
-        echo "Running first time setup for python environment"
+        echo "INFO: Running first time setup for python environment"
         python3 -m venv ${INVENTREE_PY_ENV} --system-site-packages --upgrade-deps
 
         # Ensure invoke tool is installed locally
