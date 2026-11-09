@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 573
+INVENTREE_API_VERSION = 574
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v574 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13236
+    - non-function doc changes
 
 v573 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13221
     - Mark audit log changes_detail field as nullable
