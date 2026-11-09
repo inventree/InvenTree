@@ -40,6 +40,7 @@ import type {
   ApiFormFieldType,
   ApiFormProps
 } from '@lib/types/Forms';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { isEquivalent } from '../../functions/comparison';
 import { constructField, extractAvailableFields } from '../../functions/forms';
@@ -260,7 +261,28 @@ export function ApiForm({
         props.pathParams,
         props.queryParams
       ),
-    [props.url, props.pk, props.pathParams]
+    [props.url, props.pk, props.pathParams, props.queryParams]
+  );
+
+  // Collect any query parameters which individual fields require,
+  // in order to populate their values from the initial data request
+  // (e.g. optional serializer fields such as 'tags').
+  // This ensures the form fetches the required data independent of where it is launched.
+  const fetchParams: Record<string, string> = useMemo(() => {
+    const params: Record<string, string> = {};
+
+    mapFields(props.fields ?? {}, (_path, field) => {
+      Object.assign(params, field.fetchParams ?? {});
+      return undefined;
+    });
+
+    return params;
+  }, [props.fields]);
+
+  // Stable key for the fetch params, for use in query keys
+  const fetchParamsKey: string = useMemo(
+    () => new URLSearchParams(fetchParams).toString(),
+    [fetchParams]
   );
 
   // Define function to process API response
@@ -297,22 +319,26 @@ export function ApiForm({
       props.method,
       props.url,
       props.pk,
-      props.pathParams
+      props.pathParams,
+      fetchParamsKey
     ],
     queryFn: async () => {
-      return await api.get(url).then((response: any) => {
-        // Process API response
-        const fetchedData: any = processFields(fields, response.data);
+      return await api
+        .get(url, { params: fetchParams })
+        .then((response: any) => {
+          // Process API response
+          const fetchedData: any = processFields(fields, response.data);
 
-        // Update form values, but only for the fields specified for this form
-        form.reset(fetchedData);
-        return fetchedData;
-      });
+          // Update form values, but only for the fields specified for this form
+          form.reset(fetchedData);
+          return fetchedData;
+        });
     }
   });
 
   useEffect(() => {
-    const _fields: any = props.fields || {};
+    // Shallow copy, so that per-key replacements below do not leak into props.fields
+    const _fields: any = { ...(props.fields || {}) };
     const _initialData: any = props.initialData || {};
     const _fetchedData: any = initialDataQuery.data || {};
 
@@ -330,6 +356,17 @@ export function ApiForm({
       // Ensure fetched data overrides also
       if (_fetchedData && k in _fetchedData) {
         _fields[k].value = _fetchedData[k];
+      }
+
+      // If a field requires specific fetch params, but the server did not return a value,
+      // exclude the field from the form. Otherwise, submitting an (incorrectly) empty value
+      // could overwrite existing data on the server (e.g. clearing existing tags)
+      if (
+        _fields[k].fetchParams &&
+        initialDataQuery.data &&
+        _fetchedData[k] === undefined
+      ) {
+        _fields[k] = { ..._fields[k], hidden: true, exclude: true };
       }
     }
 
@@ -361,7 +398,8 @@ export function ApiForm({
           props.method,
           props.url,
           props.pk,
-          props.pathParams
+          props.pathParams,
+          fetchParamsKey
         ]
       });
       initialDataQuery.refetch();
@@ -569,12 +607,35 @@ export function ApiForm({
             case 400:
               // Data validation errors
               const _nonFieldErrors: string[] = [];
+              let _fieldErrorCount = 0;
+
+              const setFieldError = (path: string, message: string) => {
+                _fieldErrorCount += 1;
+                form.setError(path, { message: message });
+              };
+
+              // Response keys which carry a general (non-field) error message
+              const NON_FIELD_ERROR_KEYS: string[] = [
+                'non_field_errors',
+                '__all__',
+                'detail',
+                'error',
+                'message',
+                'reason'
+              ];
 
               const processErrors = (errors: any, _path?: string) => {
+                // Ignore empty values
+                if (errors === null || errors === undefined) {
+                  return;
+                }
+
                 // Handle an array of errors
                 if (Array.isArray(errors)) {
                   errors.forEach((error: any) => {
-                    _nonFieldErrors.push(error.toString());
+                    if (typeof error === 'string') {
+                      _nonFieldErrors.push(error);
+                    }
                   });
                   return;
                 }
@@ -585,45 +646,121 @@ export function ApiForm({
                   return;
                 }
 
+                // Ignore any other non-object values (numbers, booleans)
+                if (typeof errors !== 'object') {
+                  return;
+                }
+
                 for (const [k, v] of Object.entries(errors)) {
                   const path = _path ? `${_path}.${k}` : k;
 
-                  // Determine if field "k" is valid (exists and is visible)
-                  const field = fields[k];
-                  const valid = field && !field.hidden;
-
-                  if (!valid || k == 'non_field_errors' || k == '__all__') {
+                  // Known error keys are displayed as non-field errors
+                  if (NON_FIELD_ERROR_KEYS.includes(k)) {
                     processErrors(v);
                     continue;
                   }
 
-                  if (typeof v === 'object' && Array.isArray(v)) {
-                    if (field?.field_type == 'table') {
-                      // Special handling for "table" fields - they have nested errors
-                      v.forEach((item: any, idx: number) => {
-                        for (const [key, value] of Object.entries(item)) {
-                          const path: string = `${k}.${idx}.${key}`;
-                          if (Array.isArray(value)) {
-                            form.setError(path, { message: value.join(', ') });
-                          }
+                  // Nested errors (below the top level) cannot be mapped to a form field,
+                  // so they are displayed as non-field errors rather than being dropped
+                  if (_path) {
+                    processErrors(v);
+                    continue;
+                  }
+
+                  const field = fields[k];
+
+                  // Ignore top-level keys which do not correspond to a form field
+                  // (e.g. response metadata such as "transition" or "state")
+                  if (!field) {
+                    continue;
+                  }
+
+                  // Errors against hidden fields are displayed as non-field errors
+                  if (field.hidden) {
+                    processErrors(v);
+                    continue;
+                  }
+
+                  if (
+                    field.field_type == 'table' &&
+                    typeof v === 'object' &&
+                    v !== null
+                  ) {
+                    // Special handling for "table" fields - they have nested (per-row) errors.
+                    // DRF may return these as an array (one entry per row),
+                    // or as an object keyed by row index (only rows with errors)
+                    const rows: [string, any][] = Array.isArray(v)
+                      ? v.map((item: any, idx: number) => [`${idx}`, item])
+                      : Object.entries(v);
+
+                    rows.forEach(([idx, item]) => {
+                      // Row-level error (not associated with a particular column)
+                      if (
+                        typeof item !== 'object' ||
+                        item === null ||
+                        Array.isArray(item)
+                      ) {
+                        processErrors(item);
+                        return;
+                      }
+
+                      for (const [key, value] of Object.entries(item)) {
+                        const rowPath: string = `${k}.${idx}.${key}`;
+                        if (Array.isArray(value)) {
+                          setFieldError(rowPath, value.join(', '));
+                        } else if (typeof value === 'string') {
+                          setFieldError(rowPath, value);
+                        } else {
+                          processErrors(value);
                         }
-                      });
-                    } else {
-                      // Standard error handling for other fields
-                      form.setError(path, { message: v.join(', ') });
-                    }
+                      }
+                    });
+                  } else if (Array.isArray(v)) {
+                    // Standard error handling for other fields
+                    setFieldError(path, v.join(', '));
                   } else if (typeof v === 'string') {
-                    form.setError(path, { message: v });
+                    setFieldError(path, v);
                   } else {
                     processErrors(v, path);
                   }
                 }
               };
 
-              processErrors(error.response.data);
+              try {
+                processErrors(error.response.data);
+              } catch (err) {
+                // Malformed error response - fall through to the generic message below
+                console.error('Failed to process form errors:', err);
+              }
+
+              // No errors could be extracted from the response
+              if (_nonFieldErrors.length == 0 && _fieldErrorCount == 0) {
+                _nonFieldErrors.push(
+                  t`An unknown error occurred. Refer to the browser console for details.`
+                );
+              }
+
               setNonFieldErrors(_nonFieldErrors);
               props.onFormError?.(error, form);
 
+              break;
+            case 401:
+              // The server may require the user to re-authenticate (e.g. MFA)
+              // before the action can be performed
+              if (
+                error.response.data?.id === 'reauthentication_required' &&
+                !!props.onFormError
+              ) {
+                setNonFieldErrors([
+                  error.response.data?.detail ??
+                    t`Reauthentication is required to continue`
+                ]);
+                props.onFormError(error, form);
+                break;
+              }
+
+              invalidResponse(error.response.status);
+              props.onFormError?.(error, form);
               break;
             default:
               // Unexpected state on form error
@@ -710,7 +847,12 @@ export function ApiForm({
             {/* Form Fields */}
             <Stack gap='sm'>
               {(!isValid || nonFieldErrors.length > 0) && (
-                <Alert radius='sm' color='red' title={t`Form Error`}>
+                <Alert
+                  icon={<IconExclamationCircle />}
+                  radius='sm'
+                  color='red'
+                  title={t`Form Error`}
+                >
                   {nonFieldErrors.length > 0 ? (
                     <Stack gap='xs'>
                       {nonFieldErrors

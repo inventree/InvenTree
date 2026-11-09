@@ -12,6 +12,7 @@ from moneyed import CURRENCIES
 
 import InvenTree.helpers
 import InvenTree.ready
+from common.signals import post_currency_change
 
 logger = structlog.get_logger('inventree')
 
@@ -99,24 +100,14 @@ def after_change_currency(setting) -> None:
     - Update exchange rates
     - Recalculate prices for all parts
     """
-    import InvenTree.ready
-    import InvenTree.tasks
-
     if InvenTree.ready.isImportingData():
         return
 
     if not InvenTree.ready.canAppAccessDatabase():
         return
 
-    from part import tasks as part_tasks
-
-    # Immediately update exchange rates
-    InvenTree.tasks.update_exchange_rates(force=True)
-
-    # Offload update of part prices to a background task
-    InvenTree.tasks.offload_task(
-        part_tasks.check_missing_pricing, force_async=True, group='pricing'
-    )
+    # trigger signal
+    post_currency_change.send(setting)
 
 
 def validate_currency_codes(value):

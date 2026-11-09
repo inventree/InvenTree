@@ -2,7 +2,7 @@ import { CopyButton } from '@lib/components/CopyButton';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { FlowEnum } from '@lib/types/Auth';
+import type { FlowEnum } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -13,7 +13,6 @@ import {
   Loader,
   Modal,
   Paper,
-  PasswordInput,
   SimpleGrid,
   Stack,
   Table,
@@ -32,198 +31,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { api, queryClient } from '../../../../App';
+import {
+  extractErrorMessage,
+  getReauthFlow,
+  useReauthenticate
+} from '../../../../components/modals/ReauthenticateModal';
 import { authApi, doLogout } from '../../../../functions/auth';
 import { showApiErrorMessage } from '../../../../functions/notifications';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { useGlobalSettingsState } from '../../../../states/SettingsStates';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { parseDate } from './SecurityContent';
-
-/**
- * Extract the required re-authentication flow from an error response
- */
-function getReauthFlow(err: any): FlowEnum | null {
-  const flows: any = err.response?.data?.data?.flows ?? [];
-
-  if (flows.find((flow: any) => flow.id == FlowEnum.MfaReauthenticate)) {
-    return FlowEnum.MfaReauthenticate;
-  } else if (flows.find((flow: any) => flow.id == FlowEnum.Reauthenticate)) {
-    return FlowEnum.Reauthenticate;
-  } else {
-    // No match found
-    return null;
-  }
-}
-
-/**
- * Extract an error message from an allauth error response.
- *
- * The allauth flows have a particular response structure,
- * which this function handles.
- */
-function extractErrorMessage(err: any, defaultMsg: string): string {
-  const backupMsg = `${defaultMsg}: ${err.status}`;
-
-  if (err.response?.data?.errors && err.response?.data?.errors.length > 0) {
-    return err.response?.data?.errors[0]?.message ?? backupMsg;
-  }
-
-  return backupMsg;
-}
-
-type ReauthInputProps = {
-  label: string;
-  name: string;
-  description: string;
-  url: string;
-};
-
-/**
- * Internal modal component for re-authentication
- */
-function ReauthenticateModalComponent({
-  inputProps,
-  setOpen
-}: {
-  inputProps: ReauthInputProps;
-  setOpen: (open: boolean) => void;
-}) {
-  const { setAuthContext } = useServerApiState.getState();
-
-  const [value, setValue] = useState<string>('');
-  const [error, setError] = useState<string>('');
-
-  const onSubmit = useCallback(
-    (value: string) => {
-      api
-        .post(inputProps.url, {
-          [inputProps.name]: value
-        })
-        .then((response) => {
-          setAuthContext(response.data?.data);
-          showNotification({
-            title: t`Reauthentication Succeeded`,
-            message: t`You have been reauthenticated successfully.`,
-            color: 'green',
-            icon: <IconCircleCheck />
-          });
-          setOpen(false);
-        })
-        .catch((error) => {
-          setError(
-            extractErrorMessage(error, t`Error during reauthentication`)
-          );
-          showNotification({
-            title: t`Reauthentication Failed`,
-            message: `${t`Failed to reauthenticate`}: ${error.status}`,
-            color: 'red',
-            icon: <IconExclamationCircle />
-          });
-        });
-    },
-    [inputProps]
-  );
-
-  return (
-    <Stack>
-      <Divider />
-      <Alert
-        color='yellow'
-        icon={<IconExclamationCircle />}
-        title={t`Reauthenticate`}
-      >
-        {t`Reauthentiction is required to continue.`}
-      </Alert>
-      <PasswordInput
-        required
-        label={inputProps.label}
-        name={inputProps.name}
-        description={inputProps.description}
-        value={value}
-        error={error}
-        onChange={(event) => setValue(event.target.value)}
-      />
-      <Group justify='right'>
-        <Button onClick={() => setOpen(false)} color='red'>
-          <Trans>Cancel</Trans>
-        </Button>
-        <Button onClick={() => onSubmit(value)} color='green'>
-          <Trans>Submit</Trans>
-        </Button>
-      </Group>
-    </Stack>
-  );
-}
-
-function ReauthenticateModal({
-  inputProps,
-  opened,
-  setOpen
-}: {
-  inputProps: ReauthInputProps;
-  opened: boolean;
-  setOpen: (open: boolean) => void;
-}) {
-  return (
-    <Modal
-      opened={opened}
-      zIndex={9999}
-      size='lg'
-      onClose={() => setOpen(false)}
-      title={<StylishText size='lg'>{t`Reauthenticate`}</StylishText>}
-    >
-      <ReauthenticateModalComponent inputProps={inputProps} setOpen={setOpen} />
-    </Modal>
-  );
-}
-
-/**
- * Modal for re-authenticating with password
- */
-function ReauthenticatePasswordModal({
-  opened,
-  setOpen
-}: {
-  opened: boolean;
-  setOpen: (open: boolean) => void;
-}) {
-  return (
-    <ReauthenticateModal
-      opened={opened}
-      setOpen={setOpen}
-      inputProps={{
-        label: t`Password`,
-        name: 'password',
-        description: t`Enter your password`,
-        url: apiUrl(ApiEndpoints.auth_reauthenticate)
-      }}
-    />
-  );
-}
-
-/**
- * Modal for re-authenticating with TOTP code
- */
-function ReauthenticateTOTPModal({
-  opened,
-  setOpen
-}: {
-  opened: boolean;
-  setOpen: (open: boolean) => void;
-}) {
-  return (
-    <ReauthenticateModal
-      opened={opened}
-      setOpen={setOpen}
-      inputProps={{
-        label: t`TOTP Code`,
-        name: 'code',
-        description: t`Enter one of your TOTP codes`,
-        url: apiUrl(ApiEndpoints.auth_mfa_reauthenticate)
-      }}
-    />
-  );
-}
 
 /**
  * Modal for removing a registered WebAuthn credential:
@@ -730,8 +548,6 @@ export default function MFASettings() {
   const [webauthnToken, setWebauthnToken] = useState<number | null>(null);
 
   const [recoveryCodesOpen, setRecoveryCodesOpen] = useState<boolean>(false);
-  const [reauthPassOpen, setReauthPassModalOpen] = useState<boolean>(false);
-  const [reauthTOTPOpen, setReauthTOTPModalOpen] = useState<boolean>(false);
   const [registerTOTPModalOpen, setRegisterTOTPModalOpen] =
     useState<boolean>(false);
   const [removeTOTPModalOpen, setRemoveTOTPModalOpen] =
@@ -739,20 +555,8 @@ export default function MFASettings() {
   const [removeWebauthnModalOpen, setRemoveWebauthnModalOpen] =
     useState<boolean>(false);
 
-  // Callback function used to re-authenticate the user
-  const reauthenticate = useCallback((flow: FlowEnum) => {
-    switch (flow) {
-      case FlowEnum.Reauthenticate:
-        setReauthPassModalOpen(true);
-        break;
-      case FlowEnum.MfaReauthenticate:
-        setReauthTOTPModalOpen(true);
-        break;
-      default:
-        // Un-handled reauthentication flow
-        break;
-    }
-  }, []);
+  // Re-authentication modals and callback
+  const { reauthenticate, modals: reauthModals } = useReauthenticate();
 
   const registerRecoveryCodes = useCallback(() => {
     setRecoveryCodesOpen(true);
@@ -951,14 +755,7 @@ export default function MFASettings() {
         onReauthFlow={reauthenticate}
         onSuccess={refetch}
       />
-      <ReauthenticatePasswordModal
-        opened={reauthPassOpen}
-        setOpen={setReauthPassModalOpen}
-      />
-      <ReauthenticateTOTPModal
-        opened={reauthTOTPOpen}
-        setOpen={setReauthTOTPModalOpen}
-      />
+      {reauthModals}
       <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
         {mfaRows.length > 0 ? (
           <Table stickyHeader striped highlightOnHover withTableBorder>

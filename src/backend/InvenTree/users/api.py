@@ -39,7 +39,6 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.schema import exclude_from_schema
-from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import (
     ApiToken,
     Owner,
@@ -380,6 +379,34 @@ class RuleSetDetail(RuleSetMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular RuleSet instance."""
 
 
+def check_token_reauthentication(request) -> Response | None:
+    """Check that a user is allowed to be issued a new API token.
+
+    If the user has MFA enabled, they must have recently (re)authenticated
+    before a new token can be issued. Otherwise a stolen (or aged) session
+    could be converted into a long-lived API token without the second factor.
+
+    This check must be applied to *every* API endpoint which issues new tokens.
+
+    Returns:
+        None if the user may be issued a token, or a 401 response
+        describing the required reauthentication flows.
+    """
+    user = request.user
+
+    if is_mfa_enabled(user) and not did_recently_authenticate(request):
+        return Response(
+            {
+                'id': 'reauthentication_required',
+                'detail': _('Reauthentication is required to generate a token'),
+                'data': {'flows': get_reauthentication_flows(user)},
+            },
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    return None
+
+
 class GetAuthToken(GenericAPIView):
     """Return authentication token for an authenticated user."""
 
@@ -410,16 +437,8 @@ class GetAuthToken(GenericAPIView):
         if not user.is_authenticated:
             raise exceptions.NotAuthenticated()  # pragma: no cover
 
-        # does this user have MFA set up? if so: was he recently verified?
-        if is_mfa_enabled(user) and not did_recently_authenticate(request):
-            return Response(
-                {
-                    'id': 'reauthentication_required',
-                    'detail': _('Reauthentication is required to generate a token'),
-                    'data': {'flows': get_reauthentication_flows(user)},
-                },
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
+        if reauth_response := check_token_reauthentication(request):
+            return reauth_response
 
         name = ApiToken.sanitize_name(name)
 
@@ -534,6 +553,9 @@ class TokenListView(TokenMixin, ListCreateAPI):
 
     def create(self, request, *args, **kwargs):
         """Create token and show key to user."""
+        if reauth_response := check_token_reauthentication(request):
+            return reauth_response
+
         resp = super().create(request, *args, **kwargs)
         resp.data['token'] = self._created_token.token
 
@@ -584,7 +606,7 @@ class LoginRedirect(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         """Return the URL to redirect to."""
-        return f'/{FRONTEND_URL_BASE}/logged-in/'
+        return InvenTree.helpers.pui_url('logged-in/')
 
 
 class UserProfileDetail(RetrieveUpdateAPI):

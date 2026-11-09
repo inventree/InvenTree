@@ -255,7 +255,8 @@ jobs:
       - name: Upload Coverage Artifact [${{ matrix.shard }} / 4]
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         id: coverage-upload
-        if: ${{ !cancelled() && steps.tests.outcome != 'failure' }}
+        # Coverage data is still valid if a (flaky) test fails - upload it so the shard is not dropped
+        if: ${{ !cancelled() }}
         with:
           name: coverage-${{ matrix.shard }}
           path: src/frontend/.nyc_output/
@@ -291,16 +292,19 @@ jobs:
           path: all-coverage/
           merge-multiple: true
 
+      # Note: the raw istanbul JSON files are in *compiled* (post-babel / esbuild) coordinates.
+      # "nyc report" remaps them back to the original source files via the embedded source maps.
+      # Only the remapped lcov.info file may be uploaded to Codecov.
       - name: Merge Coverage Reports
         run: |
           mkdir -p .nyc_output
           cp all-coverage/*.json .nyc_output/ 2>/dev/null || true
-          npx --ignore-scripts nyc merge .nyc_output merged-coverage.json
+          rm -rf all-coverage
           npx --ignore-scripts nyc report \
-            --tempdir .nyc_output \
+            --temp-dir .nyc_output \
             --reporter=lcov \
             --reporter=text-summary \
-            --report-dir ./coverage \
+            --report-dir ./coverage
 
       - name: Upload coverage reports to Codecov
         if: ${{ !cancelled() && github.ref == 'refs/heads/master' }}
@@ -310,3 +314,6 @@ jobs:
           slug: inventree/InvenTree
           flags: web
           files: ./coverage/lcov.info
+          # Prevent the Codecov CLI from also discovering (and uploading) the raw,
+          # un-remapped istanbul JSON files, which double-count every source file
+          disable_search: true

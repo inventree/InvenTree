@@ -174,6 +174,7 @@ export function TransferList({
               variant='outline'
               size='md'
               disabled={leftItems.length == 0}
+              aria-label='transfer-all-right'
               onClick={() => transferLeftToRight(true)}
             >
               <IconCircleChevronRight />
@@ -182,6 +183,7 @@ export function TransferList({
               variant='outline'
               size='md'
               disabled={!leftSelected}
+              aria-label='transfer-selected-right'
               onClick={() => transferLeftToRight(false)}
             >
               <IconChevronRight />
@@ -190,6 +192,7 @@ export function TransferList({
               variant='outline'
               size='md'
               disabled={!rightSelected}
+              aria-label='transfer-selected-left'
               onClick={() => transferRightToLeft(false)}
             >
               <IconChevronLeft />
@@ -198,6 +201,7 @@ export function TransferList({
               variant='outline'
               size='md'
               disabled={rightItems.length == 0}
+              aria-label='transfer-all-left'
               onClick={() => transferRightToLeft(true)}
             >
               <IconCircleChevronLeft />

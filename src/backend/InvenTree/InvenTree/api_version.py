@@ -1,10 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 570
+INVENTREE_API_VERSION = 573
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v573 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13221
+    - Mark audit log changes_detail field as nullable
+    - Add warning field to ApiToken
+
+v572 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13212
+    - Username and email fields on the /api/user/me endpoint are now read-only
+
+v571 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13166
+    - Adds "exclude_from_stock" field and filter to the StockLocation API endpoint
+    - Adds "exclude_from_stock" filter to the StockItem API endpoint
 
 v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
     - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only
