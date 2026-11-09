@@ -20,6 +20,7 @@ Tags can be attached to the following InvenTree objects:
 - [Stock Items](../stock/index.md#stock-item)
 - [Stock Locations](../stock/index.md#stock-locations)
 - [Build Orders](../manufacturing/build.md)
+- [Non-Conformance Reports](../manufacturing/ncr.md)
 - [Purchase Orders](../purchasing/purchase_order.md)
 - [Sales Orders](../sales/sales_order.md)
 - [Return Orders](../sales/return_order.md)

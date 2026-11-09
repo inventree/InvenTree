@@ -27,6 +27,9 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import HistoryPanel, {
   useShowHistoryPanel
 } from '../../components/panels/HistoryPanel';
+import NonConformancePanel, {
+  useShowNonConformancePanel
+} from '../../components/panels/NonConformancePanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
@@ -52,6 +55,7 @@ export default function ReturnOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const showNonConformances = useShowNonConformancePanel();
 
   const globalSettings = useGlobalSettingsState();
 
@@ -159,6 +163,10 @@ export default function ReturnOrderDetail() {
           </Accordion>
         )
       },
+      NonConformancePanel({
+        visible: showNonConformances,
+        returnOrderId: order.pk
+      }),
       ParametersPanel({
         model_type: ModelType.returnorder,
         model_id: order.pk,
@@ -180,7 +188,7 @@ export default function ReturnOrderDetail() {
         visible: showHistory
       })
     ];
-  }, [order, id, user, instanceInfo, showHistory]);
+  }, [order, id, user, instanceInfo, showHistory, showNonConformances]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

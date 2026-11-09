@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12682](https://github.com/inventree/InvenTree/pull/12682) adds support for NonConformanceReport (NCR), including new database models, API endpoints, and user interface components.
 - [#13166](https://github.com/inventree/InvenTree/pull/13166) Adds an "exclude_from_stock" attribute to the StockLocation model, allowing stock items in specified locations to be excluded from stock availability calculations.
 
 ### Changed

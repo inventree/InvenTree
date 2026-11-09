@@ -19,6 +19,7 @@ import {
   RenderSelectionList,
   RenderTag
 } from './Generic';
+import { RenderNonConformance } from './NonConformance';
 import { RenderNoteTemplate } from './Note';
 import {
   RenderPurchaseOrder,
@@ -44,6 +45,8 @@ registerModelRenderers({
   [ModelType.build]: RenderBuildOrder,
   [ModelType.buildline]: RenderBuildLine,
   [ModelType.builditem]: RenderBuildItem,
+  [ModelType.nonconformance]: RenderNonConformance,
+  [ModelType.nonconformancestockitem]: RenderNonConformance,
   [ModelType.company]: RenderCompany,
   [ModelType.contact]: RenderContact,
   [ModelType.parameter]: RenderParameter,

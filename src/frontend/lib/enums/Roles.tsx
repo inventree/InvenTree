@@ -7,6 +7,7 @@ export enum UserRoles {
   admin = 'admin',
   bom = 'bom',
   build = 'build',
+  ncr = 'ncr',
   part = 'part',
   part_category = 'part_category',
   pricing = 'pricing',
@@ -34,6 +35,8 @@ export function userRoleLabel(role: UserRoles): string {
       return t`Admin`;
     case UserRoles.build:
       return t`Build Orders`;
+    case UserRoles.ncr:
+      return t`Non-Conformances`;
     case UserRoles.part:
       return t`Parts`;
     case UserRoles.part_category:
@@ -59,6 +62,7 @@ export function userRoleLabel(role: UserRoles): string {
 
 export const roleToViewSettingMap: Partial<Record<UserRoles, string>> = {
   [UserRoles.build]: 'BUILDORDER_ENABLED',
+  [UserRoles.ncr]: 'NCR_ENABLED',
   [UserRoles.sales_order]: 'SALESORDER_ENABLED',
   [UserRoles.purchase_order]: 'PURCHASEORDER_ENABLED',
   [UserRoles.transfer_order]: 'TRANSFERORDER_ENABLED',

@@ -41,6 +41,9 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import HistoryPanel, {
   useShowHistoryPanel
 } from '../../components/panels/HistoryPanel';
+import NonConformancePanel, {
+  useShowNonConformancePanel
+} from '../../components/panels/NonConformancePanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
@@ -159,6 +162,7 @@ export default function BuildDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const showNonConformances = useShowNonConformancePanel();
   const globalSettings = useGlobalSettingsState();
 
   // Fetch the number of BOM items associated with the build order
@@ -366,6 +370,10 @@ export default function BuildDetail() {
           <Skeleton />
         )
       },
+      NonConformancePanel({
+        visible: showNonConformances,
+        buildOrderId: build.pk
+      }),
       ParametersPanel({
         model_type: ModelType.build,
         model_id: build.pk,
@@ -399,7 +407,8 @@ export default function BuildDetail() {
     buildLineQuery.isFetching,
     buildLineQuery.isLoading,
     buildLineData,
-    showHistory
+    showHistory,
+    showNonConformances
   ]);
 
   const editBuildOrderFields = useBuildOrderFields({
