@@ -141,7 +141,6 @@ export default function ManufacturerPartDetail() {
     pk: manufacturerPart?.pk,
     title: t`Edit Manufacturer Part`,
     fields: editManufacturerPartFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
