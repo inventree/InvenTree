@@ -261,7 +261,28 @@ export function ApiForm({
         props.pathParams,
         props.queryParams
       ),
-    [props.url, props.pk, props.pathParams]
+    [props.url, props.pk, props.pathParams, props.queryParams]
+  );
+
+  // Collect any query parameters which individual fields require,
+  // in order to populate their values from the initial data request
+  // (e.g. optional serializer fields such as 'tags').
+  // This ensures the form fetches the required data independent of where it is launched.
+  const fetchParams: Record<string, string> = useMemo(() => {
+    const params: Record<string, string> = {};
+
+    mapFields(props.fields ?? {}, (_path, field) => {
+      Object.assign(params, field.fetchParams ?? {});
+      return undefined;
+    });
+
+    return params;
+  }, [props.fields]);
+
+  // Stable key for the fetch params, for use in query keys
+  const fetchParamsKey: string = useMemo(
+    () => new URLSearchParams(fetchParams).toString(),
+    [fetchParams]
   );
 
   // Define function to process API response
@@ -298,22 +319,26 @@ export function ApiForm({
       props.method,
       props.url,
       props.pk,
-      props.pathParams
+      props.pathParams,
+      fetchParamsKey
     ],
     queryFn: async () => {
-      return await api.get(url).then((response: any) => {
-        // Process API response
-        const fetchedData: any = processFields(fields, response.data);
+      return await api
+        .get(url, { params: fetchParams })
+        .then((response: any) => {
+          // Process API response
+          const fetchedData: any = processFields(fields, response.data);
 
-        // Update form values, but only for the fields specified for this form
-        form.reset(fetchedData);
-        return fetchedData;
-      });
+          // Update form values, but only for the fields specified for this form
+          form.reset(fetchedData);
+          return fetchedData;
+        });
     }
   });
 
   useEffect(() => {
-    const _fields: any = props.fields || {};
+    // Shallow copy, so that per-key replacements below do not leak into props.fields
+    const _fields: any = { ...(props.fields || {}) };
     const _initialData: any = props.initialData || {};
     const _fetchedData: any = initialDataQuery.data || {};
 
@@ -331,6 +356,17 @@ export function ApiForm({
       // Ensure fetched data overrides also
       if (_fetchedData && k in _fetchedData) {
         _fields[k].value = _fetchedData[k];
+      }
+
+      // If a field requires specific fetch params, but the server did not return a value,
+      // exclude the field from the form. Otherwise, submitting an (incorrectly) empty value
+      // could overwrite existing data on the server (e.g. clearing existing tags)
+      if (
+        _fields[k].fetchParams &&
+        initialDataQuery.data &&
+        _fetchedData[k] === undefined
+      ) {
+        _fields[k] = { ..._fields[k], hidden: true, exclude: true };
       }
     }
 
@@ -362,7 +398,8 @@ export function ApiForm({
           props.method,
           props.url,
           props.pk,
-          props.pathParams
+          props.pathParams,
+          fetchParamsKey
         ]
       });
       initialDataQuery.refetch();
@@ -706,6 +743,24 @@ export function ApiForm({
               setNonFieldErrors(_nonFieldErrors);
               props.onFormError?.(error, form);
 
+              break;
+            case 401:
+              // The server may require the user to re-authenticate (e.g. MFA)
+              // before the action can be performed
+              if (
+                error.response.data?.id === 'reauthentication_required' &&
+                !!props.onFormError
+              ) {
+                setNonFieldErrors([
+                  error.response.data?.detail ??
+                    t`Reauthentication is required to continue`
+                ]);
+                props.onFormError(error, form);
+                break;
+              }
+
+              invalidResponse(error.response.status);
+              props.onFormError?.(error, form);
               break;
             default:
               // Unexpected state on form error
