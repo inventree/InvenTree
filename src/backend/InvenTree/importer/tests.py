@@ -143,6 +143,30 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         row = DataImportRow.objects.get(session=session, row_index=0)
         self.assertEqual(row.row_data['COMMENT'], '2024-05-01T12:30:00')
 
+    def test_convert_date_field(self):
+        """Test conversion of date values for import.
+
+        Regression test for a Sentry crash: "'datetime.datetime' object has no
+        attribute 'strip'". Excel imports provide date cells as native datetime
+        objects, which convert_date_field() previously assumed to be strings.
+        """
+        row = DataImportRow(row_index=0, row_data={})
+
+        for value, expected in [
+            (None, None),
+            ('', None),
+            ('   ', None),
+            (datetime.datetime(2024, 5, 1, 12, 30), '2024-05-01'),
+            (datetime.date(2024, 5, 1), '2024-05-01'),
+            # Native datetime after round-trip through DjangoJSONEncoder
+            ('2024-05-01T12:30:00', '2024-05-01'),
+            (' 2024-05-01 ', '2024-05-01'),
+            ('01/05/2024', '2024-05-01'),
+            ('2024/05/01', '2024-05-01'),
+            ('not a date', 'not a date'),
+        ]:
+            self.assertEqual(row.convert_date_field(value), expected, msg=value)
+
     def test_import_header_whitespace(self):
         """Test that column headers with leading/trailing whitespace are handled correctly.
 

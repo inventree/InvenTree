@@ -673,7 +673,6 @@ export default function PartDetail() {
     pk: part.pk,
     title: t`Edit Part`,
     fields: partFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
