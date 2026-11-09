@@ -701,7 +701,7 @@ class TestHelpers(TestCase):
         # Correct usage
         part = Part().image
         self.assertEqual(
-            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),  # ty:ignore[too-many-positional-arguments]
+            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),
             '/media/xx/yy.png',
         )
 
