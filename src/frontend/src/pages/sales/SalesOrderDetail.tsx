@@ -33,7 +33,9 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import HistoryPanel, {
   useShowHistoryPanel
 } from '../../components/panels/HistoryPanel';
-import NonConformancePanel from '../../components/panels/NonConformancePanel';
+import NonConformancePanel, {
+  useShowNonConformancePanel
+} from '../../components/panels/NonConformancePanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
@@ -62,6 +64,7 @@ export default function SalesOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const showNonConformances = useShowNonConformancePanel();
 
   const globalSettings = useGlobalSettingsState();
 
@@ -234,7 +237,7 @@ export default function SalesOrderDetail() {
         )
       },
       NonConformancePanel({
-        hidden: !user.hasViewVisible(UserRoles.ncr),
+        visible: showNonConformances,
         salesOrderId: order.pk
       }),
       ParametersPanel({
@@ -264,7 +267,15 @@ export default function SalesOrderDetail() {
         visible: showHistory
       })
     ];
-  }, [order, id, user, soStatus, instanceInfo, showHistory]);
+  }, [
+    order,
+    id,
+    user,
+    soStatus,
+    instanceInfo,
+    showHistory,
+    showNonConformances
+  ]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),

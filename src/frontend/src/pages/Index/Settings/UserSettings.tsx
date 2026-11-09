@@ -63,6 +63,7 @@ export default function UserSettings() {
               'FORMS_CLOSE_USING_ESCAPE',
               'DISPLAY_STOCKTAKE_TAB',
               'DISPLAY_HISTORY_TAB',
+              'DISPLAY_NCR_EXTENDED_VIEWS',
               'ENABLE_LAST_BREADCRUMB',
               'NAVIGATION_TREE_PINNED',
               'SHOW_EXTRA_MODEL_INFO',

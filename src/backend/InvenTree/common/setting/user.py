@@ -257,6 +257,14 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'DISPLAY_NCR_EXTENDED_VIEWS': {
+        'name': _('Show Extended NCR Views'),
+        'description': _(
+            'Display linked non-conformance reports on part, stock item and order detail pages'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'ENABLE_LAST_BREADCRUMB': {
         'name': _('Show Last Breadcrumb'),
         'description': _('Show the current page in breadcrumbs'),

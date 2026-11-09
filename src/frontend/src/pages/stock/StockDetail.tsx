@@ -43,7 +43,9 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import HistoryPanel, {
   useShowHistoryPanel
 } from '../../components/panels/HistoryPanel';
-import NonConformancePanel from '../../components/panels/NonConformancePanel';
+import NonConformancePanel, {
+  useShowNonConformancePanel
+} from '../../components/panels/NonConformancePanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
@@ -80,6 +82,7 @@ export default function StockDetail() {
 
   const api = useApi();
   const user = useUserState();
+  const showNonConformances = useShowNonConformancePanel();
 
   const globalSettings = useGlobalSettingsState();
 
@@ -285,7 +288,7 @@ export default function StockDetail() {
         )
       },
       NonConformancePanel({
-        hidden: !user.hasViewVisible(UserRoles.ncr),
+        visible: showNonConformances,
         partId: stockitem?.part,
         stockItemId: stockitem?.pk
       }),
@@ -334,7 +337,8 @@ export default function StockDetail() {
     stockitem,
     id,
     user,
-    instanceInfo
+    instanceInfo,
+    showNonConformances
   ]);
 
   const breadcrumbs = useMemo(

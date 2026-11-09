@@ -67,7 +67,9 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import HistoryPanel, {
   useShowHistoryPanel
 } from '../../components/panels/HistoryPanel';
-import NonConformancePanel from '../../components/panels/NonConformancePanel';
+import NonConformancePanel, {
+  useShowNonConformancePanel
+} from '../../components/panels/NonConformancePanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
@@ -159,6 +161,7 @@ export default function PartDetail() {
   const api = useApi();
   const navigate = useNavigate();
   const user = useUserState();
+  const showNonConformances = useShowNonConformancePanel();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -443,7 +446,7 @@ export default function PartDetail() {
         )
       },
       NonConformancePanel({
-        hidden: !user.hasViewVisible(UserRoles.ncr),
+        visible: showNonConformances,
         partId: part.pk
       }),
       {
@@ -545,7 +548,8 @@ export default function PartDetail() {
     revisionSelector,
     refreshInstance,
     instanceInfo,
-    showHistory
+    showHistory,
+    showNonConformances
   ]);
 
   const breadcrumbs = useMemo(() => {

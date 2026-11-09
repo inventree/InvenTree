@@ -19,7 +19,7 @@ By default, Non-Conformance Report functionality is disabled - it must be enable
 
 To navigate to the Non-Conformance Report display, select *Manufacturing* from the main navigation menu, and *Non-Conformances* from the sidebar. This shows a table of all Non-Conformance Reports, which can be filtered to only show the reports you are interested in.
 
-NCRs are also displayed in a *Non-Conformances* tab on the detail page of each linked record - the [part](../part/index.md), [stock item](../stock/index.md), [build order](./build.md), [sales order](../sales/sales_order.md), [purchase order](../purchasing/purchase_order.md) or [return order](../sales/return_order.md). A new NCR created from one of these tabs is pre-filled with that record (from a stock item tab, the part is pre-filled - the stock item itself can then be linked from the NCR's [Stock Items](#linked-stock-items) tab).
+If the {{ usersetting("DISPLAY_NCR_EXTENDED_VIEWS", short=True) }} user setting is enabled (it is disabled by default), NCRs are also displayed in a *Non-Conformances* tab on the detail page of each linked record - the [part](../part/index.md), [stock item](../stock/index.md), [build order](./build.md), [sales order](../sales/sales_order.md), [purchase order](../purchasing/purchase_order.md) or [return order](../sales/return_order.md). A new NCR created from one of these tabs is pre-filled with that record (from a stock item tab, the part is pre-filled - the stock item itself can then be linked from the NCR's [Stock Items](#linked-stock-items) tab).
 
 {{ image("build/ncr_list.png", title="Non-Conformance Reports") }}
 
@@ -188,3 +188,9 @@ The following [global settings](../settings/global.md) are available for adjusti
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("NCR_ENABLED") }}
 {{ globalsetting("NCR_REFERENCE_PATTERN") }}
+
+The following [user settings](../settings/user.md) are also available:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ usersetting("DISPLAY_NCR_EXTENDED_VIEWS") }}

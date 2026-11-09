@@ -161,7 +161,35 @@ test('NCR - Linked Panels', async ({ browser }) => {
   expect(link.status()).toBe(201);
 
   // The NCR is displayed on each linked record
-  const page = await doCachedLogin(browser, { user: adminuser });
+  // Extended NCR views are disabled by default (per-user setting)
+  const setExtendedViews = async (value: boolean) => {
+    const response = await api.patch(
+      'settings/user/DISPLAY_NCR_EXTENDED_VIEWS/',
+      { data: { value: value } }
+    );
+    expect(response.status()).toBe(200);
+  };
+
+  await setExtendedViews(false);
+
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: `part/${item.part}/details`
+  });
+
+  await page
+    .getByLabel(/panel-tabs-/)
+    .getByRole('tab')
+    .first()
+    .waitFor();
+  await expect(
+    page
+      .getByLabel(/panel-tabs-/)
+      .getByRole('tab', { name: 'Non-Conformances' })
+  ).toHaveCount(0);
+
+  // With extended views enabled, the NCR is displayed on each linked record
+  await setExtendedViews(true);
 
   for (const url of [
     `part/${item.part}/non-conformances`,
