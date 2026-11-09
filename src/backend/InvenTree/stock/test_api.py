@@ -1327,6 +1327,36 @@ class StockItemListTest(StockAPITestCase):
             self.get(detail_url, {'consumed_by_detail': True}).data,
         )
 
+    def test_consumed_by_detail_export(self):
+        """Export consuming references only when requested and permitted."""
+        self.assignRole('build.view')
+        assembly = Part.objects.create(name='Export assembly', assembly=True)
+        build_order = build.models.Build.objects.create(part=assembly, quantity=1)
+        part = Part.objects.first()
+        parent = StockItem.objects.create(part=part, quantity=10)
+        consumed = StockItem.objects.create(
+            part=part, quantity=1, parent=parent, consumed_by=build_order
+        )
+        unconsumed = StockItem.objects.create(part=part, quantity=1, parent=parent)
+        filters = {'parent': parent.pk}
+        params = {**filters, 'consumed_by_detail': True}
+        header = 'Consumed By.Reference'
+
+        with self.export_data(self.list_url, params=params) as data_file:
+            rows = self.process_csv(data_file, required_cols=[header], required_rows=2)
+        records = {int(row['ID']): row for row in rows}
+        self.assertEqual(records[consumed.pk][header], build_order.reference)
+        self.assertEqual(records[unconsumed.pk][header], '')
+
+        for options in [filters, {**filters, 'consumed_by_detail': False}]:
+            with self.export_data(self.list_url, params=options) as data_file:
+                self.process_csv(data_file, excluded_cols=[header], required_rows=2)
+
+        self.clearRoles()
+        self.assignRole('stock.view')
+        with self.export_data(self.list_url, params=params) as data_file:
+            self.process_csv(data_file, excluded_cols=[header], required_rows=2)
+
     def test_consumed_by_detail_prefetch(self):
         """Optional details prefetch builds even without StockApiMixin annotations."""
         from stock.serializers import StockItemSerializer

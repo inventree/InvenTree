@@ -326,6 +326,7 @@ class StockItemSerializer(
     SKIP_CREATE_FIELDS = ['duplicate']
 
     export_child_fields = [
+        'consumed_by_detail.reference',
         'part_detail.name',
         'part_detail.description',
         'part_detail.IPN',
@@ -691,6 +692,7 @@ class StockItemSerializer(
     consumed_by_detail = OptionalField(
         serializer_class=BuildBriefSerializer,
         serializer_kwargs={
+            'label': _('Consumed By'),
             'source': 'consumed_by',
             'read_only': True,
             'allow_null': True,
