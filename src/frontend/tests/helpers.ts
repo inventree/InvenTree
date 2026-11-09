@@ -198,11 +198,15 @@ export const deletePart = async (name: string) => {
     .then((res) => res.json());
   const existingPart = parts.find((p: any) => p.name === name);
   if (existingPart) {
-    await api.patch(`part/${existingPart.pk}/`, {
-      data: { active: false }
+    // Parts must be inactive (and unlocked) before they can be deleted.
+    // Note: other tests may run concurrently against the same database
+    const patch = await api.patch(`part/${existingPart.pk}/`, {
+      data: { active: false, locked: false }
     });
+    expect(patch.status(), await patch.text()).toBe(200);
+
     const res = await api.delete(`part/${existingPart.pk}/`);
-    expect(res.status()).toBe(204);
+    expect(res.status(), await res.text()).toBe(204);
   }
 };
 

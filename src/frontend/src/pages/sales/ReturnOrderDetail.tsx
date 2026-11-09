@@ -213,7 +213,6 @@ export default function ReturnOrderDetail() {
     pk: order.pk,
     title: t`Edit Return Order`,
     fields: returnOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }

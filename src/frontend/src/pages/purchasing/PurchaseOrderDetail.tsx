@@ -98,7 +98,6 @@ export default function PurchaseOrderDetail() {
     pk: id,
     title: t`Edit Purchase Order`,
     fields: purchaseOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }
