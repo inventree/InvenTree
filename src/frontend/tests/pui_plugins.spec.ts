@@ -221,17 +221,20 @@ test('Plugins - Custom Admin', async ({ browser }) => {
     user: adminuser
   });
 
-  // Ensure that the SampleUI plugin is enabled
-  await setPluginState({
-    plugin: 'sampleui',
-    state: true
-  });
+  // Ensure that the SampleUI plugin is enabled, and open the plugin drawer.
+  // Note: other tests (running concurrently) may toggle this plugin,
+  // which reloads the plugin registry - so retry if required
+  await expect(async () => {
+    await setPluginState({
+      plugin: 'sampleui',
+      state: true
+    });
 
-  // Navigate to the "admin" page
-  await navigate(page, 'settings/admin/plugin/');
+    await navigate(page, 'settings/admin/plugin/');
+    await page.getByText('SampleUI').first().click({ timeout: 10000 });
+  }).toPass({ timeout: 60000 });
 
-  // Open the plugin drawer, and ensure that the custom admin elements are visible
-  await page.getByText('SampleUI').click();
+  // Ensure that the custom admin elements are visible
   await page.getByRole('button', { name: 'Plugin Information' }).click();
   await page
     .getByLabel('Plugin Detail')

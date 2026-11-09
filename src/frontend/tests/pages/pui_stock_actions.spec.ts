@@ -8,7 +8,7 @@
 
 import { createApi } from '../api.js';
 import { expect, generateUUID, test } from '../baseFixtures.js';
-import { loadTab, navigate } from '../helpers.js';
+import { navigate } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
 // Part "530470210" - a simple (non-trackable) part
@@ -90,18 +90,35 @@ test('Stock - Table Bulk Actions', async ({ browser }) => {
   // Wait for the filtered results to load
   await expect(panel.getByRole('cell', { name: batch })).toHaveCount(2);
 
+  const actionMenu = panel.getByLabel('action-menu-stock-actions');
+
   // Select the specified number of rows in the table
-  // Note: the table selection is reset after each stock operation
+  // Note: the table selection is reset (asynchronously) after each stock
+  // operation, when the table data is reloaded - so retry until it sticks
   const selectRows = async (count = 2) => {
-    await page.waitForTimeout(500);
-    await page.waitForLoadState('networkidle');
-    for (let idx = 1; idx <= count; idx++) {
-      await panel.getByLabel(`Select record ${idx}`, { exact: true }).check();
-    }
+    await expect(async () => {
+      // Wait for any modal (and its loading overlay) to close
+      await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 2000 });
+      await page.waitForLoadState('networkidle');
+
+      const boxes = [];
+      for (let idx = 1; idx <= count; idx++) {
+        const box = panel.getByLabel(`Select record ${idx}`, { exact: true });
+        await box.check({ timeout: 2000 });
+        boxes.push(box);
+      }
+
+      // Ensure that the selection is not cleared by a pending table reload
+      await page.waitForTimeout(500);
+      for (const box of boxes) {
+        await expect(box).toBeChecked({ timeout: 500 });
+      }
+      await expect(actionMenu).toBeEnabled({ timeout: 500 });
+    }).toPass({ timeout: 30000 });
   };
 
   const launch = async (action: string) => {
-    await panel.getByLabel('action-menu-stock-actions').click();
+    await actionMenu.click();
     await page.getByLabel(`action-menu-stock-actions-${action}`).click();
   };
 
@@ -179,18 +196,47 @@ test('Stock - Test Result Choices', async ({ browser }) => {
 
   try {
     // Serialized stock item for "Doohickey"
-    const page = await doCachedLogin(browser, { url: 'stock/item/409/' });
-    await loadTab(page, 'Test Results');
+    // Note: explicit timeouts are used so that any failure reports the
+    // offending step, rather than a generic test timeout
+    const page = await test.step('Open test results', async () => {
+      const page = await doCachedLogin(browser, { url: 'stock/item/409/' });
+      await page
+        .getByLabel(/panel-tabs-/)
+        .getByRole('tab', { name: 'Test Results' })
+        .click({ timeout: 15000 });
+      return page;
+    });
 
-    await page.getByLabel('action-button-add-test-result').click();
-    await page.getByLabel('related-field-template').fill(testName);
-    await page.getByRole('option', { name: new RegExp(testName) }).click();
+    await test.step('Select test template', async () => {
+      await page
+        .getByLabel('action-button-add-test-result')
+        .click({ timeout: 15000 });
 
-    // The "value" field is now a choice field
-    await page.getByLabel('choice-field-value').click();
-    await page.getByRole('option', { name: 'Retest' }).click();
-    await page.getByRole('button', { name: 'Submit' }).click();
-    await page.getByRole('cell', { name: 'Retest' }).first().waitFor();
+      const option = page.getByRole('option', { name: new RegExp(testName) });
+
+      // Retry the search, in case the first query is debounced away
+      await expect(async () => {
+        await page
+          .getByLabel('related-field-template')
+          .fill(testName, { timeout: 5000 });
+        await option.click({ timeout: 5000 });
+      }).toPass({ timeout: 30000 });
+    });
+
+    await test.step('Select choice value', async () => {
+      // The "value" field is now a choice field
+      await page.getByLabel('choice-field-value').click({ timeout: 10000 });
+      await page
+        .getByRole('option', { name: 'Retest' })
+        .click({ timeout: 10000 });
+      await page
+        .getByRole('button', { name: 'Submit' })
+        .click({ timeout: 10000 });
+      await page
+        .getByRole('cell', { name: 'Retest' })
+        .first()
+        .waitFor({ timeout: 15000 });
+    });
   } finally {
     await api.delete(`part/test-template/${template.pk}/`);
   }
