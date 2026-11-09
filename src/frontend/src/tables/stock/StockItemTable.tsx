@@ -97,15 +97,15 @@ function stockItemTableColumns({
     }),
     StatusColumn({ model: ModelType.stockitem }),
     {
-      accessor: 'consumed_by_reference',
+      accessor: 'consumed_by_detail.reference',
       title: t`Consumed By`,
       sortable: false,
       hidden: !showConsumedBy,
       render: (record: any) =>
-        record.consumed_by && record.consumed_by_reference ? (
+        record.consumed_by_detail ? (
           <RenderInlineModel
-            primary={record.consumed_by_reference}
-            url={getDetailUrl(ModelType.build, record.consumed_by)}
+            primary={record.consumed_by_detail.reference}
+            url={getDetailUrl(ModelType.build, record.consumed_by_detail.pk)}
             navigate={navigate}
           />
         ) : null
@@ -526,6 +526,7 @@ export function StockItemTable({
           modelType: ModelType.stockitem,
           params: {
             ...params,
+            ...(showConsumedBy ? { consumed_by_detail: true } : {}),
             part_detail: true,
             location_detail: true,
             supplier_part_detail: true

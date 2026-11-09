@@ -78,6 +78,17 @@ for (const savedFilter of [false, true]) {
 
       const unconsumedChild = children[builds.length];
       const page = await doCachedLogin(browser);
+      const childRequests: URL[] = [];
+      page.on('request', (request) => {
+        const url = new URL(request.url());
+        if (
+          request.method() === 'GET' &&
+          url.pathname === '/api/stock/' &&
+          url.searchParams.get('parent') === String(parent.pk)
+        ) {
+          childRequests.push(url);
+        }
+      });
 
       // Cover fresh table preferences and a previously saved in-stock filter.
       await page.evaluate((saved) => {
@@ -128,6 +139,13 @@ for (const savedFilter of [false, true]) {
           `/web/manufacturing/build-order/${build.pk}/`
         );
       }
+
+      expect(childRequests.length).toBeGreaterThan(0);
+      expect(
+        childRequests.every(
+          (url) => url.searchParams.get('consumed_by_detail') === 'true'
+        )
+      ).toBeTruthy();
 
       const unconsumed = page.getByRole('row').filter({
         has: page.getByRole('cell', {

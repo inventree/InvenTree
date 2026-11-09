@@ -1260,14 +1260,17 @@ class StockItemListTest(StockAPITestCase):
         self.assertIn(stock_1.pk, ids)
         self.assertIn(stock_2.pk, ids)
 
-    def test_consumed_by_reference(self):
-        """Child stock exposes nullable, read-only consuming build references."""
+    def test_consumed_by_detail(self):
+        """Consuming build details are optional, nullable, and read-only."""
+        self.assignRole('build.view')
         assembly = Part.objects.create(name='Reference assembly', assembly=True)
         part = Part.objects.first()
         parent = StockItem.objects.create(part=part, quantity=10)
         builds = [
-            build.models.Build.objects.create(part=assembly, quantity=1)
-            for _ in range(2)
+            build.models.Build.objects.create(
+                part=assembly, quantity=1, title=f'Consuming build {index}'
+            )
+            for index in range(2)
         ]
         consuming_builds = [*builds, None]
         children = [
@@ -1276,31 +1279,76 @@ class StockItemListTest(StockAPITestCase):
             )
             for build_order in consuming_builds
         ]
+        params = {'parent': parent.pk}
+        for options in [params, {**params, 'consumed_by_detail': False}]:
+            for record in self.get(self.list_url, options).data:
+                self.assertNotIn('consumed_by_detail', record)
+                self.assertNotIn('consumed_by_reference', record)
 
-        # Check references for consumed children and null for unconsumed stock.
-        response = self.get(self.list_url, {'parent': parent.pk})
+        response = self.get(self.list_url, {**params, 'consumed_by_detail': True})
         records = {item['pk']: item for item in response.data}
         self.assertEqual(set(records), {item.pk for item in children})
         for item, build_order in zip(children, consuming_builds, strict=True):
+            detail = records[item.pk]['consumed_by_detail']
             self.assertEqual(
                 records[item.pk]['consumed_by'], build_order.pk if build_order else None
             )
-            self.assertEqual(
-                records[item.pk]['consumed_by_reference'],
-                build_order.reference if build_order else None,
-            )
+            if build_order:
+                self.assertEqual(detail['pk'], build_order.pk)
+                self.assertEqual(detail['reference'], build_order.reference)
+                self.assertEqual(detail['title'], build_order.title)
+                self.assertEqual(detail['status'], build_order.status)
+            else:
+                self.assertIsNone(detail)
 
         detail_url = reverse('api-stock-detail', kwargs={'pk': children[0].pk})
-        detail = self.get(detail_url)
-        self.assertEqual(detail.data['consumed_by_reference'], builds[0].reference)
+        self.assertNotIn('consumed_by_detail', self.get(detail_url).data)
+        detail = self.get(detail_url, {'consumed_by_detail': True}).data
+        self.assertEqual(detail['consumed_by_detail']['reference'], builds[0].reference)
 
-        # The display-only field must not modify the associated build.
         original_reference = builds[0].reference
-        self.patch(detail_url, {'consumed_by_reference': 'Cannot overwrite'})
+        self.patch(
+            detail_url, {'consumed_by_detail': {'reference': 'Cannot overwrite'}}
+        )
         builds[0].refresh_from_db()
         self.assertEqual(builds[0].reference, original_reference)
         self.assertEqual(
-            self.get(detail_url).data['consumed_by_reference'], builds[0].reference
+            StockItem.objects.get(pk=children[0].pk).consumed_by_id, builds[0].pk
+        )
+
+        # Requesting the field must not bypass build view permissions.
+        self.clearRoles()
+        self.assignRole('stock.view')
+        response = self.get(self.list_url, {**params, 'consumed_by_detail': True})
+        for record in response.data:
+            self.assertNotIn('consumed_by_detail', record)
+        self.assertNotIn(
+            'consumed_by_detail',
+            self.get(detail_url, {'consumed_by_detail': True}).data,
+        )
+
+    def test_consumed_by_detail_prefetch(self):
+        """Optional details prefetch builds even without StockApiMixin annotations."""
+        from stock.serializers import StockItemSerializer
+
+        assembly = Part.objects.create(name='Prefetch assembly', assembly=True)
+        builds = [
+            build.models.Build.objects.create(part=assembly, quantity=1)
+            for _ in range(10)
+        ]
+        items = StockItem.objects.bulk_create([
+            StockItem(part=assembly, quantity=1, consumed_by=build_order)
+            for build_order in builds
+        ])
+        queryset = StockItem.objects.filter(pk__in=[item.pk for item in items])
+        serializer = StockItemSerializer(consumed_by_detail=True)
+        self.assertIn('consumed_by', serializer.prefetch_list)
+        self.assertNotIn('consumed_by', StockItemSerializer().prefetch_list)
+        with self.assertNumQueries(2):
+            prefetched = list(serializer.prefetch_queryset(queryset))
+            references = [item.consumed_by.reference for item in prefetched]
+        self.assertCountEqual(
+            references, [build_order.reference for build_order in builds]
         )
 
     def test_query_count(self):
@@ -1319,6 +1367,9 @@ class StockItemListTest(StockAPITestCase):
             for bo in builds
             for _ in range(10)
         ])
+
+        self.assignRole('build.view')
+        self.get(self.list_url, {'consumed_by_detail': True}, max_query_count=35)
 
         # List *all* stock items
         self.get(self.list_url, {}, max_query_count=35)
@@ -2136,6 +2187,7 @@ class StockItemTest(StockAPITestCase):
 
     def test_output_options(self):
         """Test the output options for StockItemt detail."""
+        self.assignRole('build.view')
         self.run_output_test(
             reverse('api-stock-detail', kwargs={'pk': 1}),
             [
@@ -2144,6 +2196,7 @@ class StockItemTest(StockAPITestCase):
                 'supplier_part_detail',
                 'location_detail',
                 'tests',
+                'consumed_by_detail',
             ],
         )
 

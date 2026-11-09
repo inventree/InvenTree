@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 572
 INVENTREE_API_TEXT = """
 
 v572 -> 2026-11-06 : https://github.com/inventree/InvenTree/pull/13208
-    - Adds read-only "consumed_by_reference" to the StockItem API
+    - Adds optional read-only "consumed_by_detail" to the StockItem API
 
 v571 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13166
     - Adds "exclude_from_stock" field and filter to the StockLocation API endpoint
