@@ -306,6 +306,20 @@ test('Sales Orders - Shipments - Tags', async ({ browser }) => {
   await page.getByRole('button', { name: 'apply-tags-filter' }).click();
   await page.getByRole('button', { name: 'filter-drawer-close' }).click();
 
+  // Edit a shipment from the table (not the detail page)
+  // Existing tags must be pre-filled in the edit form (ref: #13224)
+  await clickOnRowMenu(page.getByRole('cell', { name: 'SO0008' }));
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  const dialog = page.getByRole('dialog');
+  await expect(
+    dialog.getByRole('combobox', { name: 'tags-field-tags' })
+  ).toBeVisible();
+  await expect(
+    dialog.getByText('Requires Payment', { exact: true })
+  ).toBeVisible();
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+
   // Click through to one of the selected shipments
   await page.getByRole('cell', { name: 'SO0007' }).click();
   await page.getByText('Sales Order: SO0007').first().waitFor();
