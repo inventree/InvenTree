@@ -84,9 +84,20 @@ test('Plugins - User Settings', async ({ browser }) => {
   await page.getByText('User Setting 3').waitFor();
 
   // Check for expected setting options
-  await page.getByLabel('edit-setting-USER_SETTING_3').click();
+  // Note: the settings list may re-render (e.g. if the plugin registry reloads
+  // due to concurrent tests), so retry until the edit modal is displayed
+  const choiceField = page.getByLabel('choice-field-value');
 
-  const val = await page.getByLabel('choice-field-value').inputValue();
+  await expect(async () => {
+    if (!(await choiceField.isVisible())) {
+      await page
+        .getByLabel('edit-setting-USER_SETTING_3')
+        .click({ timeout: 5000 });
+    }
+    await expect(choiceField).toBeVisible({ timeout: 5000 });
+  }).toPass({ timeout: 45000 });
+
+  const val = await choiceField.inputValue();
 
   await page.getByLabel('choice-field-value').click();
 

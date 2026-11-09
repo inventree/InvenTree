@@ -65,7 +65,13 @@ const reauthenticate = async (page: Page, password: string) => {
   }
 };
 
-test('Login - MFA - WebAuthn', async ({ page }) => {
+test('Login - MFA - WebAuthn', async ({ page, browserName }) => {
+  // The virtual authenticator requires the Chrome DevTools Protocol
+  test.skip(
+    browserName !== 'chromium',
+    'WebAuthn virtual authenticator is only available in Chromium'
+  );
+
   const username = `pw-webauthn-${generateUUID().slice(0, 6)}`;
   const password = `Pw-${generateUUID()}`;
   const userId = await createUser(username, password);
