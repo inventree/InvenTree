@@ -20,13 +20,22 @@ import invoke
 from invoke import Collection, task
 from invoke.exceptions import Exit, UnexpectedExit
 
+try:
+    import structlog
+
+    logger = structlog.get_logger('inventree')
+except ImportError:
+    import logging
+
+    logger = logging.getLogger('inventree')
+
 
 def safe_value(fnc):
     """Helper function to safely get value from function, catching import exceptions."""
     try:
         return fnc()
     except (ModuleNotFoundError, ImportError):
-        return wrap_color('N/A', '93')  # Yellow color for "Not Available"
+        return wrap_color('N/A', 93)  # Yellow color for "Not Available"
 
 
 def is_true(x):
@@ -167,28 +176,36 @@ def wrap_color(text: str, color: str) -> str:
     return f'\033[{color}m{text}\033[0m'
 
 
+JSON_LOG = os.environ.get('INVENTREE_JSON_LOG', 'false').lower() == 'true'
+COLOR_MAP = {92: 20, 91: 40, 93: 30, 94: 20}
+
+
+def _structured_logging(color: int, *args):
+    msg = ' '.join(map(str, args))
+    if JSON_LOG:
+        logger.log(COLOR_MAP.get(color, 10), msg)
+    else:
+        print(wrap_color(msg, str(color)))
+
+
 def success(*args):
     """Print a success message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '92'))
+    _structured_logging(92, *args)
 
 
 def error(*args):
     """Print an error message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '91'))
+    _structured_logging(91, *args)
 
 
 def warning(*args):
     """Print a warning message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '93'))
+    _structured_logging(93, *args)
 
 
 def info(*args):
     """Print an informational message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '94'))
+    _structured_logging(94, *args)
 
 
 def state_logger(fn=None, method_name=None):
