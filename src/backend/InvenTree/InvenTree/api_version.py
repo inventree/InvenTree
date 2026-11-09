@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 574
 INVENTREE_API_TEXT = """
 
 v574 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13169
-    - breaking: Basic authentication is disabled by default - re-enable with INVENTREE_BASIC_AUTH_ENABLED
+    - breaking: Basic authentication can now be disabled - controlled with INVENTREE_BASIC_AUTH_ENABLED
 
 v573 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13221
     - Mark audit log changes_detail field as nullable

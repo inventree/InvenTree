@@ -453,7 +453,7 @@ InvenTree provides allowance for additional sign-in options. The following optio
 {{ configsetting("INVENTREE_MFA_ENABLED") }} Enable multi-factor authentication support for the InvenTree server |
 {{ configsetting("INVENTREE_MFA_SUPPORTED_TYPES") }} List of supported multi-factor authentication types |
 {{ configsetting("INVENTREE_USE_JWT") }} Enable support for JSON Web Tokens (JWT) for authentication |
-{{ configsetting("INVENTREE_BASIC_AUTH_ENABLED") }} Enable basic (username:password) authentication against the API. See [Basic Auth](../api/index.md#basic-auth) |
+{{ configsetting("INVENTREE_BASIC_AUTH_ENABLED") }} Enable/Disable basic (username:password) authentication against the API. See [Basic Auth](../api/index.md#basic-auth) |
 
 ### Single Sign On
 

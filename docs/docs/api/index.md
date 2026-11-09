@@ -49,8 +49,8 @@ Token authentication is recommended as it provides much faster API access and is
 
 Users can authenticate against the API using basic authentication - specifically a valid combination of `username` and `password` credentials.
 
-!!! warning "Disabled by default"
-    Basic authentication is disabled by default. It can be re-enabled by setting `INVENTREE_BASIC_AUTH_ENABLED` (or `basic_auth_enabled` in the [configuration file](../start/config.md#authentication)) to `True`. A warning ([INVE-W18](../settings/error_codes.md#inve-w18)) is logged and shown to staff users while it is enabled.
+!!! warning "Can be disabled"
+    Basic authentication can be disabled. This is controlled by the setting `INVENTREE_BASIC_AUTH_ENABLED` (or `basic_auth_enabled` in the [configuration file](../start/config.md#authentication)) to `False`. A warning ([INVE-W18](../settings/error_codes.md#inve-w18)) is logged and shown to staff users while it is enabled.
 
 
 Basic authentication attempts might run into rate limits during authentication on busy instances, as this is a likely place of attacks. Prefer Token or OAuth2 authentication instead.

@@ -587,7 +587,7 @@ TEMPLATES = [
 
 # Basic (username:password) authentication against the API - disabled by default
 BASIC_AUTH_ENABLED = get_boolean_setting(
-    'INVENTREE_BASIC_AUTH_ENABLED', 'basic_auth_enabled', False
+    'INVENTREE_BASIC_AUTH_ENABLED', 'basic_auth_enabled', True
 )
 if BASIC_AUTH_ENABLED:
     logger.warning(
