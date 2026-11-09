@@ -128,6 +128,13 @@ An InvenTree process (web server or background worker) reloaded its plugins, but
 
 The affected process stops reloading its plugins to prevent an endless reload loop. Restart all InvenTree server and background worker processes to resolve this error. See [reloading plugins](../plugins/install.md#reloading-plugins) for further information.
 
+#### INVE-E21
+**API token pepper misconfigured - Backend**
+
+The InvenTree server failed to start, because the pepper file configured via `INVENTREE_API_TOKEN_PEPPER_FILE` (or `api_token_pepper_file`) does not exist or is not accessible.
+
+Fix the configuration or remove the setting.
+
 ## Warning Codes
 
 ### INVE-W (InvenTree Warning)
@@ -273,6 +280,20 @@ Password authentication is not allowed if the user has MFA enabled or if MFA is 
 The `middleware` or `authentication_backends` list provided in the configuration file includes a class which is not supported, as it would bypass security checks.
 
 The class has been removed automatically. To remove this warning, remove it from the list in your configuration file.
+
+#### INVE-W22
+**No API token pepper configured - Backend**
+
+No pepper for secure API token generation is configured, so `SECRET_KEY` is used instead. This makes key rotation hard and is not recommended.
+
+Set `INVENTREE_API_TOKEN_PEPPER` (or `INVENTREE_API_TOKEN_PEPPER_FILE`) - see [API token pepper settings](../start/config.md#api-token-pepper). Tokens issued with the secret key remain valid.
+
+#### INVE-W23
+**API token issued with unknown pepper - Backend**
+
+An API token was used that was issued with a pepper which is no longer configured or unknown. The token was rejected.
+
+This usually happens after the primary pepper was changed without adding the previous pepper to `INVENTREE_API_TOKEN_PEPPER_ADDITIONAL` - see the [API token pepper settings](../start/config.md#api-token-pepper). Either re-add the previous pepper or stop using old tokens.
 
 
 ### INVE-I (InvenTree Information)
