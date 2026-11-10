@@ -27,18 +27,75 @@ ACTION_MAP = {
 }
 
 
+class PermissionModelNotFoundError(AttributeError):
+    """Raised when the 'model' for an API view cannot be determined.
+
+    Subclasses AttributeError for backwards compatibility with existing callers.
+    """
+
+
+def _get_serializer_model(serializer_class):
+    """Return the Meta.model attribute of a serializer class (or None)."""
+    meta = getattr(serializer_class, 'Meta', None)
+    return getattr(meta, 'model', None)
+
+
 def get_model_for_view(view):
-    """Attempt to introspect the 'model' type for an API view."""
+    """Attempt to introspect the 'model' type for an API view.
+
+    The model is determined (in order of priority) by:
+
+    1. The view's get_permission_model() method (which may return None to explicitly opt out)
+    2. The view's serializer_class.Meta.model attribute
+    3. The view's get_serializer_class().Meta.model attribute
+
+    Raises:
+        PermissionModelNotFoundError: If the model cannot be determined
+    """
     if hasattr(view, 'get_permission_model'):
         return view.get_permission_model()
 
-    if hasattr(view, 'serializer_class'):
-        return view.serializer_class.Meta.model
+    if model := _get_serializer_model(getattr(view, 'serializer_class', None)):
+        return model
 
     if hasattr(view, 'get_serializer_class'):
-        return view.get_serializer_class().Meta.model
+        try:
+            serializer_class = view.get_serializer_class()
+        except (AssertionError, AttributeError):
+            # DRF asserts that serializer_class is set if get_serializer_class is not overridden
+            serializer_class = None
 
-    raise AttributeError(f'Serializer class not specified for {view.__class__}')
+        if model := _get_serializer_model(serializer_class):
+            return model
+
+    raise PermissionModelNotFoundError(
+        f'Cannot determine permission model for {view.__class__.__name__}'
+    )
+
+
+def get_queryset_model_for_view(view):
+    """Return the model of the queryset associated with an API view (or None).
+
+    This is the same model as is checked by the ModelPermission class.
+    """
+    queryset = getattr(view, '_cached_queryset', None)
+
+    if queryset is None:
+        queryset = getattr(view, 'queryset', None)
+
+    return getattr(queryset, 'model', None)
+
+
+def split_role_required(role: str, permission: str) -> tuple[str, str]:
+    """Split a 'role_required' value into (role, permission).
+
+    The role may be specified as 'role' or 'role.permission'.
+    If no permission is specified, the provided default permission is returned.
+    """
+    if '.' in role:
+        role, permission = role.split('.', 1)
+
+    return role, permission
 
 
 def get_roles_for_view(view) -> list[str]:
@@ -47,7 +104,7 @@ def get_roles_for_view(view) -> list[str]:
         model = get_model_for_view(view)
     except Exception:
         # Fall back to the model of the queryset (as checked by ModelPermission)
-        model = getattr(getattr(view, 'queryset', None), 'model', None)
+        model = get_queryset_model_for_view(view)
 
     if model is None:
         return []
@@ -179,7 +236,7 @@ class InvenTreeRoleScopeMixin(OASTokenMixin):
         # The required role may be defined for the view class (see RolePermission)
         if role := getattr(view, 'role_required', None):
             if '.' in role:
-                role, permission = role.split('.')
+                role, permission = split_role_required(role, '')
                 return map_scope(roles=[role], override_all_actions=permission)
             return map_scope(roles=[role])
 
@@ -272,22 +329,29 @@ class RolePermission(InvenTreeRoleScopeMixin, permissions.BasePermission):
         # The required role may be defined for the view class
         if role := getattr(view, 'role_required', None):
             # If the role is specified as "role.permission", split it
-            if '.' in role:
-                role, permission = role.split('.')
-
+            role, permission = split_role_required(role, permission)
             return users.permissions.check_user_role(user, role, permission)
 
         try:
             # Extract the model name associated with this request
             model = get_model_for_view(view)
-
-            if model is None:
+        except PermissionModelNotFoundError:
+            # The model cannot be determined from the view or serializer
+            # (e.g. a plain Serializer without a Meta.model attribute)
+            if request.method in permissions.SAFE_METHODS:
                 return True
 
-        except AttributeError:
-            # We will assume that if the serializer class does *not* have a Meta,
-            # then we don't need a permission
-            return True
+            # For write operations, fall back to the queryset model
+            # (as checked by ModelPermission), and fail closed if not found
+            model = get_queryset_model_for_view(view)
+
+            if model is None:
+                return False
+        else:
+            if model is None:
+                # The view has explicitly opted out of model permissions,
+                # via get_permission_model() returning None
+                return True
 
         return users.permissions.check_user_permission(user, model, permission)
 

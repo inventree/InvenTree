@@ -109,7 +109,12 @@ class InvenTreeMetadata(SimpleMetadata):
         try:
             # Extract the model name associated with the view
             self.model = InvenTree.permissions.get_model_for_view(view)
+        except InvenTree.permissions.PermissionModelNotFoundError:
+            # No model can be determined for this view (e.g. a plain Serializer without Meta.model)
+            # Actions have already been filtered by the view's permission classes (see determine_actions)
+            self.model = None
 
+        if self.model is not None:
             # Construct the 'table name' from the model
             tbl_label = self.model._meta.model_name
             metadata['model'] = tbl_label
@@ -129,12 +134,22 @@ class InvenTreeMetadata(SimpleMetadata):
             # The view may define a custom role requirement
             role_required = getattr(view, 'role_required', None)
 
+            def check_role_required(permission: str) -> bool:
+                """Check the 'role_required' attribute of the view (if provided)."""
+                if not role_required:
+                    return False
+
+                role, perm = InvenTree.permissions.split_role_required(
+                    role_required, permission
+                )
+                return check_user_role(user, role, perm)
+
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
                 # general model / role permission
-                result = check_user_permission(user, self.model, permission) or (
-                    role_required and check_user_role(user, role_required, permission)
-                )
+                result = check_user_permission(
+                    user, self.model, permission
+                ) or check_role_required(permission)
 
                 # check if simple IsAuthenticated permission class is used
                 if not result:
@@ -156,17 +171,12 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Add a 'DELETE' action if we are allowed to delete
             if 'DELETE' in view.allowed_methods:
-                if check_user_permission(user, self.model, 'delete') or (
-                    role_required and check_user_role(user, role_required, 'delete')
-                ):
+                if check_user_permission(
+                    user, self.model, 'delete'
+                ) or check_role_required('delete'):
                     actions['DELETE'] = {}
 
             metadata['actions'] = actions
-
-        except AttributeError:
-            # We will assume that if the serializer class does *not* have a Meta
-            # then we don't need a permission
-            pass
 
         if filters := self.get_filter_metadata(request, view):
             metadata['filters'] = filters

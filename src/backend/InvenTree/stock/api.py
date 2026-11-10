@@ -226,6 +226,7 @@ class StockAdjustView(CreateAPI):
     """
 
     queryset = StockItem.objects.none()
+    role_required = 'stock.change'
 
     def get_serializer_context(self):
         """Extend serializer context."""
@@ -280,6 +281,7 @@ class StockAssign(CreateAPI):
     """API endpoint for assigning stock to a particular customer."""
 
     queryset = StockItem.objects.all()
+    role_required = 'stock.change'
     serializer_class = StockSerializers.StockAssignmentSerializer
 
     def get_serializer_context(self):
@@ -294,6 +296,7 @@ class StockMerge(CreateAPI):
     """API endpoint for merging multiple stock items."""
 
     queryset = StockItem.objects.none()
+    role_required = 'stock.change'
     serializer_class = StockSerializers.StockMergeSerializer
 
     def get_serializer_context(self):
