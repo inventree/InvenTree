@@ -156,6 +156,13 @@ export function getAlerts(
       code: 'INVE-W16',
       message: t`CORS is set to allow all origins.`,
       condition: server?.system_state?.cors_allow_all || false
+    },
+    {
+      key: 'basic_auth',
+      title: t`Basic Authentication`,
+      code: 'INVE-W18',
+      message: t`Basic (username:password) authentication is enabled for the API.`,
+      condition: server?.system_state?.basic_auth_enabled || false
     }
   ];
 
