@@ -165,6 +165,87 @@ for role, tables in roles.items():
         precalculated_roles[table].append(role)
 
 
+def is_oauth2_request(request) -> bool:
+    """Return True if the request was authenticated using an OAuth2 access token."""
+    # Note: Authentication errors are not caught here, so the check cannot "fail open"
+    authenticator = getattr(request, 'successful_authenticator', None)
+
+    return isinstance(authenticator, OAuth2Authentication)
+
+
+def request_has_scope(request, scope: str) -> bool:
+    """Check that the OAuth2 token of a request holds the provided scope.
+
+    Requests which are not authenticated via OAuth2 are not restricted by scopes.
+    """
+    if not is_oauth2_request(request):
+        return True
+
+    token = getattr(request, 'auth', None)
+
+    return hasattr(token, 'is_valid') and bool(token.is_valid([scope]))
+
+
+def check_request_role(request, role: str, permission: str, groups=None) -> bool:
+    """Check if the requesting user has a particular role:permission combination.
+
+    In addition to the user's roles, an OAuth2 token must hold the matching role scope.
+    Use this (instead of users.permissions.check_user_role) for permission checks
+    performed within an API view or serializer, which are not covered by the
+    scopes required by the view's permission classes.
+
+    Arguments:
+        request: The API request object
+        role: The role to check (e.g. 'part' / 'stock')
+        permission: The permission to check (e.g. 'view' / 'delete')
+        groups: Optional cached queryset of groups to check
+    """
+    user = getattr(request, 'user', None)
+
+    if not users.permissions.check_user_role(user, role, permission, groups=groups):
+        return False
+
+    return request_has_scope(request, get_granular_scope(permission, role))
+
+
+def check_request_permission(request, model, permission: str, groups=None) -> bool:
+    """Check if the requesting user has a particular permission against a given model type.
+
+    In addition to the user's permissions, an OAuth2 token must hold the role scope
+    for (at least) one of the roles which grant the permission against the model.
+    Use this (instead of users.permissions.check_user_permission) for permission checks
+    performed within an API view or serializer, which are not covered by the
+    scopes required by the view's permission classes.
+
+    Arguments:
+        request: The API request object
+        model: The model class (or instance) to check
+        permission: The permission to check (e.g. 'view' / 'delete')
+        groups: Optional cached queryset of groups to check
+    """
+    user = getattr(request, 'user', None)
+
+    if not users.permissions.check_user_permission(
+        user, model, permission, groups=groups
+    ):
+        return False
+
+    if not is_oauth2_request(request):
+        return True
+
+    table_name = f'{model._meta.app_label}_{model._meta.model_name}'
+
+    if table_name in users.ruleset.get_ruleset_ignore():
+        # No role is associated with this model - covered by the view's general scopes
+        return True
+
+    return any(
+        users.permissions.check_user_role(user, role, permission, groups=groups)
+        and request_has_scope(request, get_granular_scope(permission, role))
+        for role in precalculated_roles.get(table_name, [])
+    )
+
+
 def enforce_oauth2_scopes(has_permission):
     """Decorate a `has_permission` method, so that OAuth2 tokens must hold the required scopes.
 
@@ -217,12 +298,10 @@ class OASTokenMixin:
 
     def is_oauth2ed(self, request):
         """Check if the user is authenticated using OAuth2."""
-        oauth2authenticated = False
-        if bool(request.user and request.user.is_authenticated):
-            oauth2authenticated = isinstance(
-                request.successful_authenticator, OAuth2Authentication
-            )
-        return oauth2authenticated
+        if not bool(request.user and request.user.is_authenticated):
+            return False
+
+        return is_oauth2_request(request)
 
 
 class InvenTreeRoleScopeMixin(OASTokenMixin):
@@ -590,7 +669,7 @@ class DataImporterPermission(OASTokenMixin, permissions.BasePermission):
             session = getattr(obj, 'session', None)
 
         if session:
-            return session.check_import_permission(request.user)
+            return session.check_import_permission(request.user, request=request)
 
         return True
 

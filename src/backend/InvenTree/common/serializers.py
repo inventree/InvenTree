@@ -855,7 +855,8 @@ class AttachmentSerializer(
             model_type = self.instance.model_type
 
         # Ensure that the user has permission to attach files to the specified model
-        user = self.context.get('request').user
+        request = self.context.get('request')
+        user = request.user
 
         target_model_class = common.validators.attachment_model_class_from_label(
             model_type
@@ -869,13 +870,19 @@ class AttachmentSerializer(
             _(
                 'User does not have permission to create or edit attachments for this model'
             ),
+            request=request,
         )
 
         return super().save(**kwargs)
 
 
 def check_model_change_permission(
-    user, target_model_class, mixin_class, invalid_model_msg, permission_error_msg
+    user,
+    target_model_class,
+    mixin_class,
+    invalid_model_msg,
+    permission_error_msg,
+    request=None,
 ):
     """Ensure a user has 'change' permission against a generic-relation target model.
 
@@ -885,22 +892,30 @@ def check_model_change_permission(
     case; only the mixin class and the (separately translated, so callers keep
     full-sentence translator context) error messages differ.
 
+    If the request is provided, an OAuth2 token must also hold the matching role scope.
+
     Raises PermissionDenied if the model class is invalid, or the user lacks
     permission.
     """
+    from InvenTree.permissions import check_request_permission
     from users.permissions import check_user_permission
 
     if not target_model_class or not issubclass(target_model_class, mixin_class):
         raise PermissionDenied(invalid_model_msg)
 
-    if not check_user_permission(user, target_model_class, 'change'):
+    if request is not None:
+        allowed = check_request_permission(request, target_model_class, 'change')
+    else:
+        allowed = check_user_permission(user, target_model_class, 'change')
+
+    if not allowed:
         raise PermissionDenied(permission_error_msg)
 
     if not target_model_class.check_related_permission('change', user):
         raise PermissionDenied(permission_error_msg)
 
 
-def check_note_change_permission(user, *, template, model_type):
+def check_note_change_permission(user, *, template, model_type, request=None):
     """Check whether a user is permitted to create, edit or delete a note.
 
     Shared between NoteSerializer.save() (create/update) and NoteDetail's
@@ -924,6 +939,7 @@ def check_note_change_permission(user, *, template, model_type):
         InvenTreeNoteMixin,
         _('Invalid model type specified for note'),
         _('User does not have permission to create or edit notes for this model'),
+        request=request,
     )
 
 
@@ -978,7 +994,8 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
 
     def save(self, **kwargs):
         """Save the Note instance."""
-        user = self.context.get('request').user
+        request = self.context.get('request')
+        user = request.user
         is_template = self.validated_data.get(
             'template', getattr(self.instance, 'template', False)
         )
@@ -986,7 +1003,9 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             self.instance and self.instance.model_type
         )
 
-        check_note_change_permission(user, template=is_template, model_type=model_type)
+        check_note_change_permission(
+            user, template=is_template, model_type=model_type, request=request
+        )
 
         return super().save(updated_by=user, **kwargs)
 
@@ -1086,7 +1105,8 @@ class ParameterSerializer(
             model_type = self.instance.model_type
 
         # Ensure that the user has permission to modify parameters for the specified model
-        user = self.context.get('request').user
+        request = self.context.get('request')
+        user = request.user
 
         target_model_class = model_type.model_class()
 
@@ -1098,6 +1118,7 @@ class ParameterSerializer(
             _(
                 'User does not have permission to create or edit parameters for this model'
             ),
+            request=request,
         )
 
         instance = super().save(updated_by=user, **kwargs)

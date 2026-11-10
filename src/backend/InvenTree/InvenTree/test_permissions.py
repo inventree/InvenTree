@@ -5,9 +5,11 @@ not define a Meta.model attribute (e.g. "action" endpoints which use a plain Ser
 which previously caused the RolePermission check to "fail open".
 """
 
+from django.contrib.admin.models import LogEntry
 from django.contrib.auth.models import Group, User
 from django.urls import URLPattern, URLResolver, get_resolver
 
+from oauth2_provider.contrib.rest_framework.authentication import OAuth2Authentication
 from rest_framework import serializers
 from rest_framework.request import ForcedAuthentication, Request
 from rest_framework.settings import api_settings
@@ -266,6 +268,146 @@ class RolePermissionTest(InvenTreeTestCase):
 
         self.assignRole('stock.add')
         self.assertTrue(self.check(View, 'POST'))
+
+
+class StubToken:
+    """Stub OAuth2 access token, holding a set of scopes."""
+
+    def __init__(self, scopes: str):
+        """Store the provided (space separated) scopes."""
+        self.scopes = set(scopes.split())
+
+    def is_valid(self, scopes) -> bool:
+        """Mimic AccessToken.is_valid: all provided scopes must be held."""
+        return set(scopes).issubset(self.scopes)
+
+
+class StubRequest:
+    """Stub request object, optionally authenticated via an OAuth2 token."""
+
+    def __init__(self, user, scopes: str | None = None):
+        """Construct the request - if scopes are provided, it is an OAuth2 request."""
+        self.user = user
+
+        if scopes is None:
+            self.successful_authenticator = None
+            self.auth = None
+        else:
+            self.successful_authenticator = OAuth2Authentication()
+            self.auth = StubToken(scopes)
+
+
+class RequestScopeTest(InvenTreeTestCase):
+    """Unit tests for the check_request_role and check_request_permission helpers.
+
+    These checks are used within API views / serializers, and must take
+    the scopes of an OAuth2 token into account (in addition to the user roles).
+    """
+
+    roles = ['admin.view']
+
+    def test_is_oauth2_request(self):
+        """Test detection of OAuth2 requests."""
+        self.assertFalse(permissions.is_oauth2_request(StubRequest(self.user)))
+        self.assertTrue(permissions.is_oauth2_request(StubRequest(self.user, '')))
+
+        # Objects without an authenticator (e.g. a plain Django request)
+        self.assertFalse(permissions.is_oauth2_request(object()))
+
+    def test_check_request_role(self):
+        """Test the check_request_role helper."""
+        # The user does not have the role
+        for request in [
+            StubRequest(self.user),
+            StubRequest(self.user, 'r:change:admin'),
+        ]:
+            self.assertFalse(permissions.check_request_role(request, 'admin', 'change'))
+
+        self.assignRole('admin.change')
+
+        # Not an OAuth2 request - user roles only
+        self.assertTrue(
+            permissions.check_request_role(StubRequest(self.user), 'admin', 'change')
+        )
+
+        # OAuth2 request - the token must also hold the role scope
+        for scopes, result in [
+            ('', False),
+            ('g:read g:write', False),
+            ('r:view:admin', False),
+            ('r:change:stock', False),
+            ('r:change:admin', True),
+        ]:
+            self.assertEqual(
+                permissions.check_request_role(
+                    StubRequest(self.user, scopes), 'admin', 'change'
+                ),
+                result,
+                scopes,
+            )
+
+    def test_check_request_permission(self):
+        """Test the check_request_permission helper."""
+        self.assertFalse(
+            permissions.check_request_permission(
+                StubRequest(self.user, 'r:change:admin'), Group, 'change'
+            )
+        )
+
+        self.assignRole('admin.change')
+
+        self.assertTrue(
+            permissions.check_request_permission(
+                StubRequest(self.user), Group, 'change'
+            )
+        )
+
+        for scopes, result in [
+            ('g:write', False),
+            ('r:view:admin', False),
+            ('r:change:admin', True),
+        ]:
+            self.assertEqual(
+                permissions.check_request_permission(
+                    StubRequest(self.user, scopes), Group, 'change'
+                ),
+                result,
+                scopes,
+            )
+
+        # Model instances are also accepted
+        self.assertTrue(
+            permissions.check_request_permission(
+                StubRequest(self.user, 'r:change:admin'), self.group, 'change'
+            )
+        )
+
+    def test_ignored_model(self):
+        """Models without a role are covered by the general scopes of the view."""
+        self.assertTrue(
+            permissions.check_request_permission(
+                StubRequest(self.user, 'g:write'), LogEntry, 'change'
+            )
+        )
+
+    def test_superuser(self):
+        """A superuser token must still hold the role scope."""
+        self.user.is_superuser = True
+        self.user.save()
+
+        self.assertTrue(
+            permissions.check_request_role(StubRequest(self.user), 'admin', 'delete')
+        )
+        self.assertFalse(
+            permissions.check_request_role(
+                StubRequest(self.user, 'a:superuser'), 'admin', 'delete'
+            )
+        )
+        self.assertTrue(
+            permissions.check_request_role(
+                StubRequest(self.user, 'r:delete:admin'), 'admin', 'delete'
+            )
+        )
 
 
 def get_api_views():

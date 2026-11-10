@@ -33,6 +33,7 @@ from InvenTree.unit_test import (
     AdminTestCase,
     InvenTreeAPITestCase,
     InvenTreeTestCase,
+    OAuth2TestMixin,
     PluginMixin,
     addUserPermission,
 )
@@ -2755,3 +2756,38 @@ class AdminTest(AdminTestCase):
             model=Attachment,
             model_kwargs={'link': 'https://aa.example.org', 'model_id': 1},
         )
+
+
+class ParameterOAuth2ScopeTest(OAuth2TestMixin, InvenTreeAPITestCase):
+    """OAuth2 scope tests for the Parameter API.
+
+    The Parameter endpoints require the general 'g:write' scope, but writing a
+    parameter against a model must also require the role scope for that model.
+    """
+
+    fixtures = ['category', 'part', 'location']
+
+    roles = ['part.view', 'part.change']
+
+    def test_create_requires_role_scope(self):
+        """Creating a parameter against a Part requires the 'r:change:part' scope."""
+        part = Part.objects.get(pk=1)
+        template = ParameterTemplate.objects.create(name='oauth2_scope_test')
+        url = reverse('api-parameter-list')
+
+        data = {
+            'model_id': part.pk,
+            'model_type': 'part.part',
+            'template': template.pk,
+            'data': 'abc',
+        }
+
+        # The general write scope is not sufficient
+        token = self.get_oauth2_token('g:read g:write')
+        self.oauth2_post(token, url, data, expected_code=403)
+        self.assertFalse(part.parameters_list.filter(template=template).exists())
+
+        # The token must also hold the role scope for the target model
+        token = self.get_oauth2_token('g:read g:write r:change:part')
+        self.oauth2_post(token, url, data, expected_code=201)
+        self.assertTrue(part.parameters_list.filter(template=template).exists())

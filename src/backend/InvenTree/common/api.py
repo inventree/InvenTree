@@ -546,7 +546,10 @@ class NotesImageList(ListCreateAPI):
         note = serializer.validated_data['note']
 
         common.serializers.check_note_change_permission(
-            self.request.user, template=note.template, model_type=note.model_type
+            self.request.user,
+            template=note.template,
+            model_type=note.model_type,
+            request=self.request,
         )
 
         serializer.save(user=self.request.user)
@@ -943,13 +946,13 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
         - Ensure that the user has correct 'delete' permissions for each model
         """
         from common.validators import attachment_model_class_from_label
-        from users.permissions import check_user_permission
+        from InvenTree.permissions import check_request_permission
 
         model_types = queryset.values_list('model_type', flat=True).distinct()
 
         for model_type in model_types:
             if model_class := attachment_model_class_from_label(model_type):
-                if not check_user_permission(request.user, model_class, 'delete'):
+                if not check_request_permission(request, model_class, 'delete'):
                     raise ValidationError(
                         _('User does not have permission to delete these attachments')
                     )
@@ -1102,6 +1105,7 @@ class NoteDetail(NoteMixin, RetrieveUpdateDestroyAPI):
             self.request.user,
             template=instance.template,
             model_type=instance.model_type,
+            request=self.request,
         )
         super().perform_destroy(instance)
 
@@ -1457,15 +1461,15 @@ class ParameterList(
         - Extract all model types from the provided queryset
         - Ensure that the user has correct 'delete' permissions for each linked model
         """
-        from users.permissions import check_user_permission
+        from InvenTree.permissions import check_request_permission
 
         content_type_ids = queryset.values_list('model_type', flat=True).distinct()
 
         for content_type in ContentType.objects.filter(pk__in=content_type_ids):
             model_class = content_type.model_class()
 
-            if not model_class or not check_user_permission(
-                request.user, model_class, 'delete'
+            if not model_class or not check_request_permission(
+                request, model_class, 'delete'
             ):
                 raise ValidationError(
                     _('User does not have permission to delete these parameters')

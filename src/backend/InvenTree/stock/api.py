@@ -63,7 +63,6 @@ from stock.models import (
     StockLocationType,
 )
 from stock.status_codes import StockHistoryCode, StockStatus
-from users.permissions import check_user_permission
 
 
 class GenerateBatchCode(GenericAPIView):
@@ -78,8 +77,10 @@ class GenerateBatchCode(GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         for value in serializer.validated_data.values():
-            if isinstance(value, Model) and not check_user_permission(
-                request.user, value.__class__, 'view'
+            if isinstance(
+                value, Model
+            ) and not InvenTree.permissions.check_request_permission(
+                request, value.__class__, 'view'
             ):
                 raise PermissionDenied()
 
@@ -101,7 +102,9 @@ class GenerateSerialNumber(GenericAPIView):
 
         part = serializer.validated_data.get('part')
 
-        if part and not check_user_permission(request.user, part.__class__, 'view'):
+        if part and not InvenTree.permissions.check_request_permission(
+            request, part.__class__, 'view'
+        ):
             raise PermissionDenied()
 
         data = {'serial_number': generate_serial_number(**serializer.validated_data)}

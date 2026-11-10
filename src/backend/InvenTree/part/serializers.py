@@ -29,11 +29,11 @@ import users.models
 from data_exporter.mixins import DataExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.permissions import check_request_role
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import OptionalField, TreePathSerializer
 from pricing.models import PartPricing
 from pricing.serializers import PartSalePriceSerializer
-from users.permissions import check_user_role
 from users.serializers import UserSerializer
 
 from .models import (
@@ -1812,9 +1812,9 @@ class PartCopyBOMSerializer(serializers.Serializer):
 
         if data.get('remove_existing', True):
             request = self.context.get('request')
-            user = getattr(request, 'user', None)
 
-            if not check_user_role(user, 'bom', 'delete'):
+            # Note: OAuth2 tokens must also hold the 'bom' delete scope
+            if not check_request_role(request, 'bom', 'delete'):
                 raise PermissionDenied(
                     _('User does not have permission to remove existing BOM items')
                 )

@@ -27,6 +27,7 @@ from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import (
     InvenTreeAPIPerformanceTestCase,
     InvenTreeAPITestCase,
+    OAuth2TestMixin,
     findOffloadedEvent,
     findOffloadedTask,
 )
@@ -3845,7 +3846,7 @@ class PartApiPerformanceTest(PartAPITestBase, InvenTreeAPIPerformanceTestCase):
         self.assertGreater(len(response.data), 13)
 
 
-class PartCopyBOMPermissionTest(InvenTreeAPITestCase):
+class PartCopyBOMPermissionTest(OAuth2TestMixin, InvenTreeAPITestCase):
     """Permission tests for the PartCopyBOM API endpoint.
 
     The endpoint uses a serializer without a Meta.model attribute,
@@ -3920,3 +3921,40 @@ class PartCopyBOMPermissionTest(InvenTreeAPITestCase):
         self.assignRole('bom.add')
         response = self.options(self.url)
         self.assertIn('POST', response.data.get('actions', {}))
+
+    def test_oauth2_scopes(self):
+        """Removing existing BOM items requires the 'bom' delete scope for OAuth2 tokens.
+
+        The endpoint itself only requires the 'r:add:bom' scope, so the additional
+        delete check must also take the token scopes into account.
+        """
+        bom_items = self.bom_items()
+
+        # The user has full BOM permissions
+        self.assignRole('part.add')
+        self.assignRole('bom.add')
+        self.assignRole('bom.delete')
+
+        # The token can only add BOM items
+        token = self.get_oauth2_token('r:add:bom')
+
+        # remove_existing defaults to True
+        response = self.oauth2_post(
+            token, self.url, {'part': self.source.pk}, expected_code=403
+        )
+        self.assertIn('remove existing BOM items', str(response.data))
+        self.assertEqual(self.bom_items(), bom_items)
+
+        # Copying without removing existing items is allowed
+        self.oauth2_post(
+            token,
+            self.url,
+            {'part': self.source.pk, 'remove_existing': False},
+            expected_code=201,
+        )
+        self.assertTrue(bom_items.issubset(self.bom_items()))
+
+        # A token which also holds the delete scope can remove existing items
+        token = self.get_oauth2_token('r:add:bom r:delete:bom')
+        self.oauth2_post(token, self.url, {'part': self.source.pk}, expected_code=201)
+        self.assertTrue(bom_items.isdisjoint(self.bom_items()))
