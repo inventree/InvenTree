@@ -793,6 +793,8 @@ test('Login - MFA - Setup with unverified email', async ({ page }) => {
   );
 
   await page.getByRole('button', { name: 'mfa-retry-setup' }).click();
-  await expect(page.getByLabel('otp-secret')).toHaveText('MOCKSECRET234567');
+  await expect(page.getByLabel('otp-secret', { exact: true })).toHaveText(
+    'MOCKSECRET234567'
+  );
   await expect(page.getByLabel('mfa-unverified-email')).toHaveCount(0);
 });
