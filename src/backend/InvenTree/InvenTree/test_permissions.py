@@ -11,8 +11,8 @@ from django.urls import URLPattern, URLResolver, get_resolver
 
 from oauth2_provider.contrib.rest_framework.authentication import OAuth2Authentication
 from rest_framework import serializers
+from rest_framework.generics import GenericAPIView
 from rest_framework.request import ForcedAuthentication, Request
-from rest_framework.settings import api_settings
 from rest_framework.test import APIRequestFactory
 from rest_framework.views import APIView
 
@@ -410,32 +410,121 @@ class RequestScopeTest(InvenTreeTestCase):
         )
 
 
-def get_api_views():
-    """Return a list of (route, view_class) tuples for all DRF API views."""
+UNSAFE_METHODS = ('post', 'put', 'patch', 'delete')
 
-    def walk(patterns, prefix=''):
-        for pattern in patterns:
-            if isinstance(pattern, URLResolver):
-                yield from walk(pattern.url_patterns, prefix + str(pattern.pattern))
-            elif isinstance(pattern, URLPattern):
-                yield prefix + str(pattern.pattern), pattern.callback
 
-    views = {}
+def walk_url_patterns(patterns, prefix=''):
+    """Yield (route, callback) tuples for all URL patterns."""
+    for pattern in patterns:
+        if isinstance(pattern, URLResolver):
+            yield from walk_url_patterns(
+                pattern.url_patterns, prefix + str(pattern.pattern)
+            )
+        elif isinstance(pattern, URLPattern):
+            yield prefix + str(pattern.pattern), pattern.callback
 
-    for route, callback in walk(get_resolver().url_patterns):
-        view_class = getattr(callback, 'view_class', None) or getattr(
-            callback, 'cls', None
-        )
 
-        if not route.startswith('api/') or view_class is None:
+def get_api_write_views():
+    """Return a list of (route, method, view) tuples for all writable DRF API endpoints.
+
+    Each view is instantiated as DRF would for the given route and method,
+    so that ViewSet actions (which may define their own serializer_class) are included.
+    """
+    views = []
+
+    for route, callback in walk_url_patterns(get_resolver().url_patterns):
+        if not route.startswith('api/'):
             continue
 
-        if not issubclass(view_class, APIView):
+        if actions := getattr(callback, 'actions', None):
+            # ViewSet route - each HTTP method maps to a particular action
+            view_class = callback.cls
+            initkwargs = callback.initkwargs or {}
+
+            for method, action in actions.items():
+                if method not in UNSAFE_METHODS:
+                    continue
+
+                view = view_class(**initkwargs)
+                view.action = action
+                view.action_map = actions
+                views.append((route, method, view))
+
+        elif view_class := getattr(callback, 'view_class', None):
+            if not issubclass(view_class, APIView):
+                continue
+
+            initkwargs = getattr(callback, 'view_initkwargs', None) or {}
+            allowed = set(getattr(view_class, 'http_method_names', []))
+
+            for method in UNSAFE_METHODS:
+                if method in allowed and hasattr(view_class, method):
+                    views.append((route, method, view_class(**initkwargs)))
+
+    return views
+
+
+def resolve_queryset_model(view, method: str, user):
+    """Resolve the queryset model for a view, as ModelPermission does for a request.
+
+    The view's get_queryset() method is called with a request context,
+    as the queryset may only be defined dynamically.
+    Returns None if no queryset model can be determined.
+    """
+    if model := permissions.get_queryset_model_for_view(view):
+        return model
+
+    view.request = Request(
+        getattr(APIRequestFactory(), method)('/'),
+        authenticators=(ForcedAuthentication(user, None),),
+    )
+    view.args = ()
+    view.kwargs = {}
+    view.format_kwarg = None
+
+    try:
+        queryset = view.get_queryset()
+    except Exception:
+        # e.g. DRF asserts that 'queryset' is set if get_queryset() is not overridden
+        return None
+
+    return getattr(queryset, 'model', None)
+
+
+def find_unresolved_write_views(views, user) -> list[str]:
+    """Return the writable views for which RolePermission cannot determine a role or model.
+
+    For such views, RolePermission denies all write operations (for non-superusers).
+
+    Arguments:
+        views: List of (route, method, view) tuples
+        user: User to construct requests with (for dynamic querysets)
+    """
+    errors = []
+
+    for route, method, view in views:
+        if not any(
+            isinstance(cls, type) and issubclass(cls, permissions.RolePermission)
+            for cls in view.permission_classes
+        ):
             continue
 
-        views.setdefault(view_class, route)
+        if getattr(view, 'role_required', None):
+            continue
 
-    return [(route, view_class) for view_class, route in views.items()]
+        if hasattr(view, 'get_permission_model'):
+            continue
+
+        try:
+            permissions.get_model_for_view(view)
+            continue
+        except permissions.PermissionModelNotFoundError:
+            pass
+
+        if resolve_queryset_model(view, method, user) is None:
+            errors.append(f'{method.upper()} {route} ({view.__class__.__name__})')
+
+    return errors
 
 
 class ApiViewPermissionModelTest(InvenTreeTestCase):
@@ -447,47 +536,75 @@ class ApiViewPermissionModelTest(InvenTreeTestCase):
         If no role or model can be determined, the RolePermission class denies
         all write operations (for non-superusers), which is likely a bug in the view.
         """
-        errors = []
+        views = get_api_write_views()
 
-        for route, view_class in get_api_views():
-            permission_classes = getattr(
-                view_class,
-                'permission_classes',
-                api_settings.DEFAULT_PERMISSION_CLASSES,
-            )
-
-            if not any(
-                isinstance(cls, type) and issubclass(cls, permissions.RolePermission)
-                for cls in permission_classes
-            ):
-                continue
-
-            methods = {
-                m for m in ('post', 'put', 'patch', 'delete') if hasattr(view_class, m)
-            } & set(getattr(view_class, 'http_method_names', []))
-
-            if not methods:
-                continue
-
-            if getattr(view_class, 'role_required', None):
-                continue
-
-            if hasattr(view_class, 'get_permission_model'):
-                continue
-
-            view = view_class()
-
-            try:
-                permissions.get_model_for_view(view)
-                continue
-            except permissions.PermissionModelNotFoundError:
-                pass
-
-            if permissions.get_queryset_model_for_view(view) is None and not hasattr(
-                view_class, 'get_queryset'
-            ):
-                errors.append(f'{route} ({view_class.__name__})')
+        # Sanity check: ViewSet actions are included (e.g. PurchaseOrder 'receive')
+        self.assertTrue(
+            any(getattr(view, 'action', None) == 'receive' for _, _, view in views)
+        )
 
         self.assertEqual(
-            errors, [], 'API views without a resolvable permission model or role'
+            find_unresolved_write_views(views, self.user),
+            [],
+            'API views without a resolvable permission model or role',
+        )
+
+    def test_audit_detects_unresolved_views(self):
+        """The audit flags views for which no role or model can be determined."""
+
+        class UnresolvedView(GenericAPIView):
+            """Plain serializer, and get_queryset() returns None."""
+
+            permission_classes = [permissions.RolePermission]
+            serializer_class = PlainSerializer
+            queryset = None
+
+            def get_queryset(self):
+                return None
+
+            def post(self, request):
+                pass  # pragma: no cover
+
+        class NoQuerysetView(GenericAPIView):
+            """Plain serializer, and DRF's default get_queryset() (no queryset set)."""
+
+            permission_classes = [permissions.RolePermission]
+            serializer_class = PlainSerializer
+
+            def post(self, request):
+                pass  # pragma: no cover
+
+        class DynamicQuerysetView(UnresolvedView):
+            """Queryset is only defined dynamically."""
+
+            def get_queryset(self):
+                return Group.objects.all()
+
+        class StaticQuerysetView(NoQuerysetView):
+            """Queryset is defined as a class attribute."""
+
+            queryset = Group.objects.all()
+
+        class RoleView(NoQuerysetView):
+            """Role is explicitly specified."""
+
+            role_required = 'admin.change'
+
+        class OtherPermissionView(NoQuerysetView):
+            """RolePermission is not used for this view."""
+
+            permission_classes = [permissions.IsStaffOrReadOnlyScope]
+
+        views = [
+            ('unresolved/', 'post', UnresolvedView()),
+            ('no-queryset/', 'post', NoQuerysetView()),
+            ('dynamic/', 'post', DynamicQuerysetView()),
+            ('static/', 'post', StaticQuerysetView()),
+            ('role/', 'post', RoleView()),
+            ('other/', 'post', OtherPermissionView()),
+        ]
+
+        self.assertEqual(
+            find_unresolved_write_views(views, self.user),
+            ['POST unresolved/ (UnresolvedView)', 'POST no-queryset/ (NoQuerysetView)'],
         )
