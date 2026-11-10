@@ -3843,3 +3843,80 @@ class PartApiPerformanceTest(PartAPITestBase, InvenTreeAPIPerformanceTestCase):
         url = reverse('api-part-list')
         response = self.get(url, expected_code=200)
         self.assertGreater(len(response.data), 13)
+
+
+class PartCopyBOMPermissionTest(InvenTreeAPITestCase):
+    """Permission tests for the PartCopyBOM API endpoint.
+
+    The endpoint uses a serializer without a Meta.model attribute,
+    and must require the 'bom' role (not just the 'part' role).
+    """
+
+    fixtures = ['category', 'part', 'location', 'bom']
+
+    roles = []
+
+    def setUp(self):
+        """Clear all roles before each test."""
+        super().setUp()
+        self.clearRoles()
+
+        parts = Part.objects.filter(bom_items__isnull=False).distinct()
+        self.target, self.source = parts[0], parts[1]
+        self.url = reverse('api-part-bom-copy', kwargs={'pk': self.target.pk})
+
+    def bom_items(self) -> set:
+        """Return the set of BOM item IDs for the target part."""
+        return set(self.target.bom_items.values_list('pk', flat=True))
+
+    def test_requires_bom_role(self):
+        """Copying a BOM requires the 'bom' role."""
+        bom_items = self.bom_items()
+
+        # 'part.add' satisfies ModelPermission, but not the 'bom' role
+        self.assignRole('part.add')
+        self.assignRole('bom.view')
+
+        self.post(self.url, {'part': self.source.pk}, expected_code=403)
+        self.post(
+            self.url,
+            {'part': self.source.pk, 'remove_existing': False},
+            expected_code=403,
+        )
+
+        self.assertEqual(self.bom_items(), bom_items)
+
+    def test_remove_existing_requires_delete(self):
+        """Removing existing BOM items requires the 'bom.delete' permission."""
+        bom_items = self.bom_items()
+
+        self.assignRole('part.add')
+        self.assignRole('bom.add')
+
+        # remove_existing defaults to True
+        response = self.post(self.url, {'part': self.source.pk}, expected_code=403)
+        self.assertIn('remove existing BOM items', str(response.data))
+        self.assertEqual(self.bom_items(), bom_items)
+
+        # Copying without removing existing items is allowed
+        self.post(
+            self.url,
+            {'part': self.source.pk, 'remove_existing': False},
+            expected_code=201,
+        )
+        self.assertTrue(bom_items.issubset(self.bom_items()))
+
+        # With the 'bom.delete' permission, existing items can be removed
+        self.assignRole('bom.delete')
+        self.post(self.url, {'part': self.source.pk}, expected_code=201)
+        self.assertTrue(bom_items.isdisjoint(self.bom_items()))
+
+    def test_options(self):
+        """The OPTIONS metadata does not advertise POST without the 'bom' role."""
+        self.assignRole('part.add')
+        response = self.options(self.url)
+        self.assertNotIn('POST', response.data.get('actions', {}))
+
+        self.assignRole('bom.add')
+        response = self.options(self.url)
+        self.assertIn('POST', response.data.get('actions', {}))

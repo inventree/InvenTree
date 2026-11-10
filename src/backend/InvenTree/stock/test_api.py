@@ -4557,6 +4557,36 @@ class StockMergeTest(StockAPITestCase):
         self.assertEqual(StockItem.objects.filter(part=self.part).count(), n - 2)
 
 
+class StockActionPermissionTest(StockAPITestCase):
+    """Permission tests for the stock action API endpoints.
+
+    These endpoints use serializers without a Meta.model attribute,
+    and must require the 'stock.change' role.
+    """
+
+    STOCK_ACTIONS = [
+        'api-stock-count',
+        'api-stock-add',
+        'api-stock-remove',
+        'api-stock-transfer',
+        'api-stock-return',
+        'api-stock-change-status',
+        'api-stock-assign',
+        'api-stock-merge',
+    ]
+
+    def test_stock_actions_require_stock_role(self):
+        """Each stock action endpoint is refused without the 'stock.change' role."""
+        with self.without_stock_change_role():
+            for name in self.STOCK_ACTIONS:
+                self.post(reverse(name), {}, expected_code=403)
+
+        # With the 'stock.change' role, the request passes the permission checks
+        # (and fails validation, as no data is provided)
+        for name in self.STOCK_ACTIONS:
+            self.post(reverse(name), {}, expected_code=400)
+
+
 class StockMetadataAPITest(InvenTreeAPITestCase):
     """Unit tests for the various metadata endpoints of API."""
 
