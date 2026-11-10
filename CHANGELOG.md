@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#13243](https://github.com/inventree/InvenTree/pull/13243) Stricter role checks for API action endpoints: copying a BOM requires the BOM role (add, and delete if existing items are removed), and stock adjustment endpoints require the Stock Items "change" permission. Write operations on API endpoints without an associated role or model are now denied.
+- [#13243](https://github.com/inventree/InvenTree/pull/13243) OAuth2 tokens now require the matching role scope for data which is accessed or modified via general endpoints (attachments, parameters, notes, barcode actions, label / report printing, search, data import). Integrations which relied on the `g:read` / `g:write` scopes alone may need additional scopes. Refer to the [API documentation](https://docs.inventree.org/en/latest/api/#scopes) for details.
+
 ### Added
 
 - [#13166](https://github.com/inventree/InvenTree/pull/13166) Adds an "exclude_from_stock" attribute to the StockLocation model, allowing stock items in specified locations to be excluded from stock availability calculations.

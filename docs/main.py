@@ -499,6 +499,47 @@ def define_env(env):
         return ret_data
 
     @env.macro
+    def role_models():
+        """Render a markdown table of the database models covered by each user permission role.
+
+        Sourced from `docs/generated/inventree_roles.json` (see `roles()` above).
+        """
+        global ROLES
+
+        ret_data = '| Role | Models |\n| --- | --- |\n'
+
+        for role in ROLES:
+            models = ', '.join(model['name'] for model in role.get('models', []))
+            ret_data += f'| **{role["label"]}** | {models} |\n'
+
+        return ret_data
+
+    @env.macro
+    def shared_role_models():
+        """Render a markdown table of the database models which are covered by more than one role.
+
+        Sourced from `docs/generated/inventree_roles.json` (see `roles()` above).
+        """
+        global ROLES
+
+        shared = {}
+
+        for role in ROLES:
+            for model in role.get('models', []):
+                entry = shared.setdefault(
+                    model['table'], {'name': model['name'], 'roles': []}
+                )
+                entry['roles'].append(role['label'])
+
+        ret_data = '| Model | Roles |\n| --- | --- |\n'
+
+        for entry in sorted(shared.values(), key=lambda x: x['name']):
+            if len(entry['roles']) > 1:
+                ret_data += f'| {entry["name"]} | {", ".join(entry["roles"])} |\n'
+
+        return ret_data
+
+    @env.macro
     def audited_models():
         """Render a markdown table of the models which are recorded in the audit log.
 
