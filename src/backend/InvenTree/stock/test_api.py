@@ -1366,11 +1366,11 @@ class StockItemListTest(StockAPITestCase):
             build.models.Build.objects.create(part=assembly, quantity=1)
             for _ in range(10)
         ]
-        items = StockItem.objects.bulk_create([
+        StockItem.objects.bulk_create([
             StockItem(part=assembly, quantity=1, consumed_by=build_order)
             for build_order in builds
         ])
-        queryset = StockItem.objects.filter(pk__in=[item.pk for item in items])
+        queryset = StockItem.objects.filter(consumed_by__in=builds)
         serializer = StockItemSerializer(consumed_by_detail=True)
         self.assertIn('consumed_by', serializer.prefetch_list)
         self.assertNotIn('consumed_by', StockItemSerializer().prefetch_list)
