@@ -482,6 +482,7 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
         self.assertTrue(all(cids))
         self.assertNotEqual(cids[0], cids[1])
 
+    @override_settings(BASIC_AUTH_ENABLED=True)
     def test_basic_auth_actor(self):
         """Users authenticated by DRF (not middleware) are recorded as the actor."""
         self.logout()
