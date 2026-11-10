@@ -2545,7 +2545,8 @@ class OrderCalendarExport(ICalFeed):
         response = JsonResponse({
             'detail': 'Authentication credentials were not provided.'
         })
-        response['WWW-Authenticate'] = 'Basic realm="api"'
+        if settings.BASIC_AUTH_ENABLED:
+            response['WWW-Authenticate'] = 'Basic realm="api"'
         response.status_code = 401
         return response
 
