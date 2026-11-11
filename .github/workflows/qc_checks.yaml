@@ -366,13 +366,12 @@ jobs:
           mode: walltime
           run: pytest ./src/performance --codspeed
 
-  coverage:
-    name: Tests - DB [SQLite] + Coverage ${{ matrix.python_version }}
+  sqlite:
+    name: Tests - DB [SQLite] ${{ matrix.python_version }}
     runs-on: ubuntu-24.04
 
     needs: ["code-style", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
-    continue-on-error: true # continue if a step fails so that coverage gets pushed
     strategy:
       matrix:
         python_version: [3.12, 3.14]
@@ -404,21 +403,8 @@ jobs:
         run: |
           invoke migrate --detect
           python3 .github/scripts/check_migration_files.py
-      - name: Coverage Tests
-        run: invoke dev.test --check --coverage --translations
-      - name: Upload raw coverage to artifacts
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: coverage
-          path: .coverage
-          retention-days: 14
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
-        if: always()
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: inventree/InvenTree
-          flags: backend
+      - name: Run Tests
+        run: invoke dev.test --check --translations
 
   performance:
     name: Tests - Performance
@@ -458,7 +444,7 @@ jobs:
           run: inv dev.test --pytest
 
   postgres:
-    name: Tests - DB [PostgreSQL]
+    name: Tests - DB [PostgreSQL] + Coverage
     runs-on: ubuntu-24.04
     needs: ["code-style", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -501,8 +487,25 @@ jobs:
           dev-install: true
           update: true
           static: true
-      - name: Run Tests
-        run: invoke dev.test --check --translations
+      # Coverage is collected here (not on SQLite) so that tests which require
+      # select_for_update (concurrency / locking tests) contribute to coverage
+      - name: Coverage Tests
+        run: invoke dev.test --check --coverage --translations
+      - name: Upload raw coverage to artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: coverage
+          path: .coverage
+          include-hidden-files: true
+          retention-days: 14
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: backend
       - name: Data Export Test
         uses: $/.github/actions/migration
 

@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 574
+INVENTREE_API_VERSION = 575
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v575 -> 2026-11-10 : https://github.com/inventree/InvenTree/pull/13208
+    - Adds optional read-only "consumed_by_detail" to the StockItem API
 
 v574 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13169
     - breaking: Basic authentication can now be disabled - controlled with INVENTREE_BASIC_AUTH_ENABLED
