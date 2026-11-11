@@ -864,6 +864,15 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertIn('backend', response)
         self.assertIn('frontend', response)
 
+        # Non-staff users cannot access license information
+        self.user.is_staff = False
+        self.user.save()
+        self.get(reverse('api-license'), expected_code=403)
+
+        # Anonymous users cannot access license information
+        self.client.logout()
+        self.get(reverse('api-license'), expected_code=401)
+
         # Various problem cases
         # File does not exist
         with self.assertLogs(logger='inventree', level='ERROR') as log:

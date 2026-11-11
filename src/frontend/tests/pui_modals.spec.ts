@@ -1,4 +1,4 @@
-import { systemKey, test } from './baseFixtures.js';
+import { expect, systemKey, test } from './baseFixtures.js';
 import { adminuser } from './defaults.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
@@ -119,37 +119,23 @@ test('Spotlight - No Keys', async ({ browser }) => {
   // close the nav
   await page.keyboard.press('Escape');
 
-  // use server info
+  // Server information, license and about modals are not available to non-staff users
   await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
-      name: 'Server Information About this InvenTree instance'
+      name: 'Documentation Visit the documentation to learn more about InvenTree'
     })
-    .click();
-  await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
-  await page.getByRole('button', { name: 'Close' }).click();
-
-  // use license info
-  await page.getByLabel('open-spotlight').click();
-  await page
-    .getByRole('button', {
-      name: 'License Information Licenses for dependencies of the service'
-    })
-    .click();
-  await page.getByText('License Information').first().waitFor();
-  await page.getByRole('tab', { name: 'backend Packages' }).waitFor();
-  await page.getByRole('button', { name: 'Django BSD-3-Clause' }).click();
-
+    .waitFor();
+  await expect(
+    page.getByRole('button', { name: /^Server Information/ })
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: /^License Information/ })
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: /^About InvenTree/ })
+  ).toHaveCount(0);
   await page.keyboard.press('Escape');
-
-  // use about
-  await page.getByLabel('open-spotlight').click();
-  await page
-    .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
-    .click();
-  await page.getByText('This information is only').waitFor();
-
-  await page.getByLabel('About InvenTree').getByRole('button').click();
 
   // use documentation
   await page.getByLabel('open-spotlight').click();

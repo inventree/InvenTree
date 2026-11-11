@@ -5,7 +5,6 @@ import type { ContextModalProps } from '@mantine/modals';
 import { useShallow } from 'zustand/react/shallow';
 import { useSystemStatus } from '../../hooks/UseAdminMessages';
 import { useServerApiState } from '../../states/ServerApiState';
-import { OnlyStaff } from '../items/OnlyStaff';
 
 export function ServerInfoModal({
   context,
@@ -13,7 +12,7 @@ export function ServerInfoModal({
 }: ContextModalProps<{ modalBody: string }>) {
   const [server] = useServerApiState(useShallow((state) => [state.server]));
 
-  // Deployment details are staff-only (undefined for non-staff users)
+  // Deployment details are staff-only (this modal is only available to staff users)
   const { server: status } = useSystemStatus();
 
   return (
@@ -43,9 +42,7 @@ export function ServerInfoModal({
             <Table.Td>
               <Trans>Database</Trans>
             </Table.Td>
-            <Table.Td>
-              <OnlyStaff>{status?.database}</OnlyStaff>
-            </Table.Td>
+            <Table.Td>{status?.database}</Table.Td>
           </Table.Tr>
           {status?.debug_mode && (
             <Table.Tr>
@@ -89,15 +86,13 @@ export function ServerInfoModal({
               <Trans>Server status</Trans>
             </Table.Td>
             <Table.Td>
-              <OnlyStaff>
-                <Badge color={server.system_health ? 'green' : 'yellow'}>
-                  {server.system_health ? (
-                    <Trans>Healthy</Trans>
-                  ) : (
-                    <Trans>Issues detected</Trans>
-                  )}
-                </Badge>
-              </OnlyStaff>
+              <Badge color={server.system_health ? 'green' : 'yellow'}>
+                {server.system_health ? (
+                  <Trans>Healthy</Trans>
+                ) : (
+                  <Trans>Issues detected</Trans>
+                )}
+              </Badge>
             </Table.Td>
           </Table.Tr>
           {status?.worker_running === false && (

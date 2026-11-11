@@ -25,7 +25,6 @@ import { useSystemStatus } from '../../hooks/UseAdminMessages';
 import { useServerApiState } from '../../states/ServerApiState';
 
 import type { JSX } from 'react';
-import { OnlyStaff } from '../items/OnlyStaff';
 
 type AboutLookupRef = {
   ref: string;
@@ -43,11 +42,8 @@ export function AboutInvenTreeModal({
     modalBody: string;
   }>
 >) {
-  return (
-    <OnlyStaff>
-      <AboutContent context={context} id={id} innerProps={innerProps} />
-    </OnlyStaff>
-  );
+  // Note: this modal is only available to staff users
+  return <AboutContent context={context} id={id} innerProps={innerProps} />;
 }
 
 const AboutContent = ({

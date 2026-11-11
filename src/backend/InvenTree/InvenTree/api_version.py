@@ -11,6 +11,7 @@ v575 -> 2026-11-11 : https://github.com/inventree/InvenTree/pull/xxxxx
     - breaking: Removes the "system_state" field from the root API info endpoint (use /api/system/status/ instead)
     - breaking: Moves sensitive fields from the root API info endpoint to the "server" object of the staff-only /api/system/status/ endpoint
     - breaking: The SERVER_RESTART_REQUIRED global setting is renamed to _SERVER_RESTART_REQUIRED, and is no longer exposed via the settings API
+    - breaking: The /api/license/ endpoint is now restricted to staff users
 
 v574 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13169
     - breaking: Basic authentication can now be disabled - controlled with INVENTREE_BASIC_AUTH_ENABLED

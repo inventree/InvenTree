@@ -21,9 +21,10 @@ import {
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
-import { aboutInvenTree } from '../../defaults/links';
+import { aboutInvenTree, canViewAbout } from '../../defaults/links';
 import { doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { vars } from '../../theme';
 
@@ -34,6 +35,7 @@ export function MainMenu() {
   const [user, username] = useUserState(
     useShallow((state) => [state.user, state.username])
   );
+  const globalSettings = useGlobalSettingsState();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   useWindowEvent('inventree:open-main-menu', () => {
@@ -120,13 +122,15 @@ export function MainMenu() {
           >
             <Trans>Change Color Mode</Trans>
           </Menu.Item>
-          <Menu.Item
-            onClick={() => aboutInvenTree()}
-            leftSection={<IconInfoCircle />}
-            id='tip-ftu-about'
-          >
-            <Trans>About InvenTree</Trans>
-          </Menu.Item>
+          {canViewAbout(user?.is_staff, user?.is_superuser, globalSettings) && (
+            <Menu.Item
+              onClick={() => aboutInvenTree()}
+              leftSection={<IconInfoCircle />}
+              id='tip-ftu-about'
+            >
+              <Trans>About InvenTree</Trans>
+            </Menu.Item>
+          )}
           <Menu.Divider />
           <Menu.Item
             leftSection={<IconLogout />}

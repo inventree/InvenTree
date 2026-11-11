@@ -131,6 +131,30 @@ export function DocumentationLinks(): MenuLinkItem[] {
   ];
 }
 
+/**
+ * The "System Information" modal is only available to staff users
+ */
+export function canViewLicenses(staff: boolean | undefined): boolean {
+  return !!staff;
+}
+
+export function canViewServerInfo(staff: boolean | undefined): boolean {
+  return !!staff;
+}
+
+/**
+ * The "About InvenTree" modal is only available to staff users.
+ * If INVENTREE_RESTRICT_ABOUT is set, it is further restricted to superusers.
+ */
+export function canViewAbout(
+  staff: boolean | undefined,
+  superuser: boolean | undefined,
+  settings: SettingsStateProps
+): boolean {
+  if (!staff) return false;
+  return !!superuser || !settings.isSet('INVENTREE_RESTRICT_ABOUT');
+}
+
 export function serverInfo() {
   return openContextModal({
     modal: 'info',
@@ -183,20 +207,6 @@ export function AboutLinks(
       external: true
     },
     {
-      id: 'instance',
-      title: t`System Information`,
-      description: t`About this InvenTree instance`,
-      icon: 'info',
-      action: serverInfo
-    },
-    {
-      id: 'licenses',
-      title: t`License Information`,
-      description: t`Licenses for dependencies of the InvenTree software`,
-      icon: 'license',
-      action: licenseInfo
-    },
-    {
       id: 'ftug',
       title: t`First Use Tour`,
       description: t`Guided tour for first-time users`,
@@ -207,8 +217,27 @@ export function AboutLinks(
     }
   ];
 
-  // Restrict the about link if that setting is set
-  if (user.isSuperuser() || !settings.isSet('INVENTREE_RESTRICT_ABOUT')) {
+  if (canViewLicenses(user.isStaff())) {
+    base_items.splice(1, 0, {
+      id: 'licenses',
+      title: t`License Information`,
+      description: t`Licenses for dependencies of the InvenTree software`,
+      icon: 'license',
+      action: licenseInfo
+    });
+  }
+
+  if (canViewServerInfo(user.isStaff())) {
+    base_items.splice(1, 0, {
+      id: 'instance',
+      title: t`System Information`,
+      description: t`About this InvenTree instance`,
+      icon: 'info',
+      action: serverInfo
+    });
+  }
+
+  if (canViewAbout(user.isStaff(), user.isSuperuser(), settings)) {
     base_items.push({
       id: 'about',
       title: t`About InvenTree`,

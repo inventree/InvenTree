@@ -97,9 +97,13 @@ class LicenseViewSerializer(serializers.Serializer):
 
 
 class LicenseView(APIView):
-    """Simple JSON endpoint for InvenTree license information."""
+    """Simple JSON endpoint for InvenTree license information.
 
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    Restricted to staff users, as the dependency list (with exact package versions)
+    discloses the server software stack.
+    """
+
+    permission_classes = [InvenTree.permissions.IsAdminOrAdminScope]
 
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
