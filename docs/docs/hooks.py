@@ -339,7 +339,7 @@ def on_post_build(*args, **kwargs):
         expected_settings = json.loads(f.read())
 
     ignored_settings = {
-        'global': ['SERVER_RESTART_REQUIRED'],
+        'global': [],
         'user': ['LAST_USED_PRINTING_MACHINES'],
         'config': [
             'INVENTREE_DB_TCP_KEEPALIVES',

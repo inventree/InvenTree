@@ -3671,13 +3671,13 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
             self.assertEqual(messages['basic_auth']['classifier'], 'success')
 
         set_global_setting('_PENDING_MIGRATIONS', 3, None)
-        set_global_setting('SERVER_RESTART_REQUIRED', True, None)
+        set_global_setting('_SERVER_RESTART_REQUIRED', True, None)
         messages = self._messages()
         self.assertEqual(messages['migrations']['classifier'], 'warning')
         self.assertEqual(messages['restart']['classifier'], 'warning')
 
         set_global_setting('_PENDING_MIGRATIONS', 0, None)
-        set_global_setting('SERVER_RESTART_REQUIRED', False, None)
+        set_global_setting('_SERVER_RESTART_REQUIRED', False, None)
         messages = self._messages()
         self.assertEqual(messages['migrations']['classifier'], 'success')
         self.assertEqual(messages['restart']['classifier'], 'success')

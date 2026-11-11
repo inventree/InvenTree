@@ -1291,7 +1291,8 @@ class InvenTreeSetting(InvenTree.models.InvenTreeAuditMixin, BaseInvenTreeSettin
     AUDIT_INCLUDE_FIELDS = ('key', 'value')
 
     # Settings which are written automatically by the system (not by users)
-    AUDIT_IGNORE_KEYS = ('SERVER_RESTART_REQUIRED',)
+    # Note: internal settings (prefixed with '_') are always ignored
+    AUDIT_IGNORE_KEYS: tuple[str, ...] = ()
 
     def __str__(self):
         """Return the setting key."""
@@ -1332,7 +1333,7 @@ class InvenTreeSetting(InvenTree.models.InvenTreeAuditMixin, BaseInvenTreeSettin
     def save(self, *args, **kwargs):
         """When saving a global setting, check to see if it requires a server restart.
 
-        If so, set the "SERVER_RESTART_REQUIRED" setting to True
+        If so, set the "_SERVER_RESTART_REQUIRED" setting to True
         """
         overrides = global_setting_overrides()
 
@@ -1343,7 +1344,7 @@ class InvenTreeSetting(InvenTree.models.InvenTreeAuditMixin, BaseInvenTreeSettin
         super().save()
 
         if self.requires_restart() and not InvenTree.ready.isImportingData():
-            InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
+            InvenTreeSetting.set_setting('_SERVER_RESTART_REQUIRED', True, None)
 
     @classmethod
     def get_setting_default(cls, key, **kwargs):

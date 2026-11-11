@@ -722,7 +722,7 @@ class GlobalSettingAuditTest(InvenTreeAPITestCase):
         # Internal settings (e.g. written by every scheduled task run)
         set_global_setting('_TEST_TASK_ATTEMPT', 'now', change_user=None)
 
-        # Changing a setting which requires a restart also sets 'SERVER_RESTART_REQUIRED'
+        # Changing a setting which requires a restart also sets '_SERVER_RESTART_REQUIRED'
         # Note: A setting which is not overridden by the environment is used here
         # (e.g. PLUGIN_ON_STARTUP is set via environment variable in the docker image)
         def requires_restart(setting):
@@ -734,9 +734,9 @@ class GlobalSettingAuditTest(InvenTreeAPITestCase):
             autospec=True,
             side_effect=requires_restart,
         ):
-            self.assertFalse(InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+            self.assertFalse(InvenTreeSetting.get_setting('_SERVER_RESTART_REQUIRED'))
             self.set_value('INVENTREE_INSTANCE', 'Restart Instance')
-            self.assertTrue(InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+            self.assertTrue(InvenTreeSetting.get_setting('_SERVER_RESTART_REQUIRED'))
 
         keys = list(
             self.entries().order_by('pk')[n:].values_list('object_repr', flat=True)

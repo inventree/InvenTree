@@ -200,7 +200,7 @@ class SystemSetId:
 
 
 SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
-    'SERVER_RESTART_REQUIRED': {
+    '_SERVER_RESTART_REQUIRED': {
         'name': _('Restart required'),
         'description': _('A setting has been changed which requires a server restart'),
         'default': False,
