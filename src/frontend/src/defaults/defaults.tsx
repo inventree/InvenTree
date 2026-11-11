@@ -5,12 +5,24 @@ export const emptyServerAPI = {
   version: null,
   instance: null,
   apiVersion: null,
+  worker_running: null,
+  worker_pending_tasks: null,
   plugins_enabled: null,
+  plugins_install_disabled: null,
   active_plugins: [],
+  email_configured: null,
+  debug_mode: null,
+  docker_mode: null,
+  database: null,
   system_health: null,
+  platform: null,
+  installer: null,
+  target: null,
   default_locale: null,
+  django_admin: null,
   settings: null,
-  customize: null
+  customize: null,
+  system_state: null
 };
 
 export interface SiteMarkProps {

@@ -788,23 +788,6 @@ class SearchTests(InvenTreeAPITestCase):
 class GeneralApiTests(InvenTreeAPITestCase):
     """Tests for various api endpoints."""
 
-    # Fields which are only available via the staff-only /api/system/status/ endpoint
-    STAFF_ONLY_KEYS = [
-        'system_state',
-        'worker_running',
-        'worker_count',
-        'worker_pending_tasks',
-        'plugins_install_disabled',
-        'email_configured',
-        'debug_mode',
-        'docker_mode',
-        'database',
-        'platform',
-        'installer',
-        'target',
-        'django_admin',
-    ]
-
     def test_api_version(self):
         """Test that the API text is correct."""
         url = reverse('api-version-text')
@@ -864,15 +847,6 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertIn('backend', response)
         self.assertIn('frontend', response)
 
-        # Non-staff users cannot access license information
-        self.user.is_staff = False
-        self.user.save()
-        self.get(reverse('api-license'), expected_code=403)
-
-        # Anonymous users cannot access license information
-        self.client.logout()
-        self.get(reverse('api-license'), expected_code=401)
-
         # Various problem cases
         # File does not exist
         with self.assertLogs(logger='inventree', level='ERROR') as log:
@@ -910,11 +884,11 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertIn('instance', data)
 
         self.assertEqual('InvenTree', data['server'])
+        self.assertTrue(data['system_state']['basic_auth_enabled'])
 
-        # Deployment / system state information is only available via the
-        # staff-only /api/system/status/ endpoint - not even to staff users here
-        for key in self.STAFF_ONLY_KEYS:
-            self.assertNotIn(key, data)
+        with override_settings(BASIC_AUTH_ENABLED=False):
+            data = self.get(url, max_query_count=20).json()
+            self.assertFalse(data['system_state']['basic_auth_enabled'])
 
         # Test with token
         token = self.get(url=reverse('api-token'), max_query_count=40).data['token']
@@ -923,8 +897,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
         # Anon
         response = self.get(url, max_query_count=20)
         data = response.json()
-        for key in self.STAFF_ONLY_KEYS:
-            self.assertNotIn(key, data)
+        self.assertEqual(data['database'], None)
         self.assertIsNotNone(data.get('active_plugins'))
 
         # Staff
@@ -932,8 +905,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
             url, headers={'Authorization': f'Token {token}'}, max_query_count=40
         )
         self.assertIsNotNone(data.get('active_plugins'))
-        for key in self.STAFF_ONLY_KEYS:
-            self.assertNotIn(key, response.json())
+        self.assertGreater(len(response.json()['database']), 4)
 
         data = response.json()
 

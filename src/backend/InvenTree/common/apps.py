@@ -32,17 +32,14 @@ class CommonConfig(AppConfig):
 
     @ignore_ready_warning
     def clear_restart_flag(self):
-        """Clear the _SERVER_RESTART_REQUIRED setting."""
+        """Clear the SERVER_RESTART_REQUIRED setting."""
         try:
             if get_global_setting(
-                '_SERVER_RESTART_REQUIRED',
-                backup_value=False,
-                create=False,
-                cache=False,
+                'SERVER_RESTART_REQUIRED', backup_value=False, create=False, cache=False
             ):
-                logger.info('Clearing _SERVER_RESTART_REQUIRED flag')
+                logger.info('Clearing SERVER_RESTART_REQUIRED flag')
 
                 if not InvenTree.ready.isImportingData():
-                    set_global_setting('_SERVER_RESTART_REQUIRED', False, None)
+                    set_global_setting('SERVER_RESTART_REQUIRED', False, None)
         except Exception:  # pragma: no cover
             pass

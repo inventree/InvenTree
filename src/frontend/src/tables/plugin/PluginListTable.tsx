@@ -28,7 +28,6 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useApi } from '../../contexts/ApiContext';
-import { useSystemStatus } from '../../hooks/UseAdminMessages';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -74,11 +73,6 @@ export default function PluginListTable() {
   const user = useUserState();
 
   const { server } = useServerApiState();
-
-  // Staff-only deployment info - treat installation as disabled until loaded
-  const { server: serverStatus } = useSystemStatus();
-  const pluginsInstallDisabled: boolean =
-    serverStatus?.plugins_install_disabled ?? true;
 
   const pluginTableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -373,7 +367,7 @@ export default function PluginListTable() {
     if (
       !user.isSuperuser() ||
       !server.plugins_enabled ||
-      pluginsInstallDisabled
+      server.plugins_install_disabled
     ) {
       // Prevent installation if plugins are disabled or user is not superuser
       return [];
@@ -398,7 +392,7 @@ export default function PluginListTable() {
         }}
       />
     ];
-  }, [user, server, pluginsInstallDisabled]);
+  }, [user, server]);
 
   return (
     <>

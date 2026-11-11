@@ -2,7 +2,7 @@
 
 Each message describes the outcome of a single system check. Messages are
 generated on demand (they are not stored in the database), and are exposed
-via the read-only /api/system/status/ endpoint.
+via the read-only /api/system/messages/ endpoint.
 """
 
 from dataclasses import dataclass
@@ -123,7 +123,7 @@ def get_core_admin_messages() -> list[AdminMessage]:
             'restart',
             _('Server Restart'),
             _('The server requires a restart to apply changes.'),
-            bool(get_global_setting('_SERVER_RESTART_REQUIRED', False, cache=False)),
+            bool(get_global_setting('SERVER_RESTART_REQUIRED', False, cache=False)),
             code='INVE-W6',
         ),
         _check(

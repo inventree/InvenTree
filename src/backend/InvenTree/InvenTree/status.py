@@ -74,33 +74,3 @@ def check_system_health(**kwargs):
             logger.warning('InvenTree system health checks failed')
 
     return result
-
-
-def get_server_info() -> dict:
-    """Return detailed (staff-only) information about the server deployment.
-
-    This information is exposed via the staff-only /api/system/status/ endpoint,
-    and must not be exposed to non-staff users.
-    """
-    # Imported here to avoid circular imports at app load
-    from django_q.models import OrmQ
-
-    import InvenTree.config
-    import InvenTree.version
-
-    return {
-        'worker_running': is_worker_running(),
-        'worker_count': settings.Q_CLUSTER['workers'],
-        'worker_pending_tasks': OrmQ.objects.count(),
-        'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
-        'email_configured': InvenTree.helpers_email.is_email_configured(),
-        'debug_mode': settings.DEBUG,
-        'docker_mode': settings.DOCKER,
-        'database': InvenTree.version.inventreeDatabase(),
-        'platform': InvenTree.version.inventreePlatform(),
-        'installer': InvenTree.config.inventreeInstaller(),
-        'target': InvenTree.version.inventreeTarget(),
-        'django_admin': settings.INVENTREE_ADMIN_URL
-        if settings.INVENTREE_ADMIN_ENABLED
-        else None,
-    }

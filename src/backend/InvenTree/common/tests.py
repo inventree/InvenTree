@@ -400,10 +400,10 @@ class SettingsTest(InvenTreeTestCase):
         self.assertIn('PART_COPY_TESTS', result)
         self.assertIn('STOCK_OWNERSHIP_CONTROL', result)
         self.assertIn('SIGNUP_GROUP', result)
-        self.assertIn('_SERVER_RESTART_REQUIRED', result)
+        self.assertIn('SERVER_RESTART_REQUIRED', result)
 
         result = InvenTreeSetting.allValues(exclude_hidden=True)
-        self.assertNotIn('_SERVER_RESTART_REQUIRED', result)
+        self.assertNotIn('SERVER_RESTART_REQUIRED', result)
 
     def test_all_settings(self):
         """Make sure that the all_settings function returns correctly."""
@@ -1632,13 +1632,13 @@ class CommonTest(InvenTreeAPITestCase):
         from plugin import registry
 
         # set flag true
-        set_global_setting('_SERVER_RESTART_REQUIRED', True, None)
+        set_global_setting('SERVER_RESTART_REQUIRED', True, None)
 
         # reload the app
         registry.reload_plugins()
 
         # now it should be false again
-        self.assertFalse(get_global_setting('_SERVER_RESTART_REQUIRED'))
+        self.assertFalse(get_global_setting('SERVER_RESTART_REQUIRED'))
 
     def test_config_api(self):
         """Test config URLs."""

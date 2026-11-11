@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
 import structlog
+from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers, viewsets
 from rest_framework.exceptions import AuthenticationFailed
@@ -41,8 +42,9 @@ from plugin.serializers import MetadataSerializer
 from users.permissions import check_user_permission, prefetch_rule_sets
 
 from .helpers import plugins_info, str2bool
+from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
-from .status import check_system_health
+from .status import check_system_health, is_worker_running
 from .version import inventreeApiText
 
 logger = structlog.get_logger('inventree')
@@ -97,13 +99,9 @@ class LicenseViewSerializer(serializers.Serializer):
 
 
 class LicenseView(APIView):
-    """Simple JSON endpoint for InvenTree license information.
+    """Simple JSON endpoint for InvenTree license information."""
 
-    Restricted to staff users, as the dependency list (with exact package versions)
-    discloses the server software stack.
-    """
-
-    permission_classes = [InvenTree.permissions.IsAdminOrAdminScope]
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
 
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
@@ -258,12 +256,26 @@ class InfoApiSerializer(serializers.Serializer):
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
     apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
+    worker_running = serializers.BooleanField(read_only=True)
+    worker_count = serializers.IntegerField(read_only=True)
+    worker_pending_tasks = serializers.IntegerField(read_only=True)
     plugins_enabled = serializers.BooleanField(read_only=True)
+    plugins_install_disabled = serializers.BooleanField(read_only=True)
     active_plugins = serializers.JSONField(read_only=True)
+    email_configured = serializers.BooleanField(read_only=True)
+    debug_mode = serializers.BooleanField(read_only=True)
+    docker_mode = serializers.BooleanField(read_only=True)
     default_locale = serializers.CharField(read_only=True)
     customize = CustomizeSerializer(read_only=True)
     system_health = serializers.BooleanField(read_only=True)
+    database = serializers.CharField(read_only=True)
+    platform = serializers.CharField(read_only=True)
+    installer = serializers.CharField(read_only=True)
+    target = serializers.CharField(read_only=True, allow_null=True)
+    django_admin = serializers.CharField(read_only=True)
     settings = SettingsSerializer(read_only=True, many=False)
+    """System state details that are mainly for warning purposes and do not require a hard API contract."""
+    system_state = serializers.JSONField(read_only=True)
 
 
 class InfoView(APIView):
@@ -273,6 +285,10 @@ class InfoView(APIView):
     """
 
     permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
+
+    def worker_pending_tasks(self):
+        """Return the current number of outstanding background tasks."""
+        return OrmQ.objects.count()
 
     @extend_schema(
         parameters=[
@@ -303,7 +319,14 @@ class InfoView(APIView):
             'version': InvenTree.version.inventreeVersion(),
             'instance': InvenTree.version.inventreeInstanceName(),
             'apiVersion': InvenTree.version.inventreeApiVersion(),
+            'worker_running': is_worker_running(),
+            'worker_count': settings.Q_CLUSTER['workers'],
+            'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
+            'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
+            'email_configured': is_email_configured(),
+            'debug_mode': settings.DEBUG,
+            'docker_mode': settings.DOCKER,
             'default_locale': settings.LANGUAGE_CODE,
             'customize': {
                 'logo': helpers.getLogoImage(),
@@ -317,6 +340,13 @@ class InfoView(APIView):
             'active_plugins': plugins_info(),
             # Following fields are only available to staff users
             'system_health': check_system_health() if is_staff else None,
+            'database': InvenTree.version.inventreeDatabase() if is_staff else None,
+            'platform': InvenTree.version.inventreePlatform() if is_staff else None,
+            'installer': InvenTree.config.inventreeInstaller() if is_staff else None,
+            'target': InvenTree.version.inventreeTarget() if is_staff else None,
+            'django_admin': settings.INVENTREE_ADMIN_URL
+            if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
+            else None,
             'settings': {
                 'sso_enabled': get_global_setting('LOGIN_ENABLE_SSO'),
                 'sso_registration': registration_enabled('LOGIN_ENABLE_SSO_REG'),
@@ -324,6 +354,10 @@ class InfoView(APIView):
                 'password_forgotten_enabled': get_global_setting(
                     'LOGIN_ENABLE_PWD_FORGOT'
                 ),
+            },
+            'system_state': {
+                'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS,
+                'basic_auth_enabled': settings.BASIC_AUTH_ENABLED if is_staff else None,
             },
         }
         if nonce := request.query_params.get('link_nonce'):

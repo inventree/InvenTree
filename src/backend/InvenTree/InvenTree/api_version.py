@@ -7,11 +7,7 @@ INVENTREE_API_VERSION = 576
 INVENTREE_API_TEXT = """
 
 v576 -> 2026-11-11 : https://github.com/inventree/InvenTree/pull/13247
-    - Adds /api/system/status/ endpoint: staff-only, read-only; classified system messages are provided in the "messages" array
-    - breaking: Removes the "system_state" field from the root API info endpoint (use /api/system/status/ instead)
-    - breaking: Moves sensitive fields from the root API info endpoint to the "server" object of the staff-only /api/system/status/ endpoint
-    - breaking: The SERVER_RESTART_REQUIRED global setting is renamed to _SERVER_RESTART_REQUIRED, and is no longer exposed via the settings API
-    - breaking: The /api/license/ endpoint is now restricted to staff users
+    - Adds /api/system/messages/ endpoint: staff-only, read-only; classified system messages are provided in the "messages" array
 
 v575 -> 2026-11-10 : https://github.com/inventree/InvenTree/pull/13208
     - Adds optional read-only "consumed_by_detail" to the StockItem API

@@ -12,10 +12,21 @@ export interface ServerAPIProps {
   version: null | string;
   instance: null | string;
   apiVersion: null | number;
+  worker_running: null | boolean;
+  worker_pending_tasks: null | number;
   plugins_enabled: null | boolean;
+  plugins_install_disabled: null | boolean;
   active_plugins: PluginProps[];
+  email_configured: null | boolean;
+  debug_mode: null | boolean;
+  docker_mode: null | boolean;
+  database: null | string;
   system_health: null | boolean;
+  platform: null | string;
+  installer: null | string;
+  target: null | string;
   default_locale: null | string;
+  django_admin: null | string;
   settings: {
     sso_enabled: null | boolean;
     sso_registration: null | boolean;
@@ -29,6 +40,10 @@ export interface ServerAPIProps {
     navbar_message: string;
     disable_theme_storage: boolean;
   };
+  system_state: {
+    cors_allow_all: null | boolean;
+    basic_auth_enabled: null | boolean;
+  } | null;
 }
 
 let pendingGlobalStatesFetch: Promise<void> | null = null;

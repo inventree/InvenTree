@@ -14,7 +14,6 @@ import {
   useState
 } from 'react';
 import { api } from '../../App';
-import { canViewAbout } from '../../defaults/links';
 import { useServerApiState } from '../../states/ServerApiState';
 import {
   useGlobalSettingsState,
@@ -109,15 +108,13 @@ export function FirstUseTour() {
       });
     }
 
-    if (canViewAbout(user?.is_staff, user?.is_superuser, globalSettings)) {
-      _steps.push({
-        target: 'tip-ftu-about',
-        title: t`About InvenTree`,
-        description: t`Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports.`
-      });
-    }
+    _steps.push({
+      target: 'tip-ftu-about',
+      title: t`About InvenTree`,
+      description: t`Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports.`
+    });
     return _steps;
-  }, [user, userSettings, globalSettings]);
+  }, [userSettings, globalSettings]);
 
   const completeTour = () => {
     setActive(false);

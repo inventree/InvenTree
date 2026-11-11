@@ -3,17 +3,14 @@ import { Badge, Button, Divider, Group, Stack, Table } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 
 import { useShallow } from 'zustand/react/shallow';
-import { useSystemStatus } from '../../hooks/UseAdminMessages';
 import { useServerApiState } from '../../states/ServerApiState';
+import { OnlyStaff } from '../items/OnlyStaff';
 
 export function ServerInfoModal({
   context,
   id
 }: ContextModalProps<{ modalBody: string }>) {
   const [server] = useServerApiState(useShallow((state) => [state.server]));
-
-  // Deployment details are staff-only (this modal is only available to staff users)
-  const { server: status } = useSystemStatus();
 
   return (
     <Stack>
@@ -42,9 +39,11 @@ export function ServerInfoModal({
             <Table.Td>
               <Trans>Database</Trans>
             </Table.Td>
-            <Table.Td>{status?.database}</Table.Td>
+            <Table.Td>
+              <OnlyStaff>{server.database}</OnlyStaff>
+            </Table.Td>
           </Table.Tr>
-          {status?.debug_mode && (
+          {server.debug_mode && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Debug Mode</Trans>
@@ -57,7 +56,7 @@ export function ServerInfoModal({
               </Table.Td>
             </Table.Tr>
           )}
-          {status?.docker_mode && (
+          {server.docker_mode && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Docker Mode</Trans>
@@ -86,16 +85,18 @@ export function ServerInfoModal({
               <Trans>Server status</Trans>
             </Table.Td>
             <Table.Td>
-              <Badge color={server.system_health ? 'green' : 'yellow'}>
-                {server.system_health ? (
-                  <Trans>Healthy</Trans>
-                ) : (
-                  <Trans>Issues detected</Trans>
-                )}
-              </Badge>
+              <OnlyStaff>
+                <Badge color={server.system_health ? 'green' : 'yellow'}>
+                  {server.system_health ? (
+                    <Trans>Healthy</Trans>
+                  ) : (
+                    <Trans>Issues detected</Trans>
+                  )}
+                </Badge>
+              </OnlyStaff>
             </Table.Td>
           </Table.Tr>
-          {status?.worker_running === false && (
+          {server?.worker_running == false && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Background Worker</Trans>
@@ -108,7 +109,7 @@ export function ServerInfoModal({
               </Table.Td>
             </Table.Tr>
           )}
-          {status?.email_configured === false && (
+          {!server?.email_configured && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Email Settings</Trans>

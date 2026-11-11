@@ -261,12 +261,12 @@ class MiddlewareTests(InvenTreeTestCase):
         # and InfoView falls back to its own token check
         url = reverse('api-inventree-info')
         response = self.check_path(url, auth_header=f'Bearer {raw_token}')
-        self.assertIsNotNone(response.json()['system_health'])
+        self.assertIsNotNone(response.json()['database'])
 
         self.user.is_active = False
         self.user.save()
         response = self.check_path(url, auth_header=f'Bearer {raw_token}')
-        self.assertIsNone(response.json()['system_health'])
+        self.assertIsNone(response.json()['database'])
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""

@@ -3595,7 +3595,7 @@ class GenericMetadataAuthorizationTests(InvenTreeAPITestCase):
 
 
 class AdminMessageAPITests(InvenTreeAPITestCase):
-    """Tests for the staff-only /api/system/status/ endpoint."""
+    """Tests for the staff-only /api/system/messages/ endpoint."""
 
     roles = []
 
@@ -3612,7 +3612,7 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
     @property
     def url(self):
         """Return the endpoint URL."""
-        return reverse('api-system-status')
+        return reverse('api-system-messages')
 
     def _messages(self) -> dict:
         """Fetch messages, keyed by message key."""
@@ -3640,7 +3640,7 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
     def test_core_messages(self):
         """All core system checks are reported, with valid structure."""
         response = self.get(self.url, expected_code=200)
-        self.assertEqual(set(response.data.keys()), {'messages', 'server'})
+        self.assertEqual(set(response.data.keys()), {'messages'})
         self.assertIsInstance(response.data['messages'], list)
 
         messages = self._messages()
@@ -3654,39 +3654,6 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
             self.assertIsNone(msg['plugin'])
 
         self.assertEqual(messages['basic_auth']['code'], 'INVE-W18')
-
-    def test_server_info(self):
-        """Server deployment information is provided to staff users."""
-        response = self.get(self.url, expected_code=200)
-        server = response.data['server']
-
-        self.assertEqual(
-            set(server.keys()),
-            {
-                'worker_running',
-                'worker_count',
-                'worker_pending_tasks',
-                'plugins_install_disabled',
-                'email_configured',
-                'debug_mode',
-                'docker_mode',
-                'database',
-                'platform',
-                'installer',
-                'target',
-                'django_admin',
-            },
-        )
-
-        from django.conf import settings
-
-        self.assertGreater(len(server['database']), 4)
-        self.assertIsInstance(server['worker_pending_tasks'], int)
-        self.assertEqual(server['debug_mode'], settings.DEBUG)
-
-        with override_settings(INVENTREE_ADMIN_ENABLED=False):
-            server = self.get(self.url, expected_code=200).data['server']
-            self.assertIsNone(server['django_admin'])
 
     def test_ordering(self):
         """Messages are returned most-severe first."""
@@ -3708,13 +3675,13 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
             self.assertEqual(messages['basic_auth']['classifier'], 'success')
 
         set_global_setting('_PENDING_MIGRATIONS', 3, None)
-        set_global_setting('_SERVER_RESTART_REQUIRED', True, None)
+        set_global_setting('SERVER_RESTART_REQUIRED', True, None)
         messages = self._messages()
         self.assertEqual(messages['migrations']['classifier'], 'warning')
         self.assertEqual(messages['restart']['classifier'], 'warning')
 
         set_global_setting('_PENDING_MIGRATIONS', 0, None)
-        set_global_setting('_SERVER_RESTART_REQUIRED', False, None)
+        set_global_setting('SERVER_RESTART_REQUIRED', False, None)
         messages = self._messages()
         self.assertEqual(messages['migrations']['classifier'], 'success')
         self.assertEqual(messages['restart']['classifier'], 'success')
