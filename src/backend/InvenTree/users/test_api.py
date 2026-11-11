@@ -7,7 +7,11 @@ from unittest import mock
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
 
-from allauth.account.internal.flows.login import AUTHENTICATION_METHODS_SESSION_KEY
+from allauth.account.internal.flows.login import (
+    _AUTHENTICATION_METHODS_USER_SESSION_KEY,
+    AUTHENTICATION_METHODS_SESSION_KEY,
+)
+from allauth.account.internal.userkit import user_id_to_str
 from allauth.account.models import EmailAddress
 from allauth.mfa.models import Authenticator
 
@@ -920,8 +924,14 @@ class UserTokenTests(InvenTreeAPITestCase):
         """
         session = self.client.session
         session[AUTHENTICATION_METHODS_SESSION_KEY] = [
-            {'method': 'mfa', 'type': 'totp', 'at': time.time() - age}
+            {
+                'method': 'mfa',
+                'type': 'totp',
+                'reauthenticated': True,
+                'at': time.time() - age,
+            }
         ]
+        session[_AUTHENTICATION_METHODS_USER_SESSION_KEY] = user_id_to_str(self.user)
         session.save()
 
     def test_token_mfa_reauthentication(self):
