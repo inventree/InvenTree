@@ -177,19 +177,41 @@ forbidden_modules = [
     "plugin",
     "plugin.admin",
     "plugin.api",
+    "plugin.plugin",
     "plugin.apps",
     "plugin.base",
+    "plugin.broken",
+    "plugin.builtin",
     "plugin.events",
     "plugin.helpers",
     "plugin.installer",
+    "plugin.lease",
+    # "plugin.machine",
+    "plugin.migrations",
+    # "plugin.mixins",
+    "plugin.mock",
     "plugin.models",
     "plugin.plugin",
+    # "plugin.registry",
+    "plugin.samples",
     "plugin.serializers",
     "plugin.staticfiles",
     "plugin.template",
+    "plugin.test_api",
+    "plugin.test_plugin",
+    "plugin.test_staticfiles",
+    "plugin.testing",
     "plugin.urls",
 ]
 allow_indirect_imports = true
+
+# [[tool.importlinter.contracts]]
+# name = "Plugin mixins must be layered"
+# type = "independence"
+# modules=[
+#     "plugin.base.*"
+# ]
+
 
 [[tool.importlinter.contracts]]
 # `generic` holds shared enums, events and state machines
