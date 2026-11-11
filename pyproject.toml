@@ -142,3 +142,106 @@ pythonpath = ["src/backend/InvenTree"]
 DJANGO_SETTINGS_MODULE = "InvenTree.settings"
 python_files = ["test*.py",]
 timeout = "120"
+
+[tool.importlinter]
+# Architectural import boundaries for the backend, enforced by import-linter (prek).
+root_packages = [
+    "InvenTree",
+    "build",
+    "common",
+    "company",
+    "data_exporter",
+    "generic",
+    "importer",
+    "machine",
+    "order",
+    "part",
+    "plugin",
+    "report",
+    "stock",
+    "users",
+    "web",
+]
+include_external_packages = false
+
+[[tool.importlinter.contracts]]
+# Plugins are only allowed to use the documented, stable import targets:
+# `plugin` , `plugin.mixins`, `plugin.machine`
+name = "Plugins only import the public plugin API"
+type = "forbidden"
+source_modules = ["plugin.builtin", "plugin.samples"]
+forbidden_modules = [
+    "machine",
+    "plugin",
+    "plugin.admin",
+    "plugin.api",
+    "plugin.apps",
+    "plugin.base",
+    "plugin.events",
+    "plugin.helpers",
+    "plugin.installer",
+    "plugin.models",
+    "plugin.plugin",
+    "plugin.serializers",
+    "plugin.staticfiles",
+    "plugin.template",
+    "plugin.urls",
+]
+allow_indirect_imports = true
+ignore_imports = [
+    "plugin.builtin.barcodes.inventree_barcode -> plugin.base.barcodes.helper",
+    "plugin.builtin.integration.machine_types -> machine.machine_type",
+    "plugin.builtin.integration.machine_types -> machine.machine_types.label_printer",
+    "plugin.builtin.labels.inventree_machine -> machine.machine_types",
+    "plugin.samples.event.test_event_sample -> plugin.base.event.events",
+    "plugin.samples.event.test_filtered_event_sample -> plugin.base.event.events",
+    "plugin.samples.mail.test_mail_sample -> plugin.base.mail.mail",
+    "plugin.samples.event.test_event_sample -> plugin.helpers",
+    "plugin.samples.icons.test_icon_sample -> plugin.helpers",
+    "plugin.samples.integration.test_scheduled_task -> plugin.helpers",
+    "plugin.samples.locate.test_locate_sample -> plugin.helpers",
+    "plugin.samples.mail.test_mail_sample -> plugin.helpers",
+    "plugin.samples.icons.icon_sample -> plugin.plugin",
+    "plugin.samples.supplier.supplier_sample -> plugin.plugin",
+    "plugin.samples.machines.sample_printer -> machine.machine_type"
+]
+
+[[tool.importlinter.contracts]]
+# `generic` holds shared enums, events and state machines
+name = "Generic app does not depend on feature apps"
+type = "forbidden"
+source_modules = ["generic"]
+forbidden_modules = [
+    "build",
+    "company",
+    "importer",
+    "machine",
+    "order",
+    "part",
+    "report",
+    "stock",
+    "users",
+    "web",
+]
+allow_indirect_imports = true
+ignore_imports = [
+    "generic.states.tests -> build.status_codes",
+    "generic.states.test_transition -> order.models",
+    "generic.states.test_transition -> order.status_codes",
+    "generic.states.api_helpers -> users.permissions",
+    "generic.states.test_transition -> users.models",
+]
+
+[[tool.importlinter.contracts]]
+# Ban dependency cycles between sibling modules/subpackages
+name = "No dependency cycles inside an app"
+type = "acyclic_siblings"
+ancestors = [
+    "company",
+    "data_exporter",
+    "generic",
+    "report",
+    "stock",
+    "web",
+]
+ignore_imports = ["generic.templatetags.generic -> generic.states.tags"]
