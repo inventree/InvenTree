@@ -19,9 +19,29 @@ export interface AdminMessage {
   plugin?: string | null;
 }
 
+/**
+ * Staff-only server deployment information,
+ * as returned in the `server` object of the /api/system/status/ endpoint.
+ */
+export interface SystemStatusServerInfo {
+  worker_running: boolean;
+  worker_count: number;
+  worker_pending_tasks: number;
+  plugins_install_disabled: boolean;
+  email_configured: boolean;
+  debug_mode: boolean;
+  docker_mode: boolean;
+  database: string;
+  platform: string;
+  installer: string | null;
+  target: string | null;
+  django_admin: string | null;
+}
+
 /** Response format of the /api/system/status/ endpoint */
-interface SystemStatusResponse {
+export interface SystemStatusResponse {
   messages: AdminMessage[];
+  server: SystemStatusServerInfo;
 }
 
 /** All classifiers, ordered most severe first */
@@ -67,14 +87,15 @@ export function classifierLabel(classifier: AdminMessageClassifier): string {
 }
 
 /**
- * Fetch the list of staff-only system messages from the server.
- * The query is only enabled for staff users (the endpoint is staff-only).
+ * Fetch staff-only system status information from the server.
+ * The query is only enabled for staff users (the endpoint is staff-only),
+ * so `server` is always undefined for non-staff users.
  */
-export function useAdminMessages() {
+export function useSystemStatus() {
   const user = useUserState();
   const isStaff = user.isStaff();
 
-  const query = useQuery<AdminMessage[]>({
+  const query = useQuery<SystemStatusResponse | null>({
     enabled: isStaff,
     queryKey: ['system-status', user.userId()],
     // System state changes infrequently, and checks may hit the database
@@ -83,14 +104,21 @@ export function useAdminMessages() {
     queryFn: async () =>
       api
         .get(apiUrl(ApiEndpoints.system_status))
-        .then(
-          (response) =>
-            (response.data as SystemStatusResponse | undefined)?.messages ?? []
-        )
+        .then((response) => response.data ?? null)
   });
+
+  const data = isStaff ? (query.data ?? undefined) : undefined;
 
   return {
     ...query,
-    messages: isStaff ? (query.data ?? []) : []
+    messages: data?.messages ?? [],
+    server: data?.server
   };
+}
+
+/**
+ * Fetch the list of staff-only system messages from the server.
+ */
+export function useAdminMessages() {
+  return useSystemStatus();
 }

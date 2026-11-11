@@ -526,10 +526,28 @@ class AdminMessageSerializer(serializers.Serializer):
     plugin = serializers.CharField(read_only=True, allow_null=True)
 
 
+class SystemStatusServerSerializer(serializers.Serializer):
+    """Serializer for (staff-only) server deployment information."""
+
+    worker_running = serializers.BooleanField(read_only=True)
+    worker_count = serializers.IntegerField(read_only=True)
+    worker_pending_tasks = serializers.IntegerField(read_only=True)
+    plugins_install_disabled = serializers.BooleanField(read_only=True)
+    email_configured = serializers.BooleanField(read_only=True)
+    debug_mode = serializers.BooleanField(read_only=True)
+    docker_mode = serializers.BooleanField(read_only=True)
+    database = serializers.CharField(read_only=True)
+    platform = serializers.CharField(read_only=True)
+    installer = serializers.CharField(read_only=True, allow_null=True)
+    target = serializers.CharField(read_only=True, allow_null=True)
+    django_admin = serializers.CharField(read_only=True, allow_null=True)
+
+
 class SystemStatusSerializer(serializers.Serializer):
     """Serializer for the staff-only system status endpoint."""
 
     messages = AdminMessageSerializer(many=True, read_only=True)
+    server = SystemStatusServerSerializer(read_only=True)
 
 
 class FlagSerializer(serializers.Serializer):

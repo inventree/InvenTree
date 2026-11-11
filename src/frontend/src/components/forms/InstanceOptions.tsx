@@ -16,8 +16,7 @@ import {
   IconEdit,
   IconInfoCircle,
   IconPlugConnected,
-  IconServer,
-  IconServerSpark
+  IconServer
 } from '@tabler/icons-react';
 
 import { ActionButton } from '@lib/components/ActionButton';
@@ -144,13 +143,6 @@ function ServerInfo({
       value: server.plugins_enabled ? t`Enabled` : t`Disabled`,
       icon: <IconPlugConnected />,
       color: server.plugins_enabled ? 'green' : 'red'
-    },
-    {
-      key: 'worker',
-      label: t`Worker`,
-      value: server.worker_running ? t`Running` : t`Stopped`,
-      icon: <IconServerSpark />,
-      color: server.worker_running ? 'green' : 'red'
     }
   ];
 

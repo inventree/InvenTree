@@ -16,6 +16,9 @@ test('Modals - Admin', async ({ browser }) => {
     })
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
+
+  // Database type is staff-only (loaded from /api/system/status/)
+  await page.getByRole('cell', { name: /^django\.db\.backends\./ }).waitFor();
   await page.getByRole('button', { name: 'Close' }).click();
 
   // use license info

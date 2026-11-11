@@ -21,6 +21,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { docLinks } from '../../defaults/links';
 import { generateUrl } from '../../functions/urls';
+import { useSystemStatus } from '../../hooks/UseAdminMessages';
 import { useServerApiState } from '../../states/ServerApiState';
 
 import type { JSX } from 'react';
@@ -58,6 +59,7 @@ const AboutContent = ({
   }>
 >) => {
   const [server] = useServerApiState(useShallow((state) => [state.server]));
+  const { server: status } = useSystemStatus();
   const { isLoading, data } = useQuery({
     queryKey: ['version'],
     queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
@@ -100,12 +102,12 @@ const AboutContent = ({
     commit_set
       ? `Commit Hash: ${data.version.commit_hash}\nCommit Date: ${data.version.commit_date}\nCommit Branch: ${data.version.commit_branch}\n`
       : ''
-  }Database: ${server.database}\nDebug-Mode: ${
-    server.debug_mode ? 'True' : 'False'
+  }Database: ${status?.database ?? ''}\nDebug-Mode: ${
+    status?.debug_mode ? 'True' : 'False'
   }\nDeployed using Docker: ${
-    server.docker_mode ? 'True' : 'False'
-  }\nPlatform: ${server.platform}\nInstaller: ${server.installer ? server.installer : ''}\n${
-    server.target ? `Target: ${server.target}\n` : ''
+    status?.docker_mode ? 'True' : 'False'
+  }\nPlatform: ${status?.platform ?? ''}\nInstaller: ${status?.installer ?? ''}\n${
+    status?.target ? `Target: ${status.target}\n` : ''
   }Active plugins: ${JSON.stringify(server.active_plugins)}`;
 
   const tableData = [

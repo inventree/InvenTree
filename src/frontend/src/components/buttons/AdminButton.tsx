@@ -7,7 +7,7 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { eventModified } from '@lib/functions/Navigation';
 import { generateUrl } from '../../functions/urls';
-import { useServerApiState } from '../../states/ServerApiState';
+import { useSystemStatus } from '../../hooks/UseAdminMessages';
 import { useUserState } from '../../states/UserState';
 
 export type AdminButtonProps = {
@@ -26,7 +26,9 @@ export type AdminButtonProps = {
  */
 export default function AdminButton(props: Readonly<AdminButtonProps>) {
   const user = useUserState();
-  const server = useServerApiState();
+  // Admin URL is staff-only information, provided by the system status endpoint
+  const { server: serverStatus } = useSystemStatus();
+  const adminUrl = serverStatus?.django_admin;
 
   const enabled: boolean = useMemo(() => {
     // Only users with superuser permission will see this button
@@ -37,7 +39,7 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
     const modelDef = ModelInformationDict[props.model];
 
     // Check if the server has the admin interface enabled
-    if (!server.server.django_admin) {
+    if (!adminUrl) {
       return false;
     }
 
@@ -52,7 +54,7 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
     }
 
     return true;
-  }, [user, props.model, props.id]);
+  }, [user, adminUrl, props.model, props.id]);
 
   const openAdmin = useCallback(
     (event: any) => {
@@ -63,9 +65,7 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
       }
 
       // Generate the URL for the admin interface
-      const url = generateUrl(
-        `${server.server.django_admin}${modelDef.admin_url}${props.id}/`
-      );
+      const url = generateUrl(`${adminUrl}${modelDef.admin_url}${props.id}/`);
 
       if (eventModified(event)) {
         // Open the link in a new tab
@@ -74,7 +74,7 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
         window.open(url, '_self');
       }
     },
-    [props.model, props.id]
+    [adminUrl, props.model, props.id]
   );
 
   return (

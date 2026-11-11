@@ -3,6 +3,7 @@ import { Badge, Button, Divider, Group, Stack, Table } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 
 import { useShallow } from 'zustand/react/shallow';
+import { useSystemStatus } from '../../hooks/UseAdminMessages';
 import { useServerApiState } from '../../states/ServerApiState';
 import { OnlyStaff } from '../items/OnlyStaff';
 
@@ -11,6 +12,9 @@ export function ServerInfoModal({
   id
 }: ContextModalProps<{ modalBody: string }>) {
   const [server] = useServerApiState(useShallow((state) => [state.server]));
+
+  // Deployment details are staff-only (undefined for non-staff users)
+  const { server: status } = useSystemStatus();
 
   return (
     <Stack>
@@ -40,10 +44,10 @@ export function ServerInfoModal({
               <Trans>Database</Trans>
             </Table.Td>
             <Table.Td>
-              <OnlyStaff>{server.database}</OnlyStaff>
+              <OnlyStaff>{status?.database}</OnlyStaff>
             </Table.Td>
           </Table.Tr>
-          {server.debug_mode && (
+          {status?.debug_mode && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Debug Mode</Trans>
@@ -56,7 +60,7 @@ export function ServerInfoModal({
               </Table.Td>
             </Table.Tr>
           )}
-          {server.docker_mode && (
+          {status?.docker_mode && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Docker Mode</Trans>
@@ -96,7 +100,7 @@ export function ServerInfoModal({
               </OnlyStaff>
             </Table.Td>
           </Table.Tr>
-          {server?.worker_running == false && (
+          {status?.worker_running === false && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Background Worker</Trans>
@@ -109,7 +113,7 @@ export function ServerInfoModal({
               </Table.Td>
             </Table.Tr>
           )}
-          {!server?.email_configured && (
+          {status?.email_configured === false && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Email Settings</Trans>

@@ -788,6 +788,23 @@ class SearchTests(InvenTreeAPITestCase):
 class GeneralApiTests(InvenTreeAPITestCase):
     """Tests for various api endpoints."""
 
+    # Fields which are only available via the staff-only /api/system/status/ endpoint
+    STAFF_ONLY_KEYS = [
+        'system_state',
+        'worker_running',
+        'worker_count',
+        'worker_pending_tasks',
+        'plugins_install_disabled',
+        'email_configured',
+        'debug_mode',
+        'docker_mode',
+        'database',
+        'platform',
+        'installer',
+        'target',
+        'django_admin',
+    ]
+
     def test_api_version(self):
         """Test that the API text is correct."""
         url = reverse('api-version-text')
@@ -885,8 +902,10 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
         self.assertEqual('InvenTree', data['server'])
 
-        # System state information is only available via the staff-only /api/system/status/ endpoint
-        self.assertNotIn('system_state', data)
+        # Deployment / system state information is only available via the
+        # staff-only /api/system/status/ endpoint - not even to staff users here
+        for key in self.STAFF_ONLY_KEYS:
+            self.assertNotIn(key, data)
 
         # Test with token
         token = self.get(url=reverse('api-token'), max_query_count=40).data['token']
@@ -895,7 +914,8 @@ class GeneralApiTests(InvenTreeAPITestCase):
         # Anon
         response = self.get(url, max_query_count=20)
         data = response.json()
-        self.assertEqual(data['database'], None)
+        for key in self.STAFF_ONLY_KEYS:
+            self.assertNotIn(key, data)
         self.assertIsNotNone(data.get('active_plugins'))
 
         # Staff
@@ -903,7 +923,8 @@ class GeneralApiTests(InvenTreeAPITestCase):
             url, headers={'Authorization': f'Token {token}'}, max_query_count=40
         )
         self.assertIsNotNone(data.get('active_plugins'))
-        self.assertGreater(len(response.json()['database']), 4)
+        for key in self.STAFF_ONLY_KEYS:
+            self.assertNotIn(key, response.json())
 
         data = response.json()
 

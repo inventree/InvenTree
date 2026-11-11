@@ -1742,10 +1742,13 @@ class HealthCheckStatusSerializer(serializers.Serializer):
 
 
 class AdminMessageList(APIView):
-    """Read-only list of staff-facing system messages.
+    """Read-only, staff-only system status information.
+
+    Provides:
+    - messages: classified system messages (error / warning / info / success)
+    - server: server deployment information (worker, email, debug mode, database, etc.)
 
     Messages are generated on demand from core system checks (and potentially plugins).
-    Each message has a classifier: error / warning / info / success.
     """
 
     permission_classes = [IsAdminOrAdminScope]
@@ -1754,16 +1757,18 @@ class AdminMessageList(APIView):
         responses={
             200: OpenApiResponse(
                 response=common.serializers.SystemStatusSerializer,
-                description='System status messages for staff users',
+                description='System status information for staff users',
             )
         }
     )
     def get(self, request, *args, **kwargs):
-        """Return the admin messages (most severe first) under the 'messages' key."""
+        """Return system messages (most severe first) and server deployment information."""
         from common.admin_messages import get_admin_messages
+        from InvenTree.status import get_server_info
 
         serializer = common.serializers.SystemStatusSerializer({
-            'messages': get_admin_messages()
+            'messages': get_admin_messages(),
+            'server': get_server_info(),
         })
         return Response(serializer.data)
 

@@ -26,6 +26,10 @@ test('Plugins - Settings', async ({ browser }) => {
 
   // Navigate and select the plugin
   await navigate(page, 'settings/admin/plugin/');
+
+  // Install action is available (plugins_install_disabled is read from /api/system/status/)
+  await page.getByLabel('action-button-install-plugin').waitFor();
+
   await clearTableFilters(page);
   await tableSearch(page, 'integration');
   await page.waitForTimeout(250);
