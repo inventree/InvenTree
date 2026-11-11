@@ -1,56 +1,56 @@
 import { ActionIcon, Alert, Group, Menu, Stack, Tooltip } from '@mantine/core';
-import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
+import {
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconExclamationCircle,
+  IconInfoCircle
+} from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import type { SettingsStateProps } from '@lib/types/Settings';
 import { t } from '@lingui/core/macro';
-import { useShallow } from 'zustand/react/shallow';
 import { docLinks } from '../../defaults/links';
-import { useServerApiState } from '../../states/ServerApiState';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
-import { useUserState } from '../../states/UserState';
-import type { ServerAPIProps } from '../../states/states';
-
-interface AlertInfo {
-  key: string;
-  title: string;
-  code?: string;
-  message: string;
-  error?: boolean;
-}
+import {
+  ACTIONABLE_CLASSIFIERS,
+  type AdminMessage,
+  type AdminMessageClassifier,
+  classifierColor,
+  useAdminMessages
+} from '../../hooks/UseAdminMessages';
 
 /**
- * The `Alerts` component displays a menu of alerts for staff users based on the server state
- * and global settings. Alerts are shown as a dropdown menu with actionable items that can be dismissed.
+ * The `Alerts` component displays a menu of alerts for staff users, based on the
+ * system messages provided by the server (via the /api/status/ endpoint).
  *
+ * Only actionable messages (errors and warnings) are displayed here.
  * Dismissed alerts are filtered out and will not reappear in the current session.
  *
  * @returns A dropdown menu of alerts for staff users or `null` if there are no alerts or the user is not a staff member.
  */
 export function Alerts() {
-  const user = useUserState();
-  const [server] = useServerApiState(useShallow((state) => [state.server]));
-  const globalSettings = useGlobalSettingsState();
+  const { messages } = useAdminMessages();
 
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  const alerts: ExtendedAlertInfo[] = useMemo(
+  const alerts: AdminMessage[] = useMemo(
     () =>
-      getAlerts(server, globalSettings).filter(
-        (alert) => !dismissed.includes(alert.key)
+      messages.filter(
+        (msg) =>
+          ACTIONABLE_CLASSIFIERS.includes(msg.classifier) &&
+          !dismissed.includes(msg.key)
       ),
-    [server, dismissed, globalSettings]
+    [messages, dismissed]
   );
 
   const anyErrors: boolean = useMemo(
-    () => alerts.some((alert) => alert.error),
+    () => alerts.some((alert) => alert.classifier === 'error'),
     [alerts]
   );
+
   function closeAlert(key: string) {
     setDismissed([...dismissed, key]);
   }
 
-  if (user.isStaff() && alerts.length > 0)
+  if (alerts.length > 0)
     return (
       <Menu withinPortal={true} position='bottom-end'>
         <Menu.Target>
@@ -76,15 +76,31 @@ export function Alerts() {
   return null;
 }
 
+function classifierIcon(classifier: AdminMessageClassifier) {
+  switch (classifier) {
+    case 'error':
+      return <IconExclamationCircle />;
+    case 'warning':
+      return <IconAlertTriangle />;
+    case 'info':
+      return <IconInfoCircle />;
+    case 'success':
+    default:
+      return <IconCircleCheck />;
+  }
+}
+
 export function ServerAlert({
   alert,
   closeAlert
-}: { alert: ExtendedAlertInfo; closeAlert?: (key: string) => void }) {
+}: { alert: AdminMessage; closeAlert?: (key: string) => void }) {
+  const actionable = ACTIONABLE_CLASSIFIERS.includes(alert.classifier);
+
   return (
     <Alert
       withCloseButton={!!closeAlert}
-      color={alert.condition ? (alert.error ? 'red' : 'orange') : 'green'}
-      icon={alert.condition ? <IconExclamationCircle /> : <IconCircleCheck />}
+      color={classifierColor(alert.classifier)}
+      icon={classifierIcon(alert.classifier)}
       title={
         <Group gap='xs'>
           {alert.code && `${alert.code}: `}
@@ -94,79 +110,11 @@ export function ServerAlert({
       onClose={closeAlert ? () => closeAlert(alert.key) : undefined}
     >
       <Stack gap='xs'>
-        {!alert.condition && t`No issues detected`}
-        {alert.condition && alert.message}
-        {alert.condition && alert.code && errorCodeLink(alert.code)}
+        {alert.message}
+        {actionable && alert.code && errorCodeLink(alert.code)}
       </Stack>
     </Alert>
   );
-}
-
-export type ExtendedAlertInfo = AlertInfo & {
-  condition: boolean;
-};
-
-export function getAlerts(
-  server: ServerAPIProps,
-  globalSettings: SettingsStateProps,
-  inactive = false
-): ExtendedAlertInfo[] {
-  const n_migrations =
-    Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
-
-  const allAlerts: ExtendedAlertInfo[] = [
-    {
-      key: 'debug',
-      title: t`Debug Mode`,
-      code: 'INVE-W4',
-      message: t`The server is running in debug mode.`,
-      condition: server?.debug_mode || false
-    },
-    {
-      key: 'worker',
-      title: t`Background Worker`,
-      code: 'INVE-W5',
-      message: t`The background worker process is not running.`,
-      condition: !server?.worker_running
-    },
-    {
-      key: 'restart',
-      title: t`Server Restart`,
-      code: 'INVE-W6',
-      message: t`The server requires a restart to apply changes.`,
-      condition: globalSettings.isSet('SERVER_RESTART_REQUIRED')
-    },
-    {
-      key: 'email',
-      title: t`Email settings`,
-      code: 'INVE-W7',
-      message: t`Email settings not configured.`,
-      condition: !server?.email_configured
-    },
-    {
-      key: 'migrations',
-      title: t`Database Migrations`,
-      code: 'INVE-W8',
-      message: t`There are pending database migrations.`,
-      condition: n_migrations > 0
-    },
-    {
-      key: 'cors',
-      title: t`CORS Settings`,
-      code: 'INVE-W16',
-      message: t`CORS is set to allow all origins.`,
-      condition: server?.system_state?.cors_allow_all || false
-    },
-    {
-      key: 'basic_auth',
-      title: t`Basic Authentication`,
-      code: 'INVE-W18',
-      message: t`Basic (username:password) authentication is enabled for the API.`,
-      condition: server?.system_state?.basic_auth_enabled || false
-    }
-  ];
-
-  return allAlerts.filter((alert) => inactive || alert.condition);
 }
 
 export function errorCodeLink(code: string) {

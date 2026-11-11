@@ -350,6 +350,45 @@ test('Settings - Admin', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
+test('Settings - Admin - System Status', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'settings/admin/home'
+  });
+
+  // Messages are loaded from the server (/api/status/ endpoint)
+  await page.getByText('System Status').waitFor();
+  await page.getByLabel('admin-message-classifier-selector').waitFor();
+  const messages = page.getByLabel('admin-message-list').getByRole('alert');
+
+  await messages.filter({ hasText: 'Basic Authentication' }).waitFor();
+
+  const classifiers = ['error', 'warning', 'info', 'success'];
+  const total = await messages.count();
+  expect(total).toBeGreaterThanOrEqual(7);
+
+  // Toggle a classifier chip (the native checkbox input is visually hidden)
+  const toggle = async (c: string, checked: boolean) => {
+    const chip = page.getByLabel(`admin-message-classifier-${c}`);
+    await chip.dispatchEvent('click');
+    if (checked) await expect(chip).toBeChecked();
+    else await expect(chip).not.toBeChecked();
+  };
+
+  // Hide all classifiers
+  for (const c of classifiers) {
+    await toggle(c, false);
+  }
+  await page.getByText('No messages to display').waitFor();
+  await expect(messages).toHaveCount(0);
+
+  // Show all classifiers again (also restores localStorage state)
+  for (const c of classifiers) {
+    await toggle(c, true);
+  }
+  await expect(messages).toHaveCount(total);
+});
+
 test('Settings - Admin - Background Tasks', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     user: adminuser,
