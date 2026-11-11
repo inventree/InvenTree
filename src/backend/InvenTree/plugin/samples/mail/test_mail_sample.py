@@ -4,9 +4,12 @@ from django.test import TestCase
 
 from common.models import InvenTreeSetting
 from plugin import InvenTreePlugin
-from plugin.base.mail.mail import process_mail_in, process_mail_out
-from plugin.helpers import MixinNotImplementedError
-from plugin.mixins import MailMixin
+from plugin.mixins import (
+    MailMixin,
+    MixinNotImplementedError,
+    process_mail_in,
+    process_mail_out,
+)
 from plugin.registry import registry
 
 

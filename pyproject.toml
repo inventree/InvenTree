@@ -188,18 +188,6 @@ forbidden_modules = [
     "plugin.urls",
 ]
 allow_indirect_imports = true
-ignore_imports = [
-    "plugin.samples.event.test_event_sample -> plugin.base.event.events",
-    "plugin.samples.event.test_filtered_event_sample -> plugin.base.event.events",
-    "plugin.samples.mail.test_mail_sample -> plugin.base.mail.mail",
-    "plugin.samples.event.test_event_sample -> plugin.helpers",
-    "plugin.samples.icons.test_icon_sample -> plugin.helpers",
-    "plugin.samples.integration.test_scheduled_task -> plugin.helpers",
-    "plugin.samples.locate.test_locate_sample -> plugin.helpers",
-    "plugin.samples.mail.test_mail_sample -> plugin.helpers",
-    "plugin.samples.icons.icon_sample -> plugin.plugin",
-    "plugin.samples.supplier.supplier_sample -> plugin.plugin",
-]
 
 [[tool.importlinter.contracts]]
 # `generic` holds shared enums, events and state machines
