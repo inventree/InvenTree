@@ -356,7 +356,7 @@ test('Settings - Admin - System Status', async ({ browser }) => {
     url: 'settings/admin/home'
   });
 
-  // Messages are loaded from the server (/api/status/ endpoint)
+  // Messages are loaded from the server (/api/system/status/ endpoint)
   await page.getByText('System Status').waitFor();
   await page.getByLabel('admin-message-classifier-selector').waitFor();
   const messages = page.getByLabel('admin-message-list').getByRole('alert');

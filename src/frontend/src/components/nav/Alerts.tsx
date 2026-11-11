@@ -30,7 +30,7 @@ import {
 
 /**
  * The `Alerts` component displays a menu of alerts for staff users, based on the
- * system messages provided by the server (via the /api/status/ endpoint).
+ * system messages provided by the server (via the /api/system/status/ endpoint).
  *
  * Only actionable messages (errors and warnings) are displayed here.
  * Dismissed alerts are filtered out and will not reappear in the current session.

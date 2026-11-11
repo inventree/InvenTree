@@ -3595,7 +3595,7 @@ class GenericMetadataAuthorizationTests(InvenTreeAPITestCase):
 
 
 class AdminMessageAPITests(InvenTreeAPITestCase):
-    """Tests for the staff-only /api/status/ endpoint."""
+    """Tests for the staff-only /api/system/status/ endpoint."""
 
     roles = []
 
@@ -3617,7 +3617,7 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
     def _messages(self) -> dict:
         """Fetch messages, keyed by message key."""
         response = self.get(self.url, expected_code=200)
-        return {msg['key']: msg for msg in response.data}
+        return {msg['key']: msg for msg in response.data['messages']}
 
     def test_permissions(self):
         """Only staff users may access the endpoint."""
@@ -3639,6 +3639,10 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
 
     def test_core_messages(self):
         """All core system checks are reported, with valid structure."""
+        response = self.get(self.url, expected_code=200)
+        self.assertEqual(list(response.data.keys()), ['messages'])
+        self.assertIsInstance(response.data['messages'], list)
+
         messages = self._messages()
 
         self.assertTrue(self.CORE_KEYS.issubset(messages.keys()))
@@ -3655,7 +3659,7 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
         """Messages are returned most-severe first."""
         rank = {'error': 0, 'warning': 1, 'info': 2, 'success': 3}
         response = self.get(self.url, expected_code=200)
-        ranks = [rank[msg['classifier']] for msg in response.data]
+        ranks = [rank[msg['classifier']] for msg in response.data['messages']]
         self.assertEqual(ranks, sorted(ranks))
 
     def test_conditions(self):
@@ -3701,7 +3705,7 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
         ):
             response = self.get(self.url, expected_code=200)
 
-        first = response.data[0]
+        first = response.data['messages'][0]
         self.assertEqual(first['key'], 'sample.error')
         self.assertEqual(first['classifier'], 'error')
         self.assertEqual(first['plugin'], 'sample')

@@ -274,8 +274,6 @@ class InfoApiSerializer(serializers.Serializer):
     target = serializers.CharField(read_only=True, allow_null=True)
     django_admin = serializers.CharField(read_only=True)
     settings = SettingsSerializer(read_only=True, many=False)
-    """System state details that are mainly for warning purposes and do not require a hard API contract."""
-    system_state = serializers.JSONField(read_only=True)
 
 
 class InfoView(APIView):
@@ -354,10 +352,6 @@ class InfoView(APIView):
                 'password_forgotten_enabled': get_global_setting(
                     'LOGIN_ENABLE_PWD_FORGOT'
                 ),
-            },
-            'system_state': {
-                'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS,
-                'basic_auth_enabled': settings.BASIC_AUTH_ENABLED if is_staff else None,
             },
         }
         if nonce := request.query_params.get('link_nonce'):

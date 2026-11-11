@@ -884,11 +884,9 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertIn('instance', data)
 
         self.assertEqual('InvenTree', data['server'])
-        self.assertTrue(data['system_state']['basic_auth_enabled'])
 
-        with override_settings(BASIC_AUTH_ENABLED=False):
-            data = self.get(url, max_query_count=20).json()
-            self.assertFalse(data['system_state']['basic_auth_enabled'])
+        # System state information is only available via the staff-only /api/system/status/ endpoint
+        self.assertNotIn('system_state', data)
 
         # Test with token
         token = self.get(url=reverse('api-token'), max_query_count=40).data['token']

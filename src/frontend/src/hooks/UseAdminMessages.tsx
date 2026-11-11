@@ -8,7 +8,7 @@ import { useUserState } from '../states/UserState';
 export type AdminMessageClassifier = 'error' | 'warning' | 'info' | 'success';
 
 /**
- * A staff-only system message, as returned by the /api/status/ endpoint.
+ * A staff-only system message, as returned in the `messages` array of the /api/system/status/ endpoint.
  */
 export interface AdminMessage {
   key: string;
@@ -17,6 +17,11 @@ export interface AdminMessage {
   classifier: AdminMessageClassifier;
   code?: string | null;
   plugin?: string | null;
+}
+
+/** Response format of the /api/system/status/ endpoint */
+interface SystemStatusResponse {
+  messages: AdminMessage[];
 }
 
 /** All classifiers, ordered most severe first */
@@ -78,7 +83,10 @@ export function useAdminMessages() {
     queryFn: async () =>
       api
         .get(apiUrl(ApiEndpoints.system_status))
-        .then((response) => response.data ?? [])
+        .then(
+          (response) =>
+            (response.data as SystemStatusResponse | undefined)?.messages ?? []
+        )
   });
 
   return {

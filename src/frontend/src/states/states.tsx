@@ -40,10 +40,6 @@ export interface ServerAPIProps {
     navbar_message: string;
     disable_theme_storage: boolean;
   };
-  system_state: {
-    cors_allow_all: null | boolean;
-    basic_auth_enabled: null | boolean;
-  } | null;
 }
 
 let pendingGlobalStatesFetch: Promise<void> | null = null;

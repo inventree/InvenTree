@@ -57,7 +57,7 @@ export enum ApiEndpoints {
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
   news = 'news/',
-  system_status = 'status/',
+  system_status = 'system/status/',
   global_status = 'generic/status/',
   custom_state_list = 'generic/status/custom/',
   version = 'version/',

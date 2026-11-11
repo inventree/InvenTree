@@ -526,6 +526,12 @@ class AdminMessageSerializer(serializers.Serializer):
     plugin = serializers.CharField(read_only=True, allow_null=True)
 
 
+class SystemStatusSerializer(serializers.Serializer):
+    """Serializer for the staff-only system status endpoint."""
+
+    messages = AdminMessageSerializer(many=True, read_only=True)
+
+
 class FlagSerializer(serializers.Serializer):
     """Serializer for feature flags."""
 

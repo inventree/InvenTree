@@ -7,8 +7,8 @@ INVENTREE_API_VERSION = 575
 INVENTREE_API_TEXT = """
 
 v575 -> 2026-11-11 : https://github.com/inventree/InvenTree/pull/xxxxx
-    - Adds /api/status/ endpoint: staff-only, read-only list of classified system messages
-    - breaking: Removes the "system_state" field from the root API info endpoint (use /api/status/ instead)
+    - Adds /api/system/status/ endpoint: staff-only, read-only; classified system messages are provided in the "messages" array
+    - breaking: Removes the "system_state" field from the root API info endpoint (use /api/system/status/ instead)
     - breaking: The SERVER_RESTART_REQUIRED global setting is renamed to _SERVER_RESTART_REQUIRED, and is no longer exposed via the settings API
 
 v574 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13169

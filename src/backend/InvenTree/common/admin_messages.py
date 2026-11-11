@@ -2,7 +2,7 @@
 
 Each message describes the outcome of a single system check. Messages are
 generated on demand (they are not stored in the database), and are exposed
-via the read-only /api/status/ endpoint.
+via the read-only /api/system/status/ endpoint.
 """
 
 from dataclasses import dataclass

@@ -1753,18 +1753,18 @@ class AdminMessageList(APIView):
     @extend_schema(
         responses={
             200: OpenApiResponse(
-                response=common.serializers.AdminMessageSerializer(many=True),
-                description='List of system messages for staff users',
+                response=common.serializers.SystemStatusSerializer,
+                description='System status messages for staff users',
             )
         }
     )
     def get(self, request, *args, **kwargs):
-        """Return the list of admin messages, most severe first."""
+        """Return the admin messages (most severe first) under the 'messages' key."""
         from common.admin_messages import get_admin_messages
 
-        serializer = common.serializers.AdminMessageSerializer(
-            get_admin_messages(), many=True
-        )
+        serializer = common.serializers.SystemStatusSerializer({
+            'messages': get_admin_messages()
+        })
         return Response(serializer.data)
 
 
@@ -2190,8 +2190,6 @@ common_api_urls = [
     ),
     # Icons
     path('icons/', IconList.as_view(), name='api-icon-list'),
-    # Staff-only system status messages
-    path('status/', AdminMessageList.as_view(), name='api-system-status'),
     # Selection lists
     path('selection/', include(selection_urls)),
     # System APIs (related to basic system functions)
@@ -2199,7 +2197,9 @@ common_api_urls = [
         'system/',
         include([
             # Health check
-            path('health/', HealthCheckView.as_view(), name='api-system-health')
+            path('health/', HealthCheckView.as_view(), name='api-system-health'),
+            # Staff-only system status messages
+            path('status/', AdminMessageList.as_view(), name='api-system-status'),
         ]),
     ),
     # Internal System APIs - DO NOT USE
