@@ -1,5 +1,6 @@
 """Utility class to enable simpler imports."""
 
+from plugin._internal.helpers import MixinImplementationError, MixinNotImplementedError
 from plugin.base.action.mixins import ActionMixin
 from plugin.base.barcodes.helper import (
     get_supported_barcode_model_codes_map,
@@ -31,7 +32,6 @@ from plugin.base.supplier import helpers as supplier
 from plugin.base.supplier.mixins import SupplierMixin
 from plugin.base.ui.mixins import UserInterfaceMixin
 from plugin.events import trigger_event
-from plugin.helpers import MixinNotImplementedError
 
 __all__ = [
     'APICallMixin',
@@ -47,6 +47,7 @@ __all__ = [
     'LocateMixin',
     'MachineDriverMixin',
     'MailMixin',
+    'MixinImplementationError',
     'MixinNotImplementedError',
     'NavigationMixin',
     'NotificationMixin',

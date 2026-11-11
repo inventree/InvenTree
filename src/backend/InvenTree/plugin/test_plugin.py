@@ -17,9 +17,8 @@ from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
 from InvenTree.unit_test import PluginRegistryMixin, TestQueryMixin
-from plugin import InvenTreePlugin, PluginMixinEnum
-from plugin.installer import install_plugin, update_plugins_file
-from plugin.registry import registry
+from plugin import InvenTreePlugin, PluginMixinEnum, registry
+from plugin._internal.installer import install_plugin, update_plugins_file
 from plugin.samples.integration.another_sample import (
     NoIntegrationPlugin,
     WrongIntegrationPlugin,
@@ -817,7 +816,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         from django.db.utils import ProgrammingError
 
         from common.models import InvenTreeSetting
-        from plugin.lease import release_lease, try_acquire_lease
+        from plugin._internal.lease import release_lease, try_acquire_lease
 
         with mock.patch.object(
             InvenTreeSetting.objects,
@@ -836,7 +835,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_lease_acquire_release(self):
         """Test that try_acquire_lease / release_lease provide mutual exclusion."""
-        from plugin.lease import release_lease, try_acquire_lease
+        from plugin._internal.lease import release_lease, try_acquire_lease
 
         key = '_test_lease_acquire_release'
 
@@ -859,7 +858,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         from django.utils import timezone
 
         from common.settings import set_global_setting
-        from plugin.lease import CLAIM_LEASE, release_lease, try_acquire_lease
+        from plugin._internal.lease import CLAIM_LEASE, release_lease, try_acquire_lease
 
         key = '_test_lease_expiry'
 
@@ -881,7 +880,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         """Test that acquire_lease_blocking gives up after its timeout, rather than hanging."""
         import time
 
-        from plugin.lease import (
+        from plugin._internal.lease import (
             acquire_lease_blocking,
             release_lease,
             try_acquire_lease,
@@ -916,7 +915,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         installed, and no future check would ever retry it.
         """
         from common.settings import get_global_setting
-        from plugin.registry import registry
+        from plugin import registry
 
         hash_during_install = 'unset'
 
@@ -960,7 +959,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
     def test_install_plugin_file_failure_does_not_persist_hash(self):
         """Test that a failed install leaves the hash unset, so it is retried next time."""
         from common.settings import get_global_setting, set_global_setting
-        from plugin.registry import registry
+        from plugin import registry
 
         set_global_setting('_PLUGIN_FILE_HASH', '')
 
@@ -982,7 +981,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_install_plugin_file_skips_if_already_current(self):
         """Test that install_plugin_file() is a no-op once the hash already matches."""
-        from plugin.registry import registry
+        from plugin import registry
 
         with (
             tempfile.TemporaryDirectory() as tmpdir,
@@ -1015,7 +1014,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         previous environment's successful install of the exact same file.
         """
         from common.settings import set_global_setting
-        from plugin.registry import registry
+        from plugin import registry
 
         # Simulate a database that already believes this hash is installed -
         # as if a *previous* (now-replaced) environment installed it
@@ -1057,7 +1056,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         process start.
         """
         from common.settings import set_global_setting
-        from plugin.registry import registry
+        from plugin import registry
 
         set_global_setting('_PLUGIN_FILE_HASH', '')
 
@@ -1085,8 +1084,8 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_builtin_mandatory_plugins(self):
         """Test that mandatory builtin plugins are always loaded."""
+        from plugin import registry
         from plugin.models import PluginConfig
-        from plugin.registry import registry
 
         # Start with a 'clean slate'
         PluginConfig.objects.all().delete()
@@ -1131,8 +1130,8 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_mandatory_plugins(self):
         """Test that plugins marked as 'mandatory' are always active."""
+        from plugin import registry
         from plugin.models import PluginConfig
-        from plugin.registry import registry
 
         # Start with a 'clean slate'
         PluginConfig.objects.all().delete()
@@ -1187,8 +1186,8 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_with_mixin(self):
         """Tests for the 'with_mixin' registry method."""
+        from plugin import registry
         from plugin.models import PluginConfig
-        from plugin.registry import registry
 
         self.ensurePluginsLoaded()
 

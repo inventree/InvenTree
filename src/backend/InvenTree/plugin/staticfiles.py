@@ -20,8 +20,8 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 
 import structlog
 
-from plugin.lease import acquire_lease_blocking, release_lease
-from plugin.registry import registry
+from plugin._internal.lease import acquire_lease_blocking, release_lease
+from plugin._internal.registry import registry
 
 logger = structlog.get_logger('inventree')
 
