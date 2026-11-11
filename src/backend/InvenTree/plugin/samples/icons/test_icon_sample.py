@@ -3,8 +3,8 @@
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeAPITestCase
-from plugin import InvenTreePlugin, registry
-from plugin.mixins import IconPackMixin, MixinNotImplementedError
+from plugin import InvenTreePlugin, MixinNotImplementedError, registry
+from plugin.mixins import IconPackMixin
 
 
 class SampleIconPackPluginTests(InvenTreeAPITestCase):

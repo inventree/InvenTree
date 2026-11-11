@@ -3,13 +3,8 @@
 from django.test import TestCase
 
 from common.models import InvenTreeSetting
-from plugin import InvenTreePlugin, registry
-from plugin.mixins import (
-    MailMixin,
-    MixinNotImplementedError,
-    process_mail_in,
-    process_mail_out,
-)
+from plugin import InvenTreePlugin, MixinNotImplementedError, registry
+from plugin.mixins import MailMixin, process_mail_in, process_mail_out
 
 
 class MailPluginSampleTests(TestCase):

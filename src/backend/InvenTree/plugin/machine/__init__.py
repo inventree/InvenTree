@@ -1,4 +1,3 @@
-from machine import machine_type
 from machine.machine_type import (
     BaseDriver,
     BaseMachineType,
@@ -13,6 +12,5 @@ __all__ = [
     'MachineProperty',
     'MachineStatus',
     'call_machine_function',
-    'machine_type',
     'registry',
 ]
