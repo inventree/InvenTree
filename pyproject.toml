@@ -189,10 +189,6 @@ forbidden_modules = [
 ]
 allow_indirect_imports = true
 ignore_imports = [
-    "plugin.builtin.barcodes.inventree_barcode -> plugin.base.barcodes.helper",
-    "plugin.builtin.integration.machine_types -> machine.machine_type",
-    "plugin.builtin.integration.machine_types -> machine.machine_types.label_printer",
-    "plugin.builtin.labels.inventree_machine -> machine.machine_types",
     "plugin.samples.event.test_event_sample -> plugin.base.event.events",
     "plugin.samples.event.test_filtered_event_sample -> plugin.base.event.events",
     "plugin.samples.mail.test_mail_sample -> plugin.base.mail.mail",
@@ -203,7 +199,6 @@ ignore_imports = [
     "plugin.samples.mail.test_mail_sample -> plugin.helpers",
     "plugin.samples.icons.icon_sample -> plugin.plugin",
     "plugin.samples.supplier.supplier_sample -> plugin.plugin",
-    "plugin.samples.machines.sample_printer -> machine.machine_type"
 ]
 
 [[tool.importlinter.contracts]]
