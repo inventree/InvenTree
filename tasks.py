@@ -336,6 +336,7 @@ def main():
 def builtin_apps():
     """Returns a list of installed apps."""
     return [
+        'audit',
         'build',
         'common',
         'company',

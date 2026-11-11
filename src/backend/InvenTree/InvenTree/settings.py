@@ -454,6 +454,14 @@ MIDDLEWARE = ensure_removed(
     MIDDLEWARE, 'oauth2_provider.middleware.OAuth2TokenMiddleware', 'MIDDLEWARE'
 )
 
+if TESTING:
+    # WhiteNoise scans the entire STATIC_ROOT whenever the middleware chain is loaded,
+    # which happens for every new test client (i.e. every test). No unit test relies on
+    # static files being served via HTTP, so the middleware is not loaded during testing.
+    MIDDLEWARE = [
+        m for m in MIDDLEWARE if m != 'whitenoise.middleware.WhiteNoiseMiddleware'
+    ]
+
 # Audit log configuration (django-auditlog)
 # Ref: https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
 # Note: AUDITLOG_LOGENTRY_MODEL is a swappable model, and must not be changed once migrations have been applied
