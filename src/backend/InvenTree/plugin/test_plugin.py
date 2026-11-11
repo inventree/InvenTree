@@ -932,16 +932,17 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
         with (
             tempfile.TemporaryDirectory() as tmpdir,
-            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch('plugin._internal.installer._env_plugin_hash_cache', None),
             mock.patch(
-                'plugin.installer.plugin_env_marker_path',
+                'plugin._internal.installer.plugin_env_marker_path',
                 return_value=Path(tmpdir) / '.inventree_plugins_hash',
             ),
             mock.patch(
-                'plugin.installer.plugins_file_hash', return_value='test-hash-1'
+                'plugin._internal.installer.plugins_file_hash',
+                return_value='test-hash-1',
             ),
             mock.patch(
-                'plugin.installer.install_plugins_file',
+                'plugin._internal.installer.install_plugins_file',
                 side_effect=fake_install_plugins_file,
             ),
         ):
@@ -965,15 +966,18 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
         with (
             tempfile.TemporaryDirectory() as tmpdir,
-            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch('plugin._internal.installer._env_plugin_hash_cache', None),
             mock.patch(
-                'plugin.installer.plugin_env_marker_path',
+                'plugin._internal.installer.plugin_env_marker_path',
                 return_value=Path(tmpdir) / '.inventree_plugins_hash',
             ),
             mock.patch(
-                'plugin.installer.plugins_file_hash', return_value='test-hash-2'
+                'plugin._internal.installer.plugins_file_hash',
+                return_value='test-hash-2',
             ),
-            mock.patch('plugin.installer.install_plugins_file', return_value=False),
+            mock.patch(
+                'plugin._internal.installer.install_plugins_file', return_value=False
+            ),
         ):
             registry.install_plugin_file()
 
@@ -985,16 +989,17 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
         with (
             tempfile.TemporaryDirectory() as tmpdir,
-            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch('plugin._internal.installer._env_plugin_hash_cache', None),
             mock.patch(
-                'plugin.installer.plugin_env_marker_path',
+                'plugin._internal.installer.plugin_env_marker_path',
                 return_value=Path(tmpdir) / '.inventree_plugins_hash',
             ),
             mock.patch(
-                'plugin.installer.plugins_file_hash', return_value='test-hash-3'
+                'plugin._internal.installer.plugins_file_hash',
+                return_value='test-hash-3',
             ),
             mock.patch(
-                'plugin.installer.install_plugins_file', return_value=True
+                'plugin._internal.installer.install_plugins_file', return_value=True
             ) as mock_install,
         ):
             registry.install_plugin_file()
@@ -1022,17 +1027,18 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
         with (
             tempfile.TemporaryDirectory() as tmpdir,
-            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch('plugin._internal.installer._env_plugin_hash_cache', None),
             mock.patch(
-                'plugin.installer.plugin_env_marker_path',
+                'plugin._internal.installer.plugin_env_marker_path',
                 # A fresh environment has no marker file at all
                 return_value=Path(tmpdir) / '.inventree_plugins_hash',
             ),
             mock.patch(
-                'plugin.installer.plugins_file_hash', return_value='test-hash-4'
+                'plugin._internal.installer.plugins_file_hash',
+                return_value='test-hash-4',
             ),
             mock.patch(
-                'plugin.installer.install_plugins_file', return_value=True
+                'plugin._internal.installer.install_plugins_file', return_value=True
             ) as mock_install,
         ):
             registry.install_plugin_file()
@@ -1065,13 +1071,16 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         marker.write_text.side_effect = OSError('Read-only file system')
 
         with (
-            mock.patch('plugin.installer._env_plugin_hash_cache', None),
-            mock.patch('plugin.installer.plugin_env_marker_path', return_value=marker),
+            mock.patch('plugin._internal.installer._env_plugin_hash_cache', None),
             mock.patch(
-                'plugin.installer.plugins_file_hash', return_value='test-hash-5'
+                'plugin._internal.installer.plugin_env_marker_path', return_value=marker
             ),
             mock.patch(
-                'plugin.installer.install_plugins_file', return_value=True
+                'plugin._internal.installer.plugins_file_hash',
+                return_value='test-hash-5',
+            ),
+            mock.patch(
+                'plugin._internal.installer.install_plugins_file', return_value=True
             ) as mock_install,
         ):
             registry.install_plugin_file()
