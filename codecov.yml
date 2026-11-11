@@ -1,5 +1,6 @@
 ignore:
   - "src/backend/InvenTree/**/test_migrations.py"
+  - "src/backend/InvenTree/**/migrations/**"
 
 coverage:
   status:
@@ -20,11 +21,10 @@ flag_management:
       statuses:
         - type: project
           target: 85%
+    # Legacy flag - no longer uploaded (replaced by migrations-sqlite / -mysql / -postgresql).
+    # Disable carryforward so its stale report (incl. files since deleted) is dropped.
     - name: migrations
-      carryforward: true
-      statuses:
-        - type: project
-          target: 38%
+      carryforward: false
     - name: web
       carryforward: true
       statuses:

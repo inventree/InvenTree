@@ -119,7 +119,7 @@ unused-ignore-comment = "error"
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
 dynamic_context = "test_function"
-omit = ["*/test_migrations.py"]
+omit = ["*/test_migrations.py", "*/migrations/*"]
 
 [tool.coverage.html]
 show_contexts = true
