@@ -127,6 +127,7 @@ export default defineConfig({
         INVENTREE_SITE_URL: 'http://localhost:8000',
         INVENTREE_FRONTEND_API_HOST: 'http://localhost:8000',
         INVENTREE_CORS_ORIGIN_ALLOW_ALL: 'True',
+        INVENTREE_BASIC_AUTH_ENABLED: 'True',
         INVENTREE_COOKIE_SAMESITE: 'False',
         INVENTREE_LOGIN_ATTEMPTS: '3',
         INVENTREE_PLUGINS_MANDATORY: 'samplelocate',
