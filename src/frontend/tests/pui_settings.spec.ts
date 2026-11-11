@@ -364,9 +364,13 @@ test('Settings - Admin - System Status', async ({ browser }) => {
   await messages.filter({ hasText: 'Basic Authentication' }).waitFor();
 
   const classifiers = ['error', 'warning', 'info', 'success'];
-  const total = await messages.count();
-  expect(total).toBeGreaterThanOrEqual(7);
 
+  // Each classifier chip displays its message count as a badge
+  for (const c of classifiers) {
+    await expect(page.getByLabel(`admin-message-count-${c}`)).toHaveText(
+      /^\d+$/
+    );
+  }
   // Toggle a classifier chip (the native checkbox input is visually hidden)
   const toggle = async (c: string, checked: boolean) => {
     const chip = page.getByLabel(`admin-message-classifier-${c}`);
@@ -375,6 +379,26 @@ test('Settings - Admin - System Status', async ({ browser }) => {
     else await expect(chip).not.toBeChecked();
   };
 
+  const count = async (c: string) =>
+    Number(await page.getByLabel(`admin-message-count-${c}`).textContent());
+
+  // Success messages are hidden by default
+  await expect(
+    page.getByLabel('admin-message-classifier-success')
+  ).not.toBeChecked();
+  await expect(messages.filter({ hasText: 'No issues detected' })).toHaveCount(
+    0
+  );
+
+  const actionable = await messages.count();
+  const successCount = await count('success');
+  const total = actionable + successCount;
+  expect(total).toBeGreaterThanOrEqual(7);
+
+  // Show success messages
+  await toggle('success', true);
+  await expect(messages).toHaveCount(total);
+
   // Hide all classifiers
   for (const c of classifiers) {
     await toggle(c, false);
@@ -382,11 +406,11 @@ test('Settings - Admin - System Status', async ({ browser }) => {
   await page.getByText('No messages to display').waitFor();
   await expect(messages).toHaveCount(0);
 
-  // Show all classifiers again (also restores localStorage state)
-  for (const c of classifiers) {
+  // Restore the default selection
+  for (const c of ['error', 'warning', 'info']) {
     await toggle(c, true);
   }
-  await expect(messages).toHaveCount(total);
+  await expect(messages).toHaveCount(actionable);
 });
 
 test('Settings - Admin - Alerts View All', async ({ browser }) => {

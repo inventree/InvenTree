@@ -4,7 +4,9 @@ import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
   Alert,
+  Badge,
   Chip,
+  Divider,
   Group,
   Loader,
   SimpleGrid,
@@ -22,6 +24,10 @@ import {
   classifierLabel,
   useAdminMessages
 } from '../../../../hooks/UseAdminMessages';
+
+// Passing checks ('success') are hidden by default, to highlight actionable messages
+const DEFAULT_VISIBLE_CLASSIFIERS: AdminMessageClassifier[] =
+  ADMIN_MESSAGE_CLASSIFIERS.filter((c) => c !== 'success');
 
 /**
  * Selector allowing the user to toggle display of each message classifier.
@@ -47,10 +53,21 @@ function ClassifierSelector({
             key={classifier}
             value={classifier}
             color={classifierColor(classifier)}
-            size='xs'
+            size='sm'
             aria-label={`admin-message-classifier-${classifier}`}
           >
-            {`${classifierLabel(classifier)} (${counts[classifier]})`}
+            {classifierLabel(classifier)}
+            <Badge
+              ml={6}
+              size='xs'
+              color={
+                counts[classifier] > 0 ? classifierColor(classifier) : 'gray'
+              }
+              variant={counts[classifier] > 0 ? 'white' : 'light'}
+              aria-label={`admin-message-count-${classifier}`}
+            >
+              {counts[classifier]}
+            </Badge>
           </Chip>
         ))}
       </Group>
@@ -63,7 +80,7 @@ function SystemMessages(): JSX.Element {
 
   const [selected, setSelected] = useLocalStorage<AdminMessageClassifier[]>({
     key: 'admin-center-message-classifiers',
-    defaultValue: ADMIN_MESSAGE_CLASSIFIERS
+    defaultValue: DEFAULT_VISIBLE_CLASSIFIERS
   });
 
   const counts = useMemo(() => {
@@ -86,14 +103,15 @@ function SystemMessages(): JSX.Element {
 
   return (
     <Stack gap='sm'>
-      <Group justify='space-between'>
+      <Group justify='flex-end' gap='sm'>
+        {isFetching && <Loader size='xs' />}
         <ClassifierSelector
           selected={selected}
           onChange={setSelected}
           counts={counts}
         />
-        {isFetching && <Loader size='xs' />}
       </Group>
+      <Divider />
       {isError && (
         <Alert color='red' title={t`Error`}>
           {t`Failed to load system messages`}
