@@ -183,12 +183,11 @@ forbidden_modules = [
     "plugin.broken",
     "plugin.builtin",
     "plugin.events",
-    # "plugin.machine",
+    # "plugin.machine",  - allowed
     "plugin.migrations",
-    # "plugin.mixins",
+    # "plugin.mixins",  - allowed
     "plugin.mock",
     "plugin.models",
-    # "plugin.registry",
     "plugin.samples",
     "plugin.serializers",
     "plugin.staticfiles",
