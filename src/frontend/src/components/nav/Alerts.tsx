@@ -1,11 +1,22 @@
-import { ActionIcon, Alert, Group, Menu, Stack, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Alert,
+  Group,
+  Menu,
+  Stack,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import {
   IconAlertTriangle,
+  IconArrowRight,
   IconCircleCheck,
   IconExclamationCircle,
-  IconInfoCircle
+  IconInfoCircle,
+  IconListDetails
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { t } from '@lingui/core/macro';
 import { docLinks } from '../../defaults/links';
@@ -70,6 +81,16 @@ export function Alerts() {
               <ServerAlert alert={alert} closeAlert={closeAlert} />
             </Menu.Item>
           ))}
+          <Menu.Divider />
+          <Menu.Item
+            component={Link}
+            to='/settings/admin/home'
+            aria-label='alerts-view-all'
+            leftSection={<IconListDetails size={16} />}
+            rightSection={<IconArrowRight size={16} />}
+          >
+            <Text size='md'>{t`View all messages`}</Text>
+          </Menu.Item>
         </Menu.Dropdown>
       </Menu>
     );

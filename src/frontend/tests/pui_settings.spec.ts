@@ -389,6 +389,20 @@ test('Settings - Admin - System Status', async ({ browser }) => {
   await expect(messages).toHaveCount(total);
 });
 
+test('Settings - Admin - Alerts View All', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { user: adminuser });
+
+  // Navbar alerts dropdown links through to the admin center
+  await page.getByLabel('open-alerts').click();
+
+  const viewAll = page.getByLabel('alerts-view-all');
+  await expect(viewAll).toHaveAttribute('href', /\/settings\/admin\/home$/);
+  await viewAll.click();
+
+  await page.waitForURL('**/settings/admin/home**');
+  await page.getByLabel('admin-message-classifier-selector').waitFor();
+});
+
 test('Settings - Admin - Background Tasks', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     user: adminuser,
