@@ -1217,8 +1217,7 @@ def pui_url(subpath: str) -> str:
 
 def plugins_info(*args, **kwargs):
     """Return information about activated plugins."""
-    from plugin import PluginMixinEnum
-    from plugin.registry import registry
+    from plugin import PluginMixinEnum, registry
 
     # Check if plugins are even enabled
     if not settings.PLUGINS_ENABLED:
