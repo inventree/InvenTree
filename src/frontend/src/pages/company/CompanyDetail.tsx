@@ -196,7 +196,6 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     pk: company?.pk,
     title: t`Edit Company`,
     fields: useMemo(() => companyFields({}), []),
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

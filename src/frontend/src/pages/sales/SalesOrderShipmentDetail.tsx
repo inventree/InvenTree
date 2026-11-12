@@ -106,7 +106,6 @@ export default function SalesOrderShipmentDetail() {
     pk: shipment.pk,
     fields: editShipmentFields,
     title: t`Edit Shipment`,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshShipment
   });
 

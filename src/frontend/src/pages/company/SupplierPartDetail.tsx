@@ -153,7 +153,6 @@ export default function SupplierPartDetail() {
     pk: supplierPart?.pk,
     title: t`Edit Supplier Part`,
     fields: supplierPartFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

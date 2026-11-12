@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 03:18+0000\n"
-"PO-Revision-Date: 2026-11-05 03:23\n"
+"POT-Creation-Date: 2026-11-09 04:00+0000\n"
+"PO-Revision-Date: 2026-11-09 04:04\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
@@ -114,7 +114,7 @@ msgid "Invalid decimal value"
 msgstr "Valor decimal no vàlid"
 
 #: InvenTree/fields.py:286 audit/models.py:380 build/serializers.py:538
-#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3274
+#: build/serializers.py:601 build/serializers.py:1788 common/models.py:3290
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
 #: stock/models.py:3820 stock/serializers.py:761 stock/serializers.py:945
@@ -226,7 +226,7 @@ msgid "Log in to the app"
 msgstr "Inicia la sessió a l'aplicació"
 
 #: InvenTree/magic_login.py:41 company/models.py:212 company/models.py:536
-#: users/serializers.py:227
+#: users/serializers.py:227 users/serializers.py:561
 msgid "Email"
 msgstr "Correu electrònic"
 
@@ -283,16 +283,16 @@ msgid "Invalid choice"
 msgstr "Opció no vàlida"
 
 #: InvenTree/models.py:1349 common/api.py:1825 common/models.py:1540
-#: common/models.py:1980 common/models.py:2447 common/models.py:2572
-#: common/models.py:2887 common/serializers.py:704
+#: common/models.py:1980 common/models.py:2447 common/models.py:2580
+#: common/models.py:2903 common/serializers.py:704
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1141
 #: plugin/models.py:54 report/models.py:234 stock/models.py:86
 msgid "Name"
 msgstr "Nom"
 
 #: InvenTree/models.py:1355 build/models.py:284 common/models.py:192
-#: common/models.py:2579 common/models.py:2720 common/models.py:2902
-#: common/models.py:3548 company/models.py:641 company/models.py:913
+#: common/models.py:2587 common/models.py:2728 common/models.py:2918
+#: common/models.py:3564 company/models.py:641 company/models.py:913
 #: order/models.py:549 order/models.py:2342 part/models.py:1164
 #: report/models.py:240 report/models.py:971 report/models.py:997
 #: report/templates/report/inventree_build_order_report.html:116
@@ -304,7 +304,7 @@ msgstr "Descripció"
 msgid "Description (optional)"
 msgstr "Descripció (opcional)"
 
-#: InvenTree/models.py:1371 common/models.py:3637
+#: InvenTree/models.py:1371 common/models.py:3653
 msgid "Path"
 msgstr "Camí"
 
@@ -340,7 +340,7 @@ msgstr "Error del servidor"
 msgid "An error has been logged by the server."
 msgstr "El servidor ha registrat un error."
 
-#: InvenTree/models.py:1901 common/models.py:3573
+#: InvenTree/models.py:1901 common/models.py:3589
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -583,11 +583,11 @@ msgstr "Xinès (simplificat)"
 msgid "Chinese (Traditional)"
 msgstr "Xinès (tradicional)"
 
-#: InvenTree/tasks.py:1031
+#: InvenTree/tasks.py:1033
 msgid "Update Available"
 msgstr "Actualització disponible"
 
-#: InvenTree/tasks.py:1032
+#: InvenTree/tasks.py:1034
 msgid "An update for InvenTree is available"
 msgstr "Hi ha disponible una actualització per a InvenTree"
 
@@ -610,7 +610,7 @@ msgstr "Tipus de model"
 msgid "Model type (e.g. \"order.purchaseorder\" or \"purchaseorder\")"
 msgstr ""
 
-#: audit/api.py:97 common/api.py:499 common/models.py:3207
+#: audit/api.py:97 common/api.py:499 common/models.py:3223
 msgid "Model ID"
 msgstr "ID del model"
 
@@ -674,7 +674,7 @@ msgstr ""
 msgid "Field"
 msgstr "Camp"
 
-#: audit/serializers.py:27 common/models.py:2457 common/models.py:2714
+#: audit/serializers.py:27 common/models.py:2457 common/models.py:2722
 #: generic/states/serializers.py:22
 msgid "Label"
 msgstr "Etiqueta"
@@ -719,11 +719,11 @@ msgstr ""
 msgid "Changes"
 msgstr ""
 
-#: audit/serializers.py:162
+#: audit/serializers.py:165
 msgid "Change Details"
 msgstr ""
 
-#: audit/serializers.py:235
+#: audit/serializers.py:239
 msgid "Deleted"
 msgstr ""
 
@@ -1818,19 +1818,19 @@ msgstr "No es pot suprimir el client OIDC predeterminat integrat."
 msgid "The built-in default OIDC client secret cannot be regenerated."
 msgstr "No es pot regenerar el secret del client OIDC predeterminat integrat."
 
-#: common/currency.py:135
+#: common/currency.py:126
 msgid "Invalid currency code"
 msgstr "Codi de moneda no vàlid"
 
-#: common/currency.py:137
+#: common/currency.py:128
 msgid "Duplicate currency code"
 msgstr "Codi de moneda duplicat"
 
-#: common/currency.py:142
+#: common/currency.py:133
 msgid "No valid currency codes provided"
 msgstr "No s'ha proporcionat cap codi de moneda vàlid"
 
-#: common/currency.py:159
+#: common/currency.py:150
 msgid "No plugin"
 msgstr "Cap connector"
 
@@ -1842,7 +1842,7 @@ msgstr "Etiquetes"
 msgid "Project Code Label"
 msgstr "Etiqueta del codi de projecte"
 
-#: common/models.py:111 common/models.py:136 common/models.py:3977
+#: common/models.py:111 common/models.py:136 common/models.py:3993
 #: users/models.py:853
 msgid "Updated"
 msgstr "Actualitzat"
@@ -1867,11 +1867,11 @@ msgstr "Codi de projecte únic"
 msgid "Project description"
 msgstr "Descripció del projecte"
 
-#: common/models.py:198 common/models.py:1545 common/models.py:2592
-#: common/models.py:2727 company/models.py:231 company/models.py:881
+#: common/models.py:198 common/models.py:1545 common/models.py:2600
+#: common/models.py:2735 company/models.py:231 company/models.py:881
 #: machine/models.py:43 part/models.py:1332 plugin/models.py:69
 #: stock/api.py:704 users/models.py:382 users/models.py:769
-#: users/serializers.py:405 users/serializers.py:536
+#: users/serializers.py:408 users/serializers.py:579
 msgid "Active"
 msgstr "Actiu"
 
@@ -1921,7 +1921,7 @@ msgstr "La cadena de clau ha de ser única"
 
 #: common/models.py:1438 common/models.py:1439 common/models.py:1553
 #: common/models.py:1554 common/models.py:1801 common/models.py:1802
-#: common/models.py:2277 common/models.py:2278 common/models.py:3625
+#: common/models.py:2277 common/models.py:2278 common/models.py:3641
 #: importer/models.py:115 part/models.py:2707 part/models.py:2735
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:252
@@ -1974,11 +1974,11 @@ msgstr "Secret"
 msgid "Shared secret for HMAC"
 msgstr "Secret compartit per a HMAC"
 
-#: common/models.py:1679 common/models.py:3862
+#: common/models.py:1679 common/models.py:3878
 msgid "Message ID"
 msgstr "ID del missatge"
 
-#: common/models.py:1680 common/models.py:3852
+#: common/models.py:1680 common/models.py:3868
 msgid "Unique identifier for this message"
 msgstr "Identificador únic d'aquest missatge"
 
@@ -2026,7 +2026,7 @@ msgstr "URL explícit opcional associat a aquesta notificació"
 msgid "Id"
 msgstr "Id"
 
-#: common/models.py:1859 common/models.py:3542
+#: common/models.py:1859 common/models.py:3558
 msgid "Title"
 msgstr "Títol"
 
@@ -2050,7 +2050,7 @@ msgstr "Autor"
 msgid "Summary"
 msgstr "Resum"
 
-#: common/models.py:1870 common/models.py:3829
+#: common/models.py:1870 common/models.py:3845
 msgid "Read"
 msgstr "Llegit"
 
@@ -2140,7 +2140,7 @@ msgstr "Ja existeix un fitxer amb aquest nom"
 msgid "Failed to save renamed file"
 msgstr "No s'ha pogut desar el fitxer amb el nom canviat"
 
-#: common/models.py:2235 common/models.py:2881
+#: common/models.py:2235 common/models.py:2897
 msgid "Model type"
 msgstr "Tipus de model"
 
@@ -2220,7 +2220,7 @@ msgstr "Clau lògica"
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Clau lògica de l'estat que equival a aquest estat personalitzat en la lògica de negoci"
 
-#: common/models.py:2441 common/models.py:2708 machine/serializers.py:27
+#: common/models.py:2441 common/models.py:2716 machine/serializers.py:27
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:3807
 msgid "Value"
 msgstr "Valor"
@@ -2285,7 +2285,7 @@ msgstr "La clau lògica ha de ser una de les claus lògiques de l'estat de refer
 msgid "Name must be different from the names of the reference status"
 msgstr "El nom ha de ser diferent dels noms de l'estat de referència"
 
-#: common/models.py:2567 common/models.py:2702 common/models.py:2926
+#: common/models.py:2567 common/models.py:2710 common/models.py:2942
 msgid "Selection List"
 msgstr "Llista de selecció"
 
@@ -2293,230 +2293,230 @@ msgstr "Llista de selecció"
 msgid "Selection Lists"
 msgstr "Llistes de selecció"
 
-#: common/models.py:2573
+#: common/models.py:2581
 msgid "Name of the selection list"
 msgstr "Nom de la llista de selecció"
 
-#: common/models.py:2580
+#: common/models.py:2588
 msgid "Description of the selection list"
 msgstr "Descripció de la llista de selecció"
 
-#: common/models.py:2586 part/models.py:1337
+#: common/models.py:2594 part/models.py:1337
 msgid "Locked"
 msgstr "Bloquejat"
 
-#: common/models.py:2587
+#: common/models.py:2595
 msgid "Is this selection list locked?"
 msgstr "Aquesta llista de selecció està bloquejada?"
 
-#: common/models.py:2593
+#: common/models.py:2601
 msgid "Can this selection list be used?"
 msgstr "Es pot utilitzar aquesta llista de selecció?"
 
-#: common/models.py:2601
+#: common/models.py:2609
 msgid "Source Plugin"
 msgstr "Connector d'origen"
 
-#: common/models.py:2602
+#: common/models.py:2610
 msgid "Plugin which provides the selection list"
 msgstr "Connector que proporciona la llista de selecció"
 
-#: common/models.py:2607
+#: common/models.py:2615
 msgid "Source String"
 msgstr "Cadena d'origen"
 
-#: common/models.py:2608
+#: common/models.py:2616
 msgid "Optional string identifying the source used for this list"
 msgstr "Cadena opcional que identifica l'origen utilitzat per a aquesta llista"
 
-#: common/models.py:2617
+#: common/models.py:2625
 msgid "Default Entry"
 msgstr "Entrada predeterminada"
 
-#: common/models.py:2618
+#: common/models.py:2626
 msgid "Default entry for this selection list"
 msgstr "Entrada predeterminada d'aquesta llista de selecció"
 
-#: common/models.py:2623 common/models.py:3972
+#: common/models.py:2631 common/models.py:3988
 msgid "Created"
 msgstr "Creat"
 
-#: common/models.py:2624
+#: common/models.py:2632
 msgid "Date and time that the selection list was created"
 msgstr "Data i hora en què s'ha creat la llista de selecció"
 
-#: common/models.py:2629
+#: common/models.py:2637
 msgid "Last Updated"
 msgstr "Última actualització"
 
-#: common/models.py:2630
+#: common/models.py:2638
 msgid "Date and time that the selection list was last updated"
 msgstr "Data i hora de l'última actualització de la llista de selecció"
 
-#: common/models.py:2692
+#: common/models.py:2700
 msgid "Selection List Entry"
 msgstr "Entrada de la llista de selecció"
 
-#: common/models.py:2693
+#: common/models.py:2701
 msgid "Selection List Entries"
 msgstr "Entrades de la llista de selecció"
 
-#: common/models.py:2703
+#: common/models.py:2711
 msgid "Selection list to which this entry belongs"
 msgstr "Llista de selecció a la qual pertany aquesta entrada"
 
-#: common/models.py:2709
+#: common/models.py:2717
 msgid "Value of the selection list entry"
 msgstr "Valor de l'entrada de la llista de selecció"
 
-#: common/models.py:2715
+#: common/models.py:2723
 msgid "Label for the selection list entry"
 msgstr "Etiqueta de l'entrada de la llista de selecció"
 
-#: common/models.py:2721
+#: common/models.py:2729
 msgid "Description of the selection list entry"
 msgstr "Descripció de l'entrada de la llista de selecció"
 
-#: common/models.py:2728
+#: common/models.py:2736
 msgid "Is this selection list entry active?"
 msgstr "Aquesta entrada de la llista de selecció és activa?"
 
-#: common/models.py:2767
+#: common/models.py:2775
 msgid "Parameter Template"
 msgstr "Plantilla de paràmetre"
 
-#: common/models.py:2768
+#: common/models.py:2776
 msgid "Parameter Templates"
 msgstr "Plantilles de paràmetre"
 
-#: common/models.py:2789
+#: common/models.py:2797
 msgid "No uniqueness required"
 msgstr "No cal unicitat"
 
-#: common/models.py:2790
+#: common/models.py:2798
 msgid "Unique for model type"
 msgstr "Únic per tipus de model"
 
-#: common/models.py:2791
+#: common/models.py:2799
 msgid "Globally unique"
 msgstr "Únic globalment"
 
-#: common/models.py:2818
+#: common/models.py:2834
 msgid "Checkbox parameters cannot have units"
 msgstr "Els paràmetres de casella de selecció no poden tenir unitats"
 
-#: common/models.py:2823
+#: common/models.py:2839
 msgid "Checkbox parameters cannot have choices"
 msgstr "Els paràmetres de casella de selecció no poden tenir opcions"
 
-#: common/models.py:2843 part/models.py:2805
+#: common/models.py:2859 part/models.py:2805
 msgid "Choices must be unique"
 msgstr "Les opcions han de ser úniques"
 
-#: common/models.py:2860
+#: common/models.py:2876
 msgid "Parameter template name must be unique"
 msgstr "El nom de la plantilla de paràmetre ha de ser únic"
 
-#: common/models.py:2882
+#: common/models.py:2898
 msgid "Target model type for this parameter template"
 msgstr "Tipus de model de destinació d'aquesta plantilla de paràmetre"
 
-#: common/models.py:2888
+#: common/models.py:2904
 msgid "Parameter Name"
 msgstr "Nom del paràmetre"
 
-#: common/models.py:2894 part/models.py:1290
+#: common/models.py:2910 part/models.py:1290
 msgid "Units"
 msgstr "Unitats"
 
-#: common/models.py:2895
+#: common/models.py:2911
 msgid "Physical units for this parameter"
 msgstr "Unitats físiques d'aquest paràmetre"
 
-#: common/models.py:2903
+#: common/models.py:2919
 msgid "Parameter description"
 msgstr "Descripció del paràmetre"
 
-#: common/models.py:2909
+#: common/models.py:2925
 msgid "Checkbox"
 msgstr "Casella de selecció"
 
-#: common/models.py:2910
+#: common/models.py:2926
 msgid "Is this parameter a checkbox?"
 msgstr "Aquest paràmetre és una casella de selecció?"
 
-#: common/models.py:2915 part/models.py:2892
+#: common/models.py:2931 part/models.py:2892
 msgid "Choices"
 msgstr "Opcions"
 
-#: common/models.py:2916
+#: common/models.py:2932
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "Opcions vàlides per a aquest paràmetre (separades per comes)"
 
-#: common/models.py:2927
+#: common/models.py:2943
 msgid "Selection list for this parameter"
 msgstr "Llista de selecció d'aquest paràmetre"
 
-#: common/models.py:2932 part/models.py:2867 report/models.py:384
+#: common/models.py:2948 part/models.py:2867 report/models.py:384
 #: scim/models.py:31
 msgid "Enabled"
 msgstr "Activat"
 
-#: common/models.py:2933
+#: common/models.py:2949
 msgid "Is this parameter template enabled?"
 msgstr "Aquesta plantilla de paràmetre està activada?"
 
-#: common/models.py:2939
+#: common/models.py:2955
 msgid "Uniqueness"
 msgstr "Unicitat"
 
-#: common/models.py:2941
+#: common/models.py:2957
 msgid "Enforce uniqueness of linked parameter values against this template"
 msgstr "Imposa la unicitat dels valors de paràmetre vinculats a aquesta plantilla"
 
-#: common/models.py:2996
+#: common/models.py:3012
 msgid "Parameter"
 msgstr "Paràmetre"
 
-#: common/models.py:2997
+#: common/models.py:3013
 msgid "Parameters"
 msgstr "Paràmetres"
 
-#: common/models.py:3059
+#: common/models.py:3075
 msgid "Invalid choice for parameter value"
 msgstr "Opció no vàlida per al valor del paràmetre"
 
-#: common/models.py:3166
+#: common/models.py:3182
 msgid "Parameter value must be unique"
 msgstr "El valor del paràmetre ha de ser únic"
 
-#: common/models.py:3175 common/serializers.py:1097
+#: common/models.py:3191 common/serializers.py:1097
 msgid "Invalid model type specified for parameter"
 msgstr "S'ha especificat un tipus de model no vàlid per al paràmetre"
 
-#: common/models.py:3208
+#: common/models.py:3224
 msgid "ID of the target model for this parameter"
 msgstr "ID del model de destinació d'aquest paràmetre"
 
-#: common/models.py:3217 common/models.py:3514 common/setting/system.py:515
+#: common/models.py:3233 common/models.py:3530 common/setting/system.py:515
 #: report/models.py:482 report/models.py:816 report/serializers.py:115
 #: report/serializers.py:166 stock/serializers.py:244
 msgid "Template"
 msgstr "Plantilla"
 
-#: common/models.py:3218
+#: common/models.py:3234
 msgid "Parameter template"
 msgstr "Plantilla de paràmetre"
 
-#: common/models.py:3223 common/models.py:3614 importer/models.py:715
+#: common/models.py:3239 common/models.py:3630 importer/models.py:715
 msgid "Data"
 msgstr "Dades"
 
-#: common/models.py:3224
+#: common/models.py:3240
 msgid "Parameter Value"
 msgstr "Valor del paràmetre"
 
-#: common/models.py:3233 common/models.py:3273 company/models.py:921
+#: common/models.py:3249 common/models.py:3289 company/models.py:921
 #: order/serializers.py:931 order/serializers.py:2348 part/models.py:3283
 #: part/models.py:3713
 #: report/templates/report/inventree_bill_of_materials_report.html:140
@@ -2529,226 +2529,226 @@ msgstr "Valor del paràmetre"
 msgid "Note"
 msgstr "Nota"
 
-#: common/models.py:3234 stock/serializers.py:762 stock/serializers.py:1139
+#: common/models.py:3250 stock/serializers.py:762 stock/serializers.py:1139
 msgid "Optional note field"
 msgstr "Camp de nota opcional"
 
-#: common/models.py:3377 common/models.py:3379 common/serializers.py:970
+#: common/models.py:3393 common/models.py:3395 common/serializers.py:970
 #: common/serializers.py:974
 msgid "This field is required."
 msgstr "Aquest camp és obligatori."
 
-#: common/models.py:3516
+#: common/models.py:3532
 msgid "Is this note a template (not linked to a specific model instance)?"
 msgstr "Aquesta nota és una plantilla (no vinculada a cap instància de model concreta)?"
 
-#: common/models.py:3526
+#: common/models.py:3542
 msgid "Target model type for this note"
 msgstr "Tipus de model de destinació d'aquesta nota"
 
-#: common/models.py:3530
+#: common/models.py:3546
 msgid "Target model instance ID for this note"
 msgstr "ID de la instància del model de destinació d'aquesta nota"
 
-#: common/models.py:3537 company/models.py:887
+#: common/models.py:3553 company/models.py:887
 msgid "Primary"
 msgstr "Principal"
 
-#: common/models.py:3538
+#: common/models.py:3554
 msgid "Is this the primary note for the associated model?"
 msgstr "És aquesta la nota principal del model associat?"
 
-#: common/models.py:3542
+#: common/models.py:3558
 msgid "Note title"
 msgstr "Títol de la nota"
 
-#: common/models.py:3549
+#: common/models.py:3565
 msgid "Optional description field"
 msgstr "Camp de descripció opcional"
 
-#: common/models.py:3554
+#: common/models.py:3570
 msgid "Content"
 msgstr "Contingut"
 
-#: common/models.py:3555
+#: common/models.py:3571
 msgid "Note content"
 msgstr "Contingut de la nota"
 
-#: common/models.py:3573
+#: common/models.py:3589
 msgid "Image file"
 msgstr "Fitxer d'imatge"
 
-#: common/models.py:3610
+#: common/models.py:3626
 msgid "Barcode Scan"
 msgstr "Escaneig de codi de barres"
 
-#: common/models.py:3615
+#: common/models.py:3631
 msgid "Barcode data"
 msgstr "Dades del codi de barres"
 
-#: common/models.py:3626
+#: common/models.py:3642
 msgid "User who scanned the barcode"
 msgstr "Usuari que ha escanejat el codi de barres"
 
-#: common/models.py:3631 importer/models.py:82
+#: common/models.py:3647 importer/models.py:82
 msgid "Timestamp"
 msgstr "Marca de temps"
 
-#: common/models.py:3632
+#: common/models.py:3648
 msgid "Date and time of the barcode scan"
 msgstr "Data i hora de l'escaneig del codi de barres"
 
-#: common/models.py:3638
+#: common/models.py:3654
 msgid "URL endpoint which processed the barcode"
 msgstr "Punt final de l'URL que ha processat el codi de barres"
 
-#: common/models.py:3645 order/models.py:2349 plugin/serializers.py:93
+#: common/models.py:3661 order/models.py:2349 plugin/serializers.py:93
 msgid "Context"
 msgstr "Context"
 
-#: common/models.py:3646
+#: common/models.py:3662
 msgid "Context data for the barcode scan"
 msgstr "Dades de context de l'escaneig del codi de barres"
 
-#: common/models.py:3653
+#: common/models.py:3669
 msgid "Response"
 msgstr "Resposta"
 
-#: common/models.py:3654
+#: common/models.py:3670
 msgid "Response data from the barcode scan"
 msgstr "Dades de resposta de l'escaneig del codi de barres"
 
-#: common/models.py:3660 report/templates/report/inventree_test_report.html:103
+#: common/models.py:3676 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:3801
 msgid "Result"
 msgstr "Resultat"
 
-#: common/models.py:3661
+#: common/models.py:3677
 msgid "Was the barcode scan successful?"
 msgstr "L'escaneig del codi de barres ha estat correcte?"
 
-#: common/models.py:3743
+#: common/models.py:3759
 msgid "An error occurred"
 msgstr "S'ha produït un error"
 
-#: common/models.py:3764
+#: common/models.py:3780
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
 msgstr "INVE-E8: la supressió del registre de correu electrònic està protegida. Establiu INVENTREE_PROTECT_EMAIL_LOG a False per a permetre'n la supressió."
 
-#: common/models.py:3811
+#: common/models.py:3827
 msgid "Email Message"
 msgstr "Missatge de correu electrònic"
 
-#: common/models.py:3812
+#: common/models.py:3828
 msgid "Email Messages"
 msgstr "Missatges de correu electrònic"
 
-#: common/models.py:3819
+#: common/models.py:3835
 msgid "Announced"
 msgstr "Anunciat"
 
-#: common/models.py:3821
+#: common/models.py:3837
 msgid "Sent"
 msgstr "Enviat"
 
-#: common/models.py:3822
+#: common/models.py:3838
 msgid "Failed"
 msgstr "Fallit"
 
-#: common/models.py:3825
+#: common/models.py:3841
 msgid "Delivered"
 msgstr "Lliurat"
 
-#: common/models.py:3833
+#: common/models.py:3849
 msgid "Confirmed"
 msgstr "Confirmat"
 
-#: common/models.py:3839
+#: common/models.py:3855
 msgid "Inbound"
 msgstr "Entrant"
 
-#: common/models.py:3840
+#: common/models.py:3856
 msgid "Outbound"
 msgstr "Sortint"
 
-#: common/models.py:3845
+#: common/models.py:3861
 msgid "No Reply"
 msgstr "Sense resposta"
 
-#: common/models.py:3846
+#: common/models.py:3862
 msgid "Track Delivery"
 msgstr "Seguiment del lliurament"
 
-#: common/models.py:3847
+#: common/models.py:3863
 msgid "Track Read"
 msgstr "Seguiment de la lectura"
 
-#: common/models.py:3848
+#: common/models.py:3864
 msgid "Track Click"
 msgstr "Seguiment dels clics"
 
-#: common/models.py:3851 common/models.py:3959
+#: common/models.py:3867 common/models.py:3975
 msgid "Global ID"
 msgstr "ID global"
 
-#: common/models.py:3864
+#: common/models.py:3880
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr "Identificador d'aquest missatge (pot ser proporcionat per un sistema extern)"
 
-#: common/models.py:3871
+#: common/models.py:3887
 msgid "Thread ID"
 msgstr "ID del fil"
 
-#: common/models.py:3873
+#: common/models.py:3889
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr "Identificador d'aquest fil de missatges (pot ser proporcionat per un sistema extern)"
 
-#: common/models.py:3882
+#: common/models.py:3898
 msgid "Thread"
 msgstr "Fil"
 
-#: common/models.py:3883
+#: common/models.py:3899
 msgid "Linked thread for this message"
 msgstr "Fil vinculat a aquest missatge"
 
-#: common/models.py:3899
+#: common/models.py:3915
 msgid "Priority"
 msgstr "Prioritat"
 
-#: common/models.py:3941
+#: common/models.py:3957
 msgid "Email Thread"
 msgstr "Fil de correu electrònic"
 
-#: common/models.py:3942
+#: common/models.py:3958
 msgid "Email Threads"
 msgstr "Fils de correu electrònic"
 
-#: common/models.py:3953 generic/states/serializers.py:16
+#: common/models.py:3969 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:237
 msgid "Key"
 msgstr "Clau"
 
-#: common/models.py:3956
+#: common/models.py:3972
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr "Clau única d'aquest fil (s'utilitza per a identificar el fil)"
 
-#: common/models.py:3960
+#: common/models.py:3976
 msgid "Unique identifier for this thread"
 msgstr "Identificador únic d'aquest fil"
 
-#: common/models.py:3967
+#: common/models.py:3983
 msgid "Started Internal"
 msgstr "Iniciat internament"
 
-#: common/models.py:3968
+#: common/models.py:3984
 msgid "Was this thread started internally?"
 msgstr "Aquest fil s'ha iniciat internament?"
 
-#: common/models.py:3973
+#: common/models.py:3989
 msgid "Date and time that the thread was created"
 msgstr "Data i hora en què es va crear el fil"
 
-#: common/models.py:3978
+#: common/models.py:3994
 msgid "Date and time that the thread was last updated"
 msgstr "Data i hora de l'última actualització del fil"
 
@@ -5276,24 +5276,24 @@ msgstr "Errors"
 msgid "Valid"
 msgstr "Vàlid"
 
-#: importer/models.py:936 importer/models.py:963
+#: importer/models.py:957 importer/models.py:984
 #, python-brace-format
 msgid "Invalid filters for field: {field}"
 msgstr ""
 
-#: importer/models.py:977
+#: importer/models.py:998
 msgid "Multiple matches found for value - please ensure the value is unique, or select a specific lookup field"
 msgstr "S'han trobat diverses coincidències per al valor; assegureu-vos que el valor sigui únic o seleccioneu un camp de cerca específic"
 
-#: importer/models.py:1030
+#: importer/models.py:1051
 msgid "No record found with the provided ID"
 msgstr "No s'ha trobat cap registre amb l'ID proporcionat"
 
-#: importer/models.py:1035
+#: importer/models.py:1056
 msgid "Invalid ID format provided"
 msgstr "El format de l'ID proporcionat no és vàlid"
 
-#: importer/models.py:1103
+#: importer/models.py:1124
 msgid "ID is required for updating existing records."
 msgstr "L'ID és obligatori per a actualitzar registres existents."
 
@@ -7718,41 +7718,41 @@ msgstr "Copia les peces substitutes"
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Copia les peces substitutes en duplicar els elements de la BOM"
 
-#: part/tasks.py:43
+#: part/tasks.py:45
 msgid "Low stock notification"
 msgstr "Notificació d'estoc baix"
 
-#: part/tasks.py:45
+#: part/tasks.py:47
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr "L'estoc disponible de {part.name} ha baixat per sota del nivell mínim configurat"
 
-#: part/tasks.py:75
+#: part/tasks.py:77
 msgid "Stale stock notification"
 msgstr "Notificació d'estoc a punt de caducar"
 
-#: part/tasks.py:79
+#: part/tasks.py:81
 msgid "You have 1 stock item approaching its expiry date"
 msgstr "Teniu 1 article d'estoc a punt d'arribar a la data de caducitat"
 
-#: part/tasks.py:81
+#: part/tasks.py:83
 #, python-brace-format
 msgid "You have {item_count} stock items approaching their expiry dates"
 msgstr "Teniu {item_count} articles d'estoc a punt d'arribar a la data de caducitat"
 
-#: part/tasks.py:90
+#: part/tasks.py:92
 msgid "No expiry date"
 msgstr "Sense data de caducitat"
 
-#: part/tasks.py:97
+#: part/tasks.py:99
 msgid "Expired {abs(days_diff)} days ago"
 msgstr "Ha caducat fa {abs(days_diff)} dies"
 
-#: part/tasks.py:100
+#: part/tasks.py:102
 msgid "Expires today"
 msgstr "Caduca avui"
 
-#: part/tasks.py:103
+#: part/tasks.py:105
 #, python-brace-format
 msgid "{days_until_expiry} days"
 msgstr "{days_until_expiry} dies"
@@ -8690,17 +8690,17 @@ msgstr "Connector"
 msgid "No author found"
 msgstr "No s'ha trobat cap autor"
 
-#: plugin/registry.py:918
+#: plugin/registry.py:991
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "El connector '{p}' no és compatible amb la versió actual d'InvenTree {v}"
 
-#: plugin/registry.py:921
+#: plugin/registry.py:994
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "El connector requereix com a mínim la versió {v}"
 
-#: plugin/registry.py:923
+#: plugin/registry.py:996
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "El connector requereix com a màxim la versió {v}"
@@ -10726,7 +10726,7 @@ msgstr "Permisos"
 msgid "Important dates"
 msgstr "Dates importants"
 
-#: users/api.py:417
+#: users/api.py:401
 msgid "Reauthentication is required to generate a token"
 msgstr ""
 
@@ -11010,7 +11010,7 @@ msgstr "Ordres de devolució"
 msgid "Transfer Orders"
 msgstr "Ordres de transferència"
 
-#: users/serializers.py:216
+#: users/serializers.py:216 users/serializers.py:555
 msgid "Username"
 msgstr "Nom d'usuari"
 
@@ -11030,91 +11030,91 @@ msgstr "Cognoms"
 msgid "Last name of the user"
 msgstr "Cognoms de l'usuari"
 
-#: users/serializers.py:227
+#: users/serializers.py:227 users/serializers.py:561
 msgid "Email address of the user"
 msgstr "Adreça electrònica de l'usuari"
 
-#: users/serializers.py:282
+#: users/serializers.py:284
 msgid "Expiry date cannot be in the past"
 msgstr ""
 
-#: users/serializers.py:286
+#: users/serializers.py:288
 msgid "Expiry date cannot be more than 365 days in the future"
 msgstr ""
 
-#: users/serializers.py:296
+#: users/serializers.py:298
 msgid "User must be authenticated"
 msgstr "L'usuari ha d'estar autenticat"
 
-#: users/serializers.py:305
+#: users/serializers.py:307
 msgid "Only a superuser can create a token for another user"
 msgstr "Només un superusuari pot crear un token per a un altre usuari"
 
-#: users/serializers.py:395
+#: users/serializers.py:398
 msgid "Administrator"
 msgstr "Administrador"
 
-#: users/serializers.py:396
+#: users/serializers.py:399
 msgid "Does this user have administrative permissions"
 msgstr "Indica si aquest usuari té permisos d'administració"
 
-#: users/serializers.py:401 users/serializers.py:529
+#: users/serializers.py:404 users/serializers.py:572
 msgid "Superuser"
 msgstr "Superusuari"
 
-#: users/serializers.py:401 users/serializers.py:530
+#: users/serializers.py:404 users/serializers.py:573
 msgid "Is this user a superuser"
 msgstr "Indica si aquest usuari és un superusuari"
 
-#: users/serializers.py:405 users/serializers.py:537
+#: users/serializers.py:408 users/serializers.py:580
 msgid "Is this user account active"
 msgstr "Indica si aquest compte d'usuari està actiu"
 
-#: users/serializers.py:426
+#: users/serializers.py:429
 msgid "Only a superuser can adjust this field"
 msgstr "Només un superusuari pot modificar aquest camp"
 
-#: users/serializers.py:454
-msgid "Password"
-msgstr "Contrasenya"
-
 #: users/serializers.py:455
-msgid "Password for the user"
-msgstr "Contrasenya de l'usuari"
-
-#: users/serializers.py:461
-msgid "Override warning"
-msgstr "Ignora l'avís"
-
-#: users/serializers.py:462
-msgid "Override the warning about password rules"
-msgstr "Ignora l'avís sobre les regles de contrasenya"
-
-#: users/serializers.py:522
-msgid "Staff"
-msgstr "Personal"
-
-#: users/serializers.py:523
-msgid "Does this user have staff permissions"
-msgstr "Indica si aquest usuari té permisos de personal"
-
-#: users/serializers.py:573
-msgid "You do not have permission to create users"
-msgstr "No teniu permís per a crear usuaris"
-
-#: users/serializers.py:586
 msgid "A user with this email address already exists"
 msgstr ""
 
-#: users/serializers.py:621
+#: users/serializers.py:483
+msgid "Password"
+msgstr "Contrasenya"
+
+#: users/serializers.py:484
+msgid "Password for the user"
+msgstr "Contrasenya de l'usuari"
+
+#: users/serializers.py:490
+msgid "Override warning"
+msgstr "Ignora l'avís"
+
+#: users/serializers.py:491
+msgid "Override the warning about password rules"
+msgstr "Ignora l'avís sobre les regles de contrasenya"
+
+#: users/serializers.py:565
+msgid "Staff"
+msgstr "Personal"
+
+#: users/serializers.py:566
+msgid "Does this user have staff permissions"
+msgstr "Indica si aquest usuari té permisos de personal"
+
+#: users/serializers.py:616
+msgid "You do not have permission to create users"
+msgstr "No teniu permís per a crear usuaris"
+
+#: users/serializers.py:653
 msgid "Your account has been created."
 msgstr "S'ha creat el vostre compte."
 
-#: users/serializers.py:623
+#: users/serializers.py:655
 msgid "Please use the password reset function to login"
 msgstr "Utilitzeu la funció de restabliment de la contrasenya per a iniciar la sessió"
 
-#: users/serializers.py:629
+#: users/serializers.py:661
 msgid "Welcome to InvenTree"
 msgstr "Us donem la benvinguda a InvenTree"
 

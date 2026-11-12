@@ -98,7 +98,6 @@ export default function SalesOrderDetail() {
     pk: order.pk,
     title: t`Edit Sales Order`,
     fields: salesOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }

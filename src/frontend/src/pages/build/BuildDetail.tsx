@@ -376,7 +376,6 @@ export default function BuildDetail() {
     title: t`Edit Build Order`,
     modalId: 'edit-build-order',
     fields: editBuildOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

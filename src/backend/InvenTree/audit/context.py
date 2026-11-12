@@ -296,9 +296,11 @@ def resolve_cid() -> Optional[str]:
     """Resolve the current correlation ID.
 
     - Within a request: the request ID bound by django-structlog, so that audit entries
-      can be matched against log entries (and the X-Request-ID header) for the request.
-      Note: django-structlog uses the incoming 'X-Request-ID' header if provided
-      (e.g. by a reverse proxy), otherwise generates a new UUID.
+      can be matched against log entries (and the X-InvenTree-ReqId header) for the request.
+      Note: django-structlog generates a new UUID for each request - an incoming
+      'X-Request-ID' header is not trusted (TRUST_UPSTREAM_REQUEST_ID is not set),
+      so clients cannot spoof the correlation ID. The ID is returned to the client
+      in the 'X-InvenTree-ReqId' response header.
     - Otherwise (e.g. background tasks, or if the structlog middleware is not installed):
       a server-generated ID (see audit_request / audit_source).
     """

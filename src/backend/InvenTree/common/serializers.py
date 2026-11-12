@@ -16,6 +16,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from taggit.models import Tag
 
+import common.admin_messages
 import common.filters
 import common.models as common_models
 import common.validators
@@ -505,6 +506,31 @@ class CustomStateSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
     reference_status = serializers.ChoiceField(
         choices=generic.states.custom.state_reference_mappings()
     )
+
+
+class AdminMessageSerializer(serializers.Serializer):
+    """Serializer for a (read-only) staff-facing system message.
+
+    Instances are common.admin_messages.AdminMessage dataclass objects.
+    """
+
+    key = serializers.CharField(read_only=True)
+    title = serializers.CharField(read_only=True)
+    message = serializers.CharField(read_only=True)
+    classifier = serializers.ChoiceField(
+        read_only=True,
+        choices=[
+            (c.value, c.value) for c in common.admin_messages.AdminMessageClassifier
+        ],
+    )
+    code = serializers.CharField(read_only=True, allow_null=True)
+    plugin = serializers.CharField(read_only=True, allow_null=True)
+
+
+class AdminMessageListSerializer(serializers.Serializer):
+    """Serializer for the staff-only system messages endpoint."""
+
+    messages = AdminMessageSerializer(many=True, read_only=True)
 
 
 class FlagSerializer(serializers.Serializer):

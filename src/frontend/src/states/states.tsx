@@ -43,6 +43,7 @@ export interface ServerAPIProps {
   };
   system_state: {
     cors_allow_all: null | boolean;
+    basic_auth_enabled: null | boolean;
   } | null;
 }
 

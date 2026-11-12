@@ -195,7 +195,6 @@ export default function TransferOrderDetail() {
     pk: order.pk,
     title: t`Edit Transfer Order`,
     fields: transferOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }
