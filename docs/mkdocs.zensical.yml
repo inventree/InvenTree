@@ -1,8 +1,9 @@
 # Zensical evaluation config - derived from mkdocs.yml. Build from repo root with:
 #   zensical build -f docs/mkdocs.zensical.yml
 # Differences: theme.variant classic, include_dir relative to this file, native mermaid,
-# macros on_error_fail, separate site_dir. mermaid2 / simple-hooks / git-revision-date /
+# macros on_error_fail. The mermaid2, simple-hooks and git-revision-date
 # plugins are not supported by Zensical (silently ignored).
+# Post-build checks (hooks.on_post_build) are run separately by "invoke build-docs".
 
 # Project
 site_url: https://inventree.readthedocs.io
@@ -413,4 +414,4 @@ extra:
 
 use_directory_urls: true
 strict: true
-site_dir: site_zensical
+site_dir: site

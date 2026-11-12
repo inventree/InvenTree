@@ -8,3 +8,4 @@ mkdocs-simple-hooks
 mkdocs-include-markdown-plugin
 mkdocstrings[python]
 mkdocs-mermaid2-plugin
+zensical

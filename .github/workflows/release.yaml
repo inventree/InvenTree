@@ -129,7 +129,7 @@ jobs:
           pip install --require-hashes --only-binary :all: -r docs/requirements.txt
       - name: Build documentation
         run: |
-          invoke build-docs --mkdocs
+          invoke build-docs --build
       - name: Zip build docs
         run: |
           cd docs/site
