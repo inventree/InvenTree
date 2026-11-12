@@ -72,8 +72,9 @@ div:nth-of-type(1) p {
 	padding-top: 12px;
 }
 
-/* Remove page title  */
-.md-content h1:first-child {
+/* Remove page title (Zensical inserts a skip-link anchor before the h1) */
+.md-content h1:first-child,
+.md-content #__skip + h1 {
 	display: none;
 }
 
