@@ -65,6 +65,9 @@ def generate_schema_file(key: str, renderer: SchemaRenderer, paths: dict) -> Non
 
     print('Writing schema file to:', output_file)
 
+    # Generated pages are not tracked in git, so the directory may not exist yet
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(output)
 
