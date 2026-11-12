@@ -4,9 +4,11 @@
 # macros on_error_fail. The mermaid2, simple-hooks and git-revision-date
 # plugins are not supported by Zensical (silently ignored).
 # Post-build checks (hooks.on_post_build) are run separately by "invoke build-docs".
+# site_url is taken from READTHEDOCS_CANONICAL_URL when building on ReadTheDocs
+# (the mkdocs on_config hook which used to set it is not run by Zensical).
 
 # Project
-site_url: https://inventree.readthedocs.io
+site_url: !ENV [READTHEDOCS_CANONICAL_URL, 'https://inventree.readthedocs.io/']
 site_name: InvenTree Documentation
 site_description: InvenTree - Open Source Inventory Management
 site_author: InvenTree
