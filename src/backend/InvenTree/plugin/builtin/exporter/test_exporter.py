@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from InvenTree.helpers import escape_export_value
 from InvenTree.unit_test import InvenTreeAPITestCase
-from plugin.registry import registry
+from plugin import registry
 
 
 class StocktakeExporterTest(InvenTreeAPITestCase):

@@ -64,6 +64,14 @@ repos:
     rev: v1.36.4
     hooks:
       - id: djlint-django
+- repo: local
+  hooks:
+  - id: import-linter
+    name: import-linter
+    entry: bash -c 'cd src/backend/InvenTree && lint-imports --config ../../../pyproject.toml'
+    language: python
+    additional_dependencies: [import-linter==2.16]
+    pass_filenames: false
 - repo: https://github.com/codespell-project/codespell
   rev: v2.4.2
   hooks:

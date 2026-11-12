@@ -328,7 +328,7 @@ class DataExportViewMixin:
         - If a plugin is specified, the plugin can be used to augment or replace the export functionality.
         """
         if export_plugin is None:
-            from plugin.registry import registry
+            from plugin import registry
 
             export_plugin = registry.get_plugin('inventree-exporter')
 

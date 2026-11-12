@@ -14,8 +14,8 @@ from django.test import TestCase
 
 import plugin.staticfiles as plugin_staticfiles
 from InvenTree.unit_test import PluginRegistryMixin
-from plugin.lease import try_acquire_lease
-from plugin.registry import registry
+from plugin import registry
+from plugin._internal.lease import try_acquire_lease
 
 
 class FakePlugin:
