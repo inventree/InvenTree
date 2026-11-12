@@ -3,7 +3,7 @@
 from django import template
 from django.urls import reverse
 
-from plugin.registry import registry
+from plugin import registry
 
 register = template.Library()
 

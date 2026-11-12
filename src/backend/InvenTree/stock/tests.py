@@ -1371,7 +1371,7 @@ class StockBarcodeTest(StockTestBase):
     def test_location_barcode_basics(self):
         """Simple tests for the StockLocation barcode integration."""
         # Set the barcode plugin to use the legacy barcode format
-        from plugin.registry import registry
+        from plugin import registry
 
         plugin = registry.get_plugin('inventreebarcode')
 
@@ -1760,7 +1760,7 @@ class TestResultTest(StockTestBase):
         """Test duplicate item behaviour."""
         # Create an example stock item by copying one from the database (because we are lazy)
 
-        from plugin.registry import registry
+        from plugin import registry
 
         item = StockItem.objects.get(pk=522)
 

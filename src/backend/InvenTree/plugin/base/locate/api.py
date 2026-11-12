@@ -14,8 +14,7 @@ import InvenTree.permissions
 from InvenTree.exceptions import log_error
 from InvenTree.permissions import check_request_permission
 from InvenTree.tasks import offload_task
-from plugin import PluginMixinEnum, registry
-from plugin.registry import call_plugin_function
+from plugin import PluginMixinEnum, call_plugin_function, registry
 from stock.models import StockItem, StockLocation
 
 

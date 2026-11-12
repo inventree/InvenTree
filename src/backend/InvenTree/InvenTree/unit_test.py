@@ -520,7 +520,7 @@ class PluginRegistryMixin:
         from time import sleep
 
         from common.models import InvenTreeSetting
-        from plugin.registry import registry
+        from plugin import registry
 
         while not registry.is_ready:
             print('Waiting for plugin registry to be ready...')

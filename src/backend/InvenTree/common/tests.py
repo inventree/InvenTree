@@ -1162,11 +1162,11 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 class PluginUserSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
     """Tests for the plugin user settings API."""
 
-    def setUp(self):
-        """Ensure plugin is activated."""
+    @classmethod
+    def setUpTestData(cls):
+        """Ensure plugin is activated (once for the whole class)."""
+        super().setUpTestData()
         registry.set_plugin_state('sample', True)
-
-        super().setUp()
 
     def test_user_setting_list(self):
         """Test the plugin user setting list API."""

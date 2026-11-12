@@ -6,8 +6,16 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import Part
-from plugin.registry import registry
+from plugin import registry
 from stock.models import StockItem, StockLocation
+
+# Supplier barcode plugins which must be active for these tests
+SUPPLIER_PLUGINS = {
+    'digikeyplugin': True,
+    'mouserplugin': True,
+    'lcscplugin': True,
+    'tmeplugin': True,
+}
 
 
 class SupplierBarcodeTests(InvenTreeAPITestCase):
@@ -28,10 +36,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         super().setUpTestData()
 
         # Enable the plugins
-        registry.set_plugin_state('digikeyplugin', True)
-        registry.set_plugin_state('mouserplugin', True)
-        registry.set_plugin_state('lcscplugin', True)
-        registry.set_plugin_state('tmeplugin', True)
+        registry.set_plugin_states(SUPPLIER_PLUGINS)
 
         part = Part.objects.create(name='Test Part', description='Test Part')
 
@@ -67,11 +72,9 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
         # Assign supplier information to the plugins
         # Add supplier information to each custom plugin
-        registry.set_plugin_state('digikeyplugin', True)
         digikey_plugin = registry.get_plugin('digikeyplugin')
         digikey_plugin.set_setting('SUPPLIER_ID', digikey_supplier.pk)
 
-        registry.set_plugin_state('mouserplugin', True)
         mouser_plugin = registry.get_plugin('mouserplugin')
         mouser_plugin.set_setting('SUPPLIER_ID', mouser_supplier.pk)
 
@@ -185,14 +188,25 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
     roles = ['stock.view', 'stock_location.view', 'purchase_order.add']
 
+    @classmethod
+    def setUpTestData(cls):
+        """Enable the supplier plugins once for the whole class.
+
+        Changing plugin state forces a full registry reload, so avoid doing it per-test.
+        """
+        super().setUpTestData()
+        registry.set_plugin_states(SUPPLIER_PLUGINS)
+
     def setUp(self):
         """Create supplier part and purchase_order."""
         super().setUp()
 
-        registry.set_plugin_state('digikeyplugin', True)
-        registry.set_plugin_state('mouserplugin', True)
-        registry.set_plugin_state('lcscplugin', True)
-        registry.set_plugin_state('tmeplugin', True)
+        # The plugin instances persist across tests (no per-test registry reload),
+        # so clear the cached supplier - it refers to a company from a previous test
+        for slug in SUPPLIER_PLUGINS:
+            plugin = registry.get_plugin(slug)
+            if hasattr(plugin, '_supplier'):
+                del plugin._supplier
 
         self.loc_1 = StockLocation.objects.create(name='Location 1')
         self.loc_2 = StockLocation.objects.create(name='Location 2')
@@ -249,11 +263,9 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
             self.purchase_order2.add_line_item(supplier_part, 5, destination=self.loc_2)
 
         # Add supplier information to each custom plugin
-        registry.set_plugin_state('digikeyplugin', True)
         digikey_plugin = registry.get_plugin('digikeyplugin')
         digikey_plugin.set_setting('SUPPLIER_ID', digikey_supplier.pk)
 
-        registry.set_plugin_state('mouserplugin', True)
         mouser_plugin = registry.get_plugin('mouserplugin')
         mouser_plugin.set_setting('SUPPLIER_ID', mouser.pk)
 
