@@ -25,7 +25,6 @@ from rest_framework.serializers import DecimalField, Serializer
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
-import InvenTree.fast_representation as fast_representation
 import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
@@ -783,27 +782,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
                     data[field_name] = value
 
         super().__init__(instance, data, **kwargs)
-
-    # Use the fast representation path (see InvenTree.fast_representation)
-    # Set to False on a subclass to always use the standard DRF implementation
-    FAST_REPRESENTATION = True
-
-    def to_representation(self, instance):
-        """Serialize the provided instance.
-
-        Uses a fast path which produces identical output to DRF, but avoids
-        the generic per-field overhead for simple fields.
-        """
-        if (
-            self.FAST_REPRESENTATION
-            and isinstance(instance, models.Model)
-            and fast_representation.check_serializer_class(
-                type(self), InvenTreeModelSerializer
-            )
-        ):
-            return fast_representation.fast_to_representation(self, instance)
-
-        return super().to_representation(instance)
 
     def get_initial(self):
         """Construct initial data for the serializer.
