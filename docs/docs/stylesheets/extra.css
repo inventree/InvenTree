@@ -68,8 +68,15 @@ p {
 	text-align: justify;
 }
 
-div:nth-of-type(1) p {
+div:nth-of-type(1) p:not(.admonition-title) {
 	padding-top: 12px;
+}
+
+/* Use the theme code font (bootstrap.css otherwise overrides it) */
+.md-typeset code,
+.md-typeset kbd,
+.md-typeset pre {
+	font-family: var(--md-code-font-family);
 }
 
 /* Remove page title (Zensical inserts a skip-link anchor before the h1) */

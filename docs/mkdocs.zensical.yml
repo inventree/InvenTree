@@ -1,6 +1,6 @@
 # Zensical evaluation config - derived from mkdocs.yml. Build from repo root with:
 #   zensical build -f docs/mkdocs.zensical.yml
-# Differences: theme.variant classic, include_dir relative to this file, native mermaid,
+# Differences: theme.variant modern (default fonts), include_dir relative to this file, native mermaid,
 # macros on_error_fail. The mermaid2, simple-hooks and git-revision-date
 # plugins are not supported by Zensical (silently ignored).
 # Post-build checks (hooks.on_post_build) are run separately by "invoke build-docs".
@@ -19,9 +19,7 @@ repo_name: inventree/inventree
 # Theme
 theme:
   name: material
-  variant: classic
-  font:
-    text: Roboto
+  variant: modern
   custom_dir: _includes/overrides
   palette:
     - media: "(prefers-color-scheme: light)"
