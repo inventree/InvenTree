@@ -203,3 +203,34 @@ div:nth-of-type(1) p:not(.admonition-title) {
 .md-grid {
 	max-width: 80rem;
 }
+
+/* Solid primary-colour header and navigation tabs, as in the classic theme.
+ * (The Zensical "modern" variant uses a translucent neutral header.) */
+.md-header,
+.md-tabs {
+	background-color: var(--md-primary-fg-color);
+	color: var(--md-primary-bg-color);
+}
+
+.md-header {
+	backdrop-filter: none;
+}
+
+/* Search button on the coloured header (darker blue box, white text) */
+.md-header .md-search__button {
+	background-color: rgba(0, 0, 0, 0.26);
+	color: var(--md-primary-bg-color);
+}
+
+.md-header .md-search__button:hover {
+	background-color: rgba(0, 0, 0, 0.32);
+}
+
+.md-header .md-search__button::before {
+	background-color: var(--md-primary-bg-color);
+}
+
+.md-header .md-search__button::after {
+	background-color: rgba(0, 0, 0, 0.2);
+	color: var(--md-primary-bg-color);
+}
