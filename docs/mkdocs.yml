@@ -54,6 +54,7 @@ extra_css:
   - stylesheets/brands.css
   - stylesheets/regular.css
   - stylesheets/solid.css
+  - stylesheets/fontawesome-svg.css
   - stylesheets/bootstrap.css
   - stylesheets/splide.min.css
   - stylesheets/extra.css
