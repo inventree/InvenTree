@@ -232,6 +232,7 @@ ignore_imports = [
     "generic.states.test_transition -> order.status_codes",
     "generic.states.api_helpers -> users.permissions",
     "generic.states.test_transition -> users.models",
+    "generic.modelfeatures.tests -> part.models",
 ]
 
 [[tool.importlinter.contracts]]
