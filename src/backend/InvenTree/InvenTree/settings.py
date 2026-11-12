@@ -32,7 +32,7 @@ from InvenTree.config import (
     get_oidc_private_key,
     get_setting,
 )
-from InvenTree.ready import isInMainThread, isRunningBackup
+from InvenTree.ready import isInMainThread, isInServerThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.tracing import ensure_otel_middleware
 from InvenTree.validators import invalid_site_url_hint
@@ -597,7 +597,8 @@ TEMPLATES = [
 BASIC_AUTH_ENABLED = get_boolean_setting(
     'INVENTREE_BASIC_AUTH_ENABLED', 'basic_auth_enabled', True
 )
-if BASIC_AUTH_ENABLED:
+
+if BASIC_AUTH_ENABLED and isInServerThread():
     logger.warning(
         'INVE-W18: Basic (username:password) authentication is enabled for the API - this is not recommended'
     )
