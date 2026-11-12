@@ -654,12 +654,6 @@ export function ApiForm({
                 for (const [k, v] of Object.entries(errors)) {
                   const path = _path ? `${_path}.${k}` : k;
 
-                  // Known error keys are displayed as non-field errors
-                  if (NON_FIELD_ERROR_KEYS.includes(k)) {
-                    processErrors(v);
-                    continue;
-                  }
-
                   // Nested errors (below the top level) cannot be mapped to a form field,
                   // so they are displayed as non-field errors rather than being dropped
                   if (_path) {
@@ -668,6 +662,13 @@ export function ApiForm({
                   }
 
                   const field = fields[k];
+
+                  // Known error keys are displayed as non-field errors,
+                  // unless the key matches a form field (e.g. a "reason" field)
+                  if (!field && NON_FIELD_ERROR_KEYS.includes(k)) {
+                    processErrors(v);
+                    continue;
+                  }
 
                   // Ignore top-level keys which do not correspond to a form field
                   // (e.g. response metadata such as "transition" or "state")

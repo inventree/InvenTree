@@ -52,7 +52,7 @@ class MixinNotImplementedError(NotImplementedError):
 
 def log_registry_error(error, reference: str = 'general'):
     """Log an plugin error."""
-    from plugin.registry import registry
+    from .registry import registry
 
     # make sure the registry is set up
     if reference not in registry.errors:

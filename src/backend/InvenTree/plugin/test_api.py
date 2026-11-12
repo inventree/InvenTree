@@ -498,7 +498,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_settings(self):
         """Test settings endpoint for plugin."""
-        from plugin.registry import registry
+        from plugin import registry
 
         registry.set_plugin_state('sample', True)
         url = reverse('api-plugin-settings', kwargs={'plugin': 'sample'})
@@ -519,8 +519,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_plugin_filter_by_mixin(self):
         """Test filtering plugins by mixin."""
-        from plugin import PluginMixinEnum
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         # Ensure we have some plugins loaded
         registry.reload_plugins(full_reload=True, collect=True)
@@ -548,8 +547,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_plugin_filters(self):
         """Unit testing for plugin API filters."""
+        from plugin import registry
         from plugin.models import PluginConfig
-        from plugin.registry import registry
 
         PluginConfig.objects.all().delete()
         registry.reload_plugins(full_reload=True, collect=True)
@@ -705,13 +704,18 @@ class PluginLockedSettingsTest(PluginMixin, InvenTreeAPITestCase):
 
     UNLOCKED_KEY = 'CHOICE_SETTING'
 
+    @classmethod
+    def setUpTestData(cls):
+        """Activate the sample plugin once for the whole class."""
+        super().setUpTestData()
+
+        from plugin import registry
+
+        registry.set_plugin_state(cls.PLUGIN_SLUG, True)
+
     def setUp(self):
-        """Activate the sample plugin and confirm it is ready."""
+        """Confirm the sample plugin is ready."""
         super().setUp()
-
-        from plugin.registry import registry
-
-        registry.set_plugin_state(self.PLUGIN_SLUG, True)
 
         self.cfg = PluginConfig.objects.filter(key=self.PLUGIN_SLUG).first()
         self.assertIsNotNone(self.cfg)
@@ -841,12 +845,17 @@ class PluginUnauthenticatedAccessTest(PluginMixin, InvenTreeAPITestCase):
     PLUGIN_SLUG = 'sample'
     SETTING_KEY = 'API_KEY'
 
-    def setUp(self):
-        """Activate sample plugin, then log out to simulate an anonymous client."""
-        super().setUp()
-        from plugin.registry import registry
+    @classmethod
+    def setUpTestData(cls):
+        """Activate the sample plugin once for the whole class."""
+        super().setUpTestData()
+        from plugin import registry
 
-        registry.set_plugin_state(self.PLUGIN_SLUG, True)
+        registry.set_plugin_state(cls.PLUGIN_SLUG, True)
+
+    def setUp(self):
+        """Log out to simulate an anonymous client."""
+        super().setUp()
         self.client.logout()
 
     def test_plugin_detail_unauthenticated(self):
