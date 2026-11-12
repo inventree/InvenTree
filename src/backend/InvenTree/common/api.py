@@ -1745,6 +1745,32 @@ class HealthCheckStatusSerializer(serializers.Serializer):
     )
 
 
+class AdminMessageList(APIView):
+    """Read-only, staff-only list of classified system messages (error / warning / info / success).
+
+    Messages are generated on demand from core system checks (and potentially plugins).
+    """
+
+    permission_classes = [IsAdminOrAdminScope]
+
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=common.serializers.AdminMessageListSerializer,
+                description='System messages for staff users',
+            )
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        """Return system messages (most severe first)."""
+        from common.admin_messages import get_admin_messages
+
+        serializer = common.serializers.AdminMessageListSerializer({
+            'messages': get_admin_messages()
+        })
+        return Response(serializer.data)
+
+
 class HealthCheckView(APIView):
     """Simple JSON endpoint for InvenTree health check.
 
@@ -2174,7 +2200,9 @@ common_api_urls = [
         'system/',
         include([
             # Health check
-            path('health/', HealthCheckView.as_view(), name='api-system-health')
+            path('health/', HealthCheckView.as_view(), name='api-system-health'),
+            # Staff-only system status messages
+            path('messages/', AdminMessageList.as_view(), name='api-system-messages'),
         ]),
     ),
     # Internal System APIs - DO NOT USE

@@ -1,15 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 575
+INVENTREE_API_VERSION = 577
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v575 -> 2026-11-10 : https://github.com/inventree/InvenTree/pull/13243
+v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/13243
     - breaking: The /api/part/<id>/bom-copy/ endpoint now requires the 'bom.add' role (and 'bom.delete' if remove_existing is set)
     - breaking: Stock action endpoints (count, add, remove, transfer, return, change_status, assign, merge) now require the 'stock.change' role
     - Write operations on API views without a resolvable permission model now fall back to the queryset model, or are denied
+
+v576 -> 2026-11-11 : https://github.com/inventree/InvenTree/pull/13247
+    - Adds /api/system/messages/ endpoint: staff-only, read-only; classified system messages are provided in the "messages" array
+
+v575 -> 2026-11-10 : https://github.com/inventree/InvenTree/pull/13208
+    - Adds optional read-only "consumed_by_detail" to the StockItem API
 
 v574 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13169
     - breaking: Basic authentication can now be disabled - controlled with INVENTREE_BASIC_AUTH_ENABLED

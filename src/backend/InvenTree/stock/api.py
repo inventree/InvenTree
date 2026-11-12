@@ -1119,6 +1119,7 @@ class StockOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('supplier_part_detail'),
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('tests'),
+        InvenTreeOutputOption('consumed_by_detail'),
     ]
 
 

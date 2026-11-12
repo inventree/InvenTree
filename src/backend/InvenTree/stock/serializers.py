@@ -29,6 +29,7 @@ import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
 from audit.helpers import audit_event, write_batched
+from build.serializers_brief import BuildBriefSerializer
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
@@ -325,6 +326,7 @@ class StockItemSerializer(
     SKIP_CREATE_FIELDS = ['duplicate']
 
     export_child_fields = [
+        'consumed_by_detail.reference',
         'part_detail.name',
         'part_detail.description',
         'part_detail.IPN',
@@ -353,6 +355,7 @@ class StockItemSerializer(
             'belongs_to',
             'build',
             'consumed_by',
+            'consumed_by_detail',
             'customer',
             'delete_on_deplete',
             'expiry_date',
@@ -684,6 +687,18 @@ class StockItemSerializer(
 
     purchase_price_currency = InvenTreeCurrencySerializer(
         help_text=_('Purchase currency of this stock item')
+    )
+
+    consumed_by_detail = OptionalField(
+        serializer_class=BuildBriefSerializer,
+        serializer_kwargs={
+            'label': _('Consumed By'),
+            'source': 'consumed_by',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
+        prefetch_fields=['consumed_by'],
     )
 
     purchase_order_reference = serializers.CharField(
