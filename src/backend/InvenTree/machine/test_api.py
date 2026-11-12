@@ -10,7 +10,7 @@ from machine import registry
 from machine.machine_type import BaseDriver
 from machine.models import MachineConfig
 from machine.tests import TestMachineRegistryMixin
-from plugin.registry import registry as plg_registry
+from plugin import registry as plg_registry
 from stock.models import StockLocation
 
 

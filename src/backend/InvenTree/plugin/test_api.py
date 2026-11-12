@@ -498,7 +498,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_settings(self):
         """Test settings endpoint for plugin."""
-        from plugin.registry import registry
+        from plugin import registry
 
         registry.set_plugin_state('sample', True)
         url = reverse('api-plugin-settings', kwargs={'plugin': 'sample'})
@@ -519,8 +519,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_plugin_filter_by_mixin(self):
         """Test filtering plugins by mixin."""
-        from plugin import PluginMixinEnum
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         # Ensure we have some plugins loaded
         registry.reload_plugins(full_reload=True, collect=True)
@@ -548,8 +547,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_plugin_filters(self):
         """Unit testing for plugin API filters."""
+        from plugin import registry
         from plugin.models import PluginConfig
-        from plugin.registry import registry
 
         PluginConfig.objects.all().delete()
         registry.reload_plugins(full_reload=True, collect=True)
@@ -710,7 +709,7 @@ class PluginLockedSettingsTest(PluginMixin, InvenTreeAPITestCase):
         """Activate the sample plugin once for the whole class."""
         super().setUpTestData()
 
-        from plugin.registry import registry
+        from plugin import registry
 
         registry.set_plugin_state(cls.PLUGIN_SLUG, True)
 
@@ -850,7 +849,7 @@ class PluginUnauthenticatedAccessTest(PluginMixin, InvenTreeAPITestCase):
     def setUpTestData(cls):
         """Activate the sample plugin once for the whole class."""
         super().setUpTestData()
-        from plugin.registry import registry
+        from plugin import registry
 
         registry.set_plugin_state(cls.PLUGIN_SLUG, True)
 

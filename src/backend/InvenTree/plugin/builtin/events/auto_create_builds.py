@@ -16,9 +16,8 @@ from build.events import BuildEvents
 from build.models import Build
 from build.status_codes import BuildStatus, BuildStatusGroups
 from InvenTree.tasks import offload_task
-from plugin import InvenTreePlugin
+from plugin import InvenTreePlugin, call_plugin_function
 from plugin.mixins import EventMixin, SettingsMixin
-from plugin.registry import call_plugin_function
 
 logger = structlog.get_logger('inventree')
 

@@ -33,6 +33,7 @@ from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.exceptions import log_error
 
+from .base import InvenTreePlugin
 from .helpers import (
     IntegrationPluginError,
     MixinNotImplementedError,
@@ -42,7 +43,6 @@ from .helpers import (
     log_registry_error,
 )
 from .lease import release_lease, try_acquire_lease
-from .plugin import InvenTreePlugin
 
 logger = structlog.get_logger('inventree')
 
@@ -81,10 +81,10 @@ def registry_entrypoint(check_reload: bool = True, default_value: Any = None) ->
 class PluginsRegistry:
     """The PluginsRegistry class."""
 
-    from .base.integration.AppMixin import AppMixin
-    from .base.integration.ScheduleMixin import ScheduleMixin
-    from .base.integration.SettingsMixin import SettingsMixin
-    from .base.integration.UrlsMixin import UrlsMixin
+    from ..base.integration.AppMixin import AppMixin
+    from ..base.integration.ScheduleMixin import ScheduleMixin
+    from ..base.integration.SettingsMixin import SettingsMixin
+    from ..base.integration.UrlsMixin import UrlsMixin
 
     DEFAULT_MIXIN_ORDER = [SettingsMixin, ScheduleMixin, AppMixin, UrlsMixin]
 
@@ -859,7 +859,7 @@ class PluginsRegistry:
         - Also store the hash as a local marker file in the current environment
 
         """
-        from plugin.installer import (
+        from .installer import (
             get_env_plugin_hash,
             install_plugins_file,
             plugins_file_hash,
