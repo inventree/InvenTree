@@ -334,13 +334,38 @@ class PluginsRegistry:
             slug (str): Plugin slug
             state (bool): Plugin state - true = active, false = inactive
         """
-        if slug not in self.plugins_full:
-            logger.warning("Plugin registry has no record of plugin '%s'", slug)
-            return
+        self.set_plugin_states({slug: state})
 
-        cfg = self.get_plugin_config(slug)
-        cfg.active = state
-        cfg.save()
+    @registry_entrypoint()
+    def set_plugin_states(self, states: dict[str, bool]):
+        """Set the state (active/inactive) of multiple plugins, with a single reload.
+
+        Changing the active state of a PluginConfig triggers a full registry reload,
+        which is expensive. This method updates all of the provided plugins first,
+        and then performs (at most) one reload.
+
+        Arguments:
+            states (dict): Mapping of {slug: state} - true = active, false = inactive
+        """
+        changed = False
+
+        for slug, state in states.items():
+            if slug not in self.plugins_full:
+                logger.warning("Plugin registry has no record of plugin '%s'", slug)
+                continue
+
+            cfg = self.get_plugin_config(slug)
+            cfg.active = state
+
+            # Same condition as PluginConfig.save() uses to trigger a reload
+            if cfg.reload_required():
+                changed = True
+                cfg.warn_reload(stacklevel=4)
+
+            cfg.save(no_reload=True)
+
+        if changed:
+            self.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
         # Update the registry hash value
         self.update_plugin_hash()
