@@ -15,12 +15,11 @@ from rest_framework import serializers
 
 from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
-from machine import registry as machine_registry
 from machine.models import MachineConfig
 from part.models import Part
-from plugin import InvenTreePlugin, PluginMixinEnum, registry
+from plugin import InvenTreePlugin, MixinNotImplementedError, PluginMixinEnum, registry
 from plugin.base.label.mixins import LabelPrintingMixin
-from plugin.helpers import MixinNotImplementedError
+from plugin.machine import registry as machine_registry
 from report.models import LabelTemplate
 from report.tests import PrintTestMixins
 from stock.models import StockItem, StockLocation

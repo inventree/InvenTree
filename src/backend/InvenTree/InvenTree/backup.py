@@ -158,7 +158,7 @@ InvenTreeBackupMetadata = dict[str, str | int | bool | None]
 
 def _gather_environment_metadata() -> InvenTreeBackupMetadata:
     """Gather metadata about the current environment to be stored with the backup."""
-    import plugin.installer
+    from plugin._internal.installer import plugins_file_hash
 
     new_data: InvenTreeBackupMetadata = {}
 
@@ -166,7 +166,7 @@ def _gather_environment_metadata() -> InvenTreeBackupMetadata:
     new_data['ivt_1_version'] = InvenTree.version.inventreeVersion()
     new_data['ivt_1_version_api'] = InvenTree.version.inventreeApiVersion()
     new_data['ivt_1_plugins_enabled'] = settings.PLUGINS_ENABLED
-    new_data['ivt_1_plugins_file_hash'] = plugin.installer.plugins_file_hash()
+    new_data['ivt_1_plugins_file_hash'] = plugins_file_hash()
     new_data['ivt_1_installer'] = InvenTree.config.inventreeInstaller()
     new_data['ivt_1_backup_time'] = datetime.now().isoformat()
 

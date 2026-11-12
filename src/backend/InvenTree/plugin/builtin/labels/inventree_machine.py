@@ -10,9 +10,9 @@ from rest_framework import serializers
 from common.models import InvenTreeUserSetting
 from InvenTree.serializers import DependentField
 from InvenTree.tasks import offload_task
-from machine.machine_types import LabelPrinterBaseDriver, LabelPrinterMachine
 from plugin import InvenTreePlugin
 from plugin.machine import call_machine_function, registry
+from plugin.machine.machine_types import LabelPrinterBaseDriver, LabelPrinterMachine
 from plugin.mixins import LabelPrintingMixin
 from report.models import LabelTemplate
 
