@@ -1,11 +1,10 @@
-from machine import (
+from machine.machine_type import (
     BaseDriver,
     BaseMachineType,
     MachineProperty,
     MachineStatus,
-    registry,
 )
-from machine.registry import call_machine_function
+from machine.registry import call_machine_function, registry
 
 __all__ = [
     'BaseDriver',

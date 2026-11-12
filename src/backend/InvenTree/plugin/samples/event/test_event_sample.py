@@ -3,10 +3,8 @@
 from django.test import TestCase
 
 from common.models import InvenTreeSetting
-from plugin import InvenTreePlugin, registry
-from plugin.base.event.events import trigger_event
-from plugin.helpers import MixinNotImplementedError
-from plugin.mixins import EventMixin
+from plugin import InvenTreePlugin, MixinNotImplementedError, registry
+from plugin.mixins import EventMixin, trigger_event
 
 
 class EventPluginSampleTests(TestCase):

@@ -13,8 +13,7 @@ from rest_framework.views import APIView
 
 from InvenTree import permissions
 from part.models import PartCategoryParameterTemplate
-from plugin import registry
-from plugin.plugin import PluginMixinEnum
+from plugin import PluginMixinEnum, registry
 
 from .serializers import (
     ImportRequestSerializer,
