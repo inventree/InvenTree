@@ -309,9 +309,6 @@ nav:
 
 # Plugins
 plugins:
-  - include-markdown:
-      opening_tag: "{!"
-      closing_tag: "!}"
   - search
   - git-revision-date-localized
   - mkdocs-simple-hooks:

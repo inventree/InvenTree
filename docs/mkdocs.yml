@@ -303,9 +303,6 @@ nav:
 
 # Plugins
 plugins:
-  - include-markdown:
-      opening_tag: "{!"
-      closing_tag: "!}"
   - search
   - mermaid2:
       # version: 11.6.0
