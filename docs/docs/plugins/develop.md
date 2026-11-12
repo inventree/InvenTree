@@ -52,7 +52,7 @@ from plugin.mixins import APICallMixin, SettingsMixin, ScheduleMixin, BarcodeMix
 
 ### Plugin Base Class
 
-Custom plugins must inherit from the [InvenTreePlugin class]({{ sourcefile("src/backend/InvenTree/plugin/plugin.py") }}). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
+Custom plugins must inherit from the [InvenTreePlugin class]({{ sourcefile("src/backend/InvenTree/plugin/_internal/base.py") }}). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
 
 ### Imports
 

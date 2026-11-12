@@ -368,7 +368,7 @@ def install_plugin(
         update_plugins_file(package_reference=package_ref)
 
         # Reload the plugin registry, to discover the new plugin
-        from plugin.registry import registry
+        from .registry import registry
 
         registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
@@ -404,7 +404,7 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
         user: User performing the uninstall
         delete_config: If True, delete the plugin configuration from the database
     """
-    from plugin.registry import registry
+    from .registry import registry
 
     if user and not user.is_superuser:
         raise ValidationError(_('Only superuser accounts can administer plugins'))

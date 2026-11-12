@@ -100,8 +100,8 @@ class SettingsMixin:
             value: The value to be set for the setting
             user: The user who is making the change (optional)
         """
+        from plugin import registry
         from plugin.models import PluginSetting
-        from plugin.registry import registry
 
         try:
             plugin = registry.get_plugin_config(self.plugin_slug(), self.plugin_name())
@@ -145,8 +145,8 @@ class SettingsMixin:
             value: The value to be set for the user setting
             user: The user for which the setting is to be set
         """
+        from plugin import registry
         from plugin.models import PluginUserSetting
-        from plugin.registry import registry
 
         try:
             plugin = registry.get_plugin_config(self.plugin_slug(), self.plugin_name())

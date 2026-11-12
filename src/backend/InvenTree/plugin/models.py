@@ -14,9 +14,8 @@ from django.utils.translation import gettext_lazy as _
 import common.models
 import InvenTree.models
 import plugin.staticfiles
-from plugin import InvenTreePlugin
+from plugin import InvenTreePlugin, registry
 from plugin.events import PluginEvents, trigger_event
-from plugin.registry import registry
 
 
 class PluginConfig(InvenTree.models.MetadataMixin, models.Model):

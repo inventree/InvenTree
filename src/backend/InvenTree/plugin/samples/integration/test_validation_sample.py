@@ -6,7 +6,7 @@ from django.urls import reverse
 import build.models
 import part.models
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
-from plugin.registry import registry
+from plugin import registry
 
 
 class SampleValidatorPluginTest(InvenTreeAPITestCase, InvenTreeTestCase):
