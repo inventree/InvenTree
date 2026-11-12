@@ -2,7 +2,7 @@
 title: InvenTree Mobile App
 ---
 
-{% with directory="appgallery", per_page=2 %}
+{% with directory="appgallery", per_page=2, height="25rem", mobile_height="25rem" %}
 {% include "carousel.html" %}
 {% endwith %}
 

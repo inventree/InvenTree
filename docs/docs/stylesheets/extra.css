@@ -183,3 +183,18 @@ div:nth-of-type(1) p:not(.admonition-title) {
 .api-method-patch { background-color: #9c36b5; }
 .api-method-delete { background-color: #c92a2a; }
 .api-method-head, .api-method-options { background-color: #495057; }
+
+/* Image carousel: scale every image to the slide height, keeping aspect ratio */
+.splide__slide {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.splide__slide img {
+	height: 100%;
+	width: auto;
+	/* Very wide images shrink to fit the carousel on narrow screens */
+	max-width: calc(100vw - 2rem);
+	object-fit: contain;
+}
