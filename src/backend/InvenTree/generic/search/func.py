@@ -7,7 +7,7 @@ SEARCH_FILTERS = {}
 
 
 def search_provider(
-    fn=None, ref_names: list[str] | None = None, default_filters: dict | None = None
+    ref_names: list[str] | None = None, default_filters: dict | None = None
 ):
     """Register a view class as a provider for one or more search result types."""
 
@@ -19,8 +19,6 @@ def search_provider(
             SEARCH_FILTERS[name] = (default_filters or {}).get(name, {})
         return func
 
-    if fn is not None and callable(fn):
-        return decorator(fn)
     return decorator
 
 
