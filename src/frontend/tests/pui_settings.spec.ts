@@ -350,6 +350,83 @@ test('Settings - Admin', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
+test('Settings - Admin - System Status', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'settings/admin/home'
+  });
+
+  // Messages are loaded from the server (/api/system/messages/ endpoint)
+  await page.getByText('System Status').waitFor();
+  await page.getByLabel('admin-message-classifier-selector').waitFor();
+  const messages = page.getByLabel('admin-message-list').getByRole('alert');
+
+  await messages.filter({ hasText: 'Basic Authentication' }).waitFor();
+
+  const classifiers = ['error', 'warning', 'info', 'success'];
+
+  // Each classifier chip displays its message count as a badge
+  for (const c of classifiers) {
+    await expect(page.getByLabel(`admin-message-count-${c}`)).toHaveText(
+      /^\d+$/
+    );
+  }
+  // Toggle a classifier chip (the native checkbox input is visually hidden)
+  const toggle = async (c: string, checked: boolean) => {
+    const chip = page.getByLabel(`admin-message-classifier-${c}`);
+    await chip.dispatchEvent('click');
+    if (checked) await expect(chip).toBeChecked();
+    else await expect(chip).not.toBeChecked();
+  };
+
+  const count = async (c: string) =>
+    Number(await page.getByLabel(`admin-message-count-${c}`).textContent());
+
+  // Success messages are hidden by default
+  await expect(
+    page.getByLabel('admin-message-classifier-success')
+  ).not.toBeChecked();
+  await expect(messages.filter({ hasText: 'No issues detected' })).toHaveCount(
+    0
+  );
+
+  const actionable = await messages.count();
+  const successCount = await count('success');
+  const total = actionable + successCount;
+  expect(total).toBeGreaterThanOrEqual(7);
+
+  // Show success messages
+  await toggle('success', true);
+  await expect(messages).toHaveCount(total);
+
+  // Hide all classifiers
+  for (const c of classifiers) {
+    await toggle(c, false);
+  }
+  await page.getByText('No messages to display').waitFor();
+  await expect(messages).toHaveCount(0);
+
+  // Restore the default selection
+  for (const c of ['error', 'warning', 'info']) {
+    await toggle(c, true);
+  }
+  await expect(messages).toHaveCount(actionable);
+});
+
+test('Settings - Admin - Alerts View All', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { user: adminuser });
+
+  // Navbar alerts dropdown links through to the admin center
+  await page.getByLabel('open-alerts').click();
+
+  const viewAll = page.getByLabel('alerts-view-all');
+  await expect(viewAll).toHaveAttribute('href', /\/settings\/admin\/home$/);
+  await viewAll.click();
+
+  await page.waitForURL('**/settings/admin/home**');
+  await page.getByLabel('admin-message-classifier-selector').waitFor();
+});
+
 test('Settings - Admin - Background Tasks', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     user: adminuser,

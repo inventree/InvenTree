@@ -33,7 +33,20 @@ class InvenTreeBasicAuthentication(BasicAuthentication):
 
     Checks:
     - If MFA is required and disallows basic auth
+    - Only works if BASIC_AUTH_ENABLED is True
     """
+
+    def authenticate(self, request):
+        """Only attempt basic authentication if it is enabled."""
+        if not settings.BASIC_AUTH_ENABLED:
+            return None
+        return super().authenticate(request)
+
+    def authenticate_header(self, request):
+        """Only advertise basic authentication if it is enabled."""
+        if not settings.BASIC_AUTH_ENABLED:
+            return ''
+        return super().authenticate_header(request)
 
     def authenticate_credentials(self, userid, password, request=None):
         """Also check if MFA is required for the user."""

@@ -1,7 +1,6 @@
 """Plugin mixin class for adding well-known urls."""
 
-from plugin import PluginMixinEnum
-from plugin.helpers import MixinNotImplementedError
+from plugin import MixinNotImplementedError, PluginMixinEnum
 
 
 class WellKnownMixin:

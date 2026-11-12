@@ -119,7 +119,7 @@ unused-ignore-comment = "error"
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
 dynamic_context = "test_function"
-omit = ["*/test_migrations.py"]
+omit = ["*/test_migrations.py", "*/migrations/*"]
 
 [tool.coverage.html]
 show_contexts = true
@@ -142,3 +142,108 @@ pythonpath = ["src/backend/InvenTree"]
 DJANGO_SETTINGS_MODULE = "InvenTree.settings"
 python_files = ["test*.py",]
 timeout = "120"
+
+[tool.importlinter]
+# Architectural import boundaries for the backend, enforced by import-linter (prek).
+root_packages = [
+    "InvenTree",
+    "audit",
+    "build",
+    "common",
+    "company",
+    "data_exporter",
+    "generic",
+    "importer",
+    "machine",
+    "order",
+    "part",
+    "plugin",
+    "plugins",
+    "report",
+    "stock",
+    "users",
+    "web",
+]
+include_external_packages = false
+
+[[tool.importlinter.contracts]]
+# Plugins are only allowed to use the documented, stable import targets:
+# `plugin` , `plugin.mixins`, `plugin.machine`
+name = "Plugins only import the public plugin API"
+type = "forbidden"
+source_modules = ["plugin.builtin", "plugin.samples", "plugins"]
+forbidden_modules = [
+    "machine",
+    "plugin",
+    "plugin._internal",
+    "plugin.admin",
+    "plugin.api",
+    "plugin.apps",
+    "plugin.base",
+    "plugin.broken",
+    "plugin.builtin",
+    "plugin.events",
+    # "plugin.machine",  - allowed
+    "plugin.migrations",
+    # "plugin.mixins",  - allowed
+    "plugin.mock",
+    "plugin.models",
+    "plugin.samples",
+    "plugin.serializers",
+    "plugin.staticfiles",
+    "plugin.template",
+    "plugin.test_api",
+    "plugin.test_plugin",
+    "plugin.test_staticfiles",
+    "plugin.testing",
+    "plugin.urls",
+]
+allow_indirect_imports = true
+
+# [[tool.importlinter.contracts]]
+# name = "Plugin mixins must be layered"
+# type = "independence"
+# modules=[
+#     "plugin.base.*"
+# ]
+
+
+[[tool.importlinter.contracts]]
+# `generic` holds shared enums, events and state machines
+name = "Generic app does not depend on feature apps"
+type = "forbidden"
+source_modules = ["generic"]
+forbidden_modules = [
+    "build",
+    "company",
+    "importer",
+    "machine",
+    "order",
+    "part",
+    "report",
+    "stock",
+    "users",
+    "web",
+]
+allow_indirect_imports = true
+ignore_imports = [
+    "generic.states.tests -> build.status_codes",
+    "generic.states.test_transition -> order.models",
+    "generic.states.test_transition -> order.status_codes",
+    "generic.states.api_helpers -> users.permissions",
+    "generic.states.test_transition -> users.models",
+]
+
+[[tool.importlinter.contracts]]
+# Ban dependency cycles between sibling modules/subpackages
+name = "No dependency cycles inside an app"
+type = "acyclic_siblings"
+ancestors = [
+    "company",
+    "data_exporter",
+    "generic",
+    "report",
+    "stock",
+    "web",
+]
+ignore_imports = ["generic.templatetags.generic -> generic.states.tags"]

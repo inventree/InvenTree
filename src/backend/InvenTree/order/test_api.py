@@ -13,7 +13,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import connection
-from django.test import TransactionTestCase, skipUnlessDBFeature
+from django.test import TransactionTestCase, override_settings, skipUnlessDBFeature
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
@@ -995,6 +995,7 @@ class PurchaseOrderTest(OrderTest):
             resp_dict['detail'], 'Authentication credentials were not provided.'
         )
 
+    @override_settings(BASIC_AUTH_ENABLED=True)
     def test_po_calendar_auth(self):
         """Test accessing calendar with header authorization."""
         self.client.logout()
@@ -1008,6 +1009,22 @@ class PurchaseOrderTest(OrderTest):
         )
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(BASIC_AUTH_ENABLED=False)
+    def test_po_calendar_auth_disabled(self):
+        """Test that header authorization is rejected if basic auth is disabled."""
+        self.client.logout()
+        base64_token = base64.b64encode(
+            f'{self.username}:{self.password}'.encode('ascii')
+        ).decode('ascii')
+        response = self.client.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
+            format='json',
+            headers={'authorization': f'basic {base64_token}'},
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertNotIn('WWW-Authenticate', response)
+
+    @override_settings(BASIC_AUTH_ENABLED=True)
     def test_po_calendar_auth_password_colon(self):
         """Test header authorization with a password containing a colon."""
         password = 'pass:word:123'
@@ -1025,6 +1042,7 @@ class PurchaseOrderTest(OrderTest):
         )
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(BASIC_AUTH_ENABLED=True)
     def test_po_calendar_auth_malformed(self):
         """Test that malformed basic authorization headers return 401, not 500."""
         self.client.logout()
@@ -1041,6 +1059,7 @@ class PurchaseOrderTest(OrderTest):
             self.assertEqual(response.status_code, 401)
             self.assertEqual(response['WWW-Authenticate'], 'Basic realm="api"')
 
+    @override_settings(BASIC_AUTH_ENABLED=True)
     def test_po_calendar_auth_mfa(self):
         """Test that header authorization creates no session, and is refused for users with MFA."""
         self.client.logout()
