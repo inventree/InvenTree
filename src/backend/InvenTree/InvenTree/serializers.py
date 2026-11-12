@@ -944,6 +944,26 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         return default_storage.url(str(value))
 
 
+class InvenTreeThumbnailField(serializers.CharField):
+    """Read-only field which renders the thumbnail URL for a model instance.
+
+    The instance must implement get_thumbnail_url() (e.g. InvenTreeImageMixin).
+
+    Note: This is more efficient than CharField(source='get_thumbnail_url'),
+    as DRF inspects the signature of a callable source for every serialized row.
+    """
+
+    def __init__(self, **kwargs):
+        """Initialize the field as read-only, sourced from the instance itself."""
+        kwargs['source'] = '*'
+        kwargs['read_only'] = True
+        super().__init__(**kwargs)
+
+    def to_representation(self, value):
+        """Return the thumbnail URL for the provided instance."""
+        return value.get_thumbnail_url()
+
+
 class InvenTreeImageSerializerField(serializers.ImageField):
     """Custom image serializer.
 
