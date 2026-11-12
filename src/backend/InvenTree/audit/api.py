@@ -22,6 +22,7 @@ from audit.permissions import (
 from common.filters import determine_content_type
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers_api import InvenTreeApiRouter
+from InvenTree.mixins import OutputOptionsMixin
 from InvenTree.permissions import IsAuthenticatedOrReadScope
 
 
@@ -166,7 +167,7 @@ class AuditLogFilter(rest_filters.FilterSet):
         return queryset.filter(own)
 
 
-class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+class AuditLogViewSet(OutputOptionsMixin, viewsets.ReadOnlyModelViewSet):
     """API endpoint for audit log entries (read-only).
 
     - GET (list): Return a list of audit log entries
