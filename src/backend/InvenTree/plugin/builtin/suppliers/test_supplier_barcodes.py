@@ -6,7 +6,7 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import Part
-from plugin.registry import registry
+from plugin import registry
 from stock.models import StockItem, StockLocation
 
 

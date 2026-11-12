@@ -94,7 +94,7 @@ def print_labels(
     and will continuously update the status of the DataOutput object.
     """
     from common.models import DataOutput
-    from plugin.registry import registry
+    from plugin import registry
     from report.models import LabelTemplate
 
     try:

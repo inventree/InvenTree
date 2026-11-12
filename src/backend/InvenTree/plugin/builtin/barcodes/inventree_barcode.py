@@ -13,11 +13,15 @@ from typing import cast
 
 from django.utils.translation import gettext_lazy as _
 
-import plugin.base.barcodes.helper
 from InvenTree.helpers import hash_barcode
 from InvenTree.models import InvenTreeBarcodeMixin
 from plugin import InvenTreePlugin
-from plugin.mixins import BarcodeMixin, SettingsMixin
+from plugin.mixins import (
+    BarcodeMixin,
+    SettingsMixin,
+    get_supported_barcode_model_codes_map,
+    get_supported_barcode_models,
+)
 
 
 class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugin):
@@ -67,9 +71,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
         ):
             model_type_code, pk = m.groups()
 
-            supported_models_map = (
-                plugin.base.barcodes.helper.get_supported_barcode_model_codes_map()
-            )
+            supported_models_map = get_supported_barcode_model_codes_map()
             model = supported_models_map.get(model_type_code, None)
 
             if model is None:
@@ -96,7 +98,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
             except json.JSONDecodeError:
                 pass
 
-        supported_models = plugin.base.barcodes.helper.get_supported_barcode_models()
+        supported_models = get_supported_barcode_models()
 
         succcess_message = _('Found matching item')
 

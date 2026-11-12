@@ -19,7 +19,8 @@ import structlog
 
 import InvenTree.helpers
 from generic.enums import StringEnum
-from plugin.helpers import get_git_log
+
+from .helpers import get_git_log
 
 logger = structlog.get_logger('inventree')
 
@@ -173,7 +174,7 @@ class MetaBase:
     @mark_final
     def plugin_config(self):
         """Return the PluginConfig object associated with this plugin."""
-        from plugin.registry import registry
+        from .registry import registry
 
         return registry.get_plugin_config(self.plugin_slug())
 
