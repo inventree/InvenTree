@@ -155,3 +155,24 @@ div:nth-of-type(1) p {
 	background-color: #5bc0de;
 	color: #555;
 }
+
+/* HTTP method badges for the generated API schema documentation */
+.api-method {
+	display: inline-block;
+	min-width: 4.2em;
+	padding: 0.1em 0.5em;
+	border-radius: 0.2rem;
+	color: #fff;
+	font-family: var(--md-code-font-family);
+	font-size: 0.75em;
+	font-weight: 700;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.api-method-get { background-color: #2b8a3e; }
+.api-method-post { background-color: #1971c2; }
+.api-method-put { background-color: #e67700; }
+.api-method-patch { background-color: #9c36b5; }
+.api-method-delete { background-color: #c92a2a; }
+.api-method-head, .api-method-options { background-color: #495057; }

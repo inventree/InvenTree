@@ -57,7 +57,6 @@ extra_css:
   - stylesheets/bootstrap.css
   - stylesheets/splide.min.css
   - stylesheets/extra.css
-  - stylesheets/neoteroi-mkdocs.css
   - https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css
 extra_javascript:
   - javascripts/extra.js
@@ -303,8 +302,6 @@ nav:
 
 # Plugins
 plugins:
-  - neoteroi.mkdocsoad:
-      use_pymdownx: true
   - include-markdown:
       opening_tag: "{!"
       closing_tag: "!}"

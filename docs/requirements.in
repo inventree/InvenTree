@@ -6,6 +6,5 @@ mkdocs-git-revision-date-localized-plugin>=1.6.0,<2.0
 mkdocs-redirects
 mkdocs-simple-hooks
 mkdocs-include-markdown-plugin
-neoteroi-mkdocs
 mkdocstrings[python]
 mkdocs-mermaid2-plugin
