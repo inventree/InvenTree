@@ -793,8 +793,10 @@ export async function handleWebauthnLogin(
   }
 
   try {
-    const publicKey =
-      PublicKeyCredential.parseRequestOptionsFromJSON(webauthn_challenge);
+    // The server returns the options wrapped as { publicKey: {...}, mediation: ... }
+    const publicKey = PublicKeyCredential.parseRequestOptionsFromJSON(
+      webauthn_challenge.publicKey ?? webauthn_challenge
+    );
     const credential = await navigator.credentials.get({ publicKey });
     await api
       .post(apiUrl(ApiEndpoints.auth_webauthn_login), {
