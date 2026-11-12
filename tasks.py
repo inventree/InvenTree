@@ -2618,7 +2618,7 @@ def doc_schema(c):
 
 
 # Configuration file for building the documentation with zensical
-DOCS_CONFIG = 'docs/mkdocs.zensical.yml'
+DOCS_CONFIG = 'docs/mkdocs.yml'
 
 
 def doc_checks(c):

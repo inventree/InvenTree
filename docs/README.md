@@ -2,11 +2,11 @@
 
 [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 
-This repository hosts the [official documentation](https://inventree.readthedocs.io/) for [InvenTree](https://github.com/inventree/inventree), an open source inventory management system.
+This repository hosts the [official documentation](https://docs.inventree.org/) for [InvenTree](https://github.com/inventree/inventree), an open source inventory management system.
 
 ## Prerequisites
 
-InvenTree uses [MkDocs](https://www.mkdocs.org/) to convert [Markdown](https://www.mkdocs.org/user-guide/writing-your-docs/#writing-with-markdown) format `.md` files into HTML suitable for viewing in a web browser.
+InvenTree uses [Zensical](https://zensical.org/) to convert [Markdown](https://zensical.org/docs/authoring/markdown/) format `.md` files into HTML suitable for viewing in a web browser. The site configuration is in `docs/mkdocs.yml` (Zensical reads the mkdocs configuration format).
 
 !!! info "Prerequisites"
     To build and serve this documentation locally (e.g. for development), you will need:
@@ -31,7 +31,7 @@ $ source env/bin/activate
 !!! info "(env) prefix"
     The shell prompt should now display the `(env)` prefix, showing that you are operating within the context of the python virtual environment
 
-You can now install the additional packages needed by mkdocs:
+You can now install the additional packages needed to build the documentation:
 
 ```
 $ cd src
@@ -40,7 +40,7 @@ $ pip install --require-hashes -r docs/requirements.txt
 
 ## Schema generation
 
-Building the documentation requires extracting the API schema from the source code.
+Building the documentation requires extracting the API schema (and settings definitions) from the source code. The API reference pages in `docs/docs/api/schema/` are generated from this schema and are not tracked in git.
 
 !!! tip
     This command is only required when building the documentation for the first time, or when changes have been made to the API schema.
@@ -62,15 +62,21 @@ Exporting definitions complete
 Exporting schema file to '/home/inventree/src/docs/generated/schema.yml'
 
 Schema export completed: /home/inventree/src/docs/generated/schema.yml
-Documentation build complete, but properdocs not requested
+Documentation build complete, but zensical build not requested
+```
+
+To generate the schema files *and* build the static HTML site (in `docs/site/`), including the post-build checks that all settings are documented, run:
+
+```
+$ invoke build-docs --build
 ```
 
 ## Viewing the documentation
 
-Generate the HTML files from the markdown source files, and start the properdocs webpage server:
+Generate the HTML files from the markdown source files, and start the zensical webpage server:
 
 ```
-$ properdocs serve -f docs/mkdocs.yml
+$ zensical serve -a localhost:8080 -f docs/mkdocs.yml
 ```
 
 You can then point your web browser at http://localhost:8080/
@@ -81,7 +87,7 @@ Alternatively, you can use the `invoke` command:
 $ invoke dev.docs-server
 ```
 
-If you need to, use the `-a` option after `properdocs` or `invoke` to set the address and port.  Run `invoke dev.docs-server --help` for details.
+If you need to, use the `-a` option after `zensical serve` or `invoke` to set the address and port.  Run `invoke dev.docs-server --help` for details.
 
 ## Editing the Documentation Files
 
@@ -146,4 +152,4 @@ Global variables should be added in the `# Global Variables` section of the `mkd
 
 ## Credits
 
-This documentation makes use of the [mkdocs-material template](https://github.com/squidfunk/mkdocs-material)
+This documentation is built with [Zensical](https://zensical.org/), from the team behind [Material for MkDocs](https://github.com/squidfunk/mkdocs-material)

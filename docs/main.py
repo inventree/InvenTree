@@ -92,18 +92,12 @@ def apply_hook_config(env):
     """Provide values normally injected by the 'on_config' mkdocs hook.
 
     Zensical does not support mkdocs hooks, so 'config.releases',
-    'config.assets_dir' etc are never set. When they are missing, run the
-    hook ourselves and inject the results into the template 'config' variable.
+    'config.assets_dir' etc are never set. Run the hook ourselves and
+    inject the results into the template 'config' variable.
     """
     template_config = env.variables.get('config')
 
     if template_config is None:
-        return
-
-    if 'releases' in template_config:
-        # Running under mkdocs - the hook has already been applied,
-        # and define_env() is called once per build
-        docs_data.reset_observations()
         return
 
     hook_config = docs_data.hook_config(template_config.get('site_url'))

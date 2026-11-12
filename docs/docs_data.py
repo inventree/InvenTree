@@ -173,7 +173,7 @@ def audited_models() -> Any:
 def hook_config(site_url: Optional[str] = None) -> dict:
     """Return the config values provided by the 'on_config' hook in docs/hooks.py.
 
-    For static site generators which do not support mkdocs hooks (e.g. zensical),
+    Zensical does not run mkdocs hooks, so
     the hook is run once here, and the result cached for subsequent pages.
     """
     global _hook_config
