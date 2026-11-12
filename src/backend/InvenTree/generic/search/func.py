@@ -13,10 +13,10 @@ def search_provider(
 
     def decorator(func):
         """Register the view class for each configured search result type."""
-        provider_names = ref_names or [func.__name__.lower()]
-        for name in provider_names:
+        filters = default_filters or {}
+        for name in ref_names or [func.__name__.lower()]:
             SEARCH_PROVIDERS[name] = func
-            SEARCH_FILTERS[name] = (default_filters or {}).get(name, {})
+            SEARCH_FILTERS[name] = filters.get(name, {})
         return func
 
     return decorator
