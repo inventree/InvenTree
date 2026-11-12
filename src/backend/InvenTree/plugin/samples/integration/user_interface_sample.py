@@ -226,6 +226,21 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             }
         ]
 
+    def get_ui_table_actions(self, request, context, **kwargs):
+        """Add a selection-aware action to stock item tables."""
+        if context.get('model_type') != 'stockitem':
+            return []
+
+        return [
+            {
+                'key': 'sample-stock-table-action',
+                'title': _('Sample Stock Table Action'),
+                'icon': 'ti:plus:outline',
+                'source': self.plugin_static_file('sample_table_action.js'),
+                'options': {'requires_selection': True},
+            }
+        ]
+
     def get_ui_primary_actions(self, request, context, **kwargs):
         """Return a list of custom primary action buttons."""
         return [

@@ -85,6 +85,28 @@ export type NavigationUIFeature = {
   featureReturnType: undefined;
 };
 
+export type TableActionUIFeature = {
+  featureType: 'table_action';
+  requestContext: {
+    location: string;
+    model_type?: ModelType;
+    table_url?: string;
+    table_id?: string;
+  };
+  responseOptions: Omit<PluginUIFeature, 'options'> & {
+    options?: { color?: string; requires_selection?: boolean };
+  };
+  featureContext: {
+    selectedIds: (number | string)[];
+    modelType?: ModelType;
+    tableId?: string;
+    tableUrl?: string;
+    refreshTable: () => void;
+    clearSelectedRecords: () => void;
+  };
+  featureReturnType: void | Promise<void>;
+};
+
 export type PrimaryActionUIFeature = {
   featureType: 'primary_action';
   requestContext: {
