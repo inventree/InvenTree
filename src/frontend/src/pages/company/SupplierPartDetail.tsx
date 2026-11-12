@@ -187,7 +187,6 @@ export default function SupplierPartDetail() {
     pk: supplierPart?.pk,
     title: t`Edit Supplier Part`,
     fields: supplierPartFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
@@ -275,6 +274,8 @@ export default function SupplierPartDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.supplierpart}
+            id={supplierPart.pk}
             title={t`Supplier Part`}
             subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
             breadcrumbs={breadcrumbs}

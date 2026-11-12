@@ -143,6 +143,30 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         row = DataImportRow.objects.get(session=session, row_index=0)
         self.assertEqual(row.row_data['COMMENT'], '2024-05-01T12:30:00')
 
+    def test_convert_date_field(self):
+        """Test conversion of date values for import.
+
+        Regression test for a Sentry crash: "'datetime.datetime' object has no
+        attribute 'strip'". Excel imports provide date cells as native datetime
+        objects, which convert_date_field() previously assumed to be strings.
+        """
+        row = DataImportRow(row_index=0, row_data={})
+
+        for value, expected in [
+            (None, None),
+            ('', None),
+            ('   ', None),
+            (datetime.datetime(2024, 5, 1, 12, 30), '2024-05-01'),
+            (datetime.date(2024, 5, 1), '2024-05-01'),
+            # Native datetime after round-trip through DjangoJSONEncoder
+            ('2024-05-01T12:30:00', '2024-05-01'),
+            (' 2024-05-01 ', '2024-05-01'),
+            ('01/05/2024', '2024-05-01'),
+            ('2024/05/01', '2024-05-01'),
+            ('not a date', 'not a date'),
+        ]:
+            self.assertEqual(row.convert_date_field(value), expected, msg=value)
+
     def test_import_header_whitespace(self):
         """Test that column headers with leading/trailing whitespace are handled correctly.
 
@@ -439,6 +463,97 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
 
         self.assertEqual(row.errors, {'part': 'No related model found for field: part'})
 
+    def test_field_filters_validation(self):
+        """Test that field filters cannot be used to traverse related models.
+
+        Field filters are applied as ORM filters against the related model,
+        so lookups which traverse relations (or inject Q arguments) must be rejected.
+        """
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        from importer.validators import validate_field_filters
+
+        # Valid filters
+        for filters in [
+            None,
+            {},
+            {'part': {}},
+            {'part': {'supplier': 1, 'active': True}},
+            {'part': {'name': 'abc', 'pk': 1.5, 'category': None}},
+        ]:
+            validate_field_filters(filters)
+
+        # Invalid filters
+        for filters in [
+            [],
+            {'user': []},
+            {'user': {'usersession__session_key__startswith': 'a'}},
+            {'user': {'password__startswith': 'pbkdf2'}},
+            {'part': {'name__icontains': 'abc'}},
+            {'part': {'_negated': True}},
+            {'part': {'_connector': 'OR'}},
+            {'part': {'pk': 1, 'active': True, '': 1}},
+            {'part': {'not a field': 1}},
+            {'part': {'active': [True]}},
+            {'part': {'active': {'a': 1}}},
+        ]:
+            with self.assertRaises(DjangoValidationError, msg=str(filters)):
+                validate_field_filters(filters)
+
+        # Invalid filters are rejected on save
+        session = DataImportSession(
+            data_file=self.helper_file('companies.csv'),
+            model_type='stockitem',
+            field_filters={'part': {'category__parent__name': 'abc'}},
+        )
+
+        with self.assertRaises(DjangoValidationError):
+            session.save()
+
+        # Filters stored before validation was enforced are rejected at lookup time
+        session.field_filters = {}
+        session.save()
+
+        DataImportSession.objects.filter(pk=session.pk).update(
+            field_filters={'part': {'category__parent__name': 'abc'}}
+        )
+        session.refresh_from_db()
+
+        row = DataImportRow(session=session, row_data={})
+        row.related_field_map = {}
+
+        with self.assertRaises(DjangoValidationError):
+            row.lookup_related_field('part', '1')
+
+    def test_field_filters_invalid_field(self):
+        """Test that field filters referencing a non-existent field do not crash the import.
+
+        Regression test: an unknown filter key raises a FieldError from the ORM,
+        which was not caught by lookup_related_field (only ValueError was handled).
+        """
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        session = DataImportSession.objects.create(
+            data_file=self.helper_file('companies.csv'),
+            model_type='stockitem',
+            field_filters={'part': {'not_a_field': 1}},
+        )
+
+        row = DataImportRow(session=session, row_data={'Website': '1'})
+
+        # Auto-lookup: error is recorded against the row, rather than raising FieldError
+        row.extract_data(
+            field_mapping={'part': 'Website'},
+            available_fields={'part': {'type': 'related field'}},
+            commit=False,
+        )
+
+        self.assertEqual(row.errors, {'part': 'Invalid filters for field: part'})
+
+        # Explicit lookup field
+        with self.assertRaises(DjangoValidationError):
+            row.lookup_related_field('part', '1', lookup_field='name')
+
     def test_lookup_field_validation(self):
         """Test that DataImportColumnMap.clean() validates the lookup_field value."""
         from django.core.exceptions import ValidationError as DjangoValidationError
@@ -667,6 +782,79 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         # Check that there are new database records
         self.assertEqual(PartCategory.objects.count(), N + 4)
 
+    def test_manual_correction_revalidates_import_row(self):
+        """Import manually corrected data instead of the invalid CSV value."""
+        from part.models import Part
+        from stock.models import StockItem
+
+        part = Part.objects.create(
+            name='Manual correction test part',
+            description='Target part for a corrected import row',
+        )
+        initial_count = StockItem.objects.count()
+        self.assignRole('stock.change')
+
+        # Upload a row containing an invalid part reference.
+        session_data = self.post(
+            reverse('api-importer-session-list'),
+            {
+                'model_type': 'stockitem',
+                'data_file': ContentFile(
+                    'Part,Quantity\nunknown-part,5\n', 'manual_correction.csv'
+                ),
+            },
+            format='multipart',
+            expected_code=201,
+        ).data
+        session_id = session_data['pk']
+
+        # Accept the column mapping to extract and validate the CSV row.
+        self.post(
+            reverse('api-import-session-accept-fields', kwargs={'pk': session_id}),
+            expected_code=200,
+        )
+
+        row = DataImportRow.objects.get(session_id=session_id)
+        self.assertFalse(row.valid)
+        self.assertFalse(row.complete)
+        self.assertIn('part', row.errors)
+        self.assertEqual(row.row_data['Part'], 'unknown-part')
+        self.assertEqual(StockItem.objects.count(), initial_count)
+
+        original_row_data = row.row_data.copy()
+        corrected_data = {**row.data, 'part': part.pk}
+
+        # Correct the part reference through the same API used by the UI.
+        response = self.patch(
+            reverse('api-importer-row-detail', kwargs={'pk': row.pk}),
+            {'data': corrected_data},
+            format='json',
+            expected_code=200,
+        )
+        self.assertTrue(response.data['valid'])
+        self.assertFalse(response.data['errors'])
+
+        # The correction must persist and clear the previous validation error.
+        row.refresh_from_db()
+        self.assertEqual(row.data['part'], part.pk)
+        self.assertTrue(row.valid)
+        self.assertFalse(row.errors)
+        self.assertFalse(row.complete)
+        self.assertEqual(row.row_data, original_row_data)
+        self.assertEqual(StockItem.objects.count(), initial_count)
+
+        # Confirm the corrected row and check the actual imported record.
+        self.post(
+            reverse('api-import-session-accept-rows', kwargs={'pk': session_id}),
+            {'rows': [row.pk]},
+            format='json',
+            expected_code=201,
+        )
+
+        self.assertEqual(StockItem.objects.count(), initial_count + 1)
+        item = StockItem.objects.get(part=part)
+        self.assertEqual(item.quantity, 5)
+
     def test_column_mapping_lookup_field(self):
         """Test that the 'lookup_field' option can be specified via the column-mapping API."""
         f = self.helper_file('companies.csv')
@@ -774,6 +962,143 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         self.assignRole('purchase_order.change')
         self.post(url, expected_code=200)
 
+    def test_staff_only_models(self):
+        """Test that models with IMPORT_REQUIRES_STAFF cannot be imported by non-staff users.
+
+        The importer must enforce the same restrictions as the API endpoints for these models.
+        """
+        import common.models
+
+        self.user.is_staff = False
+        self.user.save()
+
+        url = reverse('api-importer-session-list')
+
+        for model_type in [
+            'customunit',
+            'projectcode',
+            'parametertemplate',
+            'inventreecustomuserstatemodel',
+        ]:
+            # Non-staff user cannot create an import session for a staff-only model
+            response = self.post(
+                url,
+                {
+                    'model_type': model_type,
+                    'data_file': ContentFile('name\nx', 'x.csv'),
+                },
+                format='multipart',
+                expected_code=400,
+            )
+            self.assertIn('model_type', response.data)
+
+        # A pre-existing session (e.g. created while the user was staff) cannot be accepted
+        self.user.is_staff = True
+        self.user.save()
+
+        data = self.post(
+            url,
+            {
+                'model_type': 'customunit',
+                'data_file': ContentFile(
+                    'name,definition\nimported_unit,2 * kilogram', 'units.csv'
+                ),
+            },
+            format='multipart',
+            expected_code=201,
+        ).data
+
+        accept_url = reverse(
+            'api-import-session-accept-fields', kwargs={'pk': data['pk']}
+        )
+        accept_rows_url = reverse(
+            'api-import-session-accept-rows', kwargs={'pk': data['pk']}
+        )
+
+        self.user.is_staff = False
+        self.user.save()
+
+        self.post(accept_url, expected_code=403)
+        self.post(accept_rows_url, {'rows': []}, expected_code=403)
+
+        # Staff user can accept the mapping
+        self.user.is_staff = True
+        self.user.save()
+
+        self.post(accept_url, expected_code=200)
+
+        row_ids = list(
+            DataImportRow.objects.filter(session__pk=data['pk']).values_list(
+                'pk', flat=True
+            )
+        )
+        self.assertEqual(len(row_ids), 1)
+
+        # Non-staff user cannot accept the rows
+        self.user.is_staff = False
+        self.user.save()
+
+        self.post(accept_rows_url, {'rows': row_ids}, expected_code=403)
+        self.assertFalse(
+            common.models.CustomUnit.objects.filter(name='imported_unit').exists()
+        )
+
+        # Staff user can accept the rows
+        self.user.is_staff = True
+        self.user.save()
+
+        self.post(accept_rows_url, {'rows': row_ids}, expected_code=201)
+        self.assertTrue(
+            common.models.CustomUnit.objects.filter(name='imported_unit').exists()
+        )
+
+    def test_field_filters_api(self):
+        """Test that the API rejects field filters which traverse related models."""
+        import json
+
+        url = reverse('api-importer-session-list')
+
+        for filters in [
+            {'user': {'usersession__session_key__startswith': 'a'}},
+            {'user': {'_negated': True}},
+        ]:
+            response = self.post(
+                url,
+                {
+                    'model_type': 'stockitemtestresult',
+                    'data_file': self.helper_file('companies.csv'),
+                    'field_filters': json.dumps(filters),
+                },
+                format='multipart',
+                expected_code=400,
+            )
+            self.assertIn('field_filters', response.data)
+
+        # Simple equality filters are accepted
+        data = self.post(
+            url,
+            {
+                'model_type': 'purchaseorderlineitem',
+                'data_file': self.helper_file('companies.csv'),
+                'field_filters': json.dumps({'part': {'supplier': 1, 'active': True}}),
+            },
+            format='multipart',
+            expected_code=201,
+        ).data
+
+        self.assertEqual(
+            data['field_filters'], {'part': {'supplier': 1, 'active': True}}
+        )
+
+        # Filters cannot be modified to traverse related models after creation
+        self.assignRole('purchase_order.change')
+
+        self.patch(
+            reverse('api-import-session-detail', kwargs={'pk': data['pk']}),
+            {'field_filters': {'part': {'supplier__name': 'abc'}}},
+            expected_code=400,
+        )
+
     def test_model_type_immutable(self):
         """Test that a session's model_type cannot be changed after creation.
 
@@ -859,8 +1184,10 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         self.post(url, {'rows': []}, expected_code=403)
 
         # Staff can reach the endpoint (rows list is empty so validation rejects with 400, not 403)
+        # Company is part of the purchase_order ruleset
         self.user.is_staff = True
         self.user.save()
+        self.assignRole('purchase_order.change')
         self.post(url, {'rows': []}, expected_code=400)
 
     def test_session_cleanup_on_complete(self):

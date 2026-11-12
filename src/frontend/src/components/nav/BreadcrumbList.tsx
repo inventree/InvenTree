@@ -1,10 +1,9 @@
 import { ActionIcon, Anchor, Breadcrumbs, Group, Text } from '@mantine/core';
 import { IconMenu2 } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { identifierString } from '@lib/functions/Conversion';
-import { getBaseUrl, navigateToLink } from '@lib/functions/Navigation';
 
 export type Breadcrumb = {
   icon?: React.ReactNode;
@@ -22,10 +21,6 @@ export function BreadcrumbList({
   breadcrumbs: Breadcrumb[];
   navCallback?: () => void;
 }>) {
-  const navigate = useNavigate();
-
-  const baseUrl = useMemo(() => getBaseUrl(), []);
-
   const elements = useMemo(() => {
     // Limit to 7 active elements
     if (breadcrumbs.length > 7) {
@@ -58,22 +53,38 @@ export function BreadcrumbList({
       )}
       <Breadcrumbs key='breadcrumbs' separator='>'>
         {elements.map((breadcrumb, index) => {
-          return (
-            <Anchor
-              key={`${index}-${breadcrumb.name}`}
-              href={`/${baseUrl}${breadcrumb.url}`}
-              aria-label={`breadcrumb-${index}-${identifierString(
-                breadcrumb.name
-              )}`}
-              onClick={(event: any) =>
-                breadcrumb.url &&
-                navigateToLink(breadcrumb.url, navigate, event)
-              }
-            >
-              <Group gap={4} align='center'>
+          const content = (
+            <Group gap={4} align='center'>
+              {breadcrumb.icon}
+              <Text size='sm'>{breadcrumb.name}</Text>
+            </Group>
+          );
+          const ariaLabel = `breadcrumb-${index}-${identifierString(
+            breadcrumb.name
+          )}`;
+
+          if (breadcrumb.url === '#') {
+            return (
+              <Group
+                key={`${index}-${breadcrumb.name}`}
+                gap={4}
+                align='center'
+                aria-label={ariaLabel}
+              >
                 {breadcrumb.icon}
                 <Text size='sm'>{breadcrumb.name}</Text>
               </Group>
+            );
+          }
+
+          return (
+            <Anchor
+              key={`${index}-${breadcrumb.name}`}
+              component={Link}
+              to={breadcrumb.url}
+              aria-label={ariaLabel}
+            >
+              {content}
             </Anchor>
           );
         })}

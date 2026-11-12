@@ -68,8 +68,14 @@ export function BuildOrderTable({
         defaultVisible: false
       },
       DescriptionColumn({
+        accessor: 'part_detail.description',
+        title: t`Part Description`,
+        defaultVisible: false
+      }),
+      DescriptionColumn({
         accessor: 'title',
-        sortable: false
+        sortable: false,
+        title: t`Build Description`
       }),
       {
         accessor: 'completed',

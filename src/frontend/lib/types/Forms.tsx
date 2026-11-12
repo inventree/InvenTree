@@ -75,6 +75,7 @@ export type ApiFormFieldHeader = {
  * @param addRow : Callback function to add a new row to a table field
  * @param headers : Optional definitions of table headers (for table fields)
  * @param singleFetchFunction : Optional function to fetch a single value for this field (used for fetching the initial value when editing an existing object)
+ * @param fetchParams : Optional query parameters required on the initial data request to populate this field (e.g. optional serializer fields such as 'tags')
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -138,6 +139,7 @@ export type ApiFormFieldType = {
   headers?: ApiFormFieldHeader[];
   depends_on?: string[];
   singleFetchFunction?: (value: any) => Promise<any> | null;
+  fetchParams?: Record<string, string>;
 };
 
 export type ApiFormFieldSet = Record<string, ApiFormFieldType>;

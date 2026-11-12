@@ -229,7 +229,6 @@ export default function TransferOrderDetail() {
     pk: order.pk,
     title: t`Edit Transfer Order`,
     fields: transferOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }
@@ -382,6 +381,8 @@ export default function TransferOrderDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.transferorder}
+            id={order.pk}
             title={`${t`Transfer Order`}: ${order.reference}`}
             subtitle={subtitle}
             // What should be the Transfer Order image?

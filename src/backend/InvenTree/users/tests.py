@@ -1,6 +1,7 @@
 """Unit tests for the 'users' app."""
 
 import datetime
+from unittest import mock
 
 from django.apps import apps
 from django.contrib.auth.models import Group
@@ -10,7 +11,7 @@ from django.urls import reverse
 from common.settings import set_global_setting
 from InvenTree.helpers_mfa import get_codes
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
-from users.models import ApiToken, Owner
+from users.models import ApiToken, Owner, TipResult
 from users.oauth2_scopes import _roles
 from users.ruleset import (
     RULESET_CHOICES,
@@ -18,6 +19,7 @@ from users.ruleset import (
     get_ruleset_ignore,
     get_ruleset_models,
 )
+from web.tips import KNOWN_IDS
 
 G_RULESETS = get_ruleset_models()
 G_RULESETS_IG = get_ruleset_ignore()
@@ -397,10 +399,17 @@ class MFALoginTest(InvenTreeAPITestCase):
         self._helper_meta_val(response)
 
         # Add MFA - trying in a limited loop in case of timing issues
-        rc_code = get_codes(user=self.user)[1][0]
+        rc_codes = get_codes(user=self.user)[1]
 
         # There must be a TOTP device now - success
         self.get(reverse('browser:mfa:manage_totp'), expected_code=200)
+        response = self.get(reverse('api-token'), expected_code=401)
+        self.assertEqual(response.data['id'], 'reauthentication_required')
+        self.post(
+            reverse('browser:mfa:reauthenticate'),
+            {'code': rc_codes[0]},
+            expected_code=200,
+        )
         self.get(reverse('api-token'), expected_code=200)
 
         # Login with MFA enabled but not provided
@@ -417,10 +426,19 @@ class MFALoginTest(InvenTreeAPITestCase):
         self.get(reverse('api-token'), expected_code=401)
         # Complete MFA (with recovery code to avoid timing issues)
         self.post(
-            reverse('browser:mfa:authenticate'), {'code': rc_code}, expected_code=401
+            reverse('browser:mfa:authenticate'),
+            {'code': rc_codes[1]},
+            expected_code=401,
         )
         self.post(reverse('browser:mfa:trust'), {'trust': False}, expected_code=200)
         # and run through trust
+        response = self.get(reverse('api-token'), expected_code=401)
+        self.assertEqual(response.data['id'], 'reauthentication_required')
+        self.post(
+            reverse('browser:mfa:reauthenticate'),
+            {'code': rc_codes[2]},
+            expected_code=200,
+        )
         self.get(reverse('api-token'), expected_code=200)
 
         # Login with MFA enabled and provided - but incorrect pwd
@@ -534,6 +552,56 @@ class AdminTest(AdminTestCase):
         )
         self.assertEqual(qs.count(), 0)
 
+    def test_usersession_admin_delete(self):
+        """Deleting a UserSession via the admin must log the user out."""
+        from django.contrib.auth import get_user_model
+        from django.contrib.sessions.models import Session
+
+        from allauth.usersessions.models import UserSession
+        from rest_framework.test import APIClient
+
+        victim = get_user_model().objects.create_user(
+            username='victim', password='password'
+        )
+        me_url = reverse('api-user-me')
+
+        def login_victim():
+            """Log in as the victim user and return the client and its UserSession."""
+            client = APIClient()
+            client.login(username='victim', password='password')
+            self.assertEqual(client.get(me_url).status_code, 200)
+            # client.login() bypasses the allauth signal which tracks the session
+            session = UserSession.objects.create(
+                user=victim, session_key=client.session.session_key, ip='127.0.0.1'
+            )
+            return client, session
+
+        def check_logged_out(client, session):
+            """Check the victim session has been ended."""
+            self.assertFalse(UserSession.objects.filter(pk=session.pk).exists())
+            self.assertFalse(Session.objects.filter(pk=session.session_key).exists())
+            self.assertIn(client.get(me_url).status_code, [401, 403])
+
+        # Single object delete view
+        client, session = login_victim()
+        self.client.post(
+            reverse('admin:usersessions_usersession_delete', args=[session.pk]),
+            {'post': 'yes'},
+        )
+        check_logged_out(client, session)
+
+        # Bulk "delete selected" action
+        client, session = login_victim()
+        self.client.post(
+            reverse('admin:usersessions_usersession_changelist'),
+            {
+                'action': 'delete_selected',
+                '_selected_action': [session.pk],
+                'post': 'yes',
+            },
+        )
+        check_logged_out(client, session)
+
     def test_owner_admin_autocomplete(self):
         """Test admin autocomplete endpoint for SalesOrder responsible field."""
         url = reverse('admin:autocomplete')
@@ -646,6 +714,24 @@ class UserProfileTest(InvenTreeAPITestCase):
         # Ensure primary_group is set to None
         profile.refresh_from_db()
         self.assertIsNone(profile.primary_group)
+
+    def test_tip_backfill_race(self):
+        """Test that backfilling tip results tolerates records created concurrently."""
+        tip_id = KNOWN_IDS[0]
+
+        TipResult.objects.create(user=self.user, tip_id=tip_id)
+
+        # Simulate another request creating the record after the existing IDs are checked
+        mock_qs = mock.Mock()
+        mock_qs.values_list.return_value = []
+
+        with mock.patch.object(TipResult.objects, 'filter', return_value=mock_qs):
+            TipResult.backfill(self.user)
+
+        results = TipResult.objects.filter(user=self.user)
+
+        self.assertEqual(results.filter(tip_id=tip_id).count(), 1)
+        self.assertEqual(set(results.values_list('tip_id', flat=True)), set(KNOWN_IDS))
 
 
 class UserProfileMetadataPermissionTests(InvenTreeAPITestCase):

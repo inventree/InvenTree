@@ -316,8 +316,6 @@ def migrate_tracking_entries(apps, schema_editor):
         migrated += len(audit_entries)
         last_pk = entries[-1].pk
 
-        print(f'- Migrated {migrated} / {n} entries')
-
 
 class Migration(migrations.Migration):
     """Copy legacy stock tracking entries into the audit log."""

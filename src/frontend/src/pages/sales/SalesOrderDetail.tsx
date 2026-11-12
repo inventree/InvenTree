@@ -110,7 +110,6 @@ export default function SalesOrderDetail() {
     pk: order.pk,
     title: t`Edit Sales Order`,
     fields: salesOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }
@@ -434,6 +433,8 @@ export default function SalesOrderDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.salesorder}
+            id={order.pk}
             title={`${t`Sales Order`}: ${order.reference}`}
             subtitle={subtitle}
             imageUrl={order.customer_detail?.image}

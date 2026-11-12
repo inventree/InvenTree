@@ -1,6 +1,10 @@
 """Utility class to enable simpler imports."""
 
 from plugin.base.action.mixins import ActionMixin
+from plugin.base.barcodes.helper import (
+    get_supported_barcode_model_codes_map,
+    get_supported_barcode_models,
+)
 from plugin.base.barcodes.mixins import BarcodeMixin, SupplierBarcodeMixin
 from plugin.base.event.mixins import EventMixin
 from plugin.base.icons.mixins import IconPackMixin
@@ -21,10 +25,12 @@ from plugin.base.integration.ValidationMixin import ValidationMixin
 from plugin.base.integration.WellKnownMixin import WellKnownMixin
 from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.base.locate.mixins import LocateMixin
+from plugin.base.mail.mail import process_mail_in, process_mail_out
 from plugin.base.mail.mixins import MailMixin
 from plugin.base.supplier import helpers as supplier
 from plugin.base.supplier.mixins import SupplierMixin
 from plugin.base.ui.mixins import UserInterfaceMixin
+from plugin.events import trigger_event
 
 __all__ = [
     'APICallMixin',
@@ -52,5 +58,10 @@ __all__ = [
     'UserInterfaceMixin',
     'ValidationMixin',
     'WellKnownMixin',
+    'get_supported_barcode_model_codes_map',
+    'get_supported_barcode_models',
+    'process_mail_in',
+    'process_mail_out',
     'supplier',
+    'trigger_event',
 ]

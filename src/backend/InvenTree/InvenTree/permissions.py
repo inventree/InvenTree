@@ -3,7 +3,6 @@
 from functools import wraps
 from typing import Optional
 
-from oauth2_provider.contrib.rest_framework import TokenMatchesOASRequirements
 from oauth2_provider.contrib.rest_framework.authentication import OAuth2Authentication
 from rest_framework import permissions
 
@@ -13,6 +12,7 @@ from users.oauth2_scopes import (
     DEFAULT_READ,
     DEFAULT_STAFF,
     DEFAULT_SUPERUSER,
+    DEFAULT_WRITE,
     _roles,
     get_granular_scope,
 )
@@ -39,6 +39,22 @@ def get_model_for_view(view):
         return view.get_serializer_class().Meta.model
 
     raise AttributeError(f'Serializer class not specified for {view.__class__}')
+
+
+def get_roles_for_view(view) -> list[str]:
+    """Return the user roles associated with the model of an API view."""
+    try:
+        model = get_model_for_view(view)
+    except Exception:
+        # Fall back to the model of the queryset (as checked by ModelPermission)
+        model = getattr(getattr(view, 'queryset', None), 'model', None)
+
+    if model is None:
+        return []
+
+    return precalculated_roles.get(
+        f'{model._meta.app_label}_{model._meta.model_name}', []
+    )
 
 
 def map_scope(
@@ -92,24 +108,55 @@ for role, tables in roles.items():
         precalculated_roles[table].append(role)
 
 
+def enforce_oauth2_scopes(has_permission):
+    """Decorate a `has_permission` method, so that OAuth2 tokens must hold the required scopes.
+
+    Requests which are not authenticated via OAuth2 are checked by the decorated method only.
+    """
+
+    @wraps(has_permission)
+    def wrapped_has_permission(self, request, view):
+        if self.is_oauth2ed(request) and not self.has_scope_permission(request, view):
+            return False
+
+        return has_permission(self, request, view)
+
+    wrapped_has_permission.enforces_oauth2_scopes = True
+    return wrapped_has_permission
+
+
 class OASTokenMixin:
     """Mixin that combines the permissions of normal classes and token classes."""
 
-    ENFORCE_USER_PERMS: bool = False
+    def __init_subclass__(cls, **kwargs):
+        """Ensure that the scope check is applied to the `has_permission` method of the subclass."""
+        super().__init_subclass__(**kwargs)
 
+        if not getattr(cls.has_permission, 'enforces_oauth2_scopes', False):
+            cls.has_permission = enforce_oauth2_scopes(cls.has_permission)
+
+    @enforce_oauth2_scopes
     def has_permission(self, request, view):
-        """Check if the user has the required scopes or was authenticated another way."""
-        if self.ENFORCE_USER_PERMS:
-            return super().has_permission(request, view)
-        return self.check_oauth2_authentication(
-            request, view
-        ) or super().has_permission(request, view)
+        """Check the normal permissions (the scopes are checked by the decorator)."""
+        return super().has_permission(request, view)
 
-    def check_oauth2_authentication(self, request, view):
-        """Check if the user is authenticated using OAuth2 and has the required scopes."""
-        return self.is_oauth2ed(
-            request
-        ) and TokenMatchesOASRequirements().has_permission(request, view)
+    def has_scope_permission(self, request, view):
+        """Check if the OAuth2 token holds one of the scope alternatives required for this request."""
+        token = request.auth
+        alternatives = self.get_required_alternate_scopes(request, view).get(
+            request.method.upper(), []
+        )
+
+        return hasattr(token, 'is_valid') and any(
+            scopes and token.is_valid(scopes) for scopes in alternatives
+        )
+
+    def get_required_alternate_scopes(self, request, view):
+        """Return the required scope alternatives for each request method.
+
+        By default, OAuth2 tokens can not access the view.
+        """
+        return {}
 
     def is_oauth2ed(self, request):
         """Check if the user is authenticated using OAuth2."""
@@ -122,48 +169,42 @@ class OASTokenMixin:
 
 
 class InvenTreeRoleScopeMixin(OASTokenMixin):
-    """Permission that discovers the required scopes from the OpenAPI schema."""
+    """Permission that discovers the required scopes from the user roles of the view."""
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
         if hasattr(view, 'required_alternate_scopes'):
             return view.required_alternate_scopes
-        try:
-            # Extract the model name associated with this request
-            model = get_model_for_view(view)
-            calc = precalculated_roles.get(
-                f'{model._meta.app_label}_{model._meta.model_name}', []
-            )
 
-            if model is None or not calc:
-                return map_scope(only_read=True)
-            return map_scope(roles=calc)
-        except AttributeError:
-            # We will assume that if the serializer class does *not* have a Meta,
-            # then we don't need a permission
-            return map_scope(only_read=True)
-        except Exception:
-            return map_scope(only_read=True)
+        # The required role may be defined for the view class (see RolePermission)
+        if role := getattr(view, 'role_required', None):
+            if '.' in role:
+                role, permission = role.split('.')
+                return map_scope(roles=[role], override_all_actions=permission)
+            return map_scope(roles=[role])
+
+        if roles := get_roles_for_view(view):
+            return map_scope(roles=roles)
+
+        # No role is associated with this view - writing requires the general write scope
+        return map_scope(
+            only_read=True,
+            read_name=DEFAULT_WRITE,
+            map_read=list(permissions.SAFE_METHODS),
+        )
 
 
-class InvenTreeTokenMatchesOASRequirements(InvenTreeRoleScopeMixin):
+class InvenTreeTokenMatchesOASRequirements(
+    InvenTreeRoleScopeMixin, permissions.BasePermission
+):
     """Combines InvenTree role-based scope handling with OpenAPI schema token requirements.
 
     Used as default permission class.
     """
 
     def has_permission(self, request, view):
-        """Check if the user has the required scopes or was authenticated another way."""
-        if self.is_oauth2ed(request):
-            # Check if the user is authenticated using OAuth2 and has the required scopes
-            return super().has_permission(request, view)
-
-        # If the user is authenticated using another method, check if they have the required permissions
+        """Check that the user is authenticated - the user permissions are checked by the other default classes."""
         return bool(request.user and request.user.is_authenticated)
-
-    def has_object_permission(self, request, view, obj):
-        """Return `True` if permission is granted, `False` otherwise."""
-        return True
 
 
 class ModelPermission(permissions.DjangoModelPermissions):
@@ -324,11 +365,27 @@ class IsSuperuserOrReadOnlyOrScope(OASTokenMixin, permissions.IsAdminUser):
 
 
 class IsAuthenticatedOrReadScope(OASTokenMixin, permissions.IsAuthenticated):
-    """Allows access only to authenticated users or read scope tokens."""
+    """Allows access only to authenticated users or read / write scope tokens."""
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
-        return map_scope(only_read=True)
+        return map_scope(
+            only_read=True,
+            read_name=DEFAULT_WRITE,
+            map_read=list(permissions.SAFE_METHODS),
+        )
+
+
+class IsAuthenticatedNotOAuth2(OASTokenMixin, permissions.IsAuthenticated):
+    """Allows access only to authenticated users - OAuth2 tokens are never allowed.
+
+    Used for endpoints which issue or manage credentials (e.g. API tokens):
+    a scoped OAuth2 token must not be able to obtain an unscoped credential.
+    """
+
+    def get_required_alternate_scopes(self, request, view):
+        """No scope grants access to this endpoint."""
+        return {}
 
 
 class IsStaffOrReadOnlyScope(OASTokenMixin, permissions.IsAuthenticated):
@@ -359,7 +416,7 @@ class IsAdminOrAdminScope(OASTokenMixin, permissions.IsAdminUser):
 
 
 class AllowAnyOrReadScope(OASTokenMixin, permissions.AllowAny):
-    """Allows access to any user or read scope tokens."""
+    """Allows access to any user or read / write scope tokens."""
 
     def has_permission(self, request, view):
         """Anyone is allowed."""
@@ -367,7 +424,11 @@ class AllowAnyOrReadScope(OASTokenMixin, permissions.AllowAny):
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
-        return map_scope(only_read=True)
+        return map_scope(
+            only_read=True,
+            read_name=DEFAULT_WRITE,
+            map_read=list(permissions.SAFE_METHODS),
+        )
 
 
 def auth_exempt(view_func):
@@ -405,7 +466,11 @@ class UserSettingsPermissionsOrScope(OASTokenMixin, permissions.BasePermission):
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
-        return map_scope(only_read=True)
+        return map_scope(
+            only_read=True,
+            read_name=DEFAULT_WRITE,
+            map_read=list(permissions.SAFE_METHODS),
+        )
 
 
 class GlobalSettingsPermissions(OASTokenMixin, permissions.BasePermission):
@@ -435,8 +500,6 @@ class GlobalSettingsPermissions(OASTokenMixin, permissions.BasePermission):
 class DataImporterPermission(OASTokenMixin, permissions.BasePermission):
     """Mixin class for determining if the user has correct permissions."""
 
-    ENFORCE_USER_PERMS = True
-
     def has_permission(self, request, view):
         """Class level permission checks are handled via InvenTree.permissions.IsAuthenticatedOrReadScope."""
         return request.user and request.user.is_authenticated
@@ -463,18 +526,13 @@ class DataImporterPermission(OASTokenMixin, permissions.BasePermission):
             session = getattr(obj, 'session', None)
 
         if session:
-            if model_class := session.model_class:
-                return users.permissions.check_user_permission(
-                    request.user, model_class, 'change'
-                )
+            return session.check_import_permission(request.user)
 
         return True
 
 
 class ContentTypePermission(OASTokenMixin, permissions.BasePermission):
     """Mixin class for determining if the user has correct permissions."""
-
-    ENFORCE_USER_PERMS = True
 
     def has_permission(self, request, view):
         """Class level permission checks are handled via InvenTree.permissions.IsAuthenticatedOrReadScope."""
@@ -492,6 +550,17 @@ class ContentTypePermission(OASTokenMixin, permissions.BasePermission):
             return obj.check_permission(permission, request.user)
 
         if model_class := obj.__class__:
+            table_name = f'{model_class._meta.app_label}_{model_class._meta.model_name}'
+
+            if table_name in users.ruleset.get_ruleset_ignore():
+                # Ignore-listed models have no RuleSet permissions of their own,
+                # so check_user_permission() would grant access to every active user.
+                # Without an explicit check_permission() on the model, fail safe:
+                # allow read access only, and restrict writes to staff users.
+                return permission == 'view' or bool(
+                    request.user.is_staff or request.user.is_superuser
+                )
+
             return users.permissions.check_user_permission(
                 request.user, model_class, 'change'
             )

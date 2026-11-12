@@ -20,13 +20,22 @@ import invoke
 from invoke import Collection, task
 from invoke.exceptions import Exit, UnexpectedExit
 
+try:
+    import structlog
+
+    logger = structlog.get_logger('inventree')
+except ImportError:
+    import logging
+
+    logger = logging.getLogger('inventree')
+
 
 def safe_value(fnc):
     """Helper function to safely get value from function, catching import exceptions."""
     try:
         return fnc()
     except (ModuleNotFoundError, ImportError):
-        return wrap_color('N/A', '93')  # Yellow color for "Not Available"
+        return wrap_color('N/A', 93)  # Yellow color for "Not Available"
 
 
 def is_true(x):
@@ -167,28 +176,36 @@ def wrap_color(text: str, color: str) -> str:
     return f'\033[{color}m{text}\033[0m'
 
 
+JSON_LOG = os.environ.get('INVENTREE_JSON_LOG', 'false').lower() == 'true'
+COLOR_MAP = {92: 20, 91: 40, 93: 30, 94: 20}
+
+
+def _structured_logging(color: int, *args):
+    msg = ' '.join(map(str, args))
+    if JSON_LOG:
+        logger.log(COLOR_MAP.get(color, 10), msg)
+    else:
+        print(wrap_color(msg, str(color)))
+
+
 def success(*args):
     """Print a success message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '92'))
+    _structured_logging(92, *args)
 
 
 def error(*args):
     """Print an error message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '91'))
+    _structured_logging(91, *args)
 
 
 def warning(*args):
     """Print a warning message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '93'))
+    _structured_logging(93, *args)
 
 
 def info(*args):
     """Print an informational message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '94'))
+    _structured_logging(94, *args)
 
 
 def state_logger(fn=None, method_name=None):
@@ -319,6 +336,7 @@ def main():
 def builtin_apps():
     """Returns a list of installed apps."""
     return [
+        'audit',
         'build',
         'common',
         'company',
@@ -2163,6 +2181,7 @@ def export_definitions(c, basedir: str = ''):
         base_path.joinpath('inventree_status_codes.json'),
         base_path.joinpath('inventree_roles.json'),
         base_path.joinpath('inventree_audited_models.json'),
+        base_path.joinpath('inventree_fsm.json'),
     ]
 
     info('Exporting definitions...')
@@ -2185,6 +2204,9 @@ def export_definitions(c, basedir: str = ''):
 
     check_file_existence(filenames[6], overwrite=True)
     manage(c, f'export_audited_models {filenames[6]}', pty=True)
+
+    check_file_existence(filenames[7], overwrite=True)
+    manage(c, f'export_fsm {filenames[7]}', pty=True)
 
     info('Exporting definitions complete')
 
@@ -2608,7 +2630,7 @@ def docs_server(
     compile_schema: bool = False,
     export_settings: bool = True,
 ):
-    """Start a local mkdocs server to view the documentation."""
+    """Start a local properdocs server to view the documentation."""
     # Extract settings definitions
     if export_settings:
         export_definitions(c, basedir='docs')
@@ -2616,7 +2638,7 @@ def docs_server(
     if compile_schema:
         doc_schema(c)
 
-    run(c, f'mkdocs serve -a {address} -f docs/mkdocs.yml')
+    run(c, f'properdocs serve -a {address} -f docs/mkdocs.yml')
 
 
 @task(
@@ -2629,7 +2651,7 @@ def build_docs(c, mkdocs=False):
     doc_schema(c)
 
     if mkdocs:
-        run(c, 'mkdocs build  -f docs/mkdocs.yml')
+        run(c, 'properdocs build  -f docs/mkdocs.yml')
         info('Documentation build complete')
     else:
         info('Documentation build complete, but mkdocs not requested')

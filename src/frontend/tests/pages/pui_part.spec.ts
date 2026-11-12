@@ -195,7 +195,7 @@ test('Parts - BOM', async ({ browser }) => {
   await page.getByText('Robert Shuruncle').waitFor();
 
   // Move the mouse away
-  await page.getByRole('link', { name: 'Bill of Materials' }).hover();
+  await page.getByRole('tab', { name: 'Bill of Materials' }).hover();
 
   // Test sub-assembly row expansion (rows are inserted into the same table)
   const assemblyRow = page
@@ -627,6 +627,18 @@ test('Parts - Details', async ({ browser }) => {
   await page.getByText('2022-04-29').waitFor();
 
   await page.getByText('Latest Serial Number').waitFor();
+
+  // Non-consumable part
+  await expect(
+    page.getByRole('row', { name: 'Consumable Part' })
+  ).toContainText('No');
+
+  // Consumable part
+  await navigate(page, 'part/921/details');
+
+  await expect(
+    page.getByRole('row', { name: 'Consumable Part' })
+  ).toContainText('Yes');
 });
 
 test('Parts - Details - Upload image modal accepts pasted clipboard image', async ({

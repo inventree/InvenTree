@@ -102,6 +102,8 @@ The following debugging / logging options are available:
 {{ configsetting("INVENTREE_DEBUG_QUERYCOUNT") }} Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. |
 {{ configsetting("INVENTREE_DEBUG_SILK") }} Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. |
 | `INVENTREE_DEBUG_SILK_PROFILING` | `debug_silk_profiling` | False | Enable detailed profiling in django-silk |
+| `INVENTREE_GUNICORN_ACCESS_LOG` | - | True | Enable gunicorn access logging |
+| `INVENTREE_GUNICORN_ERROR_LOG` | - | True | Enable gunicorn error logging |
 
 ### Debug Mode
 
@@ -451,6 +453,7 @@ InvenTree provides allowance for additional sign-in options. The following optio
 {{ configsetting("INVENTREE_MFA_ENABLED") }} Enable multi-factor authentication support for the InvenTree server |
 {{ configsetting("INVENTREE_MFA_SUPPORTED_TYPES") }} List of supported multi-factor authentication types |
 {{ configsetting("INVENTREE_USE_JWT") }} Enable support for JSON Web Tokens (JWT) for authentication |
+{{ configsetting("INVENTREE_BASIC_AUTH_ENABLED") }} Enable/Disable basic (username:password) authentication against the API. See [Basic Auth](../api/index.md#basic-auth) |
 
 ### Single Sign On
 

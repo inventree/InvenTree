@@ -109,9 +109,9 @@ test('Spotlight - No Keys', async ({ browser }) => {
   await page.getByText('About').first().waitFor();
 
   await page
-    .getByRole('button', { name: 'Notifications', exact: true })
+    .getByRole('link', { name: 'Notifications', exact: true })
     .waitFor();
-  await page.getByRole('button', { name: 'Dashboard', exact: true }).waitFor();
+  await page.getByRole('link', { name: 'Dashboard', exact: true }).waitFor();
 
   // close the nav
   await page.keyboard.press('Escape');

@@ -20,7 +20,7 @@ The following report templates are provided "out of the box" and can be used as 
 | [Return Order](#return-order) | [ReturnOrder](../sales/return_order.md) | Return Order report |
 | [Sales Order](#sales-order) | [SalesOrder](../sales/sales_order.md) | Sales Order report |
 | [Sales Order Shipment](#sales-order-shipment) | [SalesOrderShipment](../sales/sales_order.md) | Sales Order Shipment report |
-| [Stock Location](#stock-location) | [StockLocation](../stock/index.md#stock-location) | Stock Location report |
+| [Stock Location](#stock-location) | [StockLocation](../stock/index.md#stock-locations) | Stock Location report |
 | [Test Report](#test-report) | [StockItem](../stock/index.md#stock-item) | Test Report |
 | [Transfer Order](#transfer-order) | [TransferOrder](../stock/transfer_order.md) | Transfer Order report |
 | [Selected Stock Items Report](#selected-stock-items-report) | [StockItem](../stock/index.md#stock-item) | Selected Stock Items report |
@@ -76,8 +76,8 @@ The following label templates are provided "out of the box" and can be used as a
 | [Part](#part-label) | [Part](../part/index.md) | Part label (QR code and part name) |
 | [Part (Code128)](#part-label-code128) | [Part](../part/index.md) | Part label (Code128 barcode) |
 | [Stock Item](#stock-item-label) | [StockItem](../stock/index.md#stock-item) | Stock Item label |
-| [Stock Location](#stock-location-label) | [StockLocation](../stock/index.md#stock-location) | Stock Location label (QR code) |
-| [Stock Location (with text)](#stock-location-label-with-text) | [StockLocation](../stock/index.md#stock-location) | Stock Location label (QR code and location details) |
+| [Stock Location](#stock-location-label) | [StockLocation](../stock/index.md#stock-locations) | Stock Location label (QR code) |
+| [Stock Location (with text)](#stock-location-label-with-text) | [StockLocation](../stock/index.md#stock-locations) | Stock Location label (QR code and location details) |
 
 ### Build Line Label
 

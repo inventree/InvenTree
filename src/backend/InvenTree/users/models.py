@@ -385,6 +385,25 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         return not self.revoked and not self.expired
 
 
+def check_email_warning():
+    """Check if email is configured and return a warning if not."""
+    from InvenTree.helpers_email import is_email_configured
+
+    if is_email_configured():
+        return None  # pragma: no cover
+    return _('Email is not configured on this server - this is a security risk.')
+
+
+@receiver(post_save, sender=ApiToken, dispatch_uid='api_token_notification')
+def api_token_notification(sender, instance: ApiToken, created, **kwargs):
+    """Notify the token owner that a token was made for them."""
+    if not created or isImportingData() or isReadOnlyCommand():
+        return
+    from users.tasks import notify_api_token
+
+    notify_api_token(instance)
+
+
 class RuleSet(models.Model):
     """A RuleSet is somewhat like a superset of the django permission class, in that in encapsulates a bunch of permissions.
 
@@ -835,6 +854,14 @@ class TipResult(InvenTree.models.MetadataMixin):
         help_text=_('The last time this tip result was updated'),
     )
 
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this tip result.
+
+        TipResult has no RuleSet permissions of its own (it is ignore-listed),
+        so only the owning user may access it (mirrors TipResultDetail).
+        """
+        return self.user_id == user.pk
+
     def __str__(self):
         """Return string representation of the tip result."""
         if self.finished:
@@ -859,9 +886,11 @@ class TipResult(InvenTree.models.MetadataMixin):
         # bulk create
         missing_ids = set(known_ids) - existing_ids
         if missing_ids:
-            cls.objects.bulk_create([
-                cls(user=user, tip_id=tip_id) for tip_id in missing_ids
-            ])
+            cls.objects.bulk_create(
+                [cls(user=user, tip_id=tip_id) for tip_id in missing_ids],
+                # Concurrent requests may race to create the same records
+                ignore_conflicts=True,
+            )
 
 
 # Validate groups

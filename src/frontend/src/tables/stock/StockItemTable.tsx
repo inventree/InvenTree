@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
+import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
@@ -7,10 +8,12 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { RenderInlineModel } from '../../components/render/Instance';
 import {
   DateColumn,
   DescriptionColumn,
@@ -53,10 +56,14 @@ import { useUserState } from '../../states/UserState';
  */
 function stockItemTableColumns({
   showLocation,
-  showPricing
+  showPricing,
+  showConsumedBy,
+  navigate
 }: {
   showLocation: boolean;
   showPricing: boolean;
+  showConsumedBy: boolean;
+  navigate: NavigateFunction;
 }): TableColumn[] {
   return [
     PartColumn({
@@ -89,6 +96,20 @@ function stockItemTableColumns({
       ]
     }),
     StatusColumn({ model: ModelType.stockitem }),
+    {
+      accessor: 'consumed_by_detail.reference',
+      title: t`Consumed By`,
+      sortable: false,
+      hidden: !showConsumedBy,
+      render: (record: any) =>
+        record.consumed_by_detail ? (
+          <RenderInlineModel
+            primary={record.consumed_by_detail.reference}
+            url={getDetailUrl(ModelType.build, record.consumed_by_detail.pk)}
+            navigate={navigate}
+          />
+        ) : null
+    },
     {
       accessor: 'batch',
       sortable: true,
@@ -320,6 +341,11 @@ function stockItemTableFilters({
       label: t`External Location`,
       description: t`Show items in an external location`
     },
+    {
+      name: 'exclude_from_stock',
+      label: t`Exclude from Stock`,
+      description: t`Show items in a location excluded from stock calculations`
+    },
     TagsFilter({ modelType: ModelType.stockitem })
   ];
 }
@@ -332,6 +358,7 @@ export function StockItemTable({
   allowAdd = false,
   showLocation = true,
   showPricing = true,
+  showConsumedBy = false,
   allowReturn = false,
   initialFilters,
   defaultInStock = true,
@@ -341,6 +368,7 @@ export function StockItemTable({
   allowAdd?: boolean;
   showLocation?: boolean;
   showPricing?: boolean;
+  showConsumedBy?: boolean;
   allowReturn?: boolean;
   defaultInStock?: boolean | null;
   initialFilters?: TableFilter[];
@@ -371,6 +399,7 @@ export function StockItemTable({
   });
 
   const user = useUserState();
+  const navigate = useNavigate();
 
   const settings = useGlobalSettingsState();
 
@@ -383,9 +412,11 @@ export function StockItemTable({
     () =>
       stockItemTableColumns({
         showLocation: showLocation ?? true,
-        showPricing: showPricing ?? true
+        showPricing: showPricing ?? true,
+        showConsumedBy,
+        navigate
       }),
-    [showLocation, showPricing]
+    [showLocation, showPricing, showConsumedBy, navigate]
   );
 
   const tableFilters: TableFilter[] = useMemo(
@@ -495,6 +526,7 @@ export function StockItemTable({
           modelType: ModelType.stockitem,
           params: {
             ...params,
+            ...(showConsumedBy ? { consumed_by_detail: true } : {}),
             part_detail: true,
             location_detail: true,
             supplier_part_detail: true

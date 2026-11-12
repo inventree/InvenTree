@@ -53,7 +53,7 @@
       "label": "InvenTree Server"
     },
     "8080": {
-      "label": "mkdocs server"
+      "label": "properdocs server"
     }
   },
 

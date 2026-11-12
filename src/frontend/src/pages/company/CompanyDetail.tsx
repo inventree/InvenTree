@@ -230,7 +230,6 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     pk: company?.pk,
     title: t`Edit Company`,
     fields: useMemo(() => companyFields({}), []),
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
@@ -305,6 +304,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.company}
+            id={company.pk}
             title={`${t`Company`}: ${company.name}`}
             subtitle={company.description}
             actions={companyActions}

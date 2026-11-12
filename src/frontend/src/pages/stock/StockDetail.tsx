@@ -298,6 +298,8 @@ export default function StockDetail() {
         content: stockitem?.pk ? (
           <StockItemTable
             tableName='child-stock'
+            showConsumedBy
+            defaultInStock={null}
             params={{ parent: stockitem.pk }}
           />
         ) : (
@@ -355,7 +357,6 @@ export default function StockDetail() {
     title: t`Edit Stock Item`,
     modalId: 'edit-stock-item',
     fields: editStockItemFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
@@ -747,6 +748,8 @@ export default function StockDetail() {
           >
             <Stack>
               <PageDetail
+                model={ModelType.stockitem}
+                id={stockitem.pk}
                 title={t`Stock Item`}
                 subtitle={stockitem.part_detail?.full_name}
                 imageUrl={stockitem.part_detail?.thumbnail}

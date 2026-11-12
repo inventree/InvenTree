@@ -1,4 +1,4 @@
-import { type Page, expect } from '@playwright/test';
+import { type Locator, type Page, expect } from '@playwright/test';
 import { createApi } from './api';
 
 export const clickOnParamFilter = async (page: Page, name: string) => {
@@ -118,6 +118,31 @@ export const navigate = async (
 };
 
 /**
+ * Ctrl+click a link, and return the new tab which it opens (in the same browser context).
+ *
+ * A modified click occasionally fails to open a new tab in CI - so the
+ * click is retried (with a short per-attempt timeout) rather than
+ * waiting for the entire test timeout on a single attempt.
+ */
+export const openInNewTab = async (
+  page: Page,
+  link: Locator,
+  url: string | RegExp
+): Promise<Page> => {
+  const context = page.context();
+  let popup: Page | undefined;
+
+  await expect(async () => {
+    const popupPromise = context.waitForEvent('page', { timeout: 5000 });
+    await link.click({ modifiers: ['ControlOrMeta'], timeout: 5000 });
+    popup = await popupPromise;
+  }).toPass({ timeout: 30000 });
+
+  await popup!.waitForURL(url);
+  return popup!;
+};
+
+/**
  * CLick on the 'tab' element with the provided name
  */
 export const loadTab = async (page: Page, tabName: string, exact?: boolean) => {
@@ -143,13 +168,14 @@ export const activateCalendarView = async (page: Page) => {
 
 export const tableSearch = async (page: Page, query: string) => {
   await page.getByLabel('table-search-input').fill(query);
-  await page.waitForTimeout(300);
+  // Wait for longer than the SearchInput debounce (500ms)
+  await page.waitForTimeout(600);
   await page.waitForLoadState('networkidle');
 };
 
 export const clearTableSearch = async (page: Page) => {
   await page.getByLabel('table-search-input').clear();
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(600);
   await page.waitForLoadState('networkidle');
 };
 
@@ -172,11 +198,15 @@ export const deletePart = async (name: string) => {
     .then((res) => res.json());
   const existingPart = parts.find((p: any) => p.name === name);
   if (existingPart) {
-    await api.patch(`part/${existingPart.pk}/`, {
-      data: { active: false }
+    // Parts must be inactive (and unlocked) before they can be deleted.
+    // Note: other tests may run concurrently against the same database
+    const patch = await api.patch(`part/${existingPart.pk}/`, {
+      data: { active: false, locked: false }
     });
+    expect(patch.status(), await patch.text()).toBe(200);
+
     const res = await api.delete(`part/${existingPart.pk}/`);
-    expect(res.status()).toBe(204);
+    expect(res.status(), await res.text()).toBe(204);
   }
 };
 

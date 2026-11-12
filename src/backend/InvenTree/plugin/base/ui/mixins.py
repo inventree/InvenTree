@@ -217,12 +217,17 @@ class UserInterfaceMixin:
             request: HTTPRequest object (including user information)
             context: Additional context data provided by the UI (query parameters)
 
+        The context data provided by the UI includes:
+            - location: The URL path of the current page
+            - target_model: The model type (or page key) of the current page, e.g. 'part' or 'purchasing' (if available)
+            - target_id: The primary key of the instance displayed on the current page (if available)
+
         Returns:
             list: A list of custom primary action buttons to be injected into the UI
         """
         # Sample code to render conditional primary action button based on context
         # items = []
-        # if self.my_assert_function(context):
+        # if context.get('target_model') == 'part' and context.get('target_id'):
         #     items.append({
         #         'key': 'sample-primary-action',
         #         'title': 'Sample Primary Action',

@@ -1,10 +1,47 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 566
+INVENTREE_API_VERSION = 577
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/13236
+    - non-function doc changes from allauth
+
+v576 -> 2026-11-11 : https://github.com/inventree/InvenTree/pull/13247
+    - Adds /api/system/messages/ endpoint: staff-only, read-only; classified system messages are provided in the "messages" array
+
+v575 -> 2026-11-10 : https://github.com/inventree/InvenTree/pull/13208
+    - Adds optional read-only "consumed_by_detail" to the StockItem API
+
+v574 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13169
+    - breaking: Basic authentication can now be disabled - controlled with INVENTREE_BASIC_AUTH_ENABLED
+
+v573 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13221
+    - Mark audit log changes_detail field as nullable
+    - Add warning field to ApiToken
+
+v572 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13212
+    - Username and email fields on the /api/user/me endpoint are now read-only
+
+v571 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13166
+    - Adds "exclude_from_stock" field and filter to the StockLocation API endpoint
+    - Adds "exclude_from_stock" filter to the StockItem API endpoint
+
+v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
+    - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only
+    - Token API (/api/user/tokens/): "expiry" must be between today and 365 days in the future
+
+v569 -> 2026-10-30 : https://github.com/inventree/InvenTree/security/advisories
+    - Hardens OAuth2 token usage in the API
+    - OAuth2 tokens can not be used to issue or manage API tokens (/api/user/me/token/, /api/user/tokens/)
+
+v568 -> 2026-10-30 : https://github.com/inventree/InvenTree/pull/13141
+    - token endpoints now have a warning if notifications cannot be sent
+
+v567 -> 2026-10-28 : https://github.com/inventree/InvenTree/pull/13128
+    - Allow ordering of SupplierPart API by "on_order" field
 
 v566 -> 2026-10-25 : https://github.com/inventree/InvenTree/pull/13101
     - Audit log API (/api/audit/) is available to all authenticated users (entries are filtered by model permissions)

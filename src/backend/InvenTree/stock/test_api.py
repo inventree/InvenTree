@@ -981,6 +981,14 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(external=False)
         self.assertEqual(len(response), 28)
 
+    def test_filter_exclude_from_stock(self):
+        """Filter StockItem by exclude_from_stock."""
+        response = self.get_stock(exclude_from_stock=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(exclude_from_stock=False)
+        self.assertEqual(len(response), 29)
+
     def test_filter_available(self):
         """Filter StockItem by available."""
         response = self.get_stock(available=True)
@@ -1252,14 +1260,146 @@ class StockItemListTest(StockAPITestCase):
         self.assertIn(stock_1.pk, ids)
         self.assertIn(stock_2.pk, ids)
 
+    def test_consumed_by_detail(self):
+        """Consuming build details are optional, nullable, and read-only."""
+        self.assignRole('build.view')
+        assembly = Part.objects.create(name='Reference assembly', assembly=True)
+        part = Part.objects.first()
+        parent = StockItem.objects.create(part=part, quantity=10)
+        builds = [
+            build.models.Build.objects.create(
+                part=assembly, quantity=1, title=f'Consuming build {index}'
+            )
+            for index in range(2)
+        ]
+        consuming_builds = [*builds, None]
+        children = [
+            StockItem.objects.create(
+                part=part, quantity=1, parent=parent, consumed_by=build_order
+            )
+            for build_order in consuming_builds
+        ]
+        params = {'parent': parent.pk}
+        for options in [params, {**params, 'consumed_by_detail': False}]:
+            for record in self.get(self.list_url, options).data:
+                self.assertNotIn('consumed_by_detail', record)
+                self.assertNotIn('consumed_by_reference', record)
+
+        response = self.get(self.list_url, {**params, 'consumed_by_detail': True})
+        records = {item['pk']: item for item in response.data}
+        self.assertEqual(set(records), {item.pk for item in children})
+        for item, build_order in zip(children, consuming_builds, strict=True):
+            detail = records[item.pk]['consumed_by_detail']
+            self.assertEqual(
+                records[item.pk]['consumed_by'], build_order.pk if build_order else None
+            )
+            if build_order:
+                self.assertEqual(detail['pk'], build_order.pk)
+                self.assertEqual(detail['reference'], build_order.reference)
+                self.assertEqual(detail['title'], build_order.title)
+                self.assertEqual(detail['status'], build_order.status)
+            else:
+                self.assertIsNone(detail)
+
+        detail_url = reverse('api-stock-detail', kwargs={'pk': children[0].pk})
+        self.assertNotIn('consumed_by_detail', self.get(detail_url).data)
+        detail = self.get(detail_url, {'consumed_by_detail': True}).data
+        self.assertEqual(detail['consumed_by_detail']['reference'], builds[0].reference)
+
+        original_reference = builds[0].reference
+        self.patch(
+            detail_url, {'consumed_by_detail': {'reference': 'Cannot overwrite'}}
+        )
+        builds[0].refresh_from_db()
+        self.assertEqual(builds[0].reference, original_reference)
+        self.assertEqual(
+            StockItem.objects.get(pk=children[0].pk).consumed_by_id, builds[0].pk
+        )
+
+        # Requesting the field must not bypass build view permissions.
+        self.clearRoles()
+        self.assignRole('stock.view')
+        response = self.get(self.list_url, {**params, 'consumed_by_detail': True})
+        for record in response.data:
+            self.assertNotIn('consumed_by_detail', record)
+        self.assertNotIn(
+            'consumed_by_detail',
+            self.get(detail_url, {'consumed_by_detail': True}).data,
+        )
+
+    def test_consumed_by_detail_export(self):
+        """Export consuming references only when requested and permitted."""
+        self.assignRole('build.view')
+        assembly = Part.objects.create(name='Export assembly', assembly=True)
+        build_order = build.models.Build.objects.create(part=assembly, quantity=1)
+        part = Part.objects.first()
+        parent = StockItem.objects.create(part=part, quantity=10)
+        consumed = StockItem.objects.create(
+            part=part, quantity=1, parent=parent, consumed_by=build_order
+        )
+        unconsumed = StockItem.objects.create(part=part, quantity=1, parent=parent)
+        filters = {'parent': parent.pk}
+        params = {**filters, 'consumed_by_detail': True}
+        header = 'Consumed By.Reference'
+
+        with self.export_data(self.list_url, params=params) as data_file:
+            rows = self.process_csv(data_file, required_cols=[header], required_rows=2)
+        records = {int(row['ID']): row for row in rows}
+        self.assertEqual(records[consumed.pk][header], build_order.reference)
+        self.assertEqual(records[unconsumed.pk][header], '')
+
+        for options in [filters, {**filters, 'consumed_by_detail': False}]:
+            with self.export_data(self.list_url, params=options) as data_file:
+                self.process_csv(data_file, excluded_cols=[header], required_rows=2)
+
+        self.clearRoles()
+        self.assignRole('stock.view')
+        with self.export_data(self.list_url, params=params) as data_file:
+            self.process_csv(data_file, excluded_cols=[header], required_rows=2)
+
+    def test_consumed_by_detail_prefetch(self):
+        """Optional details prefetch builds even without StockApiMixin annotations."""
+        from stock.serializers import StockItemSerializer
+
+        assembly = Part.objects.create(name='Prefetch assembly', assembly=True)
+        builds = [
+            build.models.Build.objects.create(part=assembly, quantity=1)
+            for _ in range(10)
+        ]
+        StockItem.objects.bulk_create([
+            StockItem(part=assembly, quantity=1, consumed_by=build_order)
+            for build_order in builds
+        ])
+        queryset = StockItem.objects.filter(consumed_by__in=builds)
+        serializer = StockItemSerializer(consumed_by_detail=True)
+        self.assertIn('consumed_by', serializer.prefetch_list)
+        self.assertNotIn('consumed_by', StockItemSerializer().prefetch_list)
+        with self.assertNumQueries(2):
+            prefetched = list(serializer.prefetch_queryset(queryset))
+            references = [item.consumed_by.reference for item in prefetched]
+        self.assertCountEqual(
+            references, [build_order.reference for build_order in builds]
+        )
+
     def test_query_count(self):
         """Test that the number of queries required to fetch stock items is reasonable."""
         # Create a bunch of StockItem objects
         prt = Part.objects.first()
 
+        assembly = Part.objects.create(name='Query assembly', assembly=True)
+        builds = [
+            build.models.Build.objects.create(part=assembly, quantity=1)
+            for _ in range(10)
+        ]
+        # Include consuming builds so missing prefetches exceed the query budget.
         StockItem.objects.bulk_create([
-            StockItem(part=prt, quantity=1) for _ in range(100)
+            StockItem(part=prt, quantity=1, consumed_by=bo)
+            for bo in builds
+            for _ in range(10)
         ])
+
+        self.assignRole('build.view')
+        self.get(self.list_url, {'consumed_by_detail': True}, max_query_count=35)
 
         # List *all* stock items
         self.get(self.list_url, {}, max_query_count=35)
@@ -2077,6 +2217,7 @@ class StockItemTest(StockAPITestCase):
 
     def test_output_options(self):
         """Test the output options for StockItemt detail."""
+        self.assignRole('build.view')
         self.run_output_test(
             reverse('api-stock-detail', kwargs={'pk': 1}),
             [
@@ -2085,6 +2226,7 @@ class StockItemTest(StockAPITestCase):
                 'supplier_part_detail',
                 'location_detail',
                 'tests',
+                'consumed_by_detail',
             ],
         )
 
@@ -3393,6 +3535,164 @@ class StocktakeTest(StockAPITestCase):
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(len(response.data['items']), 100)
+
+
+class StockAdjustmentCustomStatusTest(StockAPITestCase):
+    """Tests for applying custom status values via the stock adjustment endpoints.
+
+    Regression tests for https://github.com/inventree/InvenTree/issues/13191
+    The available status choices for stock adjustment items were evaluated once
+    (at import time), so custom states created afterwards were rejected as invalid.
+    """
+
+    def setUp(self):
+        """Create a custom stock status *after* the serializer module has been imported."""
+        super().setUp()
+
+        self.custom_status = InvenTreeCustomUserStateModel.objects.create(
+            key=160,
+            name='Custom attention',
+            label='Custom attention',
+            color='warning',
+            logical_key=StockStatus.ATTENTION.value,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+
+        self.part = Part.objects.get(pk=1)
+        self.source = StockLocation.objects.get(pk=5)
+        self.dest = StockLocation.objects.get(pk=2)
+
+    def test_serializer_choices(self):
+        """The adjustment item serializer must offer the runtime custom state."""
+        from stock.serializers import StockAdjustmentItemSerializer
+
+        choices = StockAdjustmentItemSerializer().fields['status'].choices
+
+        self.assertIn(None, choices)
+        self.assertIn(StockStatus.OK.value, choices)
+        self.assertIn(self.custom_status.key, choices)
+
+        # A state created later must also be picked up by a new serializer instance
+        later_status = InvenTreeCustomUserStateModel.objects.create(
+            key=170,
+            name='Custom later',
+            label='Custom later',
+            color='info',
+            logical_key=StockStatus.OK.value,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+
+        choices = StockAdjustmentItemSerializer().fields['status'].choices
+        self.assertIn(later_status.key, choices)
+
+    def test_adjust_with_custom_status(self):
+        """Each stock adjustment endpoint must accept a custom status."""
+        # Note: transfer the full quantity, so that the original item is moved
+        for endpoint, quantity, extra in [
+            ('api-stock-transfer', 10, {'location': self.dest.pk}),
+            ('api-stock-count', 5, {}),
+            ('api-stock-add', 5, {}),
+            ('api-stock-remove', 5, {}),
+        ]:
+            with self.subTest(endpoint=endpoint):
+                item = StockItem.objects.create(
+                    part=self.part, location=self.source, quantity=10
+                )
+
+                self.assertEqual(item.status, StockStatus.OK.value)
+
+                self.post(
+                    reverse(endpoint),
+                    {
+                        'items': [
+                            {
+                                'pk': item.pk,
+                                'quantity': quantity,
+                                'status': self.custom_status.key,
+                            }
+                        ],
+                        'notes': 'Custom status adjustment',
+                        **extra,
+                    },
+                    expected_code=201,
+                )
+
+                item.refresh_from_db()
+                self.assertEqual(item.status_custom_key, self.custom_status.key)
+                self.assertEqual(item.status, StockStatus.ATTENTION.value)
+
+    def test_partial_transfer_with_custom_status(self):
+        """A partial transfer applies the custom status to the split item only."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+
+        self.post(
+            reverse('api-stock-transfer'),
+            {
+                'items': [
+                    {'pk': item.pk, 'quantity': 4, 'status': self.custom_status.key}
+                ],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 6)
+        self.assertEqual(item.location, self.source)
+        self.assertEqual(item.status, StockStatus.OK.value)
+        self.assertIsNone(item.status_custom_key)
+
+        new_item = StockItem.objects.get(
+            part=self.part, location=self.dest, parent=item
+        )
+        self.assertEqual(new_item.quantity, 4)
+        self.assertEqual(new_item.location, self.dest)
+        self.assertEqual(new_item.status_custom_key, self.custom_status.key)
+        self.assertEqual(new_item.status, StockStatus.ATTENTION.value)
+
+    def test_invalid_status_rejected(self):
+        """Unknown status values must still be rejected."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+
+        response = self.post(
+            reverse('api-stock-transfer'),
+            {
+                'items': [{'pk': item.pk, 'quantity': 5, 'status': 999}],
+                'location': self.dest.pk,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('is not a valid choice', str(response.data))
+
+        item.refresh_from_db()
+        self.assertEqual(item.location, self.source)
+        self.assertEqual(item.quantity, 10)
+
+    def test_no_status_change(self):
+        """Omitting the status (or passing a blank value) leaves the status unchanged."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+        item.set_status(self.custom_status.key)
+        item.save()
+
+        for idx, line in enumerate([{}, {'status': ''}]):
+            with self.subTest(line=line):
+                self.post(
+                    reverse('api-stock-count'),
+                    {'items': [{'pk': item.pk, 'quantity': 8 - idx, **line}]},
+                    expected_code=201,
+                )
+
+                item.refresh_from_db()
+                self.assertEqual(item.status_custom_key, self.custom_status.key)
 
 
 class StockTransferMergeTest(StockAPITestCase):

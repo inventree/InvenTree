@@ -413,7 +413,6 @@ export default function BuildDetail() {
     title: t`Edit Build Order`,
     modalId: 'edit-build-order',
     fields: editBuildOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
@@ -605,6 +604,8 @@ export default function BuildDetail() {
       <InstanceDetail query={instanceQuery} requiredRole={UserRoles.build}>
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.build}
+            id={build.pk}
             title={`${t`Build Order`}: ${build.reference}`}
             subtitle={`${build.quantity} x ${build.part_detail?.full_name}`}
             badges={buildBadges}

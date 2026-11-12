@@ -29,6 +29,7 @@ import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
 from audit.helpers import audit_event, write_batched
+from build.serializers_brief import BuildBriefSerializer
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
@@ -325,6 +326,7 @@ class StockItemSerializer(
     SKIP_CREATE_FIELDS = ['duplicate']
 
     export_child_fields = [
+        'consumed_by_detail.reference',
         'part_detail.name',
         'part_detail.description',
         'part_detail.IPN',
@@ -353,6 +355,7 @@ class StockItemSerializer(
             'belongs_to',
             'build',
             'consumed_by',
+            'consumed_by_detail',
             'customer',
             'delete_on_deplete',
             'expiry_date',
@@ -686,6 +689,18 @@ class StockItemSerializer(
         help_text=_('Purchase currency of this stock item')
     )
 
+    consumed_by_detail = OptionalField(
+        serializer_class=BuildBriefSerializer,
+        serializer_kwargs={
+            'label': _('Consumed By'),
+            'source': 'consumed_by',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
+        prefetch_fields=['consumed_by'],
+    )
+
     purchase_order_reference = serializers.CharField(
         source='purchase_order.reference', read_only=True, allow_null=True
     )
@@ -977,10 +992,23 @@ class UninstallStockItemSerializer(serializers.Serializer):
 class StockStatusCustomSerializer(serializers.ChoiceField):
     """Serializer to allow annotating the schema to use int where custom values may be entered."""
 
-    def __init__(self, *args, **kwargs):
-        """Initialize the status selector."""
+    def __init__(self, *args, include_no_change: bool = False, **kwargs):
+        """Initialize the status selector.
+
+        Arguments:
+            include_no_change: If True, prepend a null "No Change" option to the choices
+
+        Note: Choices are evaluated here (rather than being passed in) so that
+        custom states which are added at runtime are available. Declared serializer
+        fields are deep-copied (re-initialized) for each serializer instance.
+        """
         if 'choices' not in kwargs:
-            kwargs['choices'] = stock.status_codes.StockStatus.items(custom=True)
+            choices = list(stock.status_codes.StockStatus.items(custom=True))
+
+            if include_no_change:
+                choices = [(None, _('No Change')), *choices]
+
+            kwargs['choices'] = choices
 
         if 'label' not in kwargs:
             kwargs['label'] = _('Status')
@@ -1428,6 +1456,7 @@ class LocationSerializer(
             'custom_icon',
             'structural',
             'external',
+            'exclude_from_stock',
             'location_type',
             # Optional fields
             'location_type_detail',
@@ -1752,14 +1781,6 @@ class StockMergeSerializer(serializers.Serializer):
         )
 
 
-def stock_item_adjust_status_options():
-    """Return a custom set of options for the StockItem status adjustment field.
-
-    In particular, include a Null option for the status field.
-    """
-    return [(None, _('No Change')), *stock.status_codes.StockStatus.items(custom=True)]
-
-
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """Serializer for a single StockItem within a stock adjustment request.
 
@@ -1839,10 +1860,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     )
 
     status = StockStatusCustomSerializer(
-        choices=stock_item_adjust_status_options(),
-        default=None,
-        required=False,
-        allow_blank=True,
+        include_no_change=True, default=None, required=False, allow_blank=True
     )
 
     packaging = serializers.CharField(

@@ -13,8 +13,7 @@ from rest_framework.response import Response
 import InvenTree.permissions
 from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
-from plugin import PluginMixinEnum, registry
-from plugin.registry import call_plugin_function
+from plugin import PluginMixinEnum, call_plugin_function, registry
 from stock.models import StockItem, StockLocation
 from users.permissions import check_user_permission
 

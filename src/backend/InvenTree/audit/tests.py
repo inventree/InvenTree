@@ -208,6 +208,39 @@ class AuditModelTest(AuditTestMixin, TestCase):
         self.assertNotIn('reference_int', entry.changes_dict)
         self.assertNotIn('metadata', entry.changes_dict)
 
+    def test_empty_values_equivalent(self):
+        """Changing a field between None and '' is not recorded as a change."""
+        Part.objects.filter(pk=self.part.pk).update(IPN=None)
+        self.part.refresh_from_db()
+
+        # Saving an empty value from a form ('') over NULL
+        self.part.IPN = ''
+        self.part.description = 'Updated'
+        self.part.save()
+
+        entry = self.entries_for(self.part, action=AuditLogEntry.Action.UPDATE).last()
+        self.assertEqual(entry.changes_dict, {'description': ['A part', 'Updated']})
+
+        # No entry is created if the only "change" is between empty values
+        self.part.IPN = None
+        self.part.save()
+
+        self.assertEqual(
+            self.entries_for(self.part, action=AuditLogEntry.Action.UPDATE).count(), 1
+        )
+
+        # A real change to or from an empty value is still recorded
+        self.part.IPN = 'IPN-001'
+        self.part.save()
+        self.part.IPN = ''
+        self.part.save()
+
+        entries = self.entries_for(self.part, action=AuditLogEntry.Action.UPDATE)
+        self.assertEqual(
+            [e.changes_dict['IPN'] for e in entries.order_by('pk')[1:]],
+            [[None, 'IPN-001'], ['IPN-001', '']],
+        )
+
     def test_parent_link(self):
         """Child entries are linked to the parent - and are retained after deletion."""
         line = PurchaseOrderLineItem.objects.create(
@@ -425,30 +458,40 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
         self.assertEqual(data[0]['changes']['description'][1], 'Session edit')
 
     def test_correlation_id(self):
-        """The correlation ID matches the request ID (as used by structlog)."""
+        """The correlation ID matches the request ID (as used by structlog).
+
+        The request ID is generated server-side - a client-supplied X-Request-ID
+        header is not trusted (django-structlog TRUST_UPSTREAM_REQUEST_ID is not set),
+        so a client cannot spoof the correlation ID recorded in the audit log.
+        """
         url = reverse('api-po-detail', kwargs={'pk': self.po.pk})
 
-        # Request ID provided by the client / reverse proxy
-        self.patch(url, {'description': 'One'}, HTTP_X_REQUEST_ID='req-abc-123')
-
-        entry = self.entries_for(self.po, action=AuditLogEntry.Action.UPDATE).get()
-        self.assertEqual(entry.cid, 'req-abc-123')
-
-        # Otherwise a unique ID is generated per request
-        self.patch(url, {'description': 'Two'})
-        self.patch(url, {'description': 'Three'})
-
-        cids = list(
-            self
-            .entries_for(self.po, action=AuditLogEntry.Action.UPDATE)
-            .exclude(cid='req-abc-123')
-            .values_list('cid', flat=True)
+        # A client-supplied request ID is ignored
+        response = self.patch(
+            url, {'description': 'One'}, HTTP_X_REQUEST_ID='req-abc-123'
         )
 
-        self.assertEqual(len(cids), 2)
-        self.assertTrue(all(cids))
-        self.assertNotEqual(cids[0], cids[1])
+        entry = self.entries_for(self.po, action=AuditLogEntry.Action.UPDATE).get()
+        self.assertNotEqual(entry.cid, 'req-abc-123')
+        self.assertEqual(entry.cid, response['X-InvenTree-ReqId'])
 
+        # A unique ID is generated per request, matching the response header
+        req_ids = {entry.cid}
+
+        for description in ['Two', 'Three']:
+            response = self.patch(url, {'description': description})
+            req_ids.add(response['X-InvenTree-ReqId'])
+
+        cids = set(
+            self.entries_for(self.po, action=AuditLogEntry.Action.UPDATE).values_list(
+                'cid', flat=True
+            )
+        )
+
+        self.assertEqual(len(cids), 3)
+        self.assertEqual(cids, req_ids)
+
+    @override_settings(BASIC_AUTH_ENABLED=True)
     def test_basic_auth_actor(self):
         """Users authenticated by DRF (not middleware) are recorded as the actor."""
         self.logout()

@@ -3473,3 +3473,239 @@ class GenericMetadataAuthorizationTests(InvenTreeAPITestCase):
         self.user.is_staff = True
         self.user.save()
         self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
+    def _check_staff_only_write(self, model, pk, detail_url):
+        """Metadata for a staff-write model is readable by all, writable only by staff."""
+        url = self._metadata_url(model, pk)
+
+        self.user.is_staff = False
+        self.user.save()
+
+        # The dedicated endpoint refuses writes from a non-staff user...
+        self.patch(detail_url, {'description': 'x'}, expected_code=403)
+
+        # ...and so must the generic metadata endpoint
+        self.get(url, expected_code=200)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+        self.put(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.user.is_staff = True
+        self.user.save()
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
+    def test_parameter_template_metadata_requires_staff_for_write(self):
+        """ParameterTemplate metadata mirrors the staff-only write restriction of its own endpoint."""
+        template = self.parameter.template
+        self._check_staff_only_write(
+            'parametertemplate',
+            template.pk,
+            reverse('api-parameter-template-detail', kwargs={'pk': template.pk}),
+        )
+
+    def test_selection_list_metadata_requires_staff_for_write(self):
+        """SelectionList metadata mirrors the staff-only write restriction of its own endpoint."""
+        selection_list = SelectionList.objects.create(name='Metadata Perm Test List')
+        self._check_staff_only_write(
+            'selectionlist',
+            selection_list.pk,
+            reverse('api-selectionlist-detail', kwargs={'pk': selection_list.pk}),
+        )
+
+    def test_tip_result_metadata_owner_only(self):
+        """TipResult metadata is only accessible to the owning user (mirrors TipResultDetail)."""
+        from django.contrib.auth import get_user_model
+
+        from users.models import TipResult
+
+        other_user = get_user_model().objects.create_user(
+            username='tip-other', password='tip-other-pw'
+        )
+
+        own_tip = TipResult.objects.create(user=self.user, tip_id='own-tip')
+        other_tip = TipResult.objects.create(user=other_user, tip_id='other-tip')
+
+        own_url = self._metadata_url('tipresult', own_tip.pk)
+        other_url = self._metadata_url('tipresult', other_tip.pk)
+
+        self.get(own_url, expected_code=200)
+        self.patch(own_url, {'metadata': {'x': 1}}, expected_code=200)
+
+        # Staff status does not grant access to another user's tip results
+        self.assertTrue(self.user.is_staff)
+        self.get(other_url, expected_code=403)
+        self.patch(other_url, {'metadata': {'x': 1}}, expected_code=403)
+
+        other_tip.refresh_from_db()
+        self.assertNotIn('x', other_tip.metadata or {})
+
+    def test_ignore_listed_metadata_models_define_check_permission(self):
+        """Every ignore-listed model with metadata must define check_permission().
+
+        Otherwise the generic metadata endpoint falls back to the (read-only for
+        non-staff) default in ContentTypePermission, which may not match the
+        restriction enforced by the model's own API endpoint.
+        """
+        from django.apps import apps
+
+        from users.ruleset import get_ruleset_ignore
+
+        ignored = set(get_ruleset_ignore())
+        missing = []
+
+        for model in apps.get_models():
+            table = f'{model._meta.app_label}_{model._meta.model_name}'
+            if table not in ignored:
+                continue
+            if not any(f.name == 'metadata' for f in model._meta.get_fields()):
+                continue
+            if not hasattr(model, 'check_permission'):
+                missing.append(table)
+
+        self.assertEqual(missing, [])
+
+    def test_ignore_listed_fallback_denies_non_staff_write(self):
+        """ContentTypePermission fails safe for ignore-listed models without check_permission()."""
+        from rest_framework.test import APIRequestFactory
+
+        from InvenTree.permissions import ContentTypePermission
+
+        # CustomUnit is ignore-listed and does not define check_permission()
+        unit = common.models.CustomUnit.objects.create(
+            name='metadata_perm_unit', definition='1 m'
+        )
+        self.assertFalse(hasattr(unit, 'check_permission'))
+
+        factory = APIRequestFactory()
+        perm = ContentTypePermission()
+
+        self.user.is_staff = False
+        self.user.save()
+
+        for method, expected in [('get', True), ('patch', False), ('put', False)]:
+            request = getattr(factory, method)('/')
+            request.user = self.user
+            self.assertEqual(perm.has_object_permission(request, None, unit), expected)
+
+        self.user.is_staff = True
+        self.user.save()
+
+        request = factory.patch('/')
+        request.user = self.user
+        self.assertTrue(perm.has_object_permission(request, None, unit))
+
+
+class AdminMessageAPITests(InvenTreeAPITestCase):
+    """Tests for the staff-only /api/system/messages/ endpoint."""
+
+    roles = []
+
+    CORE_KEYS = {
+        'debug',
+        'worker',
+        'restart',
+        'email',
+        'migrations',
+        'cors',
+        'basic_auth',
+    }
+
+    @property
+    def url(self):
+        """Return the endpoint URL."""
+        return reverse('api-system-messages')
+
+    def _messages(self) -> dict:
+        """Fetch messages, keyed by message key."""
+        response = self.get(self.url, expected_code=200)
+        return {msg['key']: msg for msg in response.data['messages']}
+
+    def test_permissions(self):
+        """Only staff users may access the endpoint."""
+        self.get(self.url, expected_code=200)
+
+        self.user.is_staff = False
+        self.user.save()
+        self.get(self.url, expected_code=403)
+
+        self.logout()
+        self.get(self.url, expected_code=401)
+
+    def test_read_only(self):
+        """The endpoint does not accept write methods."""
+        self.post(self.url, {}, expected_code=405)
+        self.put(self.url, {}, expected_code=405)
+        self.patch(self.url, {}, expected_code=405)
+        self.delete(self.url, expected_code=405)
+
+    def test_core_messages(self):
+        """All core system checks are reported, with valid structure."""
+        response = self.get(self.url, expected_code=200)
+        self.assertEqual(set(response.data.keys()), {'messages'})
+        self.assertIsInstance(response.data['messages'], list)
+
+        messages = self._messages()
+
+        self.assertTrue(self.CORE_KEYS.issubset(messages.keys()))
+
+        for msg in messages.values():
+            self.assertIn(msg['classifier'], ['error', 'warning', 'info', 'success'])
+            self.assertTrue(msg['title'])
+            self.assertTrue(msg['message'])
+            self.assertIsNone(msg['plugin'])
+
+        self.assertEqual(messages['basic_auth']['code'], 'INVE-W18')
+
+    def test_ordering(self):
+        """Messages are returned most-severe first."""
+        rank = {'error': 0, 'warning': 1, 'info': 2, 'success': 3}
+        response = self.get(self.url, expected_code=200)
+        ranks = [rank[msg['classifier']] for msg in response.data['messages']]
+        self.assertEqual(ranks, sorted(ranks))
+
+    def test_conditions(self):
+        """Message classifiers reflect the underlying system state."""
+        with override_settings(CORS_ALLOW_ALL_ORIGINS=True, BASIC_AUTH_ENABLED=True):
+            messages = self._messages()
+            self.assertEqual(messages['cors']['classifier'], 'warning')
+            self.assertEqual(messages['basic_auth']['classifier'], 'warning')
+
+        with override_settings(CORS_ALLOW_ALL_ORIGINS=False, BASIC_AUTH_ENABLED=False):
+            messages = self._messages()
+            self.assertEqual(messages['cors']['classifier'], 'success')
+            self.assertEqual(messages['basic_auth']['classifier'], 'success')
+
+        set_global_setting('_PENDING_MIGRATIONS', 3, None)
+        set_global_setting('SERVER_RESTART_REQUIRED', True, None)
+        messages = self._messages()
+        self.assertEqual(messages['migrations']['classifier'], 'warning')
+        self.assertEqual(messages['restart']['classifier'], 'warning')
+
+        set_global_setting('_PENDING_MIGRATIONS', 0, None)
+        set_global_setting('SERVER_RESTART_REQUIRED', False, None)
+        messages = self._messages()
+        self.assertEqual(messages['migrations']['classifier'], 'success')
+        self.assertEqual(messages['restart']['classifier'], 'success')
+
+    def test_plugin_messages(self):
+        """Plugin-provided messages are merged in and sorted by severity."""
+        from unittest import mock
+
+        from common.admin_messages import AdminMessage, AdminMessageClassifier
+
+        plugin_msg = AdminMessage(
+            key='sample.error',
+            title='Plugin Error',
+            message='Something is wrong',
+            classifier=AdminMessageClassifier.ERROR,
+            plugin='sample',
+        )
+
+        with mock.patch(
+            'common.admin_messages.get_plugin_admin_messages', return_value=[plugin_msg]
+        ):
+            response = self.get(self.url, expected_code=200)
+
+        first = response.data['messages'][0]
+        self.assertEqual(first['key'], 'sample.error')
+        self.assertEqual(first['classifier'], 'error')
+        self.assertEqual(first['plugin'], 'sample')

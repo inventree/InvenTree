@@ -673,7 +673,6 @@ export default function PartDetail() {
     pk: part.pk,
     title: t`Edit Part`,
     fields: partFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
@@ -834,6 +833,8 @@ export default function PartDetail() {
           >
             <Stack gap='xs'>
               <PageDetail
+                model={ModelType.part}
+                id={part.pk}
                 title={`${t`Part`}: ${part.full_name}`}
                 icon={
                   lockingEnabled ? (

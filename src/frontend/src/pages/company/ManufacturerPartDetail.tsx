@@ -141,7 +141,6 @@ export default function ManufacturerPartDetail() {
     pk: manufacturerPart?.pk,
     title: t`Edit Manufacturer Part`,
     fields: editManufacturerPartFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
@@ -221,6 +220,8 @@ export default function ManufacturerPartDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.manufacturerpart}
+            id={manufacturerPart.pk}
             title={t`Manufacturer Part`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}

@@ -49,7 +49,14 @@ Token authentication is recommended as it provides much faster API access and is
 
 Users can authenticate against the API using basic authentication - specifically a valid combination of `username` and `password` credentials.
 
+!!! warning "Can be disabled"
+    Basic authentication can be disabled. This is controlled by the setting `INVENTREE_BASIC_AUTH_ENABLED` (or `basic_auth_enabled` in the [configuration file](../start/config.md#authentication)) to `False`. A warning ([INVE-W18](../settings/error_codes.md#inve-w18)) is logged and shown to staff users while it is enabled.
+
+
 Basic authentication attempts might run into rate limits during authentication on busy instances, as this is a likely place of attacks. Prefer Token or OAuth2 authentication instead.
+
+!!! warning "Multi factor authentication"
+    Basic authentication is a single factor, so it is refused for users who have [multi factor authentication](../settings/MFA.md) configured, and for all users while MFA is enforced. These users must use a token (generated in the user interface) or OAuth2 instead. See [error code INVE-W20](../settings/error_codes.md#inve-w20).
 
 ### Tokens
 
@@ -60,7 +67,7 @@ Each user is assigned an authentication token which can be used to access the AP
 
 #### Requesting a Token
 
-If a user does not already have an access token, they can request one via the user interface under the security user settings or the API interface, using a basic authentication request.
+If a user does not already have an access token, they can request one via the user interface under the security user settings or the API interface, using a basic authentication request (only if [basic authentication](#basic-auth) is enabled).
 
 !!! warning "Tokens are only available once"
     Regardless of the request path used to obtain the token, it will only be displayed or provided once. Ensure that you copy and store it securely when it is first issued. Requesting a token with the same name will re-issue a new token, invalidating all previous ones of the same name.
@@ -68,6 +75,11 @@ If a user does not already have an access token, they can request one via the us
 There is a guided process to generate, view and revoke access tokens in the `Security` section of the user settings.
 
 Alternatively the API also issues tokens. Perform a GET request to `/api/user/me/token/`. No data are required, but a valid username / password combination must be supplied in the authentication headers. It is recommended to also send a name that identifies the token. The Name is also used for re-issuance of tokens when tokens are re-requested.
+
+!!! warning "Users with multi factor authentication"
+    Requesting a token with a basic authentication request is not possible for users with [MFA](../settings/MFA.md) configured, or while MFA is enforced (see [Basic Auth](#basic-auth)). These users should generate a token in the `Security` section of the user settings.
+
+    Calls to this endpoint by a user with MFA configured also require a recent login, so a token cannot be used to issue a new token. Otherwise, the server responds with `HTTP 401` and the id `reauthentication_required`.
 
 !!! info "Credentials"
 	Ensure that a valid username:password combination are supplied as a **basic authorization header**.
@@ -88,6 +100,9 @@ HTTP_200_OK
 After reception of a valid authentication token, it can be subsequently used to perform token-based authentication.
 
 The token value sent to the server must be of the format `Token <TOKEN-VALUE>` (without the `<` and `>` characters).
+
+!!! info "Tokens and MFA"
+    A token is a bearer credential - requests made with a valid token are not challenged for a second factor. While [MFA is enforced](../settings/MFA.md#configuration), tokens belonging to users who have not set up MFA are refused. They work again once the user sets up MFA.
 
 **Example: Javascript**
 ```javascript
@@ -154,9 +169,16 @@ Examples:
 ```bash
 a:superuser
 g:read
+g:write
 r:change:part
 r:delete:stock
 ```
+
+The general scopes `g:read` and `g:write` cover endpoints which are not associated with a specific role - `g:read` only grants read access (`GET`, `HEAD`, `OPTIONS`), write operations require `g:write`.
+
+!!! warning "Scopes restrict - they do not grant"
+    A request with an oAuth2 token must satisfy both the scopes of the token *and* the permissions of the user who authorized the application. A token can therefore never do more than the user is allowed to do.
+    oAuth2 tokens are only accepted by the API - they can not be used to log in to the web interface, or to issue (or manage) API tokens.
 
 !!! info "Read the API docs"
     The API [documentation](#documentation) and [schema](./schema.md) list the required scopes for every API endpoint / interaction in the security sections.

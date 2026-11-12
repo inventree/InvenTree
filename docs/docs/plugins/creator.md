@@ -64,7 +64,7 @@ Next, the creator tool will prompt you to select the features you wish to includ
 
 #### Select Mixins
 
-Select the [plugin mixins](./index.md/#plugin-mixins) you wish to use in your plugin:
+Select the [plugin mixins](./develop.md#plugin-mixins) you wish to use in your plugin:
 
 {{ image("plugin/plugin-creator-mixins.png", "Plugin Mixins") }}
 

@@ -205,7 +205,6 @@ export default function ReturnOrderDetail() {
     pk: order.pk,
     title: t`Edit Return Order`,
     fields: returnOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }
@@ -364,6 +363,8 @@ export default function ReturnOrderDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.returnorder}
+            id={order.pk}
             title={`${t`Return Order`}: ${order.reference}`}
             subtitle={subtitle}
             imageUrl={order.customer_detail?.image}
