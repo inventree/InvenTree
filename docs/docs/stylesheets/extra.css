@@ -198,3 +198,8 @@ div:nth-of-type(1) p:not(.admonition-title) {
 	max-width: calc(100vw - 2rem);
 	object-fit: contain;
 }
+
+/* Widen the page layout (theme default is 61rem) */
+.md-grid {
+	max-width: 80rem;
+}
