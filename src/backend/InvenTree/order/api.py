@@ -1547,7 +1547,9 @@ class SalesOrderShipmentMixin:
         return queryset
 
 
-class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
+class SalesOrderShipmentList(
+    SalesOrderShipmentMixin, OutputOptionsMixin, ListCreateAPI
+):
     """API list endpoint for SalesOrderShipment model."""
 
     filterset_class = SalesOrderShipmentFilter

@@ -915,7 +915,9 @@ class AttachmentMixin:
     permission_classes = [IsAuthenticatedOrReadScope]
 
 
-class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
+class AttachmentList(
+    AttachmentMixin, BulkDeleteMixin, OutputOptionsMixin, ListCreateAPI
+):
     """List API endpoint for Attachment objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -1034,7 +1036,9 @@ class NoteMixin:
     # Note: This is handled explicitly in the 'save' method of the Note model
     SAFE_FIELDS = ['content']
 
-    queryset = common.models.Note.objects.all()
+    queryset = common.models.Note.objects.all().select_related(
+        'updated_by', 'model_type'
+    )
     serializer_class = common.serializers.NoteSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
@@ -1068,7 +1072,7 @@ class NoteMixin:
         return qs.filter(Q(template=True) | Q(model_type__in=allowed_ct_ids))
 
 
-class NoteList(NoteMixin, ListCreateAPI):
+class NoteList(NoteMixin, OutputOptionsMixin, ListCreateAPI):
     """List API endpoint for Note objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -1548,8 +1552,7 @@ class InstanceInfoView(APIView):
                 # Route through NoteList's own get_queryset() (rather than
                 # re-deriving the view-permission check here) so this count can
                 # never drift from what the Notes list endpoint actually shows.
-                note_list_view = NoteList()
-                note_list_view.request = request
+                note_list_view = NoteList(request=request, format_kwarg=None)
                 counts['note_count'] = (
                     note_list_view
                     .get_queryset()
