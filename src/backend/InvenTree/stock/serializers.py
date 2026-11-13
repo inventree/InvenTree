@@ -401,7 +401,9 @@ class StockItemSerializer(
         read_only_fields = [
             'allocated',
             'barcode_hash',
+            'build',
             'creation_date',
+            'is_building',
             'stocktake_date',
             'stocktake_user',
             'updated',
