@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 578
+INVENTREE_API_VERSION = 579
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v578 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/13072
+v579 -> 2026-11-13 : https://github.com/inventree/InvenTree/pull/13072
     - Adds feature info to contenttype endpoint
+
+v578 -> 2026-11-13 : https://github.com/inventree/InvenTree/pull/13265
+    - The "is_building" and "build" fields on the StockItem API are now read-only - build outputs must be created, completed or scrapped via the build order endpoints
 
 v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/13236
     - non-function doc changes from allauth

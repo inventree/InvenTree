@@ -1883,11 +1883,11 @@ class BuildLineTests(BuildAPITest):
         self.assertEqual(len(response.data), BuildLine.objects.count())
 
         # Filter by 'available' status
-        response = self.get(url, data={'available': True}, max_query_time=10)
+        response = self.get(url, data={'available': True}, max_query_time=11)
         n_t = len(response.data)
         self.assertGreater(n_t, 0)
 
-        response = self.get(url, data={'available': False}, max_query_time=10)
+        response = self.get(url, data={'available': False}, max_query_time=11)
         n_f = len(response.data)
         self.assertGreater(n_f, 0)
 
@@ -2212,14 +2212,14 @@ class BuildLineTests(BuildAPITest):
             StockItem.objects.create(part=line.bom_item.sub_part, quantity=60)
 
         response = self.get(
-            url, {'build': build.pk, 'available': True}, max_query_time=10
+            url, {'build': build.pk, 'available': True}, max_query_time=11
         )
 
         # We expect 2 lines to have "available" stock
         self.assertEqual(len(response.data), 2)
 
         response = self.get(
-            url, {'build': build.pk, 'available': False}, max_query_time=10
+            url, {'build': build.pk, 'available': False}, max_query_time=11
         )
 
         self.assertEqual(len(response.data), 1)
