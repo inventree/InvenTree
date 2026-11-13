@@ -34,6 +34,7 @@ import stock.serializers
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
@@ -341,6 +342,7 @@ class BuildListOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
 
 
+@search_provider(ref_names=['build'])
 class BuildList(
     DataExportViewMixin,
     BuildMixin,
