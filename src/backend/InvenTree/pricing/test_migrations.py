@@ -1,5 +1,7 @@
 """Unit tests for the 'pricing' app database migrations."""
 
+from decimal import Decimal
+
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
 from InvenTree import unit_test
@@ -223,3 +225,279 @@ class TestMigrateQueuedTasks(MigratorTestCase):
 
         self.assertEqual(tasks['unrelated'].payload, self.unrelated)
         self.assertEqual(tasks['invalid'].payload, 'not-a-valid-payload')
+
+
+class TestLegacyPurchasePriceEntries(MigratorTestCase):
+    """Test that stock item purchase prices are migrated into legacy cost entries."""
+
+    migrate_from = ('pricing', '0003_stock_item_cost')
+    migrate_to = ('pricing', '0004_legacy_purchase_price_entries')
+
+    def prepare(self):
+        """Create stock items with (and without) purchase price data."""
+        apps = self.old_state.apps
+
+        InvenTreeSetting = apps.get_model('common', 'InvenTreeSetting')
+        ExchangeBackend = apps.get_model('exchange', 'ExchangeBackend')
+        Rate = apps.get_model('exchange', 'Rate')
+        Part = apps.get_model('part', 'part')
+        StockItem = apps.get_model('stock', 'stockitem')
+        StockItemCostEntry = apps.get_model('pricing', 'stockitemcostentry')
+        StockItemCost = apps.get_model('pricing', 'stockitemcost')
+
+        InvenTreeSetting.objects.update_or_create(
+            key='INVENTREE_DEFAULT_CURRENCY', defaults={'value': 'AUD'}
+        )
+
+        # Rates are stored relative to the backend base currency (USD)
+        backend = ExchangeBackend.objects.create(
+            name='InvenTreeExchange', base_currency='USD'
+        )
+        Rate.objects.create(backend=backend, currency='AUD', value=Decimal('1.5'))
+        Rate.objects.create(backend=backend, currency='EUR', value=Decimal('0.75'))
+
+        part = Part.objects.create(
+            name='Migration Test Part', level=0, tree_id=0, lft=0, rght=0
+        )
+
+        def make_item(price=None, currency='', **kwargs):
+            item = StockItem.objects.create(
+                part=part,
+                quantity=10,
+                purchase_price=price,
+                purchase_price_currency=currency,
+                **kwargs,
+            )
+            return item.pk
+
+        self.items = {
+            # Default currency - copied directly
+            'default': make_item(Decimal('10.5'), 'AUD'),
+            # USD (base) -> AUD
+            'base': make_item(Decimal('10'), 'USD'),
+            # EUR -> AUD (via the base currency)
+            'cross': make_item(Decimal('3'), 'EUR'),
+            # No exchange rate available
+            'no_rate': make_item(Decimal('1000'), 'JPY'),
+            # Zero price is retained
+            'zero': make_item(Decimal('0'), 'AUD'),
+            # No price
+            'none': make_item(None),
+            # Existing (estimated) cost entry, and a stale summary
+            'existing': make_item(Decimal('5'), 'AUD'),
+            # Existing legacy entry (e.g. migration re-applied) - not duplicated
+            'legacy': make_item(Decimal('7'), 'AUD'),
+        }
+
+        StockItemCostEntry.objects.create(
+            stock_item_id=self.items['existing'],
+            cost_type=20,
+            source='manual',
+            estimated=True,
+            currency='AUD',
+            min_cost=2,
+            max_cost=3,
+            converted_currency='AUD',
+            converted_min_cost=2,
+            converted_max_cost=3,
+        )
+
+        StockItemCost.objects.create(
+            stock_item_id=self.items['existing'],
+            currency='AUD',
+            min_cost=99,
+            max_cost=99,
+        )
+
+        StockItemCostEntry.objects.create(
+            stock_item_id=self.items['legacy'],
+            cost_type=10,
+            source='legacy',
+            currency='AUD',
+            min_cost=7,
+            max_cost=7,
+            converted_currency='AUD',
+            converted_min_cost=7,
+            converted_max_cost=7,
+        )
+
+        StockItemCost.objects.create(
+            stock_item_id=self.items['legacy'], currency='AUD', min_cost=7, max_cost=7
+        )
+
+    def test_legacy_entries(self):
+        """Legacy entries are created, and the cost summaries are calculated."""
+        apps = self.new_state.apps
+
+        StockItemCostEntry = apps.get_model('pricing', 'stockitemcostentry')
+        StockItemCost = apps.get_model('pricing', 'stockitemcost')
+
+        def legacy_entry(key):
+            return StockItemCostEntry.objects.get(
+                stock_item_id=self.items[key], source='legacy'
+            )
+
+        def summary(key):
+            return StockItemCost.objects.filter(stock_item_id=self.items[key]).first()
+
+        # (key, original currency, original value, converted value)
+        expected = [
+            ('default', 'AUD', Decimal('10.5'), Decimal('10.5')),
+            ('base', 'USD', Decimal('10'), Decimal('15')),
+            ('cross', 'EUR', Decimal('3'), Decimal('6')),
+            ('zero', 'AUD', Decimal('0'), Decimal('0')),
+        ]
+
+        for key, currency, value, converted in expected:
+            entry = legacy_entry(key)
+
+            self.assertEqual(entry.cost_type, 10)
+            self.assertFalse(entry.estimated)
+            self.assertEqual(entry.currency, currency)
+            self.assertEqual(entry.min_cost, value)
+            self.assertEqual(entry.max_cost, value)
+            self.assertEqual(entry.converted_currency, 'AUD')
+            self.assertEqual(entry.converted_min_cost, converted)
+            self.assertEqual(entry.converted_max_cost, converted)
+
+            cost = summary(key)
+
+            self.assertEqual(cost.currency, 'AUD')
+            self.assertEqual(cost.min_cost, converted)
+            self.assertEqual(cost.max_cost, converted)
+            self.assertFalse(cost.estimated)
+            self.assertFalse(cost.incomplete)
+            self.assertIsNotNone(cost.date)
+
+        # No exchange rate - the entry is retained, but excluded from the summary
+        entry = legacy_entry('no_rate')
+        self.assertEqual(entry.currency, 'JPY')
+        self.assertEqual(entry.min_cost, Decimal('1000'))
+        self.assertEqual(entry.converted_currency, '')
+        self.assertIsNone(entry.converted_min_cost)
+        self.assertIsNone(entry.converted_max_cost)
+
+        cost = summary('no_rate')
+        self.assertIsNone(cost.min_cost)
+        self.assertIsNone(cost.max_cost)
+        self.assertTrue(cost.incomplete)
+
+        # No purchase price - no entry or summary
+        self.assertFalse(
+            StockItemCostEntry.objects.filter(stock_item_id=self.items['none']).exists()
+        )
+        self.assertIsNone(summary('none'))
+
+        # Existing entries are retained, and the (stale) summary is recalculated
+        self.assertEqual(
+            StockItemCostEntry.objects.filter(
+                stock_item_id=self.items['existing']
+            ).count(),
+            2,
+        )
+
+        cost = summary('existing')
+        self.assertEqual(cost.min_cost, Decimal('7'))
+        self.assertEqual(cost.max_cost, Decimal('8'))
+        self.assertTrue(cost.estimated)
+        self.assertFalse(cost.incomplete)
+        self.assertEqual(
+            StockItemCost.objects.filter(stock_item_id=self.items['existing']).count(),
+            1,
+        )
+
+        # Existing legacy entries are not duplicated (and the stock item is not modified)
+        cost = summary('legacy')
+        self.assertEqual(cost.min_cost, Decimal('7'))
+        self.assertEqual(cost.max_cost, Decimal('7'))
+
+        self.assertEqual(
+            StockItemCostEntry.objects.filter(
+                stock_item_id=self.items['legacy']
+            ).count(),
+            1,
+        )
+
+        self.assertEqual(StockItemCostEntry.objects.filter(source='legacy').count(), 7)
+        self.assertEqual(StockItemCost.objects.count(), 7)
+
+
+class TestRemoveLegacyPurchasePriceEntries(MigratorTestCase):
+    """Test that reversing the legacy purchase price migration removes the legacy entries."""
+
+    migrate_from = ('pricing', '0004_legacy_purchase_price_entries')
+    migrate_to = ('pricing', '0003_stock_item_cost')
+
+    def prepare(self):
+        """Create stock items with legacy (and other) cost entries."""
+        apps = self.old_state.apps
+
+        Part = apps.get_model('part', 'part')
+        StockItem = apps.get_model('stock', 'stockitem')
+        StockItemCostEntry = apps.get_model('pricing', 'stockitemcostentry')
+        StockItemCost = apps.get_model('pricing', 'stockitemcost')
+
+        part = Part.objects.create(
+            name='Migration Test Part', level=0, tree_id=0, lft=0, rght=0
+        )
+
+        self.items = []
+
+        for _ in range(2):
+            item = StockItem.objects.create(
+                part=part,
+                quantity=10,
+                purchase_price=Decimal('5'),
+                purchase_price_currency='USD',
+            )
+            self.items.append(item.pk)
+
+            StockItemCostEntry.objects.create(
+                stock_item=item,
+                cost_type=10,
+                source='legacy',
+                currency='USD',
+                min_cost=5,
+                max_cost=5,
+                converted_currency='USD',
+                converted_min_cost=5,
+                converted_max_cost=5,
+            )
+
+        # The second item also has a manual entry
+        StockItemCostEntry.objects.create(
+            stock_item_id=self.items[1],
+            cost_type=20,
+            source='manual',
+            currency='USD',
+            min_cost=1,
+            max_cost=2,
+            converted_currency='USD',
+            converted_min_cost=1,
+            converted_max_cost=2,
+        )
+
+        for pk, total in zip(self.items, [5, 6], strict=True):
+            StockItemCost.objects.create(
+                stock_item_id=pk, currency='USD', min_cost=total, max_cost=total
+            )
+
+    def test_reverse(self):
+        """Legacy entries are removed, and the summaries are recalculated."""
+        apps = self.new_state.apps
+
+        StockItemCostEntry = apps.get_model('pricing', 'stockitemcostentry')
+        StockItemCost = apps.get_model('pricing', 'stockitemcost')
+
+        self.assertFalse(StockItemCostEntry.objects.filter(source='legacy').exists())
+        self.assertEqual(StockItemCostEntry.objects.count(), 1)
+
+        # No entries left - the summary is removed
+        self.assertFalse(
+            StockItemCost.objects.filter(stock_item_id=self.items[0]).exists()
+        )
+
+        cost = StockItemCost.objects.get(stock_item_id=self.items[1])
+        self.assertEqual(cost.currency, 'USD')
+        self.assertEqual(cost.min_cost, Decimal('1'))
+        self.assertEqual(cost.max_cost, Decimal('2'))
