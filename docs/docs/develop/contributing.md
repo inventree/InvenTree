@@ -3,9 +3,9 @@ title: Contribution Guide
 ---
 
 
-Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
+## Contribution Guide
 
-## Quickstart
+Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
 
 The following commands will get you quickly configure and run a development server, complete with a demo dataset to work with:
 
