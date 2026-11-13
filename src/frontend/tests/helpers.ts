@@ -291,3 +291,26 @@ export const waitForDataOutput = async (
     page.off('popup', closePopup);
   }
 };
+
+/**
+ * Handle a re-authentication (password) prompt, if one is displayed.
+ */
+// Handle a re-authentication prompt (if displayed)
+export const reauthenticate = async (
+  page: Page,
+  password: string,
+  time = 3000
+) => {
+  const field = page.getByLabel('text-field-password');
+  const visible = await field
+    .waitFor({ timeout: time })
+    .then(() => true)
+    .catch(() => false);
+
+  if (visible) {
+    await field.fill(password);
+    await page.getByRole('button', { name: 'Submit' }).click();
+  }
+
+  return visible;
+};

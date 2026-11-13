@@ -9,7 +9,7 @@ import type { Page } from '@playwright/test';
 import { createApi } from './api.js';
 import { expect, generateUUID, test } from './baseFixtures.js';
 import { logoutUrl } from './defaults.js';
-import { navigate } from './helpers.js';
+import { navigate, reauthenticate } from './helpers.js';
 import { doLogin } from './login.js';
 
 // Attach a virtual authenticator to the provided page
@@ -49,20 +49,6 @@ const createUser = async (username: string, password: string) => {
   expect([200, 201]).toContain(pwd.status());
 
   return user.pk;
-};
-
-// Handle a re-authentication prompt (if displayed)
-const reauthenticate = async (page: Page, password: string) => {
-  const field = page.getByLabel('text-field-password');
-  const visible = await field
-    .waitFor({ timeout: 3000 })
-    .then(() => true)
-    .catch(() => false);
-
-  if (visible) {
-    await field.fill(password);
-    await page.getByRole('button', { name: 'Submit' }).click();
-  }
 };
 
 test('Login - MFA - WebAuthn', async ({ page, browserName }) => {
