@@ -29,7 +29,7 @@ class ResourceLockedError(APIException):
     """
 
     status_code = status.HTTP_409_CONFLICT
-    default_detail = _(
+    default_detail = 'INVE-E21: ' + _(
         'This item is currently being updated by another process - please try again'
     )
     default_code = 'resource_locked'
