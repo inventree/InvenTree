@@ -9,7 +9,7 @@ from typing import Optional
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import connections, models, transaction
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, F, Q, Sum
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
@@ -454,35 +454,79 @@ class PartPricing(InvenTree.models.InvenTreeAuditMixin, common.models.MetaMixin)
             if purchase_max is None or purchase_cost > purchase_max:
                 purchase_max = purchase_cost
 
-        # Also check if manual stock item pricing is included
+        # Also include the purchase cost recorded against individual stock items
         if get_global_setting('PRICING_USE_STOCK_PRICING', True):
-            items = self.part.stock_items.all()
-
-            # Limit to stock items updated within a certain window
-            days = int(get_global_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0))
-
-            if days > 0:
-                date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
-                items = items.filter(updated__gte=date_threshold)
-
-            for item in items:
-                cost = self.convert(item.purchase_price)
+            for cost_min, cost_max in self.get_stock_purchase_costs():
+                cost_min = self.convert(cost_min)
+                cost_max = self.convert(cost_max)
 
                 # Skip if the cost could not be converted (for some reason)
-                if cost is None:
+                if cost_min is None or cost_max is None:
                     continue
 
-                if purchase_min is None or cost < purchase_min:
-                    purchase_min = cost
+                if purchase_min is None or cost_min < purchase_min:
+                    purchase_min = cost_min
 
-                if purchase_max is None or cost > purchase_max:
-                    purchase_max = cost
+                if purchase_max is None or cost_max > purchase_max:
+                    purchase_max = cost_max
 
         self.purchase_cost_min = purchase_min
         self.purchase_cost_max = purchase_max
 
         if save:
             self.save()
+
+    def get_stock_purchase_costs(self) -> list[tuple[Money, Money]]:
+        """Return the (min, max) unit purchase cost of each stock item for this part.
+
+        The purchase cost of a stock item is the sum of its PURCHASE cost entries
+        (only - other cost types such as landed costs are excluded), using the stored
+        converted values (in the default currency).
+
+        - If PRICING_STOCK_ITEM_AGE_DAYS is set, only entries recorded (or updated)
+          within that window are included
+        - Stock items with any PURCHASE entry which has not been converted to the
+          default currency are skipped, rather than reporting a partial cost
+        """
+        if not (_part := self.get_part()):
+            return []
+
+        currency = currency_code_default()
+
+        entries = StockItemCostEntry.objects.filter(
+            stock_item__part=_part, cost_type=CostType.PURCHASE
+        )
+
+        # Limit to cost entries recorded within a certain window
+        days = int(get_global_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0))
+
+        if days > 0:
+            date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
+            entries = entries.filter(date__date__gte=date_threshold)
+
+        valid = Q(
+            converted_currency=currency,
+            converted_min_cost__isnull=False,
+            converted_max_cost__isnull=False,
+        )
+
+        totals = (
+            entries
+            .order_by()
+            .values('stock_item_id')
+            .annotate(
+                min_total=Sum('converted_min_cost', filter=valid),
+                max_total=Sum('converted_max_cost', filter=valid),
+                entry_count=Count('pk'),
+                valid_count=Count('pk', filter=valid),
+            )
+            .filter(entry_count=F('valid_count'))
+        )
+
+        return [
+            (Money(row['min_total'], currency), Money(row['max_total'], currency))
+            for row in totals
+        ]
 
     def update_internal_cost(self, save=True):
         """Recalculate internal cost for the referenced Part instance."""
@@ -1993,6 +2037,35 @@ class StockItemCostManager(models.Manager):
                     upsert_kwargs['unique_fields'] = ['stock_item']
 
                 self.bulk_create(summaries, batch_size=500, **upsert_kwargs)
+
+        self.schedule_part_pricing_updates(stock_item_ids)
+
+    def schedule_part_pricing_updates(self, stock_item_ids):
+        """Schedule a pricing update for the parts of the provided stock items.
+
+        The purchase cost of a part is (optionally) calculated from the
+        cost entries of its stock items (see PartPricing.update_purchase_cost).
+        """
+        if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+            return
+
+        if not InvenTree.ready.canAppAccessDatabase(
+            allow_test=settings.TESTING_PRICING
+        ):
+            return
+
+        from stock.models import StockItem
+
+        part_ids = (
+            StockItem.objects
+            .filter(pk__in=stock_item_ids)
+            .order_by()
+            .values_list('part_id', flat=True)
+            .distinct()
+        )
+
+        for part in Part.objects.filter(pk__in=list(part_ids)):
+            part.schedule_pricing_update(create=True, refresh=False)
 
 
 class StockItemCost(models.Model):

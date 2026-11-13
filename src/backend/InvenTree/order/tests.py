@@ -530,7 +530,9 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # Ensure that received quantity and unit purchase price data are correct
         si = si.first()
         self.assertEqual(si.quantity, 10)
-        self.assertEqual(si.purchase_price, Money(100, 'USD'))
+
+        # The legacy purchase price field is no longer written (see cost entries below)
+        self.assertIsNone(si.purchase_price)
 
         si = StockItem.objects.filter(supplier_part=sp_2)
         self.assertEqual(si.count(), 1)
@@ -538,7 +540,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # Ensure that received quantity and unit purchase price data are correct
         si = si.first()
         self.assertEqual(si.quantity, 0.5)
-        self.assertEqual(si.purchase_price, Money(100, 'USD'))
+        self.assertIsNone(si.purchase_price)
 
         # Each received stock item has a PURCHASE cost entry, per base unit
         # (i.e. the line price divided by the supplier pack quantity)
@@ -657,9 +659,6 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         set_global_setting('INVENTREE_DEFAULT_CURRENCY', 'USD')
         self.assertEqual(get_global_setting('INVENTREE_DEFAULT_CURRENCY'), 'USD')
 
-        # Enable auto conversion
-        set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', True)
-
         order = PurchaseOrder.objects.get(pk=7)
         sku = SupplierPart.objects.get(SKU='ZERGM312')
         loc = StockLocation.objects.get(id=1)
@@ -669,27 +668,24 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         order.place_order()
 
-        # Receive a line item, should be converted to GBP
+        # Note: The PURCHASEORDER_CONVERT_CURRENCY setting no longer has any effect -
+        # the cost entry stores both the original and the converted values
+        set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', True)
         order.receive_line_item(line, loc, 50, user=None)
-        item = order.stock_items.order_by('-pk').first()
 
-        self.assertEqual(item.quantity, 50)
-        self.assertEqual(item.purchase_price_currency, 'USD')
-        self.assertAlmostEqual(item.purchase_price.amount, Decimal(0.7353), 3)
-
-        # Disable auto conversion
         set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', False)
-
         order.receive_line_item(line, loc, 30, user=None)
-        item = order.stock_items.order_by('-pk').first()
 
-        self.assertEqual(item.quantity, 30)
-        self.assertEqual(item.purchase_price_currency, 'CAD')
-        self.assertAlmostEqual(item.purchase_price.amount, Decimal(1.25), 3)
+        self.assertEqual(
+            [item.quantity for item in order.stock_items.order_by('-pk')[:2]], [30, 50]
+        )
 
         # The cost entries always record the original (line item) currency,
         # and the summaries the default currency
         for item in order.stock_items.order_by('-pk')[:2]:
+            # The legacy purchase price field is no longer written
+            self.assertIsNone(item.purchase_price)
+
             entry = item.cost_entries.get()
             self.assertEqual(entry.currency, 'CAD')
             self.assertEqual(entry.min_cost, Decimal('1.25'))

@@ -23,7 +23,6 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import TreeForeignKey
 
@@ -463,7 +462,7 @@ class StockItem(
         is_building: Boolean field indicating if this stock item is currently being built (or is "in production")
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
-        purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
+        purchase_price: Legacy unit purchase price - no longer written or read by core code (to be removed). Stock item costs are recorded as cost entries (see pricing.models.StockItemCostEntry)
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
     """
 
@@ -2905,12 +2904,6 @@ class StockItem(
 
         parent_id = self.parent.pk if self.parent else None
 
-        # Keep track of pricing data for the merged data
-        pricing_data = []
-
-        if self.purchase_price:
-            pricing_data.append([self.purchase_price, self.quantity])
-
         for other in other_items:
             # Check the merge in both directions, so that the generic state checks
             # (serialized, in production, installed, assigned to an order / customer)
@@ -2933,10 +2926,6 @@ class StockItem(
         for other in other_items:
             merged_quantity += other.quantity
             self.quantity += other.quantity
-
-            if other.purchase_price:
-                # Only add pricing data if it is available
-                pricing_data.append([other.purchase_price, other.quantity])
 
             # Any "build order allocations" for the other item must be assigned to this one
             for allocation in other.allocations.all():
@@ -2967,28 +2956,6 @@ class StockItem(
 
         # Update the location of the item
         self.location = location
-
-        # Update the unit price - calculate weighted average of available pricing data
-        if len(pricing_data) > 0:
-            unit_price, quantity = pricing_data[0]
-
-            # Use the first currency as the base currency
-            base_currency = unit_price.currency
-
-            total_price = unit_price * quantity
-
-            for price, qty in pricing_data[1:]:
-                # Attempt to convert the price to the base currency
-                try:
-                    price = convert_money(price, base_currency)
-                    total_price += price * qty
-                    quantity += qty
-                except Exception:
-                    # Skip this entry, cannot convert to base currency
-                    continue
-
-            if quantity > 0:
-                self.purchase_price = total_price / quantity
 
         with self.tracking_event(
             StockHistoryCode.MERGED_STOCK_ITEMS,

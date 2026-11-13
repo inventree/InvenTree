@@ -1179,9 +1179,6 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
         # Cache of subscribers per part, to avoid repeated queries for the same part
         part_subscribers_cache: dict[int, list] = {}
 
-        convert_purchase_price = get_global_setting('PURCHASEORDER_CONVERT_CURRENCY')
-        default_currency = currency_code_default()
-
         # Prefetch line item objects for DB efficiency
         line_items_ids = [item['line_item'].pk for item in items]
 
@@ -1274,18 +1271,14 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
             # Calculate the received quantity in base part units
             stock_quantity = supplier_part.base_quantity(quantity)
 
-            # Calculate unit purchase price (in base units)
+            # Calculate the unit cost (per base unit) of the received items.
+            # Note: Line prices are per supplier pack, but costs are per (base) unit.
+            # The cost is recorded in the original (line item) currency - the cost entry
+            # also stores the value converted to the default currency
             if line.purchase_price:
                 pack_quantity = supplier_part.base_quantity(1)
                 unit_cost = line.purchase_price / pack_quantity
 
-                if convert_purchase_price:
-                    purchase_price = convert_money(unit_cost, default_currency)
-                else:
-                    purchase_price = unit_cost
-
-                # Cost entry data, recorded in the original (line item) currency.
-                # Note: Line prices are per supplier pack, but costs are per (base) unit
                 cost_data = {
                     'cost_type': CostType.PURCHASE,
                     'cost': unit_cost,
@@ -1299,7 +1292,6 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                     },
                 }
             else:
-                purchase_price = None
                 cost_data = None
 
             # Construct dataset for creating a new StockItem instances
@@ -1307,7 +1299,6 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 'part': supplier_part.part,
                 'supplier_part': supplier_part,
                 'purchase_order': self,
-                'purchase_price': purchase_price,
                 'location': stock_location,
                 'quantity': 1 if serialize else stock_quantity,
                 'batch': item.get('batch_code', ''),

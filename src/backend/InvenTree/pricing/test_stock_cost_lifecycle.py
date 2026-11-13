@@ -392,3 +392,40 @@ class DisassemblyCostTests(StockItemCostLifecycleBase):
             entry = component.cost_entries.get()
             self.assertEqual(entry.min_cost, cost)
             self.assertEqual(entry.user, user)
+
+
+class StocktakeCostTests(StockItemCostLifecycleBase):
+    """Stocktake values stock items using their recorded unit cost."""
+
+    def test_stocktake_value(self):
+        """The stock value is calculated from the cost summary of each stock item."""
+        from common.settings import set_global_setting
+        from part.models import PartStocktake
+        from part.stocktake import perform_stocktake
+
+        set_global_setting('STOCKTAKE_ENABLE', True)
+        self.generate_exchange_rates()
+
+        part = Part.objects.create(name='Valued part', description='A part')
+
+        a = self.make_item(quantity=10, part=part)
+        self.add_cost(a, min_cost=Money(2, 'USD'), max_cost=Money(3, 'USD'))
+
+        # 15 AUD = 10 USD
+        b = self.make_item(quantity=5, part=part)
+        self.add_cost(b, min_cost=Money(15, 'AUD'))
+
+        # No recorded cost (and no part pricing) - no contribution
+        self.make_item(quantity=4, part=part)
+
+        perform_stocktake(part_id=part.pk)
+
+        stocktake = PartStocktake.objects.get(part=part)
+
+        self.assertEqual(stocktake.item_count, 3)
+        self.assertEqual(stocktake.quantity, 19)
+
+        # min: 10 x 2 + 5 x 10 = 70 ; max: 10 x 3 + 5 x 10 = 80
+        self.assertAlmostEqual(stocktake.cost_min.amount, Decimal(70), places=4)
+        self.assertAlmostEqual(stocktake.cost_max.amount, Decimal(80), places=4)
+        self.assertEqual(str(stocktake.cost_min.currency), 'USD')

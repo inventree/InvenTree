@@ -30,6 +30,8 @@ from InvenTree.unit_test import (
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from plugin.base.event.events import batch_events
+from pricing.models import CostSource, StockItemCost, StockItemCostEntry
+from pricing.status_codes import CostType
 from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
@@ -1100,8 +1102,6 @@ class StockTest(StockTestBase):
 
     def test_merge(self):
         """Test merging of multiple stock items."""
-        from djmoney.money import Money
-
         part = Part.objects.first()
         part.stock_items.all().delete()
 
@@ -1128,31 +1128,47 @@ class StockTest(StockTestBase):
 
         part.stock_items.all().delete()
 
-        # Create some stock items with pricing information
-        s1 = StockItem.objects.create(part=part, quantity=10, purchase_price=None)
-        s2 = StockItem.objects.create(
-            part=part, quantity=15, purchase_price=Money(10, 'USD')
-        )
-        s3 = StockItem.objects.create(part=part, quantity=30)
+        def make_item(quantity, cost=None):
+            """Create a stock item, with an (optional) purchase cost entry."""
+            item = StockItem.objects.create(part=part, quantity=quantity)
+
+            if cost is not None:
+                StockItemCostEntry.objects.create_cost(
+                    item, CostType.PURCHASE, CostSource.MANUAL, min_cost=cost
+                )
+
+            return item
+
+        def merged_cost(item):
+            """Return the (single) merged cost entry, and the cost summary."""
+            entry = item.cost_entries.get()
+            self.assertEqual(entry.source, CostSource.MERGE)
+            return entry, StockItemCost.objects.get(stock_item=item)
+
+        # Create some stock items with cost information
+        # (items without any cost data have an unknown cost, and are excluded)
+        s1 = make_item(10)
+        s2 = make_item(15, Money(10, 'USD'))
+        s3 = make_item(30)
 
         self.assertEqual(part.stock_items.count(), 3)
         s1.merge_stock_items([s2, s3])
         self.assertEqual(part.stock_items.count(), 1)
         s1.refresh_from_db()
         self.assertEqual(s1.quantity, 55)
-        self.assertEqual(s1.purchase_price, Money(10, 'USD'))
+
+        entry, summary = merged_cost(s1)
+        self.assertEqual(entry.min_cost, Decimal(10))
+        self.assertEqual(summary.min_cost, Decimal(10))
+
+        # The legacy purchase price field is no longer written
+        self.assertIsNone(s1.purchase_price)
 
         part.stock_items.all().delete()
 
-        s1 = StockItem.objects.create(
-            part=part, quantity=10, purchase_price=Money(5, 'USD')
-        )
-        s2 = StockItem.objects.create(
-            part=part, quantity=25, purchase_price=Money(10, 'USD')
-        )
-        s3 = StockItem.objects.create(
-            part=part, quantity=5, purchase_price=Money(75, 'USD')
-        )
+        s1 = make_item(10, Money(5, 'USD'))
+        s2 = make_item(25, Money(10, 'USD'))
+        s3 = make_item(5, Money(75, 'USD'))
 
         self.assertEqual(part.stock_items.count(), 3)
         s1.merge_stock_items([s2, s3])
@@ -1160,8 +1176,11 @@ class StockTest(StockTestBase):
         s1.refresh_from_db()
         self.assertEqual(s1.quantity, 40)
 
-        # Final purchase price should be the weighted average
-        self.assertAlmostEqual(s1.purchase_price.amount, 16.875, places=3)
+        # Final unit cost should be the weighted average
+        entry, summary = merged_cost(s1)
+        self.assertAlmostEqual(float(entry.min_cost), 16.875, places=3)
+        self.assertAlmostEqual(float(summary.min_cost), 16.875, places=3)
+        self.assertIsNone(s1.purchase_price)
 
     def test_merge_protected_items(self):
         """Stock items in a protected state cannot be absorbed by a merge.

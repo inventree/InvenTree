@@ -1,9 +1,12 @@
 """Unit tests for Part pricing calculations."""
 
+from datetime import timedelta
+from decimal import Decimal
 from unittest import mock
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.test.utils import override_settings
+from django.utils import timezone
 
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -16,7 +19,13 @@ import stock.models
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
 from order.status_codes import PurchaseOrderStatus
-from pricing.models import PartInternalPriceBreak, PartPricing
+from pricing.models import (
+    CostSource,
+    PartInternalPriceBreak,
+    PartPricing,
+    StockItemCostEntry,
+)
+from pricing.status_codes import CostType
 
 
 class PartPricingTests(InvenTreeTestCase):
@@ -245,23 +254,28 @@ class PartPricingTests(InvenTreeTestCase):
 
     @override_settings(TESTING_PRICING=True)
     def test_stock_item_pricing(self):
-        """Test for stock item pricing data."""
+        """Test for stock item pricing data (from stock item PURCHASE cost entries)."""
         # Create a part
         p = part.models.Part.objects.create(
             name='Test part for pricing',
             description='hello world, this is a part description',
         )
 
-        # Create some stock items
-        prices = [(10, 'AUD'), (5, 'USD'), (2, 'CAD')]
+        def make_item(*costs):
+            """Create a stock item with the provided cost entries."""
+            item = stock.models.StockItem.objects.create(part=p, quantity=10)
 
-        for price, currency in prices:
-            stock.models.StockItem.objects.create(
-                part=p,
-                quantity=10,
-                purchase_price=price,
-                purchase_price_currency=currency,
-            )
+            for cost_type, cost in costs:
+                StockItemCostEntry.objects.create_cost(
+                    item, cost_type, CostSource.MANUAL, min_cost=cost
+                )
+
+            return item
+
+        # Create some stock items
+        make_item((CostType.PURCHASE, Money(10, 'AUD')))
+        make_item((CostType.PURCHASE, Money(5, 'USD')))
+        make_item((CostType.PURCHASE, Money(2, 'CAD')))
 
         # Ensure that initially, stock item pricing is disabled
         set_global_setting('PRICING_USE_STOCK_PRICING', False, None)
@@ -285,6 +299,69 @@ class PartPricingTests(InvenTreeTestCase):
 
         self.assertEqual(pricing.overall_min, Money(1.176471, 'USD'))
         self.assertEqual(pricing.overall_max, Money(6.666667, 'USD'))
+
+        # Only PURCHASE entries count towards the purchase cost (not e.g. landed costs)
+        make_item(
+            (CostType.PURCHASE, Money(1, 'USD')), (CostType.LANDED, Money(100, 'USD'))
+        )
+
+        pricing.update_pricing()
+        self.assertEqual(pricing.purchase_cost_min, Money(1, 'USD'))
+        self.assertEqual(pricing.purchase_cost_max, Money(6.666667, 'USD'))
+
+        # Multiple PURCHASE entries for a stock item are summed, and ranges are respected
+        item = make_item(
+            (CostType.PURCHASE, Money(4, 'USD')), (CostType.PURCHASE, Money(4, 'USD'))
+        )
+        StockItemCostEntry.objects.create_cost(
+            item,
+            CostType.PURCHASE,
+            CostSource.MANUAL,
+            min_cost=Money(0, 'USD'),
+            max_cost=Money(2, 'USD'),
+        )
+
+        pricing.update_pricing()
+        self.assertEqual(pricing.purchase_cost_max, Money(10, 'USD'))
+
+        # A stock item with an unconverted PURCHASE entry is skipped (not under-reported)
+        StockItemCostEntry.objects.create_cost(
+            item, CostType.PURCHASE, CostSource.MANUAL, min_cost=Money(1000, 'JPY')
+        )
+
+        pricing.update_pricing()
+        self.assertEqual(pricing.purchase_cost_max, Money(6.666667, 'USD'))
+
+        # The age window applies to the date of the cost entries
+        set_global_setting('PRICING_STOCK_ITEM_AGE_DAYS', 30, None)
+
+        old_date = timezone.now() - timedelta(days=60)
+        StockItemCostEntry.objects.filter(stock_item__part=p).exclude(
+            min_cost=Decimal(5)
+        ).update(date=old_date)
+
+        pricing.update_pricing()
+        self.assertEqual(pricing.purchase_cost_min, Money(5, 'USD'))
+        self.assertEqual(pricing.purchase_cost_max, Money(5, 'USD'))
+
+        set_global_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0, None)
+
+    @override_settings(TESTING_PRICING=True)
+    def test_stock_item_cost_schedules_update(self):
+        """Changing the cost entries of a stock item schedules a part pricing update."""
+        p = part.models.Part.objects.create(name='Scheduled', description='A part')
+        item = stock.models.StockItem.objects.create(part=p, quantity=10)
+
+        with mock.patch.object(part.models.Part, 'schedule_pricing_update') as schedule:
+            entry = StockItemCostEntry.objects.create_cost(
+                item, CostType.PURCHASE, CostSource.MANUAL, min_cost=Money(1, 'USD')
+            )
+
+            schedule.assert_called_with(create=True, refresh=False)
+            schedule.reset_mock()
+
+            entry.delete()
+            schedule.assert_called_with(create=True, refresh=False)
 
     @override_settings(TESTING_PRICING=True)
     def test_bom_pricing(self):
