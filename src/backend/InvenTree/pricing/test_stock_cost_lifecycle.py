@@ -1,18 +1,16 @@
 """Tests for stock item cost data across the stock item lifecycle.
 
 Covers the business logic which creates, copies or combines stock item cost entries:
-splitting, serializing, merging, disassembly, shipping, and creating stock via the API.
+splitting, serializing, merging, disassembly and shipping.
 """
 
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.urls import reverse
 
 from djmoney.money import Money
 
-from company.models import Company, SupplierPart
-from InvenTree.unit_test import InvenTreeAPITestCase
+from company.models import Company
 from order.models import (
     SalesOrder,
     SalesOrderAllocation,
@@ -392,107 +390,3 @@ class DisassemblyCostTests(StockItemCostLifecycleBase):
 
         for component in components:
             self.assertFalse(component.cost_entries.exists())
-
-
-class StockCreateCostTests(InvenTreeAPITestCase):
-    """Creating stock via the API records the purchase price as a cost entry."""
-
-    fixtures = ['category', 'part', 'location', 'company']
-
-    roles = ['stock.add', 'stock.view', 'pricing.add', 'pricing.view']
-
-    URL = reverse('api-stock-list')
-
-    def setUp(self):
-        """Set the default currency."""
-        super().setUp()
-
-        from common.models import InvenTreeSetting
-
-        InvenTreeSetting.set_setting('INVENTREE_DEFAULT_CURRENCY', 'USD', None)
-
-    def test_create(self):
-        """A purchase price creates a manual cost entry (and summary) for each new item."""
-        response = self.post(
-            self.URL,
-            {
-                'part': 1,
-                'quantity': 10,
-                'location': 1,
-                'purchase_price': 4.5,
-                'purchase_price_currency': 'USD',
-            },
-            expected_code=201,
-        )
-
-        item = StockItem.objects.get(pk=response.data[0]['pk'])
-
-        entry = item.cost_entries.get()
-        self.assertEqual(entry.cost_type, CostType.PURCHASE)
-        self.assertEqual(entry.source, CostSource.MANUAL)
-        self.assertEqual(entry.user, self.user)
-        self.assertEqual(entry.min_cost, Decimal('4.5'))
-        self.assertEqual(entry.currency, 'USD')
-
-        summary = StockItemCost.objects.get(stock_item=item)
-        self.assertEqual(summary.min_cost, Decimal('4.5'))
-
-        # No price - no cost entry
-        response = self.post(
-            self.URL, {'part': 1, 'quantity': 10, 'location': 1}, expected_code=201
-        )
-
-        item = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertFalse(item.cost_entries.exists())
-
-    def test_create_pack_size(self):
-        """A price per supplier pack is recorded per (base) unit."""
-        part = Part.objects.get(pk=1)
-        supplier_part = SupplierPart.objects.create(
-            part=part,
-            supplier=Company.objects.filter(is_supplier=True).first(),
-            SKU='PACK-10',
-            pack_quantity='10',
-        )
-
-        response = self.post(
-            self.URL,
-            {
-                'part': part.pk,
-                'supplier_part': supplier_part.pk,
-                'quantity': 2,
-                'use_pack_size': True,
-                'location': 1,
-                'purchase_price': 50,
-                'purchase_price_currency': 'USD',
-            },
-            expected_code=201,
-        )
-
-        item = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(item.quantity, 20)
-
-        entry = item.cost_entries.get()
-        self.assertEqual(entry.min_cost, Decimal(5))
-        self.assertEqual(Decimal(entry.source_data['pack_quantity']), Decimal(10))
-
-    def test_create_without_pricing_role(self):
-        """A user without the 'pricing' add permission cannot create cost data."""
-        self.clearRoles()
-        self.assignRole('stock.add')
-        self.assignRole('stock.view')
-
-        response = self.post(
-            self.URL,
-            {
-                'part': 1,
-                'quantity': 10,
-                'location': 1,
-                'purchase_price': 4.5,
-                'purchase_price_currency': 'USD',
-            },
-            expected_code=201,
-        )
-
-        item = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertFalse(item.cost_entries.exists())

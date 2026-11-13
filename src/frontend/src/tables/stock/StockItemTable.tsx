@@ -43,7 +43,7 @@ import {
 } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
+import { formatPriceRange } from '../../defaults/formatters';
 import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -143,16 +143,20 @@ function stockItemTableColumns({
       copyable: true
     },
     {
-      accessor: 'purchase_price',
-      title: t`Unit Price`,
-      sortable: true,
+      // Cost summary - only provided by the API for users with the 'pricing' view role
+      accessor: 'pricing_detail.min_cost',
+      title: t`Unit Cost`,
+      sortable: false,
       switchable: true,
       hidden: !showPricing,
       defaultVisible: false,
       render: (record: any) =>
-        formatCurrency(record.purchase_price, {
-          currency: record.purchase_price_currency
-        })
+        record.pricing_detail &&
+        formatPriceRange(
+          record.pricing_detail.min_cost,
+          record.pricing_detail.max_cost,
+          { currency: record.pricing_detail.currency }
+        )
     },
     {
       accessor: 'stock_value',
@@ -160,11 +164,16 @@ function stockItemTableColumns({
       sortable: false,
       hidden: !showPricing,
       render: (record: any) => {
-        const min_price =
-          record.purchase_price || record.part_detail?.pricing_min;
-        const max_price =
-          record.purchase_price || record.part_detail?.pricing_max;
-        const currency = record.purchase_price_currency || undefined;
+        // Use the stock item cost (if available), otherwise fall back to part pricing
+        const cost = record.pricing_detail;
+
+        const min_price = cost
+          ? cost.min_cost
+          : record.part_detail?.pricing_min;
+        const max_price = cost
+          ? cost.max_cost
+          : record.part_detail?.pricing_max;
+        const currency = cost ? cost.currency : undefined;
 
         return formatPriceRange(min_price, max_price, {
           currency: currency,
@@ -283,11 +292,6 @@ function stockItemTableFilters({
       name: 'tracked',
       label: t`Tracked`,
       description: t`Show tracked items`
-    },
-    {
-      name: 'has_purchase_price',
-      label: t`Has Purchase Price`,
-      description: t`Show items which have a purchase price`
     },
     {
       name: 'expired',
@@ -445,7 +449,6 @@ export function StockItemTable({
     partId: params.part,
     locationId: params.location,
     supplierPartId: params.supplier_part,
-    pricing: params.pricing,
     modalId: 'add-stock-item'
   });
 
@@ -529,7 +532,8 @@ export function StockItemTable({
             ...(showConsumedBy ? { consumed_by_detail: true } : {}),
             part_detail: true,
             location_detail: true,
-            supplier_part_detail: true
+            supplier_part_detail: true,
+            ...(showPricing ? { pricing_detail: true } : {})
           }
         }}
       />

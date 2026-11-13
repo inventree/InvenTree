@@ -922,16 +922,6 @@ class StockFilter(FilterSet):
             return queryset.filter(quantity__lte=0)
         return queryset.exclude(quantity__lte=0)
 
-    has_purchase_price = rest_filters.BooleanFilter(
-        label='Has purchase price', method='filter_has_purchase_price'
-    )
-
-    def filter_has_purchase_price(self, queryset, name, value):
-        """Filter by having a purchase price."""
-        if str2bool(value):
-            return queryset.exclude(purchase_price=None)
-        return queryset.filter(purchase_price=None)
-
     category = rest_filters.ModelChoiceFilter(
         label=_('Category'),
         queryset=PartCategory.objects.all(),
@@ -1182,9 +1172,6 @@ class StockList(
         # We use 'serial_numbers' for item creation
         data.pop('serial', None)
 
-        # Supplier pack quantity (if the purchase price was provided per pack)
-        price_pack_quantity = None
-
         # Check if the supplier_part has a package size defined, which is not 1
         if supplier_part_id := data.get('supplier_part', None):
             try:
@@ -1206,19 +1193,6 @@ class StockList(
                     })
                 elif bool(data.get('use_pack_size')):
                     quantity = data['quantity'] = supplier_part.base_quantity(quantity)
-
-                    # Divide purchase price by pack size, to save correct price per stock item
-                    if (
-                        data.get('purchase_price')
-                        and supplier_part.pack_quantity_native
-                    ):
-                        try:
-                            data['purchase_price'] = float(
-                                data['purchase_price']
-                            ) / float(supplier_part.pack_quantity_native)
-                            price_pack_quantity = supplier_part.pack_quantity_native
-                        except ValueError:  # pragma: no cover
-                            pass
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
@@ -1328,8 +1302,6 @@ class StockList(
                 for item in items:
                     apply_duplicate_options(item)
 
-                self.record_purchase_cost(items, user, price_pack_quantity)
-
                 # Annotate the stock items with part information
                 queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
 
@@ -1352,8 +1324,6 @@ class StockList(
 
                 apply_duplicate_options(item)
 
-                self.record_purchase_cost([item], user, price_pack_quantity)
-
                 response_data = [
                     StockSerializers.StockItemSerializer(
                         item, context=self.get_serializer_context()
@@ -1365,43 +1335,6 @@ class StockList(
             status=status.HTTP_201_CREATED,
             headers=self.get_success_headers(serializer.data),
         )
-
-    @staticmethod
-    def record_purchase_cost(items, user, pack_quantity=None):
-        """Record the purchase price of newly created stock items as a (manual) cost entry.
-
-        The price is only recorded as cost data if the user has permission to add pricing data.
-
-        Arguments:
-            items: The newly created StockItem objects (all with the same purchase price)
-            user: The user who created the stock items
-            pack_quantity: The supplier pack quantity, if the price was provided per pack
-        """
-        from pricing.helpers import StockItemCostRecorder, user_can_add_costs
-        from pricing.models import CostSource
-        from pricing.status_codes import CostType
-
-        items = list(items)
-
-        if not items or items[0].purchase_price is None:
-            return
-
-        if not user_can_add_costs(user):
-            return
-
-        source_data = {}
-
-        if pack_quantity:
-            source_data['pack_quantity'] = str(pack_quantity)
-
-        costs = StockItemCostRecorder(source=CostSource.MANUAL, user=user)
-        costs.add(
-            items,
-            CostType.PURCHASE,
-            cost=items[0].purchase_price,
-            source_data=source_data or None,
-        )
-        costs.save()
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -1421,7 +1354,6 @@ class StockList(
         'part__name',
         'part__IPN',
         'updated',
-        'purchase_price',
         'creation_date',
         'stocktake_date',
         'expiry_date',

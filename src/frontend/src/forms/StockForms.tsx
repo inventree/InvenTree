@@ -33,9 +33,7 @@ import {
   IconCalendarExclamation,
   IconChevronDown,
   IconChevronUp,
-  IconCoins,
   IconCopy,
-  IconCurrencyDollar,
   IconLink,
   IconPackage,
   IconUsersGroup
@@ -96,7 +94,6 @@ export function useStockFields({
   stockItem,
   create = false,
   supplierPartId,
-  pricing,
   modalId,
   duplicateStockItem
 }: {
@@ -106,7 +103,6 @@ export function useStockFields({
   modalId: string;
   create: boolean;
   supplierPartId?: number;
-  pricing?: { [priceBreak: number]: [number, string] };
   duplicateStockItem?: any;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
@@ -122,11 +118,6 @@ export function useStockFields({
   const [location, setLocation] = useState<number | null>(locationId ?? null);
 
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
-  const [quantity, setQuantity] = useState<number | null>(null);
-  const [purchasePrice, setPurchasePrice] = useState<number | null>(null);
-  const [purchasePriceCurrency, setPurchasePriceCurrency] = useState<
-    string | null
-  >(null);
 
   const batchGenerator = useBatchCodeGenerator({
     modalId: modalId,
@@ -142,32 +133,10 @@ export function useStockFields({
     }
   });
 
-  // Update pricing when quantity changes
-  useEffect(() => {
-    if (quantity === null || quantity === undefined || !pricing) return;
-
-    // Find the highest price break that is less than or equal to the quantity
-    const priceBreak = Object.entries(pricing)
-      .sort(([a], [b]) => Number.parseInt(b) - Number.parseInt(a))
-      .find(([br]) => quantity >= Number.parseInt(br));
-
-    if (priceBreak) {
-      setPurchasePrice(priceBreak[1][0]);
-      setPurchasePriceCurrency(priceBreak[1][1]);
-    }
-  }, [pricing, quantity]);
-
   // Set the supplier part if provided
   useEffect(() => {
     if (supplierPartId && !supplierPart) setSupplierPart(supplierPartId);
   }, [partInstance, supplierPart, supplierPartId]);
-
-  // Set default currency from global settings
-  useEffect(() => {
-    setPurchasePriceCurrency(
-      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
-    );
-  }, [globalSettings]);
 
   const stockItemStatusCodes = useStatusCodes({
     modelType: ModelType.stockitem
@@ -258,7 +227,6 @@ export function useStockFields({
         description: t`Enter initial quantity for this stock item`,
         onValueChange: (value) => {
           batchGenerator.update({ quantity: value });
-          setQuantity(value);
         }
       },
       serial_numbers: {
@@ -295,21 +263,6 @@ export function useStockFields({
         value: expiryDate,
         onValueChange: (value) => {
           setExpiryDate(value);
-        }
-      },
-      purchase_price: {
-        icon: <IconCurrencyDollar />,
-        value: purchasePrice,
-        onValueChange: (value) => {
-          setPurchasePrice(value);
-        }
-      },
-      purchase_price_currency: {
-        icon: <IconCoins />,
-        default: globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY'),
-        value: purchasePriceCurrency,
-        onValueChange: (value) => {
-          setPurchasePriceCurrency(value);
         }
       },
       packaging: {
@@ -362,8 +315,6 @@ export function useStockFields({
     location,
     create,
     supplierPartId,
-    purchasePrice,
-    purchasePriceCurrency,
     serialGenerator.result,
     batchGenerator.result,
     duplicateStockItem,
@@ -919,8 +870,9 @@ export function useDisassembleStockItem({
             quantity:
               (Number(elem.quantity) || 0) * (Number(stockItem.quantity) || 0),
             purchase_price: null,
+            // Note: The cost summary (if available) is always in the default currency
             purchase_price_currency:
-              stockItem.purchase_price_currency ?? undefined
+              stockItem.pricing_detail?.currency ?? undefined
           };
         }),
         modelRenderer: (row: TableFieldRowProps) => {

@@ -380,8 +380,6 @@ class StockItemSerializer(
             'creation_date',
             'stocktake_date',
             'updated',
-            'purchase_price',
-            'purchase_price_currency',
             'use_pack_size',
             'serial_numbers',
             'duplicate',
@@ -693,16 +691,6 @@ class StockItemSerializer(
         read_only=True, allow_null=True, label=_('Child Items')
     )
     stale = serializers.BooleanField(read_only=True, allow_null=True, label=_('Stale'))
-
-    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
-        label=_('Purchase Price'),
-        allow_null=True,
-        help_text=_('Purchase price of this stock item, per unit or pack'),
-    )
-
-    purchase_price_currency = InvenTreeCurrencySerializer(
-        help_text=_('Purchase currency of this stock item')
-    )
 
     consumed_by_detail = OptionalField(
         serializer_class=BuildBriefSerializer,

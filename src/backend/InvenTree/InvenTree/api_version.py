@@ -13,6 +13,8 @@ v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/XXXX
     - Adds /api/pricing/stock-cost/ list and detail endpoints (read-only)
     - Access to these endpoints requires the "pricing" role, and the "stock" role (view to read, change to write)
     - Adds optional "pricing_detail" field to the StockItem API (requires the "pricing" view role)
+    - Breaking: Removes the "purchase_price" and "purchase_price_currency" fields from the StockItem API (read and write) - stock item costs are managed via /api/pricing/stock-cost-entry/, and the cost summary is available via "pricing_detail"
+    - Breaking: Removes the "has_purchase_price" filter and "purchase_price" ordering option from the StockItem API
 
 v576 -> 2026-11-11 : https://github.com/inventree/InvenTree/pull/13247
     - Adds /api/system/messages/ endpoint: staff-only, read-only; classified system messages are provided in the "messages" array

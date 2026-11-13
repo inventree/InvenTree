@@ -28,7 +28,6 @@ import {
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { RenderCostRange } from '../../components/render/Pricing';
-import { formatCurrency } from '../../defaults/formatters';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
@@ -352,32 +351,6 @@ export function StockDetailsPanel({
           multiplier={instance.quantity}
         />
       )
-    },
-    {
-      type: 'text',
-      name: 'purchase_price',
-      label: t`Unit Price`,
-      icon: 'currency',
-      hidden: !instance?.purchase_price,
-      value_formatter: () =>
-        formatCurrency(instance?.purchase_price, {
-          currency: instance?.purchase_price_currency
-        })
-    },
-    {
-      type: 'text',
-      name: 'stock_value',
-      label: t`Stock Value`,
-      icon: 'currency',
-      hidden:
-        !instance?.purchase_price ||
-        instance?.quantity == 1 ||
-        instance?.quantity == 0,
-      value_formatter: () =>
-        formatCurrency(instance?.purchase_price, {
-          currency: instance?.purchase_price_currency,
-          multiplier: instance?.quantity
-        })
     },
     {
       type: 'text',

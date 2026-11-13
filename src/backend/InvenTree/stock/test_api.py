@@ -1029,14 +1029,6 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(sent_to_customer=False)
         self.assertEqual(len(response), 29)  # TODO: adjust test dataset
 
-    def test_filter_has_purchase_price(self):
-        """Filter StockItem by has_purchase_price."""
-        response = self.get_stock(has_purchase_price=True)
-        self.assertEqual(len(response), 1)
-
-        response = self.get_stock(has_purchase_price=False)
-        self.assertEqual(len(response), 28)
-
     def test_filter_stale(self):
         """Filter StockItem by stale."""
         response = self.get_stock(stale=True)
@@ -1966,22 +1958,13 @@ class StockItemTest(StockAPITestCase):
         current_count = part_4.available_stock
         response = self.post(
             self.list_url,
-            data={
-                'part': 4,
-                'location': 1,
-                'quantity': 3,
-                'supplier_part': 5,
-                'purchase_price': 123.45,
-                'purchase_price_currency': 'USD',
-            },
+            data={'part': 4, 'location': 1, 'quantity': 3, 'supplier_part': 5},
             expected_code=201,
         )
 
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 3)
-        stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
 
         # POST with valid supplier part, no pack size defined
         # Send use_pack_size along, make sure this doesn't break stuff
@@ -1996,16 +1979,12 @@ class StockItemTest(StockAPITestCase):
                 'quantity': 12,
                 'supplier_part': 5,
                 'use_pack_size': True,
-                'purchase_price': 123.45,
-                'purchase_price_currency': 'USD',
             },
             expected_code=201,
         )
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 12)
-        stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
 
         # POST with valid supplier part, WITH pack size defined - but ignore
         # Supplier part 6 is a 100-pack, otherwise same as SP 5
@@ -2018,16 +1997,12 @@ class StockItemTest(StockAPITestCase):
                 'quantity': 3,
                 'supplier_part': 6,
                 'use_pack_size': False,
-                'purchase_price': 123.45,
-                'purchase_price_currency': 'USD',
             },
             expected_code=201,
         )
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 3)
-        stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
 
         # POST with valid supplier part, WITH pack size defined and used
         # Supplier part 6 is a 100-pack, otherwise same as SP 5
@@ -2040,16 +2015,12 @@ class StockItemTest(StockAPITestCase):
                 'quantity': 3,
                 'supplier_part': 6,
                 'use_pack_size': True,
-                'purchase_price': 123.45,
-                'purchase_price_currency': 'USD',
             },
             expected_code=201,
         )
         # Reload part, count stock again
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 3 * 100)
-        stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(stock_4.purchase_price, Money('1.234500', 'USD'))
 
     def test_creation_with_serials(self):
         """Test that serialized stock items can be created via the API."""
@@ -2181,39 +2152,46 @@ class StockItemTest(StockAPITestCase):
         response = self.post(self.list_url, data, expected_code=201)
         self.assertEqual(response.data[0]['expiry_date'], expiry.isoformat())
 
-    def test_purchase_price(self):
-        """Test that we can correctly read and adjust purchase price information via the API."""
+    def test_purchase_price_removed(self):
+        """Purchase price data is not available via the StockItem API.
+
+        Stock item costs are managed via the pricing API instead (see pricing_detail).
+        """
         url = reverse('api-stock-detail', kwargs={'pk': 1})
+
+        item = StockItem.objects.get(pk=1)
+        price = item.purchase_price
 
         data = self.get(url, expected_code=200).data
 
-        # Check fixture values
-        self.assertAlmostEqual(data['purchase_price'], 123, 3)
-        self.assertEqual(data['purchase_price_currency'], 'AUD')
+        self.assertNotIn('purchase_price', data)
+        self.assertNotIn('purchase_price_currency', data)
 
-        # Update just the amount
-        data = self.patch(url, {'purchase_price': 456}, expected_code=200).data
+        # Attempts to write the price are ignored
+        self.patch(
+            url,
+            {'purchase_price': 456, 'purchase_price_currency': 'NZD'},
+            expected_code=200,
+        )
 
-        self.assertAlmostEqual(data['purchase_price'], 456, 3)
-        self.assertEqual(data['purchase_price_currency'], 'AUD')
+        item.refresh_from_db()
+        self.assertEqual(item.purchase_price, price)
 
-        # Update the currency
-        data = self.patch(
-            url, {'purchase_price_currency': 'NZD'}, expected_code=200
-        ).data
+        response = self.post(
+            self.list_url,
+            {
+                'part': 1,
+                'location': 1,
+                'quantity': 5,
+                'purchase_price': 10,
+                'purchase_price_currency': 'USD',
+            },
+            expected_code=201,
+        )
 
-        self.assertEqual(data['purchase_price_currency'], 'NZD')
-
-        # Clear the price field
-        data = self.patch(url, {'purchase_price': None}, expected_code=200).data
-
-        self.assertEqual(data['purchase_price'], None)
-
-        # Invalid currency code
-        data = self.patch(url, {'purchase_price_currency': 'xyz'}, expected_code=400)
-
-        data = self.get(url).data
-        self.assertEqual(data['purchase_price_currency'], 'NZD')
+        item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertIsNone(item.purchase_price)
+        self.assertFalse(item.cost_entries.exists())
 
     def test_output_options(self):
         """Test the output options for StockItemt detail."""
@@ -2874,10 +2852,15 @@ class StockItemDisassembleTest(StockAPITestCase):
             expected_code=201,
         )
 
-        prices = {entry['part']: entry['purchase_price'] for entry in response.data}
+        # Note: purchase price is no longer exposed via the API
+        items = {
+            entry['part']: StockItem.objects.get(pk=entry['pk'])
+            for entry in response.data
+        }
 
-        self.assertAlmostEqual(prices[1], 5, places=3)
-        self.assertIsNone(prices[50])
+        self.assertAlmostEqual(float(items[1].purchase_price.amount), 5, places=3)
+        self.assertEqual(str(items[1].purchase_price.currency), 'NZD')
+        self.assertIsNone(items[50].purchase_price)
 
     def install_item(self, part_pk: int, quantity, **kwargs) -> StockItem:
         """Install a new stock item into the assembly under test."""

@@ -501,7 +501,6 @@ const StockStep = ({
         params={{
           part: importResult.part_id,
           supplier_part: importResult.supplier_part_id,
-          pricing: importResult.pricing,
           openNewStockItem: false
         }}
       />
