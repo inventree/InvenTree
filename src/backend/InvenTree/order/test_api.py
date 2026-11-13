@@ -3693,6 +3693,25 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(self.shipment.delivery_date, datetime(2023, 12, 5).date())
         self.assertTrue(self.shipment.is_delivered())
 
+    def test_shipment_barcode_hash_read_only(self):
+        """The 'barcode_hash' field cannot be changed via the SalesOrderShipment API."""
+        url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
+
+        self.assertEqual(self.shipment.barcode_hash, '')
+
+        # The 'barcode_hash' value is ignored, other fields are updated
+        data = self.patch(
+            url,
+            {'barcode_hash': 'abc123', 'tracking_number': 'TRK999'},
+            expected_code=200,
+        ).data
+
+        self.assertEqual(data['barcode_hash'], '')
+        self.assertEqual(data['tracking_number'], 'TRK999')
+
+        self.shipment.refresh_from_db()
+        self.assertEqual(self.shipment.barcode_hash, '')
+
     def test_shipment_delivery_date(self):
         """Test delivery date functions via API."""
         url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
@@ -4620,8 +4639,99 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         )
 
 
+class OrderDateReadOnlyTests(InvenTreeAPITestCase):
+    """The 'issue_date' and 'complete_date' fields are set by issuing / completing an order."""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+        'return_order',
+        'transfer_order',
+    ]
+
+    superuser = True
+
+    def test_dates_read_only(self):
+        """The 'issue_date' and 'complete_date' fields cannot be changed via the order API."""
+        orders = [
+            (models.PurchaseOrder, 'api-po-detail', ['issue_date', 'complete_date']),
+            (models.SalesOrder, 'api-so-detail', ['issue_date']),
+            (
+                models.ReturnOrder,
+                'api-return-order-detail',
+                ['issue_date', 'complete_date'],
+            ),
+            (
+                models.TransferOrder,
+                'api-transfer-order-detail',
+                ['issue_date', 'complete_date'],
+            ),
+        ]
+
+        for model, url_name, fields in orders:
+            with self.subTest(model=model.__name__):
+                # Select a "pending" order, which can be freely edited
+                order = model.objects.filter(status=10).first()
+                self.assertIsNotNone(order)
+
+                # Start from a known state, without going via the API
+                # (some fixture orders do not have a valid reference)
+                model.objects.filter(pk=order.pk).update(
+                    reference=model.generate_reference(), **dict.fromkeys(fields)
+                )
+
+                url = reverse(url_name, kwargs={'pk': order.pk})
+
+                # The date values are ignored, other fields are updated
+                data = self.patch(
+                    url,
+                    {**dict.fromkeys(fields, '2024-01-01'), 'description': 'Updated'},
+                    expected_code=200,
+                ).data
+
+                self.assertEqual(data['description'], 'Updated')
+
+                order.refresh_from_db()
+
+                for field in fields:
+                    self.assertIsNone(data[field])
+                    self.assertIsNone(getattr(order, field))
+
+
 class ReturnOrderLineItemTests(InvenTreeAPITestCase):
     """Unit tests for ReturnOrderLineItem API endpoints."""
+
+    def test_received_date_read_only(self):
+        """The 'received_date' field cannot be changed via the ReturnOrderLineItem API.
+
+        Line items must be received via the return order 'receive' endpoint,
+        otherwise the returned stock item is never actually received into stock.
+        """
+        self.assignRole('return_order.change')
+
+        line = models.ReturnOrderLineItem.objects.filter(received_date=None).first()
+        self.assertIsNotNone(line)
+
+        url = reverse('api-return-order-line-detail', kwargs={'pk': line.pk})
+
+        # The 'received_date' value is ignored, other fields are updated
+        data = self.patch(
+            url,
+            {'received_date': '2024-01-01', 'reference': 'Updated'},
+            expected_code=200,
+        ).data
+
+        self.assertIsNone(data['received_date'])
+        self.assertEqual(data['reference'], 'Updated')
+
+        line.refresh_from_db()
+        self.assertIsNone(line.received_date)
 
     fixtures = [
         'category',
