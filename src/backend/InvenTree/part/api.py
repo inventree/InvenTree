@@ -16,6 +16,7 @@ import common.filters
 import common.serializers
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from InvenTree.api import (
     BulkDeleteMixin,
     BulkUpdateMixin,
@@ -218,6 +219,7 @@ class CategoryOutputOption(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption(flag='path_detail')]
 
 
+@search_provider(ref_names=['partcategory'])
 class CategoryList(
     CategoryMixin,
     BulkUpdateMixin,
@@ -1025,6 +1027,7 @@ class PartOutputOptions(OutputConfiguration):
     ]
 
 
+@search_provider(ref_names=['part'])
 class PartList(
     PartMixin,
     BulkUpdateMixin,
