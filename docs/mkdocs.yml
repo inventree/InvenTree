@@ -263,6 +263,7 @@ nav:
         - LCSC Barcode Plugin: plugins/builtin/barcode_lcsc.md
         - Mouser Barcode Plugin: plugins/builtin/barcode_mouser.md
         - TME Barcode Plugin: plugins/builtin/barcode_tme.md
+        - Manufacturer Barcode Plugin: plugins/builtin/barcode_manufacturer.md
       - Event Plugins:
         - Auto Create Builds: plugins/builtin/auto_create_builds.md
         - Auto Issue: plugins/builtin/auto_issue.md
