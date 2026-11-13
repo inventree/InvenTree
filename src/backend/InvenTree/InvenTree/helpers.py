@@ -182,7 +182,70 @@ def getMediaUrl(
     if name is not None:
         file = regenerate_imagefile(file, name)
 
-    return default_storage.url(file.name)
+    return get_media_url(file.name)
+
+
+# Request cache key for the default storage base URL (see get_media_url)
+MEDIA_BASE_URL_CACHE_KEY = 'media_storage_base_url'
+
+# Matches '.' or '..' path segments, which urljoin() would resolve
+_DOT_SEGMENT_REGEX = re.compile(r'(^|/)\.\.?(/|$)')
+
+
+def _get_filesystem_base_url() -> str:
+    """Return the base URL of the default storage, if it is a plain FileSystemStorage.
+
+    Returns an empty string for any other storage backend
+    (e.g. S3, or a subclass which may override url()),
+    or if the base URL is not in the expected format.
+
+    The result is cached for the duration of the current request.
+    """
+    from django.core.files.storage import FileSystemStorage
+
+    from InvenTree.cache import get_session_cache, set_session_cache
+
+    base_url = get_session_cache(MEDIA_BASE_URL_CACHE_KEY)
+
+    if base_url is None:
+        base_url = ''
+
+        # Note: default_storage is a LazyObject - __class__ is proxied to the wrapped storage
+        if default_storage.__class__ is FileSystemStorage:
+            storage_base_url = default_storage.base_url
+
+            if isinstance(storage_base_url, str) and storage_base_url.endswith('/'):
+                base_url = storage_base_url
+
+        set_session_cache(MEDIA_BASE_URL_CACHE_KEY, base_url)
+
+    return base_url
+
+
+def get_media_url(name: str) -> str:
+    """Return the URL for the named file in the default (media) storage.
+
+    Equivalent to default_storage.url(name), but for the default FileSystemStorage
+    backend the URL is constructed directly, which avoids the overhead of urljoin().
+    This is significant when rendering URLs for large API list queries.
+
+    Arguments:
+        name: The name (path) of the file within the storage
+    """
+    if base_url := _get_filesystem_base_url():
+        from django.utils.encoding import filepath_to_uri
+
+        url = filepath_to_uri(name)
+
+        if url is not None:
+            url = url.lstrip('/')
+
+            # urljoin() resolves '.' and '..' segments, and collapses empty segments ('//')
+            # Defer to the storage backend for these (rare) cases
+            if '//' not in url and not _DOT_SEGMENT_REGEX.search(url):
+                return base_url + url
+
+    return default_storage.url(name)
 
 
 def regenerate_imagefile(_file, _name: str):
@@ -1154,8 +1217,7 @@ def pui_url(subpath: str) -> str:
 
 def plugins_info(*args, **kwargs):
     """Return information about activated plugins."""
-    from plugin import PluginMixinEnum
-    from plugin.registry import registry
+    from plugin import PluginMixinEnum, registry
 
     # Check if plugins are even enabled
     if not settings.PLUGINS_ENABLED:

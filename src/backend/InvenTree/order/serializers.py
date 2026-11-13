@@ -131,7 +131,7 @@ class AbstractOrderSerializer(
             'many': False,
         },
         default_include=True,
-        prefetch_fields=['responsible'],
+        prefetch_fields=['responsible', 'responsible__owner'],
     )
 
     project_code_label = common.filters.enable_project_label_filter()
@@ -2559,6 +2559,7 @@ class TransferOrderSerializer(
             'allow_null': True,
         },
         default_include=True,
+        prefetch_fields=['take_from', 'take_from__location_type'],
     )
 
     destination_detail = OptionalField(
@@ -2570,6 +2571,7 @@ class TransferOrderSerializer(
             'allow_null': True,
         },
         default_include=True,
+        prefetch_fields=['destination', 'destination__location_type'],
     )
 
 

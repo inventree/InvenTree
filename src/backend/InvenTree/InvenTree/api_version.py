@@ -1,10 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 575
+INVENTREE_API_VERSION = 578
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v578 -> 2026-11-13 : https://github.com/inventree/InvenTree/pull/13265
+    - The "is_building" and "build" fields on the StockItem API are now read-only - build outputs must be created, completed or scrapped via the build order endpoints
+
+v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/13236
+    - non-function doc changes from allauth
+
+v576 -> 2026-11-11 : https://github.com/inventree/InvenTree/pull/13247
+    - Adds /api/system/messages/ endpoint: staff-only, read-only; classified system messages are provided in the "messages" array
 
 v575 -> 2026-11-10 : https://github.com/inventree/InvenTree/pull/13208
     - Adds optional read-only "consumed_by_detail" to the StockItem API

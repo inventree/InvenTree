@@ -137,7 +137,7 @@ class MachineRegistry(
     def discover_machine_types(self):
         """Discovers all machine types by discovering all plugins which implement the Machine mixin class."""
         from plugin import PluginMixinEnum
-        from plugin.registry import registry as plugin_registry
+        from plugin import registry as plugin_registry
 
         logger.debug('Collecting machine types')
 
@@ -187,7 +187,7 @@ class MachineRegistry(
     def discover_drivers(self):
         """Discovers all machine drivers by discovering all plugins which implement the Machine mixin class."""
         from plugin import PluginMixinEnum
-        from plugin.registry import registry as plugin_registry
+        from plugin import registry as plugin_registry
 
         logger.debug('Collecting machine drivers')
         drivers: dict[str, type[BaseDriver]] = {}

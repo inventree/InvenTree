@@ -487,6 +487,16 @@ jobs:
           dev-install: true
           update: true
           static: true
+      # The database is discarded after the run - durability is not required
+      - name: Tune PostgreSQL for Testing
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          docker exec "$PG_CONTAINER" psql -U inventree \
+            -c "ALTER SYSTEM SET fsync = off" \
+            -c "ALTER SYSTEM SET synchronous_commit = off" \
+            -c "ALTER SYSTEM SET full_page_writes = off" \
+            -c "SELECT pg_reload_conf()"
       # Coverage is collected here (not on SQLite) so that tests which require
       # select_for_update (concurrency / locking tests) contribute to coverage
       - name: Coverage Tests

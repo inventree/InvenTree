@@ -651,9 +651,9 @@ django==5.2.19 \
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth[headless, mfa, openid, saml, socialaccount]==65.19.6 \
-    --hash=sha256:52f6d31998c0101775b2b5d4fb627a18f3e13c79d863740f762ca476e720be9f \
-    --hash=sha256:efa94dbb9bccf7f29ab7034d176f6a7ab17014c9434867cc7bceea434623ab06
+django-allauth[headless, mfa, openid, saml, socialaccount]==65.21.1 \
+    --hash=sha256:128344e260a22b62796747be0a2249ad9488a509c1aa34ab35e3fcf22862dd9e \
+    --hash=sha256:7bdf018c9f3f0a32c80677f84e7777272d9c833b180bd6734314c4831c802a9e
     # via -r src/backend/requirements.in
 django-anymail[amazon-ses, postal]==15.1 \
     --hash=sha256:299fb12a21ac4101e9706c2ade461d18deacbb6bc3750cfa6ca08aeea1fc9442 \

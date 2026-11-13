@@ -32,7 +32,7 @@ from InvenTree.template import InvenTreeStorageTemplateLoader
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from part.models import Part
-from plugin.registry import registry
+from plugin import registry
 from report.models import LabelTemplate, ReportTemplate
 from report.tasks import print_labels
 from stock.models import StockItem, StockLocation

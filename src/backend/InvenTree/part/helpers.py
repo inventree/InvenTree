@@ -8,6 +8,7 @@ import structlog
 from jinja2.sandbox import SandboxedEnvironment
 
 from common.settings import get_global_setting
+from InvenTree.cache import get_session_cache, set_session_cache
 
 logger = structlog.get_logger('inventree')
 
@@ -16,34 +17,77 @@ logger = structlog.get_logger('inventree')
 _part_full_name_template = None
 _part_full_name_template_string = ''
 
+# Request cache key for the compiled 'full_name' template
+PART_NAME_TEMPLATE_CACHE_KEY = 'part_full_name_template'
+
+
+class DefaultPartNameTemplate:
+    """Fast (non-jinja) renderer for the default 'PART_NAME_FORMAT' template.
+
+    Produces identical output to the default template:
+    "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}{{ part.revision if part.revision }}"
+    """
+
+    def render(self, part) -> str:
+        """Render the 'full_name' for the provided part."""
+        name = f'{part.IPN} | {part.name}' if part.IPN else str(part.name)
+
+        if part.revision:
+            name += f' | {part.revision}'
+
+        return name
+
+
+def reset_full_name_template(*args, **kwargs):
+    """Clear the request-cached 'full_name' template.
+
+    Called when the 'PART_NAME_FORMAT' setting is saved,
+    so that the new format is applied within the current request.
+    """
+    set_session_cache(PART_NAME_TEMPLATE_CACHE_KEY, None)
+
 
 def compile_full_name_template(*args, **kwargs):
-    """Recompile the template for rendering the 'full_name' attribute of a Part.
+    """Return the compiled template for rendering the 'full_name' attribute of a Part.
 
-    This function is called whenever the 'PART_NAME_FORMAT' setting is changed.
+    The 'PART_NAME_FORMAT' setting is checked (at most) once per request,
+    as this function is called for every Part rendered (e.g. large API list queries).
+    The template is only recompiled when the setting value changes.
     """
     global _part_full_name_template
     global _part_full_name_template_string
 
+    if (template := get_session_cache(PART_NAME_TEMPLATE_CACHE_KEY)) is not None:
+        return template
+
     template_string = get_global_setting('PART_NAME_FORMAT', cache=True)
 
-    # Skip if the template string has not changed
+    # Only recompile if the template string has changed
     if (
-        template_string == _part_full_name_template_string
-        and _part_full_name_template is not None
+        template_string != _part_full_name_template_string
+        or _part_full_name_template is None
     ):
-        return _part_full_name_template
+        from common.setting.system import SYSTEM_SETTINGS
 
-    # Cache the template string
-    _part_full_name_template_string = template_string
+        # Cache the template string
+        _part_full_name_template_string = template_string
 
-    env = SandboxedEnvironment(variable_start_string='{{', variable_end_string='}}')
+        if template_string == SYSTEM_SETTINGS['PART_NAME_FORMAT']['default']:
+            # Default format - avoid the overhead of jinja rendering
+            _part_full_name_template = DefaultPartNameTemplate()
+        else:
+            env = SandboxedEnvironment(
+                variable_start_string='{{', variable_end_string='}}'
+            )
 
-    # Compile the template
-    try:
-        _part_full_name_template = env.from_string(template_string)
-    except Exception:
-        _part_full_name_template = None
+            # Compile the template
+            try:
+                _part_full_name_template = env.from_string(template_string)
+            except Exception:
+                _part_full_name_template = None
+
+    # Note: An invalid (None) template is not cached, and will be re-checked next call
+    set_session_cache(PART_NAME_TEMPLATE_CACHE_KEY, _part_full_name_template)
 
     return _part_full_name_template
 

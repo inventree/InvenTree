@@ -10,6 +10,7 @@ from django_filters.rest_framework.filterset import FilterSet
 import common.filters
 import part.models
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from InvenTree.api import ListCreateDestroyAPIView, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER
@@ -71,6 +72,14 @@ class CompanyMixin(OutputOptionsMixin):
         return queryset
 
 
+@search_provider(
+    ref_names=['company', 'supplier', 'manufacturer', 'customer'],
+    default_filters={
+        'supplier': {'is_supplier': True},
+        'manufacturer': {'is_manufacturer': True},
+        'customer': {'is_customer': True},
+    },
+)
 class CompanyList(CompanyMixin, ParameterListMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Company objects.
 
@@ -98,7 +107,7 @@ class CompanyDetail(CompanyMixin, RetrieveUpdateDestroyAPI):
 class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Company model."""
 
-    queryset = Contact.objects.all()
+    queryset = Contact.objects.all().select_related('company')
     serializer_class = ContactSerializer
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -115,7 +124,7 @@ class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
 class ContactDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for Company model."""
 
-    queryset = Contact.objects.all()
+    queryset = Contact.objects.all().select_related('company')
     serializer_class = ContactSerializer
 
 
@@ -212,6 +221,7 @@ class ManufacturerPartMixin(SerializerContextMixin):
         return queryset
 
 
+@search_provider(ref_names=['manufacturerpart'])
 class ManufacturerPartList(
     DataExportViewMixin,
     ManufacturerPartMixin,
@@ -387,6 +397,7 @@ class SupplierPartMixin:
         return queryset
 
 
+@search_provider(ref_names=['supplierpart'])
 class SupplierPartList(
     DataExportViewMixin,
     SupplierPartMixin,
@@ -482,6 +493,11 @@ class SupplierPriceBreakMixin:
 
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
+
+    def get_queryset(self):
+        """Return annotated queryset for the SupplierPriceBreak endpoints."""
+        queryset = super().get_queryset()
+        return SupplierPriceBreakSerializer.annotate_queryset(queryset)
 
 
 class SupplierPriceBreakOutputOptions(OutputConfiguration):

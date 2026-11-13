@@ -13,7 +13,7 @@ from django.views.generic.base import RedirectView
 import django_filters.rest_framework.filters as rest_filters
 import structlog
 from allauth.account.internal.flows.reauthentication import (
-    did_recently_authenticate,
+    did_recently_reauthenticate,
     get_reauthentication_flows,
 )
 from allauth.mfa.utils import is_mfa_enabled
@@ -292,7 +292,7 @@ class UserList(ListCreateAPI):
     - Otherwise authenticated users have read-only access
     """
 
-    queryset = User.objects.all().prefetch_related('groups')
+    queryset = User.objects.all().select_related('profile').prefetch_related('groups')
     serializer_class = UserCreateSerializer
 
     # User must have the right role, AND be a staff user, else read-only
@@ -394,7 +394,7 @@ def check_token_reauthentication(request) -> Response | None:
     """
     user = request.user
 
-    if is_mfa_enabled(user) and not did_recently_authenticate(request):
+    if is_mfa_enabled(user) and not did_recently_reauthenticate(request):
         return Response(
             {
                 'id': 'reauthentication_required',
