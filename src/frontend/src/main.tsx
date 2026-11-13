@@ -4,19 +4,19 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/spotlight/styles.css';
-import * as Sentry from '@sentry/react';
 import 'mantine-contextmenu/styles.css';
 import 'mantine-datatable/styles.css';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import * as LinguiCore from '@lingui/core';
-import * as LinguiReact from '@lingui/react';
-// Global types to be exported for use in plugins
-import * as MantineCore from '@mantine/core';
-import * as MantineNotifications from '@mantine/notifications';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import type * as LinguiCore from '@lingui/core';
+import type * as LinguiReact from '@lingui/react';
+// Global types to be exported for use in plugins (see functions/pluginGlobalsSetup)
+import type * as MantineCore from '@mantine/core';
+import type * as MantineNotifications from '@mantine/notifications';
+import { StrictMode } from 'react';
+import type * as React from 'react';
+import type * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 
 import './styles/overrides.css';
@@ -103,11 +103,18 @@ window.INVENTREE_SETTINGS = {
 
 if (window.INVENTREE_SETTINGS.sentry_dsn) {
   console.log('Sentry enabled');
-  Sentry.init({
-    dsn: window.INVENTREE_SETTINGS.sentry_dsn,
-    tracesSampleRate: 1.0,
-    environment: window.INVENTREE_SETTINGS.environment || 'default'
-  });
+  // Loaded on demand to keep Sentry out of the initial bundle
+  import('@sentry/react')
+    .then((Sentry) =>
+      Sentry.init({
+        dsn: window.INVENTREE_SETTINGS.sentry_dsn,
+        tracesSampleRate: 1.0,
+        environment: window.INVENTREE_SETTINGS.environment || 'default'
+      })
+    )
+    .catch((err) => {
+      console.error('Failed to load Sentry:', err);
+    });
 }
 // Redirect to base url if on /
 if (window.location.pathname === '/') {
@@ -117,16 +124,7 @@ if (window.location.pathname === '/') {
 ReactDOMClient.createRoot(
   document.getElementById('root') as HTMLElement
 ).render(
-  <React.StrictMode>
+  <StrictMode>
     <MainView />
-  </React.StrictMode>
+  </StrictMode>
 );
-
-// All window globals assigned here since these modules are already statically bundled
-window.React = React;
-window.ReactDOM = ReactDOM;
-window.ReactDOMClient = ReactDOMClient;
-window.MantineCore = MantineCore;
-window.MantineNotifications = MantineNotifications;
-window.LinguiCore = LinguiCore;
-window.LinguiReact = LinguiReact;

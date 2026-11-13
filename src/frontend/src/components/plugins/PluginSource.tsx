@@ -1,4 +1,5 @@
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
+import { ensurePluginGlobals } from '../../functions/pluginGlobals';
 import { generateUrl } from '../../functions/urls';
 import { useLocalState } from '../../states/LocalState';
 
@@ -14,6 +15,8 @@ export async function loadExternalPluginSource(source: string) {
   }
 
   const url = generateUrl(source);
+
+  await ensurePluginGlobals();
 
   const module = await import(/* @vite-ignore */ url)
     .catch((error) => {

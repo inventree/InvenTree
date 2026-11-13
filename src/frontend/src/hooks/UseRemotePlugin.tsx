@@ -2,6 +2,7 @@ import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import { t } from '@lingui/core/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
+import { ensurePluginGlobals } from '../functions/pluginGlobals';
 import { useLocalState } from '../states/LocalState';
 
 type LegacyPluginEntryFn = (
@@ -94,6 +95,7 @@ export function useRemotePlugin({
 
     const loadModule = async () => {
       try {
+        await ensurePluginGlobals();
         const mod = await import(/* @vite-ignore */ moduleUrl);
         if (!cancelled) setRemoteModule(mod);
       } catch (err) {
