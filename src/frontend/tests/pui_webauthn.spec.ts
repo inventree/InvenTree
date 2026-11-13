@@ -83,7 +83,9 @@ test('Login - MFA - WebAuthn', async ({ page, browserName }) => {
       .getByRole('button', { name: 'Multi-Factor Authentication' })
       .click();
     await page.getByRole('button', { name: 'add-factor-webauthn' }).click();
-    await reauthenticate(page, password);
+    if (await reauthenticate(page, password)) {
+      await page.getByRole('button', { name: 'add-factor-webauthn' }).click();
+    }
     await page
       .getByText('WebAuthn credential registered successfully')
       .waitFor();
@@ -111,7 +113,9 @@ test('Login - MFA - WebAuthn', async ({ page, browserName }) => {
     await page.getByRole('button', { name: 'remove-webauthn' }).click();
     await page.getByText('Remove WebAuthn Credential').waitFor();
     await page.getByRole('button', { name: 'Remove', exact: true }).click();
-    await reauthenticate(page, password);
+    if (await reauthenticate(page, password)) {
+      await page.getByRole('button', { name: 'Remove', exact: true }).click();
+    }
     await page.getByText('WebAuthn credential removed successfully').waitFor();
   } finally {
     const api = await createApi({});
