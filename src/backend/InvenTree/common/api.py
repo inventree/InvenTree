@@ -910,7 +910,7 @@ def get_viewable_attachment_model_types(user) -> set:
 class AttachmentMixin:
     """Mixin class for Attachment views."""
 
-    queryset = common.models.Attachment.objects.all()
+    queryset = common.models.Attachment.objects.all().select_related('upload_user')
     serializer_class = common.serializers.AttachmentSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
