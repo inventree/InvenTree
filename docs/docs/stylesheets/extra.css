@@ -199,9 +199,18 @@ div:nth-of-type(1) p:not(.admonition-title) {
 	object-fit: contain;
 }
 
-/* Widen the page layout (theme default is 61rem) */
+/* Widen the page layout (theme default is 61rem), and keep ~5% horizontal
+ * padding so the content does not run to the window edges */
 .md-grid {
 	max-width: 80rem;
+	padding-left: 5%;
+	padding-right: 5%;
+}
+
+/* ...but not for grids nested inside page content (e.g. the home page hero) */
+.md-content .md-grid {
+	padding-left: 0;
+	padding-right: 0;
 }
 
 /* Solid primary-colour header and navigation tabs, as in the classic theme.
