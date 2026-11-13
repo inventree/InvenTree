@@ -2998,7 +2998,30 @@ class SalesOrderShipment(
         customer = order.customer
 
         # Preselect related fields to avoid per-row database queries below
-        allocations = allocations.select_related('line', 'item', 'item__part')
+        allocations = list(allocations.select_related('line', 'item', 'item__part'))
+
+        # Lock the distinct StockItem rows (in pk order, to avoid deadlocks) and
+        # re-read their quantities, so the arithmetic below operates on the
+        # current committed values. Stock adjustments elsewhere lock these
+        # same rows, so concurrent adjustments cannot be silently overwritten.
+        locked_quantities = dict(
+            stock.models.StockItem.objects
+            .select_for_update()
+            .filter(pk__in={allocation.item_id for allocation in allocations})
+            .order_by('pk')
+            .values_list('pk', 'quantity')
+        )
+
+        # Likewise, lock the distinct SalesOrderLineItem rows and re-read their
+        # 'shipped' quantities: another shipment against the same line may be
+        # completed concurrently, and each must add to the latest value
+        locked_shipped = dict(
+            SalesOrderLineItem.objects
+            .select_for_update()
+            .filter(pk__in={allocation.line_id for allocation in allocations})
+            .order_by('pk')
+            .values_list('pk', 'shipped')
+        )
 
         split_items = []  # (source_item, new_item, quantity) - stock to split off
         shipped_items = []  # (target_item, quantity) - stock to mark as shipped
@@ -3016,6 +3039,13 @@ class SalesOrderShipment(
         for allocation in allocations:
             stock_item = seen_stock_items.get(allocation.item_id) or allocation.item
             quantity = allocation.quantity
+
+            if (locked_qty := locked_quantities.pop(stock_item.pk, None)) is not None:
+                # First encounter: refresh the quantity from the locked database row
+                stock_item.quantity = locked_qty
+            elif stock_item.pk not in seen_stock_items:
+                # The stock item no longer exists in the database - skip
+                continue
 
             seen_stock_items[stock_item.pk] = stock_item
 
@@ -3046,7 +3076,13 @@ class SalesOrderShipment(
             shipped_items.append((target_item, quantity))
 
             # Increase the "shipped" quantity for the associated line
-            line = seen_lines.get(allocation.line_id) or allocation.line
+            line = seen_lines.get(allocation.line_id)
+
+            if line is None:
+                # First encounter: refresh the quantity from the locked database row
+                line = allocation.line
+                line.shipped = locked_shipped.get(line.pk, line.shipped)
+
             line.shipped += quantity
             seen_lines[line.pk] = line
 
