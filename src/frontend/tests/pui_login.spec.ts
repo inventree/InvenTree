@@ -2,7 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { TOTP } from 'otpauth';
 import { expect, test } from './baseFixtures.js';
 import { engineeruser, logoutUrl, mfauser, noaccessuser } from './defaults.js';
-import { navigate, openDetailAction } from './helpers.js';
+import { navigate, openDetailAction, reauthenticate } from './helpers.js';
 import { doLogin } from './login.js';
 
 const stripQueryAndHash = (url: string): string => {
@@ -487,10 +487,21 @@ test('Login - MFA - TOTP', async ({ page }) => {
 
   await page.getByRole('textbox', { name: 'text-input-otp-code' }).fill(token);
   await page.getByRole('button', { name: 'Submit', exact: true }).click();
+
+  // re-authentication; needs a new login
+  const submitButton = page.getByRole('button', {
+    name: 'Submit',
+    exact: true
+  });
+  if (await reauthenticate(page, noaccessuser.testcred ?? '', 5000)) {
+    await submitButton.click();
+  }
+
   await page.getByText('TOTP token registered successfully').waitFor();
 
   // View recovery codes
   await page.getByRole('button', { name: 'view-recovery-codes' }).click();
+  await reauthenticate(page, noaccessuser.testcred ?? '');
   await page
     .getByText('The following one time recovery codes are available')
     .waitFor();
@@ -499,6 +510,7 @@ test('Login - MFA - TOTP', async ({ page }) => {
   // Remove TOTP token
   await page.getByRole('button', { name: 'remove-totp' }).click();
   await page.getByRole('button', { name: 'Remove', exact: true }).click();
+  await reauthenticate(page, noaccessuser.testcred ?? '');
 
   await page.getByText('TOTP token removed successfully').waitFor();
 
