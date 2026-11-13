@@ -682,6 +682,78 @@ class SearchTests(InvenTreeAPITestCase):
         # No results again
         self.assertEqual(response.data['build']['count'], 0)
 
+    def test_search_fields(self):
+        """Test that a search can be limited to a subset of fields via 'search_fields'."""
+        from part.models import Part, PartCategory
+
+        TERM = 'zzqxsearchfieldszz'
+
+        category = PartCategory.objects.first()
+
+        by_name = Part.objects.create(
+            name=f'{TERM} name', description='Nothing to see', category=category
+        )
+        by_desc = Part.objects.create(
+            name='Unremarkable part', description=f'{TERM} desc', category=category
+        )
+
+        url = reverse('api-part-list')
+
+        def search(**kwargs):
+            response = self.get(url, {'search': TERM, **kwargs}, expected_code=200)
+            return {part['pk'] for part in response.data}
+
+        # Default behavior: all searchable fields are used
+        self.assertEqual(search(), {by_name.pk, by_desc.pk})
+
+        # Limit to a single field
+        self.assertEqual(search(search_fields='name'), {by_name.pk})
+        self.assertEqual(search(search_fields='description'), {by_desc.pk})
+
+        # Multiple fields (with whitespace)
+        self.assertEqual(
+            search(search_fields='name, description'), {by_name.pk, by_desc.pk}
+        )
+
+        # Unknown fields are ignored
+        self.assertEqual(search(search_fields='name,not_a_field'), {by_name.pk})
+
+        # A field which is not searchable cannot be selected:
+        # falls back to the default search fields
+        self.assertEqual(
+            search(search_fields='creation_user__password'), {by_name.pk, by_desc.pk}
+        )
+
+        # Combines with the other search options
+        self.assertEqual(
+            search(search_fields='description', search_regex=True), {by_desc.pk}
+        )
+
+    def test_search_fields_metadata(self):
+        """Test that the searchable fields are exposed via the OPTIONS endpoint."""
+        from part.api import PartList
+
+        response = self.options(reverse('api-part-list'), expected_code=200)
+
+        fields = response.data['search_fields']
+        names = [field['name'] for field in fields]
+
+        # Lookup prefixes are not exposed
+        self.assertEqual(
+            names, [name.lstrip('^=@$') for name in PartList.search_fields]
+        )
+
+        labels = {field['name']: field['label'] for field in fields}
+
+        self.assertEqual(labels['name'], 'Name')
+        self.assertEqual(labels['category__name'], 'Category / Name')
+
+        # A detail endpoint does not provide search information
+        response = self.options(
+            reverse('api-part-detail', kwargs={'pk': 1}), expected_code=200
+        )
+        self.assertNotIn('search_fields', response.data)
+
     def test_search_notes_distinct(self):
         """Test that search_notes does not return duplicate results for multi-note instances.
 

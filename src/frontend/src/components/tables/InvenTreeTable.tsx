@@ -134,6 +134,14 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
+  // Subset of fields to search in (an empty list means "search all fields")
+  const [searchFields, setSearchFields] = useState<string[]>([]);
+
+  // The search fields only affect the query while a search term is active
+  const activeSearchFields: string = useMemo(() => {
+    return tableState.searchTerm ? searchFields.join(',') : '';
+  }, [tableState.searchTerm, searchFields]);
+
   const userSettings = useUserSettingsState();
 
   const showPreviewPanel = useMemo(() => {
@@ -567,6 +575,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     tableState.clearSelectedRecords();
   }, [
     tableState.searchTerm,
+    activeSearchFields,
     tableState.filterSet.activeFilters,
     tableSearchParams
   ]);
@@ -618,6 +627,11 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       // Add custom search term
       if (tableState.searchTerm) {
         queryParams.search = tableState.searchTerm;
+
+        // Limit the search to the selected fields (if any)
+        if (activeSearchFields) {
+          queryParams.search_fields = activeSearchFields;
+        }
       }
 
       // Pagination
@@ -646,6 +660,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       tableState.filterSet.activeFilters,
       tableSearchParams,
       tableState.searchTerm,
+      activeSearchFields,
       getOrderingTerm
     ]
   );
@@ -810,7 +825,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       sortStatus.direction,
       tableState.tableKey,
       tableState.filterSet.activeFilters,
-      tableState.searchTerm
+      tableState.searchTerm,
+      activeSearchFields
     ],
     retry: 5,
     retryDelay: (attempt: number) => (1 + attempt) * 250,
@@ -884,6 +900,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     sortStatus,
     tableState.page,
     tableState.searchTerm,
+    activeSearchFields,
     tableState.tableKey,
     tableState.filterSet.activeFilters,
     tableSearchParams
@@ -1293,7 +1310,10 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         {!tableProps.noHeader && (
           <Boundary label={`InvenTreeTableHeader-${cacheKey}`}>
             <InvenTreeTableHeader
+              api={api}
               tableUrl={url}
+              searchFields={searchFields}
+              setSearchFields={setSearchFields}
               tableState={tableState}
               tableProps={tableProps}
               hasSwitchableColumns={hasSwitchableColumns}

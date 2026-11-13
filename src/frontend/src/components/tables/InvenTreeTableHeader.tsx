@@ -34,15 +34,18 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableState } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
+import type { AxiosInstance } from 'axios';
 import useDataExport from '../../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { PrintingActions } from '../buttons/PrintingActions';
 import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
+import { TableSearchFieldSelect } from './TableSearchFieldSelect';
 
 /**
  * Render a composite header for an InvenTree table
  */
 export default function InvenTreeTableHeader({
+  api,
   tableUrl,
   tableState,
   tableProps,
@@ -51,8 +54,11 @@ export default function InvenTreeTableHeader({
   filters,
   queryFilters,
   clearQueryFilters,
-  toggleColumn
+  toggleColumn,
+  searchFields,
+  setSearchFields
 }: Readonly<{
+  api: AxiosInstance;
   tableUrl?: string;
   tableState: TableState;
   tableProps: InvenTreeTableProps<any>;
@@ -62,6 +68,8 @@ export default function InvenTreeTableHeader({
   queryFilters?: URLSearchParams;
   clearQueryFilters: () => void;
   toggleColumn: (column: string) => void;
+  searchFields: string[];
+  setSearchFields: (fields: string[]) => void;
 }>) {
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
@@ -93,8 +101,19 @@ export default function InvenTreeTableHeader({
       }
     }
 
+    // Limit the search to the selected fields (if any)
+    if (tableState.searchTerm && searchFields.length > 0) {
+      filters.search_fields = searchFields.join(',');
+    }
+
     return filters;
-  }, [tableProps.params, tableState.filterSet, queryFilters]);
+  }, [
+    tableProps.params,
+    tableState.filterSet,
+    tableState.searchTerm,
+    queryFilters,
+    searchFields
+  ]);
 
   const exportModal = useDataExport({
     url: tableUrl ?? '',
@@ -269,6 +288,15 @@ export default function InvenTreeTableHeader({
             <SearchInput
               disabled={hasCustomSearch}
               searchCallback={(term: string) => tableState.setSearchTerm(term)}
+            />
+          )}
+          {tableProps.enableSearch && tableUrl && (
+            <TableSearchFieldSelect
+              api={api}
+              url={tableUrl}
+              disabled={hasCustomSearch}
+              selectedFields={searchFields}
+              onChange={setSearchFields}
             />
           )}
           {tableProps.enableRefresh && (
