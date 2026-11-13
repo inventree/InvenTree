@@ -2,7 +2,7 @@
 title: Defining Models
 ---
 
-[App Mixins](./mixins/app.md) allow the usage of most django features - amongst the most important use cases is the ability to freely design custom database models for a plugin. While almost all djsngo model festures are supported, it is beneficial to use the built-in abstractions and generic features provided by InvenTree as those are well supported by the platform and come with good API integration.
+[App Mixins](./mixins/app.md) allow the usage of most django features - amongst the most important use cases is the ability to freely design custom database models for a plugin. While almost all django model features are supported, it is beneficial to use the built-in abstractions and generic features provided by InvenTree as those are well supported by the platform and come with good API integration.
 
 ## The apps module
 
