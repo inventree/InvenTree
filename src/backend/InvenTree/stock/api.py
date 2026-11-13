@@ -28,6 +28,7 @@ import stock.serializers as StockSerializers
 from build.models import Build
 from company.models import Company, ManufacturerPart, SupplierPart
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from generic.states.api import StatusView
 from InvenTree.api import (
     BulkCreateMixin,
@@ -442,6 +443,7 @@ class StockLocationOutputOptions(OutputConfiguration):
     ]
 
 
+@search_provider(ref_names=['stocklocation'])
 class StockLocationList(
     DataExportViewMixin,
     BulkUpdateMixin,
@@ -1117,6 +1119,7 @@ class StockOutputOptions(OutputConfiguration):
     ]
 
 
+@search_provider(ref_names=['stockitem'])
 class StockList(
     DataExportViewMixin,
     BulkUpdateMixin,
