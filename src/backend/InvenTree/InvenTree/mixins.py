@@ -1,12 +1,17 @@
 """Mixins for (API) views in the whole project."""
 
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import connection, models, transaction
+
 from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
 import data_exporter.mixins
 import importer.mixins
+from InvenTree.exceptions import ResourceLocked
 from InvenTree.fields import OutputConfiguration
 from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
+from InvenTree.helpers_model import RowLockTimeoutError, lock_row
 from InvenTree.schema import schema_for_view_output_options
 from InvenTree.serializers import FilterableSerializerMixin
 
@@ -23,16 +28,32 @@ class CleanCreate:  # noqa: D101
         )
 
 
-class CleanUpdate:  # noqa: D101
+class CleanUpdate:
+    """Mixin which cleans the provided data before updating an object.
+
+    The update is performed within a single database transaction, with the target row
+    locked *before* it is read. Without this, the object is validated and saved using a
+    snapshot which may be stale by the time it is written - silently reverting any change
+    committed in the meantime (e.g. by a background task, or another request).
+
+    If the row is locked by another (long-running) transaction, the request is rejected
+    with a 409 (see InvenTree.exceptions.ResourceLocked) rather than blocking.
+    """
+
+    # Set to False to skip row locking for a particular view
+    lock_on_update: bool = True
+
     def update(self, request, *args, **kwargs):  # noqa: D102
         # Override to clean data before processing it
         partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=self.clean_data(request.data), partial=partial
-        )
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
+
+        with transaction.atomic():
+            instance = self.get_object_for_update()
+            serializer = self.get_serializer(
+                instance, data=self.clean_data(request.data), partial=partial
+            )
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
@@ -40,6 +61,60 @@ class CleanUpdate:  # noqa: D101
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
+
+    def get_object_for_update(self):
+        """Return the object to be updated, with its database row locked.
+
+        Must be called from within a database transaction.
+
+        Raises:
+            ResourceLocked: If the row is locked by another transaction
+        """
+        if not self.lock_on_update or not connection.features.has_select_for_update:
+            return self.get_object()
+
+        # Preferably, lock the row *before* reading the object.
+        # This is possible if the primary key is provided directly by the URL
+        locked = None
+        target = self._get_lock_target()
+
+        if target is not None:
+            locked = target
+            self._lock_row(*target)
+
+        instance = self.get_object()
+
+        if not isinstance(instance, models.Model) or instance.pk is None:
+            return instance
+
+        if locked == (type(instance), instance.pk):
+            return instance
+
+        # The object was resolved some other way (e.g. a custom lookup):
+        # lock its row now, and then read it again as it may have changed
+        self._lock_row(type(instance), instance.pk)
+
+        return self.get_object()
+
+    def _get_lock_target(self):
+        """Return the (model, pk) which the URL of this request refers to, if known."""
+        if self.lookup_field != 'pk':
+            return None
+
+        value = self.kwargs.get(self.lookup_url_kwarg or self.lookup_field)
+
+        try:
+            model = self.get_queryset().model
+            return (model, model._meta.pk.to_python(value))
+        except (AssertionError, AttributeError, DjangoValidationError):
+            return None
+
+    def _lock_row(self, model, pk) -> None:
+        """Lock the specified database row, or raise ResourceLocked."""
+        try:
+            lock_row(model, pk)
+        except RowLockTimeoutError:
+            raise ResourceLocked()
 
 
 class CleanBase:

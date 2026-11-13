@@ -763,6 +763,15 @@ export function ApiForm({
               invalidResponse(error.response.status);
               props.onFormError?.(error, form);
               break;
+            case 409:
+              // The item is locked by another process (e.g. a background task),
+              // and the request was not applied - the user can retry
+              setNonFieldErrors([
+                error.response.data?.detail ??
+                  t`This item is being updated by another process. Please try again.`
+              ]);
+              props.onFormError?.(error, form);
+              break;
             default:
               // Unexpected state on form error
               invalidResponse(error.response.status);

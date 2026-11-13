@@ -12,11 +12,27 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 
 import structlog
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.exceptions import APIException
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 
 logger = structlog.get_logger('inventree')
+
+
+class ResourceLocked(APIException):
+    """The requested object is locked by another operation, and cannot be modified right now.
+
+    Returned (as HTTP 409) when a database row could not be locked within a reasonable
+    time, e.g. because a background task is updating the same object.
+    The request has not been applied, and can safely be retried.
+    """
+
+    status_code = status.HTTP_409_CONFLICT
+    default_detail = _(
+        'This item is currently being updated by another process - please try again'
+    )
+    default_code = 'resource_locked'
 
 
 def log_error(
