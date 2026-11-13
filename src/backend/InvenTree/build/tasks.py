@@ -121,6 +121,11 @@ def delete_build_outputs(build_id: int, output_ids: list, **kwargs):
     build = Build.objects.get(pk=build_id)
 
     with transaction.atomic():
+        # Lock the build order row first: every operation against this build order
+        # (including the API endpoints) locks the build before any of its outputs,
+        # so that concurrent operations cannot deadlock against each other
+        Build.objects.select_for_update().filter(pk=build_id).first()
+
         for output_id in output_ids:
             # Lock the output row, and re-check that it is still "in production" -
             # it may have been processed already (e.g. by a duplicated task)
@@ -167,6 +172,11 @@ def scrap_build_outputs(
     user = User.objects.filter(pk=user_id).first() if user_id else None
 
     with transaction.atomic():
+        # Lock the build order row first: every operation against this build order
+        # (including the API endpoints) locks the build before any of its outputs,
+        # so that concurrent operations cannot deadlock against each other
+        Build.objects.select_for_update().filter(pk=build_id).first()
+
         for item in outputs:
             # Lock the output row, and re-check that it is still "in production" -
             # it may have been processed already (e.g. by a duplicated task)
@@ -229,6 +239,11 @@ def complete_build_outputs(
     required_tests = build.part.getRequiredTests()
 
     with transaction.atomic():
+        # Lock the build order row first: every operation against this build order
+        # (including the API endpoints) locks the build before any of its outputs,
+        # so that concurrent operations cannot deadlock against each other
+        Build.objects.select_for_update().filter(pk=build_id).first()
+
         for item in outputs:
             # Lock the output row, and re-check that it is still "in production" -
             # it may have been processed already (e.g. by a duplicated task)
@@ -426,24 +441,32 @@ def update_build_order_lines(bom_item_pk: int):
 
     # Iterate through each build, and update the relevant line items
     for bo in builds:
-        # Try to find a matching build order line
-        line = BuildLine.objects.filter(build=bo, bom_item=bom_item).first()
-
         q = bom_item.get_required_quantity(bo.quantity)
 
-        if line:
-            # If the BOM item points to a "virtual" part, delete the BuildLine instance
-            if bom_item.sub_part.virtual:
-                line.delete()
-                continue
+        with transaction.atomic():
+            # Try to find a matching build order line
+            # The row is locked before it is read, as the line is saved in full below:
+            # a stale copy would revert a concurrent update (e.g. the 'consumed' quantity)
+            line = (
+                BuildLine.objects
+                .select_for_update()
+                .filter(build=bo, bom_item=bom_item)
+                .first()
+            )
 
-            # Ensure quantity is correct
-            if line.quantity != q:
-                line.quantity = q
-                line.save()
-        elif not bom_item.sub_part.virtual:
-            # Create a new line item (for non-virtual parts)
-            BuildLine.objects.create(build=bo, bom_item=bom_item, quantity=q)
+            if line:
+                # If the BOM item points to a "virtual" part, delete the BuildLine instance
+                if bom_item.sub_part.virtual:
+                    line.delete()
+                    continue
+
+                # Ensure quantity is correct
+                if line.quantity != q:
+                    line.quantity = q
+                    line.save()
+            elif not bom_item.sub_part.virtual:
+                # Create a new line item (for non-virtual parts)
+                BuildLine.objects.create(build=bo, bom_item=bom_item, quantity=q)
 
     if builds.count() > 0:
         logger.info(

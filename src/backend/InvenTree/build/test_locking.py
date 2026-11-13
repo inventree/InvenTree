@@ -133,9 +133,10 @@ class BuildCompletedConcurrencyTest(ThreadedTestMixin, TransactionTestCase):
     """
 
     def pause_task_before_commit(self):
-        """Patch the output completion task so that it pauses just before it commits.
+        """Patch the output completion task so that it pauses after completing an output.
 
-        At this point the task has updated (and so holds a lock on) the build order row.
+        At this point the task has updated (and so holds a lock on) the build order row,
+        but has not yet committed.
 
         Returns:
             A tuple of (context manager, 'paused' event, 'resume' event)
@@ -143,14 +144,15 @@ class BuildCompletedConcurrencyTest(ThreadedTestMixin, TransactionTestCase):
         paused = threading.Event()
         resume = threading.Event()
 
-        original = Build.increment_completed
+        original = Build.complete_build_output
 
-        def increment_and_pause(bo, quantity):
-            original(bo, quantity)
+        def complete_and_pause(bo, *args, **kwargs):
+            result = original(bo, *args, **kwargs)
             paused.set()
             resume.wait(timeout=15)
+            return result
 
-        patcher = mock.patch.object(Build, 'increment_completed', increment_and_pause)
+        patcher = mock.patch.object(Build, 'complete_build_output', complete_and_pause)
 
         return patcher, paused, resume
 
@@ -334,15 +336,16 @@ class BuildUpdateLockingAPITest(ThreadedTestMixin, TransactionTestCase):
         paused = threading.Event()
         resume = threading.Event()
 
-        original = Build.increment_completed
+        original = Build.complete_build_output
 
-        def increment_and_pause(bo, quantity):
-            original(bo, quantity)
+        def complete_and_pause(bo, *args, **kwargs):
+            result = original(bo, *args, **kwargs)
             paused.set()
             resume.wait(timeout=15)
+            return result
 
         try:
-            with mock.patch.object(Build, 'increment_completed', increment_and_pause):
+            with mock.patch.object(Build, 'complete_build_output', complete_and_pause):
                 self.run_thread(run_complete_outputs_task, self.bo, self.outputs)
                 self.assertTrue(paused.wait(timeout=10))
 
@@ -473,15 +476,16 @@ class ActionLockingAPITest(ThreadedTestMixin, TransactionTestCase):
         paused = threading.Event()
         resume = threading.Event()
 
-        original = Build.increment_completed
+        original = Build.complete_build_output
 
-        def increment_and_pause(build_order, quantity):
-            original(build_order, quantity)
+        def complete_and_pause(build_order, *args, **kwargs):
+            result = original(build_order, *args, **kwargs)
             paused.set()
             resume.wait(timeout=15)
+            return result
 
         try:
-            with mock.patch.object(Build, 'increment_completed', increment_and_pause):
+            with mock.patch.object(Build, 'complete_build_output', complete_and_pause):
                 self.run_thread(run_complete_outputs_task, bo, outputs)
                 self.assertTrue(paused.wait(timeout=10))
 
