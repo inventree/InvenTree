@@ -9,7 +9,6 @@ from typing import Optional
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.core.files.storage import default_storage
 from django.db import models
 from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
@@ -29,7 +28,7 @@ from taggit.serializers import TaggitSerializer
 import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import get_media_url, str2bool
 from InvenTree.helpers_model import getModelsWithMixin
 
 
@@ -941,7 +940,27 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         if not value:
             return None
 
-        return default_storage.url(str(value))
+        return get_media_url(str(value))
+
+
+class InvenTreeThumbnailField(serializers.CharField):
+    """Read-only field which renders the thumbnail URL for a model instance.
+
+    The instance must implement get_thumbnail_url() (e.g. InvenTreeImageMixin).
+
+    Note: This is more efficient than CharField(source='get_thumbnail_url'),
+    as DRF inspects the signature of a callable source for every serialized row.
+    """
+
+    def __init__(self, **kwargs):
+        """Initialize the field as read-only, sourced from the instance itself."""
+        kwargs['source'] = '*'
+        kwargs['read_only'] = True
+        super().__init__(**kwargs)
+
+    def to_representation(self, value):
+        """Return the thumbnail URL for the provided instance."""
+        return value.get_thumbnail_url()
 
 
 class InvenTreeImageSerializerField(serializers.ImageField):
@@ -955,7 +974,7 @@ class InvenTreeImageSerializerField(serializers.ImageField):
         if not value:
             return None
 
-        return default_storage.url(str(value))
+        return get_media_url(str(value))
 
 
 class InvenTreeDecimalField(serializers.FloatField):

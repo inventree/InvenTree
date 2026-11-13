@@ -45,6 +45,12 @@ class InvenTreeConfig(AppConfig):
         - Collecting state transition methods
         - Adding users set in the current environment
         """
+        from django.core import checks
+
+        from InvenTree.checks import check_optional_field_prefetch
+
+        checks.register(check_optional_field_prefetch, checks.Tags.urls)
+
         # skip loading if plugin registry is not loaded or we run in a background thread
 
         if not InvenTree.ready.isPluginRegistryLoaded():
