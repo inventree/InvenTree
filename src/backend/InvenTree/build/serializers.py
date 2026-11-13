@@ -164,7 +164,7 @@ class BuildSerializer(
         },
         default_include=True,
         filter_name='user_detail',
-        prefetch_fields=['responsible'],
+        prefetch_fields=['responsible', 'responsible__owner'],
     )
 
     barcode_hash = serializers.CharField(read_only=True)
@@ -1558,25 +1558,18 @@ class BuildLineSerializer(
         Note: If the 'build' is provided, we can use it to filter available stock, depending on the specified location for the build
 
         """
-        queryset = queryset.select_related(
-            'build',
-            'build__part',
-            'build__part__pricing_data',
-            'bom_item',
-            'bom_item__part',
-            'bom_item__part__pricing_data',
-            'bom_item__sub_part',
-            'bom_item__sub_part__pricing_data',
+        # Note: Only join the tables which are required for every row.
+        # The build (and its part) are shared across many rows, so a prefetch is cheaper
+        # than constructing duplicate model instances for each row via select_related.
+        # Other related data is prefetched by the optional fields (where required).
+        queryset = queryset.select_related('bom_item', 'bom_item__sub_part')
+
+        queryset = queryset.prefetch_related(
+            'build', 'build__part', 'build__part__pricing_data'
         )
 
         # Defer expensive fields which we do not need for this serializer
-
-        queryset = queryset.defer(
-            'build__metadata',
-            'bom_item__metadata',
-            'bom_item__part__metadata',
-            'bom_item__sub_part__metadata',
-        )
+        queryset = queryset.defer('bom_item__metadata', 'bom_item__sub_part__metadata')
 
         # Annotate the "allocated" quantity
         queryset = queryset.annotate(
