@@ -32,6 +32,7 @@ import InvenTree.permissions
 import InvenTree.version
 from audit.helpers import write_batched
 from common.settings import get_global_setting
+from generic.search import get_search_filters, get_search_providers
 from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
@@ -797,37 +798,11 @@ class APISearchView(GenericAPIView):
 
     def get_result_types(self):
         """Construct a list of search types we can return."""
-        import build.api
-        import company.api
-        import order.api
-        import part.api
-        import stock.api
-
-        return {
-            'build': build.api.BuildList,
-            'company': company.api.CompanyList,
-            'supplier': company.api.CompanyList,
-            'manufacturer': company.api.CompanyList,
-            'customer': company.api.CompanyList,
-            'manufacturerpart': company.api.ManufacturerPartList,
-            'supplierpart': company.api.SupplierPartList,
-            'part': part.api.PartList,
-            'partcategory': part.api.CategoryList,
-            'purchaseorder': order.api.PurchaseOrderViewSet,
-            'returnorder': order.api.ReturnOrderList,
-            'salesorder': order.api.SalesOrderList,
-            'salesordershipment': order.api.SalesOrderShipmentList,
-            'stockitem': stock.api.StockList,
-            'stocklocation': stock.api.StockLocationList,
-        }
+        return get_search_providers()
 
     def get_result_filters(self):
         """Provide extra filtering options for particular search groups."""
-        return {
-            'supplier': {'is_supplier': True},
-            'manufacturer': {'is_manufacturer': True},
-            'customer': {'is_customer': True},
-        }
+        return get_search_filters()
 
     def post(self, request, *args, **kwargs):
         """Perform search query against available models."""

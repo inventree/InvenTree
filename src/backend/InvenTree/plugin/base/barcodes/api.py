@@ -31,6 +31,23 @@ from . import serializers as barcode_serializers
 logger = structlog.get_logger('inventree')
 
 
+def get_barcode_plugins(mixin: str = PluginMixinEnum.BARCODE) -> list:
+    """Return the active barcode plugins, in the order they should be queried.
+
+    Plugins are sorted by their BARCODE_PRIORITY attribute (highest first).
+    The sort is stable, so plugins with equal priority retain registry order.
+    """
+    plugins = registry.with_mixin(mixin)
+
+    def priority(plugin) -> int:
+        try:
+            return int(getattr(plugin, 'BARCODE_PRIORITY', 0))
+        except (TypeError, ValueError):
+            return 0
+
+    return sorted(plugins, key=priority, reverse=True)
+
+
 class BarcodeView(CreateAPIView):
     """Custom view class for handling a barcode scan."""
 
@@ -143,9 +160,9 @@ class BarcodeView(CreateAPIView):
     def scan_barcode(self, barcode: str, request, **kwargs):
         """Perform a generic 'scan' of the provided barcode data.
 
-        Check each loaded plugin, and return the first valid match
+        Check each loaded plugin (in priority order), and return the first valid match
         """
-        plugins = registry.with_mixin(PluginMixinEnum.BARCODE)
+        plugins = get_barcode_plugins(PluginMixinEnum.BARCODE)
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
@@ -548,7 +565,7 @@ class BarcodePOReceive(BarcodeView):
                 raise ValidationError(response)
 
         # Now, look just for "supplier-barcode" plugins
-        plugins = registry.with_mixin(PluginMixinEnum.SUPPLIER_BARCODE)
+        plugins = get_barcode_plugins(PluginMixinEnum.SUPPLIER_BARCODE)
 
         plugin_slug = None
 

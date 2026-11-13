@@ -198,6 +198,8 @@ class CategoryTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'subcategories',
         ]
 
+        read_only_fields = ['pathstring']
+
     subcategories = serializers.IntegerField(label=_('Subcategories'), read_only=True)
 
     icon = serializers.CharField(
@@ -325,7 +327,7 @@ class PartBriefSerializer(
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         read_only=True, allow_null=True
     )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    thumbnail = InvenTree.serializers.InvenTreeThumbnailField()
 
     IPN = serializers.CharField(
         required=False,
@@ -482,6 +484,7 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         model = stock_models.StockLocation
         fields = ['pk', 'name', 'pathstring']
+        read_only_fields = ['pathstring']
 
 
 @register_importer()
@@ -842,7 +845,7 @@ class PartSerializer(
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         required=False, allow_null=True
     )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    thumbnail = InvenTree.serializers.InvenTreeThumbnailField()
     starred = serializers.SerializerMethodField()
 
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)

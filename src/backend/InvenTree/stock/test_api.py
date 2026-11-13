@@ -2292,6 +2292,70 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url).data
         self.assertEqual(data['purchase_price_currency'], 'NZD')
 
+    def test_build_fields_read_only(self):
+        """The 'is_building' and 'build' fields cannot be changed via the generic stock item API.
+
+        Build outputs must be completed (or scrapped) via the build order endpoints,
+        otherwise the build order 'completed' count, stock allocations and
+        tracking history are bypassed.
+        """
+        assembly = Part.objects.filter(assembly=True).first()
+        self.assertIsNotNone(assembly)
+
+        bo = build.models.Build.objects.create(
+            part=assembly, reference=build.models.Build.generate_reference(), quantity=5
+        )
+
+        output = bo.create_build_output(5).first()
+        self.assertTrue(output.is_building)
+
+        url = reverse('api-stock-detail', kwargs={'pk': output.pk})
+
+        # Attempting to mark the output as complete is silently ignored
+        data = self.patch(url, {'is_building': False}, expected_code=200).data
+        self.assertTrue(data['is_building'])
+
+        output.refresh_from_db()
+        self.assertTrue(output.is_building)
+
+        bo.refresh_from_db()
+        self.assertEqual(bo.completed, 0)
+
+        # The source build cannot be changed or removed
+        other_bo = build.models.Build.objects.create(
+            part=assembly, reference=build.models.Build.generate_reference(), quantity=5
+        )
+
+        for value in [other_bo.pk, None]:
+            data = self.patch(url, {'build': value}, expected_code=200).data
+            self.assertEqual(data['build'], bo.pk)
+
+        output.refresh_from_db()
+        self.assertEqual(output.build, bo)
+
+        # Nor can a new stock item be created as "in production" or against a build
+        response = self.post(
+            reverse('api-stock-list'),
+            {
+                'part': assembly.pk,
+                'quantity': 3,
+                'location': 1,
+                'is_building': True,
+                'build': bo.pk,
+            },
+            expected_code=201,
+        )
+
+        for item in response.data:
+            item = StockItem.objects.get(pk=item['pk'])
+            self.assertFalse(item.is_building)
+            self.assertIsNone(item.build)
+
+        # And an existing stock item cannot be assigned to a build
+        item_url = reverse('api-stock-detail', kwargs={'pk': 1})
+        data = self.patch(item_url, {'build': bo.pk}, expected_code=200).data
+        self.assertIsNone(data['build'])
+
     def test_output_options(self):
         """Test the output options for StockItemt detail."""
         self.assignRole('build.view')

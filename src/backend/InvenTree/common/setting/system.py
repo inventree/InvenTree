@@ -102,6 +102,13 @@ def update_instance_name(setting):
         site_obj.save()
 
 
+def reset_part_name_format(setting):
+    """Clear the cached Part 'full_name' template when PART_NAME_FORMAT changes."""
+    from part.helpers import reset_full_name_template
+
+    reset_full_name_template()
+
+
 def update_instance_url(setting):
     """Update the first site objects domain to url."""
     if site_obj := _get_site_object():
@@ -579,6 +586,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
         '{{ part.revision if part.revision }}',
         'validator': validate_part_name_format,
+        'after_save': reset_part_name_format,
     },
     'PART_CATEGORY_DEFAULT_ICON': {
         'name': _('Part Category Default Icon'),

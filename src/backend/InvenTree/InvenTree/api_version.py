@@ -1,15 +1,25 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 578
+INVENTREE_API_VERSION = 580
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v578 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/13243
+v580 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/13243
     - breaking: The /api/part/<id>/bom-copy/ endpoint now requires the 'bom.add' role (and 'bom.delete' if remove_existing is set)
     - breaking: Stock action endpoints (count, add, remove, transfer, return, change_status, assign, merge) now require the 'stock.change' role
     - Write operations on API views without a resolvable permission model now fall back to the queryset model, or are denied
+
+v579 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13271
+    - The "consumed" field on the BuildLine API is now read-only - stock must be consumed via the build order endpoints
+    - The "received_date" field on the ReturnOrderLineItem API is now read-only - line items must be received via the return order "receive" endpoint
+    - The "barcode_hash" field on the ManufacturerPart and SalesOrderShipment APIs is now read-only - barcodes must be assigned via the barcode endpoints
+    - The "issue_date" field on the SalesOrder, ReturnOrder and TransferOrder APIs is now read-only (as per the PurchaseOrder API) - it is set when the order is issued
+    - The "complete_date" field on the ReturnOrder and TransferOrder APIs is now read-only (as per the PurchaseOrder API) - it is set when the order is completed
+
+v578 -> 2026-11-13 : https://github.com/inventree/InvenTree/pull/13265
+    - The "is_building" and "build" fields on the StockItem API are now read-only - build outputs must be created, completed or scrapped via the build order endpoints
 
 v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/13236
     - non-function doc changes from allauth
