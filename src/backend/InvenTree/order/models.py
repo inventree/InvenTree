@@ -1137,7 +1137,15 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
             note: Optional note for the item (optional) - recorded against the
                 item's RECEIVED_AGAINST_PURCHASE_ORDER tracking entry, not the
                 StockItem itself
+
+        Each new StockItem receives a PURCHASE cost entry (if the line item has a price),
+        with the line price divided down to a cost per base unit (by the supplier pack quantity).
         """
+        # Local import - pricing.models depends on this module
+        from pricing.helpers import StockItemCostRecorder
+        from pricing.models import CostSource
+        from pricing.status_codes import CostType
+
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
                 "Lines can only be received against an order marked as 'PLACED'"
@@ -1155,6 +1163,12 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
         # StockItem has no 'notes' field, so the note is recorded against each item's
         # RECEIVED_AGAINST_PURCHASE_ORDER tracking event instead
         bulk_create_notes: list[str] = []
+
+        # Unit cost data for bulk_create_items, appended in lockstep (see bulk_create_notes)
+        bulk_create_costs: list[Optional[dict]] = []
+
+        # Records the purchase cost of each new stock item
+        costs = StockItemCostRecorder(source=CostSource.PURCHASE_ORDER, user=user)
 
         # List of line items to update
         line_items_to_update: list[PurchaseOrderLineItem] = []
@@ -1262,12 +1276,31 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
             # Calculate unit purchase price (in base units)
             if line.purchase_price:
-                purchase_price = line.purchase_price / supplier_part.base_quantity(1)
+                pack_quantity = supplier_part.base_quantity(1)
+                unit_cost = line.purchase_price / pack_quantity
 
                 if convert_purchase_price:
-                    purchase_price = convert_money(purchase_price, default_currency)
+                    purchase_price = convert_money(unit_cost, default_currency)
+                else:
+                    purchase_price = unit_cost
+
+                # Cost entry data, recorded in the original (line item) currency.
+                # Note: Line prices are per supplier pack, but costs are per (base) unit
+                cost_data = {
+                    'cost_type': CostType.PURCHASE,
+                    'cost': unit_cost,
+                    'source_data': {
+                        'purchase_order': self.pk,
+                        'line_item': line.pk,
+                        'supplier_part': supplier_part.pk,
+                        'line_price': str(line.purchase_price.amount),
+                        'line_currency': str(line.purchase_price.currency),
+                        'pack_quantity': str(pack_quantity),
+                    },
+                }
             else:
                 purchase_price = None
+                cost_data = None
 
             # Construct dataset for creating a new StockItem instances
             stock_data = {
@@ -1342,6 +1375,9 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                     **stock_data,
                 )
 
+                if cost_data:
+                    costs.add(new_items, **cost_data)
+
                 for new_item in new_items:
                     # run validation for serialized items plugin.validate_batch_code
                     new_item.validate_batch_code()
@@ -1361,6 +1397,7 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
                 bulk_create_items.append(new_item)
                 bulk_create_notes.append(note)
+                bulk_create_costs.append(cost_data)
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
@@ -1393,6 +1430,13 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
             )
 
             stock_items.extend(new_items)
+
+            for new_item, cost_data in zip(new_items, bulk_create_costs, strict=True):
+                if cost_data:
+                    costs.add(new_item, **cost_data)
+
+        # Create the cost entries (and the cost summary) for the new stock items
+        costs.save()
 
         # Update received quantity for each line item
         audited_bulk_update(PurchaseOrderLineItem, line_items_to_update, ['received'])

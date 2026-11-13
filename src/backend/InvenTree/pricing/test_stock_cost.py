@@ -828,3 +828,99 @@ class StockItemCostAuditTests(StockItemCostTestBase):
 
         self.assertTrue(auditlog.contains(StockItemCostEntry))
         self.assertFalse(auditlog.contains(StockItemCost))
+
+
+class StockItemCostRecorderTests(StockItemCostTestBase):
+    """Tests for the StockItemCostRecorder helper."""
+
+    def test_record(self):
+        """Entries are created in bulk, along with the cost summaries."""
+        from django.contrib.auth.models import User
+
+        from pricing.helpers import StockItemCostRecorder
+
+        user = User.objects.create(username='cost-user')
+        items = list(StockItem.objects.order_by('pk')[:3])
+
+        costs = StockItemCostRecorder(source=CostSource.PURCHASE_ORDER, user=user)
+
+        # The same cost for many items
+        self.assertTrue(
+            costs.add(
+                items[:2],
+                CostType.PURCHASE,
+                cost=Money(5, 'USD'),
+                source_data={'line_item': 1},
+            )
+        )
+
+        # A range, and an additional entry for the same item
+        costs.add(items[2], CostType.PURCHASE, min_cost=1, max_cost=2)
+        costs.add(items[2], CostType.LANDED, cost=Money(1, 'USD'), estimated=True)
+
+        # No cost - nothing is recorded
+        self.assertFalse(costs.add(items[0], CostType.FEES, cost=None))
+
+        self.assertEqual(len(costs), 4)
+
+        # Nothing is created until saved
+        self.assertFalse(StockItemCostEntry.objects.exists())
+
+        created = costs.save()
+
+        self.assertEqual(len(created), 4)
+        self.assertEqual(len(costs), 0)
+
+        for entry in StockItemCostEntry.objects.all():
+            self.assertEqual(entry.source, CostSource.PURCHASE_ORDER)
+            self.assertEqual(entry.user, user)
+
+        for item in items[:2]:
+            entry = item.cost_entries.get()
+            self.assertEqual(entry.min_cost, Decimal(5))
+            self.assertEqual(entry.max_cost, Decimal(5))
+            self.assertEqual(entry.source_data, {'line_item': 1})
+
+            summary = self.summary(item)
+            self.assertEqual(summary.min_cost, Decimal(5))
+            self.assertEqual(summary.max_cost, Decimal(5))
+            self.assertFalse(summary.estimated)
+
+        summary = self.summary(items[2])
+        self.assertEqual(summary.min_cost, Decimal(2))
+        self.assertEqual(summary.max_cost, Decimal(3))
+        self.assertTrue(summary.estimated)
+
+        # Saving again creates nothing
+        self.assertEqual(costs.save(), [])
+
+    def test_invalid(self):
+        """Invalid input is rejected, and no entries are created."""
+        from pricing.helpers import StockItemCostRecorder
+
+        costs = StockItemCostRecorder(source=CostSource.MANUAL)
+
+        with self.assertRaises(ValueError):
+            costs.add(self.item, CostType.PURCHASE, cost=1, min_cost=1)
+
+        with self.assertRaises(ValueError):
+            costs.add(StockItem(part=self.item.part), CostType.PURCHASE, cost=1)
+
+        # One invalid entry prevents all entries from being created
+        costs.add(self.item, CostType.PURCHASE, cost=1)
+        costs.add(self.other_item, CostType.PURCHASE, min_cost=5, max_cost=1)
+
+        with self.assertRaises(ValidationError):
+            costs.save()
+
+        self.assertFalse(StockItemCostEntry.objects.exists())
+        self.assertIsNone(self.summary())
+
+        # An invalid source is rejected
+        costs = StockItemCostRecorder(source='not a source')
+        costs.add(self.item, CostType.PURCHASE, cost=1)
+
+        with self.assertRaises(ValidationError):
+            costs.save()
+
+        self.assertFalse(StockItemCostEntry.objects.exists())
