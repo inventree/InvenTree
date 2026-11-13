@@ -543,6 +543,10 @@ class PartCopyBOM(CreateAPI):
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartCopyBOMSerializer
 
+    # Copying a BOM creates new BomItem objects (and may delete existing ones)
+    # Note: The 'bom.delete' permission is checked by the serializer (if required)
+    role_required = 'bom.add'
+
     def get_serializer_context(self):
         """Add custom information to the serializer context for this endpoint."""
         ctx = super().get_serializer_context()

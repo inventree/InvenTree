@@ -1,6 +1,7 @@
 """Unit testing for the Stock API."""
 
 import os
+from contextlib import contextmanager
 from datetime import datetime, timedelta
 from decimal import Decimal
 
@@ -60,6 +61,82 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock.delete',
         'part.view',
     ]
+
+    @contextmanager
+    def without_stock_change_role(self):
+        """Temporarily remove the 'stock.change' role from the test user.
+
+        The 'build.add' role is granted instead, which provides the 'add' permission
+        against the StockItem model (satisfying the ModelPermission check),
+        but does *not* provide the 'stock' role.
+        """
+        rulesets = {
+            ruleset.name: ruleset
+            for ruleset in self.group.rule_sets.filter(name__in=['stock', 'build'])
+        }
+
+        original = {
+            name: (r.can_view, r.can_add, r.can_change, r.can_delete)
+            for name, r in rulesets.items()
+        }
+
+        stock_rules = rulesets['stock']
+        stock_rules.can_view = True
+        stock_rules.can_add = stock_rules.can_change = stock_rules.can_delete = False
+        stock_rules.save()
+
+        build_rules = rulesets['build']
+        build_rules.can_add = True
+        build_rules.save()
+
+        try:
+            yield
+        finally:
+            for name, ruleset in rulesets.items():
+                (
+                    ruleset.can_view,
+                    ruleset.can_add,
+                    ruleset.can_change,
+                    ruleset.can_delete,
+                ) = original[name]
+                ruleset.save()
+
+    def check_stock_change_role(self, url, data, items):
+        """Check that a stock action endpoint requires the 'stock.change' role.
+
+        Without the role, the (otherwise valid) request is refused,
+        and the provided stock items are not modified.
+
+        Arguments:
+            url: The API endpoint URL
+            data: Valid POST data for the endpoint
+            items: List of StockItem primary keys which would be affected by the request
+        """
+        fields = [
+            'pk',
+            'quantity',
+            'location',
+            'status',
+            'status_custom_key',
+            'customer',
+            'belongs_to',
+            'updated',
+        ]
+
+        def snapshot():
+            return list(
+                StockItem.objects.filter(pk__in=items).order_by('pk').values(*fields)
+            )
+
+        n_items = StockItem.objects.count()
+        before = snapshot()
+        self.assertEqual(len(before), len(items))
+
+        with self.without_stock_change_role():
+            self.post(url, data, expected_code=403)
+
+        self.assertEqual(snapshot(), before)
+        self.assertEqual(StockItem.objects.count(), n_items)
 
 
 class StockLocationTest(StockAPITestCase):
@@ -2449,15 +2526,16 @@ class StockItemTest(StockAPITestCase):
             str(response.data['items'][0]['quantity']),
         )
 
-        response = self.post(
-            url,
-            {
-                'items': [{'pk': item.pk, 'quantity': item.quantity}],
-                'location': '1',
-                'notes': 'Returned from this customer for testing',
-            },
-            expected_code=201,
-        )
+        data = {
+            'items': [{'pk': item.pk, 'quantity': item.quantity}],
+            'location': '1',
+            'notes': 'Returned from this customer for testing',
+        }
+
+        # The 'stock.change' role is required
+        self.check_stock_change_role(url, data, [item.pk])
+
+        response = self.post(url, data, expected_code=201)
 
         item.refresh_from_db()
 
@@ -2552,6 +2630,9 @@ class StockItemTest(StockAPITestCase):
             'status': StockStatus.DAMAGED.value,
             'note': 'Damaged in transit',
         }
+
+        # The 'stock.change' role is required
+        self.check_stock_change_role(url, data, [item.pk for item in items])
 
         self.post(url, data, expected_code=201)
 
@@ -3247,6 +3328,10 @@ class StocktakeTest(StockAPITestCase):
 
             # Valid POST
             data = {'items': [{'pk': 1234, 'quantity': 10}]}
+
+            # The 'stock.change' role is required
+            self.check_stock_change_role(url, data, [1234])
+
             response = self.post(url, data, expected_code=201)
             self.assertEqual(response.data['items'][0]['pk'], 1234)
             self.assertEqual(response.data['items'][0]['quantity'], target[endpoint])
@@ -3329,6 +3414,9 @@ class StocktakeTest(StockAPITestCase):
 
         # Now, allow transfer of "out of stock" items
         InvenTreeSetting.set_setting('STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', True)
+
+        # The 'stock.change' role is required
+        self.check_stock_change_role(url, data, [1234])
 
         # This should succeed
         response = self.post(url, data, expected_code=201)
@@ -4538,9 +4626,15 @@ class StockAssignTest(StockAPITestCase):
 
         self.assertEqual(customer.assigned_stock.count(), 0)
 
-        response = self.post(
-            self.URL, data={'items': stock_items, 'customer': 4}, expected_code=201
+        data = {'items': stock_items, 'customer': 4}
+
+        # The 'stock.change' role is required
+        self.check_stock_change_role(
+            self.URL, data, [item['item'] for item in stock_items]
         )
+        self.assertEqual(customer.assigned_stock.count(), 0)
+
+        response = self.post(self.URL, data=data, expected_code=201)
 
         self.assertEqual(response.data['customer'], 4)
 
@@ -4645,6 +4739,11 @@ class StockMergeTest(StockAPITestCase):
             'allow_mismatched_suppliers': True,
         }
 
+        # The 'stock.change' role is required
+        self.check_stock_change_role(
+            self.URL, payload, [self.item_1.pk, self.item_2.pk, self.item_3.pk]
+        )
+
         self.post(self.URL, payload, expected_code=201)
 
         self.item_1.refresh_from_db()
@@ -4654,6 +4753,36 @@ class StockMergeTest(StockAPITestCase):
 
         # Total number of stock items has been reduced!
         self.assertEqual(StockItem.objects.filter(part=self.part).count(), n - 2)
+
+
+class StockActionPermissionTest(StockAPITestCase):
+    """Permission tests for the stock action API endpoints.
+
+    These endpoints use serializers without a Meta.model attribute,
+    and must require the 'stock.change' role.
+    """
+
+    STOCK_ACTIONS = [
+        'api-stock-count',
+        'api-stock-add',
+        'api-stock-remove',
+        'api-stock-transfer',
+        'api-stock-return',
+        'api-stock-change-status',
+        'api-stock-assign',
+        'api-stock-merge',
+    ]
+
+    def test_stock_actions_require_stock_role(self):
+        """Each stock action endpoint is refused without the 'stock.change' role."""
+        with self.without_stock_change_role():
+            for name in self.STOCK_ACTIONS:
+                self.post(reverse(name), {}, expected_code=403)
+
+        # With the 'stock.change' role, the request passes the permission checks
+        # (and fails validation, as no data is provided)
+        for name in self.STOCK_ACTIONS:
+            self.post(reverse(name), {}, expected_code=400)
 
 
 class StockMetadataAPITest(InvenTreeAPITestCase):

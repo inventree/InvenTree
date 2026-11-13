@@ -119,7 +119,7 @@ class DataImportSessionAcceptFields(APIView):
             raise PermissionDenied()
 
         # Check that the user has permission to accept the field mapping
-        if not session.check_import_permission(request.user):
+        if not session.check_import_permission(request.user, request=request):
             raise PermissionDenied()
 
         # Attempt to accept the mapping (may raise an exception if the mapping is invalid)
@@ -149,7 +149,7 @@ class DataImportSessionAcceptRows(DataImporterPermissionMixin, CreateAPI):
             user = self.request.user
             if not user.is_staff and session.user != user:
                 raise PermissionDenied()
-            if not session.check_import_permission(user):
+            if not session.check_import_permission(user, request=self.request):
                 raise PermissionDenied()
             ctx['session'] = session
 

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#13243](https://github.com/inventree/InvenTree/pull/13243) Stricter role checks for API action endpoints: copying a BOM requires the BOM role (add, and delete if existing items are removed), and stock adjustment endpoints require the Stock Items "change" permission. Write operations on API endpoints without an associated role or model are now denied.
+- [#13243](https://github.com/inventree/InvenTree/pull/13243) OAuth2 tokens now require the matching role scope for data which is accessed or modified via general endpoints (attachments, parameters, notes, barcode actions, label / report printing, search, data import). Integrations which relied on the `g:read` / `g:write` scopes alone may need additional scopes. Refer to the [API documentation](https://docs.inventree.org/en/latest/api/#scopes) for details.
 - [#13271](https://github.com/inventree/InvenTree/pull/13271) makes a number of API fields read-only, as they are managed by dedicated endpoints and must not be edited directly: `consumed` (BuildLine), `received_date` (ReturnOrderLineItem), `barcode_hash` (ManufacturerPart, SalesOrderShipment), `issue_date` (SalesOrder, ReturnOrder, TransferOrder) and `complete_date` (ReturnOrder, TransferOrder). Values provided for these fields are now ignored.
 
 ### Added

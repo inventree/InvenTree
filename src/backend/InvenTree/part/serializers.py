@@ -13,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 from sql_util.utils import SubqueryCount
 
 import common.filters
@@ -28,6 +29,7 @@ import users.models
 from data_exporter.mixins import DataExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.permissions import check_request_role
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import OptionalField, TreePathSerializer
 from pricing.models import PartPricing
@@ -1806,6 +1808,21 @@ class PartCopyBOMSerializer(serializers.Serializer):
         help_text=_('Copy substitute parts when duplicate BOM items'),
         default=True,
     )
+
+    def validate(self, data):
+        """Check that the user has permission to remove existing BOM items (if required)."""
+        data = super().validate(data)
+
+        if data.get('remove_existing', True):
+            request = self.context.get('request')
+
+            # Note: OAuth2 tokens must also hold the 'bom' delete scope
+            if not check_request_role(request, 'bom', 'delete'):
+                raise PermissionDenied(
+                    _('User does not have permission to remove existing BOM items')
+                )
+
+        return data
 
     def save(self):
         """Actually duplicate the BOM."""

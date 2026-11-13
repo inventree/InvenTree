@@ -28,6 +28,74 @@ The URLs get exposed under `/plugin/{plugin.slug}/*` and get exposed to the temp
 If your plugin will implement and host another webpage, familiarize yourself with Django views. Implementation is exactly the same.
 A good place to start is the [django documentation]({% include "django.html" %}/topics/http/views/). Additional InvenTree-specific information is below.
 
+### API Views and Permissions
+
+If your plugin provides API endpoints (e.g. using [Django REST Framework](https://www.django-rest-framework.org/) views), you are responsible for ensuring that these endpoints enforce the correct [user permissions](../../settings/permissions.md).
+
+Unless a view overrides the `permission_classes` attribute, the default InvenTree permission classes are applied. These check the user's role permissions (and the [OAuth2 scopes](../../api/index.md#scopes) of the token, if applicable) against the *model* associated with the view:
+
+- If the view's serializer defines a `Meta.model` attribute, permissions are checked against that model
+- Otherwise, for write operations (`POST`, `PUT`, `PATCH`, `DELETE`), permissions are checked against the model of the view's `queryset`
+- If no model can be determined, write operations are denied (for all users except superusers)
+
+For views which use a serializer without a model (e.g. "action" endpoints), or which modify data associated with a different role, specify the required role explicitly using the `role_required` attribute. This can either be a role name (e.g. `'stock'`, in which case the permission is determined by the HTTP method), or a `role.permission` pair (e.g. `'stock.change'`):
+
+```python
+from rest_framework import serializers
+from rest_framework.generics import CreateAPIView
+from rest_framework.response import Response
+
+from stock.models import StockItem
+
+
+class AdjustSerializer(serializers.Serializer):
+    """Serializer without a model."""
+
+    item = serializers.PrimaryKeyRelatedField(queryset=StockItem.objects.all())
+
+
+class AdjustStockView(CreateAPIView):
+    """Custom action which modifies stock items."""
+
+    queryset = StockItem.objects.none()
+    serializer_class = AdjustSerializer
+
+    # Require the 'change' permission for the 'stock' role (for all HTTP methods)
+    role_required = 'stock.change'
+
+    def create(self, request, *args, **kwargs):
+        ...
+        return Response({'success': True})
+```
+
+!!! warning "Overriding permission classes"
+    If you override the `permission_classes` attribute of a view, the default role permission checks are no longer applied, and you must implement any required permission checks yourself.
+
+#### Additional Permission Checks
+
+If your view reads or modifies data beyond the model associated with the view, check the user's permissions against that data as well. Use the `check_request_permission` and `check_request_role` functions, which take the API request (rather than the user) - so that the scopes of an OAuth2 token are also checked:
+
+```python
+from rest_framework.exceptions import PermissionDenied
+
+from InvenTree.permissions import check_request_permission, check_request_role
+from part.models import Part
+
+...
+
+def create(self, request, *args, **kwargs):
+    # Check the 'change' permission against the Part model
+    if not check_request_permission(request, Part, 'change'):
+        raise PermissionDenied()
+
+    # Check the 'delete' permission for the 'bom' role
+    if not check_request_role(request, 'bom', 'delete'):
+        raise PermissionDenied()
+```
+
+!!! info "OAuth2 Scopes"
+    The `check_user_permission` and `check_user_role` functions (in `users.permissions`) only check the permissions of the user. When used within an API view, they ignore the scopes of an OAuth2 token, which may allow a token to perform actions beyond its scopes.
+
 ### Rendering Views
 Rendering templated views is also supported. Templated HTML files should be placed inside your plugin folder in a sub folder called `templates`.
 Placed here, the template can be called using the file name and the render command.

@@ -27,18 +27,75 @@ ACTION_MAP = {
 }
 
 
+class PermissionModelNotFoundError(AttributeError):
+    """Raised when the 'model' for an API view cannot be determined.
+
+    Subclasses AttributeError for backwards compatibility with existing callers.
+    """
+
+
+def _get_serializer_model(serializer_class):
+    """Return the Meta.model attribute of a serializer class (or None)."""
+    meta = getattr(serializer_class, 'Meta', None)
+    return getattr(meta, 'model', None)
+
+
 def get_model_for_view(view):
-    """Attempt to introspect the 'model' type for an API view."""
+    """Attempt to introspect the 'model' type for an API view.
+
+    The model is determined (in order of priority) by:
+
+    1. The view's get_permission_model() method (which may return None to explicitly opt out)
+    2. The view's serializer_class.Meta.model attribute
+    3. The view's get_serializer_class().Meta.model attribute
+
+    Raises:
+        PermissionModelNotFoundError: If the model cannot be determined
+    """
     if hasattr(view, 'get_permission_model'):
         return view.get_permission_model()
 
-    if hasattr(view, 'serializer_class'):
-        return view.serializer_class.Meta.model
+    if model := _get_serializer_model(getattr(view, 'serializer_class', None)):
+        return model
 
     if hasattr(view, 'get_serializer_class'):
-        return view.get_serializer_class().Meta.model
+        try:
+            serializer_class = view.get_serializer_class()
+        except (AssertionError, AttributeError):
+            # DRF asserts that serializer_class is set if get_serializer_class is not overridden
+            serializer_class = None
 
-    raise AttributeError(f'Serializer class not specified for {view.__class__}')
+        if model := _get_serializer_model(serializer_class):
+            return model
+
+    raise PermissionModelNotFoundError(
+        f'Cannot determine permission model for {view.__class__.__name__}'
+    )
+
+
+def get_queryset_model_for_view(view):
+    """Return the model of the queryset associated with an API view (or None).
+
+    This is the same model as is checked by the ModelPermission class.
+    """
+    queryset = getattr(view, '_cached_queryset', None)
+
+    if queryset is None:
+        queryset = getattr(view, 'queryset', None)
+
+    return getattr(queryset, 'model', None)
+
+
+def split_role_required(role: str, permission: str) -> tuple[str, str]:
+    """Split a 'role_required' value into (role, permission).
+
+    The role may be specified as 'role' or 'role.permission'.
+    If no permission is specified, the provided default permission is returned.
+    """
+    if '.' in role:
+        role, permission = role.split('.', 1)
+
+    return role, permission
 
 
 def get_roles_for_view(view) -> list[str]:
@@ -47,7 +104,7 @@ def get_roles_for_view(view) -> list[str]:
         model = get_model_for_view(view)
     except Exception:
         # Fall back to the model of the queryset (as checked by ModelPermission)
-        model = getattr(getattr(view, 'queryset', None), 'model', None)
+        model = get_queryset_model_for_view(view)
 
     if model is None:
         return []
@@ -108,6 +165,87 @@ for role, tables in roles.items():
         precalculated_roles[table].append(role)
 
 
+def is_oauth2_request(request) -> bool:
+    """Return True if the request was authenticated using an OAuth2 access token."""
+    # Note: Authentication errors are not caught here, so the check cannot "fail open"
+    authenticator = getattr(request, 'successful_authenticator', None)
+
+    return isinstance(authenticator, OAuth2Authentication)
+
+
+def request_has_scope(request, scope: str) -> bool:
+    """Check that the OAuth2 token of a request holds the provided scope.
+
+    Requests which are not authenticated via OAuth2 are not restricted by scopes.
+    """
+    if not is_oauth2_request(request):
+        return True
+
+    token = getattr(request, 'auth', None)
+
+    return hasattr(token, 'is_valid') and bool(token.is_valid([scope]))
+
+
+def check_request_role(request, role: str, permission: str, groups=None) -> bool:
+    """Check if the requesting user has a particular role:permission combination.
+
+    In addition to the user's roles, an OAuth2 token must hold the matching role scope.
+    Use this (instead of users.permissions.check_user_role) for permission checks
+    performed within an API view or serializer, which are not covered by the
+    scopes required by the view's permission classes.
+
+    Arguments:
+        request: The API request object
+        role: The role to check (e.g. 'part' / 'stock')
+        permission: The permission to check (e.g. 'view' / 'delete')
+        groups: Optional cached queryset of groups to check
+    """
+    user = getattr(request, 'user', None)
+
+    if not users.permissions.check_user_role(user, role, permission, groups=groups):
+        return False
+
+    return request_has_scope(request, get_granular_scope(permission, role))
+
+
+def check_request_permission(request, model, permission: str, groups=None) -> bool:
+    """Check if the requesting user has a particular permission against a given model type.
+
+    In addition to the user's permissions, an OAuth2 token must hold the role scope
+    for (at least) one of the roles which grant the permission against the model.
+    Use this (instead of users.permissions.check_user_permission) for permission checks
+    performed within an API view or serializer, which are not covered by the
+    scopes required by the view's permission classes.
+
+    Arguments:
+        request: The API request object
+        model: The model class (or instance) to check
+        permission: The permission to check (e.g. 'view' / 'delete')
+        groups: Optional cached queryset of groups to check
+    """
+    user = getattr(request, 'user', None)
+
+    if not users.permissions.check_user_permission(
+        user, model, permission, groups=groups
+    ):
+        return False
+
+    if not is_oauth2_request(request):
+        return True
+
+    table_name = f'{model._meta.app_label}_{model._meta.model_name}'
+
+    if table_name in users.ruleset.get_ruleset_ignore():
+        # No role is associated with this model - covered by the view's general scopes
+        return True
+
+    return any(
+        users.permissions.check_user_role(user, role, permission, groups=groups)
+        and request_has_scope(request, get_granular_scope(permission, role))
+        for role in precalculated_roles.get(table_name, [])
+    )
+
+
 def enforce_oauth2_scopes(has_permission):
     """Decorate a `has_permission` method, so that OAuth2 tokens must hold the required scopes.
 
@@ -160,12 +298,10 @@ class OASTokenMixin:
 
     def is_oauth2ed(self, request):
         """Check if the user is authenticated using OAuth2."""
-        oauth2authenticated = False
-        if bool(request.user and request.user.is_authenticated):
-            oauth2authenticated = isinstance(
-                request.successful_authenticator, OAuth2Authentication
-            )
-        return oauth2authenticated
+        if not bool(request.user and request.user.is_authenticated):
+            return False
+
+        return is_oauth2_request(request)
 
 
 class InvenTreeRoleScopeMixin(OASTokenMixin):
@@ -179,7 +315,7 @@ class InvenTreeRoleScopeMixin(OASTokenMixin):
         # The required role may be defined for the view class (see RolePermission)
         if role := getattr(view, 'role_required', None):
             if '.' in role:
-                role, permission = role.split('.')
+                role, permission = split_role_required(role, '')
                 return map_scope(roles=[role], override_all_actions=permission)
             return map_scope(roles=[role])
 
@@ -272,22 +408,29 @@ class RolePermission(InvenTreeRoleScopeMixin, permissions.BasePermission):
         # The required role may be defined for the view class
         if role := getattr(view, 'role_required', None):
             # If the role is specified as "role.permission", split it
-            if '.' in role:
-                role, permission = role.split('.')
-
+            role, permission = split_role_required(role, permission)
             return users.permissions.check_user_role(user, role, permission)
 
         try:
             # Extract the model name associated with this request
             model = get_model_for_view(view)
-
-            if model is None:
+        except PermissionModelNotFoundError:
+            # The model cannot be determined from the view or serializer
+            # (e.g. a plain Serializer without a Meta.model attribute)
+            if request.method in permissions.SAFE_METHODS:
                 return True
 
-        except AttributeError:
-            # We will assume that if the serializer class does *not* have a Meta,
-            # then we don't need a permission
-            return True
+            # For write operations, fall back to the queryset model
+            # (as checked by ModelPermission), and fail closed if not found
+            model = get_queryset_model_for_view(view)
+
+            if model is None:
+                return False
+        else:
+            if model is None:
+                # The view has explicitly opted out of model permissions,
+                # via get_permission_model() returning None
+                return True
 
         return users.permissions.check_user_permission(user, model, permission)
 
@@ -526,7 +669,7 @@ class DataImporterPermission(OASTokenMixin, permissions.BasePermission):
             session = getattr(obj, 'session', None)
 
         if session:
-            return session.check_import_permission(request.user)
+            return session.check_import_permission(request.user, request=request)
 
         return True
 

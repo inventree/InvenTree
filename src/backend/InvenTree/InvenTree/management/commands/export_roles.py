@@ -11,7 +11,7 @@ import json
 
 from django.core.management.base import BaseCommand
 
-from users.ruleset import RULESET_CHOICES, RuleSetEnum
+from users.ruleset import RULESET_CHOICES, RuleSetEnum, get_ruleset_models
 
 from .export_report_context import parse_docstring
 
@@ -37,6 +37,19 @@ class Command(BaseCommand):
         print(f"Exported InvenTree role definitions to '{filename}'")
 
 
+def get_model_names() -> dict:
+    """Return a mapping of database table names to model names."""
+    from django.apps import apps
+
+    names = {}
+
+    for model in apps.get_models():
+        table = f'{model._meta.app_label}_{model._meta.model_name}'
+        names[table] = str(model._meta.verbose_name).capitalize()
+
+    return names
+
+
 def discover_roles():
     """Discover all available user permission roles (rulesets).
 
@@ -44,8 +57,13 @@ def discover_roles():
     Each role's description is sourced from `RuleSetEnum`'s docstring `Attributes:`
     block, rather than being manually curated here - so a role's description can
     never drift out of sync with its source.
+
+    Each role also lists the database models it grants permissions against
+    (sourced from `get_ruleset_models`) - some models are covered by multiple roles.
     """
     attributes = parse_docstring(RuleSetEnum.__doc__ or '').get('Attributes', {})
+    ruleset_models = get_ruleset_models()
+    model_names = get_model_names()
 
     return [
         {
@@ -53,6 +71,10 @@ def discover_roles():
             'key': str(key.value),
             'label': str(label),
             'description': attributes.get(key.name, ''),
+            'models': [
+                {'table': table, 'name': model_names.get(table, table)}
+                for table in ruleset_models.get(key.value, [])
+            ],
         }
         for key, label in RULESET_CHOICES
     ]

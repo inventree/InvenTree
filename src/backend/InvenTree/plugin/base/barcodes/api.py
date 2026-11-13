@@ -23,8 +23,8 @@ from InvenTree.exceptions import log_error
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import hash_barcode
 from InvenTree.mixins import ListAPI, RetrieveDestroyAPI
+from InvenTree.permissions import check_request_permission
 from plugin import PluginMixinEnum, registry
-from users.permissions import check_user_permission
 
 from . import serializers as barcode_serializers
 
@@ -277,7 +277,7 @@ class BarcodeGenerate(CreateAPIView):
         except model_cls.DoesNotExist:
             raise ValidationError({'error': _('Model instance not found')})
 
-        if not check_user_permission(request.user, model_cls, 'view'):
+        if not check_request_permission(request, model_cls, 'view'):
             raise PermissionDenied()
 
         barcode_data = plugin.base.barcodes.helper.generate_barcode(model_instance)
@@ -325,7 +325,7 @@ class BarcodeAssign(BarcodeView):
 
             if instance := kwargs.get(label):
                 # Check that the user has the required permission
-                if not check_user_permission(request.user, model, 'change'):
+                if not check_request_permission(request, model, 'change'):
                     raise PermissionDenied({
                         'error': f'You do not have the required permissions for {model}'
                     })
@@ -383,7 +383,7 @@ class BarcodeUnassign(BarcodeView):
 
             if instance := data.get(label, None):
                 # Check that the user has the required permission
-                if not check_user_permission(request.user, model, 'change'):
+                if not check_request_permission(request, model, 'change'):
                     raise PermissionDenied({
                         'error': f'You do not have the required permissions for {model}'
                     })
@@ -462,7 +462,7 @@ class BarcodePOAllocate(BarcodeView):
 
     def handle_barcode(self, barcode: str, request, **kwargs):
         """Scan the provided barcode data."""
-        if not check_user_permission(request.user, order.models.PurchaseOrder, 'add'):
+        if not check_request_permission(request, order.models.PurchaseOrder, 'add'):
             raise PermissionDenied({
                 'error': _(
                     'You do not have the required permissions for purchase orders'
@@ -522,7 +522,7 @@ class BarcodePOReceive(BarcodeView):
 
     def handle_barcode(self, barcode: str, request, **kwargs):
         """Handle a barcode scan for a purchase order item."""
-        if not check_user_permission(request.user, order.models.PurchaseOrder, 'add'):
+        if not check_request_permission(request, order.models.PurchaseOrder, 'add'):
             raise PermissionDenied({
                 'error': _(
                     'You do not have the required permissions for purchase orders'
@@ -764,7 +764,7 @@ class BarcodeSOAllocate(BarcodeView):
             line: SalesOrderLineItem ID value (optional)
             shipment: SalesOrderShipment ID value (optional)
         """
-        if not check_user_permission(request.user, order.models.SalesOrder, 'add'):
+        if not check_request_permission(request, order.models.SalesOrder, 'add'):
             raise PermissionDenied({
                 'error': _('You do not have the required permissions for sales orders')
             })

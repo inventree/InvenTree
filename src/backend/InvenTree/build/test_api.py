@@ -3426,3 +3426,44 @@ class BuildActionMissingPkTest(InvenTreeAPITestCase):
         ]:
             url = reverse(url_name, kwargs={'pk': 999999})
             self.post(url, {}, expected_code=404)
+
+
+class BuildActionPermissionTest(InvenTreeAPITestCase):
+    """Permission tests for the Build action API endpoints.
+
+    These endpoints use serializers without a Meta.model attribute,
+    so the RolePermission check falls back to the queryset model (Build).
+    """
+
+    fixtures = ['category', 'part', 'location', 'bom', 'build', 'build_line', 'stock']
+
+    roles = ['build.view']
+
+    BUILD_ACTIONS = [
+        'api-build-allocate',
+        'api-build-consume',
+        'api-build-auto-allocate',
+        'api-build-output-complete',
+        'api-build-output-create',
+        'api-build-output-delete',
+        'api-build-output-scrap',
+        'api-build-issue',
+        'api-build-hold',
+        'api-build-finish',
+        'api-build-cancel',
+        'api-build-unallocate',
+    ]
+
+    def test_actions_require_build_role(self):
+        """Each build action endpoint is refused without the 'build.add' role."""
+        for name in self.BUILD_ACTIONS:
+            self.post(reverse(name, kwargs={'pk': 1}), {}, expected_code=403)
+
+        self.assignRole('build.add')
+
+        # The request now passes the permission checks
+        for name in self.BUILD_ACTIONS:
+            response = self.post(
+                reverse(name, kwargs={'pk': 1}), {}, expected_code=None
+            )
+            self.assertNotEqual(response.status_code, 403, name)

@@ -169,13 +169,15 @@ class DataImportSession(models.Model):
 
         return supported_models().get(self.model_type, None)
 
-    def check_import_permission(self, user) -> bool:
+    def check_import_permission(self, user, request=None) -> bool:
         """Check if the provided user is allowed to import data into the target model.
 
         - Models marked with IMPORT_REQUIRES_STAFF require the user to be staff,
           matching the API write permissions for that model.
         - The user must also have 'change' permission for the target model.
+        - If the request is provided, an OAuth2 token must also hold the matching role scope.
         """
+        from InvenTree.permissions import check_request_permission
         from users.permissions import check_user_permission
 
         model_class = self.model_class
@@ -187,6 +189,9 @@ class DataImportSession(models.Model):
             user, 'is_staff', False
         ):
             return False
+
+        if request is not None:
+            return check_request_permission(request, model_class, 'change')
 
         return check_user_permission(user, model_class, 'change')
 

@@ -12,10 +12,10 @@ from rest_framework.response import Response
 
 import InvenTree.permissions
 from InvenTree.exceptions import log_error
+from InvenTree.permissions import check_request_permission
 from InvenTree.tasks import offload_task
 from plugin import PluginMixinEnum, call_plugin_function, registry
 from stock.models import StockItem, StockLocation
-from users.permissions import check_user_permission
 
 
 class LocatePluginSerializer(serializers.Serializer):
@@ -64,7 +64,7 @@ class LocatePluginView(GenericAPIView):
         # StockItem takes priority
         if item_pk:
             # Check permissions *before* lookup, to prevent existence leaks
-            if not check_user_permission(request.user, StockItem, 'view'):
+            if not check_request_permission(request, StockItem, 'view'):
                 raise PermissionDenied(
                     'User does not have permission to view stock items'
                 )
@@ -92,7 +92,7 @@ class LocatePluginView(GenericAPIView):
 
         elif location_pk:
             # Check permissions *before* lookup, to prevent existence leaks
-            if not check_user_permission(request.user, StockLocation, 'view'):
+            if not check_request_permission(request, StockLocation, 'view'):
                 raise PermissionDenied(
                     'User does not have permission to view stock locations'
                 )

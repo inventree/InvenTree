@@ -367,6 +367,53 @@ class UserMixin:
                     break
 
 
+class OAuth2TestMixin:
+    """Mixin for issuing OAuth2 access tokens (with specific scopes) in API tests."""
+
+    def get_oauth2_token(self, scope: str, user=None):
+        """Issue an OAuth2 access token with the provided (space separated) scopes."""
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from oauth2_provider.models import AccessToken, Application
+
+        application, _ = Application.objects.get_or_create(
+            name='OAuth2 test application',
+            defaults={
+                'client_type': Application.CLIENT_CONFIDENTIAL,
+                'authorization_grant_type': Application.GRANT_AUTHORIZATION_CODE,
+                'redirect_uris': 'https://example.com/callback',
+            },
+        )
+
+        return AccessToken.objects.create(
+            user=user or self.user,
+            application=application,
+            token=f'oauth2-test-token-{AccessToken.objects.count()}',
+            expires=timezone.now() + timedelta(hours=1),
+            scope=scope,
+        )
+
+    def oauth2_post(self, token, url: str, data=None, expected_code=None):
+        """Perform a POST request authenticated with the provided OAuth2 token."""
+        from rest_framework.test import APIClient
+
+        client = APIClient()
+
+        response = client.post(
+            url,
+            data=data or {},
+            format='json',
+            HTTP_AUTHORIZATION=f'Bearer {token.token}',
+        )
+
+        if expected_code is not None:
+            self.assertEqual(response.status_code, expected_code, response.data)
+
+        return response
+
+
 class PluginMixin:
     """Mixin to ensure that all plugins are loaded for tests."""
 
