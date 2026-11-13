@@ -929,6 +929,63 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertIn('inventree-ui-notification', keys)
         self.assertIn('inventreelabel', keys)
 
+    def test_info_view_disabled_plugin_mixins(self):
+        """Test that plugins which rely on a disabled integration are reported."""
+        from plugin.registry import registry
+
+        self.ensurePluginsLoaded()
+
+        url = reverse('api-inventree-info')
+
+        # The 'sample' plugin makes use of the (gated) URL and navigation mixins
+        registry.set_plugin_state('sample', True)
+
+        def get_entries():
+            data = self.get(url, expected_code=200).json()
+            return data['system_state']['plugins_disabled_mixins']
+
+        self.user.is_staff = True
+        self.user.save()
+
+        set_global_setting('ENABLE_PLUGINS_URL', False)
+        set_global_setting('ENABLE_PLUGINS_NAVIGATION', True)
+
+        entries = get_entries()
+
+        # The disabled URL integration is reported for the sample plugin
+        self.assertIn(
+            {
+                'plugin': 'sample',
+                'name': 'SampleIntegrationPlugin',
+                'mixin': 'urls',
+                'setting': 'ENABLE_PLUGINS_URL',
+            },
+            entries,
+        )
+
+        # The (enabled) navigation integration is not reported
+        self.assertFalse(
+            any(entry['setting'] == 'ENABLE_PLUGINS_NAVIGATION' for entry in entries)
+        )
+
+        # Enabling the integration clears the warning
+        set_global_setting('ENABLE_PLUGINS_URL', True)
+        self.assertFalse(
+            any(entry['setting'] == 'ENABLE_PLUGINS_URL' for entry in get_entries())
+        )
+
+        # An inactive plugin is not reported
+        set_global_setting('ENABLE_PLUGINS_URL', False)
+        registry.set_plugin_state('sample', False)
+        self.assertFalse(any(entry['plugin'] == 'sample' for entry in get_entries()))
+
+        # Information is not provided to non-staff users
+        self.user.is_staff = False
+        self.user.save()
+
+        data = self.get(url, expected_code=200).json()
+        self.assertIsNone(data['system_state']['plugins_disabled_mixins'])
+
     def test_info_view_link(self):
         """Test the link proof in the 'info-view' endpoint."""
         instance_id = 'c0ffee00-1234-4abc-8def-0123456789ab'

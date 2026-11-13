@@ -1170,6 +1170,73 @@ def plugins_info(*args, **kwargs):
     ]
 
 
+def plugins_disabled_mixins() -> list[dict]:
+    """Return information about active plugins which rely on a globally disabled integration.
+
+    Some plugin mixins only have an effect if the matching global setting is enabled
+    (e.g. a plugin which uses the UrlsMixin requires the 'ENABLE_PLUGINS_URL' setting).
+    If the setting is disabled, the plugin silently "does nothing" for that mixin -
+    which is hard to diagnose for an administrator.
+
+    Returns:
+        list: One entry for each (plugin, mixin) combination which is not operational
+    """
+    from common.models import InvenTreeSetting
+    from plugin import PluginMixinEnum
+    from plugin.registry import registry
+
+    # Check if plugins are even enabled
+    if not settings.PLUGINS_ENABLED:
+        return []
+
+    # Map each "gated" mixin to the global setting which enables it
+    mixin_settings = {
+        PluginMixinEnum.APP: 'ENABLE_PLUGINS_APP',
+        PluginMixinEnum.EVENTS: 'ENABLE_PLUGINS_EVENTS',
+        PluginMixinEnum.MAIL: 'ENABLE_PLUGINS_MAILS',
+        PluginMixinEnum.NAVIGATION: 'ENABLE_PLUGINS_NAVIGATION',
+        PluginMixinEnum.SCHEDULE: 'ENABLE_PLUGINS_SCHEDULE',
+        PluginMixinEnum.URLS: 'ENABLE_PLUGINS_URL',
+        PluginMixinEnum.USER_INTERFACE: 'ENABLE_PLUGINS_INTERFACE',
+    }
+
+    # Fetch all of the settings in a single query (a missing setting is disabled by default)
+    enabled_settings = {
+        setting.key.upper()
+        for setting in InvenTreeSetting.objects.filter(key__in=mixin_settings.values())
+        if str2bool(setting.value)
+    }
+
+    disabled_mixins = {
+        mixin: setting
+        for mixin, setting in mixin_settings.items()
+        if setting not in enabled_settings
+    }
+
+    if not disabled_mixins:
+        return []
+
+    results = []
+
+    # Only active plugins which actually make use of the mixin are reported
+    for plg in registry.with_mixin(PluginMixinEnum.BASE, active=True):
+        for mixin, setting in disabled_mixins.items():
+            try:
+                if not plg.mixin_enabled(mixin):
+                    continue
+            except Exception:
+                continue
+
+            results.append({
+                'plugin': plg.slug,
+                'name': plg.name,
+                'mixin': str(mixin.value),
+                'setting': setting,
+            })
+
+    return results
+
+
 def sanitize_token(token_value: str, front=8, back=12) -> str:
     """Sanitize a token by replacing the middle characters with asterisks.
 

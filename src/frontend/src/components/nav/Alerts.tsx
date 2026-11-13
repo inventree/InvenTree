@@ -114,6 +114,13 @@ export function getAlerts(
   const n_migrations =
     Number.parseInt(globalSettings.getSetting('_PENDING_MIGRATIONS')) ?? 0;
 
+  // Active plugins which rely on a plugin integration which is globally disabled
+  const disabledMixins = server?.system_state?.plugins_disabled_mixins ?? [];
+
+  const disabledMixinPlugins: string = [
+    ...new Set(disabledMixins.map((entry) => entry.name || entry.plugin))
+  ].join(', ');
+
   const allAlerts: ExtendedAlertInfo[] = [
     {
       key: 'debug',
@@ -163,6 +170,13 @@ export function getAlerts(
       code: 'INVE-W18',
       message: t`Basic (username:password) authentication is enabled for the API.`,
       condition: server?.system_state?.basic_auth_enabled || false
+    },
+    {
+      key: 'plugin_mixins',
+      title: t`Plugin Integration`,
+      code: 'INVE-W22',
+      message: t`Active plugins require a plugin integration which is disabled: ${disabledMixinPlugins}`,
+      condition: disabledMixins.length > 0
     }
   ];
 

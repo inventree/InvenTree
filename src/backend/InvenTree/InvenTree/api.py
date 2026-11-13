@@ -41,7 +41,7 @@ from plugin.base.event.events import batch_events
 from plugin.serializers import MetadataSerializer
 from users.permissions import check_user_permission, prefetch_rule_sets
 
-from .helpers import plugins_info, str2bool
+from .helpers import plugins_disabled_mixins, plugins_info, str2bool
 from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
@@ -358,6 +358,9 @@ class InfoView(APIView):
             'system_state': {
                 'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS,
                 'basic_auth_enabled': settings.BASIC_AUTH_ENABLED if is_staff else None,
+                'plugins_disabled_mixins': plugins_disabled_mixins()
+                if is_staff
+                else None,
             },
         }
         if nonce := request.query_params.get('link_nonce'):

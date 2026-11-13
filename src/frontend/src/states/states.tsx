@@ -43,6 +43,14 @@ export interface ServerAPIProps {
   system_state: {
     cors_allow_all: null | boolean;
     basic_auth_enabled: null | boolean;
+    plugins_disabled_mixins?:
+      | null
+      | {
+          plugin: string;
+          name: string;
+          mixin: string;
+          setting: string;
+        }[];
   } | null;
 }
 
