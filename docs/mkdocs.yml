@@ -218,6 +218,7 @@ nav:
       - Step-by-Step Walkthrough: plugins/walkthrough.md
     - Guides:
       - Model Metadata: plugins/metadata.md
+      - Defining Models: plugins/models.md
       - Tags: plugins/tags.md
       - Unit Test: plugins/test.md
     - References:
