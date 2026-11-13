@@ -4,11 +4,13 @@ title: Model Metadata
 
 ## Model Metadata
 
-Plugins have access to internal database models (such at [Parts](../part/index.md)), and any associated data associated with these models. It may be the case that a particular plugin needs to store some extra information about a particular model instance, to be able to perform custom functionality.
+Plugins can access internal database models, such as [Parts](../part/index.md), and their associated data. A plugin may need to store additional information for a specific model instance.
 
-One way of achieving this would be to create an entirely new database model to keep track of this information, using the [app plugin mixin](./mixins/app.md). However, this is a very heavy-handed (and complicated) approach!
+One option is to define a [database model](./models.md) using the [app plugin mixin](./mixins/app.md). This requires some knowledge of Django models and database design.
 
-A much simpler and more accessible method of recording custom information against a given model instance is provided "out of the box" - using *Model Metadata*.
+For information that can be represented as JSON, *Model Metadata* provides a way to store data on supported model instances without defining a separate model or handling lifecycle considerations.
+
+This page describes how to use the model metadata mechanism.
 
 ### MetadataMixin Class
 
@@ -122,4 +124,4 @@ There is no guarantee that the data added to a particular model will *not* be ov
 
 ### Structured Data
 
-If you need to store data which is more "structured" than JSON objects, consider using the (more complex) [app mixin](./mixins/app.md) to develop custom database tables for your data.
+If you need to store data which is more "structured" than JSON objects, consider using the (more involved) [app mixin](./mixins/app.md) to develop custom database tables for your data.

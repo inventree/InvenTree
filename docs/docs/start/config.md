@@ -365,6 +365,7 @@ The following email settings are available:
 {{ configsetting("INVENTREE_EMAIL_SSL") }} Enable legacy SSL/TLS support (commonly port 465) |
 {{ configsetting("INVENTREE_EMAIL_SENDER") }} Sending email address |
 {{ configsetting("INVENTREE_EMAIL_PREFIX") }} Prefix for subject text |
+{{ configsetting("INVENTREE_ANYMAIL") }} Anymail settings |
 
 ### Email Backend
 
