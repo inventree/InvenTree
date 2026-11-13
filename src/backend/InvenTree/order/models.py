@@ -3123,6 +3123,13 @@ class SalesOrderShipment(
             split_item_map[id(placeholder)] = persisted
             split_items[i] = (source, persisted, quantity)
 
+        # Each split-off item carries the same (per unit) cost as its source item
+        from pricing.models import StockItemCostEntry
+
+        StockItemCostEntry.objects.copy_costs(
+            (source, new_item) for source, new_item, _quantity in split_items
+        )
+
         shipped_items = [
             (split_item_map.get(id(item), item), quantity)
             for item, quantity in shipped_items

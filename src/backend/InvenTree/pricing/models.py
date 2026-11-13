@@ -1,5 +1,6 @@
 """Database model definitions for the 'pricing' app."""
 
+import collections
 import re
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
@@ -1319,6 +1320,208 @@ class StockItemCostEntryManager(models.Manager):
 
         return objs
 
+    def copy_costs(self, pairs) -> list:
+        """Copy all cost entries from source stock items onto target stock items.
+
+        Used whenever a stock item is duplicated (split, serialized, partially consumed
+        or shipped), so that the new stock item carries the same unit cost as its source.
+        Valid because all costs are *per unit* (see StockItemCostEntry).
+
+        Every field is copied verbatim - including the source, user, estimated flag,
+        and the stored converted values (no reconversion takes place).
+        The cached StockItemCost summary of each target stock item is then (re)calculated.
+
+        Arguments:
+            pairs: Iterable of (source, target) pairs - each either a StockItem or a primary key.
+                A source may be copied onto any number of targets.
+
+        Returns:
+            The created StockItemCostEntry objects
+        """
+        targets = collections.defaultdict(list)
+
+        for source, target in pairs:
+            source_id = getattr(source, 'pk', source)
+            target_id = getattr(target, 'pk', target)
+
+            if source_id is None or target_id is None:
+                raise ValueError(
+                    'Cost entries can only be copied between saved stock items'
+                )
+
+            if source_id != target_id:
+                targets[source_id].append(target_id)
+
+        if not targets:
+            return []
+
+        fields = [
+            field.attname
+            for field in self.model._meta.concrete_fields
+            if not field.primary_key and field.attname != 'stock_item_id'
+        ]
+
+        objs = []
+
+        for entry in (
+            self
+            .filter(stock_item_id__in=targets.keys())
+            .order_by('pk')
+            .iterator(chunk_size=500)
+        ):
+            data = {field: getattr(entry, field) for field in fields}
+
+            for target_id in targets[entry.stock_item_id]:
+                objs.append(self.model(stock_item_id=target_id, **data))
+
+        with transaction.atomic():
+            created = self.save_prepared_entries(objs)
+
+            # Note: Targets without any copied entries are included,
+            # so that any (stale) summary is removed
+            StockItemCost.objects.update_for_stock_items({
+                target_id for ids in targets.values() for target_id in ids
+            })
+
+        return created
+
+    def build_merge_entries(self, target, items) -> Optional[list]:
+        """Calculate the cost entries for a stock item which is about to be merged.
+
+        Must be called *before* the merge takes place - i.e. while all of the merged stock items
+        (and their cost entries) still exist, and before any quantities change.
+
+        One entry is calculated per cost type, as the quantity-weighted average of the per-unit
+        costs of the merged stock items. The original entries are recorded in 'source_data'.
+
+        Rules:
+        - Stock items without *any* cost entries have an unknown cost, and are excluded entirely
+        - A stock item without an entry of a particular cost type contributes zero for that type
+        - If every entry of a cost type has the same (original) currency, the average is
+          calculated in that currency. Otherwise, the stored converted values are used, and any
+          entry without a converted value is excluded (and the result marked as estimated)
+
+        Arguments:
+            target: The StockItem which the other items are being merged into
+            items: All StockItems being merged (including the target)
+
+        Returns:
+            A list of dicts (see StockItemCostRecorder.add) for the merged stock item,
+            or None if the cost data of the target stock item does not need to change
+        """
+        quantities = {item.pk: Decimal(item.quantity) for item in [target, *items]}
+
+        queryset = self.filter(stock_item_id__in=quantities.keys())
+
+        # Re-attempt conversion of any entries without a (current) converted value
+        self.reconvert_costs(queryset)
+
+        entries = list(queryset.order_by('pk'))
+
+        contributing = {entry.stock_item_id for entry in entries}
+
+        if not contributing or contributing == {target.pk}:
+            # No change required to the cost data of the target stock item
+            return None
+
+        total_quantity = sum(quantities[pk] for pk in contributing)
+
+        if total_quantity <= 0:
+            return None
+
+        default_currency = currency_code_default()
+
+        by_type = collections.defaultdict(list)
+
+        for entry in entries:
+            by_type[entry.cost_type].append(entry)
+
+        results = []
+
+        for cost_type, type_entries in sorted(by_type.items()):
+            currencies = {entry.currency for entry in type_entries}
+
+            if len(currencies) == 1:
+                # Average in the original currency (exact - no conversion required)
+                currency = currencies.pop()
+                values = [
+                    (entry, entry.min_cost, entry.max_cost) for entry in type_entries
+                ]
+            else:
+                # Use the stored converted values (if current)
+                currency = default_currency
+                values = [
+                    (entry, entry.converted_min_cost, entry.converted_max_cost)
+                    if entry.converted_currency == default_currency
+                    else (entry, None, None)
+                    for entry in type_entries
+                ]
+
+            min_total = Decimal(0)
+            max_total = Decimal(0)
+            excluded = []
+
+            for entry, min_cost, max_cost in values:
+                if min_cost is None or max_cost is None:
+                    excluded.append(entry.pk)
+                    continue
+
+                quantity = quantities[entry.stock_item_id]
+                min_total += min_cost * quantity
+                max_total += max_cost * quantity
+
+            if len(excluded) == len(type_entries):
+                # No usable values for this cost type
+                continue
+
+            results.append({
+                'cost_type': cost_type,
+                'min_cost': min_total / total_quantity,
+                'max_cost': max_total / total_quantity,
+                'currency': currency,
+                'estimated': bool(excluded)
+                or any(entry.estimated for entry in type_entries),
+                'notes': str(_('Weighted average of merged stock items')),
+                'source_data': {
+                    'merged_items': sorted(contributing),
+                    'quantities': {
+                        str(pk): str(quantities[pk]) for pk in sorted(contributing)
+                    },
+                    'excluded_entries': excluded,
+                    'entries': [entry.snapshot() for entry in type_entries],
+                },
+            })
+
+        return results
+
+    def apply_merged_costs(self, target, entries: list, user=None) -> list:
+        """Replace the cost entries of a merged stock item (see build_merge_entries).
+
+        Arguments:
+            target: The StockItem which the other items were merged into
+            entries: The entries returned by build_merge_entries
+            user: The user who performed the merge
+
+        Returns:
+            The created StockItemCostEntry objects
+        """
+        from pricing.helpers import StockItemCostRecorder
+
+        with transaction.atomic():
+            self.filter(stock_item=target).delete()
+
+            costs = StockItemCostRecorder(source=CostSource.MERGE, user=user)
+
+            for data in entries:
+                costs.add(target, **data)
+
+            created = costs.save()
+
+            # Ensure that the summary is updated, even if no entries were created
+            StockItemCost.objects.update_for_stock_items([target.pk])
+
+        return created
+
     def reconvert_costs(self, queryset=None) -> int:
         """Re-attempt currency conversion for entries which need it.
 
@@ -1567,6 +1770,29 @@ class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
             self.__dict__.get('min_cost'),
             self.__dict__.get('max_cost'),
         )
+
+    def snapshot(self) -> dict:
+        """Return a JSON serializable record of this entry (e.g. to retain after it is removed)."""
+
+        def value(val):
+            return None if val is None else str(val)
+
+        return {
+            'pk': self.pk,
+            'stock_item': self.stock_item_id,
+            'cost_type': self.cost_type,
+            'source': self.source,
+            'estimated': self.estimated,
+            'currency': self.currency,
+            'min_cost': value(self.min_cost),
+            'max_cost': value(self.max_cost),
+            'converted_currency': self.converted_currency,
+            'converted_min_cost': value(self.converted_min_cost),
+            'converted_max_cost': value(self.converted_max_cost),
+            'user': self.user_id,
+            'notes': self.notes,
+            'source_data': self.source_data,
+        }
 
     def clean_fields(self, exclude=None):
         """Round the cost values to the stored precision, before field validation."""

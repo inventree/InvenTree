@@ -2035,33 +2035,21 @@ class StockItem(
 
             self.save()
 
-    def allocate_disassembly_pricing(self, quantity, lines: list) -> list:
-        """Allocate the purchase price of this stock item across disassembly lines.
+    @staticmethod
+    def disassembly_cost_weights(lines: list) -> tuple[list[Decimal], str] | None:
+        """Calculate the share of the total cost to allocate to each disassembly line.
 
-        Automatic cost allocation is only performed if:
-        - This stock item has a recorded purchase price
-        - None of the provided lines specify an explicit purchase price
-
-        The total cost is apportioned across the lines pro-rata,
-        weighted by existing pricing data for each component part.
-        If pricing data is not available for *every* line,
+        The cost is apportioned across the lines pro-rata, weighted by existing pricing
+        data for each component part. If pricing data is not available for *every* line,
         the cost is split evenly across the generated units.
 
         Args:
-            quantity: The number of units of this stock item being disassembled
             lines: A list of dict objects (see the disassemble method)
 
         Returns:
-            The list of lines, with 'purchase_price' values filled in where possible
+            A tuple of (fractions, method) - one fraction per line (summing to 1), and the
+            allocation method ('pricing' or 'even') - or None if no allocation is possible
         """
-        if not self.purchase_price:
-            return lines
-
-        if any(line.get('purchase_price') is not None for line in lines):
-            # Explicit pricing has been provided - do not override
-            return lines
-
-        # Calculate a relative pricing "weight" for each line
         weights = []
 
         for line in lines:
@@ -2083,31 +2071,143 @@ class StockItem(
 
             weights.append(weight)
 
+        method = 'pricing'
+
         if any(weight is None for weight in weights):
             # Insufficient pricing data - fall back to an even (per unit) split
             weights = [Decimal(line['quantity']) for line in lines]
+            method = 'even'
 
         total_weight = sum(weights)
 
         if total_weight <= 0:
+            return None
+
+        return [weight / total_weight for weight in weights], method
+
+    def allocate_disassembly_pricing(self, quantity, lines: list) -> list:
+        """Allocate the purchase price of this stock item across disassembly lines.
+
+        Automatic cost allocation is only performed if:
+        - This stock item has a recorded purchase price
+        - None of the provided lines specify an explicit purchase price
+
+        See disassembly_cost_weights for how the cost is apportioned.
+
+        Args:
+            quantity: The number of units of this stock item being disassembled
+            lines: A list of dict objects (see the disassemble method)
+
+        Returns:
+            The list of lines, with 'purchase_price' values filled in where possible
+        """
+        if not self.purchase_price:
+            return lines
+
+        if any(line.get('purchase_price') is not None for line in lines):
+            # Explicit pricing has been provided - do not override
+            return lines
+
+        allocation = self.disassembly_cost_weights(lines)
+
+        if allocation is None:
             return lines
 
         # Total cost of the disassembled units
         total_cost = self.purchase_price * quantity
 
-        for line, weight in zip(lines, weights, strict=True):
+        for line, fraction in zip(lines, allocation[0], strict=True):
             line_quantity = Decimal(line['quantity'])
 
             if line_quantity > 0:
-                if weight is None:
-                    # Fallback to an even split
-                    line['purchase_price'] = total_cost / len(lines) / line_quantity
-                else:
-                    line['purchase_price'] = (
-                        total_cost * (weight / total_weight) / line_quantity
-                    )
+                line['purchase_price'] = total_cost * fraction / line_quantity
 
         return lines
+
+    def record_disassembly_costs(
+        self, quantity, lines: list, created: list, user, explicit: bool
+    ):
+        """Record cost entries for the stock items created by disassembling this item.
+
+        - If explicit (per line) prices were provided, these are recorded as the unit cost
+          of each component (only if the user has permission to add cost data)
+        - Otherwise, the total cost of the disassembled units (from the cost summary of this item)
+          is apportioned across the components (see disassembly_cost_weights)
+
+        Args:
+            quantity: The number of units of this stock item being disassembled
+            lines: The disassembly lines (see the disassemble method)
+            created: A list of (line, StockItem) pairs for the newly created components
+            user: The user performing the operation
+            explicit: True if explicit prices were provided for the lines
+        """
+        from pricing.helpers import StockItemCostRecorder, user_can_add_costs
+        from pricing.models import CostSource, StockItemCost
+        from pricing.status_codes import CostType
+
+        if not created:
+            return
+
+        costs = StockItemCostRecorder(source=CostSource.DISASSEMBLY, user=user)
+
+        if explicit:
+            if user_can_add_costs(user):
+                for line, item in created:
+                    costs.add(
+                        item,
+                        CostType.PURCHASE,
+                        cost=line.get('purchase_price'),
+                        source_data={'stock_item': self.pk, 'allocation': 'explicit'},
+                    )
+
+            costs.save()
+            return
+
+        summary = StockItemCost.objects.filter(stock_item=self).first()
+
+        if not summary or (summary.min_cost is None and summary.max_cost is None):
+            return
+
+        allocation = self.disassembly_cost_weights(lines)
+
+        if allocation is None:
+            return
+
+        fractions, method = allocation
+        line_fractions = {
+            id(line): fraction for line, fraction in zip(lines, fractions, strict=True)
+        }
+
+        for line, item in created:
+            fraction = line_fractions[id(line)]
+            line_quantity = Decimal(line['quantity'])
+
+            # Convert the share of the total cost back into a cost per (component) unit
+            def unit_cost(total, fraction=fraction, line_quantity=line_quantity):
+                if total is None:
+                    return None
+                return total * quantity * fraction / line_quantity
+
+            costs.add(
+                item,
+                CostType.PURCHASE,
+                min_cost=unit_cost(summary.min_cost),
+                max_cost=unit_cost(summary.max_cost),
+                currency=summary.currency,
+                estimated=summary.estimated or summary.incomplete,
+                source_data={
+                    'stock_item': self.pk,
+                    'quantity': str(quantity),
+                    'allocation': method,
+                    'fraction': str(fraction),
+                    'min_cost': str(summary.min_cost),
+                    'max_cost': str(summary.max_cost),
+                    'currency': summary.currency,
+                    'incomplete': summary.incomplete,
+                },
+            )
+
+        costs.save()
 
     @transaction.atomic
     def disassemble(
@@ -2225,10 +2325,17 @@ class StockItem(
 
             items.append(installed_item)
 
+        # Were explicit (per line) prices provided? Must be checked *before* the
+        # automatic allocation below, which fills in the 'purchase_price' values
+        explicit_prices = any(line.get('purchase_price') is not None for line in lines)
+
         # Allocate pricing data across the generated components.
         # Note: Deliberately performed *after* the installed items are uninstalled,
         # so that the cost is only spread across newly created stock items
         lines = self.allocate_disassembly_pricing(quantity, lines)
+
+        # (line, StockItem) pairs for the newly created components
+        created = []
 
         for line in lines:
             bom_item = line['bom_item']
@@ -2271,6 +2378,12 @@ class StockItem(
                 new_item.save(add_note=False)
 
             items.append(new_item)
+            created.append((line, new_item))
+
+        # Record the cost of each newly created component
+        self.record_disassembly_costs(
+            quantity, lines, created, user, explicit=explicit_prices
+        )
 
         # Consume this stock item.
         # Note: the item is deliberately retained (not deleted) at zero quantity,
@@ -2584,6 +2697,11 @@ class StockItem(
             **data,
         )
 
+        # Each new item carries the same (per unit) cost as this item
+        from pricing.models import StockItemCostEntry
+
+        StockItemCostEntry.objects.copy_costs((self, item) for item in items)
+
         # Check (once) whether there are any test results to copy across, rather
         # than re-querying an identical (and usually empty) result set per item
         has_test_results = self.test_results.exists()
@@ -2846,6 +2964,11 @@ class StockItem(
                 )
                 return
 
+        # Calculate the merged cost data *before* the other items (and their costs) are deleted
+        from pricing.models import StockItemCostEntry
+
+        merged_costs = StockItemCostEntry.objects.build_merge_entries(self, other_items)
+
         merged_quantity = Decimal(0)
 
         for other in other_items:
@@ -2916,6 +3039,10 @@ class StockItem(
             deltas=tracking_deltas,
         ):
             self.save()
+
+        # Replace the cost entries of this item with the merged (weighted average) costs
+        if merged_costs is not None:
+            StockItemCostEntry.objects.apply_merged_costs(self, merged_costs, user=user)
 
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
@@ -3019,6 +3146,11 @@ class StockItem(
 
         with event:
             new_stock.save(add_note=False)
+
+        # The new item carries the same (per unit) cost as this item
+        from pricing.models import StockItemCostEntry
+
+        StockItemCostEntry.objects.copy_costs([(self, new_stock)])
 
         if split_transfer_deltas is not None:
             split_transfer_deltas.clear()
