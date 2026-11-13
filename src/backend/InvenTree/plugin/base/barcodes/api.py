@@ -1,5 +1,6 @@
 """API endpoints for barcode plugins."""
 
+from django.db import transaction
 from django.db.models import F
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -22,7 +23,7 @@ from InvenTree.api import BulkDeleteMixin
 from InvenTree.exceptions import log_error
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import hash_barcode
-from InvenTree.mixins import ListAPI, RetrieveDestroyAPI
+from InvenTree.mixins import ListAPI, RetrieveDestroyAPI, RowLockMixin
 from plugin import PluginMixinEnum, registry
 from users.permissions import check_user_permission
 
@@ -285,7 +286,7 @@ class BarcodeGenerate(CreateAPIView):
         return Response({'barcode': barcode_data}, status=status.HTTP_200_OK)
 
 
-class BarcodeAssign(BarcodeView):
+class BarcodeAssign(RowLockMixin, BarcodeView):
     """Endpoint for assigning a barcode to a stock item.
 
     - This only works if the barcode is not already associated with an object in the database
@@ -330,7 +331,12 @@ class BarcodeAssign(BarcodeView):
                         'error': f'You do not have the required permissions for {model}'
                     })
 
-                instance.assign_barcode(barcode_data=barcode, barcode_hash=barcode_hash)
+                # Lock (and reload) the instance, as assigning the barcode saves it in full
+                with transaction.atomic():
+                    instance = self.lock_instance(instance)
+                    instance.assign_barcode(
+                        barcode_data=barcode, barcode_hash=barcode_hash
+                    )
 
                 return Response({
                     'success': f'Assigned barcode to {label} instance',
@@ -345,7 +351,7 @@ class BarcodeAssign(BarcodeView):
         })
 
 
-class BarcodeUnassign(BarcodeView):
+class BarcodeUnassign(RowLockMixin, BarcodeView):
     """Endpoint for unlinking / unassigning a custom barcode from a database object."""
 
     serializer_class = barcode_serializers.BarcodeUnassignSerializer
@@ -389,7 +395,10 @@ class BarcodeUnassign(BarcodeView):
                     })
 
                 # Unassign the barcode data from the model instance
-                instance.unassign_barcode()
+                # Lock (and reload) the instance, as this saves it in full
+                with transaction.atomic():
+                    instance = self.lock_instance(instance)
+                    instance.unassign_barcode()
 
                 return Response({
                     'success': f'Barcode unassigned from {label} instance'

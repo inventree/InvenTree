@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import connection, models, transaction
 
 from rest_framework import generics, mixins, status
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import data_exporter.mixins
@@ -66,6 +67,26 @@ class RowLockMixin:
             return lock_row(model, pk)
         except RowLockTimeoutError:
             raise ResourceLocked()
+
+    def lock_instance(self, instance):
+        """Lock the database row of an instance which has already been loaded, and reload it.
+
+        To be used where the instance is resolved before the row can be locked
+        (e.g. by a serializer field): any data which was read before the lock was
+        acquired may be stale, so the instance is refreshed from the database.
+
+        Must be called from within a database transaction.
+
+        Raises:
+            ResourceLocked: If the row is locked by another transaction
+            NotFound: If the row no longer exists
+        """
+        if not self.lock_row_or_conflict(type(instance), instance.pk):
+            raise NotFound()
+
+        instance.refresh_from_db()
+
+        return instance
 
     @contextlib.contextmanager
     def locked_action(self, model, pk):

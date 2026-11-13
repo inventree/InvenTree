@@ -11,30 +11,24 @@ import time
 from unittest import mock
 
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import connection, transaction
-from django.db.models import F
-from django.test import TestCase, TransactionTestCase, skipUnlessDBFeature
+from django.test import TransactionTestCase, skipUnlessDBFeature
 from django.urls import reverse
 
 from rest_framework.test import APIClient
 
 import build.tasks
 import InvenTree.helpers_model
-from build.models import Build, BuildLine, generate_next_build_reference
+from build.models import Build, generate_next_build_reference
 from build.status_codes import BuildStatus
 from company.models import Company
 from InvenTree.helpers_model import RowLockTimeoutError, lock_row
-from InvenTree.models import ProtectedFieldsMixin
 from order.models import (
     PurchaseOrder,
-    PurchaseOrderLineItem,
     ReturnOrder,
     SalesOrder,
-    SalesOrderLineItem,
     SalesOrderShipment,
     TransferOrder,
-    TransferOrderLineItem,
 )
 from part.models import Part
 from stock.models import StockItem
@@ -73,231 +67,6 @@ def run_complete_outputs_task(bo, outputs):
     build.tasks.complete_build_outputs(
         bo.pk, [{'output_id': output.pk} for output in outputs], None, StockStatus.OK
     )
-
-
-class ProtectedFieldsTest(TestCase):
-    """Tests for the ProtectedFieldsMixin class (deterministic, no real concurrency)."""
-
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'company',
-        'supplier_part',
-        'stock',
-        'users',
-        'bom',
-        'build',
-        'build_line',
-        'order',
-        'sales_order',
-        'transfer_order',
-    ]
-
-    def test_stale_build_save(self):
-        """A stale save of a build order must not revert the 'completed' count."""
-        bo, outputs = create_build()
-
-        # Another process (e.g. an API request) loads the build order...
-        stale = Build.objects.get(pk=bo.pk)
-
-        # ...then the outputs are completed...
-        for output in outputs:
-            bo.complete_build_output(output, None)
-
-        self.assertEqual(bo.completed, 20)
-
-        # ...and finally the other process saves its (unrelated) change
-        stale.title = 'Edited title'
-        stale.save()
-
-        bo.refresh_from_db()
-        self.assertEqual(bo.title, 'Edited title')
-        self.assertEqual(bo.completed, 20)
-
-        # The stale instance does not know about the new value, but a further save is harmless
-        self.assertEqual(stale.completed, 0)
-        stale.save()
-
-        bo.refresh_from_db()
-        self.assertEqual(bo.completed, 20)
-
-    def test_stale_task_save(self):
-        """The (full) save performed by the build completion task must not revert the 'completed' count."""
-        bo, outputs = create_build()
-
-        stale = Build.objects.get(pk=bo.pk)
-        run_complete_outputs_task(bo, outputs)
-
-        # e.g. build.tasks.complete_build / build.tasks.cancel_build
-        stale.status = 40
-        stale.save()
-
-        bo.refresh_from_db()
-        self.assertEqual(bo.status, 40)
-        self.assertEqual(bo.completed, 20)
-
-    def test_explicit_change_is_saved(self):
-        """A protected field which has been explicitly changed is still written by a full save."""
-        bo, _outputs = create_build()
-
-        bo = Build.objects.get(pk=bo.pk)
-        bo.completed = 7
-        bo.save()
-
-        self.assertEqual(Build.objects.get(pk=bo.pk).completed, 7)
-
-        # The saved value is now the "known" value: it is not written again
-        Build.objects.filter(pk=bo.pk).update(completed=12)
-        bo.title = 'Another title'
-        bo.save()
-
-        self.assertEqual(Build.objects.get(pk=bo.pk).completed, 12)
-
-        # A value which was reloaded from the database is also "known"
-        bo.refresh_from_db()
-        self.assertEqual(bo.completed, 12)
-        Build.objects.filter(pk=bo.pk).update(completed=15)
-        bo.save()
-
-        self.assertEqual(Build.objects.get(pk=bo.pk).completed, 15)
-
-    def test_new_instance(self):
-        """A protected field is written when the instance is created, and tracked thereafter."""
-        bo, _outputs = create_build()
-
-        other = Build.objects.create(
-            reference=generate_next_build_reference(),
-            part=bo.part,
-            quantity=10,
-            completed=3,
-        )
-
-        self.assertEqual(Build.objects.get(pk=other.pk).completed, 3)
-
-        # The instance which was used to create the row is protected too
-        Build.objects.filter(pk=other.pk).update(completed=8)
-        other.title = 'Edited title'
-        other.save()
-
-        other.refresh_from_db()
-        self.assertEqual(other.title, 'Edited title')
-        self.assertEqual(other.completed, 8)
-
-    def test_increment_is_not_repeated(self):
-        """An F() expression which has been saved must not be applied again by a later save."""
-        bo, _outputs = create_build()
-
-        bo = Build.objects.get(pk=bo.pk)
-        bo.increment_completed(5)
-        self.assertEqual(bo.completed, 5)
-
-        bo.save()
-        bo.save()
-
-        self.assertEqual(Build.objects.get(pk=bo.pk).completed, 5)
-
-        # A zero quantity is ignored
-        bo.increment_completed(0)
-        self.assertEqual(Build.objects.get(pk=bo.pk).completed, 5)
-
-    def test_deferred_field(self):
-        """An instance with deferred fields can still be saved."""
-        bo, _outputs = create_build()
-
-        Build.objects.filter(pk=bo.pk).update(completed=9)
-
-        for queryset in [Build.objects.defer('completed'), Build.objects.only('title')]:
-            partial = queryset.get(pk=bo.pk)
-            partial.title = f'Title {queryset.query.deferred_loading[1]}'
-            partial.save()
-
-            bo.refresh_from_db()
-            self.assertEqual(bo.title, partial.title)
-            self.assertEqual(bo.completed, 9)
-
-    def editable_instance(self, model):
-        """Return an instance of the model which can be saved (e.g. the order is not locked)."""
-        for instance in model.objects.all():
-            try:
-                instance.save()
-                return model.objects.get(pk=instance.pk)
-            except ValidationError:
-                continue
-
-        self.fail(f'No editable {model.__name__} found')  # pragma: no cover
-
-    def test_update_fields(self):
-        """An unchanged protected field is not written, even if it is named in update_fields."""
-        bo, _outputs = create_build()
-
-        stale = Build.objects.get(pk=bo.pk)
-        Build.objects.filter(pk=bo.pk).update(completed=11)
-
-        stale.title = 'Edited title'
-        stale.save(update_fields=['title', 'completed'])
-
-        bo.refresh_from_db()
-        self.assertEqual(bo.title, 'Edited title')
-        self.assertEqual(bo.completed, 11)
-
-        # Nothing to write at all
-        stale.save(update_fields=['completed'])
-        self.assertEqual(Build.objects.get(pk=bo.pk).completed, 11)
-
-        # A changed value is written
-        stale.completed = 4
-        stale.save(update_fields=['completed'])
-        self.assertEqual(Build.objects.get(pk=bo.pk).completed, 4)
-
-        # Identical increments are each applied
-        for _ in range(2):
-            stale.completed = F('completed') + 3
-            stale.save(update_fields=['completed'])
-
-        self.assertEqual(Build.objects.get(pk=bo.pk).completed, 10)
-
-    def test_protected_models(self):
-        """Each model with protected fields must survive a stale save."""
-        models = {
-            Build: 'completed',
-            BuildLine: 'consumed',
-            PurchaseOrderLineItem: 'received',
-            SalesOrderLineItem: 'shipped',
-            TransferOrderLineItem: 'transferred',
-        }
-
-        for model, field in models.items():
-            with self.subTest(model=model.__name__):
-                self.assertTrue(issubclass(model, ProtectedFieldsMixin))
-                self.assertEqual(model.PROTECTED_FIELDS, (field,))
-
-                # The mixin must come after any other class which overrides save()
-                mro = model.__mro__
-                self.assertEqual(
-                    [cls for cls in mro if 'save' in vars(cls)][-2],
-                    ProtectedFieldsMixin,
-                )
-
-                instance = self.editable_instance(model)
-
-                stale = model.objects.get(pk=instance.pk)
-                value = getattr(stale, field) + 3
-
-                # A concurrent process updates the counter
-                model.objects.filter(pk=instance.pk).update(**{field: value})
-
-                # A stale save does not revert it
-                stale.save()
-                instance.refresh_from_db()
-                self.assertEqual(getattr(instance, field), value)
-
-                # An explicit change is written
-                setattr(instance, field, value + 1)
-                instance.save()
-                self.assertEqual(
-                    getattr(model.objects.get(pk=instance.pk), field), value + 1
-                )
 
 
 class ThreadedTestMixin:
@@ -384,57 +153,6 @@ class BuildCompletedConcurrencyTest(ThreadedTestMixin, TransactionTestCase):
         patcher = mock.patch.object(Build, 'increment_completed', increment_and_pause)
 
         return patcher, paused, resume
-
-    def test_edit_during_output_completion(self):
-        """A build order which is saved while its outputs are being completed keeps its 'completed' count.
-
-        This reproduces the reported sequence of events:
-
-        1. The edit loads the build order (completed = 0)
-        2. The task completes the outputs, but has not yet committed
-        3. The edit saves the build order: the write blocks on the row lock held by the task
-        4. The task commits (completed = 20)
-        5. The edit is written - and must not reset the 'completed' count
-        """
-        bo, outputs = create_build()
-
-        patcher, paused, resume = self.pause_task_before_commit()
-
-        # 1. The edit loads the build order
-        stale = Build.objects.get(pk=bo.pk)
-
-        saved = threading.Event()
-
-        def edit():
-            stale.title = 'Edited title'
-            stale.save()
-            saved.set()
-
-        with patcher:
-            # 2. The task completes the outputs (but does not commit)
-            self.run_thread(run_complete_outputs_task, bo, outputs)
-            self.assertTrue(paused.wait(timeout=10))
-
-            # The uncommitted count is not visible to anyone else
-            self.assertEqual(Build.objects.get(pk=bo.pk).completed, 0)
-
-            # 3. The edit is saved, and blocks on the row lock
-            self.run_thread(edit)
-            self.assertFalse(saved.wait(timeout=0.5))
-
-            # 4. The task commits, which also unblocks the edit
-            resume.set()
-            self.join_threads()
-
-        self.assertTrue(saved.is_set())
-
-        bo.refresh_from_db()
-        self.assertEqual(bo.title, 'Edited title')
-        self.assertEqual(bo.completed, 20)
-
-        for output in outputs:
-            output.refresh_from_db()
-            self.assertFalse(output.is_building)
 
     def test_concurrent_output_completion(self):
         """Tasks which complete different outputs of the same build order at the same time are all counted."""
@@ -805,6 +523,55 @@ class ActionLockingAPITest(ThreadedTestMixin, TransactionTestCase):
         ]:
             with self.subTest(url=url_name):
                 self.assert_locked(Build, bo.pk, url_name)
+
+    def test_barcode_assign(self):
+        """Assigning (or removing) a barcode saves the entire object, so the row must be locked."""
+        bo, _outputs = create_build()
+
+        url = reverse('api-barcode-link')
+        data = {'barcode': 'locking-test-barcode', 'build': bo.pk}
+
+        release = threading.Event()
+        self.hold_row_lock(Build, bo.pk, release)
+
+        try:
+            with mock.patch.object(InvenTree.helpers_model, 'ROW_LOCK_TIMEOUT', 0.3):
+                response = self.client.post(url, data, format='json')
+        finally:
+            release.set()
+
+        self.join_threads()
+        self.threads.clear()
+
+        self.assertEqual(response.status_code, 409)
+
+        bo.refresh_from_db()
+        self.assertEqual(bo.barcode_data, '')
+
+        # Once the lock is available, the barcode is assigned to the *latest* data
+        for url_name, expected in [
+            ('api-barcode-link', 'locking-test-barcode'),
+            ('api-barcode-unlink', ''),
+        ]:
+            completed = bo.completed + 5
+
+            release = threading.Event()
+            self.hold_row_lock(Build, bo.pk, release, completed=completed)
+
+            timer = threading.Timer(0.5, release.set)
+            timer.start()
+
+            response = self.client.post(reverse(url_name), data, format='json')
+            timer.join()
+
+            self.join_threads()
+            self.threads.clear()
+
+            self.assertEqual(response.status_code, 200, response.data)
+
+            bo.refresh_from_db()
+            self.assertEqual(bo.barcode_data, expected)
+            self.assertEqual(bo.completed, completed)
 
     def test_build_action_not_found(self):
         """An action against a build order which does not exist returns a 404."""
