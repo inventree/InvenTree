@@ -31,6 +31,7 @@ import company.models
 import stock.models as stock_models
 import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from generic.states.api import FSMTransitionMixin, StatusView
 from InvenTree.api import (
     BulkDeleteMixin,
@@ -383,6 +384,7 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('supplier_detail')]
 
 
+@search_provider(ref_names=['purchaseorder'])
 class PurchaseOrderViewSet(
     SerializerContextMixin,
     OrderCreateMixin,
@@ -905,6 +907,7 @@ class SalesOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('customer_detail')]
 
 
+@search_provider(ref_names=['salesorder'])
 class SalesOrderList(
     SalesOrderMixin,
     OrderCreateMixin,
@@ -1547,6 +1550,7 @@ class SalesOrderShipmentMixin:
         return queryset
 
 
+@search_provider(ref_names=['salesordershipment'])
 class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
     """API list endpoint for SalesOrderShipment model."""
 
@@ -1695,6 +1699,7 @@ class ReturnOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption(flag='customer_detail')]
 
 
+@search_provider(ref_names=['returnorder'])
 class ReturnOrderList(
     ReturnOrderMixin,
     OrderCreateMixin,
