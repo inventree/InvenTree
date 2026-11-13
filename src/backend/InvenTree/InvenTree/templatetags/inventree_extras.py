@@ -13,7 +13,7 @@ import InvenTree.helpers
 import plugin.models
 from common.settings import get_global_setting
 from InvenTree import version
-from plugin.plugin import InvenTreePlugin
+from plugin import InvenTreePlugin
 
 register = template.Library()
 
