@@ -323,7 +323,7 @@ class PartBriefSerializer(
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         read_only=True, allow_null=True
     )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    thumbnail = InvenTree.serializers.InvenTreeThumbnailField()
 
     IPN = serializers.CharField(
         required=False,
@@ -840,7 +840,7 @@ class PartSerializer(
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         required=False, allow_null=True
     )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    thumbnail = InvenTree.serializers.InvenTreeThumbnailField()
     starred = serializers.SerializerMethodField()
 
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)

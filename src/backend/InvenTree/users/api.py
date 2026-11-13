@@ -292,7 +292,7 @@ class UserList(ListCreateAPI):
     - Otherwise authenticated users have read-only access
     """
 
-    queryset = User.objects.all().prefetch_related('groups')
+    queryset = User.objects.all().select_related('profile').prefetch_related('groups')
     serializer_class = UserCreateSerializer
 
     # User must have the right role, AND be a staff user, else read-only

@@ -31,6 +31,7 @@ import company.models
 import stock.models as stock_models
 import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from generic.states.api import FSMTransitionMixin, StatusView
 from InvenTree.api import (
     BulkDeleteMixin,
@@ -383,6 +384,7 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('supplier_detail')]
 
 
+@search_provider(ref_names=['purchaseorder'])
 class PurchaseOrderViewSet(
     SerializerContextMixin,
     OrderCreateMixin,
@@ -458,8 +460,14 @@ class PurchaseOrderViewSet(
 
     def get_order(self):
         """Return the PurchaseOrder object associated with this API endpoint."""
+        pk = self.kwargs.get('pk', None)
+
+        # No order is associated with a list request: avoid a pointless DB query
+        if pk is None:
+            raise NotFound(_('Purchase order not found'))
+
         try:
-            return models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
+            return models.PurchaseOrder.objects.get(pk=pk)
         except (ValueError, models.PurchaseOrder.DoesNotExist):
             raise NotFound(_('Purchase order not found'))
 
@@ -905,6 +913,7 @@ class SalesOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('customer_detail')]
 
 
+@search_provider(ref_names=['salesorder'])
 class SalesOrderList(
     SalesOrderMixin,
     OrderCreateMixin,
@@ -1173,8 +1182,14 @@ class SalesOrderContextMixin:
 
     def get_order(self):
         """Return the SalesOrder object associated with this API endpoint."""
+        pk = self.kwargs.get('pk', None)
+
+        # No order is associated with a list request: avoid a pointless DB query
+        if pk is None:
+            raise NotFound(_('Sales order not found'))
+
         try:
-            return models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
+            return models.SalesOrder.objects.get(pk=pk)
         except (ValueError, models.SalesOrder.DoesNotExist):
             raise NotFound(_('Sales order not found'))
 
@@ -1547,7 +1562,10 @@ class SalesOrderShipmentMixin:
         return queryset
 
 
-class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
+@search_provider(ref_names=['salesordershipment'])
+class SalesOrderShipmentList(
+    SalesOrderShipmentMixin, OutputOptionsMixin, ListCreateAPI
+):
     """API list endpoint for SalesOrderShipment model."""
 
     filterset_class = SalesOrderShipmentFilter
@@ -1695,6 +1713,7 @@ class ReturnOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption(flag='customer_detail')]
 
 
+@search_provider(ref_names=['returnorder'])
 class ReturnOrderList(
     ReturnOrderMixin,
     OrderCreateMixin,
@@ -1754,8 +1773,14 @@ class ReturnOrderContextMixin:
 
     def get_order(self):
         """Return the ReturnOrder object associated with this API endpoint."""
+        pk = self.kwargs.get('pk', None)
+
+        # No order is associated with a list request: avoid a pointless DB query
+        if pk is None:
+            raise NotFound(_('Return order not found'))
+
         try:
-            return models.ReturnOrder.objects.get(pk=self.kwargs.get('pk', None))
+            return models.ReturnOrder.objects.get(pk=pk)
         except (ValueError, models.ReturnOrder.DoesNotExist):
             raise NotFound(_('Return order not found'))
 
@@ -2057,8 +2082,14 @@ class TransferOrderContextMixin:
 
     def get_order(self):
         """Return the TransferOrder object associated with this API endpoint."""
+        pk = self.kwargs.get('pk', None)
+
+        # No order is associated with a list request: avoid a pointless DB query
+        if pk is None:
+            raise NotFound(_('Transfer order not found'))
+
         try:
-            return models.TransferOrder.objects.get(pk=self.kwargs.get('pk', None))
+            return models.TransferOrder.objects.get(pk=pk)
         except (ValueError, models.TransferOrder.DoesNotExist):
             raise NotFound(_('Transfer order not found'))
 
