@@ -7,6 +7,7 @@ from typing import Any
 
 from django.apps import apps
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from drf_spectacular.utils import extend_schema
@@ -134,7 +135,15 @@ def transition_action(
     input_serializer_class = serializer_class
 
     def endpoint(self, request: Request, pk: str | None = None) -> Response:
-        instance = self.get_object()
+        # Lock the row before reading the instance (where the viewset supports it),
+        # as the transition saves the entire instance back to the database
+        with transaction.atomic():
+            get_object = getattr(self, 'get_object_for_update', self.get_object)
+            instance = get_object()
+
+            return run_transition(self, request, instance)
+
+    def run_transition(self, request: Request, instance) -> Response:
         kwargs: dict[str, Any] = {}
         context = self.get_serializer_context()
 

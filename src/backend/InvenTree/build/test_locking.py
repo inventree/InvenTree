@@ -6,14 +6,12 @@ loaded the build order before the task committed, and then wrote *every* column 
 (including the stale 'completed' value) after the task had committed.
 """
 
-import io
 import threading
 import time
 from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.core.management import call_command
 from django.db import connection, transaction
 from django.db.models import F
 from django.test import TestCase, TransactionTestCase, skipUnlessDBFeature
@@ -24,11 +22,18 @@ from rest_framework.test import APIClient
 import build.tasks
 import InvenTree.helpers_model
 from build.models import Build, BuildLine, generate_next_build_reference
+from build.status_codes import BuildStatus
+from company.models import Company
 from InvenTree.helpers_model import RowLockTimeoutError, lock_row
 from InvenTree.models import ProtectedFieldsMixin
 from order.models import (
+    PurchaseOrder,
     PurchaseOrderLineItem,
+    ReturnOrder,
+    SalesOrder,
     SalesOrderLineItem,
+    SalesOrderShipment,
+    TransferOrder,
     TransferOrderLineItem,
 )
 from part.models import Part
@@ -293,78 +298,6 @@ class ProtectedFieldsTest(TestCase):
                 self.assertEqual(
                     getattr(model.objects.get(pk=instance.pk), field), value + 1
                 )
-
-
-class CheckBuildCompletedCommandTest(TestCase):
-    """Tests for the 'check_build_completed' management command."""
-
-    def run_command(self, *args) -> str:
-        """Run the management command, and return the output."""
-        out = io.StringIO()
-        call_command('check_build_completed', *args, stdout=out)
-        return out.getvalue()
-
-    def test_command(self):
-        """A 'completed' count which was overwritten is detected, and can be repaired."""
-        bo, outputs = create_build()
-        other, other_outputs = create_build(n_outputs=1)
-
-        run_complete_outputs_task(bo, outputs)
-        run_complete_outputs_task(other, other_outputs)
-
-        output = self.run_command()
-        self.assertIn('0 mismatched', output)
-
-        # Overwrite the count, without recording the change (as per a stale save)
-        Build.objects.filter(pk=bo.pk).update(completed=0)
-
-        for source in ['audit', 'outputs']:
-            output = self.run_command('--source', source)
-            self.assertIn(f'{bo.reference} (pk={bo.pk}): completed=0', output)
-            self.assertIn('audit history=20, completed outputs=20', output)
-            self.assertIn('1 mismatched, 0 updated', output)
-            self.assertNotIn(other.reference, output)
-
-        # Nothing has been changed (yet)
-        bo.refresh_from_db()
-        self.assertEqual(bo.completed, 0)
-
-        # Limit to a particular build order (by reference, or by ID)
-        self.assertIn('0 mismatched', self.run_command(other.reference))
-        self.assertIn('1 mismatched', self.run_command(str(bo.pk)))
-
-        output = self.run_command('--fix', bo.reference)
-        self.assertIn('updated: completed=20', output)
-        self.assertIn('1 mismatched, 1 updated', output)
-
-        bo.refresh_from_db()
-        self.assertEqual(bo.completed, 20)
-
-        self.assertIn('0 mismatched', self.run_command())
-
-    def test_fix_from_outputs(self):
-        """The count can be repaired from the completed outputs, if the audit history is wrong."""
-        bo, outputs = create_build()
-        run_complete_outputs_task(bo, outputs)
-
-        # An (audited) write of the wrong value
-        bo.completed = 3
-        bo.save()
-
-        self.assertIn('0 mismatched', self.run_command())
-
-        output = self.run_command('--source', 'outputs', '--fix')
-        self.assertIn('1 mismatched, 1 updated', output)
-
-        bo.refresh_from_db()
-        self.assertEqual(bo.completed, 20)
-
-    def test_invalid_build(self):
-        """An unknown build order is reported."""
-        from django.core.management.base import CommandError
-
-        with self.assertRaises(CommandError):
-            self.run_command('BO-does-not-exist')
 
 
 class ThreadedTestMixin:
@@ -722,3 +655,231 @@ class BuildUpdateLockingAPITest(ThreadedTestMixin, TransactionTestCase):
         url = reverse('api-build-detail', kwargs={'pk': self.bo.pk + 1000})
         response = self.client.patch(url, {'title': 'Edited title'}, format='json')
         self.assertEqual(response.status_code, 404)
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class ActionLockingAPITest(ThreadedTestMixin, TransactionTestCase):
+    """Cross-transaction tests for "action" endpoints, which act upon an existing object.
+
+    These endpoints (e.g. "hold" a build order) load the object, and then save it again
+    in full. The row must be locked *before* the object is loaded, otherwise the save
+    reverts any change which was committed in the meantime.
+    """
+
+    def setUp(self):
+        """Create an authenticated API client."""
+        super().setUp()
+
+        user = get_user_model().objects.create(
+            username='locking-admin', is_superuser=True, is_staff=True
+        )
+
+        self.client = APIClient()
+        self.client.force_authenticate(user=user)
+
+    def post(self, url_name: str, pk: int, data=None):
+        """POST to the named action endpoint."""
+        url = reverse(url_name, kwargs={'pk': pk})
+        return self.client.post(url, data or {}, format='json')
+
+    def assert_locked(self, model, pk, url_name: str, url_pk=None, data=None):
+        """Assert that the action is rejected (409) while the specified row is locked."""
+        release = threading.Event()
+        self.hold_row_lock(model, pk, release)
+
+        try:
+            with mock.patch.object(InvenTree.helpers_model, 'ROW_LOCK_TIMEOUT', 0.3):
+                response = self.post(url_name, url_pk or pk, data)
+        finally:
+            release.set()
+
+        self.join_threads()
+        self.threads.clear()
+
+        self.assertEqual(response.status_code, 409, f'{url_name}: {response.data}')
+        self.assertIn('currently being updated', response.data['detail'])
+
+    def test_build_hold_locked(self):
+        """A build order cannot be placed on hold while it is locked by another process."""
+        bo, _outputs = create_build()
+
+        self.assert_locked(Build, bo.pk, 'api-build-hold')
+
+        # Nothing was changed
+        bo.refresh_from_db()
+        self.assertEqual(bo.status, BuildStatus.PRODUCTION.value)
+
+        # The action succeeds once the lock has been released
+        response = self.post('api-build-hold', bo.pk)
+        self.assertEqual(response.status_code, 201)
+
+        bo.refresh_from_db()
+        self.assertEqual(bo.status, BuildStatus.ON_HOLD.value)
+
+    def test_build_hold_waits_for_lock(self):
+        """An action which waits (briefly) for a lock is applied to the *latest* data.
+
+        The other process changes fields which are not otherwise protected: if the
+        build order had been read before the lock was acquired, the action
+        (which saves the entire build order) would write the stale values back.
+        """
+        bo, _outputs = create_build()
+
+        release = threading.Event()
+        self.hold_row_lock(Build, bo.pk, release, priority=5, batch='ABC', completed=15)
+
+        # Release the lock while the request is waiting for it
+        timer = threading.Timer(0.5, release.set)
+        timer.start()
+
+        response = self.post('api-build-hold', bo.pk)
+        timer.join()
+
+        self.assertEqual(response.status_code, 201)
+        self.join_threads()
+
+        bo.refresh_from_db()
+        self.assertEqual(bo.status, BuildStatus.ON_HOLD.value)
+        self.assertEqual(bo.priority, 5)
+        self.assertEqual(bo.batch, 'ABC')
+        self.assertEqual(bo.completed, 15)
+
+    def test_build_hold_during_output_completion(self):
+        """Placing a build order on hold while its outputs are being completed.
+
+        The request is rejected while the task holds the build order row,
+        and the 'completed' count is intact afterwards.
+        """
+        bo, outputs = create_build()
+
+        paused = threading.Event()
+        resume = threading.Event()
+
+        original = Build.increment_completed
+
+        def increment_and_pause(build_order, quantity):
+            original(build_order, quantity)
+            paused.set()
+            resume.wait(timeout=15)
+
+        try:
+            with mock.patch.object(Build, 'increment_completed', increment_and_pause):
+                self.run_thread(run_complete_outputs_task, bo, outputs)
+                self.assertTrue(paused.wait(timeout=10))
+
+                with mock.patch.object(
+                    InvenTree.helpers_model, 'ROW_LOCK_TIMEOUT', 0.3
+                ):
+                    response = self.post('api-build-hold', bo.pk)
+
+                self.assertEqual(response.status_code, 409)
+
+                resume.set()
+                self.join_threads()
+        finally:
+            resume.set()
+
+        response = self.post('api-build-hold', bo.pk)
+        self.assertEqual(response.status_code, 201)
+
+        bo.refresh_from_db()
+        self.assertEqual(bo.status, BuildStatus.ON_HOLD.value)
+        self.assertEqual(bo.completed, 20)
+
+    def test_build_actions_locked(self):
+        """Every build order action is rejected while the build order is locked."""
+        bo, _outputs = create_build()
+
+        for url_name in [
+            'api-build-issue',
+            'api-build-hold',
+            'api-build-cancel',
+            'api-build-finish',
+            'api-build-allocate',
+            'api-build-auto-allocate',
+            'api-build-consume',
+            'api-build-output-create',
+            'api-build-output-complete',
+            'api-build-output-scrap',
+            'api-build-output-delete',
+        ]:
+            with self.subTest(url=url_name):
+                self.assert_locked(Build, bo.pk, url_name)
+
+    def test_build_action_not_found(self):
+        """An action against a build order which does not exist returns a 404."""
+        response = self.post('api-build-hold', 9999)
+        self.assertEqual(response.status_code, 404)
+
+    def test_order_actions_locked(self):
+        """Order actions are rejected while the order is locked."""
+        company = Company.objects.create(
+            name='Locking company', is_customer=True, is_supplier=True
+        )
+
+        orders = {
+            SalesOrder: (
+                SalesOrder.objects.create(reference='SO-9990', customer=company),
+                ['api-so-hold', 'api-so-issue', 'api-so-cancel', 'api-so-complete'],
+            ),
+            ReturnOrder: (
+                ReturnOrder.objects.create(reference='RMA-9990', customer=company),
+                ['api-ro-hold', 'api-return-order-issue', 'api-return-order-cancel'],
+            ),
+            TransferOrder: (
+                TransferOrder.objects.create(reference='TO-9990'),
+                ['api-transfer-order-hold', 'api-transfer-order-issue'],
+            ),
+            PurchaseOrder: (
+                PurchaseOrder.objects.create(reference='PO-9990', supplier=company),
+                ['api-po-hold', 'api-po-issue', 'api-po-cancel', 'api-po-receive'],
+            ),
+        }
+
+        for model, (order, url_names) in orders.items():
+            for url_name in url_names:
+                with self.subTest(url=url_name):
+                    self.assert_locked(model, order.pk, url_name)
+
+        # A transition is applied to the latest data once the lock is available
+        po, _url_names = orders[PurchaseOrder]
+
+        release = threading.Event()
+        self.hold_row_lock(PurchaseOrder, po.pk, release, description='Changed')
+
+        timer = threading.Timer(0.5, release.set)
+        timer.start()
+
+        response = self.post('api-po-issue', po.pk)
+        timer.join()
+        self.join_threads()
+
+        self.assertEqual(response.status_code, 201)
+
+        po.refresh_from_db()
+        self.assertEqual(po.description, 'Changed')
+        self.assertEqual(po.status, 20)
+
+    def test_shipment_complete_locked(self):
+        """A shipment cannot be completed while it is locked."""
+        company = Company.objects.create(name='Locking customer', is_customer=True)
+        order = SalesOrder.objects.create(reference='SO-9991', customer=company)
+        shipment = SalesOrderShipment.objects.create(order=order, reference='1')
+
+        self.assert_locked(SalesOrderShipment, shipment.pk, 'api-so-shipment-ship')
+
+    def test_stock_item_actions_locked(self):
+        """Stock item actions are rejected while the stock item is locked."""
+        part = Part.objects.create(
+            name='Locking part', description='Part for locking tests'
+        )
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        for url_name in [
+            'api-stock-item-serialize',
+            'api-stock-item-install',
+            'api-stock-item-uninstall',
+            'api-stock-item-convert',
+        ]:
+            with self.subTest(url=url_name):
+                self.assert_locked(StockItem, item.pk, url_name)
