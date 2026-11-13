@@ -12,7 +12,8 @@ import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { IconShoppingCart } from '@tabler/icons-react';
+import { Alert } from '@mantine/core';
+import { IconListTree, IconShoppingCart } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { PartCreationMenu } from '../../components/items/PartCreationMenu';
@@ -222,6 +223,59 @@ export function PartListTable({
 
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
 
+  // Only "component" parts can be added to the BOM of another part
+  const bomComponents: any[] = useMemo(() => {
+    return table.selectedRecords.filter((record: any) => record.component);
+  }, [table.selectedRecords]);
+
+  // Generate a BOM item for each selected component (bulk create)
+  const generateBomItems = useCallback(
+    (data: any) => {
+      return bomComponents.map((record: any) => ({
+        ...data,
+        sub_part: record.pk
+      }));
+    },
+    [bomComponents]
+  );
+
+  const addToBom = useCreateApiFormModal({
+    url: ApiEndpoints.bom_list,
+    title: t`Add Parts to BOM`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`${bomComponents.length} selected parts will be added to the BOM of the selected assembly`}
+      </Alert>
+    ),
+    fields: {
+      part: {
+        label: t`Assembly`,
+        description: t`Select the assembly to add the selected parts to`,
+        filters: {
+          active: true,
+          assembly: true,
+          locked: false
+        }
+      },
+      raw_amount: {
+        label: t`Quantity`,
+        description: t`Required quantity for each of the selected parts`
+      },
+      allow_variants: {},
+      inherited: {},
+      consumable: {},
+      optional: {}
+    },
+    initialData: {
+      raw_amount: '1'
+    },
+    processFormData: generateBomItems,
+    successMessage: t`Parts added to BOM`,
+    onFormSuccess: () => {
+      table.clearSelectedRecords();
+    }
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const can_edit = user.hasChangePermission(ModelType.part);
@@ -273,6 +327,16 @@ export function PartListTable({
             onClick: () => {
               orderPartsWizard.openWizard();
             }
+          },
+          {
+            name: t`Add to BOM`,
+            icon: <IconListTree color='green' />,
+            tooltip: t`Add selected parts to the BOM of another part`,
+            hidden: !user.hasChangeRole(UserRoles.part),
+            disabled: bomComponents.length == 0,
+            onClick: () => {
+              addToBom.open();
+            }
           }
         ]}
       />,
@@ -284,7 +348,7 @@ export function PartListTable({
         refreshRef={refreshRef}
       />
     ];
-  }, [user, enableImport, table.hasSelectedRecords]);
+  }, [user, enableImport, table.hasSelectedRecords, bomComponents]);
 
   return (
     <>
@@ -292,6 +356,7 @@ export function PartListTable({
       {editPart.modal}
       {setCategory.modal}
       {orderPartsWizard.wizard}
+      {addToBom.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}
         tableState={table}

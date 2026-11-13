@@ -2981,6 +2981,69 @@ class BomItemTest(InvenTreeAPITestCase):
             for key in ['available_stock', 'available_substitute_stock']:
                 self.assertIn(key, el)
 
+    def test_bom_bulk_create(self):
+        """Test that multiple BomItem objects can be created in a single request."""
+        url = reverse('api-bom-list')
+
+        assembly = Part.objects.create(
+            name='Bulk BOM Assembly',
+            description='An assembly for bulk BOM creation',
+            assembly=True,
+        )
+
+        components = [
+            Part.objects.create(
+                name=f'Bulk BOM Component {idx}',
+                description='A component for bulk BOM creation',
+                component=True,
+            )
+            for idx in range(3)
+        ]
+
+        data = [
+            {'part': assembly.pk, 'sub_part': component.pk, 'raw_amount': '2'}
+            for component in components
+        ]
+
+        response = self.post(url, data, expected_code=201)
+
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(BomItem.objects.filter(part=assembly).count(), 3)
+
+        for item in BomItem.objects.filter(part=assembly):
+            self.assertEqual(item.quantity, 2)
+
+        # The same component cannot be provided twice in a single request
+        other = Part.objects.create(
+            name='Bulk BOM Component X', description='Another one', component=True
+        )
+
+        data = [
+            {'part': assembly.pk, 'sub_part': other.pk, 'raw_amount': '1'},
+            {'part': assembly.pk, 'sub_part': other.pk, 'raw_amount': '1'},
+        ]
+
+        self.post(url, data, expected_code=400)
+        self.assertEqual(BomItem.objects.filter(part=assembly).count(), 3)
+
+        # If any item is invalid, no items are created
+        data = [
+            {'part': assembly.pk, 'sub_part': other.pk, 'raw_amount': '1'},
+            # An assembly cannot be added to its own BOM
+            {'part': assembly.pk, 'sub_part': assembly.pk, 'raw_amount': '1'},
+        ]
+
+        self.post(url, data, expected_code=400)
+        self.assertEqual(BomItem.objects.filter(part=assembly).count(), 3)
+
+        # A single item can still be created as usual
+        self.post(
+            url,
+            {'part': assembly.pk, 'sub_part': other.pk, 'raw_amount': '1'},
+            expected_code=201,
+        )
+        self.assertEqual(BomItem.objects.filter(part=assembly).count(), 4)
+
     def test_bom_list_search(self):
         """Test that we can search the BOM list API endpoint."""
         url = reverse('api-bom-list')
