@@ -588,19 +588,27 @@ class Owner(models.Model):
 
     owner = GenericForeignKey('owner_type', 'owner_id')
 
+    @property
+    def owner_type_name(self) -> str:
+        """Return the name of the owner type (e.g. 'user' or 'group').
+
+        Uses the ContentType cache, rather than a database query for each Owner instance.
+        """
+        return ContentType.objects.get_for_id(self.owner_type_id).name
+
     def __str__(self):
         """Defines the owner string representation."""
-        if self.owner_type.name == 'user' and get_global_setting(
+        if self.owner_type_name == 'user' and get_global_setting(
             'DISPLAY_FULL_NAMES', cache=True
         ):
             display_name = self.owner.get_full_name()
         else:
             display_name = str(self.owner)
-        return f'{display_name} ({self.owner_type.name})'
+        return f'{display_name} ({self.owner_type_name})'
 
     def name(self):
         """Return the 'name' of this owner."""
-        if self.owner_type.name == 'user' and get_global_setting(
+        if self.owner_type_name == 'user' and get_global_setting(
             'DISPLAY_FULL_NAMES', cache=True
         ):
             if self.owner and hasattr(self.owner, 'get_full_name'):
@@ -612,7 +620,7 @@ class Owner(models.Model):
 
     def label(self):
         """Return the 'type' label of this owner i.e. 'user' or 'group'."""
-        return str(self.owner_type.name)
+        return str(self.owner_type_name)
 
     @classmethod
     def create(cls, obj):

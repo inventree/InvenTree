@@ -107,7 +107,7 @@ class CompanyDetail(CompanyMixin, RetrieveUpdateDestroyAPI):
 class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Company model."""
 
-    queryset = Contact.objects.all()
+    queryset = Contact.objects.all().select_related('company')
     serializer_class = ContactSerializer
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -124,7 +124,7 @@ class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
 class ContactDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for Company model."""
 
-    queryset = Contact.objects.all()
+    queryset = Contact.objects.all().select_related('company')
     serializer_class = ContactSerializer
 
 
@@ -493,6 +493,11 @@ class SupplierPriceBreakMixin:
 
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
+
+    def get_queryset(self):
+        """Return annotated queryset for the SupplierPriceBreak endpoints."""
+        queryset = super().get_queryset()
+        return SupplierPriceBreakSerializer.annotate_queryset(queryset)
 
 
 class SupplierPriceBreakOutputOptions(OutputConfiguration):

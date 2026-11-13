@@ -261,6 +261,48 @@ class BarcodeAPITest(InvenTreeAPITestCase):
             self.assertIn('object does not exist', str(response.data[k]))
 
 
+class BarcodePluginPriorityTest(InvenTreeAPITestCase):
+    """Tests for the ordering of barcode plugins by BARCODE_PRIORITY."""
+
+    def test_sort_order(self):
+        """Plugins are sorted by priority (highest first), retaining registry order for ties."""
+        from types import SimpleNamespace
+        from unittest import mock
+
+        from plugin.base.barcodes.api import get_barcode_plugins
+
+        plugins = [
+            SimpleNamespace(slug='a', BARCODE_PRIORITY=0),
+            SimpleNamespace(slug='fallback', BARCODE_PRIORITY=-100),
+            SimpleNamespace(slug='b', BARCODE_PRIORITY=0),
+            SimpleNamespace(slug='high', BARCODE_PRIORITY=10),
+            SimpleNamespace(slug='missing'),  # No attribute - defaults to 0
+            SimpleNamespace(slug='invalid', BARCODE_PRIORITY='abc'),  # Defaults to 0
+        ]
+
+        with mock.patch(
+            'plugin.base.barcodes.api.registry.with_mixin', return_value=plugins
+        ):
+            slugs = [plg.slug for plg in get_barcode_plugins()]
+
+        self.assertEqual(slugs, ['high', 'a', 'b', 'missing', 'invalid', 'fallback'])
+
+    def test_registry_order(self):
+        """The fallback manufacturer barcode plugin is queried last."""
+        from plugin import PluginMixinEnum, registry
+        from plugin.base.barcodes.api import get_barcode_plugins
+
+        registry.set_plugin_states({'manufacturerbarcode': True})
+
+        slugs = [plg.slug for plg in get_barcode_plugins(PluginMixinEnum.BARCODE)]
+
+        self.assertGreater(len(slugs), 1)
+        self.assertEqual(slugs[-1], 'manufacturerbarcode')
+        self.assertLess(
+            slugs.index('inventreebarcode'), slugs.index('manufacturerbarcode')
+        )
+
+
 class BarcodeScanResultAPITest(InvenTreeAPITestCase):
     """Tests for the BarcodeScanResult list / detail API endpoints."""
 

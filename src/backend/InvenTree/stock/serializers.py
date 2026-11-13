@@ -518,17 +518,25 @@ class StockItemSerializer(
     @staticmethod
     def annotate_queryset(queryset):
         """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
+        # Note: 'part' must be loaded via Prefetch (not select_related),
+        # otherwise the select_related cache causes the Prefetch to be skipped,
+        # and the 'category_default_location' annotation is silently lost.
+        # Prefetching also loads each distinct Part (and PartPricing) only once,
+        # rather than once per StockItem row.
         queryset = queryset.prefetch_related(
             'location',
             'sales_order',
             'purchase_order',
             Prefetch(
                 'part',
-                queryset=part_models.Part.objects.annotate(
+                queryset=part_models.Part.objects
+                .annotate(
                     category_default_location=part_filters.annotate_default_location(
                         'category__'
                     )
-                ).prefetch_related(None),
+                )
+                .prefetch_related(None)
+                .select_related('pricing_data'),
             ),
             'parent',
             'part__category',
@@ -536,9 +544,8 @@ class StockItemSerializer(
             'supplier_part__manufacturer_part',
             'customer',
             'belongs_to',
-            'sales_order',
             'consumed_by',
-        ).select_related('part', 'part__pricing_data')
+        )
 
         # Annotate the queryset with the total allocated to sales orders
         queryset = queryset.annotate(
@@ -1472,7 +1479,7 @@ class LocationSerializer(
         """Annotate extra information to the queryset."""
         # Annotate the number of stock items which exist in this category (including subcategories)
 
-        queryset = queryset.prefetch_related('tags')
+        queryset = queryset.prefetch_related('tags', 'location_type')
 
         queryset = queryset.annotate(
             items=stock.filters.annotate_location_items(),
