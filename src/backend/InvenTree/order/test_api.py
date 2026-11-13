@@ -3693,6 +3693,25 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(self.shipment.delivery_date, datetime(2023, 12, 5).date())
         self.assertTrue(self.shipment.is_delivered())
 
+    def test_shipment_barcode_hash_read_only(self):
+        """The 'barcode_hash' field cannot be changed via the SalesOrderShipment API."""
+        url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
+
+        self.assertEqual(self.shipment.barcode_hash, '')
+
+        # The 'barcode_hash' value is ignored, other fields are updated
+        data = self.patch(
+            url,
+            {'barcode_hash': 'abc123', 'tracking_number': 'TRK999'},
+            expected_code=200,
+        ).data
+
+        self.assertEqual(data['barcode_hash'], '')
+        self.assertEqual(data['tracking_number'], 'TRK999')
+
+        self.shipment.refresh_from_db()
+        self.assertEqual(self.shipment.barcode_hash, '')
+
     def test_shipment_delivery_date(self):
         """Test delivery date functions via API."""
         url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
@@ -4622,6 +4641,32 @@ class ReturnOrderTests(InvenTreeAPITestCase):
 
 class ReturnOrderLineItemTests(InvenTreeAPITestCase):
     """Unit tests for ReturnOrderLineItem API endpoints."""
+
+    def test_received_date_read_only(self):
+        """The 'received_date' field cannot be changed via the ReturnOrderLineItem API.
+
+        Line items must be received via the return order 'receive' endpoint,
+        otherwise the returned stock item is never actually received into stock.
+        """
+        self.assignRole('return_order.change')
+
+        line = models.ReturnOrderLineItem.objects.filter(received_date=None).first()
+        self.assertIsNotNone(line)
+
+        url = reverse('api-return-order-line-detail', kwargs={'pk': line.pk})
+
+        # The 'received_date' value is ignored, other fields are updated
+        data = self.patch(
+            url,
+            {'received_date': '2024-01-01', 'reference': 'Updated'},
+            expected_code=200,
+        ).data
+
+        self.assertIsNone(data['received_date'])
+        self.assertEqual(data['reference'], 'Updated')
+
+        line.refresh_from_db()
+        self.assertIsNone(line.received_date)
 
     fixtures = [
         'category',

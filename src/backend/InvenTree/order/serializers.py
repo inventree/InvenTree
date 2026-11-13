@@ -1493,6 +1493,9 @@ class SalesOrderShipmentSerializer(
             'tags',
         ]
 
+        # Note: Barcodes are assigned via the dedicated barcode endpoints
+        read_only_fields = ['barcode_hash']
+
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with extra information."""
@@ -2415,6 +2418,9 @@ class ReturnOrderLineItemSerializer(
             'item_detail',
             'part_detail',
         ])
+
+        # Note: Line items are marked as received via the 'receive' endpoint
+        read_only_fields = ['received_date']
 
     order_detail = OptionalField(
         serializer_class=ReturnOrderSerializer,
