@@ -23,11 +23,13 @@ import type { TableColumn, TableColumnFilterType } from '@lib/types/Tables';
 import {
   CodeEditor,
   PdfPreview,
-  TemplateEditor
+  TemplateEditor,
+  useTemplateEditorCloseGuard
 } from '../../components/editors/TemplateEditor';
 import type {
   Editor,
-  PreviewArea
+  PreviewArea,
+  UnsavedChangesRef
 } from '../../components/editors/TemplateEditor/TemplateEditor';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
@@ -87,10 +89,12 @@ export interface TemplateProps {
 
 export function TemplateDrawer({
   id,
-  templateProps
+  templateProps,
+  unsavedChangesRef
 }: Readonly<{
   id: string | number;
   templateProps: TemplateProps;
+  unsavedChangesRef?: UnsavedChangesRef;
 }>) {
   const { modelType, templateEndpoint, printingEndpoint } = templateProps;
 
@@ -198,6 +202,7 @@ export function TemplateDrawer({
         template={template}
         editors={editors}
         previewAreas={previews}
+        unsavedChangesRef={unsavedChangesRef}
       />
     </Stack>
   );
@@ -212,6 +217,9 @@ export function TemplateTable({
 
   const table = useTable(`${templateEndpoint}-template`);
   const navigate = useNavigate();
+
+  // Warn the user before closing the editor with unsaved changes
+  const closeGuard = useTemplateEditorCloseGuard();
   const user = useUserState();
 
   const openDetailDrawer = useCallback((pk: number) => navigate(`${pk}/`), []);
@@ -427,8 +435,15 @@ export function TemplateTable({
         title={t`Edit Template`}
         size={'90%'}
         closeOnEscape={false}
+        onBeforeClose={closeGuard.onBeforeClose}
         renderContent={(id) => {
-          return <TemplateDrawer id={id ?? ''} templateProps={templateProps} />;
+          return (
+            <TemplateDrawer
+              id={id ?? ''}
+              templateProps={templateProps}
+              unsavedChangesRef={closeGuard.unsavedChangesRef}
+            />
+          );
         }}
       />
       <InvenTreeTable

@@ -25,8 +25,10 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CodeEditor,
-  TemplateEditor
+  TemplateEditor,
+  useTemplateEditorCloseGuard
 } from '../../components/editors/TemplateEditor';
+import type { UnsavedChangesRef } from '../../components/editors/TemplateEditor/TemplateEditor';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DescriptionColumn } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
@@ -47,9 +49,11 @@ export type SnippetI = {
 };
 
 export function SnippetDrawer({
-  id
+  id,
+  unsavedChangesRef
 }: Readonly<{
   id: string | number;
+  unsavedChangesRef?: UnsavedChangesRef;
 }>) {
   const {
     instance: snippet,
@@ -90,6 +94,7 @@ export function SnippetDrawer({
         fileField='snippet'
         editors={[CodeEditor]}
         previewAreas={[]}
+        unsavedChangesRef={unsavedChangesRef}
       />
     </Stack>
   );
@@ -98,6 +103,9 @@ export function SnippetDrawer({
 export default function SnippetTable() {
   const table = useTable('report-snippet');
   const navigate = useNavigate();
+
+  // Warn the user before closing the editor with unsaved changes
+  const closeGuard = useTemplateEditorCloseGuard();
   const user = useUserState();
 
   const openDetailDrawer = useCallback((pk: number) => navigate(`${pk}/`), []);
@@ -215,8 +223,14 @@ export default function SnippetTable() {
         title={t`Edit Snippet`}
         size={'90%'}
         closeOnEscape={false}
+        onBeforeClose={closeGuard.onBeforeClose}
         renderContent={(id) => {
-          return <SnippetDrawer id={id ?? ''} />;
+          return (
+            <SnippetDrawer
+              id={id ?? ''}
+              unsavedChangesRef={closeGuard.unsavedChangesRef}
+            />
+          );
         }}
       />
       <Alert icon={<IconInfoCircle />} title={t`Snippets`}>

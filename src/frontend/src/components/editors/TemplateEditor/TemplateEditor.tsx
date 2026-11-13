@@ -14,6 +14,7 @@ import {
   Stack,
   Tabs
 } from '@mantine/core';
+import { useWindowEvent } from '@mantine/hooks';
 import { openConfirmModal } from '@mantine/modals';
 import {
   hideNotification,
@@ -85,7 +86,69 @@ export type TemplateEditorProps = {
   template: TemplateI;
   // Name of the file field on the template model (e.g. 'template' or 'snippet')
   fileField?: string;
+  // Populated by the editor with a function to check for unsaved changes
+  unsavedChangesRef?: UnsavedChangesRef;
 };
+
+export type UnsavedChangesRef = React.MutableRefObject<
+  (() => Promise<boolean>) | null
+>;
+
+// Compare template code, ignoring differences in line endings
+function codeDiffers(a: string, b: string): boolean {
+  return a.replace(/\r\n/g, '\n') !== b.replace(/\r\n/g, '\n');
+}
+
+/**
+ * Guard a drawer which contains a TemplateEditor against accidental closing.
+ *
+ * - Pass "unsavedChangesRef" to the TemplateEditor component
+ * - Pass "onBeforeClose" to the DetailDrawer component
+ */
+export function useTemplateEditorCloseGuard() {
+  const unsavedChangesRef: UnsavedChangesRef = useRef(null);
+
+  const onBeforeClose = useCallback((close: () => void) => {
+    const check = unsavedChangesRef.current;
+
+    if (!check) {
+      close();
+      return;
+    }
+
+    check()
+      .then((unsaved) => {
+        if (!unsaved) {
+          close();
+          return;
+        }
+
+        openConfirmModal({
+          title: t`Unsaved Changes`,
+          children: (
+            <Alert
+              color='yellow'
+              icon={<IconAlertTriangle />}
+              title={t`The template has unsaved changes`}
+            >
+              {t`If you close the editor now, your changes will be lost. Do you want to proceed?`}
+            </Alert>
+          ),
+          labels: {
+            confirm: t`Discard Changes`,
+            cancel: t`Keep Editing`
+          },
+          confirmProps: {
+            color: 'red'
+          },
+          onConfirm: close
+        });
+      })
+      .catch(() => close());
+  }, []);
+
+  return { unsavedChangesRef, onBeforeClose };
+}
 
 export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   const {
@@ -93,7 +156,8 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
     editors,
     previewAreas,
     template,
-    fileField = 'template'
+    fileField = 'template',
+    unsavedChangesRef
   } = props;
   const editorRef = useRef<EditorRef | null>(null);
   const previewRef = useRef<PreviewAreaRef | null>(null);
@@ -114,6 +178,53 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   );
 
   const codeRef = useRef<string | undefined>(undefined);
+
+  // The template code as it is currently stored on the server
+  const savedCodeRef = useRef<string | undefined>(undefined);
+
+  // Check if the code in the editor differs from the code stored on the server
+  const hasUnsavedChanges = useCallback(async () => {
+    if (savedCodeRef.current === undefined) return false;
+
+    try {
+      const code = await Promise.resolve(editorRef.current?.getCode());
+      return code !== undefined && codeDiffers(code, savedCodeRef.current);
+    } catch {
+      return false;
+    }
+  }, []);
+
+  // Expose the check to the parent component (e.g. to guard closing of a drawer)
+  useEffect(() => {
+    if (!unsavedChangesRef) return;
+
+    unsavedChangesRef.current = hasUnsavedChanges;
+
+    return () => {
+      unsavedChangesRef.current = null;
+    };
+  }, [unsavedChangesRef, hasUnsavedChanges]);
+
+  // Warn before the page is closed or reloaded with unsaved changes
+  // Note: this must be synchronous, so editors which provide their code asynchronously are not covered
+  useWindowEvent('beforeunload', (event) => {
+    let code: unknown;
+
+    try {
+      code = editorRef.current?.getCode();
+    } catch {
+      return;
+    }
+
+    if (
+      typeof code === 'string' &&
+      savedCodeRef.current !== undefined &&
+      codeDiffers(code, savedCodeRef.current)
+    ) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  });
 
   const loadCodeToEditor = useCallback(async (code: string) => {
     try {
@@ -158,6 +269,8 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
           })
           .then((res) => {
             codeRef.current = res.data;
+            savedCodeRef.current =
+              typeof res.data === 'string' ? res.data : undefined;
             loadCodeToEditor(res.data);
           })
           .catch(() => {
@@ -224,6 +337,11 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
         )
       )
         .then(() => {
+          if (saveTemplate) {
+            // The preview area has stored the template on the server
+            savedCodeRef.current = code;
+          }
+
           setRenderingErrors(null);
 
           notifications.hide('template-preview');
@@ -274,6 +392,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
     api
       .patch(templateUrl, formData)
       .then(() => {
+        savedCodeRef.current = code;
         hideNotification('template-save');
         showNotification({
           id: 'template-save',
