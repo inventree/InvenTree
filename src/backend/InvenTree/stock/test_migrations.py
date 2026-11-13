@@ -633,3 +633,56 @@ class TestStockTrackingAuditMigration(MigratorTestCase):
         ]:
             with self.subTest(check=check.__name__):
                 check()
+
+
+class TestRestorePurchasePrice(MigratorTestCase):
+    """Test that reversing the removal of StockItem.purchase_price restores the legacy values."""
+
+    migrate_from = ('stock', '0132_remove_stockitem_purchase_price')
+    migrate_to = ('stock', '0131_stocklocation_exclude_from_stock')
+
+    def prepare(self):
+        """Create stock items with (and without) legacy cost entries."""
+        apps = self.old_state.apps
+
+        Part = apps.get_model('part', 'part')
+        StockItem = apps.get_model('stock', 'stockitem')
+        StockItemCostEntry = apps.get_model('pricing', 'stockitemcostentry')
+
+        # The purchase price field does not exist in this state
+        field_names = [field.name for field in StockItem._meta.get_fields()]
+        self.assertNotIn('purchase_price', field_names)
+        self.assertNotIn('purchase_price_currency', field_names)
+
+        part = Part.objects.create(
+            name='Migration Test Part', level=0, tree_id=0, lft=0, rght=0
+        )
+
+        self.legacy = StockItem.objects.create(part=part, quantity=10).pk
+        self.manual = StockItem.objects.create(part=part, quantity=10).pk
+        self.empty = StockItem.objects.create(part=part, quantity=10).pk
+
+        for pk, source, cost, currency in [
+            (self.legacy, 'legacy', 12.5, 'AUD'),
+            (self.legacy, 'manual', 99, 'USD'),
+            (self.manual, 'manual', 7, 'USD'),
+        ]:
+            StockItemCostEntry.objects.create(
+                stock_item_id=pk,
+                cost_type=10,
+                source=source,
+                currency=currency,
+                min_cost=cost,
+                max_cost=cost,
+            )
+
+    def test_restored(self):
+        """Only the legacy (migrated) purchase prices are restored."""
+        StockItem = self.new_state.apps.get_model('stock', 'stockitem')
+
+        item = StockItem.objects.get(pk=self.legacy)
+        self.assertEqual(float(item.purchase_price.amount), 12.5)
+        self.assertEqual(str(item.purchase_price.currency), 'AUD')
+
+        for pk in [self.manual, self.empty]:
+            self.assertIsNone(StockItem.objects.get(pk=pk).purchase_price)

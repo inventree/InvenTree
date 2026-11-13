@@ -619,8 +619,10 @@ class PartPricingTests(InvenTreeTestCase):
 
         # Create some stock items
         for _idx in range(3):
-            stock.models.StockItem.objects.create(
-                part=p, quantity=10, purchase_price=Money(10, 'USD')
+            item = stock.models.StockItem.objects.create(part=p, quantity=10)
+
+            StockItemCostEntry.objects.create_cost(
+                item, CostType.PURCHASE, CostSource.MANUAL, min_cost=Money(10, 'USD')
             )
 
         # Manually schedule a pricing update (does not happen automatically in testing)

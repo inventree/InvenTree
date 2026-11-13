@@ -2161,9 +2161,6 @@ class StockItemTest(StockAPITestCase):
         """
         url = reverse('api-stock-detail', kwargs={'pk': 1})
 
-        item = StockItem.objects.get(pk=1)
-        price = item.purchase_price
-
         data = self.get(url, expected_code=200).data
 
         self.assertNotIn('purchase_price', data)
@@ -2175,9 +2172,6 @@ class StockItemTest(StockAPITestCase):
             {'purchase_price': 456, 'purchase_price_currency': 'NZD'},
             expected_code=200,
         )
-
-        item.refresh_from_db()
-        self.assertEqual(item.purchase_price, price)
 
         response = self.post(
             self.list_url,
@@ -2192,7 +2186,6 @@ class StockItemTest(StockAPITestCase):
         )
 
         item = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertIsNone(item.purchase_price)
         self.assertFalse(item.cost_entries.exists())
 
     def test_output_options(self):
@@ -2773,9 +2766,6 @@ class StockItemDisassembleTest(StockAPITestCase):
             self.assertAlmostEqual(float(entry.min_cost), 400 / 52, places=4)
             self.assertAlmostEqual(float(entry.max_cost), 400 / 52, places=4)
 
-            # The legacy purchase price is no longer set
-            self.assertIsNone(item.purchase_price)
-
         # Check stock tracking entries have been created
         self.assertTrue(
             stock_events(self.item, event_type=StockHistoryCode.DISASSEMBLED).exists()
@@ -2881,9 +2871,6 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         # No automatic allocation for the line without an explicit cost
         self.assertFalse(items[50].cost_entries.exists())
-
-        # The legacy purchase price is not set
-        self.assertIsNone(items[1].purchase_price)
 
     def install_item(self, part_pk: int, quantity, **kwargs) -> StockItem:
         """Install a new stock item into the assembly under test."""

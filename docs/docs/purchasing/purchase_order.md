@@ -152,9 +152,9 @@ Rather than receiving the bundle as a single opaque stock quantity, InvenTree al
 1. Create a part to represent the bundle itself, and mark it as an [assembly](../part/index.md#assembly)
 2. Link a [supplier part](./supplier.md#supplier-parts) to the bundle part, representing how it is purchased from the supplier
 3. Define a [Bill of Materials](../manufacturing/bom.md) for the bundle part, listing each of the individual components and the quantity contained within a single bundle
-4. Create and receive a purchase order against the bundle's supplier part, as normal - a single stock item is created for the bundle, retaining the purchase price and source purchase order of the order as a whole
+4. Create and receive a purchase order against the bundle's supplier part, as normal - a single stock item is created for the bundle, retaining the purchase cost and source purchase order of the order as a whole
 
-Once the individual components are actually required, the received bundle stock item can be [disassembled](../stock/disassemble.md) into its component parts. The purchase price and traceability data (batch code, source purchase order) of the original bundle are automatically apportioned across the newly generated component stock items.
+Once the individual components are actually required, the received bundle stock item can be [disassembled](../stock/disassemble.md) into its component parts. The cost and traceability data (batch code, source purchase order) of the original bundle are automatically apportioned across the newly generated component stock items.
 
 !!! tip "Pack Size vs Bundled Items"
     A supplier part with a [pack size](./supplier.md#supplier-part-pack-size) greater than one still represents multiple units of the *same* part - the pack size simply determines how many physical units are added to stock per unit ordered. A *bundled* item is different: a single supplier part represents an assortment of *different* components, which must be disassembled before the individual components can be used or sold separately.

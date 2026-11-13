@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) removes the "purchase_price" and "purchase_price_currency" fields from the StockItem API (including stock item CSV import and export), along with the "has_purchase_price" filter and "purchase_price" ordering option. Stock item costs are now managed via cost entries (`/api/pricing/stock-cost-entry/`), and the unit cost of a stock item is available via the optional "pricing_detail" field.
+- [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) removes the "purchase_price" field from the StockItem model. Existing values are migrated to "legacy" cost entries. Any plugin or report template which still references `purchase_price` (or `purchase_price_currency`) on a stock item will raise an error (`StockItemPurchasePriceRemovedError`), and must be updated to use the stock item cost data (`item.cost` / `item.cost_entries`).
 - [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) removes the "Convert Currency" purchase order setting (`PURCHASEORDER_CONVERT_CURRENCY`). Costs recorded when receiving stock always store both the original (line item) value and the value converted to the default currency.
 - [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) explicit per-line prices provided when disassembling a stock item are now recorded as cost entries (in the default currency, unless specified), rather than as the purchase price of the component items.
 

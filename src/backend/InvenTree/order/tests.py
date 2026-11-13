@@ -531,16 +531,12 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         si = si.first()
         self.assertEqual(si.quantity, 10)
 
-        # The legacy purchase price field is no longer written (see cost entries below)
-        self.assertIsNone(si.purchase_price)
-
         si = StockItem.objects.filter(supplier_part=sp_2)
         self.assertEqual(si.count(), 1)
 
         # Ensure that received quantity and unit purchase price data are correct
         si = si.first()
         self.assertEqual(si.quantity, 0.5)
-        self.assertIsNone(si.purchase_price)
 
         # Each received stock item has a PURCHASE cost entry, per base unit
         # (i.e. the line price divided by the supplier pack quantity)
@@ -678,9 +674,6 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # The cost entries always record the original (line item) currency,
         # and the summaries the default currency
         for item in order.stock_items.order_by('-pk')[:2]:
-            # The legacy purchase price field is no longer written
-            self.assertIsNone(item.purchase_price)
-
             entry = item.cost_entries.get()
             self.assertEqual(entry.currency, 'CAD')
             self.assertEqual(entry.min_cost, Decimal('1.25'))

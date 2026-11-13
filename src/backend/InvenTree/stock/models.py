@@ -42,7 +42,7 @@ from company import models as CompanyModels
 from generic.enums import StringEnum
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
-from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers_db import bulk_create_and_fetch
 from order.status_codes import SalesOrderStatusGroups, TransferOrderStatusGroups
 from part import models as PartModels
@@ -427,6 +427,23 @@ STOCK_SORT_CHOICES = [
 STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 
+class StockItemPurchasePriceRemovedError(Exception):
+    """Raised when the removed StockItem.purchase_price field is accessed.
+
+    Note: Deliberately *not* an AttributeError, which would be silently ignored by
+    hasattr() / getattr() with a default, and by the template engine (rendering an empty value).
+    """
+
+    def __init__(self):
+        """Initialize with a message describing the replacement."""
+        super().__init__(
+            "StockItem 'purchase_price' and 'purchase_price_currency' have been removed. "
+            "Stock item costs are recorded as cost entries: use 'item.cost' (pricing.models.StockItemCost, "
+            'the total unit cost in the default currency - may not exist) or '
+            "'item.cost_entries' (pricing.models.StockItemCostEntry)."
+        )
+
+
 class StockItem(
     InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
@@ -462,7 +479,7 @@ class StockItem(
         is_building: Boolean field indicating if this stock item is currently being built (or is "in production")
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
-        purchase_price: Legacy unit purchase price - no longer written or read by core code (to be removed). Stock item costs are recorded as cost entries (see pricing.models.StockItemCostEntry)
+        purchase_price: REMOVED - any access raises StockItemPurchasePriceRemovedError. Stock item costs are recorded as cost entries (see pricing.models.StockItemCostEntry)
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
     """
 
@@ -1382,14 +1399,15 @@ class StockItem(
         """Return the text representation of the status field."""
         return StockStatus.text(self.status)
 
-    purchase_price = InvenTreeModelMoneyField(
-        max_digits=19,
-        decimal_places=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Purchase Price'),
-        help_text=_('Single unit purchase price at time of purchase'),
-    )
+    def _purchase_price_removed(self, *args):
+        """Raise an error for any access to the removed purchase price fields."""
+        raise StockItemPurchasePriceRemovedError()
+
+    # The 'purchase_price' field has been removed - any remaining reference
+    # (e.g. from a plugin or report template) raises a descriptive error,
+    # rather than silently returning no data
+    purchase_price = property(_purchase_price_removed, _purchase_price_removed)
+    purchase_price_currency = property(_purchase_price_removed, _purchase_price_removed)
 
     owner = models.ForeignKey(
         Owner,

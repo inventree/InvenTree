@@ -1115,7 +1115,6 @@ class StockTest(StockTestBase):
         self.assertEqual(part.stock_items.count(), 1)
         s1.refresh_from_db()
         self.assertEqual(s1.quantity, 60)
-        self.assertIsNone(s1.purchase_price)
 
         merge_entry = stock_events(
             s1, event_type=StockHistoryCode.MERGED_STOCK_ITEMS
@@ -1161,9 +1160,6 @@ class StockTest(StockTestBase):
         self.assertEqual(entry.min_cost, Decimal(10))
         self.assertEqual(summary.min_cost, Decimal(10))
 
-        # The legacy purchase price field is no longer written
-        self.assertIsNone(s1.purchase_price)
-
         part.stock_items.all().delete()
 
         s1 = make_item(10, Money(5, 'USD'))
@@ -1180,7 +1176,6 @@ class StockTest(StockTestBase):
         entry, summary = merged_cost(s1)
         self.assertAlmostEqual(float(entry.min_cost), 16.875, places=3)
         self.assertAlmostEqual(float(summary.min_cost), 16.875, places=3)
-        self.assertIsNone(s1.purchase_price)
 
     def test_merge_protected_items(self):
         """Stock items in a protected state cannot be absorbed by a merge.
@@ -1269,26 +1264,40 @@ class StockTest(StockTestBase):
 
         self.assertTrue(check_func())
 
-    def test_purchase_price(self):
-        """Test purchase price field."""
-        from common.currency import currency_code_default
-        from common.settings import set_global_setting
+    def test_purchase_price_removed(self):
+        """The 'purchase_price' field has been removed - any access raises a descriptive error."""
+        from stock.models import StockItemPurchasePriceRemovedError
 
         part = Part.objects.filter(virtual=False).first()
+        item = StockItem.objects.create(part=part, quantity=10)
 
-        for currency in ['AUD', 'USD', 'JPY']:
-            set_global_setting('INVENTREE_DEFAULT_CURRENCY', currency)
-            self.assertEqual(currency_code_default(), currency)
+        for attr in ['purchase_price', 'purchase_price_currency']:
+            with self.assertRaises(StockItemPurchasePriceRemovedError) as err:
+                getattr(item, attr)
 
-            # Create stock item, do not specify currency - should get default
-            item = StockItem.objects.create(part=part, quantity=10)
-            self.assertEqual(item.purchase_price_currency, currency)
+            self.assertIn('cost_entries', str(err.exception))
 
-            # Create stock item, specify currency
-            item = StockItem.objects.create(
-                part=part, quantity=10, purchase_price=Money(5, 'GBP')
-            )
-            self.assertEqual(item.purchase_price_currency, 'GBP')
+            with self.assertRaises(StockItemPurchasePriceRemovedError):
+                setattr(item, attr, None)
+
+            # Not an AttributeError - so not hidden by hasattr() or getattr() defaults
+            with self.assertRaises(StockItemPurchasePriceRemovedError):
+                hasattr(item, attr)
+
+        with self.assertRaises(StockItemPurchasePriceRemovedError):
+            StockItem(part=part, quantity=10, purchase_price=Money(5, 'GBP'))
+
+        # The error is not hidden by the template engine
+        from django.template import Context, Template
+
+        with self.assertRaises(StockItemPurchasePriceRemovedError):
+            Template('{{ item.purchase_price }}').render(Context({'item': item}))
+
+        # Ordinary model operations are unaffected
+        item.quantity = 5
+        item.save()
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 5)
 
 
 class TrackingEventBatchTests(StockTestBase):
