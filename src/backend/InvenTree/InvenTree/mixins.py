@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 import data_exporter.mixins
 import importer.mixins
-from InvenTree.exceptions import ResourceLocked
+from InvenTree.exceptions import ResourceLockedError
 from InvenTree.fields import OutputConfiguration
 from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
 from InvenTree.helpers_model import RowLockTimeoutError, lock_row
@@ -40,7 +40,7 @@ class RowLockMixin:
     the meantime (e.g. by a background task, or another request).
 
     If the row is locked by another (long-running) transaction, the request is rejected
-    with a 409 (see InvenTree.exceptions.ResourceLocked) rather than blocking.
+    with a 409 (see InvenTree.exceptions.ResourceLockedError) rather than blocking.
     """
 
     def lock_row_or_conflict(self, model, pk) -> bool:
@@ -53,7 +53,7 @@ class RowLockMixin:
             An invalid primary key value is treated as a row which does not exist.
 
         Raises:
-            ResourceLocked: If the row is locked by another transaction
+            ResourceLockedError: If the row is locked by another transaction
         """
         try:
             pk = model._meta.pk.to_python(pk)
@@ -66,7 +66,7 @@ class RowLockMixin:
         try:
             return lock_row(model, pk)
         except RowLockTimeoutError:
-            raise ResourceLocked()
+            raise ResourceLockedError()
 
     def lock_instance(self, instance):
         """Lock the database row of an instance which has already been loaded, and reload it.
@@ -78,7 +78,7 @@ class RowLockMixin:
         Must be called from within a database transaction.
 
         Raises:
-            ResourceLocked: If the row is locked by another transaction
+            ResourceLockedError: If the row is locked by another transaction
             NotFound: If the row no longer exists
         """
         if not self.lock_row_or_conflict(type(instance), instance.pk):
@@ -97,7 +97,7 @@ class RowLockMixin:
         the block exits.
 
         Raises:
-            ResourceLocked: If the row is locked by another transaction
+            ResourceLockedError: If the row is locked by another transaction
         """
         with transaction.atomic():
             self.lock_row_or_conflict(model, pk)
@@ -182,7 +182,7 @@ class CleanUpdate(RowLockMixin):
         Must be called from within a database transaction.
 
         Raises:
-            ResourceLocked: If the row is locked by another transaction
+            ResourceLockedError: If the row is locked by another transaction
         """
         if not self.lock_on_update or not connection.features.has_select_for_update:
             return self.get_object()

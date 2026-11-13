@@ -20,7 +20,7 @@ from rest_framework.response import Response
 logger = structlog.get_logger('inventree')
 
 
-class ResourceLocked(APIException):
+class ResourceLockedError(APIException):
     """The requested object is locked by another operation, and cannot be modified right now.
 
     Returned (as HTTP 409) when a database row could not be locked within a reasonable
