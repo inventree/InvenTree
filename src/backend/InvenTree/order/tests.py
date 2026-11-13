@@ -580,7 +580,6 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         self.generate_exchange_rates()
 
         set_global_setting('INVENTREE_DEFAULT_CURRENCY', 'USD')
-        set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', False)
 
         user = get_user_model().objects.get(pk=1)
         sup = Company.objects.get(pk=1)
@@ -668,12 +667,8 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         order.place_order()
 
-        # Note: The PURCHASEORDER_CONVERT_CURRENCY setting no longer has any effect -
-        # the cost entry stores both the original and the converted values
-        set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', True)
+        # The cost entry stores both the original and the converted values
         order.receive_line_item(line, loc, 50, user=None)
-
-        set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', False)
         order.receive_line_item(line, loc, 30, user=None)
 
         self.assertEqual(

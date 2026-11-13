@@ -17,6 +17,7 @@ v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/XXXX
     - Breaking: Removes the "has_purchase_price" filter and "purchase_price" ordering option from the StockItem API
     - Adds "has_unit_cost" filter and "unit_cost" ordering option to the StockItem API (ignored for users without the "pricing" view role)
     - Breaking: Explicit per-line "purchase_price" values for stock disassembly now create cost entries (and no longer set the purchase price), and default to the default currency
+    - Breaking: Removes the "PURCHASEORDER_CONVERT_CURRENCY" global setting
 
 v576 -> 2026-11-11 : https://github.com/inventree/InvenTree/pull/13247
     - Adds /api/system/messages/ endpoint: staff-only, read-only; classified system messages are provided in the "messages" array

@@ -9,13 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) removes the "purchase_price" and "purchase_price_currency" fields from the StockItem API (including stock item CSV import and export), along with the "has_purchase_price" filter and "purchase_price" ordering option. Stock item costs are now managed via cost entries (`/api/pricing/stock-cost-entry/`), and the unit cost of a stock item is available via the optional "pricing_detail" field.
+- [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) removes the "Convert Currency" purchase order setting (`PURCHASEORDER_CONVERT_CURRENCY`). Costs recorded when receiving stock always store both the original (line item) value and the value converted to the default currency.
+- [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) explicit per-line prices provided when disassembling a stock item are now recorded as cost entries (in the default currency, unless specified), rather than as the purchase price of the component items.
+
 ### Added
+
+- [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) adds stock item cost tracking. Each stock item can carry any number of per-unit cost entries (purchase, landed, fees, material, manufacturing, adjustment, other), with optional min/max ranges and an "estimated" flag, which are summed into a cached unit cost for the stock item. Costs are recorded automatically when receiving purchase orders, and carried across when stock is split, serialized, consumed, shipped, merged or disassembled. Existing stock item purchase prices are migrated to "legacy" cost entries. A "Costs" panel and a "Unit Cost" overview are shown on the stock item page for users with the "pricing" role.
+- [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) adds the "has_unit_cost" filter and "unit_cost" ordering option to the StockItem API (available to users with the "pricing" view role).
 
 - [#13208](https://github.com/inventree/InvenTree/pull/13208) Shows the consuming build order in the stock item Child Items table, which includes consumed children by default for users without saved filters.
 
 - [#13166](https://github.com/inventree/InvenTree/pull/13166) Adds an "exclude_from_stock" attribute to the StockLocation model, allowing stock items in specified locations to be excluded from stock availability calculations.
 
 ### Changed
+
+- [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) when stock item pricing is enabled, the purchase cost of a part is now calculated from the "purchase" cost entries of its stock items. The "Stock Item Pricing Age" setting now applies to the date the cost was recorded, rather than the date the stock item was last updated.
+- [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) stocktake now values stock items using their recorded unit cost.
 
 ### Removed
 

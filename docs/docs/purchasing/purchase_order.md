@@ -133,11 +133,15 @@ If the part being received is [trackable](../part/trackable.md), serial numbers 
 
 Serial numbers are *not* required to receive a trackable part - if left blank, a single (non-serialized) stock item is created for the received quantity. This is useful, for example, when receiving a batch of units against an [external build order](../manufacturing/external.md) which will be [serialized later](../part/trackable.md#build-outputs-without-serial-numbers) in the manufacturing process.
 
-### Item Value Currency
+### Item Cost
 
-The unit cost of the purchase order line item is transferred across to the created stock item. By default, the same currency is used for the stock item as was used for the purchase order line item.
+When items are received against a purchase order line which has a price, a *purchase* cost entry is recorded against each of the created stock items:
 
-However, if the [Convert Currency](#purchase-order-settings) setting is enabled, the currency of the stock item will be converted to the [default currency](../concepts/pricing.md#default-currency) of the system. This may be useful when ordering stock in a different currency, to ensure that the unit cost of the stock item is converted to the base currency at the time of receipt.
+- The line price is per supplier pack, so it is divided by the [pack quantity](./supplier.md#supplier-part-pack-size) of the supplier part to give a cost per (base) unit of the stock item
+- The cost is recorded in the currency of the purchase order line item
+- The cost is also converted to the [default currency](../concepts/pricing.md#default-currency) of the system, at the exchange rate at the time of receipt. Both the original and the converted values are stored, and the unit cost of the stock item is calculated from the converted values
+
+Recording these costs does not require the *pricing* role - users who can receive items against a purchase order can assign the incoming cost. Viewing stock item costs requires the *pricing* role.
 
 ## Bundled Items
 
@@ -217,7 +221,6 @@ The following [global settings](../settings/global.md) are available for purchas
 {{ globalsetting("PURCHASEORDER_ENABLED") }}
 {{ globalsetting("PURCHASEORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("PURCHASEORDER_REQUIRE_RESPONSIBLE") }}
-{{ globalsetting("PURCHASEORDER_CONVERT_CURRENCY") }}
 {{ globalsetting("PURCHASEORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("PURCHASEORDER_AUTO_COMPLETE") }}
 {{ globalsetting("PURCHASEORDER_MERGE_LINE_ITEMS") }}
