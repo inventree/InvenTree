@@ -846,6 +846,12 @@ export function useDisassembleStockItem({
   const serialized: boolean =
     !!stockItem.serial && Number(stockItem.quantity) == 1;
 
+  // Explicit (per line) unit costs are entered in the default currency
+  const globalSettings = useGlobalSettingsState();
+
+  const defaultCurrency: string =
+    globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY') || 'USD';
+
   const stockStatusCodes = useMemo(
     () => getStatusCodeOptions(ModelType.stockitem),
     []
@@ -869,10 +875,8 @@ export function useDisassembleStockItem({
             bom_item: elem.pk,
             quantity:
               (Number(elem.quantity) || 0) * (Number(stockItem.quantity) || 0),
-            purchase_price: null,
-            // Note: The cost summary (if available) is always in the default currency
-            purchase_price_currency:
-              stockItem.pricing_detail?.currency ?? undefined
+            // Explicit unit cost (in the default currency) - leave blank for automatic allocation
+            purchase_price: null
           };
         }),
         modelRenderer: (row: TableFieldRowProps) => {
@@ -897,7 +901,10 @@ export function useDisassembleStockItem({
           { title: t`Component`, style: { minWidth: '200px' } },
           { title: t`Unit Quantity`, style: { width: '100px' } },
           { title: t`Quantity`, style: { width: '200px' } },
-          { title: t`Unit Price`, style: { width: '200px' } },
+          {
+            title: `${t`Unit Cost`} (${defaultCurrency})`,
+            style: { width: '200px' }
+          },
           { title: t`Actions` },
           { title: '', style: { width: '50px' } }
         ]
@@ -910,7 +917,8 @@ export function useDisassembleStockItem({
     installedMap,
     stockItem,
     serialized,
-    stockStatusCodes
+    stockStatusCodes,
+    defaultCurrency
   ]);
 
   return useCreateApiFormModal({

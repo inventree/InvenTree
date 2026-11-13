@@ -2085,52 +2085,17 @@ class StockItem(
 
         return [weight / total_weight for weight in weights], method
 
-    def allocate_disassembly_pricing(self, quantity, lines: list) -> list:
-        """Allocate the purchase price of this stock item across disassembly lines.
-
-        Automatic cost allocation is only performed if:
-        - This stock item has a recorded purchase price
-        - None of the provided lines specify an explicit purchase price
-
-        See disassembly_cost_weights for how the cost is apportioned.
-
-        Args:
-            quantity: The number of units of this stock item being disassembled
-            lines: A list of dict objects (see the disassemble method)
-
-        Returns:
-            The list of lines, with 'purchase_price' values filled in where possible
-        """
-        if not self.purchase_price:
-            return lines
-
-        if any(line.get('purchase_price') is not None for line in lines):
-            # Explicit pricing has been provided - do not override
-            return lines
-
-        allocation = self.disassembly_cost_weights(lines)
-
-        if allocation is None:
-            return lines
-
-        # Total cost of the disassembled units
-        total_cost = self.purchase_price * quantity
-
-        for line, fraction in zip(lines, allocation[0], strict=True):
-            line_quantity = Decimal(line['quantity'])
-
-            if line_quantity > 0:
-                line['purchase_price'] = total_cost * fraction / line_quantity
-
-        return lines
-
     def record_disassembly_costs(
         self, quantity, lines: list, created: list, user, explicit: bool
     ):
         """Record cost entries for the stock items created by disassembling this item.
 
         - If explicit (per line) prices were provided, these are recorded as the unit cost
-          of each component (only if the user has permission to add cost data)
+          of each component
+
+        Note: No 'pricing' role is required - costs recorded as part of a stock operation
+        are governed by the permissions for that operation (the 'pricing' role only applies
+        to explicitly creating or adjusting stock item cost entries)
         - Otherwise, the total cost of the disassembled units (from the cost summary of this item)
           is apportioned across the components (see disassembly_cost_weights)
 
@@ -2141,7 +2106,7 @@ class StockItem(
             user: The user performing the operation
             explicit: True if explicit prices were provided for the lines
         """
-        from pricing.helpers import StockItemCostRecorder, user_can_add_costs
+        from pricing.helpers import StockItemCostRecorder
         from pricing.models import CostSource, StockItemCost
         from pricing.status_codes import CostType
 
@@ -2151,14 +2116,13 @@ class StockItem(
         costs = StockItemCostRecorder(source=CostSource.DISASSEMBLY, user=user)
 
         if explicit:
-            if user_can_add_costs(user):
-                for line, item in created:
-                    costs.add(
-                        item,
-                        CostType.PURCHASE,
-                        cost=line.get('purchase_price'),
-                        source_data={'stock_item': self.pk, 'allocation': 'explicit'},
-                    )
+            for line, item in created:
+                costs.add(
+                    item,
+                    CostType.PURCHASE,
+                    cost=line.get('purchase_price'),
+                    source_data={'stock_item': self.pk, 'allocation': 'explicit'},
+                )
 
             costs.save()
             return
@@ -2226,7 +2190,7 @@ class StockItem(
                 quantity: The total quantity of the component to create
                 location: Optional destination StockLocation for the component
                 status: Optional StockStatus code for the component (default: OK)
-                purchase_price: Optional unit purchase price for the component
+                purchase_price: Optional unit cost (Money) for the component - recorded as a cost entry
             user: The user performing the operation
             location: Default destination location for the generated components
             notes: Optional transaction notes
@@ -2325,14 +2289,8 @@ class StockItem(
 
             items.append(installed_item)
 
-        # Were explicit (per line) prices provided? Must be checked *before* the
-        # automatic allocation below, which fills in the 'purchase_price' values
+        # Were explicit (per line) unit costs provided?
         explicit_prices = any(line.get('purchase_price') is not None for line in lines)
-
-        # Allocate pricing data across the generated components.
-        # Note: Deliberately performed *after* the installed items are uninstalled,
-        # so that the cost is only spread across newly created stock items
-        lines = self.allocate_disassembly_pricing(quantity, lines)
 
         # (line, StockItem) pairs for the newly created components
         created = []
@@ -2353,7 +2311,6 @@ class StockItem(
                 parent=self,
                 batch=self.batch,
                 purchase_order=self.purchase_order,
-                purchase_price=line.get('purchase_price', None),
             )
 
             if status := line.get('status'):
@@ -2380,7 +2337,9 @@ class StockItem(
             items.append(new_item)
             created.append((line, new_item))
 
-        # Record the cost of each newly created component
+        # Record the cost of each newly created component.
+        # Note: Deliberately performed *after* the installed items are uninstalled,
+        # so that the cost is only spread across newly created stock items
         self.record_disassembly_costs(
             quantity, lines, created, user, explicit=explicit_prices
         )

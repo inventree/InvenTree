@@ -1086,17 +1086,18 @@ class DisassemblyLineSerializer(serializers.Serializer):
     )
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
-        label=_('Purchase Price'),
+        label=_('Unit Cost'),
         required=False,
         allow_null=True,
         default=None,
         help_text=_(
-            'Unit purchase price for the component items (leave blank for automatic cost allocation)'
+            'Unit cost of the component items (leave blank for automatic cost allocation)'
         ),
     )
 
+    # Note: Defaults to the default currency
     purchase_price_currency = InvenTreeCurrencySerializer(
-        required=False, help_text=_('Purchase price currency')
+        help_text=_('Currency for the unit cost')
     )
 
 

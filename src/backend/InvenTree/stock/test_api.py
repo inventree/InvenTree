@@ -27,6 +27,8 @@ from InvenTree.unit_test import (
     stock_history,
 )
 from part.models import Part, PartTestTemplate
+from pricing.models import CostSource, StockItemCostEntry
+from pricing.status_codes import CostType
 from stock.models import (
     StockItem,
     StockItemTestResult,
@@ -2621,10 +2623,12 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assembly = part.models.Part.objects.get(pk=100)
 
         self.item = StockItem.objects.create(
-            part=self.assembly,
-            quantity=10,
-            location=StockLocation.objects.get(pk=1),
-            purchase_price=Money(100, 'USD'),
+            part=self.assembly, quantity=10, location=StockLocation.objects.get(pk=1)
+        )
+
+        # Unit cost of the assembly: 100 USD
+        StockItemCostEntry.objects.create_cost(
+            self.item, CostType.PURCHASE, CostSource.MANUAL, min_cost=Money(100, 'USD')
         )
 
         self.url = reverse('api-stock-item-disassemble', kwargs={'pk': self.item.pk})
@@ -2762,9 +2766,15 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assertEqual(item_50.parent.pk, self.item.pk)
 
         # Total cost (4 x 100 USD) is allocated evenly across 52 units
-        self.assertAlmostEqual(float(item_1.purchase_price.amount), 400 / 52, places=4)
-        self.assertAlmostEqual(float(item_50.purchase_price.amount), 400 / 52, places=4)
-        self.assertEqual(str(item_1.purchase_price.currency), 'USD')
+        for item in [item_1, item_50]:
+            entry = item.cost_entries.get()
+            self.assertEqual(entry.source, CostSource.DISASSEMBLY)
+            self.assertEqual(entry.currency, 'USD')
+            self.assertAlmostEqual(float(entry.min_cost), 400 / 52, places=4)
+            self.assertAlmostEqual(float(entry.max_cost), 400 / 52, places=4)
+
+            # The legacy purchase price is no longer set
+            self.assertIsNone(item.purchase_price)
 
         # Check stock tracking entries have been created
         self.assertTrue(
@@ -2834,33 +2844,46 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assertEqual(entry.additional_data['deltas']['purchaseorder']['pk'], po.pk)
 
     def test_explicit_pricing(self):
-        """Test that automatic cost allocation is skipped if explicit pricing is provided."""
-        response = self.post(
-            self.url,
-            {
-                'items': [
-                    {
-                        'bom_item': 1,
-                        'quantity': 10,
-                        'purchase_price': 5,
-                        'purchase_price_currency': 'NZD',
-                    },
-                    {'bom_item': 4, 'quantity': 3},
-                ],
-                'quantity': 1,
-            },
-            expected_code=201,
+        """Explicit (per line) unit costs are recorded, and skip automatic cost allocation."""
+        data = {
+            'items': [
+                {
+                    'bom_item': 1,
+                    'quantity': 10,
+                    'purchase_price': 5,
+                    'purchase_price_currency': 'NZD',
+                },
+                {'bom_item': 4, 'quantity': 3},
+            ],
+            'quantity': 1,
+        }
+
+        # Note: No 'pricing' role is required - the cost is part of the stock operation
+        self.assertFalse(
+            self.user.groups.filter(
+                rule_sets__name='pricing', rule_sets__can_add=True
+            ).exists()
         )
 
-        # Note: purchase price is no longer exposed via the API
+        response = self.post(self.url, data, expected_code=201)
+
         items = {
             entry['part']: StockItem.objects.get(pk=entry['pk'])
             for entry in response.data
         }
 
-        self.assertAlmostEqual(float(items[1].purchase_price.amount), 5, places=3)
-        self.assertEqual(str(items[1].purchase_price.currency), 'NZD')
-        self.assertIsNone(items[50].purchase_price)
+        entry = items[1].cost_entries.get()
+        self.assertEqual(entry.source, CostSource.DISASSEMBLY)
+        self.assertEqual(entry.user, self.user)
+        self.assertEqual(entry.currency, 'NZD')
+        self.assertEqual(entry.min_cost, 5)
+        self.assertEqual(entry.source_data['allocation'], 'explicit')
+
+        # No automatic allocation for the line without an explicit cost
+        self.assertFalse(items[50].cost_entries.exists())
+
+        # The legacy purchase price is not set
+        self.assertIsNone(items[1].purchase_price)
 
     def install_item(self, part_pk: int, quantity, **kwargs) -> StockItem:
         """Install a new stock item into the assembly under test."""
@@ -2927,7 +2950,11 @@ class StockItemDisassembleTest(StockAPITestCase):
 
     def test_installed_items_full_coverage(self):
         """No new stock item is created for a line fully covered by installed items."""
-        sub = self.install_item(1, 120, purchase_price=Money(3, 'USD'))
+        sub = self.install_item(1, 120)
+
+        StockItemCostEntry.objects.create_cost(
+            sub, CostType.PURCHASE, CostSource.MANUAL, min_cost=Money(3, 'USD')
+        )
 
         n = StockItem.objects.count()
 
@@ -2950,14 +2977,16 @@ class StockItemDisassembleTest(StockAPITestCase):
         sub.refresh_from_db()
         self.assertIsNone(sub.belongs_to)
 
-        # The uninstalled item retains its own purchase price
-        self.assertEqual(sub.purchase_price, Money(3, 'USD'))
+        # The uninstalled item retains its own cost
+        entry = sub.cost_entries.get()
+        self.assertEqual(entry.source, CostSource.MANUAL)
+        self.assertEqual(entry.min_cost, 3)
 
         # The total cost (10 x 100 USD) is spread only across newly created units
         new_item = StockItem.objects.get(part=50, parent=self.item)
         self.assertEqual(new_item.quantity, 30)
         self.assertAlmostEqual(
-            float(new_item.purchase_price.amount), 1000 / 30, places=4
+            float(new_item.cost_entries.get().min_cost), 1000 / 30, places=4
         )
 
     def test_installed_items_leftover(self):

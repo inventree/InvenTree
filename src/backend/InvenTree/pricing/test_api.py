@@ -719,6 +719,33 @@ class StockItemPricingDetailTests(StockItemCostApiTestBase):
         for row in response.data:
             self.assertNotIn('pricing_detail', row)
 
+    def test_unit_cost_filter_ordering(self):
+        """Stock items can be filtered and ordered by unit cost (with the 'pricing' view role)."""
+        url = reverse('api-stock-list')
+
+        costed = [self.other_item.pk, self.item.pk]  # 5 USD, 11 - 13 USD
+        total = StockItem.objects.count()
+
+        def pks(**params):
+            return [row['pk'] for row in self.get(url, params).data]
+
+        self.assertEqual(sorted(pks(has_unit_cost=True)), sorted(costed))
+
+        uncosted = pks(has_unit_cost=False)
+        self.assertEqual(len(uncosted), total - 2)
+        self.assertFalse(set(uncosted) & set(costed))
+
+        self.assertEqual(pks(has_unit_cost=True, ordering='unit_cost'), costed)
+        self.assertEqual(pks(has_unit_cost=True, ordering='-unit_cost'), costed[::-1])
+
+        # Without the 'pricing' view role, the filter and ordering are ignored
+        self.set_roles(*[f'stock.{perm}' for perm in self.ALL_PERMISSIONS])
+
+        self.assertEqual(len(pks(has_unit_cost=True)), total)
+        self.assertEqual(len(pks(has_unit_cost=False)), total)
+
+        self.assertEqual(pks(ordering='-unit_cost'), pks())
+
     def test_pricing_detail_queries(self):
         """The cost summary is prefetched (a single additional query, regardless of the number of rows)."""
         from django.db import connection

@@ -380,7 +380,7 @@ class DisassemblyCostTests(StockItemCostLifecycleBase):
             self.assertEqual(entry.min_cost, cost)
             self.assertEqual(entry.source_data['allocation'], 'explicit')
 
-        # A user without the 'pricing' role cannot add cost data
+        # No 'pricing' role is required - the cost is part of the stock operation
         user = User.objects.create(username='no-pricing')
 
         item = self.make_item(quantity=5, part=self.assembly)
@@ -388,5 +388,7 @@ class DisassemblyCostTests(StockItemCostLifecycleBase):
 
         components = self.disassemble(item, lines, user=user)
 
-        for component in components:
-            self.assertFalse(component.cost_entries.exists())
+        for component, cost in zip(components, [3, 1], strict=True):
+            entry = component.cost_entries.get()
+            self.assertEqual(entry.min_cost, cost)
+            self.assertEqual(entry.user, user)

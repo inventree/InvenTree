@@ -57,11 +57,13 @@ import { useUserState } from '../../states/UserState';
 function stockItemTableColumns({
   showLocation,
   showPricing,
+  showCost,
   showConsumedBy,
   navigate
 }: {
   showLocation: boolean;
   showPricing: boolean;
+  showCost: boolean;
   showConsumedBy: boolean;
   navigate: NavigateFunction;
 }): TableColumn[] {
@@ -146,9 +148,10 @@ function stockItemTableColumns({
       // Cost summary - only provided by the API for users with the 'pricing' view role
       accessor: 'pricing_detail.min_cost',
       title: t`Unit Cost`,
-      sortable: false,
+      sortable: true,
+      ordering: 'unit_cost',
       switchable: true,
-      hidden: !showPricing,
+      hidden: !showPricing || !showCost,
       defaultVisible: false,
       render: (record: any) =>
         record.pricing_detail &&
@@ -217,9 +220,11 @@ function stockItemTableColumns({
  * Construct a list of available filters for the stock item table
  */
 function stockItemTableFilters({
-  enableExpiry
+  enableExpiry,
+  enableCost
 }: {
   enableExpiry: boolean;
+  enableCost: boolean;
 }): TableFilter[] {
   return [
     {
@@ -293,6 +298,16 @@ function stockItemTableFilters({
       label: t`Tracked`,
       description: t`Show tracked items`
     },
+    // Cost data is only available to users with the 'pricing' view role
+    ...(enableCost
+      ? [
+          {
+            name: 'has_unit_cost',
+            label: t`Has Unit Cost`,
+            description: t`Show items which have a unit cost`
+          }
+        ]
+      : []),
     {
       name: 'expired',
       label: t`Expired`,
@@ -412,23 +427,31 @@ export function StockItemTable({
     [settings]
   );
 
+  // Cost data is only available to users with the 'pricing' view role
+  const canViewCosts: boolean = useMemo(
+    () => user.hasViewRole(UserRoles.pricing),
+    [user]
+  );
+
   const tableColumns = useMemo(
     () =>
       stockItemTableColumns({
         showLocation: showLocation ?? true,
         showPricing: showPricing ?? true,
+        showCost: canViewCosts,
         showConsumedBy,
         navigate
       }),
-    [showLocation, showPricing, showConsumedBy, navigate]
+    [showLocation, showPricing, canViewCosts, showConsumedBy, navigate]
   );
 
   const tableFilters: TableFilter[] = useMemo(
     () =>
       stockItemTableFilters({
-        enableExpiry: stockExpiryEnabled
+        enableExpiry: stockExpiryEnabled,
+        enableCost: canViewCosts
       }),
-    [stockExpiryEnabled]
+    [stockExpiryEnabled, canViewCosts]
   );
 
   const stockOperationProps: StockOperationProps = useMemo(() => {

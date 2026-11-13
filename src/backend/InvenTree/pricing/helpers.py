@@ -109,19 +109,3 @@ class StockItemCostRecorder:
         entries, self.entries = self.entries, []
 
         return StockItemCostEntry.objects.bulk_create_costs(entries)
-
-
-def user_can_add_costs(user) -> bool:
-    """Return True if cost entries may be recorded from prices supplied by the given user.
-
-    Prices supplied directly by a user (e.g. when creating stock via the API) are only
-    recorded as cost data if the user holds the 'pricing' add permission.
-    Costs derived by internal business logic (no user) are always recorded.
-    """
-    from users.permissions import check_user_role
-    from users.ruleset import RuleSetEnum
-
-    if user is None:
-        return True
-
-    return check_user_role(user, RuleSetEnum.PRICING, 'add')

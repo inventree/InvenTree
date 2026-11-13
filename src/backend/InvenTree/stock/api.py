@@ -24,6 +24,7 @@ import common.models
 import common.settings
 import InvenTree.helpers
 import InvenTree.permissions
+import InvenTree.ready
 import stock.serializers as StockSerializers
 from build.models import Build
 from company.models import Company, ManufacturerPart, SupplierPart
@@ -63,7 +64,8 @@ from stock.models import (
     StockLocationType,
 )
 from stock.status_codes import StockHistoryCode, StockStatus
-from users.permissions import check_user_permission
+from users.permissions import check_user_permission, check_user_role
+from users.ruleset import RuleSetEnum
 
 
 class GenerateBatchCode(GenericAPIView):
@@ -582,6 +584,14 @@ class StockLocationTypeDetail(RetrieveUpdateDestroyAPI):
         return queryset
 
 
+def user_can_view_costs(user) -> bool:
+    """Return True if the user may filter or order stock items by cost data."""
+    if user is None or not user.is_authenticated:
+        return False
+
+    return check_user_role(user, RuleSetEnum.PRICING, 'view')
+
+
 class StockFilter(FilterSet):
     """FilterSet for StockItem LIST API."""
 
@@ -921,6 +931,25 @@ class StockFilter(FilterSet):
         if str2bool(value):
             return queryset.filter(quantity__lte=0)
         return queryset.exclude(quantity__lte=0)
+
+    has_unit_cost = rest_filters.BooleanFilter(
+        label=_('Has unit cost'), method='filter_has_unit_cost'
+    )
+
+    def filter_has_unit_cost(self, queryset, name, value):
+        """Filter by whether the stock item has a (calculated) unit cost.
+
+        Cost data is only available to users with the 'pricing' view role -
+        for any other user, this filter is ignored.
+        """
+        if not user_can_view_costs(getattr(self.request, 'user', None)):
+            return queryset
+
+        has_cost = Q(cost__min_cost__isnull=False) | Q(cost__max_cost__isnull=False)
+
+        if str2bool(value):
+            return queryset.filter(has_cost)
+        return queryset.exclude(has_cost)
 
     category = rest_filters.ModelChoiceFilter(
         label=_('Category'),
@@ -1345,9 +1374,29 @@ class StockList(
         'SKU': 'supplier_part__SKU',
         'MPN': 'supplier_part__manufacturer_part__MPN',
         'stock': ['quantity', 'serial_int', 'serial'],
+        'unit_cost': 'cost__min_cost',
     }
 
-    ordering_fields = [
+    @property
+    def ordering_fields(self) -> list:
+        """Return the valid ordering fields for the requesting user.
+
+        Ordering by cost data ('unit_cost') is only available to users with the 'pricing'
+        view role - for any other user, it is ignored. If there is no request, or the API schema
+        is being generated, all ordering fields are returned.
+        """
+        request = getattr(self, 'request', None)
+
+        if (
+            request is None
+            or InvenTree.ready.isGeneratingSchema()
+            or user_can_view_costs(getattr(request, 'user', None))
+        ):
+            return [*self.BASE_ORDERING_FIELDS, 'unit_cost']
+
+        return list(self.BASE_ORDERING_FIELDS)
+
+    BASE_ORDERING_FIELDS = [
         'batch',
         'location',
         'part',
