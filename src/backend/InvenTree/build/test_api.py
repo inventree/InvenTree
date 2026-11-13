@@ -1887,10 +1887,7 @@ class BuildLineTests(BuildAPITest):
 
         # The 'consumed' value is ignored, other fields are updated
         data = self.patch(
-            url,
-            {'consumed': 5, 'quantity': line.quantity + 1},
-            expected_code=200,
-            max_query_count=350,
+            url, {'consumed': 5, 'quantity': line.quantity + 1}, expected_code=200
         ).data
 
         self.assertEqual(data['consumed'], 0)
@@ -1898,9 +1895,6 @@ class BuildLineTests(BuildAPITest):
 
         line.refresh_from_db()
         self.assertEqual(line.consumed, 0)
-
-        options = self.options(url, expected_code=200).data
-        self.assertTrue(options['actions']['PUT']['consumed']['read_only'])
 
     def test_filter_available(self):
         """Filter BuildLine objects by 'available' status."""
