@@ -131,7 +131,7 @@ class AbstractOrderSerializer(
             'many': False,
         },
         default_include=True,
-        prefetch_fields=['responsible'],
+        prefetch_fields=['responsible', 'responsible__owner'],
     )
 
     project_code_label = common.filters.enable_project_label_filter()

@@ -1479,7 +1479,7 @@ class LocationSerializer(
         """Annotate extra information to the queryset."""
         # Annotate the number of stock items which exist in this category (including subcategories)
 
-        queryset = queryset.prefetch_related('tags')
+        queryset = queryset.prefetch_related('tags', 'location_type')
 
         queryset = queryset.annotate(
             items=stock.filters.annotate_location_items(),

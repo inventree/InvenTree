@@ -164,7 +164,7 @@ class BuildSerializer(
         },
         default_include=True,
         filter_name='user_detail',
-        prefetch_fields=['responsible'],
+        prefetch_fields=['responsible', 'responsible__owner'],
     )
 
     barcode_hash = serializers.CharField(read_only=True)
