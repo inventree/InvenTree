@@ -111,6 +111,7 @@ ARGV_COMMANDS: dict[str, tuple[str, ...]] = {
         'schema',
         'spectactular',
         # schema adjacent calls
+        'export_audited_models',
         'export_status_codes',
         'export_roles',
         'export_settings_definitions',
