@@ -731,9 +731,9 @@ django-flags==5.2.0 \
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
-django-fsm-2==4.3.0 \
-    --hash=sha256:1e47a4b29904c201df16a68208f8e337db826df1488670447d5d0ade87ae7d7f \
-    --hash=sha256:6f578e5dda9738418bef12b94d20bcbde4751f12fbf41f7c4bdf10bff5e616a7
+django-fsm-2==4.2.4 \
+    --hash=sha256:0072be359520075eee4baead3873e5eb8f1700b4f91e41208058cbea0ceae9b9 \
+    --hash=sha256:0e395afd03ff504afd476e8568ca213aafc3324bd4e5427e5b3287f7b1e7d979
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
@@ -2196,9 +2196,9 @@ python-barcode[images]==0.16.1 \
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
-python-dateutil==4.0.0 \
-    --hash=sha256:a5e246f79eb80475e691bf93862cead98decd8a498cf53ba0516fcdc0f50dc1c \
-    --hash=sha256:d7295ff14fdc0f92f662100bfb6c551d160ca090f2939f1ec5b9794265c03f06
+python-dateutil==2.9.0.post0 \
+    --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
+    --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
     # via
     #   -c src/backend/requirements.txt
     #   botocore
@@ -2591,9 +2591,9 @@ s3transfer==0.19.3 \
     # via
     #   -c src/backend/requirements.txt
     #   boto3
-scim2-models==0.12.4 \
-    --hash=sha256:d219558358557a674e0a5b85f6d11cb2cd8cdf3182c4942df0956891be052e8e \
-    --hash=sha256:d3cfaafbe49d6daa61b63afe0f0536774e7543218eaa222164ccb95ecb8871aa
+scim2-models==0.12.2 \
+    --hash=sha256:721b627f9ae50d24956103ba9fc2e852a1badbada8d25c0939bc8656881af62a \
+    --hash=sha256:c8b1f7ae25af4874dba53edd2855ce126f7594d0dbe694a6e9bb32c369082234
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in

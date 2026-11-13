@@ -956,24 +956,24 @@ rich==15.0.0 \
     # via
     #   -c src/backend/requirements-dev.txt
     #   pytest-codspeed
-scim2-client==0.14.1 \
-    --hash=sha256:6f60caa7f3df6657a28885bd7b3dbbe5773ffb747bdc3cee0eaf35cb02452bc7 \
-    --hash=sha256:bf7c3f3cf9da7cb8e813eaf560cfeab8037f6c1b5ab81b56cf137d8f94d3b7cd
+scim2-client==0.13.2 \
+    --hash=sha256:1397962f294f95c8982c543d422e2fa7fcf9295d5eb1af73067ab142090608e0 \
+    --hash=sha256:9fafa5d903e1fae513a0d946ce7cd5fad2d697d47b55ae0b3204c0848c6d4b48
     # via
     #   -c src/backend/requirements-dev.txt
     #   scim2-tester
-scim2-models==0.12.4 \
-    --hash=sha256:d219558358557a674e0a5b85f6d11cb2cd8cdf3182c4942df0956891be052e8e \
-    --hash=sha256:d3cfaafbe49d6daa61b63afe0f0536774e7543218eaa222164ccb95ecb8871aa
+scim2-models==0.12.2 \
+    --hash=sha256:721b627f9ae50d24956103ba9fc2e852a1badbada8d25c0939bc8656881af62a \
+    --hash=sha256:c8b1f7ae25af4874dba53edd2855ce126f7594d0dbe694a6e9bb32c369082234
     # via
     #   -c src/backend/requirements-3.14.txt
     #   -c src/backend/requirements-dev.txt
     #   -c src/backend/requirements.txt
     #   scim2-client
     #   scim2-tester
-scim2-tester==0.6.4 \
-    --hash=sha256:a4d5e522f228d2d2afaa147d66c641bc5659dcdde5967411fb4b830b08198a8a \
-    --hash=sha256:df8c582d391511ae7f0d35e0d7bfe4916c79571af22768ab96cc43599765b144
+scim2-tester==0.6.1 \
+    --hash=sha256:9ab6d38f3b264be84a5fa7bb53f4040acc9762028399acba4b93294aaf02250a \
+    --hash=sha256:f915b261a49dba47e486a16f71d8c74c287a3d0257d645b2a08c24463ccf06f0
     # via
     #   -c src/backend/requirements-dev.txt
     #   -r src/backend/requirements-dev.in
