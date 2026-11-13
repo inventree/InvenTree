@@ -4639,6 +4639,71 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         )
 
 
+class OrderDateReadOnlyTests(InvenTreeAPITestCase):
+    """The 'issue_date' and 'complete_date' fields are set by issuing / completing an order."""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+        'return_order',
+        'transfer_order',
+    ]
+
+    superuser = True
+
+    def test_dates_read_only(self):
+        """The 'issue_date' and 'complete_date' fields cannot be changed via the order API."""
+        orders = [
+            (models.PurchaseOrder, 'api-po-detail', ['issue_date', 'complete_date']),
+            (models.SalesOrder, 'api-so-detail', ['issue_date']),
+            (
+                models.ReturnOrder,
+                'api-return-order-detail',
+                ['issue_date', 'complete_date'],
+            ),
+            (
+                models.TransferOrder,
+                'api-transfer-order-detail',
+                ['issue_date', 'complete_date'],
+            ),
+        ]
+
+        for model, url_name, fields in orders:
+            with self.subTest(model=model.__name__):
+                # Select a "pending" order, which can be freely edited
+                order = model.objects.filter(status=10).first()
+                self.assertIsNotNone(order)
+
+                # Start from a known state, without going via the API
+                # (some fixture orders do not have a valid reference)
+                model.objects.filter(pk=order.pk).update(
+                    reference=model.generate_reference(), **dict.fromkeys(fields)
+                )
+
+                url = reverse(url_name, kwargs={'pk': order.pk})
+
+                # The date values are ignored, other fields are updated
+                data = self.patch(
+                    url,
+                    {**dict.fromkeys(fields, '2024-01-01'), 'description': 'Updated'},
+                    expected_code=200,
+                ).data
+
+                self.assertEqual(data['description'], 'Updated')
+
+                order.refresh_from_db()
+
+                for field in fields:
+                    self.assertIsNone(data[field])
+                    self.assertIsNone(getattr(order, field))
+
+
 class ReturnOrderLineItemTests(InvenTreeAPITestCase):
     """Unit tests for ReturnOrderLineItem API endpoints."""
 

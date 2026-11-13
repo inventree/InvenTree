@@ -159,6 +159,8 @@ class AbstractOrderSerializer(
 
     barcode_hash = serializers.CharField(read_only=True)
 
+    # Note: The creation date may be specified (e.g. when creating a historical order),
+    # otherwise it defaults to the current date when the order is created
     creation_date = serializers.DateField(
         required=False, allow_null=True, label=_('Creation Date')
     )
@@ -407,12 +409,7 @@ class PurchaseOrderSerializer(
             'delivery_address_detail',
             'updated_at',
         ])
-        read_only_fields = [
-            'issue_date',
-            'complete_date',
-            'creation_date',
-            'updated_at',
-        ]
+        read_only_fields = ['issue_date', 'complete_date', 'updated_at']
         extra_kwargs = {
             'supplier': {'required': True},
             'order_currency': {'required': False},
@@ -1168,7 +1165,7 @@ class SalesOrderSerializer(
             'updated_at',
             'tags',
         ])
-        read_only_fields = ['status', 'creation_date', 'shipment_date', 'updated_at']
+        read_only_fields = ['status', 'issue_date', 'shipment_date', 'updated_at']
         extra_kwargs = {'order_currency': {'required': False}}
 
     def skip_create_fields(self):
@@ -2212,7 +2209,7 @@ class ReturnOrderSerializer(
             'total_price',
             'updated_at',
         ])
-        read_only_fields = ['creation_date', 'updated_at']
+        read_only_fields = ['issue_date', 'complete_date', 'updated_at']
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
@@ -2511,7 +2508,7 @@ class TransferOrderSerializer(
             'consume',
             'complete_date',
         ])
-        read_only_fields = ['creation_date']
+        read_only_fields = ['issue_date', 'complete_date']
         extra_kwargs = {}
 
     def skip_create_fields(self):
