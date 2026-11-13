@@ -301,15 +301,16 @@ export const reauthenticate = async (
   password: string,
   time = 3000
 ) => {
-  const field = page.getByLabel('text-field-password');
-  const visible = await field
+  const dialog = page.getByRole('dialog', { name: 'Reauthenticate' });
+  const visible = await dialog
     .waitFor({ timeout: time })
     .then(() => true)
     .catch(() => false);
 
   if (visible) {
-    await field.fill(password);
-    await page.getByRole('button', { name: 'Submit' }).click();
+    await dialog.locator('input[type="password"]').fill(password);
+    await dialog.getByRole('button', { name: 'Submit', exact: true }).click();
+    await dialog.waitFor({ state: 'hidden' });
   }
 
   return visible;
