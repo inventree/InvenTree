@@ -438,6 +438,27 @@ test('Login - Change Password', async ({ page }) => {
   await page.getByText('The password was set successfully').waitFor();
 });
 
+/**
+ * Wait (if required) until there is enough time left in the current TOTP period.
+ *
+ * The server does not allow any clock tolerance (MFA_TOTP_TOLERANCE = 0),
+ * so a code generated near the end of a period may have expired by the time
+ * the server validates it (especially on a slow CI runner).
+ *
+ * @param minRemaining - Minimum number of seconds which must remain in the period
+ */
+async function waitForFreshTotpPeriod(
+  page: Page,
+  minRemaining = 10,
+  period = 30
+) {
+  const remaining = period - (Math.floor(Date.now() / 1000) % period);
+
+  if (remaining < minRemaining) {
+    await page.waitForTimeout((remaining + 1) * 1000);
+  }
+}
+
 // Tests for assigning MFA tokens to users
 test('Login - MFA - TOTP', async ({ page }) => {
   await doLogin(page, {
@@ -483,6 +504,8 @@ test('Login - MFA - TOTP', async ({ page }) => {
     period: 30
   });
 
+  // Avoid generating a code which expires before the server validates it
+  await waitForFreshTotpPeriod(page);
   const token = totp.generate();
 
   await page.getByRole('textbox', { name: 'text-input-otp-code' }).fill(token);
