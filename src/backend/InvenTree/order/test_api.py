@@ -634,6 +634,16 @@ class PurchaseOrderTest(OrderTest):
         po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
         self.assertEqual(po.creation_date, creation_date)
 
+        # Next, check that the creation_date is read-only on update
+        po_pk = po.pk
+        response = self.patch(
+            reverse('api-po-detail', kwargs={'pk': po_pk}),
+            {'creation_date': '2000-01-01'},
+            expected_code=200,
+        )
+        po.refresh_from_db()
+        self.assertEqual(po.creation_date, creation_date)
+
     def test_po_duplicate(self):
         """Test that we can duplicate a PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
