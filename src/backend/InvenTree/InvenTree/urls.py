@@ -45,7 +45,7 @@ from .api import (
 )
 from .config import get_setting
 from .magic_login import GetSimpleLoginView
-from .views import AccountLoginRedirectView, auth_request
+from .views import auth_request
 
 # Set admin header from config or use default
 admin.site.site_header = get_setting(
@@ -145,8 +145,10 @@ backendpatterns = [
     # SCIM 2 provisioning endpoint
     path('scim/v2/', include(scim.api)),
     path(
-        'accounts/login/', AccountLoginRedirectView.as_view(), name='account_login'
-    ),  # Redirect for login views; keeps any 'next' parameter through to the SPA
+        'accounts/login/',
+        RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
+        name='account_login',
+    ),  # Add a redirect for login views
     path('anymail/', include('anymail.urls')),  # Emails
 ]
 
