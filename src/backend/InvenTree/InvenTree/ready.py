@@ -111,10 +111,14 @@ ARGV_COMMANDS: dict[str, tuple[str, ...]] = {
         'schema',
         'spectactular',
         # schema adjacent calls
-        'export_settings_definitions',
-        'export_tags',
+        'export_audited_models',
         'export_filters',
+        'export_fsm',
         'export_report_context',
+        'export_roles',
+        'export_settings_definitions',
+        'export_status_codes',
+        'export_tags',
     ),
     # Commands which must not touch the database during the app 'ready' phase
     'database_excluded': (
@@ -188,14 +192,32 @@ def isCollectingPlugins():
     return cmd_context['collect_plugins']
 
 
+# Prefix of the RuntimeWarning Django emits when the database is queried before the app registry is ready
+APPS_NOT_READY_WARNING_MSG = (
+    'Accessing the database during app initialization is discouraged'
+)
+
 # This variable is used to cache the result of the isGeneratingSchema function, to prevent multiple executions of the same checks
 _IS_GENERATING_SCHEMA: bool | None = None
 
 
 def _setGeneratingSchema(value: bool):
-    """Set the value of the isGeneratingSchema variable."""
+    """Set the value of the isGeneratingSchema variable.
+
+    When schema generation is detected, the Django 'APPS_NOT_READY' database warning
+    is suppressed for the remainder of the process. Schema generation (and the
+    'schema adjacent' export commands) intentionally query the database during model
+    import (e.g. to document custom status codes), so this warning is expected noise.
+    These are one-shot CLI processes, so a process-wide filter is safe here.
+    """
     global _IS_GENERATING_SCHEMA
     _IS_GENERATING_SCHEMA = value
+
+    if value:
+        warnings.filterwarnings(
+            'ignore', message=APPS_NOT_READY_WARNING_MSG, category=RuntimeWarning
+        )
+
     return value
 
 
@@ -360,9 +382,7 @@ def ignore_ready_warning(func):
     def wrapper(*args, **kwargs):
         with warnings.catch_warnings():
             warnings.filterwarnings(
-                'ignore',
-                message='Accessing the database during app initialization is discouraged',
-                category=RuntimeWarning,
+                'ignore', message=APPS_NOT_READY_WARNING_MSG, category=RuntimeWarning
             )
             return func(*args, **kwargs)
 

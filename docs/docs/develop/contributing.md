@@ -3,9 +3,9 @@ title: Contribution Guide
 ---
 
 
-Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
+## Contribution Guide
 
-## Quickstart
+Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
 
 The following commands will get you quickly configure and run a development server, complete with a demo dataset to work with:
 
@@ -281,7 +281,7 @@ If you have followed the setup devtools procedure, then code style checking is p
 
 Django are checked by [djlint](https://github.com/Riverside-Healthcare/djlint) through pre-commit.
 
-The following rules out of the [default set](https://djlint.com/docs/linter/) are not applied:
+The following rules out of the default set of djlint rules are not applied:
 ```bash
 D018: (Django) Internal links should use the { % url ... % } pattern
 H006: Img tag should have height and width attributes

@@ -1,9 +1,8 @@
 """Main entry point for the documentation build process."""
 
-import json
-import logging
 import os
 import subprocess
+import sys
 import textwrap
 from pathlib import Path
 from typing import Literal, Optional
@@ -11,89 +10,17 @@ from typing import Literal, Optional
 import requests
 import yaml
 
-# Debugging output - useful for diagnosing CI build issues
-print('loading ./docs/main.py...')
-
-logging.getLogger('openapidocs').setLevel(logging.ERROR)
-
-# Print out some useful debugging information
-# Ref: https://docs.readthedocs.io/en/stable/reference/environment-variables.html
-for key in [
-    'GITHUB_ACTIONS',
-    'GITHUB_REF',
-    'READTHEDOCS',
-    'READTHEDOCS_GIT_IDENTIFIER',
-    'READTHEDOCS_GIT_CLONE_URL',
-    'READTHEDOCS_GIT_COMMIT_HASH',
-    'READTHEDOCS_PROJECT',
-    'READTHEDOCS_VERSION',
-    'READTHEDOCS_VERSION_NAME',
-    'READTHEDOCS_VERSION_TYPE',
-]:
-    val = os.environ.get(key, None) or '-- MISSING --'
-    print(f' - {key}: {val}')
-
-# Cached settings dict values
-global CONFIG_SETTINGS
-global GLOBAL_SETTINGS
-global USER_SETTINGS
-global TAGS
-global FILTERS
-global REPORT_CONTEXT
-global STATUS_CODES
-global ROLES
-
 # Read in the InvenTree settings file
 here = Path(__file__).parent
 
 gen_base = here.joinpath('generated')
 
-# File where we expect to find the settings definitions
-settings_file = gen_base.joinpath('inventree_settings.json')
+# Generated data is loaded (and cached) by a separate module, as some static site
+# generators (e.g. zensical) re-execute this file for every page.
+if str(here) not in sys.path:
+    sys.path.append(str(here))
 
-# File where we will *store* information on the settings we have observed
-observed_settings_file = gen_base.joinpath('observed_settings.json')
-
-# Overwrite the observed settings file
-with open(observed_settings_file, 'w', encoding='utf-8') as f:
-    data = {'global': {}, 'user': {}}
-
-    # Write an empty dict to the file
-    # This is used to track which settings we have observed during the build process
-    f.write(json.dumps(data, indent=4))
-
-# File where we will *store* information on the status code classes we have observed
-observed_status_codes_file = gen_base.joinpath('observed_status_codes.json')
-
-# Overwrite the observed status codes file
-with open(observed_status_codes_file, 'w', encoding='utf-8') as f:
-    f.write(json.dumps({}, indent=4))
-
-with open(settings_file, encoding='utf-8') as sf:
-    settings = json.load(sf)
-
-    GLOBAL_SETTINGS = settings['global']
-    USER_SETTINGS = settings['user']
-    CONFIG_SETTINGS = settings['config']
-
-# Tags
-with open(gen_base.joinpath('inventree_tags.yml'), encoding='utf-8') as f:
-    TAGS = yaml.load(f, yaml.BaseLoader)
-# Filters
-with open(gen_base.joinpath('inventree_filters.yml'), encoding='utf-8') as f:
-    FILTERS = yaml.load(f, yaml.BaseLoader)
-# Status codes
-with open(gen_base.joinpath('inventree_status_codes.json'), encoding='utf-8') as f:
-    STATUS_CODES = json.load(f)
-# Report context
-with open(gen_base.joinpath('inventree_report_context.json'), encoding='utf-8') as f:
-    REPORT_CONTEXT = json.load(f)
-# User permission roles
-with open(gen_base.joinpath('inventree_roles.json'), encoding='utf-8') as f:
-    ROLES = json.load(f)
-# Audited models
-with open(gen_base.joinpath('inventree_audited_models.json'), encoding='utf-8') as f:
-    AUDITED_MODELS = json.load(f)
+import docs_data
 
 
 def get_repo_url(raw=False):
@@ -161,9 +88,30 @@ def get_build_environment() -> Optional[str]:
     return 'master'
 
 
+def apply_hook_config(env):
+    """Provide values normally injected by the 'on_config' mkdocs hook.
+
+    Zensical does not support mkdocs hooks, so 'config.releases',
+    'config.assets_dir' etc are never set. Run the hook ourselves and
+    inject the results into the template 'config' variable.
+    """
+    template_config = env.variables.get('config')
+
+    if template_config is None:
+        return
+
+    hook_config = docs_data.hook_config(template_config.get('site_url'))
+
+    for key in ['releases', 'assets_dir', 'readthedocs', 'version_banner']:
+        if key in hook_config:
+            template_config[key] = hook_config[key]
+
+
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
-    config = env.config
+    apply_hook_config(env)
+
+    config = env.variables.get('config') or env.config
     assets_dir = config.get('assets_dir', None)
 
     if assets_dir is None:
@@ -326,18 +274,10 @@ def define_env(env):
         (produced by the `export_status_codes` management command), so it can never
         drift out of sync with the status codes actually defined in the source code.
         """
-        global STATUS_CODES
-
-        status_class = STATUS_CODES[class_name]
+        status_class = docs_data.status_codes()[class_name]
 
         # Record that this status code class has been rendered somewhere in the docs
-        with open(observed_status_codes_file, encoding='utf-8') as f:
-            data = json.load(f)
-
-        data[class_name] = True
-
-        with open(observed_status_codes_file, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4)
+        docs_data.observe_status_code(class_name)
 
         ret_data = '| Status | Value | Description |\n| --- | --- | --- |\n'
 
@@ -356,18 +296,7 @@ def define_env(env):
             key: The name of the setting to observe
             group: The group of the setting (e.g. 'global', 'user')
         """
-        # Read the observed settings file
-        with open(observed_settings_file, encoding='utf-8') as f:
-            data = json.load(f)
-
-        if group not in data:
-            data[group] = {}
-
-        data[group][key] = True
-
-        # Write the updated data back to the file
-        with open(observed_settings_file, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4)
+        docs_data.observe_setting(key, group)
 
     @env.macro
     def rendersetting(
@@ -403,8 +332,7 @@ def define_env(env):
             short: If True, return a short version of the setting (default: False)
             default: An optional default value to override the setting's default display value.
         """
-        global GLOBAL_SETTINGS
-        setting = GLOBAL_SETTINGS[key]
+        setting = docs_data.settings('global')[key]
 
         # Settings are only 'observed' if they are displayed in full
         if not short:
@@ -420,8 +348,7 @@ def define_env(env):
             key: The name of the user setting to extract information for.
             short: If True, return a short version of the setting (default: False)
         """
-        global USER_SETTINGS
-        setting = USER_SETTINGS[key]
+        setting = docs_data.settings('user')[key]
 
         # Settings are only 'observed' if they are displayed in full
         if not short:
@@ -442,8 +369,7 @@ def define_env(env):
             key: The name of the configuration setting to extract information for.
             default: An optional default value to override the setting's default display value.
         """
-        global CONFIG_SETTINGS
-        setting = CONFIG_SETTINGS[key]
+        setting = docs_data.settings('config')[key]
 
         observe_setting(key, 'config')
 
@@ -460,11 +386,8 @@ def define_env(env):
     @env.macro
     def tags_and_filters():
         """Return a list of all tags and filters."""
-        global TAGS
-        global FILTERS
-
         ret_data = ''
-        for ref in [['Tags', TAGS], ['Filters', FILTERS]]:
+        for ref in [['Tags', docs_data.tags()], ['Filters', docs_data.filters()]]:
             ret_data += f'### {ref[0]}\n\n| Namespace | Name | Description |\n| --- | --- | --- |\n'
             for value in ref[1]:
                 title = (
@@ -488,11 +411,9 @@ def define_env(env):
         `users.ruleset.RULESET_CHOICES`), so it can never drift out of sync with
         the roles actually defined in the source code.
         """
-        global ROLES
-
         ret_data = '| Role | Description |\n| --- | --- |\n'
 
-        for role in ROLES:
+        for role in docs_data.roles():
             description = role['description'] or role['label']
             ret_data += f'| **{role["label"]}** | {description} |\n'
 
@@ -507,12 +428,10 @@ def define_env(env):
         the models which implement `InvenTreeAuditMixin`), so it can never drift out
         of sync with the models actually audited in the source code.
         """
-        global AUDITED_MODELS
-
         ret_data = '| Category | Model | Model Type | Parent | Notes |\n'
         ret_data += '| --- | --- | --- | --- | --- |\n'
 
-        for model in AUDITED_MODELS:
+        for model in docs_data.audited_models():
             parent = model['parent']
             notes = model['parent_note']
 
@@ -527,9 +446,7 @@ def define_env(env):
     @env.macro
     def report_context(type_: Literal['models', 'base'], model: str):
         """Extract information on a particular report context."""
-        global REPORT_CONTEXT
-
-        context = REPORT_CONTEXT.get(type_).get(model)
+        context = docs_data.report_context().get(type_).get(model)
 
         ret_data = '| Variable | Type | Description |\n| --- | --- | --- |\n'
         for k, v in context['context'].items():
@@ -568,9 +485,7 @@ def define_env(env):
         `InvenTreeReportMixin`, so there is no manually-maintained per-model heading
         list to keep in sync here.
         """
-        global REPORT_CONTEXT
-
-        models = REPORT_CONTEXT.get('models', {})
+        models = docs_data.report_context().get('models', {})
 
         ret_data = ''
 
@@ -593,9 +508,7 @@ def define_env(env):
         the `export_report_context` management command, so there is no manually-maintained
         list of related models to keep in sync here.
         """
-        global REPORT_CONTEXT
-
-        related = REPORT_CONTEXT.get('related_models', {})
+        related = docs_data.report_context().get('related_models', {})
 
         ret_data = ''
 

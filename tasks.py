@@ -2617,6 +2617,22 @@ def doc_schema(c):
     run(c, 'python docs/extract_schema.py docs/generated/schema.yml')
 
 
+# Configuration file for building the documentation with zensical
+DOCS_CONFIG = 'docs/mkdocs.yml'
+
+
+def doc_checks(c):
+    """Check that all settings and status codes are documented.
+
+    Zensical does not support mkdocs hooks, so the 'on_post_build' hook
+    is run separately, after the documentation has been built.
+    """
+    run(
+        c,
+        'python -c "import sys; sys.path.insert(0, \'docs/docs\'); import hooks; hooks.on_post_build()"',
+    )
+
+
 @task(
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
@@ -2630,7 +2646,7 @@ def docs_server(
     compile_schema: bool = False,
     export_settings: bool = True,
 ):
-    """Start a local properdocs server to view the documentation."""
+    """Start a local zensical server to view the documentation."""
     # Extract settings definitions
     if export_settings:
         export_definitions(c, basedir='docs')
@@ -2638,23 +2654,27 @@ def docs_server(
     if compile_schema:
         doc_schema(c)
 
-    run(c, f'properdocs serve -a {address} -f docs/mkdocs.yml')
+    run(c, f'zensical serve -a {address} -f {DOCS_CONFIG}')
 
 
 @task(
-    help={'mkdocs': 'Build the documentation using mkdocs at the end (default: False)'}
+    help={
+        'build': 'Build the documentation using zensical at the end (default: False)',
+        'clean': 'Clear the zensical build cache first (default: False)',
+    }
 )
-def build_docs(c, mkdocs=False):
-    """Build the required documents for building the docs. Optionally build the documentation using mkdocs."""
+def build_docs(c, build=False, clean=False):
+    """Build the required documents for building the docs. Optionally build the documentation using zensical."""
     migrate(c)
     export_definitions(c, basedir='docs')
     doc_schema(c)
 
-    if mkdocs:
-        run(c, 'properdocs build  -f docs/mkdocs.yml')
+    if build:
+        run(c, f'zensical build {"--clean " if clean else ""}-f {DOCS_CONFIG}')
+        doc_checks(c)
         info('Documentation build complete')
     else:
-        info('Documentation build complete, but mkdocs not requested')
+        info('Documentation build complete, but zensical build not requested')
 
 
 @task

@@ -2,10 +2,10 @@
 
 import argparse
 import os
-import re
 import textwrap
 
 import yaml
+from render_schema import SchemaRenderer
 
 OUTPUT_DIR = './docs/api/schema/'
 
@@ -20,12 +20,13 @@ SPECIAL_PATHS = {
     'bom': 'Bill of Materials',
     'build': 'Build Order Management',
     'company': 'Company Management',
+    'importer': 'Data Importing',
     'label': 'Label Printing',
     'machine': 'External Machine Management',
     'order': 'External Order Management',
     'part': 'Parts and Part Categories',
     'plugins': 'Plugin Functionality',
-    'pricing': 'Part Pricing',
+    'pricing': 'Part and Stock Pricing',
     'report': 'Report Generation',
     'settings': 'Settings Management',
     'stock': 'Stock and Stock Locations',
@@ -54,26 +55,19 @@ def top_level_path(path: str) -> str:
     return GENERAL_PATH
 
 
-def generate_schema_file(key: str) -> None:
-    """Generate a schema file for the provided key."""
+def generate_schema_file(key: str, renderer: SchemaRenderer, paths: dict) -> None:
+    """Render the API documentation page for the provided key."""
     description = SPECIAL_PATHS.get(key, 'General API Endpoints')
 
-    output = f"""
-    ---
-    title: {description}
-    ---
-
-    The *{description}* section of the InvenTree API schema is documented below.
-
-    [OAD(./docs/docs/api/schema/{key}.yml)]
-    """
-
-    output = textwrap.dedent(output).strip() + '\n'
+    output = renderer.render_page(description, paths)
 
     output_file = os.path.join(os.path.dirname(__file__), OUTPUT_DIR, f'{key}.md')
     output_file = os.path.abspath(output_file)
 
     print('Writing schema file to:', output_file)
+
+    # Generated pages are not tracked in git, so the directory may not exist yet
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(output)
@@ -125,99 +119,26 @@ def generate_index_file(version: str):
         f.write(output)
 
 
-def extract_refs(data: dict, components: dict) -> dict:
-    """Extract a dict of refs from the provided paths dict.
-
-    The refs are located like so:
-    <path>:<method>:responses:<status>:content:application/json:schema:$ref
-
-    Also, the referenced components might reference *sub* components,
-    so we need to do this step recursively.
-
-    """
-    pattern = r"'?\$ref'?: '#\/components\/schemas\/(\S+)'"
-
-    # First, extract the results from the paths data dict
-    matches = re.findall(pattern, str(data))
-
-    refs = list(matches)
-
-    # Next, extract additional refs from the components dict
-    # Note that the components dict may reference other components
-
-    idx = 0
-
-    while idx < len(refs):
-        ref = refs[idx]
-
-        schema = components.get('schemas', {}).get(ref, None)
-
-        if schema:
-            # Search for additional refs
-            matches = re.findall(pattern, str(schema))
-
-            for match in matches:
-                if match not in refs:
-                    refs.append(match)
-
-        idx += 1
-
-    # Return a dict only of the extracted refs
-    schemas = {ref: components['schemas'][ref] for ref in refs}
-
-    return schemas
-
-
 def parse_api_file(filename: str):
-    """Parse the input API file, and split into smaller sections.
+    """Parse the input API file, and render it as a set of smaller documentation pages.
 
     The intent is to make the API schema easier to peruse on the documentation.
     """
     with open(filename, encoding='utf-8') as f:
         data = yaml.safe_load(f)
 
-    paths = data['paths']
-
     top_level_paths = {}
 
-    for path, methods in paths.items():
+    for path, methods in data['paths'].items():
         tlp = top_level_path(path)
+        top_level_paths.setdefault(tlp, {})[path] = methods
 
-        if tlp not in top_level_paths:
-            top_level_paths[tlp] = {}
-
-        top_level_paths[tlp][path] = methods
+    # The renderer uses the complete schema, so all references can be resolved
+    renderer = SchemaRenderer(data)
 
     # Generate output files
     for key, value in top_level_paths.items():
-        output_file = os.path.join(os.path.dirname(__file__), OUTPUT_DIR, f'{key}.yml')
-
-        output = {}
-
-        output['paths'] = value
-
-        components = data.get('components', {})
-
-        # Extract only the schemas relating to the provided paths
-        path_schemas = extract_refs(value, components)
-
-        for k, v in data.items():
-            if k == 'components':
-                v = v.copy()
-                v['schemas'] = path_schemas
-
-            if k != 'paths':
-                output[k] = v
-
-        print(f'Writing schema file to {output_file}...')
-
-        output_file = os.path.abspath(output_file)
-
-        with open(output_file, 'w', encoding='utf-8') as f:
-            yaml.dump(output, f)
-
-        # Generate a markdown file for the schema
-        generate_schema_file(key)
+        generate_schema_file(key, renderer, value)
 
     # Finally, generate an index file for the API schema
     generate_index_file(data['info']['version'])
