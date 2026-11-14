@@ -45,6 +45,7 @@ from InvenTree.filters import (
 )
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
+    ActionLockMixin,
     CreateAPI,
     ListCreateAPI,
     OutputOptionsMixin,
@@ -739,8 +740,14 @@ class BuildLineDetail(BuildLineMixin, OutputOptionsMixin, RetrieveUpdateDestroyA
         return None
 
 
-class BuildOrderContextMixin:
-    """Mixin class which adds build order as serializer context variable."""
+class BuildOrderContextMixin(ActionLockMixin):
+    """Mixin class which adds build order as serializer context variable.
+
+    The build order row is locked for the duration of the action (see ActionLockMixin),
+    so the action operates on (and saves) up-to-date build order data.
+    """
+
+    lock_model = Build
 
     def get_build(self):
         """Return the Build object associated with this API endpoint."""

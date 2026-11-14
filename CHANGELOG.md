@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [#13274](https://github.com/inventree/InvenTree/pull/13274) API requests which modify an existing object (updates, and "action" endpoints such as issuing or completing an order) now lock the database row before reading it, and run within a single database transaction. This prevents a concurrent edit from silently overwriting changes made by a background task (e.g. the "completed" quantity of a build order being reset while its outputs were being completed). If the object is locked by another long-running process, the request now returns a `409 Conflict` response and can be retried. A failed action no longer leaves partial changes behind.
 - [#13241](https://github.com/inventree/InvenTree/pull/13241)  completing a password reset now verifies the user's email address (when the account has a single address matching the account email), allowing users created by an administrator to set up MFA while it is enforced.
 
 ### Removed
