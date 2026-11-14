@@ -549,9 +549,23 @@ export function clearCsrfCookie() {
 
 export async function ProviderLogin(
   provider: AuthProvider,
-  process: 'login' | 'connect' = 'login'
+  process: 'login' | 'connect' = 'login',
+  redirect?: any
 ) {
   await ensureCsrf();
+
+  // The round-trip through the identity provider is a full page navigation,
+  // so the router state carrying the originally requested URL is lost on
+  // the way back. Forward it through the flow instead, appended to the
+  // callback URL allauth redirects the browser back to - LoggedIn.tsx
+  // picks the 'next' parameter back up once the login completes.
+  const next = `${redirect?.redirectUrl ?? ''}${redirect?.queryParams ?? ''}`;
+  const callback_url =
+    generateUrl(`/${getBaseUrl()}/logged-in`, window.location.origin) +
+    (process === 'login' && next.startsWith('/') && !next.startsWith('//')
+      ? `?next=${encodeURIComponent(next)}`
+      : '');
+
   post(generateUrl(apiUrl(ApiEndpoints.auth_provider_redirect)), {
     provider: provider.id,
     // Return to wherever this page is actually being served from, not the
@@ -561,10 +575,7 @@ export async function ProviderLogin(
     // back in server-side by Django's compatibility redirect for bare
     // (non-API-host) paths, which only exists on the Django side - so add
     // it explicitly rather than relying on that.
-    callback_url: generateUrl(
-      `/${getBaseUrl()}/logged-in`,
-      window.location.origin
-    ),
+    callback_url,
     process: process,
     csrfmiddlewaretoken: getCsrfCookie()
   });

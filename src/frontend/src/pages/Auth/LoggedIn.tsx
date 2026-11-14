@@ -27,6 +27,15 @@ function ssoErrorMessage(error: string): string {
   }
 }
 
+// Recovers the redirect target from the 'next' query param ProviderLogin
+// appends to the SSO callback URL - router state does not survive the full
+// page load back from the identity provider.
+function redirectFromNextParam(next: string | null) {
+  return next?.startsWith('/') && !next.startsWith('//')
+    ? { redirectUrl: next }
+    : undefined;
+}
+
 export default function Logged_In() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,6 +43,8 @@ export default function Logged_In() {
 
   useEffect(() => {
     const error = searchParams.get('error');
+    const redirect =
+      location?.state ?? redirectFromNextParam(searchParams.get('next'));
 
     if (error) {
       showLoginNotification({
@@ -41,11 +52,11 @@ export default function Logged_In() {
         message: ssoErrorMessage(error),
         success: false
       });
-      navigate('/login', { state: location?.state });
+      navigate('/login', { state: redirect });
       return;
     }
 
-    checkLoginState(navigate, location?.state);
+    void checkLoginState(navigate, redirect);
   }, [navigate]);
 
   return (
