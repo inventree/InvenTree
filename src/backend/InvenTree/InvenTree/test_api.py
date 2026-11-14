@@ -974,6 +974,21 @@ class GeneralApiTests(InvenTreeAPITestCase):
             any(entry['setting'] == 'ENABLE_PLUGINS_URL' for entry in get_entries())
         )
 
+        # A setting override (environment / config file) takes priority over the stored value
+        set_global_setting('ENABLE_PLUGINS_URL', False)
+
+        with override_settings(GLOBAL_SETTINGS_OVERRIDES={'ENABLE_PLUGINS_URL': True}):
+            self.assertFalse(
+                any(entry['setting'] == 'ENABLE_PLUGINS_URL' for entry in get_entries())
+            )
+
+        set_global_setting('ENABLE_PLUGINS_URL', True)
+
+        with override_settings(GLOBAL_SETTINGS_OVERRIDES={'ENABLE_PLUGINS_URL': False}):
+            self.assertTrue(
+                any(entry['setting'] == 'ENABLE_PLUGINS_URL' for entry in get_entries())
+            )
+
         # An inactive plugin is not reported
         set_global_setting('ENABLE_PLUGINS_URL', False)
         registry.set_plugin_state('sample', False)

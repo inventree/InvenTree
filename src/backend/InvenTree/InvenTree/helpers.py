@@ -1182,6 +1182,7 @@ def plugins_disabled_mixins() -> list[dict]:
         list: One entry for each (plugin, mixin) combination which is not operational
     """
     from common.models import InvenTreeSetting
+    from common.settings import global_setting_overrides
     from plugin import PluginMixinEnum
     from plugin.registry import registry
 
@@ -1200,12 +1201,21 @@ def plugins_disabled_mixins() -> list[dict]:
         PluginMixinEnum.USER_INTERFACE: 'ENABLE_PLUGINS_INTERFACE',
     }
 
-    # Fetch all of the settings in a single query (a missing setting is disabled by default)
-    enabled_settings = {
-        setting.key.upper()
+    # Fetch all of the stored settings in a single query (a missing setting is disabled by default)
+    values = {
+        setting.key.upper(): setting.value
         for setting in InvenTreeSetting.objects.filter(key__in=mixin_settings.values())
-        if str2bool(setting.value)
     }
+
+    # A setting which is overridden (via environment or config file) takes priority,
+    # to match the "effective" value which is used when the mixins are activated
+    values.update({
+        key: value
+        for key, value in global_setting_overrides().items()
+        if key in mixin_settings.values()
+    })
+
+    enabled_settings = {key for key, value in values.items() if str2bool(value)}
 
     disabled_mixins = {
         mixin: setting
