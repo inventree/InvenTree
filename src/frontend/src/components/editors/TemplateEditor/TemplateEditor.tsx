@@ -190,7 +190,8 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
       const code = await Promise.resolve(editorRef.current?.getCode());
       return code !== undefined && codeDiffers(code, savedCodeRef.current);
     } catch {
-      return false;
+      // The editor state is unknown: err on the side of asking for confirmation
+      return true;
     }
   }, []);
 
