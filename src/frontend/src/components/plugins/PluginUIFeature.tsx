@@ -143,7 +143,19 @@ export const getPluginTemplatePreview = (
     );
 
     useImperativeHandle(ref, () => ({
-      updatePreview: (...args) => updatePreviewRef.current?.(...args)
+      updatePreview: (...args) => {
+        const updatePreview = updatePreviewRef.current;
+
+        if (!updatePreview) {
+          // The plugin has not registered its handler (yet):
+          // fail, so that the editor does not assume the template was saved
+          return Promise.reject(
+            new Error(t`The template preview is not ready yet.`)
+          );
+        }
+
+        return updatePreview(...args);
+      }
     }));
 
     useEffect(() => {
