@@ -15,7 +15,11 @@
 	// DOMContentLoaded event, so mount immediately if the document has loaded
 	(function () {
 	function mountCarousel() {
-		new Splide(
+
+        if (window.carouselInstance) {
+			window.carouselInstance.destroy();
+		}
+		window.carouselInstance = new Splide(
             '.splide', {
                 type: 'loop',
                 perPage: {{ per_page }},
