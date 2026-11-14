@@ -1,4 +1,6 @@
 
+## InvenTree Project Governance
+
 As a MIT licensed open-source project, there are not legal obligations for the InvenTree project team or any contributor to provide support or maintenance. The software is provided "as-is" - without warranty of any kind.
 However, the project team is committed to providing a reliable and [secure](../security.md) code base with predictable upgrade paths.
 

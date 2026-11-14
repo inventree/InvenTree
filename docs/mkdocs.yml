@@ -211,7 +211,6 @@ nav:
       - Multi Factor Authentication: settings/MFA.md
       - SCIM Provisioning: settings/SCIM.md
       - Email Settings: settings/email.md
-      - Experimental Features: settings/experimental.md
     - Operations:
       - Background Tasks: settings/tasks.md
       - Error Logs: settings/logs.md
