@@ -25,10 +25,22 @@ import { useServerApiState } from '../../states/ServerApiState';
 export function getReauthFlow(err: any): FlowEnum | null {
   const flows: any = err.response?.data?.data?.flows ?? [];
 
-  if (flows.find((flow: any) => flow.id == FlowEnum.MfaReauthenticate)) {
+  const mfaFlow = flows.find(
+    (flow: any) => flow.id == FlowEnum.MfaReauthenticate
+  );
+  const mfaSupported = mfaFlow?.types.includes('totp');
+  const passwordFlow = flows.find(
+    (flow: any) => flow.id == FlowEnum.Reauthenticate
+  );
+
+  if (mfaSupported) {
     return FlowEnum.MfaReauthenticate;
-  } else if (flows.find((flow: any) => flow.id == FlowEnum.Reauthenticate)) {
+    // this can happen if you only have webauthn and mail but not totp/recovery
+  } else if (passwordFlow) {
     return FlowEnum.Reauthenticate;
+    // fallback for other flows
+  } else if (mfaFlow) {
+    return FlowEnum.MfaReauthenticate;
   } else {
     // No match found
     return null;

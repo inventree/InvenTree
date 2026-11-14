@@ -1440,7 +1440,8 @@ class BuildLineSerializer(
     )
 
     quantity = serializers.FloatField(label=_('Quantity'))
-    consumed = serializers.FloatField(label=_('Consumed'))
+    # Note: The 'consumed' quantity is only adjusted by consuming allocated stock
+    consumed = serializers.FloatField(label=_('Consumed'), read_only=True)
 
     bom_item = serializers.PrimaryKeyRelatedField(label=_('BOM Item'), read_only=True)
 

@@ -269,6 +269,9 @@ class ManufacturerPartSerializer(
             'parameters',
         ]
 
+        # Note: Barcodes are assigned via the dedicated barcode endpoints
+        read_only_fields = ['barcode_hash']
+
     tags = common.filters.enable_tags_filter()
 
     parameters = common.filters.enable_parameters_filter()

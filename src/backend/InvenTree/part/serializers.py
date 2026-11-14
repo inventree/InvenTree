@@ -196,6 +196,8 @@ class CategoryTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'subcategories',
         ]
 
+        read_only_fields = ['pathstring']
+
     subcategories = serializers.IntegerField(label=_('Subcategories'), read_only=True)
 
     icon = serializers.CharField(
@@ -480,6 +482,7 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         model = stock_models.StockLocation
         fields = ['pk', 'name', 'pathstring']
+        read_only_fields = ['pathstring']
 
 
 @register_importer()

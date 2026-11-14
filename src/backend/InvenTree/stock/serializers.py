@@ -190,6 +190,7 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         model = StockLocation
         fields = ['pk', 'name', 'pathstring']
+        read_only_fields = ['pathstring']
 
 
 @register_importer()
@@ -1404,6 +1405,8 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'structural',
             'sublocations',
         ]
+
+        read_only_fields = ['pathstring']
 
     sublocations = serializers.IntegerField(label=_('Sublocations'), read_only=True)
 

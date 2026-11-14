@@ -23,6 +23,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from allauth.account.models import EmailAddress
+from allauth.account.signals import password_reset
 from rest_framework.authtoken.models import Token as AuthToken
 
 import InvenTree.helpers
@@ -402,6 +403,36 @@ def api_token_notification(sender, instance: ApiToken, created, **kwargs):
     from users.tasks import notify_api_token
 
     notify_api_token(instance)
+
+
+@receiver(password_reset, dispatch_uid='verify_email_on_password_reset')
+def verify_email_on_password_reset(sender, request, user, **kwargs):
+    """Mark the user's email address as verified after a successful password reset.
+
+    Completing a password reset proves control of the mailbox the reset link (or code)
+    was sent to. Without this, users created by an administrator (whose email address
+    is stored as unverified) cannot register an MFA device, which locks them out
+    entirely when MFA is enforced.
+
+    To avoid verifying an address the user did not prove control of, this only applies
+    when the user has exactly one email address and it matches their account email.
+    """
+    if not user or not user.email:
+        return
+
+    addresses = list(EmailAddress.objects.filter(user=user)[:2])
+
+    if len(addresses) != 1:
+        return
+
+    address = addresses[0]
+
+    if address.verified or address.email.lower() != user.email.lower():
+        return
+
+    address.verified = True
+    address.save(update_fields=['verified'])
+    logger.info('Email address verified via password reset for user %s', user.pk)
 
 
 class RuleSet(models.Model):

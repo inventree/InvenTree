@@ -430,7 +430,8 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   const expandImage = (event: any) => {
     cancelEvent(event);
     modals.open({
-      children: <ApiImage src={img} thumbnail={props.thumbnail} />,
+      children: <ApiImage src={img} thumbnail={props.thumbnail} mah='85vh' />,
+      size: '90vw',
       withCloseButton: false
     });
   };

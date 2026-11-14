@@ -1874,6 +1874,28 @@ class BuildOutputCancelTest(BuildAPITest):
 class BuildLineTests(BuildAPITest):
     """Unit tests for the BuildLine API endpoints."""
 
+    def test_consumed_read_only(self):
+        """The 'consumed' quantity cannot be changed via the BuildLine API.
+
+        Stock must be consumed via the build order endpoints, otherwise
+        the consumed quantity does not match the stock which was actually consumed.
+        """
+        line = BuildLine.objects.first()
+        self.assertEqual(line.consumed, 0)
+
+        url = reverse('api-build-line-detail', kwargs={'pk': line.pk})
+
+        # The 'consumed' value is ignored, other fields are updated
+        data = self.patch(
+            url, {'consumed': 5, 'quantity': line.quantity + 1}, expected_code=200
+        ).data
+
+        self.assertEqual(data['consumed'], 0)
+        self.assertEqual(data['quantity'], line.quantity + 1)
+
+        line.refresh_from_db()
+        self.assertEqual(line.consumed, 0)
+
     def test_filter_available(self):
         """Filter BuildLine objects by 'available' status."""
         url = reverse('api-build-line-list')
