@@ -30,8 +30,12 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
     NAME = 'InvenTreeBarcode'
     TITLE = _('InvenTree Barcodes')
     DESCRIPTION = _('Provides native support for barcodes')
-    VERSION = '2.2.0'
+    VERSION = '2.3.0'
     AUTHOR = _('InvenTree contributors')
+
+    # This plugin will by default take priority over other barcode plugins
+    # This is to ensure that an internal barcode should always scan first
+    BARCODE_PRIORITY = 100
 
     SETTINGS = {
         'INTERNAL_BARCODE_FORMAT': {

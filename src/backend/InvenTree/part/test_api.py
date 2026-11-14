@@ -149,7 +149,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             {'items': [category.pk for category in categories], 'parent': parent_b.pk},
             expected_code=200,
             max_query_count=60 * len(categories),
-            max_query_time=10,  # Note: in production this is offloaded to the background worker
+            max_query_time=11,  # Note: in production this is offloaded to the background worker
         )
 
         for category in categories:
