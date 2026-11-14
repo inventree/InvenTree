@@ -195,6 +195,12 @@ export function BomTable({
       IPNColumn({
         accessor: 'sub_part_detail.IPN'
       }),
+      {
+        accessor: 'sub_part_detail.revision',
+        title: t`Revision`,
+        switchable: true,
+        defaultVisible: false
+      },
       CategoryColumn({
         accessor: 'category_detail',
         defaultVisible: false,
