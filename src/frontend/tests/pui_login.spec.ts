@@ -438,6 +438,27 @@ test('Login - Change Password', async ({ page }) => {
   await page.getByText('The password was set successfully').waitFor();
 });
 
+/**
+ * Wait (if required) until there is enough time left in the current TOTP period.
+ *
+ * The server does not allow any clock tolerance (MFA_TOTP_TOLERANCE = 0),
+ * so a code generated near the end of a period may have expired by the time
+ * the server validates it (especially on a slow CI runner).
+ *
+ * @param minRemaining - Minimum number of seconds which must remain in the period
+ */
+async function waitForFreshTotpPeriod(
+  page: Page,
+  minRemaining = 10,
+  period = 30
+) {
+  const remaining = period - (Math.floor(Date.now() / 1000) % period);
+
+  if (remaining < minRemaining) {
+    await page.waitForTimeout((remaining + 1) * 1000);
+  }
+}
+
 // Tests for assigning MFA tokens to users
 test('Login - MFA - TOTP', async ({ page }) => {
   await doLogin(page, {
@@ -483,6 +504,8 @@ test('Login - MFA - TOTP', async ({ page }) => {
     period: 30
   });
 
+  // Avoid generating a code which expires before the server validates it
+  await waitForFreshTotpPeriod(page);
   const token = totp.generate();
 
   await page.getByRole('textbox', { name: 'text-input-otp-code' }).fill(token);
@@ -717,4 +740,96 @@ test('Login - MFA - Token Reauthentication', async ({ page }) => {
     .locator('.mantine-CloseButton-root')
     .click();
   await page.getByRole('cell', { name: tokenName }).waitFor();
+});
+
+/**
+ * Regression test: a user with an unverified email address who is forced to set up MFA
+ * must be offered a way to verify their email (instead of a broken QR code page).
+ *
+ * Ref: https://github.com/inventree/InvenTree/issues/13238
+ */
+test('Login - MFA - Setup with unverified email', async ({ page }) => {
+  await doLogin(page, { user: noaccessuser });
+
+  const totpEndpoint = /auth\/v1\/account\/authenticators\/totp/;
+  const emailEndpoint = /auth\/v1\/account\/email/;
+  const unverified = `${noaccessuser.username}@example.org`;
+  const verificationRequests: string[] = [];
+
+  // Simulate allauth refusing MFA registration due to an unverified email
+  await page.route(totpEndpoint, (route) =>
+    route.fulfill({
+      status: 409,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 409,
+        errors: [
+          {
+            code: 'unverified_email',
+            message:
+              'You cannot add an authenticator until you have verified your email address.'
+          }
+        ]
+      })
+    })
+  );
+
+  await page.route(emailEndpoint, (route) => {
+    const request = route.request();
+
+    if (request.method() === 'PUT') {
+      verificationRequests.push(request.postDataJSON()?.email);
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 200 })
+      });
+    }
+
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 200,
+        data: [
+          { email: 'verified@example.org', verified: true, primary: false },
+          { email: unverified, verified: false, primary: true }
+        ]
+      })
+    });
+  });
+
+  await navigate(page, 'mfa-setup');
+
+  // The user is told why MFA setup is blocked, rather than shown an empty QR code
+  await page.getByLabel('mfa-unverified-email').waitFor();
+  await page.getByText('Email verification required').waitFor();
+  await expect(page.getByLabel('otp-secret-container')).toHaveCount(0);
+
+  // Request a verification email - only unverified addresses are sent one
+  await page.getByRole('button', { name: 'mfa-send-verification' }).click();
+  await page.getByText('Verification email sent').waitFor();
+  expect(verificationRequests).toEqual([unverified]);
+
+  // Once the email is verified, retrying shows the TOTP registration form
+  await page.unroute(totpEndpoint);
+  await page.route(totpEndpoint, (route) =>
+    route.fulfill({
+      status: 404,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 404,
+        meta: {
+          secret: 'MOCKSECRET234567',
+          totp_url: 'otpauth://totp/InvenTree?secret=MOCKSECRET234567'
+        }
+      })
+    })
+  );
+
+  await page.getByRole('button', { name: 'mfa-retry-setup' }).click();
+  await expect(page.getByLabel('otp-secret', { exact: true })).toHaveText(
+    'MOCKSECRET234567'
+  );
+  await expect(page.getByLabel('mfa-unverified-email')).toHaveCount(0);
 });
