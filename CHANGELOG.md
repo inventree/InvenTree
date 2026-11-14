@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [#13241](https://github.com/inventree/InvenTree/pull/13241)  completing a password reset now verifies the user's email address (when the account has a single address matching the account email), allowing users created by an administrator to set up MFA while it is enforced.
+
 ### Removed
 
 ## 1.7.0 - 2026-11.03
