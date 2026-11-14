@@ -87,6 +87,13 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SALESORDER_ENABLED': {
+        'name': _('Enable Sales Orders'),
+        'description': _('Enable sales order functionality in the user interface'),
+        'validator': bool,
+        'default': True,
+        'flags': [SettingFlag.TOGGLE],
+    },
     # TO
     'TRANSFERORDER_ENABLED': {
         'name': _('Enable Transfer Orders'),
@@ -170,5 +177,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': '',
         'model': 'stock.stocklocation',
         'model_filters': {'structural': False},
+    },
+    'PURCHASEORDER_ENABLED': {
+        'name': _('Enable Purchase Orders'),
+        'description': _('Enable purchase order functionality in the user interface'),
+        'validator': bool,
+        'default': True,
+        'flags': [SettingFlag.TOGGLE],
     },
 }
