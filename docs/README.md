@@ -23,9 +23,9 @@ InvenTree uses [Zensical](https://zensical.org/) to convert [Markdown](https://z
 
 To build the documentation locally, run these commands as the `inventree` user:
 
-```
-$ cd /home/inventree
-$ source env/bin/activate
+```bash
+cd /home/inventree
+source env/bin/activate
 ```
 
 !!! info "(env) prefix"
@@ -33,9 +33,9 @@ $ source env/bin/activate
 
 You can now install the additional packages needed to build the documentation:
 
-```
-$ cd src
-$ pip install --require-hashes -r docs/requirements.txt
+```bash
+cd src
+pip install --require-hashes -r docs/requirements.txt
 ```
 
 ## Schema generation
@@ -45,8 +45,8 @@ Building the documentation requires extracting the API schema (and settings defi
 !!! tip
     This command is only required when building the documentation for the first time, or when changes have been made to the API schema.
 
-```
-$ invoke build-docs
+```bash
+invoke build-docs
 ```
 
 You will see output similar to this (truncated for brevity):
@@ -67,24 +67,24 @@ Documentation build complete, but zensical build not requested
 
 To generate the schema files *and* build the static HTML site (in `docs/site/`), including the post-build checks that all settings are documented, run:
 
-```
-$ invoke build-docs --build
+```bash
+invoke build-docs --build
 ```
 
 ## Viewing the documentation
 
 Generate the HTML files from the markdown source files, and start the zensical webpage server:
 
-```
-$ zensical serve -a localhost:8080 -f docs/mkdocs.yml
+```bash
+zensical serve -a localhost:8080 -f docs/mkdocs.yml
 ```
 
 You can then point your web browser at http://localhost:8080/
 
 Alternatively, you can use the `invoke` command:
 
-```
-$ invoke dev.docs-server
+```bash
+invoke dev.docs-server
 ```
 
 If you need to, use the `-a` option after `zensical serve` or `invoke` to set the address and port.  Run `invoke dev.docs-server --help` for details.

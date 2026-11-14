@@ -80,6 +80,8 @@ def generate_index_file(version: str):
     title: InvenTree API Schema
     ---
 
+    ## InvenTree API Schema
+
     The InvenTree API is implemented using the [Django REST framework](https://www.django-rest-framework.org).
     The API schema as documented below is generated using the [drf-spectactular](https://github.com/tfranzel/drf-spectacular/) extension.
 
@@ -108,8 +110,6 @@ def generate_index_file(version: str):
         output += f'| [{value}](./schema/{key}.md) | {value} |\n'
 
     output += '| [General](./schema/general.md) | General API endpoints |\n'
-
-    output += '\n'
 
     output_file = os.path.join(os.path.dirname(__file__), OUTPUT_DIR, '..', 'schema.md')
 

@@ -33,7 +33,13 @@ from InvenTree.unit_test import (
     findOffloadedTask,
     stock_history_count,
 )
-from order.models import PurchaseOrder, PurchaseOrderLineItem
+from order.models import (
+    PurchaseOrder,
+    PurchaseOrderLineItem,
+    TransferOrder,
+    TransferOrderAllocation,
+    TransferOrderLineItem,
+)
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
 from stock.models import StockItem, StockItemTestResult, StockLocation
 from stock.status_codes import StockStatus
@@ -351,6 +357,21 @@ class BuildTest(BuildTestBase):
 
         with self.assertRaises(ValidationError):
             b.clean()
+
+        # Stock which is fully allocated to a transfer order is not available
+        item = StockItem.objects.create(part=self.sub_part_1, quantity=10)
+        to = TransferOrder.objects.create(reference='TO-9999')
+        to_line = TransferOrderLineItem.objects.create(
+            order=to, part=self.sub_part_1, quantity=10
+        )
+        TransferOrderAllocation.objects.create(line=to_line, item=item, quantity=10)
+
+        b = BuildItem(stock_item=item, build_line=self.line_1, quantity=10)
+
+        with self.assertRaises(ValidationError) as err:
+            b.clean()
+
+        self.assertIn('Stock item is over-allocated', str(err.exception))
 
         # Ok, what about we make one that does *not* fail?
         b = BuildItem(
