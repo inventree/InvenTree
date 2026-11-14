@@ -8,7 +8,6 @@ from importlib.util import find_spec
 
 from django.apps import apps
 from django.conf import settings as django_settings
-from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
@@ -69,6 +68,8 @@ def update_instance_url(setting):
 
 def settings_group_options():
     """Build up group tuple for settings based on your choices."""
+    from django.contrib.auth.models import Group
+
     return [('', _('No group')), *[(str(a.pk), str(a)) for a in Group.objects.all()]]
 
 
