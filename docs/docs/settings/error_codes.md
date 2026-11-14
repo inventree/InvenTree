@@ -281,6 +281,13 @@ The `middleware` or `authentication_backends` list provided in the configuration
 
 The class has been removed automatically. To remove this warning, remove it from the list in your configuration file.
 
+#### INVE-W22
+**Plugin integration is disabled - Backend**
+
+An active plugin makes use of a plugin integration (mixin) which is disabled in the global settings. The affected functionality of the plugin (e.g. custom URLs, scheduled tasks, event handling or user interface elements) will not work until the integration is enabled.
+
+Enable the matching integration in the [plugin settings](./global.md#plugin-settings) (a server restart may be required), or deactivate the plugin if it is not needed.
+
 
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.

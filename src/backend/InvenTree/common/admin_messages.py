@@ -98,11 +98,28 @@ def _pending_migrations() -> int:
         return 0
 
 
+def _disabled_plugin_integrations() -> list[str]:
+    """Return the names of active plugins which rely on a disabled plugin integration."""
+    from InvenTree.helpers import plugins_disabled_mixins
+
+    try:
+        entries = plugins_disabled_mixins()
+    except Exception:
+        # This check must never prevent the other messages from being reported
+        logger.exception('Failed to check for disabled plugin integrations')
+        return []
+
+    # A plugin may be affected by multiple disabled integrations
+    return sorted({str(entry['name'] or entry['plugin']) for entry in entries})
+
+
 def get_core_admin_messages() -> list[AdminMessage]:
     """Return the set of core InvenTree system messages."""
     # Imported here to avoid circular imports at app load
     from InvenTree.helpers_email import is_email_configured
     from InvenTree.status import is_worker_running
+
+    disabled_integrations = _disabled_plugin_integrations()
 
     return [
         _check(
@@ -153,6 +170,15 @@ def get_core_admin_messages() -> list[AdminMessage]:
             _('Basic (username:password) authentication is enabled for the API.'),
             bool(settings.BASIC_AUTH_ENABLED),
             code='INVE-W18',
+        ),
+        _check(
+            'plugin_integration',
+            _('Plugin Integration'),
+            _(
+                'Active plugins require a plugin integration which is disabled: {plugins}'
+            ).format(plugins=', '.join(disabled_integrations)),
+            len(disabled_integrations) > 0,
+            code='INVE-W22',
         ),
     ]
 
