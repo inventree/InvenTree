@@ -4,7 +4,10 @@ import json
 import os
 import re
 import uuid
+from importlib import import_module
+from importlib.util import find_spec
 
+from django.apps import apps
 from django.conf import settings as django_settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import FieldDoesNotExist, ValidationError
@@ -1428,3 +1431,31 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'flags': [SettingFlag.TOGGLE],
     },
 }
+_settings_collected = False
+
+
+def collect_system_settings() -> None:
+    """Collect the domain-specific system settings from built-in apps."""
+    global _settings_collected
+
+    if _settings_collected:
+        return
+
+    _settings_collected = True
+
+    for app in apps.get_app_configs():
+        module_name = f'{app.name}.system_settings'
+
+        try:
+            if find_spec(module_name) is None:
+                continue
+        except ModuleNotFoundError:  # pragma: no cover
+            continue
+
+        settings = import_module(module_name).SYSTEM_SETTINGS
+
+        duplicates = sorted(SYSTEM_SETTINGS.keys() & settings.keys())
+        if duplicates:
+            raise ValueError(f'Duplicate system settings in {app.name}: {duplicates}')
+
+        SYSTEM_SETTINGS.update(settings)
