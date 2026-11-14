@@ -599,22 +599,64 @@ export function authApi(
   return api(url, requestConfig);
 }
 
-export const getTotpSecret = async (setTotpQr: any) => {
+export const getTotpSecret = async (
+  setTotpQr: any,
+  onUnverifiedEmail?: () => void
+) => {
   await authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'get').catch(
     (err) => {
-      if (err.status == 404 && err.response.data.meta.secret) {
+      if (err.status == 404 && err.response?.data?.meta?.secret) {
         setTotpQr(err.response.data.meta);
-      } else {
-        const msg = err.response.data.errors[0].message;
-        showNotification({
-          title: t`Failed to set up MFA`,
-          message: msg,
-          color: 'red'
-        });
+        return;
       }
+
+      const error = err.response?.data?.errors?.[0];
+
+      // MFA cannot be registered until all email addresses are verified
+      if (error?.code == 'unverified_email' && onUnverifiedEmail) {
+        onUnverifiedEmail();
+        return;
+      }
+
+      showNotification({
+        title: t`Failed to set up MFA`,
+        message: error?.message ?? t`An unknown error occurred`,
+        color: 'red'
+      });
     }
   );
 };
+
+/**
+ * Request a new verification email for each unverified email address of the current user.
+ */
+export async function resendEmailVerification() {
+  try {
+    const response = await authApi(apiUrl(ApiEndpoints.auth_email));
+    const addresses: { email: string; verified: boolean }[] =
+      response.data?.data ?? [];
+
+    const unverified = addresses.filter((address) => !address.verified);
+
+    for (const address of unverified) {
+      await authApi(apiUrl(ApiEndpoints.auth_email), undefined, 'put', {
+        email: address.email
+      });
+    }
+
+    showNotification({
+      title: t`Verification email sent`,
+      message: t`Check your inbox for a link to verify your email address`,
+      color: 'green'
+    });
+  } catch {
+    showNotification({
+      title: t`Error`,
+      message: t`Verification email could not be sent`,
+      color: 'red'
+    });
+  }
+}
 
 export function handleVerifyTotp(
   value: string,
