@@ -110,7 +110,7 @@ def _disabled_plugin_integrations() -> list[str]:
         return []
 
     # A plugin may be affected by multiple disabled integrations
-    return sorted({entry['name'] or entry['plugin'] for entry in entries})
+    return sorted({str(entry['name'] or entry['plugin']) for entry in entries})
 
 
 def get_core_admin_messages() -> list[AdminMessage]:

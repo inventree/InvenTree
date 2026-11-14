@@ -1291,7 +1291,8 @@ def plugins_disabled_mixins() -> list[dict]:
 
             results.append({
                 'plugin': plg.slug,
-                'name': plg.name,
+                # The plugin name may be a lazily translated string
+                'name': str(plg.name),
                 'mixin': str(mixin.value),
                 'setting': setting,
             })

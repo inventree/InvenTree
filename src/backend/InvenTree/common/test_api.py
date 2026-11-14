@@ -3731,6 +3731,14 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
 
         self.assertNotIn('SampleIntegrationPlugin', message()['message'])
 
+        # A plugin with a (lazily) translated name is reported correctly
+        registry.set_plugin_state('autocreatebuilds', True)
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False, None)
+
+        self.assertIn('Auto Create Builds', message()['message'])
+
+        registry.set_plugin_state('autocreatebuilds', False)
+
     def test_plugin_messages(self):
         """Plugin-provided messages are merged in and sorted by severity."""
         from unittest import mock
