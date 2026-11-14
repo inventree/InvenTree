@@ -35,7 +35,6 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { useStockLocationFields } from '../../forms/StockForms';
@@ -45,7 +44,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
@@ -100,11 +98,6 @@ export default function Stock() {
     params: {
       path_detail: true
     }
-  });
-
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.stocklocation,
-    modelId: location?.pk
   });
 
   const detailsPanel =
@@ -208,15 +201,9 @@ export default function Stock() {
             }}
           />
         )
-      },
-      ParametersPanel({
-        model_type: ModelType.stocklocation,
-        model_id: location.pk,
-        hidden: !location.pk,
-        parameter_count: instanceInfo.parameter_count
-      })
+      }
     ];
-  }, [sublocationView, transferOrderView, location, id, instanceInfo]);
+  }, [sublocationView, transferOrderView, location, id]);
 
   const editLocation = useEditApiFormModal({
     url: ApiEndpoints.stock_location_list,
