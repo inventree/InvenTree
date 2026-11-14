@@ -9,13 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#13271](https://github.com/inventree/InvenTree/pull/13271) makes a number of API fields read-only, as they are managed by dedicated endpoints and must not be edited directly: `consumed` (BuildLine), `received_date` (ReturnOrderLineItem), `barcode_hash` (ManufacturerPart, SalesOrderShipment), `issue_date` (SalesOrder, ReturnOrder, TransferOrder) and `complete_date` (ReturnOrder, TransferOrder). Values provided for these fields are now ignored.
+
 ### Added
+
+- [#13266](https://github.com/inventree/InvenTree/pull/13266) Adds a "Manufacturer Barcode" plugin, which provides fallback barcode matching against manufacturer part numbers, and a `BARCODE_PRIORITY` attribute which controls the order in which barcode plugins are queried.
 
 - [#13208](https://github.com/inventree/InvenTree/pull/13208) Shows the consuming build order in the stock item Child Items table, which includes consumed children by default for users without saved filters.
 
 - [#13166](https://github.com/inventree/InvenTree/pull/13166) Adds an "exclude_from_stock" attribute to the StockLocation model, allowing stock items in specified locations to be excluded from stock availability calculations.
 
 ### Changed
+
+- [#13241](https://github.com/inventree/InvenTree/pull/13241)  completing a password reset now verifies the user's email address (when the account has a single address matching the account email), allowing users created by an administrator to set up MFA while it is enforced.
 
 ### Removed
 

@@ -910,12 +910,14 @@ def get_viewable_attachment_model_types(user) -> set:
 class AttachmentMixin:
     """Mixin class for Attachment views."""
 
-    queryset = common.models.Attachment.objects.all()
+    queryset = common.models.Attachment.objects.all().select_related('upload_user')
     serializer_class = common.serializers.AttachmentSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
 
-class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
+class AttachmentList(
+    AttachmentMixin, BulkDeleteMixin, OutputOptionsMixin, ListCreateAPI
+):
     """List API endpoint for Attachment objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -1034,7 +1036,9 @@ class NoteMixin:
     # Note: This is handled explicitly in the 'save' method of the Note model
     SAFE_FIELDS = ['content']
 
-    queryset = common.models.Note.objects.all()
+    queryset = common.models.Note.objects.all().select_related(
+        'updated_by', 'model_type'
+    )
     serializer_class = common.serializers.NoteSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
@@ -1068,7 +1072,7 @@ class NoteMixin:
         return qs.filter(Q(template=True) | Q(model_type__in=allowed_ct_ids))
 
 
-class NoteList(NoteMixin, ListCreateAPI):
+class NoteList(NoteMixin, OutputOptionsMixin, ListCreateAPI):
     """List API endpoint for Note objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -1548,8 +1552,7 @@ class InstanceInfoView(APIView):
                 # Route through NoteList's own get_queryset() (rather than
                 # re-deriving the view-permission check here) so this count can
                 # never drift from what the Notes list endpoint actually shows.
-                note_list_view = NoteList()
-                note_list_view.request = request
+                note_list_view = NoteList(request=request, format_kwarg=None)
                 counts['note_count'] = (
                     note_list_view
                     .get_queryset()
@@ -1739,6 +1742,32 @@ class HealthCheckStatusSerializer(serializers.Serializer):
         read_only=True,
         default='ok',
     )
+
+
+class AdminMessageList(APIView):
+    """Read-only, staff-only list of classified system messages (error / warning / info / success).
+
+    Messages are generated on demand from core system checks (and potentially plugins).
+    """
+
+    permission_classes = [IsAdminOrAdminScope]
+
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=common.serializers.AdminMessageListSerializer,
+                description='System messages for staff users',
+            )
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        """Return system messages (most severe first)."""
+        from common.admin_messages import get_admin_messages
+
+        serializer = common.serializers.AdminMessageListSerializer({
+            'messages': get_admin_messages()
+        })
+        return Response(serializer.data)
 
 
 class HealthCheckView(APIView):
@@ -2170,7 +2199,9 @@ common_api_urls = [
         'system/',
         include([
             # Health check
-            path('health/', HealthCheckView.as_view(), name='api-system-health')
+            path('health/', HealthCheckView.as_view(), name='api-system-health'),
+            # Staff-only system status messages
+            path('messages/', AdminMessageList.as_view(), name='api-system-messages'),
         ]),
     ),
     # Internal System APIs - DO NOT USE

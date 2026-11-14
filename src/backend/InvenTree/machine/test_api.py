@@ -10,7 +10,7 @@ from machine import registry
 from machine.machine_type import BaseDriver
 from machine.models import MachineConfig
 from machine.tests import TestMachineRegistryMixin
-from plugin.registry import registry as plg_registry
+from plugin import registry as plg_registry
 from stock.models import StockLocation
 
 
@@ -19,12 +19,15 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
 
     roles = ['admin.add', 'admin.view', 'admin.change', 'admin.delete']
 
+    @classmethod
+    def setUpTestData(cls):
+        """Ensure the test plugin is loaded (once for the whole class)."""
+        super().setUpTestData()
+        plg_registry.set_plugin_state('label-printer-test-plugin', True)
+
     def setUp(self):
         """Setup some testing drivers/machines."""
         registry.initialize()
-
-        # Ensure the test plugin is loaded
-        plg_registry.set_plugin_state('label-printer-test-plugin', True)
 
         super().setUp()
 

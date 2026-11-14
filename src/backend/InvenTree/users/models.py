@@ -23,6 +23,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from allauth.account.models import EmailAddress
+from allauth.account.signals import password_reset
 from rest_framework.authtoken.models import Token as AuthToken
 
 import InvenTree.helpers
@@ -404,6 +405,36 @@ def api_token_notification(sender, instance: ApiToken, created, **kwargs):
     notify_api_token(instance)
 
 
+@receiver(password_reset, dispatch_uid='verify_email_on_password_reset')
+def verify_email_on_password_reset(sender, request, user, **kwargs):
+    """Mark the user's email address as verified after a successful password reset.
+
+    Completing a password reset proves control of the mailbox the reset link (or code)
+    was sent to. Without this, users created by an administrator (whose email address
+    is stored as unverified) cannot register an MFA device, which locks them out
+    entirely when MFA is enforced.
+
+    To avoid verifying an address the user did not prove control of, this only applies
+    when the user has exactly one email address and it matches their account email.
+    """
+    if not user or not user.email:
+        return
+
+    addresses = list(EmailAddress.objects.filter(user=user)[:2])
+
+    if len(addresses) != 1:
+        return
+
+    address = addresses[0]
+
+    if address.verified or address.email.lower() != user.email.lower():
+        return
+
+    address.verified = True
+    address.save(update_fields=['verified'])
+    logger.info('Email address verified via password reset for user %s', user.pk)
+
+
 class RuleSet(models.Model):
     """A RuleSet is somewhat like a superset of the django permission class, in that in encapsulates a bunch of permissions.
 
@@ -557,19 +588,27 @@ class Owner(models.Model):
 
     owner = GenericForeignKey('owner_type', 'owner_id')
 
+    @property
+    def owner_type_name(self) -> str:
+        """Return the name of the owner type (e.g. 'user' or 'group').
+
+        Uses the ContentType cache, rather than a database query for each Owner instance.
+        """
+        return ContentType.objects.get_for_id(self.owner_type_id).name
+
     def __str__(self):
         """Defines the owner string representation."""
-        if self.owner_type.name == 'user' and get_global_setting(
+        if self.owner_type_name == 'user' and get_global_setting(
             'DISPLAY_FULL_NAMES', cache=True
         ):
             display_name = self.owner.get_full_name()
         else:
             display_name = str(self.owner)
-        return f'{display_name} ({self.owner_type.name})'
+        return f'{display_name} ({self.owner_type_name})'
 
     def name(self):
         """Return the 'name' of this owner."""
-        if self.owner_type.name == 'user' and get_global_setting(
+        if self.owner_type_name == 'user' and get_global_setting(
             'DISPLAY_FULL_NAMES', cache=True
         ):
             if self.owner and hasattr(self.owner, 'get_full_name'):
@@ -581,7 +620,7 @@ class Owner(models.Model):
 
     def label(self):
         """Return the 'type' label of this owner i.e. 'user' or 'group'."""
-        return str(self.owner_type.name)
+        return str(self.owner_type_name)
 
     @classmethod
     def create(cls, obj):
