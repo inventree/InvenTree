@@ -5,7 +5,6 @@ from django.apps import AppConfig
 import structlog
 
 import InvenTree.ready
-from common.setting.system import collect_system_settings
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.ready import ignore_ready_warning
 
@@ -22,6 +21,7 @@ class CommonConfig(AppConfig):
 
     def ready(self):
         """Initialize restart flag clearance on startup."""
+        from common.setting.system import collect_system_settings
         from InvenTree.ready import setAppLoaded
 
         setAppLoaded(self.name)
