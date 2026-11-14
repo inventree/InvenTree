@@ -549,6 +549,24 @@ class ManufacturerTest(InvenTreeAPITestCase):
 
     roles = ['part.add', 'part.change', 'purchase_order.view']
 
+    def test_barcode_hash_read_only(self):
+        """The 'barcode_hash' field cannot be changed via the ManufacturerPart API."""
+        part = ManufacturerPart.objects.first()
+        self.assertEqual(part.barcode_hash, '')
+
+        url = reverse('api-manufacturer-part-detail', kwargs={'pk': part.pk})
+
+        # The 'barcode_hash' value is ignored, other fields are updated
+        data = self.patch(
+            url, {'barcode_hash': 'abc123', 'description': 'Updated'}, expected_code=200
+        ).data
+
+        self.assertEqual(data['barcode_hash'], '')
+        self.assertEqual(data['description'], 'Updated')
+
+        part.refresh_from_db()
+        self.assertEqual(part.barcode_hash, '')
+
     def test_manufacturer_part_list(self):
         """Test the ManufacturerPart API list functionality."""
         url = reverse('api-manufacturer-part-list')
