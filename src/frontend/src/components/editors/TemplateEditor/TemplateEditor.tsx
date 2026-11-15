@@ -337,16 +337,20 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
       if (code === undefined || !previewItem) return;
 
       setIsPreviewLoading(true);
-      Promise.resolve(
-        previewRef.current?.updatePreview(
-          code,
-          previewItem,
-          saveTemplate,
-          props
-        )
-      )
+
+      const result = previewRef.current?.updatePreview(
+        code,
+        previewItem,
+        saveTemplate,
+        props
+      );
+
+      // Only a returned promise reports whether the template was actually stored
+      const isConfirmed = typeof (result as any)?.then === 'function';
+
+      Promise.resolve(result)
         .then(() => {
-          if (saveTemplate) {
+          if (saveTemplate && isConfirmed) {
             // The preview area has stored the template on the server
             savedCodeRef.current = code;
           }
