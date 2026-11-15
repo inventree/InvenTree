@@ -27,6 +27,14 @@ class BarcodeMixin:
 
     ACTION_NAME = ''
 
+    # Order in which barcode plugins are queried when scanning a barcode.
+    # Plugins with a higher priority are queried first, and the first plugin
+    # to return a successful match is used.
+    # Plugins with equal priority are queried in registry order.
+    # Use a negative value for "fallback" plugins which should only be used
+    # when no other plugin can match the barcode.
+    BARCODE_PRIORITY: int = 0
+
     class MixinMeta:
         """Meta options for this mixin."""
 

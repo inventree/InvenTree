@@ -17,6 +17,7 @@ The following builtin plugins are available in InvenTree:
 | Barcodes | [DigiKey](./barcode_digikey.md) | DigiKey barcode support | No |
 | Barcodes | [InvenTree Barcode](./inventree_barcode.md) | Internal barcode support | Yes |
 | Barcodes | [LCSC](./barcode_lcsc.md) | LCSC barcode support | No |
+| Barcodes | [Manufacturer](./barcode_manufacturer.md) | Fallback barcode support for manufacturer part numbers | No |
 | Barcodes | [Mouser](./barcode_mouser.md) | Mouser barcode support | No |
 | Barcodes | [TME](./barcode_tme.md) | TME barcode support | No |
 | Data Export | [BOM Exporter](./bom_exporter.md) | Custom [exporter](../mixins/export.md) for BOM data | Yes |

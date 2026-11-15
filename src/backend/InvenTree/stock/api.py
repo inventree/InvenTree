@@ -29,6 +29,7 @@ import stock.serializers as StockSerializers
 from build.models import Build
 from company.models import Company, ManufacturerPart, SupplierPart
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from generic.states.api import StatusView
 from InvenTree.api import (
     BulkCreateMixin,
@@ -45,6 +46,7 @@ from InvenTree.filters import (
 )
 from InvenTree.helpers import extract_serial_numbers, generateTestKey, str2bool
 from InvenTree.mixins import (
+    ActionLockMixin,
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
     ListAPI,
@@ -111,10 +113,15 @@ class GenerateSerialNumber(GenericAPIView):
         return Response(data, status=status.HTTP_201_CREATED)
 
 
-class StockItemContextMixin:
-    """Mixin class for adding StockItem object to serializer context."""
+class StockItemContextMixin(ActionLockMixin):
+    """Mixin class for adding StockItem object to serializer context.
+
+    The stock item row is locked for the duration of the action (see ActionLockMixin).
+    """
 
     role_required = 'stock.change'
+
+    lock_model = StockItem
 
     queryset = StockItem.objects.none()
 
@@ -444,6 +451,7 @@ class StockLocationOutputOptions(OutputConfiguration):
     ]
 
 
+@search_provider(ref_names=['stocklocation'])
 class StockLocationList(
     DataExportViewMixin,
     BulkUpdateMixin,
@@ -1136,6 +1144,7 @@ class StockOutputOptions(OutputConfiguration):
     ]
 
 
+@search_provider(ref_names=['stockitem'])
 class StockList(
     DataExportViewMixin,
     BulkUpdateMixin,

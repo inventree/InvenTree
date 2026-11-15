@@ -18,15 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) adds stock item cost tracking. Each stock item can carry any number of per-unit cost entries (purchase, landed, fees, material, manufacturing, adjustment, other), with optional min/max ranges and an "estimated" flag, which are summed into a cached unit cost for the stock item. Costs are recorded automatically when receiving purchase orders, and carried across when stock is split, serialized, consumed, shipped, merged or disassembled. Existing stock item purchase prices are migrated to "legacy" cost entries. A "Costs" panel and a "Unit Cost" overview are shown on the stock item page for users with the "pricing" role.
 - [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) adds the "has_unit_cost" filter and "unit_cost" ordering option to the StockItem API (available to users with the "pricing" view role).
-
+- [#13271](https://github.com/inventree/InvenTree/pull/13271) makes a number of API fields read-only, as they are managed by dedicated endpoints and must not be edited directly: `consumed` (BuildLine), `received_date` (ReturnOrderLineItem), `barcode_hash` (ManufacturerPart, SalesOrderShipment), `issue_date` (SalesOrder, ReturnOrder, TransferOrder) and `complete_date` (ReturnOrder, TransferOrder). Values provided for these fields are now ignored.
+- [#13266](https://github.com/inventree/InvenTree/pull/13266) Adds a "Manufacturer Barcode" plugin, which provides fallback barcode matching against manufacturer part numbers, and a `BARCODE_PRIORITY` attribute which controls the order in which barcode plugins are queried.
 - [#13208](https://github.com/inventree/InvenTree/pull/13208) Shows the consuming build order in the stock item Child Items table, which includes consumed children by default for users without saved filters.
-
 - [#13166](https://github.com/inventree/InvenTree/pull/13166) Adds an "exclude_from_stock" attribute to the StockLocation model, allowing stock items in specified locations to be excluded from stock availability calculations.
 
 ### Changed
 
 - [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) when stock item pricing is enabled, the purchase cost of a part is now calculated from the "purchase" cost entries of its stock items. The "Stock Item Pricing Age" setting now applies to the date the cost was recorded, rather than the date the stock item was last updated.
 - [#XXXX](https://github.com/inventree/InvenTree/pull/XXXX) stocktake now values stock items using their recorded unit cost.
+- [#13274](https://github.com/inventree/InvenTree/pull/13274) API requests which modify an existing object (updates, and "action" endpoints such as issuing or completing an order) now lock the database row before reading it, and run within a single database transaction. This prevents a concurrent edit from silently overwriting changes made by a background task (e.g. the "completed" quantity of a build order being reset while its outputs were being completed). If the object is locked by another long-running process, the request now returns a `409 Conflict` response and can be retried. A failed action no longer leaves partial changes behind.
+- [#13241](https://github.com/inventree/InvenTree/pull/13241)  completing a password reset now verifies the user's email address (when the account has a single address matching the account email), allowing users created by an administrator to set up MFA while it is enforced.
 
 ### Removed
 

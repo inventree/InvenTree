@@ -12,6 +12,9 @@
     ],
     "ignorePatterns": [
         {
+            "pattern": "^\\./schema/[a-z-]+\\.md$"
+        },
+        {
             "pattern": "http://inventree.localhost"
         },
         {

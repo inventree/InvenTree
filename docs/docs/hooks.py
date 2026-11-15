@@ -1,4 +1,9 @@
-"""Custom mkdocs hooks, using the mkdocs-simple-hooks plugin."""
+"""Documentation build hooks.
+
+Zensical does not run mkdocs hooks, so these are called directly:
+- on_config: via docs/docs_data.py (hook_config)
+- on_post_build: via the "invoke build-docs --build" task
+"""
 
 import json
 import os

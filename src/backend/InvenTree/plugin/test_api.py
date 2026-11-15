@@ -528,7 +528,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         # Filter by 'mixin' parameter
         mixin_results = {
-            PluginMixinEnum.BARCODE: 5,
+            PluginMixinEnum.BARCODE: 6,
             PluginMixinEnum.EXPORTER: 4,
             PluginMixinEnum.ICON_PACK: 1,
             PluginMixinEnum.MAIL: 1,
@@ -704,13 +704,18 @@ class PluginLockedSettingsTest(PluginMixin, InvenTreeAPITestCase):
 
     UNLOCKED_KEY = 'CHOICE_SETTING'
 
-    def setUp(self):
-        """Activate the sample plugin and confirm it is ready."""
-        super().setUp()
+    @classmethod
+    def setUpTestData(cls):
+        """Activate the sample plugin once for the whole class."""
+        super().setUpTestData()
 
         from plugin import registry
 
-        registry.set_plugin_state(self.PLUGIN_SLUG, True)
+        registry.set_plugin_state(cls.PLUGIN_SLUG, True)
+
+    def setUp(self):
+        """Confirm the sample plugin is ready."""
+        super().setUp()
 
         self.cfg = PluginConfig.objects.filter(key=self.PLUGIN_SLUG).first()
         self.assertIsNotNone(self.cfg)
@@ -840,12 +845,17 @@ class PluginUnauthenticatedAccessTest(PluginMixin, InvenTreeAPITestCase):
     PLUGIN_SLUG = 'sample'
     SETTING_KEY = 'API_KEY'
 
-    def setUp(self):
-        """Activate sample plugin, then log out to simulate an anonymous client."""
-        super().setUp()
+    @classmethod
+    def setUpTestData(cls):
+        """Activate the sample plugin once for the whole class."""
+        super().setUpTestData()
         from plugin import registry
 
-        registry.set_plugin_state(self.PLUGIN_SLUG, True)
+        registry.set_plugin_state(cls.PLUGIN_SLUG, True)
+
+    def setUp(self):
+        """Log out to simulate an anonymous client."""
+        super().setUp()
         self.client.logout()
 
     def test_plugin_detail_unauthenticated(self):

@@ -1,13 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 577
+INVENTREE_API_VERSION = 580
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/XXXX
+v580 -> 2026-11-15 : https://github.com/inventree/InvenTree/pull/XXXX
     - Adds StockItemCostEntry and StockItemCost (summary) models to the "pricing" app
     - Adds /api/pricing/stock-cost-entry/ list and detail endpoints (and /api/pricing/stock-cost-entry/status/)
     - Adds /api/pricing/stock-cost/ list and detail endpoints (read-only)
@@ -18,6 +18,19 @@ v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/XXXX
     - Adds "has_unit_cost" filter and "unit_cost" ordering option to the StockItem API (ignored for users without the "pricing" view role)
     - Breaking: Explicit per-line "purchase_price" values for stock disassembly now create cost entries (and no longer set the purchase price), and default to the default currency
     - Breaking: Removes the "PURCHASEORDER_CONVERT_CURRENCY" global setting
+
+v579 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13271
+    - The "consumed" field on the BuildLine API is now read-only - stock must be consumed via the build order endpoints
+    - The "received_date" field on the ReturnOrderLineItem API is now read-only - line items must be received via the return order "receive" endpoint
+    - The "barcode_hash" field on the ManufacturerPart and SalesOrderShipment APIs is now read-only - barcodes must be assigned via the barcode endpoints
+    - The "issue_date" field on the SalesOrder, ReturnOrder and TransferOrder APIs is now read-only (as per the PurchaseOrder API) - it is set when the order is issued
+    - The "complete_date" field on the ReturnOrder and TransferOrder APIs is now read-only (as per the PurchaseOrder API) - it is set when the order is completed
+
+v578 -> 2026-11-13 : https://github.com/inventree/InvenTree/pull/13265
+    - The "is_building" and "build" fields on the StockItem API are now read-only - build outputs must be created, completed or scrapped via the build order endpoints
+
+v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/13236
+    - non-function doc changes from allauth
 
 v576 -> 2026-11-11 : https://github.com/inventree/InvenTree/pull/13247
     - Adds /api/system/messages/ endpoint: staff-only, read-only; classified system messages are provided in the "messages" array

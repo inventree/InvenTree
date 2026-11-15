@@ -118,11 +118,11 @@ unused-ignore-comment = "error"
 
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
-dynamic_context = "test_function"
+# sys.monitoring based measurement (Python 3.12+) is much faster than the default tracer.
+# Note: sysmon does not support 'dynamic_context', so per-test contexts are not recorded.
+# On older Python versions, coverage falls back to the default core (with a warning).
+core = "sysmon"
 omit = ["*/test_migrations.py", "*/migrations/*"]
-
-[tool.coverage.html]
-show_contexts = true
 
 [tool.djlint]
 ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"

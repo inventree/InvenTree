@@ -6,12 +6,12 @@ title: App Mixin
 
 If this mixin is added to a plugin the directory the plugin class is defined in is added to the list of `INSTALLED_APPS` in the InvenTree server configuration.
 
-!!! warning "Danger Zone"
+!!! warning "Expert Mode"
     Only use this mixin if you have an understanding of Django's [app system]({% include "django.html" %}/ref/applications). Plugins with this mixin are deeply integrated into InvenTree and can cause difficult to reproduce or long-running errors. Use the built-in testing functions of Django to make sure your code does not cause unwanted behaviour in InvenTree before releasing.
 
 ## Custom Models
 
-This mixin allows you to define custom database models within your plugin. These models will be automatically registered with the InvenTree server, and will be available for use within your plugin code.
+This mixin allows you to define [custom database models](../models.md) within your plugin. These models will be automatically registered with the InvenTree server, and will be available for use within your plugin code.
 
 ### Model Permissions
 

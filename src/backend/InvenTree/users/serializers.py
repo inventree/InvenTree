@@ -648,6 +648,7 @@ class UserCreateSerializer(ExtendedUserSerializer):
 
         # Make sure the user cannot login until they have set a password
         instance.set_unusable_password()
+        instance.save(update_fields=['password'])
 
         message = (
             _('Your account has been created.')
