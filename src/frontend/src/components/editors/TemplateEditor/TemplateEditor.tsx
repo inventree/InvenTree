@@ -187,8 +187,16 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
     if (savedCodeRef.current === undefined) return false;
 
     try {
-      const code = await Promise.resolve(editorRef.current?.getCode());
-      return code !== undefined && codeDiffers(code, savedCodeRef.current);
+      // An editor which is still initializing (e.g. a plugin editor) cannot provide its code yet:
+      // fall back to the code which was last handed to the editor
+      const code =
+        (await Promise.resolve(editorRef.current?.getCode())) ??
+        codeRef.current;
+
+      // The editor content is unknown: err on the side of asking for confirmation
+      if (code === undefined) return true;
+
+      return codeDiffers(code, savedCodeRef.current);
     } catch {
       // The editor state is unknown: err on the side of asking for confirmation
       return true;
