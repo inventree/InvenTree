@@ -101,6 +101,7 @@ def _pending_migrations() -> int:
 def get_core_admin_messages() -> list[AdminMessage]:
     """Return the set of core InvenTree system messages."""
     # Imported here to avoid circular imports at app load
+    from InvenTree.helpers import get_api_token_pepper_set
     from InvenTree.helpers_email import is_email_configured
     from InvenTree.status import is_worker_running
 
@@ -153,6 +154,13 @@ def get_core_admin_messages() -> list[AdminMessage]:
             _('Basic (username:password) authentication is enabled for the API.'),
             bool(settings.BASIC_AUTH_ENABLED),
             code='INVE-W18',
+        ),
+        _check(
+            'api_token_pepper',
+            _('API Token Pepper'),
+            _('No API token pepper is configured, the secret key is used instead.'),
+            not get_api_token_pepper_set(),
+            code='INVE-W22',
         ),
     ]
 
