@@ -3739,6 +3739,64 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
 
         registry.set_plugin_state('autocreatebuilds', False)
 
+    def test_plugin_integration_edge_cases(self):
+        """Edge cases of the plugin integration check."""
+        from unittest import mock
+
+        from InvenTree.helpers import plugins_disabled_mixins
+        from plugin import PluginMixinEnum, registry
+        from plugin._internal.base import MixinBase
+
+        self.ensurePluginsLoaded()
+        registry.set_plugin_state('sample', True)
+        set_global_setting('ENABLE_PLUGINS_URL', False, None)
+
+        self.assertGreater(len(plugins_disabled_mixins()), 0)
+
+        # Nothing is reported if plugins are disabled entirely
+        with override_settings(PLUGINS_ENABLED=False):
+            self.assertEqual(plugins_disabled_mixins(), [])
+
+        # A plugin which fails to report its mixin state is skipped
+        def broken_mixin_enabled(key):
+            if key == PluginMixinEnum.BASE:
+                return True
+            raise ValueError('broken plugin')
+
+        with mock.patch.object(
+            MixinBase, 'mixin_enabled', side_effect=broken_mixin_enabled
+        ):
+            self.assertEqual(plugins_disabled_mixins(), [])
+
+        # Nothing is reported if all of the integrations are enabled
+        for key in [
+            'ENABLE_PLUGINS_APP',
+            'ENABLE_PLUGINS_EVENTS',
+            'ENABLE_PLUGINS_MAILS',
+            'ENABLE_PLUGINS_NAVIGATION',
+            'ENABLE_PLUGINS_SCHEDULE',
+            'ENABLE_PLUGINS_URL',
+            'ENABLE_PLUGINS_INTERFACE',
+        ]:
+            set_global_setting(key, True, None)
+
+        self.assertEqual(plugins_disabled_mixins(), [])
+
+        registry.set_plugin_state('sample', False)
+
+        # A failed check is not reported as successful, and other messages are still provided
+        with mock.patch(
+            'InvenTree.helpers.plugins_disabled_mixins',
+            side_effect=RuntimeError('check failed'),
+        ):
+            messages = self._messages()
+
+        msg = messages['plugin_integration']
+        self.assertEqual(msg['classifier'], 'warning')
+        self.assertEqual(msg['code'], 'INVE-W22')
+        self.assertEqual(msg['message'], 'Unable to check plugin integrations')
+        self.assertTrue(self.CORE_KEYS.issubset(messages.keys()))
+
     def test_plugin_messages(self):
         """Plugin-provided messages are merged in and sorted by severity."""
         from unittest import mock
