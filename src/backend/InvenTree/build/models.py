@@ -2469,8 +2469,16 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         sales_allocation_count = decimal.Decimal(
             self.stock_item.sales_order_allocation_count()
         )
+        transfer_allocation_count = decimal.Decimal(
+            self.stock_item.transfer_order_allocation_count()
+        )
 
-        total_allocation = build_allocation_count + sales_allocation_count + quantity
+        total_allocation = (
+            build_allocation_count
+            + sales_allocation_count
+            + transfer_allocation_count
+            + quantity
+        )
 
         if total_allocation > available:
             error = {'quantity': _('Stock item is over-allocated')}
