@@ -286,7 +286,9 @@ The class has been removed automatically. To remove this warning, remove it from
 
 An active plugin makes use of a plugin integration (mixin) which is disabled in the global settings. The affected functionality of the plugin (e.g. custom URLs, scheduled tasks, event handling or user interface elements) will not work until the integration is enabled.
 
-Enable the matching integration in the [plugin settings](./global.md#plugin-settings) (a server restart may be required), or deactivate the plugin if it is not needed.
+The message lists each affected plugin, together with the plugin settings which need to be enabled. Enable the listed settings in the [plugin settings](./global.md#plugin-settings) (a server restart may be required), or deactivate the plugin if it is not needed.
+
+If the check itself fails, the message "Unable to check plugin integrations" is shown instead. Check the server log for details.
 
 
 ### INVE-I (InvenTree Information)

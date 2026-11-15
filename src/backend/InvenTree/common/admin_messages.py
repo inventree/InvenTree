@@ -99,10 +99,11 @@ def _pending_migrations() -> int:
 
 
 def _disabled_plugin_integrations() -> Optional[list[str]]:
-    """Return the names of active plugins which rely on a disabled plugin integration.
+    """Return the active plugins which rely on a disabled plugin integration.
 
     Returns:
-        A list of plugin names, or None if the check could not be performed
+        A list of plugin names, each with the settings which need to be enabled,
+        or None if the check could not be performed
     """
     from InvenTree.helpers import plugins_disabled_mixins
 
@@ -113,8 +114,24 @@ def _disabled_plugin_integrations() -> Optional[list[str]]:
         logger.exception('Failed to check for disabled plugin integrations')
         return None
 
-    # A plugin may be affected by multiple disabled integrations
-    return sorted({str(entry['name'] or entry['plugin']) for entry in entries})
+    from common.models import InvenTreeSetting
+
+    # Group the settings which need to be enabled by plugin
+    # (a plugin may be affected by multiple disabled integrations)
+    required: dict[str, set[str]] = {}
+
+    for entry in entries:
+        plugin = str(entry['name'] or entry['plugin'])
+        setting = str(
+            InvenTreeSetting.get_setting_name(entry['setting']) or entry['setting']
+        )
+        required.setdefault(plugin, set()).add(setting)
+
+    # e.g. "Auto Create Builds (Enable event integration)"
+    return [
+        f'{plugin} ({", ".join(sorted(names))})'
+        for plugin, names in sorted(required.items())
+    ]
 
 
 def get_core_admin_messages() -> list[AdminMessage]:
@@ -130,7 +147,7 @@ def get_core_admin_messages() -> list[AdminMessage]:
         plugin_integration_message = _('Unable to check plugin integrations')
     else:
         plugin_integration_message = _(
-            'Active plugins require a plugin integration which is disabled: {plugins}'
+            'Active plugins require a plugin integration which is disabled. Enable the listed plugin settings: {plugins}'
         ).format(plugins=', '.join(disabled_integrations))
 
     return [

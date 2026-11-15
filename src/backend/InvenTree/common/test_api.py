@@ -3716,6 +3716,11 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
         self.assertEqual(msg['code'], 'INVE-W22')
         self.assertIn('SampleIntegrationPlugin', msg['message'])
 
+        # The setting which needs to be enabled is named
+        self.assertIn(
+            'SampleIntegrationPlugin (Enable URL integration)', msg['message']
+        )
+
         # A setting override (environment / config file) takes priority over the stored value
         with override_settings(GLOBAL_SETTINGS_OVERRIDES={'ENABLE_PLUGINS_URL': True}):
             self.assertNotIn('SampleIntegrationPlugin', message()['message'])
@@ -3735,7 +3740,9 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
         registry.set_plugin_state('autocreatebuilds', True)
         set_global_setting('ENABLE_PLUGINS_EVENTS', False, None)
 
-        self.assertIn('Auto Create Builds', message()['message'])
+        self.assertIn(
+            'Auto Create Builds (Enable event integration)', message()['message']
+        )
 
         registry.set_plugin_state('autocreatebuilds', False)
 
