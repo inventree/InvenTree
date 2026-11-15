@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 579
+INVENTREE_API_VERSION = 580
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v580 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13072
+    - Adds feature info to contenttype endpoint
 
 v579 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13271
     - The "consumed" field on the BuildLine API is now read-only - stock must be consumed via the build order endpoints
