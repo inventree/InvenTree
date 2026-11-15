@@ -1497,7 +1497,7 @@ class TestSettings(InvenTreeTestCase):
             self.assertEqual(config.get_api_token_peppers(), ('file-pepper', []))
         test_file.unlink(missing_ok=True)
         with in_env_context({'INVENTREE_API_TOKEN_PEPPER_FILE': 'abcd'}):
-            with self.assertRaisesRegex(FileNotFoundError, 'INVE-E21'):
+            with self.assertRaisesRegex(FileNotFoundError, 'INVE-E22'):
                 config.get_api_token_peppers()
 
     def test_helpers_setting(self):

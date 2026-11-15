@@ -129,6 +129,13 @@ An InvenTree process (web server or background worker) reloaded its plugins, but
 The affected process stops reloading its plugins to prevent an endless reload loop. Restart all InvenTree server and background worker processes to resolve this error. See [reloading plugins](../plugins/install.md#reloading-plugins) for further information.
 
 #### INVE-E21
+**Resource locked by another process - Backend**
+
+An API request attempted to modify an object that is currently locked by another long-running process. This typically occurs when multiple processes are trying to update the same object concurrently.
+
+The request will return a `409 Conflict` response. Retry the request after the other process has completed its operation.
+
+#### INVE-E22
 **API token pepper misconfigured - Backend**
 
 The InvenTree server failed to start, because the pepper file configured via `INVENTREE_API_TOKEN_PEPPER_FILE` (or `api_token_pepper_file`) does not exist or is not accessible.
@@ -268,6 +275,13 @@ Use the INVENTREE_CORS_ORIGIN_ALLOW_ALL and INVENTREE_CORS_ORIGIN_WHITELIST sett
 The `middleware` list provided in the configuration file does not include the audit log middleware (`audit.middleware.InvenTreeAuditlogMiddleware`). This middleware is required for audit log entries to record which user made each change.
 
 The middleware has been added automatically. To remove this warning, add it to the `middleware` list in your configuration file (after `django_structlog.middlewares.RequestMiddleware`).
+
+#### INVE-W18
+**Basic authentication is enabled - Backend**
+
+Basic (username:password) authentication against the API is enabled via the `INVENTREE_BASIC_AUTH_ENABLED` / `basic_auth_enabled` setting. Sending the user password with every request increases the impact of leaked credentials and makes the API a simpler target for brute-force attacks. Basic authentication also bypasses the interactive login flow and does not work for users with multi-factor authentication enabled.
+
+It is recommended to disable basic authentication and use [Token or OAuth2 authentication](../api/index.md#authentication) instead - see the [Authentication settings](../start/config.md#authentication).
 
 #### INVE-W20
 **Password authentication not allowed due to MFA - Backend**

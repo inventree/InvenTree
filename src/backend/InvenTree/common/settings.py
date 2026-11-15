@@ -135,10 +135,3 @@ def set_global_warning(key: str, options: Optional[dict] = None) -> bool:
             SystemSetId.GLOBAL_WARNING, global_dict_val, change_user=None, create=True
         )
     return True
-
-
-def stock_expiry_enabled():
-    """Returns True if the stock expiry feature is enabled."""
-    from common.models import InvenTreeSetting
-
-    return InvenTreeSetting.get_setting('STOCK_ENABLE_EXPIRY', False, create=False)

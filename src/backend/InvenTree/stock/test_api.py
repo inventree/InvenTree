@@ -1260,14 +1260,146 @@ class StockItemListTest(StockAPITestCase):
         self.assertIn(stock_1.pk, ids)
         self.assertIn(stock_2.pk, ids)
 
+    def test_consumed_by_detail(self):
+        """Consuming build details are optional, nullable, and read-only."""
+        self.assignRole('build.view')
+        assembly = Part.objects.create(name='Reference assembly', assembly=True)
+        part = Part.objects.first()
+        parent = StockItem.objects.create(part=part, quantity=10)
+        builds = [
+            build.models.Build.objects.create(
+                part=assembly, quantity=1, title=f'Consuming build {index}'
+            )
+            for index in range(2)
+        ]
+        consuming_builds = [*builds, None]
+        children = [
+            StockItem.objects.create(
+                part=part, quantity=1, parent=parent, consumed_by=build_order
+            )
+            for build_order in consuming_builds
+        ]
+        params = {'parent': parent.pk}
+        for options in [params, {**params, 'consumed_by_detail': False}]:
+            for record in self.get(self.list_url, options).data:
+                self.assertNotIn('consumed_by_detail', record)
+                self.assertNotIn('consumed_by_reference', record)
+
+        response = self.get(self.list_url, {**params, 'consumed_by_detail': True})
+        records = {item['pk']: item for item in response.data}
+        self.assertEqual(set(records), {item.pk for item in children})
+        for item, build_order in zip(children, consuming_builds, strict=True):
+            detail = records[item.pk]['consumed_by_detail']
+            self.assertEqual(
+                records[item.pk]['consumed_by'], build_order.pk if build_order else None
+            )
+            if build_order:
+                self.assertEqual(detail['pk'], build_order.pk)
+                self.assertEqual(detail['reference'], build_order.reference)
+                self.assertEqual(detail['title'], build_order.title)
+                self.assertEqual(detail['status'], build_order.status)
+            else:
+                self.assertIsNone(detail)
+
+        detail_url = reverse('api-stock-detail', kwargs={'pk': children[0].pk})
+        self.assertNotIn('consumed_by_detail', self.get(detail_url).data)
+        detail = self.get(detail_url, {'consumed_by_detail': True}).data
+        self.assertEqual(detail['consumed_by_detail']['reference'], builds[0].reference)
+
+        original_reference = builds[0].reference
+        self.patch(
+            detail_url, {'consumed_by_detail': {'reference': 'Cannot overwrite'}}
+        )
+        builds[0].refresh_from_db()
+        self.assertEqual(builds[0].reference, original_reference)
+        self.assertEqual(
+            StockItem.objects.get(pk=children[0].pk).consumed_by_id, builds[0].pk
+        )
+
+        # Requesting the field must not bypass build view permissions.
+        self.clearRoles()
+        self.assignRole('stock.view')
+        response = self.get(self.list_url, {**params, 'consumed_by_detail': True})
+        for record in response.data:
+            self.assertNotIn('consumed_by_detail', record)
+        self.assertNotIn(
+            'consumed_by_detail',
+            self.get(detail_url, {'consumed_by_detail': True}).data,
+        )
+
+    def test_consumed_by_detail_export(self):
+        """Export consuming references only when requested and permitted."""
+        self.assignRole('build.view')
+        assembly = Part.objects.create(name='Export assembly', assembly=True)
+        build_order = build.models.Build.objects.create(part=assembly, quantity=1)
+        part = Part.objects.first()
+        parent = StockItem.objects.create(part=part, quantity=10)
+        consumed = StockItem.objects.create(
+            part=part, quantity=1, parent=parent, consumed_by=build_order
+        )
+        unconsumed = StockItem.objects.create(part=part, quantity=1, parent=parent)
+        filters = {'parent': parent.pk}
+        params = {**filters, 'consumed_by_detail': True}
+        header = 'Consumed By.Reference'
+
+        with self.export_data(self.list_url, params=params) as data_file:
+            rows = self.process_csv(data_file, required_cols=[header], required_rows=2)
+        records = {int(row['ID']): row for row in rows}
+        self.assertEqual(records[consumed.pk][header], build_order.reference)
+        self.assertEqual(records[unconsumed.pk][header], '')
+
+        for options in [filters, {**filters, 'consumed_by_detail': False}]:
+            with self.export_data(self.list_url, params=options) as data_file:
+                self.process_csv(data_file, excluded_cols=[header], required_rows=2)
+
+        self.clearRoles()
+        self.assignRole('stock.view')
+        with self.export_data(self.list_url, params=params) as data_file:
+            self.process_csv(data_file, excluded_cols=[header], required_rows=2)
+
+    def test_consumed_by_detail_prefetch(self):
+        """Optional details prefetch builds even without StockApiMixin annotations."""
+        from stock.serializers import StockItemSerializer
+
+        assembly = Part.objects.create(name='Prefetch assembly', assembly=True)
+        builds = [
+            build.models.Build.objects.create(part=assembly, quantity=1)
+            for _ in range(10)
+        ]
+        StockItem.objects.bulk_create([
+            StockItem(part=assembly, quantity=1, consumed_by=build_order)
+            for build_order in builds
+        ])
+        queryset = StockItem.objects.filter(consumed_by__in=builds)
+        serializer = StockItemSerializer(consumed_by_detail=True)
+        self.assertIn('consumed_by', serializer.prefetch_list)
+        self.assertNotIn('consumed_by', StockItemSerializer().prefetch_list)
+        with self.assertNumQueries(2):
+            prefetched = list(serializer.prefetch_queryset(queryset))
+            references = [item.consumed_by.reference for item in prefetched]
+        self.assertCountEqual(
+            references, [build_order.reference for build_order in builds]
+        )
+
     def test_query_count(self):
         """Test that the number of queries required to fetch stock items is reasonable."""
         # Create a bunch of StockItem objects
         prt = Part.objects.first()
 
+        assembly = Part.objects.create(name='Query assembly', assembly=True)
+        builds = [
+            build.models.Build.objects.create(part=assembly, quantity=1)
+            for _ in range(10)
+        ]
+        # Include consuming builds so missing prefetches exceed the query budget.
         StockItem.objects.bulk_create([
-            StockItem(part=prt, quantity=1) for _ in range(100)
+            StockItem(part=prt, quantity=1, consumed_by=bo)
+            for bo in builds
+            for _ in range(10)
         ])
+
+        self.assignRole('build.view')
+        self.get(self.list_url, {'consumed_by_detail': True}, max_query_count=35)
 
         # List *all* stock items
         self.get(self.list_url, {}, max_query_count=35)
@@ -2083,8 +2215,73 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url).data
         self.assertEqual(data['purchase_price_currency'], 'NZD')
 
+    def test_build_fields_read_only(self):
+        """The 'is_building' and 'build' fields cannot be changed via the generic stock item API.
+
+        Build outputs must be completed (or scrapped) via the build order endpoints,
+        otherwise the build order 'completed' count, stock allocations and
+        tracking history are bypassed.
+        """
+        assembly = Part.objects.filter(assembly=True).first()
+        self.assertIsNotNone(assembly)
+
+        bo = build.models.Build.objects.create(
+            part=assembly, reference=build.models.Build.generate_reference(), quantity=5
+        )
+
+        output = bo.create_build_output(5).first()
+        self.assertTrue(output.is_building)
+
+        url = reverse('api-stock-detail', kwargs={'pk': output.pk})
+
+        # Attempting to mark the output as complete is silently ignored
+        data = self.patch(url, {'is_building': False}, expected_code=200).data
+        self.assertTrue(data['is_building'])
+
+        output.refresh_from_db()
+        self.assertTrue(output.is_building)
+
+        bo.refresh_from_db()
+        self.assertEqual(bo.completed, 0)
+
+        # The source build cannot be changed or removed
+        other_bo = build.models.Build.objects.create(
+            part=assembly, reference=build.models.Build.generate_reference(), quantity=5
+        )
+
+        for value in [other_bo.pk, None]:
+            data = self.patch(url, {'build': value}, expected_code=200).data
+            self.assertEqual(data['build'], bo.pk)
+
+        output.refresh_from_db()
+        self.assertEqual(output.build, bo)
+
+        # Nor can a new stock item be created as "in production" or against a build
+        response = self.post(
+            reverse('api-stock-list'),
+            {
+                'part': assembly.pk,
+                'quantity': 3,
+                'location': 1,
+                'is_building': True,
+                'build': bo.pk,
+            },
+            expected_code=201,
+        )
+
+        for item in response.data:
+            item = StockItem.objects.get(pk=item['pk'])
+            self.assertFalse(item.is_building)
+            self.assertIsNone(item.build)
+
+        # And an existing stock item cannot be assigned to a build
+        item_url = reverse('api-stock-detail', kwargs={'pk': 1})
+        data = self.patch(item_url, {'build': bo.pk}, expected_code=200).data
+        self.assertIsNone(data['build'])
+
     def test_output_options(self):
         """Test the output options for StockItemt detail."""
+        self.assignRole('build.view')
         self.run_output_test(
             reverse('api-stock-detail', kwargs={'pk': 1}),
             [
@@ -2093,6 +2290,7 @@ class StockItemTest(StockAPITestCase):
                 'supplier_part_detail',
                 'location_detail',
                 'tests',
+                'consumed_by_detail',
             ],
         )
 

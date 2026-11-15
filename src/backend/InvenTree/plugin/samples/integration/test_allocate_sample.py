@@ -5,7 +5,7 @@ from company.models import Company
 from InvenTree.unit_test import InvenTreeTestCase
 from order.models import SalesOrder, SalesOrderLineItem
 from part.models import BomItem, Part
-from plugin.registry import registry
+from plugin import registry
 from stock.models import StockItem
 
 

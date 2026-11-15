@@ -2,8 +2,8 @@
 
 import structlog
 
-from machine.machine_type import BaseDriver, BaseMachineType
 from plugin import PluginMixinEnum
+from plugin.machine import BaseDriver, BaseMachineType
 
 logger = structlog.get_logger('inventree')
 

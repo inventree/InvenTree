@@ -550,7 +550,7 @@ def get_api_token_peppers():
                 pepper = pepper_file.read_text().strip()
             if not pepper:
                 raise FileNotFoundError(
-                    f"INVE-E21: API token pepper file '{pepper_file}' does not exist, is empty or unreadable."
+                    f"INVE-E22: API token pepper file '{pepper_file}' does not exist, is empty or unreadable."
                 )
 
     additional = get_setting(

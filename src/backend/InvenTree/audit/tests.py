@@ -458,30 +458,40 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
         self.assertEqual(data[0]['changes']['description'][1], 'Session edit')
 
     def test_correlation_id(self):
-        """The correlation ID matches the request ID (as used by structlog)."""
+        """The correlation ID matches the request ID (as used by structlog).
+
+        The request ID is generated server-side - a client-supplied X-Request-ID
+        header is not trusted (django-structlog TRUST_UPSTREAM_REQUEST_ID is not set),
+        so a client cannot spoof the correlation ID recorded in the audit log.
+        """
         url = reverse('api-po-detail', kwargs={'pk': self.po.pk})
 
-        # Request ID provided by the client / reverse proxy
-        self.patch(url, {'description': 'One'}, HTTP_X_REQUEST_ID='req-abc-123')
-
-        entry = self.entries_for(self.po, action=AuditLogEntry.Action.UPDATE).get()
-        self.assertEqual(entry.cid, 'req-abc-123')
-
-        # Otherwise a unique ID is generated per request
-        self.patch(url, {'description': 'Two'})
-        self.patch(url, {'description': 'Three'})
-
-        cids = list(
-            self
-            .entries_for(self.po, action=AuditLogEntry.Action.UPDATE)
-            .exclude(cid='req-abc-123')
-            .values_list('cid', flat=True)
+        # A client-supplied request ID is ignored
+        response = self.patch(
+            url, {'description': 'One'}, HTTP_X_REQUEST_ID='req-abc-123'
         )
 
-        self.assertEqual(len(cids), 2)
-        self.assertTrue(all(cids))
-        self.assertNotEqual(cids[0], cids[1])
+        entry = self.entries_for(self.po, action=AuditLogEntry.Action.UPDATE).get()
+        self.assertNotEqual(entry.cid, 'req-abc-123')
+        self.assertEqual(entry.cid, response['X-InvenTree-ReqId'])
 
+        # A unique ID is generated per request, matching the response header
+        req_ids = {entry.cid}
+
+        for description in ['Two', 'Three']:
+            response = self.patch(url, {'description': description})
+            req_ids.add(response['X-InvenTree-ReqId'])
+
+        cids = set(
+            self.entries_for(self.po, action=AuditLogEntry.Action.UPDATE).values_list(
+                'cid', flat=True
+            )
+        )
+
+        self.assertEqual(len(cids), 3)
+        self.assertEqual(cids, req_ids)
+
+    @override_settings(BASIC_AUTH_ENABLED=True)
     def test_basic_auth_actor(self):
         """Users authenticated by DRF (not middleware) are recorded as the actor."""
         self.logout()

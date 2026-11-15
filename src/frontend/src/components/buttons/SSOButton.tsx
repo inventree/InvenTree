@@ -16,6 +16,7 @@ import {
 
 import type { AuthProvider } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
+import { useLocation } from 'react-router-dom';
 import { ProviderLogin } from '../../functions/auth';
 
 import type { JSX } from 'react';
@@ -39,6 +40,8 @@ function getBrandIcon(provider: AuthProvider) {
 }
 
 export function SsoButton({ provider }: Readonly<{ provider: AuthProvider }>) {
+  const location = useLocation();
+
   return (
     <Tooltip
       label={t`You will be redirected to the provider for further actions.`}
@@ -46,7 +49,7 @@ export function SsoButton({ provider }: Readonly<{ provider: AuthProvider }>) {
       <Button
         leftSection={getBrandIcon(provider)}
         radius='xl'
-        onClick={() => ProviderLogin(provider)}
+        onClick={() => void ProviderLogin(provider, 'login', location?.state)}
       >
         {provider.name}
       </Button>

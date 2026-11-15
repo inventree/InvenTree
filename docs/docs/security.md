@@ -1,3 +1,4 @@
+## InvenTree Security Overview
 
 The InvenTree project is committed to providing a secure and safe environment for all users. We know that many of our users rely on InvenTree to manage the inventory and manufacturing for their small and mid-size businesses, and we take that responsibility seriously.
 

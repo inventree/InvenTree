@@ -2,6 +2,7 @@ import type { PluginProps } from '@lib/types/Plugins';
 import { removeTraceId, setApiDefaults, setTraceId } from '../App';
 import { useGlobalStatusState } from './GlobalStatusState';
 import { useIconState } from './IconState';
+import { useModelFeatureState } from './ModelFeatureState';
 import { useServerApiState } from './ServerApiState';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsStates';
 import { useUserState } from './UserState';
@@ -42,7 +43,7 @@ export interface ServerAPIProps {
   };
   system_state: {
     cors_allow_all: null | boolean;
-    api_token_pepper_set: null | boolean;
+    basic_auth_enabled: null | boolean;
   } | null;
 }
 
@@ -84,7 +85,8 @@ export async function fetchGlobalStates(force = false) {
       useUserSettingsState.getState().fetchSettings(),
       useGlobalSettingsState.getState().fetchSettings(),
       useGlobalStatusState.getState().fetchStatus(),
-      useIconState.getState().fetchIcons()
+      useIconState.getState().fetchIcons(),
+      useModelFeatureState.getState().fetchFeatures()
     ]);
     removeTraceId(traceId);
     globalStatesFetched = true;

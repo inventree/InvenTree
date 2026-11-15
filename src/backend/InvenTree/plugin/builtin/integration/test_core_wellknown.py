@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
-from plugin.registry import registry
+from plugin import registry
 
 
 class InvenTreeWellKnownTest(InvenTreeAPITestCase):

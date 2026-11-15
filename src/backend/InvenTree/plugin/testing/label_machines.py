@@ -3,9 +3,8 @@
 import structlog
 from rest_framework import serializers
 
-from machine.machine_type import BaseDriver
 from plugin import InvenTreePlugin
-from plugin.machine import BaseMachineType
+from plugin.machine import BaseDriver, BaseMachineType
 from plugin.machine.machine_types import LabelPrinterBaseDriver
 from plugin.mixins import MachineDriverMixin, SettingsMixin
 

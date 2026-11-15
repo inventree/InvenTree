@@ -135,6 +135,29 @@ test('SSO - Complete Registration', async ({ page }) => {
     .waitFor();
 });
 
+test('SSO - Deep Link Redirect Target', async ({ page }) => {
+  // A CUI deep link visited while logged out must return the user to the
+  // requested page after logging in via SSO
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO', value: true });
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO_REG', value: true });
+  await setSettingState({ setting: 'LOGIN_SIGNUP_SSO_AUTO', value: true });
+
+  await navigate(page, logoutUrl, { waitUntil: 'load' });
+  await page.waitForURL('**/web/login');
+
+  // The CUI compatibility redirect only exists on the backend
+  const backendUrl = new URL('/', apiUrl).toString();
+
+  await page.goto(`${backendUrl}part/3/`, { waitUntil: 'load' });
+  await page.waitForURL('**/web/login');
+
+  await page.getByRole('button', { name: 'Mock SSO' }).click();
+
+  // Back on the originally requested part
+  await page.waitForURL(/\/web\/part\/3(\/|$)/);
+  await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+});
+
 test('SSO - Registration Disabled', async ({ page }) => {
   // Allow SSO login, but disable self-registration - a brand-new SSO
   // identity has no matching local account, and nothing should silently

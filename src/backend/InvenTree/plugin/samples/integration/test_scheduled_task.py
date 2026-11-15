@@ -7,10 +7,13 @@ from django.db import connection
 from django.db.models.query import QuerySet
 from django.test import TestCase, TransactionTestCase, skipUnlessDBFeature
 
-from plugin import InvenTreePlugin
-from plugin.helpers import MixinImplementationError
+from plugin import (
+    InvenTreePlugin,
+    MixinImplementationError,
+    call_plugin_function,
+    registry,
+)
 from plugin.mixins import ScheduleMixin
-from plugin.registry import call_plugin_function, registry
 
 
 class ExampleScheduledTaskPluginTests(TestCase):

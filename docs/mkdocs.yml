@@ -1,5 +1,14 @@
+# Documentation is built with Zensical (https://zensical.org), which reads this
+# mkdocs-format config. Build from the repo root with "invoke build-docs --build"
+# (or "zensical build -f docs/mkdocs.yml" after running "invoke build-docs").
+#
+# Zensical does not run mkdocs hooks, so:
+# - the values from docs/docs/hooks.py:on_config are injected by docs/main.py
+# - the post-build checks (hooks.py:on_post_build) are run by "invoke build-docs"
+# - site_url is taken from READTHEDOCS_CANONICAL_URL when building on ReadTheDocs
+
 # Project
-site_url: https://inventree.readthedocs.io
+site_url: !ENV [READTHEDOCS_CANONICAL_URL, 'https://docs.inventree.org/']
 site_name: InvenTree Documentation
 site_description: InvenTree - Open Source Inventory Management
 site_author: InvenTree
@@ -12,8 +21,7 @@ repo_name: inventree/inventree
 # Theme
 theme:
   name: material
-  font:
-    text: Roboto
+  variant: modern
   custom_dir: _includes/overrides
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -39,7 +47,7 @@ theme:
     - header.autohide
     - navigation.expand
     - navigation.footer
-    - navigation.indexes
+    # - navigation.indexes
     - navigation.instant
     # - navigation.sections
     - navigation.tracking
@@ -54,10 +62,10 @@ extra_css:
   - stylesheets/brands.css
   - stylesheets/regular.css
   - stylesheets/solid.css
+  - stylesheets/fontawesome-svg.css
   - stylesheets/bootstrap.css
   - stylesheets/splide.min.css
   - stylesheets/extra.css
-  - stylesheets/neoteroi-mkdocs.css
   - https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css
 extra_javascript:
   - javascripts/extra.js
@@ -203,7 +211,6 @@ nav:
       - Multi Factor Authentication: settings/MFA.md
       - SCIM Provisioning: settings/SCIM.md
       - Email Settings: settings/email.md
-      - Experimental Features: settings/experimental.md
     - Operations:
       - Background Tasks: settings/tasks.md
       - Error Logs: settings/logs.md
@@ -211,43 +218,47 @@ nav:
   - Plugins:
     - Overview: plugins/index.md
     - Installation: plugins/install.md
-    - Developing a Plugin: plugins/develop.md
-    - Frontend Integration: plugins/frontend.md
-    - Plugin Creator: plugins/creator.md
-    - Plugin Walkthrough: plugins/walkthrough.md
-    - Model Metadata: plugins/metadata.md
-    - Tags: plugins/tags.md
-    - Unit Test: plugins/test.md
-    - Plugin Mixins:
-      - Action Mixin: plugins/mixins/action.md
-      - Allocate Mixin: plugins/mixins/allocate.md
-      - API Mixin: plugins/mixins/api.md
-      - App Mixin: plugins/mixins/app.md
-      - Barcode Mixin: plugins/mixins/barcode.md
-      - Currency Mixin: plugins/mixins/currency.md
-      - Event Mixin: plugins/mixins/event.md
-      - Data Export Mixin: plugins/mixins/export.md
-      - Icon Pack Mixin: plugins/mixins/icon.md
-      - Label Printing Mixin: plugins/mixins/label.md
-      - Locate Mixin: plugins/mixins/locate.md
-      - Machine Mixin: plugins/mixins/machine.md
-      - Mail Mixin: plugins/mixins/mail.md
-      - Navigation Mixin: plugins/mixins/navigation.md
-      - Notification Mixin: plugins/mixins/notification.md
-      - Report Mixin: plugins/mixins/report.md
-      - Schedule Mixin: plugins/mixins/schedule.md
-      - Settings Mixin: plugins/mixins/settings.md
-      - Supplier Mixin: plugins/mixins/supplier.md
-      - Transition Mixin: plugins/mixins/transition.md
-      - URL Mixin: plugins/mixins/urls.md
-      - User Interface Mixin: plugins/mixins/ui.md
-      - Validation Mixin: plugins/mixins/validation.md
-      - Well-Known Mixin: plugins/mixins/wellknown.md
-    - Machines:
-      - Overview: plugins/machines/overview.md
-      - Label Printer: plugins/machines/label_printer.md
-    - Builtin:
-      - Builtin Plugins: plugins/builtin/index.md
+    - Tutorials:
+      - Developing a Plugin: plugins/develop.md
+      - Frontend Integration: plugins/frontend.md
+      - Plugin Creator: plugins/creator.md
+      - Step-by-Step Walkthrough: plugins/walkthrough.md
+    - Guides:
+      - Model Metadata: plugins/metadata.md
+      - Defining Models: plugins/models.md
+      - Tags: plugins/tags.md
+      - Unit Test: plugins/test.md
+    - References:
+      - Plugin Mixins:
+        - Action Mixin: plugins/mixins/action.md
+        - Allocate Mixin: plugins/mixins/allocate.md
+        - API Mixin: plugins/mixins/api.md
+        - App Mixin: plugins/mixins/app.md
+        - Barcode Mixin: plugins/mixins/barcode.md
+        - Currency Mixin: plugins/mixins/currency.md
+        - Event Mixin: plugins/mixins/event.md
+        - Data Export Mixin: plugins/mixins/export.md
+        - Icon Pack Mixin: plugins/mixins/icon.md
+        - Label Printing Mixin: plugins/mixins/label.md
+        - Locate Mixin: plugins/mixins/locate.md
+        - Machine Mixin: plugins/mixins/machine.md
+        - Mail Mixin: plugins/mixins/mail.md
+        - Navigation Mixin: plugins/mixins/navigation.md
+        - Notification Mixin: plugins/mixins/notification.md
+        - Report Mixin: plugins/mixins/report.md
+        - Schedule Mixin: plugins/mixins/schedule.md
+        - Settings Mixin: plugins/mixins/settings.md
+        - Supplier Mixin: plugins/mixins/supplier.md
+        - Transition Mixin: plugins/mixins/transition.md
+        - URL Mixin: plugins/mixins/urls.md
+        - User Interface Mixin: plugins/mixins/ui.md
+        - Validation Mixin: plugins/mixins/validation.md
+        - Well-Known Mixin: plugins/mixins/wellknown.md
+      - Machines:
+        - Overview: plugins/machines/overview.md
+        - Label Printer: plugins/machines/label_printer.md
+    - Builtin Plugins:
+      - Overview: plugins/builtin/overview.md
       - Barcode Plugins:
         - Barcode Plugins: plugins/builtin/barcode_index.md
         - InvenTree Barcode: plugins/builtin/inventree_barcode.md
@@ -255,6 +266,7 @@ nav:
         - LCSC Barcode Plugin: plugins/builtin/barcode_lcsc.md
         - Mouser Barcode Plugin: plugins/builtin/barcode_mouser.md
         - TME Barcode Plugin: plugins/builtin/barcode_tme.md
+        - Manufacturer Barcode Plugin: plugins/builtin/barcode_manufacturer.md
       - Event Plugins:
         - Auto Create Builds: plugins/builtin/auto_create_builds.md
         - Auto Issue: plugins/builtin/auto_issue.md
@@ -303,22 +315,10 @@ nav:
 
 # Plugins
 plugins:
-  - neoteroi.mkdocsoad:
-      use_pymdownx: true
-  - include-markdown:
-      opening_tag: "{!"
-      closing_tag: "!}"
   - search
-  - mermaid2:
-      # version: 11.6.0
-      javascript: javascripts/mermaid.min.js
-  - git-revision-date-localized
-  - mkdocs-simple-hooks:
-      hooks:
-        on_config: "docs.docs.hooks:on_config"
-        on_post_build: "docs.docs.hooks:on_post_build"
   - macros:
-      include_dir: docs/_includes
+      include_dir: _includes
+      on_error_fail: true
       module_name: main
   - mkdocstrings:
       default_handler: python
@@ -365,7 +365,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:mermaid2.fence_mermaid_custom
+          format: !!python/name:pymdownx.superfences.fence_code_format
   # - pymdownx.emoji:
   #     emoji_index: !!python/name:materialx.emoji.twemoji
   #     emoji_generator: !!python/name:materialx.emoji.to_svg
@@ -411,3 +411,4 @@ extra:
 
 use_directory_urls: true
 strict: true
+site_dir: site

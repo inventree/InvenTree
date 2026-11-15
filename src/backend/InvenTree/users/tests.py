@@ -399,10 +399,17 @@ class MFALoginTest(InvenTreeAPITestCase):
         self._helper_meta_val(response)
 
         # Add MFA - trying in a limited loop in case of timing issues
-        rc_code = get_codes(user=self.user)[1][0]
+        rc_codes = get_codes(user=self.user)[1]
 
         # There must be a TOTP device now - success
         self.get(reverse('browser:mfa:manage_totp'), expected_code=200)
+        response = self.get(reverse('api-token'), expected_code=401)
+        self.assertEqual(response.data['id'], 'reauthentication_required')
+        self.post(
+            reverse('browser:mfa:reauthenticate'),
+            {'code': rc_codes[0]},
+            expected_code=200,
+        )
         self.get(reverse('api-token'), expected_code=200)
 
         # Login with MFA enabled but not provided
@@ -419,10 +426,19 @@ class MFALoginTest(InvenTreeAPITestCase):
         self.get(reverse('api-token'), expected_code=401)
         # Complete MFA (with recovery code to avoid timing issues)
         self.post(
-            reverse('browser:mfa:authenticate'), {'code': rc_code}, expected_code=401
+            reverse('browser:mfa:authenticate'),
+            {'code': rc_codes[1]},
+            expected_code=401,
         )
         self.post(reverse('browser:mfa:trust'), {'trust': False}, expected_code=200)
         # and run through trust
+        response = self.get(reverse('api-token'), expected_code=401)
+        self.assertEqual(response.data['id'], 'reauthentication_required')
+        self.post(
+            reverse('browser:mfa:reauthenticate'),
+            {'code': rc_codes[2]},
+            expected_code=200,
+        )
         self.get(reverse('api-token'), expected_code=200)
 
         # Login with MFA enabled and provided - but incorrect pwd

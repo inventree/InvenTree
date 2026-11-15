@@ -2,7 +2,6 @@
 title: Companies
 ---
 
-
 ## Companies
 
 External companies are represented by the *Company* database model. Each company may be classified into the following categories:

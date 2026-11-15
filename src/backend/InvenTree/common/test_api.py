@@ -3592,3 +3592,120 @@ class GenericMetadataAuthorizationTests(InvenTreeAPITestCase):
         request = factory.patch('/')
         request.user = self.user
         self.assertTrue(perm.has_object_permission(request, None, unit))
+
+
+class AdminMessageAPITests(InvenTreeAPITestCase):
+    """Tests for the staff-only /api/system/messages/ endpoint."""
+
+    roles = []
+
+    CORE_KEYS = {
+        'debug',
+        'worker',
+        'restart',
+        'email',
+        'migrations',
+        'cors',
+        'basic_auth',
+    }
+
+    @property
+    def url(self):
+        """Return the endpoint URL."""
+        return reverse('api-system-messages')
+
+    def _messages(self) -> dict:
+        """Fetch messages, keyed by message key."""
+        response = self.get(self.url, expected_code=200)
+        return {msg['key']: msg for msg in response.data['messages']}
+
+    def test_permissions(self):
+        """Only staff users may access the endpoint."""
+        self.get(self.url, expected_code=200)
+
+        self.user.is_staff = False
+        self.user.save()
+        self.get(self.url, expected_code=403)
+
+        self.logout()
+        self.get(self.url, expected_code=401)
+
+    def test_read_only(self):
+        """The endpoint does not accept write methods."""
+        self.post(self.url, {}, expected_code=405)
+        self.put(self.url, {}, expected_code=405)
+        self.patch(self.url, {}, expected_code=405)
+        self.delete(self.url, expected_code=405)
+
+    def test_core_messages(self):
+        """All core system checks are reported, with valid structure."""
+        response = self.get(self.url, expected_code=200)
+        self.assertEqual(set(response.data.keys()), {'messages'})
+        self.assertIsInstance(response.data['messages'], list)
+
+        messages = self._messages()
+
+        self.assertTrue(self.CORE_KEYS.issubset(messages.keys()))
+
+        for msg in messages.values():
+            self.assertIn(msg['classifier'], ['error', 'warning', 'info', 'success'])
+            self.assertTrue(msg['title'])
+            self.assertTrue(msg['message'])
+            self.assertIsNone(msg['plugin'])
+
+        self.assertEqual(messages['basic_auth']['code'], 'INVE-W18')
+
+    def test_ordering(self):
+        """Messages are returned most-severe first."""
+        rank = {'error': 0, 'warning': 1, 'info': 2, 'success': 3}
+        response = self.get(self.url, expected_code=200)
+        ranks = [rank[msg['classifier']] for msg in response.data['messages']]
+        self.assertEqual(ranks, sorted(ranks))
+
+    def test_conditions(self):
+        """Message classifiers reflect the underlying system state."""
+        with override_settings(CORS_ALLOW_ALL_ORIGINS=True, BASIC_AUTH_ENABLED=True):
+            messages = self._messages()
+            self.assertEqual(messages['cors']['classifier'], 'warning')
+            self.assertEqual(messages['basic_auth']['classifier'], 'warning')
+
+        with override_settings(CORS_ALLOW_ALL_ORIGINS=False, BASIC_AUTH_ENABLED=False):
+            messages = self._messages()
+            self.assertEqual(messages['cors']['classifier'], 'success')
+            self.assertEqual(messages['basic_auth']['classifier'], 'success')
+
+        set_global_setting('_PENDING_MIGRATIONS', 3, None)
+        set_global_setting('SERVER_RESTART_REQUIRED', True, None)
+        messages = self._messages()
+        self.assertEqual(messages['migrations']['classifier'], 'warning')
+        self.assertEqual(messages['restart']['classifier'], 'warning')
+
+        set_global_setting('_PENDING_MIGRATIONS', 0, None)
+        set_global_setting('SERVER_RESTART_REQUIRED', False, None)
+        messages = self._messages()
+        self.assertEqual(messages['migrations']['classifier'], 'success')
+        self.assertEqual(messages['restart']['classifier'], 'success')
+
+    def test_plugin_messages(self):
+        """Plugin-provided messages are merged in and sorted by severity."""
+        from unittest import mock
+
+        from common.admin_messages import AdminMessage, AdminMessageClassifier
+
+        plugin_msg = AdminMessage(
+            key='sample.error',
+            title='Plugin Error',
+            message='Something is wrong',
+            classifier=AdminMessageClassifier.ERROR,
+            plugin='sample',
+        )
+
+        with mock.patch(
+            'common.admin_messages.get_plugin_admin_messages', return_value=[plugin_msg]
+        ):
+            response = self.get(self.url, expected_code=200)
+
+        first = response.data['messages'][0]
+        self.assertEqual(first['key'], 'sample.error')
+        self.assertEqual(first['classifier'], 'error')
+        self.assertEqual(first['plugin'], 'sample')

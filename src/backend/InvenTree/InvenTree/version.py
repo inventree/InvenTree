@@ -34,19 +34,8 @@ try:
         main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
         main_commit = main_repo[main_repo.head()]
     except NotGitRepository:
-        output = logger.warning
-
-        try:
-            from django.conf import settings
-
-            if settings.DOCKER:
-                output = logger.info
-        except Exception:
-            # We may not have access to settings at this point
-            pass
-
-        output(git_warning_txt)
-
+        if os.environ.get('INVENTREE_DOCKER', 'false') != 'true':
+            logger.warning(git_warning_txt)
         main_repo = None
         main_commit = None
 
