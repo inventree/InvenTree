@@ -128,6 +128,13 @@ An InvenTree process (web server or background worker) reloaded its plugins, but
 
 The affected process stops reloading its plugins to prevent an endless reload loop. Restart all InvenTree server and background worker processes to resolve this error. See [reloading plugins](../plugins/install.md#reloading-plugins) for further information.
 
+#### INVE-E21
+**Resource locked by another process - Backend**
+
+An API request attempted to modify an object that is currently locked by another long-running process. This typically occurs when multiple processes are trying to update the same object concurrently.
+
+The request will return a `409 Conflict` response. Retry the request after the other process has completed its operation.
+
 ## Warning Codes
 
 ### INVE-W (InvenTree Warning)

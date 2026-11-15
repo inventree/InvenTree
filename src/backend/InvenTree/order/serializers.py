@@ -200,6 +200,16 @@ class AbstractOrderSerializer(
 
         return value
 
+    def get_fields(self):
+        """Dynamically set creation_date as read-only on update operations."""
+        fields = super().get_fields()
+
+        # Make creation_date read-only when updating an existing order
+        if self.instance is not None and 'creation_date' in fields:
+            fields['creation_date'].read_only = True
+
+        return fields
+
     @staticmethod
     def annotate_queryset(queryset):
         """Add extra information to the queryset."""

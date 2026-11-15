@@ -5,11 +5,13 @@ import contextvars
 import io
 import ipaddress
 import socket
+import time
 from typing import Optional, cast
 from urllib.parse import urljoin, urlparse
 
 from django.conf import settings
 from django.core.validators import URLValidator
+from django.db import connection, transaction
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
@@ -433,3 +435,95 @@ def notify_users(
         target_exclude=[exclude],
         context=context,
     )
+
+
+class RowLockTimeoutError(Exception):
+    """A database row lock could not be acquired within the allowed time."""
+
+
+# Default time (in seconds) to wait for a contended row lock
+ROW_LOCK_TIMEOUT = 2.0
+
+# Time (in seconds) between attempts to acquire a contended row lock
+ROW_LOCK_INTERVAL = 0.1
+
+
+def _is_lock_unavailable_error(exc: OperationalError) -> bool:
+    """Return True if the database error indicates that a row lock could not be acquired."""
+    cause = exc.__cause__
+
+    # PostgreSQL: 'lock_not_available' (psycopg 3 / psycopg2)
+    sqlstate = getattr(cause, 'sqlstate', None) or getattr(cause, 'pgcode', None)
+
+    if sqlstate:
+        return sqlstate == '55P03'
+
+    # MySQL / MariaDB: NOWAIT lock failure, or lock wait timeout
+    code = exc.args[0] if exc.args else None
+
+    return code in (3572, 1205)
+
+
+def lock_row(model, pk, timeout: float | None = None) -> bool:
+    """Acquire a row-level lock on a single database row, with a bounded wait.
+
+    A plain select_for_update() blocks for as long as another transaction holds the row
+    (e.g. a long-running background task). This helper gives up after a short time instead,
+    so that the caller can report the conflict rather than hanging.
+
+    Note: Must be called from within a database transaction (transaction.atomic),
+    and the lock is held until that transaction completes. Any instance of this row
+    which was loaded *before* the lock was acquired may be stale, and must be reloaded.
+
+    Arguments:
+        model: The model class
+        pk: The primary key of the row to lock
+        timeout: Maximum time (in seconds) to wait for the lock (default = ROW_LOCK_TIMEOUT)
+
+    Returns:
+        True if the row exists (and is now locked), False if the row does not exist.
+        If the database does not support row-level locking (e.g. SQLite), no lock is taken.
+
+    Raises:
+        RowLockTimeoutError: If the lock could not be acquired in time
+    """
+    queryset = model._base_manager.filter(pk=pk)
+    features = connection.features
+
+    if not features.has_select_for_update:
+        return queryset.exists()
+
+    if not features.has_select_for_update_nowait:
+        # No way to bound the wait on this database - block until the lock is available
+        return (
+            queryset.select_for_update().values_list('pk', flat=True).first()
+            is not None
+        )
+
+    if timeout is None:
+        timeout = ROW_LOCK_TIMEOUT
+
+    deadline = time.monotonic() + timeout
+
+    while True:
+        try:
+            # Each attempt runs in a savepoint: a failed attempt must not
+            # invalidate the surrounding transaction
+            with transaction.atomic():
+                return (
+                    queryset
+                    .select_for_update(nowait=True)
+                    .values_list('pk', flat=True)
+                    .first()
+                    is not None
+                )
+        except OperationalError as exc:
+            if not _is_lock_unavailable_error(exc):
+                raise
+
+            if time.monotonic() >= deadline:
+                raise RowLockTimeoutError(
+                    f'Could not lock {model._meta.label} <{pk}>'
+                ) from exc
+
+        time.sleep(ROW_LOCK_INTERVAL)
