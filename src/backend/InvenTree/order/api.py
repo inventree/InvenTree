@@ -52,6 +52,7 @@ from InvenTree.helpers_api import (
 )
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
+    ActionLockMixin,
     CreateAPI,
     ListAPI,
     ListCreateAPI,
@@ -499,11 +500,14 @@ class PurchaseOrderViewSet(
     )
     def receive(self, request, pk=None):
         """API endpoint to receive stock items against a PurchaseOrder."""
-        self.get_order()
+        # The order row is locked while the items are received
+        with self.locked_action(models.PurchaseOrder, pk):
+            self.get_order()
 
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        items = serializer.save()
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            items = serializer.save()
+
         queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
 
         response = stock_serializers.StockItemSerializer(
@@ -1175,10 +1179,13 @@ class SalesOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.SalesOrderExtraLineSerializer
 
 
-class SalesOrderContextMixin:
+class SalesOrderContextMixin(ActionLockMixin):
     """Mixin to add sales order object as serializer context variable."""
 
     queryset = models.SalesOrder.objects.all()
+
+    # The order row is locked for the duration of the action
+    lock_model = models.SalesOrder
 
     def get_order(self):
         """Return the SalesOrder object associated with this API endpoint."""
@@ -1584,10 +1591,13 @@ class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI
     """API detail endpoint for SalesOrderShipment model."""
 
 
-class SalesOrderShipmentComplete(CreateAPI):
+class SalesOrderShipmentComplete(ActionLockMixin, CreateAPI):
     """API endpoint for completing (shipping) a SalesOrderShipment."""
 
     queryset = models.SalesOrderShipment.objects.all()
+
+    # The shipment row is locked for the duration of the action
+    lock_model = models.SalesOrderShipment
     serializer_class = serializers.SalesOrderShipmentCompleteSerializer
 
     def get_shipment(self):
@@ -1766,10 +1776,13 @@ class ReturnOrderDetail(ReturnOrderMixin, OutputOptionsMixin, RetrieveUpdateDest
     output_options = ReturnOrderOutputOptions
 
 
-class ReturnOrderContextMixin:
+class ReturnOrderContextMixin(ActionLockMixin):
     """Simple mixin class to add a ReturnOrder to the serializer context."""
 
     queryset = models.ReturnOrder.objects.all()
+
+    # The order row is locked for the duration of the action
+    lock_model = models.ReturnOrder
 
     def get_order(self):
         """Return the ReturnOrder object associated with this API endpoint."""
@@ -2075,10 +2088,13 @@ class TransferOrderDetail(
     # output_options = TransferOrderOutputOptions
 
 
-class TransferOrderContextMixin:
+class TransferOrderContextMixin(ActionLockMixin):
     """Simple mixin class to add a TransferOrder to the serializer context."""
 
     queryset = models.TransferOrder.objects.all()
+
+    # The order row is locked for the duration of the action
+    lock_model = models.TransferOrder
 
     def get_order(self):
         """Return the TransferOrder object associated with this API endpoint."""

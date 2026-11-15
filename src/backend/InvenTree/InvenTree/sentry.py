@@ -29,8 +29,11 @@ def sentry_ignore_errors():  # pragma: no cover
 
     These error types will *not* be reported to sentry.io.
     """
+    from InvenTree.exceptions import ResourceLockedError
+
     return [
         Http404,
+        ResourceLockedError,
         MissingRate,
         TemplateSyntaxError,
         ValidationError,

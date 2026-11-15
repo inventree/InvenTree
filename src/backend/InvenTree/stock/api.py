@@ -45,6 +45,7 @@ from InvenTree.filters import (
 )
 from InvenTree.helpers import extract_serial_numbers, generateTestKey, str2bool
 from InvenTree.mixins import (
+    ActionLockMixin,
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
     ListAPI,
@@ -110,10 +111,15 @@ class GenerateSerialNumber(GenericAPIView):
         return Response(data, status=status.HTTP_201_CREATED)
 
 
-class StockItemContextMixin:
-    """Mixin class for adding StockItem object to serializer context."""
+class StockItemContextMixin(ActionLockMixin):
+    """Mixin class for adding StockItem object to serializer context.
+
+    The stock item row is locked for the duration of the action (see ActionLockMixin).
+    """
 
     role_required = 'stock.change'
+
+    lock_model = StockItem
 
     queryset = StockItem.objects.none()
 
