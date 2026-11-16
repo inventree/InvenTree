@@ -22,7 +22,11 @@ import common.models as common_models
 import common.validators
 import generic.states.custom
 from generic.modelfeatures import get_model_features
-from generic.models.modelmixins import InvenTreeNoteMixin, InvenTreeParameterMixin
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+)
 from importer.registry import register_importer
 from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.helpers import get_objectreference
@@ -892,8 +896,6 @@ class AttachmentSerializer(
 
     def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
-        from generic.models.modelmixins import InvenTreeAttachmentMixin
-
         model_type = self.validated_data.get('model_type', None)
 
         if model_type is None and self.instance:

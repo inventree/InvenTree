@@ -52,7 +52,9 @@ from generic.models.base import InvenTreeMetadataModel, InvenTreeModel, InvenTre
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
     InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
     InvenTreeTagsMixin,
     MetadataMixin,
     PluginValidationMixin,
@@ -74,7 +76,6 @@ from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = structlog.get_logger('inventree')
-from generic.models.modelmixins import InvenTreeBarcodeMixin, InvenTreeParameterMixin
 
 
 class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
