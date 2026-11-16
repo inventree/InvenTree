@@ -3177,6 +3177,10 @@ class StockItem(
 
             return new_stock is not None
 
+        # Requesting more than the available quantity moves the entire item,
+        # so record the quantity which is actually moved
+        quantity = min(quantity, Decimal(self.quantity))
+
         # Moving into the same location triggers a different history code
         same_location = location == self.location
 
