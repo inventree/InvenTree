@@ -41,7 +41,7 @@ from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from generic.enums import StringEnum
-from generic.models.base import InvenTreeMetadataModel, InvenTreeModel, InvenTreeTree
+from generic.models.base import InvenTreeMetadataModel, InvenTreeTree
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeAuditMixin,
@@ -49,6 +49,7 @@ from generic.models.modelmixins import (
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreeTagsMixin,
+    MetadataMixin,
     PathStringMixin,
 )
 from generic.states import StatusCodeMixin
@@ -66,7 +67,7 @@ from users.models import Owner
 logger = structlog.get_logger('inventree')
 
 
-class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
+class StockLocationType(MetadataMixin, models.Model):
     """A type of stock location like Warehouse, room, shelf, drawer.
 
     Attributes:
@@ -137,7 +138,7 @@ class StockLocation(
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     PathStringMixin,
-    InvenTree.models.MetadataMixin,
+    MetadataMixin,
     InvenTreeTree,
 ):
     """Organization tree for StockItem objects.
@@ -447,8 +448,7 @@ class StockItem(
     StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """A StockItem object represents a quantity of physical instances of a part.
 

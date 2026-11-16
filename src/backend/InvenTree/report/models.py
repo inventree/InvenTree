@@ -30,9 +30,8 @@ import report.validators
 from common.models import DataOutput, RenderChoices, UpdatedUserMixin
 from common.settings import get_global_setting
 from company.models import Company
-from generic.models.base import InvenTreeModel
+from generic.models.base import InvenTreeMetadataModel
 from InvenTree.helpers_model import get_base_url
-from InvenTree.models import MetadataMixin
 from plugin import InvenTreePlugin, PluginMixinEnum, registry
 from report.security import restricted_db_access
 
@@ -203,7 +202,7 @@ class ReportContextExtension(TypedDict):
     merge: bool
 
 
-class ReportTemplateBase(MetadataMixin, UpdatedUserMixin, InvenTreeModel):
+class ReportTemplateBase(UpdatedUserMixin, InvenTreeMetadataModel):
     """Base class for reports, labels."""
 
     class ModelChoices(RenderChoices):

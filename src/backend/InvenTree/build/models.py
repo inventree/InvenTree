@@ -55,6 +55,8 @@ from generic.models.modelmixins import (
     InvenTreeAuditMixin,
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
+    MetadataMixin,
+    PluginValidationMixin,
 )
 from generic.states import (
     DEFERRABLE,
@@ -101,7 +103,7 @@ class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
 
 class Build(
     InvenTreeAuditMixin,
-    InvenTree.models.PluginValidationMixin,
+    PluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTreeParameterMixin,
     InvenTreeAttachmentMixin,
@@ -111,7 +113,7 @@ class Build(
     InvenTree.models.ReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,
-    InvenTree.models.MetadataMixin,
+    MetadataMixin,
     InvenTreeTree,
 ):
     """A Build object organizes the creation of new StockItem objects from other existing StockItem objects.

@@ -22,7 +22,6 @@ import common.currency
 import common.models
 import InvenTree.conversion
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.validators
 import report.mixins
@@ -691,12 +690,11 @@ class SupplierPart(
     InvenTreeAuditMixin,
     InvenTreeAttachmentMixin,
     InvenTreeParameterMixin,
-    InvenTree.models.MetadataMixin,
     InvenTreeBarcodeMixin,
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
     common.models.MetaMixin,
-    InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 

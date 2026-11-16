@@ -59,7 +59,6 @@ import InvenTree.conversion
 import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -2038,12 +2037,7 @@ def rename_attachment(instance, filename: str):
     )
 
 
-class Attachment(
-    InvenTreeAuditMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTreeTagsMixin,
-    InvenTreeModel,
-):
+class Attachment(InvenTreeAuditMixin, InvenTreeTagsMixin, InvenTreeMetadataModel):
     """Class which represents an uploaded file attachment.
 
     An attachment can be either an uploaded file, or an external URL.
@@ -2548,7 +2542,7 @@ class InvenTreeCustomUserStateModel(models.Model):
                 return cls
 
 
-class SelectionList(InvenTree.models.MetadataMixin, InvenTreeModel):
+class SelectionList(InvenTreeMetadataModel):
     """Class which represents a list of selectable items for parameters.
 
     A lists selection options can be either manually defined, or sourced from a plugin.
@@ -2747,9 +2741,7 @@ class SelectionListEntry(models.Model):
         return self.label
 
 
-class ParameterTemplate(
-    InvenTreeAuditMixin, InvenTree.models.MetadataMixin, InvenTreeModel
-):
+class ParameterTemplate(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A ParameterTemplate provides a template for defining parameter values against various models.
 
     This allow for assigning arbitrary data fields against existing models,
@@ -2979,12 +2971,7 @@ def post_save_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class Parameter(
-    InvenTreeAuditMixin,
-    UpdatedUserMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTreeModel,
-):
+class Parameter(InvenTreeAuditMixin, UpdatedUserMixin, InvenTreeMetadataModel):
     """Class which represents a parameter value assigned to a particular model instance.
 
     Attributes:
@@ -3262,7 +3249,7 @@ class Parameter(
         return self.template.description
 
 
-class Note(UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTreeModel):
+class Note(UpdatedUserMixin, InvenTreeMetadataModel):
     """Class which represents a note assigned to a particular model instance.
 
     Attributes:

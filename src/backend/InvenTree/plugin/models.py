@@ -12,13 +12,13 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import common.models
-import InvenTree.models
 import plugin.staticfiles
+from generic.models.modelmixins import MetadataMixin
 from plugin import InvenTreePlugin, registry
 from plugin.events import PluginEvents, trigger_event
 
 
-class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
+class PluginConfig(MetadataMixin, models.Model):
     """A PluginConfig object holds settings for plugins.
 
     Attributes:

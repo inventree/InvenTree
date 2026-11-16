@@ -46,7 +46,7 @@ from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.icons import validate_icon
 from common.settings import get_global_setting
-from generic.models.base import InvenTreeMetadataModel, InvenTreeModel, InvenTreeTree
+from generic.models.base import InvenTreeMetadataModel, InvenTreeTree
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeAuditMixin,
@@ -55,7 +55,9 @@ from generic.models.modelmixins import (
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreeTagsMixin,
+    MetadataMixin,
     PathStringMixin,
+    PluginValidationMixin,
 )
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
@@ -74,9 +76,9 @@ logger = structlog.get_logger('inventree')
 
 class PartCategory(
     InvenTreeAuditMixin,
-    InvenTree.models.PluginValidationMixin,
+    PluginValidationMixin,
     InvenTreeParameterMixin,
-    InvenTree.models.MetadataMixin,
+    MetadataMixin,
     PathStringMixin,
     InvenTreeTree,
 ):
@@ -482,7 +484,7 @@ class Part(
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTreeImageMixin,
-    InvenTree.models.MetadataMixin,
+    MetadataMixin,
     InvenTreeTree,
 ):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
@@ -2913,7 +2915,7 @@ class PartTestTemplate(InvenTreeMetadataModel):
         return [x.strip() for x in self.choices.split(',') if x.strip()]
 
 
-class BomItem(InvenTreeAuditMixin, InvenTree.models.MetadataMixin, InvenTreeModel):
+class BomItem(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines

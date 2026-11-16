@@ -51,7 +51,7 @@ from company.models import (
     SupplierPart,
     default_internal_company,
 )
-from generic.models.base import InvenTreeMetadataModel, InvenTreeModel
+from generic.models.base import InvenTreeMetadataModel
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeAuditMixin,
@@ -372,9 +372,8 @@ class Order(
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
     InvenTree.models.ReferenceIndexingMixin,
-    InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """Abstract model for an order.
 
@@ -2763,8 +2762,7 @@ class SalesOrderShipment(
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 
