@@ -34,7 +34,6 @@ import company.models
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import part.helpers as part_helpers
@@ -476,7 +475,7 @@ class PartReportContext(report.mixins.BaseReportContext, TypedDict):
 @cleanup.ignore
 class Part(
     InvenTreeAuditMixin,
-    InvenTree.models.PluginValidationMixin,
+    PluginValidationMixin,
     InvenTreeParameterMixin,
     InvenTreeAttachmentMixin,
     InvenTreeBarcodeMixin,

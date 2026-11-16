@@ -31,7 +31,6 @@ import build.models
 import common.models
 import InvenTree.exceptions
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import order.models
@@ -51,6 +50,7 @@ from generic.models.modelmixins import (
     InvenTreeTagsMixin,
     MetadataMixin,
     PathStringMixin,
+    PluginValidationMixin,
 )
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
@@ -132,7 +132,7 @@ class StockLocationReportContext(report.mixins.BaseReportContext):
 
 
 class StockLocation(
-    InvenTree.models.PluginValidationMixin,
+    PluginValidationMixin,
     InvenTreeParameterMixin,
     InvenTreeBarcodeMixin,
     InvenTreeTagsMixin,

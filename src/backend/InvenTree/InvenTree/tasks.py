@@ -34,7 +34,6 @@ from opentelemetry import trace
 
 from common.settings import get_global_setting, set_global_setting
 from common.signals import post_currency_change
-from generic.models.modelmixins import PathStringMixin
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -773,6 +772,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
     from django.apps import apps
 
     from generic.models.base import InvenTreeTree
+    from generic.models.modelmixins import PathStringMixin
 
     try:
         model_class = apps.get_model(model)
