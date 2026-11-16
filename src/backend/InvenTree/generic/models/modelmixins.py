@@ -1,6 +1,8 @@
 """Generic models which provide extra functionality over base Django model types."""
 
 from collections.abc import Callable
+from datetime import datetime
+from string import Formatter
 from typing import Any, Optional
 
 from django.contrib.contenttypes.fields import GenericRelation
@@ -17,6 +19,8 @@ from rest_framework.exceptions import PermissionDenied
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
+import common.settings
+import InvenTree.format
 import InvenTree.helpers
 import report.mixins
 from generic.modelfeatures import ModelFeatureMixin
@@ -247,6 +251,221 @@ class MetadataMixin(models.Model):
 
         if commit:
             self.save()
+
+
+class ReferenceIndexingMixin(models.Model):
+    """A mixin for keeping track of numerical copies of the "reference" field.
+
+    Here, we attempt to convert a "reference" field value (char) to an integer,
+    for performing fast natural sorting.
+
+    This requires extra database space (due to the extra table column),
+    but is required as not all supported database backends provide equivalent casting.
+
+    This mixin adds a field named 'reference_int'.
+
+    - If the 'reference' field can be cast to an integer, it is stored here
+    - If the 'reference' field *starts* with an integer, it is stored here
+    - Otherwise, we store zero
+    """
+
+    # Name of the global setting which defines the required reference pattern for this model
+    REFERENCE_PATTERN_SETTING = None
+
+    class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
+        abstract = True
+
+    @classmethod
+    def get_reference_pattern(cls):
+        """Returns the reference pattern associated with this model.
+
+        This is defined by a global setting object, specified by the REFERENCE_PATTERN_SETTING attribute
+        """
+        # By default, we return an empty string
+        if cls.REFERENCE_PATTERN_SETTING is None:
+            return ''
+
+        return common.settings.get_global_setting(
+            cls.REFERENCE_PATTERN_SETTING, create=False
+        ).strip()
+
+    @classmethod
+    def get_reference_context(cls):
+        """Generate context data for generating the 'reference' field for this class.
+
+        - Returns a python dict object which contains the context data for formatting the reference string.
+        - The default implementation provides some default context information
+        - The '?' key is required to accept our wildcard-with-default syntax {?:default}
+        """
+        return {'ref': cls.get_next_reference(), 'date': datetime.now(), '?': '?'}
+
+    @classmethod
+    def get_most_recent_item(cls):
+        """Return the item which is 'most recent'.
+
+        In practice, this means the item with the highest reference value
+        """
+        query = cls.objects.all().order_by('-reference_int', '-pk')
+
+        if query.exists():
+            return query.first()
+        return None
+
+    @classmethod
+    def get_next_reference(cls):
+        """Return the next available reference value for this particular class."""
+        # Find the "most recent" item
+        latest = cls.get_most_recent_item()
+
+        if not latest:
+            # No existing items
+            return 1
+
+        reference = latest.reference.strip()
+
+        try:
+            reference = InvenTree.format.extract_named_group(
+                'ref', reference, cls.get_reference_pattern()
+            )
+        except Exception:
+            # If reference cannot be extracted using the pattern, try just the integer value
+            reference = str(latest.reference_int)
+
+        # Attempt to perform 'intelligent' incrementing of the reference field
+        incremented = InvenTree.helpers.increment(reference)
+
+        try:
+            incremented = int(incremented)
+        except ValueError:
+            pass
+
+        return incremented
+
+    @classmethod
+    def generate_reference(cls):
+        """Generate the next 'reference' field based on specified pattern."""
+
+        # Based on https://stackoverflow.com/a/57570269/14488558
+        class ReferenceFormatter(Formatter):
+            def format_field(self, value, format_spec):
+                if isinstance(value, str) and value == '?':
+                    value = format_spec
+                    format_spec = ''
+                return super().format_field(value, format_spec)
+
+        ref_ptn = cls.get_reference_pattern()
+        ctx = cls.get_reference_context()
+        fmt = ReferenceFormatter()
+
+        reference = None
+
+        attempts = set()
+
+        while reference is None:
+            try:
+                ref = fmt.format(ref_ptn, **ctx)
+
+                if ref in attempts:
+                    # We are stuck in a loop!
+                    reference = ref
+                    break
+                else:
+                    attempts.add(ref)
+
+                    if cls.objects.filter(reference=ref).exists():
+                        # Handle case where we have duplicated an existing reference
+                        ctx['ref'] = InvenTree.helpers.increment(ctx['ref'])
+                    else:
+                        # We have found an 'unused' reference
+                        reference = ref
+                        break
+
+            except Exception:
+                # If anything goes wrong, return the most recent reference
+                recent = cls.get_most_recent_item()
+                reference = recent.reference if recent else ''
+
+        return reference
+
+    @classmethod
+    def validate_reference_pattern(cls, pattern):
+        """Ensure that the provided pattern is valid."""
+        ctx = cls.get_reference_context()
+
+        try:
+            info = InvenTree.format.parse_format_string(pattern)
+        except Exception as exc:
+            raise ValidationError({
+                'value': _('Improperly formatted pattern') + ': ' + str(exc)
+            })
+
+        # Check that only 'allowed' keys are provided
+        for key in info:
+            if key not in ctx:
+                raise ValidationError({
+                    'value': _('Unknown format key specified') + f": '{key}'"
+                })
+
+        # Check that the 'ref' variable is specified
+        if 'ref' not in info:
+            raise ValidationError({
+                'value': _('Missing required format key') + ": 'ref'"
+            })
+
+    @classmethod
+    def validate_reference_field(cls, value):
+        """Check that the provided 'reference' value matches the requisite pattern."""
+        pattern = cls.get_reference_pattern()
+
+        value = str(value).strip()
+
+        if len(value) == 0:
+            raise ValidationError(_('Reference field cannot be empty'))
+
+        # An 'empty' pattern means no further validation is required
+        if not pattern:
+            return
+
+        if not InvenTree.format.validate_string(value, pattern):
+            raise ValidationError(
+                _('Reference must match required pattern') + ': ' + pattern
+            )
+
+        # Check that the reference field can be rebuild
+        return cls.rebuild_reference_field(value, validate=True)
+
+    @classmethod
+    def rebuild_reference_field(cls, reference, validate=False):
+        """Extract integer out of reference for sorting.
+
+        If the 'integer' portion is buried somewhere 'within' the reference,
+        we can first try to extract it using the pattern.
+
+        Example:
+        reference - BO-123-ABC
+        pattern - BO-{ref}-???
+        extracted - 123
+
+        If we cannot extract using the pattern for some reason, fallback to the entire reference
+        """
+        try:
+            # Extract named group based on provided pattern
+            reference = InvenTree.format.extract_named_group(
+                'ref', reference, cls.get_reference_pattern()
+            )
+        except Exception:
+            pass
+
+        reference_int = InvenTree.helpers.extract_int(reference)
+
+        if validate and reference_int > models.BigIntegerField.MAX_BIGINT:
+            raise ValidationError({'reference': _('Reference number is too large')})
+
+        return reference_int
+
+    reference_int = models.BigIntegerField(default=0)
 
 
 class InvenTreeAuditMixin(ModelFeatureMixin):

@@ -25,7 +25,6 @@ from mptt.models import TreeForeignKey
 
 import common.models as common_models
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -59,6 +58,7 @@ from generic.models.modelmixins import (
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreeTagsMixin,
+    ReferenceIndexingMixin,
 )
 from generic.states import (
     RETURN_VALUE,
@@ -372,7 +372,7 @@ class Order(
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.ReferenceIndexingMixin,
+    ReferenceIndexingMixin,
     InvenTreeMetadataModel,
 ):
     """Abstract model for an order.

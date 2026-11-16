@@ -25,7 +25,6 @@ import generic.states
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.helpers_model
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import part.models
@@ -57,6 +56,7 @@ from generic.models.modelmixins import (
     InvenTreeTagsMixin,
     MetadataMixin,
     PluginValidationMixin,
+    ReferenceIndexingMixin,
 )
 from generic.states import (
     DEFERRABLE,
@@ -110,7 +110,7 @@ class Build(
     InvenTreeBarcodeMixin,
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
-    InvenTree.models.ReferenceIndexingMixin,
+    ReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,
     MetadataMixin,
