@@ -14,6 +14,26 @@ from error_report.models import Error
 
 import InvenTree.helpers_model
 
+# legacy imports
+from generic.models.base import (  # noqa: F401
+    InvenTreeMetadataModel,
+    InvenTreeModel,
+    InvenTreeTree,
+)
+from generic.models.modelmixins import (  # noqa: F401
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeImageMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeTagsMixin,
+    PluginValidationMixin,
+    ReferenceIndexingMixin,
+)
+from generic.models.modelmixins import MetadataMixin as MetadataMixin
+from generic.models.modelmixins import PathStringMixin as PathStringMixin
+
 logger = structlog.get_logger('inventree')
 
 
