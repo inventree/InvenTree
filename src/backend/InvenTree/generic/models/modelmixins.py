@@ -17,15 +17,15 @@ from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
 import InvenTree.helpers
-import InvenTree.models
 import report.mixins
 from generic.modelfeatures import ModelFeatureMixin
+from generic.models.internal import InvenTreePermissionCheckMixin
 
 logger = structlog.get_logger('inventree')
 
 
 class InvenTreeParameterMixin(
-    ModelFeatureMixin, InvenTree.models.InvenTreePermissionCheckMixin, models.Model
+    ModelFeatureMixin, InvenTreePermissionCheckMixin, models.Model
 ):
     """Provides an abstracted class for managing parameters.
 
@@ -181,7 +181,7 @@ class InvenTreeParameterMixin(
 
 
 class InvenTreeNoteMixin(
-    ModelFeatureMixin, InvenTree.models.InvenTreePermissionCheckMixin, models.Model
+    ModelFeatureMixin, InvenTreePermissionCheckMixin, models.Model
 ):
     """Provides an abstracted class for managing notes.
 
@@ -337,9 +337,7 @@ class InvenTreeNoteMixin(
         return True
 
 
-class InvenTreeAttachmentMixin(
-    ModelFeatureMixin, InvenTree.models.InvenTreePermissionCheckMixin
-):
+class InvenTreeAttachmentMixin(ModelFeatureMixin, InvenTreePermissionCheckMixin):
     """Provides an abstracted class for managing file attachments.
 
     Links the implementing model to the common.models.Attachment table,

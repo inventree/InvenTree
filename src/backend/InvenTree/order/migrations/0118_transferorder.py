@@ -13,7 +13,7 @@ import order.validators
 from django.conf import settings
 from django.db import migrations, models
 import generic.models.modelmixins
-
+import generic.models.internal
 
 class Migration(migrations.Migration):
 
@@ -291,7 +291,7 @@ class Migration(migrations.Migration):
                 generic.states.states.StatusCodeMixin,
                 generic.states.transition.StateTransitionMixin,
                 generic.models.modelmixins.InvenTreeAttachmentMixin,
-                InvenTree.models.InvenTreePermissionCheckMixin,
+                generic.models.internal.InvenTreePermissionCheckMixin,
                 InvenTree.models.ContentTypeMixin,
                 InvenTree.models.PluginValidationMixin,
                 models.Model,
