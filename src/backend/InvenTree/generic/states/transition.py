@@ -354,8 +354,14 @@ def _run_plugin_transition_handlers(instance, source, target, default_action):
 
             # Call the transition method.
             # ValidationError raised here will propagate and cancel the transition.
-            if result := handler.transition(source, target, instance, default_action):
-                return result
+            try:
+                if result := handler.transition(
+                    source, target, instance, default_action
+                ):
+                    return result
+            except Exception:
+                log_error('handler.transition', plugin=plugin)
+                continue
 
 
 def _noop_default_action(current_state, target_state, instance, **kwargs):
