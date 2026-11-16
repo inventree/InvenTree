@@ -49,6 +49,7 @@ from common.settings import get_global_setting
 from generic.models.base import InvenTreeMetadataModel, InvenTreeModel, InvenTreeTree
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
     InvenTreeBarcodeMixin,
     InvenTreeImageMixin,
     InvenTreeNoteMixin,
@@ -71,7 +72,7 @@ logger = structlog.get_logger('inventree')
 
 
 class PartCategory(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
     InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
@@ -471,7 +472,7 @@ class PartReportContext(report.mixins.BaseReportContext, TypedDict):
 
 @cleanup.ignore
 class Part(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
     InvenTreeParameterMixin,
     InvenTreeAttachmentMixin,
@@ -2911,9 +2912,7 @@ class PartTestTemplate(InvenTreeMetadataModel):
         return [x.strip() for x in self.choices.split(',') if x.strip()]
 
 
-class BomItem(
-    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.MetadataMixin, InvenTreeModel
-):
+class BomItem(InvenTreeAuditMixin, InvenTree.models.MetadataMixin, InvenTreeModel):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -3602,7 +3601,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
             pass
 
 
-class BomItemSubstitute(InvenTree.models.InvenTreeAuditMixin, InvenTreeMetadataModel):
+class BomItemSubstitute(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:

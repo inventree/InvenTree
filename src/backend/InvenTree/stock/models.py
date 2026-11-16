@@ -44,6 +44,7 @@ from generic.enums import StringEnum
 from generic.models.base import InvenTreeMetadataModel, InvenTreeModel, InvenTreeTree
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
     InvenTreeBarcodeMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
@@ -437,7 +438,7 @@ STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 
 class StockItem(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     InvenTreeAttachmentMixin,
     InvenTreeBarcodeMixin,
     InvenTreeNoteMixin,

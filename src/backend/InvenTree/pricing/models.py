@@ -19,11 +19,11 @@ import common.currency
 import common.models
 import InvenTree.fields
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 from common.currency import currency_code_default
 from common.settings import get_global_setting
+from generic.models.modelmixins import InvenTreeAuditMixin
 from InvenTree import validators
 from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.exceptions import log_error
@@ -34,7 +34,7 @@ from part.models import Part
 logger = structlog.get_logger('inventree')
 
 
-class PartPricing(InvenTree.models.InvenTreeAuditMixin, common.models.MetaMixin):
+class PartPricing(InvenTreeAuditMixin, common.models.MetaMixin):
     """Model for caching min/max pricing information for a particular Part.
 
     It is prohibitively expensive to calculate min/max pricing for a part "on the fly".
@@ -851,9 +851,7 @@ class PartPricing(InvenTree.models.InvenTreeAuditMixin, common.models.MetaMixin)
     )
 
 
-class PartSellPriceBreak(
-    InvenTree.models.InvenTreeAuditMixin, common.models.PriceBreak
-):
+class PartSellPriceBreak(InvenTreeAuditMixin, common.models.PriceBreak):
     """Represents a price break for selling this part."""
 
     # Changes to a price break are included in the history of the part
@@ -881,9 +879,7 @@ class PartSellPriceBreak(
     )
 
 
-class PartInternalPriceBreak(
-    InvenTree.models.InvenTreeAuditMixin, common.models.PriceBreak
-):
+class PartInternalPriceBreak(InvenTreeAuditMixin, common.models.PriceBreak):
     """Represents a price break for internally selling this part."""
 
     # Changes to a price break are included in the history of the part

@@ -52,6 +52,7 @@ from generic.enums import StringEnum
 from generic.models.base import InvenTreeMetadataModel, InvenTreeModel, InvenTreeTree
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
 )
@@ -99,7 +100,7 @@ class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
 
 
 class Build(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTreeParameterMixin,

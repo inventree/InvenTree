@@ -42,7 +42,7 @@ def audit_parent(model) -> tuple[str, str]:
     - If the parent is a foreign key field, the name of the related model is returned
     - If the parent reference is resolved by a custom method, the method docstring summary is returned as a note
     """
-    from InvenTree.models import InvenTreeAuditMixin
+    from generic.models.modelmixins import InvenTreeAuditMixin
 
     if model.AUDIT_PARENT_FIELD:
         field = model._meta.get_field(model.AUDIT_PARENT_FIELD)

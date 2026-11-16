@@ -32,6 +32,7 @@ from common.settings import get_global_setting
 from generic.models.base import InvenTreeMetadataModel, InvenTreeModel
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
     InvenTreeBarcodeMixin,
     InvenTreeImageMixin,
     InvenTreeNoteMixin,
@@ -96,7 +97,7 @@ def default_internal_company() -> Optional[int]:
 
 
 class Company(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     InvenTreeAttachmentMixin,
     InvenTreeParameterMixin,
     InvenTreeNoteMixin,
@@ -348,7 +349,7 @@ class Company(
         ).distinct()
 
 
-class Contact(InvenTree.models.InvenTreeAuditMixin, InvenTreeMetadataModel):
+class Contact(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
     Attributes:
@@ -391,7 +392,7 @@ class Contact(InvenTree.models.InvenTreeAuditMixin, InvenTreeMetadataModel):
         return self.name
 
 
-class Address(InvenTree.models.InvenTreeAuditMixin, InvenTreeModel):
+class Address(InvenTreeAuditMixin, InvenTreeModel):
     """An address represents a physical location where the company is located. It is possible for a company to have multiple locations.
 
     Attributes:
@@ -568,7 +569,7 @@ class Address(InvenTree.models.InvenTreeAuditMixin, InvenTreeModel):
 
 
 class ManufacturerPart(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     InvenTreeAttachmentMixin,
     InvenTreeParameterMixin,
     InvenTreeBarcodeMixin,
@@ -687,7 +688,7 @@ class ManufacturerPart(
 
 
 class SupplierPart(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     InvenTreeAttachmentMixin,
     InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
@@ -1100,9 +1101,7 @@ class SupplierPart(
         return s
 
 
-class SupplierPriceBreak(
-    InvenTree.models.InvenTreeAuditMixin, common.models.PriceBreak
-):
+class SupplierPriceBreak(InvenTreeAuditMixin, common.models.PriceBreak):
     """Represents a quantity price break for a SupplierPart.
 
     - Suppliers can offer discounts at larger quantities

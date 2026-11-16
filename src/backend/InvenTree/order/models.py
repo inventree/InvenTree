@@ -54,6 +54,7 @@ from company.models import (
 from generic.models.base import InvenTreeMetadataModel, InvenTreeModel
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
     InvenTreeBarcodeMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
@@ -104,7 +105,7 @@ from stock.status_codes import StockHistoryCode, StockStatus
 logger = structlog.get_logger('inventree')
 
 
-class AuditedOrderMixin(InvenTree.models.InvenTreeAuditMixin):
+class AuditedOrderMixin(InvenTreeAuditMixin):
     """Audit log configuration for order models."""
 
     AUDIT_EXCLUDE_FIELDS = (
@@ -116,7 +117,7 @@ class AuditedOrderMixin(InvenTree.models.InvenTreeAuditMixin):
     )
 
 
-class AuditedLineItemMixin(InvenTree.models.InvenTreeAuditMixin):
+class AuditedLineItemMixin(InvenTreeAuditMixin):
     """Audit log configuration for order line item models.
 
     Changes to line items are included in the history of the order.
@@ -2755,7 +2756,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict
 
 
 class SalesOrderShipment(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     InvenTreeParameterMixin,
     InvenTreeAttachmentMixin,
     InvenTreeBarcodeMixin,

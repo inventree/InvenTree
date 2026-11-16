@@ -70,6 +70,7 @@ from generic.enums import StringEnum
 from generic.models.base import InvenTreeMetadataModel, InvenTreeModel
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreeTagsMixin,
@@ -158,7 +159,7 @@ class UpdatedUserMixin(models.Model):
     )
 
 
-class ProjectCode(InvenTree.models.InvenTreeAuditMixin, InvenTreeMetadataModel):
+class ProjectCode(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
     IMPORT_ID_FIELDS = ['code']
@@ -1284,7 +1285,7 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
         return self.__class__.is_required(self.key, **self.get_filters_for_instance())
 
 
-class InvenTreeSetting(InvenTree.models.InvenTreeAuditMixin, BaseInvenTreeSetting):
+class InvenTreeSetting(InvenTreeAuditMixin, BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     The class provides a way of retrieving the value for a particular key,
@@ -1876,7 +1877,7 @@ class NewsFeedEntry(models.Model):
     )
 
 
-class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
+class CustomUnit(InvenTreeAuditMixin, models.Model):
     """Model for storing custom physical unit definitions.
 
     Model Attributes:
@@ -2038,7 +2039,7 @@ def rename_attachment(instance, filename: str):
 
 
 class Attachment(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     InvenTree.models.MetadataMixin,
     InvenTreeTagsMixin,
     InvenTreeModel,
@@ -2747,7 +2748,7 @@ class SelectionListEntry(models.Model):
 
 
 class ParameterTemplate(
-    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.MetadataMixin, InvenTreeModel
+    InvenTreeAuditMixin, InvenTree.models.MetadataMixin, InvenTreeModel
 ):
     """A ParameterTemplate provides a template for defining parameter values against various models.
 
@@ -2979,7 +2980,7 @@ def post_save_parameter_template(sender, instance, created, **kwargs):
 
 
 class Parameter(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     UpdatedUserMixin,
     InvenTree.models.MetadataMixin,
     InvenTreeModel,
