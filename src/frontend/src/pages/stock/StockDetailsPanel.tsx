@@ -236,6 +236,10 @@ export function StockDetailsPanel({
       name: 'location',
       label: t`Location`,
       model: ModelType.stocklocation,
+      model_formatter: (location: any) =>
+        location?.description
+          ? `${location.name} - ${location.description}`
+          : location?.name,
       hidden: !instance?.location
     },
     {
