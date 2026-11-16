@@ -892,7 +892,7 @@ class AttachmentSerializer(
 
     def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
-        from InvenTree.models import InvenTreeAttachmentMixin
+        from generic.models.modelmixins import InvenTreeAttachmentMixin
 
         model_type = self.validated_data.get('model_type', None)
 

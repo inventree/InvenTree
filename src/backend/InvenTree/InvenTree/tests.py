@@ -817,7 +817,7 @@ class TestHelpers(TestCase):
 
     def test_model_mixin(self):
         """Test the getModelsWithMixin function."""
-        from InvenTree.models import InvenTreeBarcodeMixin
+        from generic.models.modelmixins import InvenTreeBarcodeMixin
 
         models = InvenTree.helpers_model.getModelsWithMixin(InvenTreeBarcodeMixin)
 
