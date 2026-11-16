@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-15 06:01+0000\n"
-"PO-Revision-Date: 2026-11-15 06:05\n"
+"POT-Creation-Date: 2026-11-16 21:08+0000\n"
+"PO-Revision-Date: 2026-11-16 21:12\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -53,7 +53,7 @@ msgstr "この項目は一意である必要があります。"
 msgid "Item no longer matches the provided criteria"
 msgstr "アイテムが指定された条件に一致しなくなりました"
 
-#: InvenTree/api.py:872 InvenTree/models.py:1664
+#: InvenTree/api.py:872 InvenTree/models.py:1681
 msgid "User does not have permission to view this model"
 msgstr "ユーザーにこのモデルを表示する権限がありません"
 
@@ -111,7 +111,7 @@ msgstr "小数値が無効です"
 #: build/serializers.py:601 build/serializers.py:1782 common/models.py:3290
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
-#: stock/models.py:3820 stock/serializers.py:786 stock/serializers.py:970
+#: stock/models.py:3824 stock/serializers.py:786 stock/serializers.py:970
 #: stock/serializers.py:1163 stock/serializers.py:1330
 #: stock/serializers.py:1621 stock/serializers.py:1711
 #: stock/serializers.py:1910
@@ -211,59 +211,59 @@ msgstr "CSRF検証に失敗しました。INVENTREE_SITE_URLとINVENTREE_TRUSTED
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "二要素認証を有効にする必要があります。"
 
-#: InvenTree/models.py:138
+#: InvenTree/models.py:139
 msgid "Error running plugin validation"
 msgstr "プラグイン検証の実行エラー"
 
-#: InvenTree/models.py:220
+#: InvenTree/models.py:221
 msgid "Metadata must be a python dict object"
 msgstr "メタデータは python dict オブジェクトでなければなりません。"
 
-#: InvenTree/models.py:226
+#: InvenTree/models.py:227
 msgid "Plugin Metadata"
 msgstr "プラグインメタデータ"
 
-#: InvenTree/models.py:227
+#: InvenTree/models.py:228
 msgid "JSON metadata field, for use by external plugins"
 msgstr "外部プラグインで使用するためのJSONメタデータフィールド"
 
-#: InvenTree/models.py:410
+#: InvenTree/models.py:411
 msgid "Improperly formatted pattern"
 msgstr "不適切な書式パターン"
 
-#: InvenTree/models.py:417
+#: InvenTree/models.py:418
 msgid "Unknown format key specified"
 msgstr "不明なフォーマットキーが指定されました"
 
-#: InvenTree/models.py:423
+#: InvenTree/models.py:424
 msgid "Missing required format key"
 msgstr "必要なフォーマットキーがありません"
 
-#: InvenTree/models.py:434
+#: InvenTree/models.py:435
 msgid "Reference field cannot be empty"
 msgstr "参照フィールドを空にすることはできません。"
 
-#: InvenTree/models.py:442
+#: InvenTree/models.py:443
 msgid "Reference must match required pattern"
 msgstr "参照は必須パターンに一致する必要があります。"
 
-#: InvenTree/models.py:473
+#: InvenTree/models.py:474
 msgid "Reference number is too large"
 msgstr "参照番号が大きすぎる"
 
-#: InvenTree/models.py:1179
+#: InvenTree/models.py:1192
 msgid "Invalid choice"
 msgstr "無効な選択です"
 
-#: InvenTree/models.py:1349 common/api.py:1854 common/models.py:1540
+#: InvenTree/models.py:1362 common/api.py:1854 common/models.py:1540
 #: common/models.py:1980 common/models.py:2447 common/models.py:2580
-#: common/models.py:2903 common/serializers.py:730
+#: common/models.py:2903 common/serializers.py:749
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1141
 #: plugin/models.py:53 report/models.py:233 stock/models.py:86
 msgid "Name"
 msgstr "お名前"
 
-#: InvenTree/models.py:1355 build/models.py:284 common/models.py:192
+#: InvenTree/models.py:1368 build/models.py:284 common/models.py:192
 #: common/models.py:2587 common/models.py:2728 common/models.py:2918
 #: common/models.py:3564 company/models.py:641 company/models.py:913
 #: order/models.py:549 order/models.py:2342 part/models.py:1164
@@ -273,47 +273,47 @@ msgstr "お名前"
 msgid "Description"
 msgstr "説明"
 
-#: InvenTree/models.py:1356 stock/models.py:93
+#: InvenTree/models.py:1369 stock/models.py:93
 msgid "Description (optional)"
 msgstr "説明 (オプション)"
 
-#: InvenTree/models.py:1371 common/models.py:3653
+#: InvenTree/models.py:1384 common/models.py:3653
 msgid "Path"
 msgstr "パス"
 
-#: InvenTree/models.py:1529
+#: InvenTree/models.py:1542
 msgid "Duplicate names cannot exist under the same parent"
 msgstr "同じ親の下に同じ名前を登録することはできません。"
 
-#: InvenTree/models.py:1620
+#: InvenTree/models.py:1637
 msgid "Barcode Data"
 msgstr "バーコード情報"
 
-#: InvenTree/models.py:1621
+#: InvenTree/models.py:1638
 msgid "Third party barcode data"
 msgstr "サードパーティ製バーコードデータ"
 
-#: InvenTree/models.py:1627
+#: InvenTree/models.py:1644
 msgid "Barcode Hash"
 msgstr "バーコードハッシュ"
 
-#: InvenTree/models.py:1628
+#: InvenTree/models.py:1645
 msgid "Unique hash of barcode data"
 msgstr "バーコードデータのユニークなハッシュ"
 
-#: InvenTree/models.py:1718
+#: InvenTree/models.py:1735
 msgid "Existing barcode found"
 msgstr "既存のバーコードが見つかりました"
 
-#: InvenTree/models.py:1858
+#: InvenTree/models.py:1875
 msgid "Server Error"
 msgstr "サーバーエラー"
 
-#: InvenTree/models.py:1859
+#: InvenTree/models.py:1876
 msgid "An error has been logged by the server."
 msgstr "サーバーによってエラーが記録されました。"
 
-#: InvenTree/models.py:1901 common/models.py:3589
+#: InvenTree/models.py:1920 common/models.py:3589
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -572,9 +572,9 @@ msgstr "無効な物理単位"
 msgid "Not a valid currency code"
 msgstr "有効な通貨コードではありません。"
 
-#: audit/api.py:92 audit/serializers.py:107 common/serializers.py:867
-#: common/serializers.py:1023 common/serializers.py:1069
-#: common/serializers.py:1137 importer/models.py:104 report/api.py:42
+#: audit/api.py:92 audit/serializers.py:107 common/serializers.py:886
+#: common/serializers.py:1042 common/serializers.py:1088
+#: common/serializers.py:1156 importer/models.py:104 report/api.py:42
 #: report/models.py:389 report/serializers.py:69
 msgid "Model Type"
 msgstr "モデルタイプ"
@@ -1770,61 +1770,74 @@ msgstr "期限超過の製造オーダー"
 msgid "No issues detected"
 msgstr "問題は検出されませんでした"
 
-#: common/admin_messages.py:110 report/system_settings.py:33
+#: common/admin_messages.py:147
+msgid "Unable to check plugin integrations"
+msgstr ""
+
+#: common/admin_messages.py:150
+#, python-brace-format
+msgid "Active plugins require a plugin integration which is disabled. Enable the listed plugin settings: {plugins}"
+msgstr ""
+
+#: common/admin_messages.py:156 report/system_settings.py:33
 msgid "Debug Mode"
 msgstr "デバッグモード"
 
-#: common/admin_messages.py:111
+#: common/admin_messages.py:157
 msgid "The server is running in debug mode."
 msgstr "サーバーはデバッグモードで実行しています。"
 
-#: common/admin_messages.py:117
+#: common/admin_messages.py:163
 msgid "Background Worker"
 msgstr "バックグラウンドワーカー"
 
-#: common/admin_messages.py:118
+#: common/admin_messages.py:164
 msgid "The background worker process is not running."
 msgstr "バックグラウンドワーカープロセスは実行されていません。"
 
-#: common/admin_messages.py:124
+#: common/admin_messages.py:170
 msgid "Server Restart"
 msgstr "サーバー再起動"
 
-#: common/admin_messages.py:125
+#: common/admin_messages.py:171
 msgid "The server requires a restart to apply changes."
 msgstr "変更を適用するにはサーバーを再起動する必要があります。"
 
-#: common/admin_messages.py:131
+#: common/admin_messages.py:177
 msgid "Email settings"
 msgstr "Eメール設定"
 
-#: common/admin_messages.py:132
+#: common/admin_messages.py:178
 msgid "Email settings not configured."
 msgstr "Eメール設定が未設定です。"
 
-#: common/admin_messages.py:138
+#: common/admin_messages.py:184
 msgid "Database Migrations"
 msgstr "データベース移行"
 
-#: common/admin_messages.py:139
+#: common/admin_messages.py:185
 msgid "There are pending database migrations."
 msgstr "保留中のデータベース移行があります。"
 
-#: common/admin_messages.py:145
+#: common/admin_messages.py:191
 msgid "CORS Settings"
 msgstr "CORS設定"
 
-#: common/admin_messages.py:146
+#: common/admin_messages.py:192
 msgid "CORS is set to allow all origins."
 msgstr "CORSはすべてのオリジンを許可する設定になっています。"
 
-#: common/admin_messages.py:152
+#: common/admin_messages.py:198
 msgid "Basic Authentication"
 msgstr "Basic認証"
 
-#: common/admin_messages.py:153
+#: common/admin_messages.py:199
 msgid "Basic (username:password) authentication is enabled for the API."
 msgstr "Basic（ユーザー名:パスワード）認証はAPIで有効です。"
+
+#: common/admin_messages.py:205
+msgid "Plugin Integration"
+msgstr ""
 
 #: common/api.py:858
 msgid "Has Thumbnail"
@@ -1838,7 +1851,7 @@ msgstr "リンク"
 msgid "Is File"
 msgstr "ファイル"
 
-#: common/api.py:886 common/serializers.py:860
+#: common/api.py:886 common/serializers.py:879
 msgid "Filename"
 msgstr "ファイル名"
 
@@ -1874,7 +1887,7 @@ msgstr "この項目は必須です"
 msgid "Invalid model ID"
 msgstr "無効なモデルID"
 
-#: common/api.py:1632 common/serializers.py:1194 common/serializers.py:1242
+#: common/api.py:1632 common/serializers.py:1213 common/serializers.py:1261
 msgid "Selection list is locked"
 msgstr "選択リストがロックされています"
 
@@ -2200,7 +2213,7 @@ msgstr "定義"
 msgid "Unit definition"
 msgstr "ユニットの定義"
 
-#: common/models.py:2071 common/models.py:2243 stock/models.py:3815
+#: common/models.py:2071 common/models.py:2243 stock/models.py:3819
 #: stock/serializers.py:259
 msgid "Attachment"
 msgstr "添付ファイル"
@@ -2289,7 +2302,7 @@ msgstr "ファイルサイズ"
 msgid "File size in bytes"
 msgstr "ファイルサイズ（バイト"
 
-#: common/models.py:2332 common/serializers.py:894
+#: common/models.py:2332 common/serializers.py:913
 msgid "Invalid model type specified for attachment"
 msgstr "添付ファイルに指定されたモデルタイプが無効です"
 
@@ -2318,7 +2331,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "業務処理上、このカスタム状態と同等に扱う標準状態の論理キー"
 
 #: common/models.py:2441 common/models.py:2716 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3807
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3811
 msgid "Value"
 msgstr "値"
 
@@ -2587,7 +2600,7 @@ msgstr "パラメータ値の選択が無効"
 msgid "Parameter value must be unique"
 msgstr "パラメータ値は一意である必要があります"
 
-#: common/models.py:3191 common/serializers.py:1123
+#: common/models.py:3191 common/serializers.py:1142
 msgid "Invalid model type specified for parameter"
 msgstr "パラメータに対して無効なモデルタイプが指定されています"
 
@@ -2630,8 +2643,8 @@ msgstr "備考"
 msgid "Optional note field"
 msgstr "任意のメモ欄"
 
-#: common/models.py:3393 common/models.py:3395 common/serializers.py:996
-#: common/serializers.py:1000
+#: common/models.py:3393 common/models.py:3395 common/serializers.py:1015
+#: common/serializers.py:1019
 msgid "This field is required."
 msgstr "この項目は必須です。"
 
@@ -2716,7 +2729,7 @@ msgid "Response data from the barcode scan"
 msgstr "バーコードスキャンによるレスポンスデータ"
 
 #: common/models.py:3676 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3801
+#: stock/models.py:3805
 msgid "Result"
 msgstr "結果"
 
@@ -2883,127 +2896,127 @@ msgstr "発注した品目を受領しました"
 msgid "Items have been received against a return order"
 msgstr "返品オーダーの対象品を受領しました"
 
-#: common/serializers.py:131
+#: common/serializers.py:132
 msgid "Indicates if changing this setting requires confirmation"
 msgstr "この設定の変更時に確認が必要かどうかを示します"
 
-#: common/serializers.py:139
+#: common/serializers.py:140
 msgid "Indicating behavior or purpose of setting."
 msgstr "設定の動作または目的を示します。"
 
-#: common/serializers.py:151
+#: common/serializers.py:152
 msgid "This setting requires confirmation before changing. Please confirm the change."
 msgstr "この設定を変更するには、確認が必要です。変更内容をご確認ください。"
 
-#: common/serializers.py:195
+#: common/serializers.py:196
 msgid "Indicates if the setting is overridden by an environment variable"
 msgstr "環境変数によって設定が上書きされるかどうかを示します"
 
-#: common/serializers.py:197 plugin/serializers.py:293
+#: common/serializers.py:198 plugin/serializers.py:293
 msgid "Override"
 msgstr "上書き"
 
-#: common/serializers.py:693
+#: common/serializers.py:712
 msgid "Is Running"
 msgstr "稼働中"
 
-#: common/serializers.py:699
+#: common/serializers.py:718
 msgid "Pending Tasks"
 msgstr "保留タスク"
 
-#: common/serializers.py:705
+#: common/serializers.py:724
 msgid "Scheduled Tasks"
 msgstr "スケジュールされたタスク"
 
-#: common/serializers.py:711
+#: common/serializers.py:730
 msgid "Failed Tasks"
 msgstr "失敗したタスク"
 
-#: common/serializers.py:726
+#: common/serializers.py:745
 msgid "Task ID"
 msgstr "タスクID"
 
-#: common/serializers.py:726
+#: common/serializers.py:745
 msgid "Unique task ID"
 msgstr "ユニークなタスクID"
 
-#: common/serializers.py:728
+#: common/serializers.py:747
 msgid "Lock"
 msgstr "ロック"
 
-#: common/serializers.py:728
+#: common/serializers.py:747
 msgid "Lock time"
 msgstr "ロック時間"
 
-#: common/serializers.py:730
+#: common/serializers.py:749
 msgid "Task name"
 msgstr "タスク名"
 
-#: common/serializers.py:732
+#: common/serializers.py:751
 msgid "Function"
 msgstr "関数"
 
-#: common/serializers.py:732
+#: common/serializers.py:751
 msgid "Function name"
 msgstr "関数名"
 
-#: common/serializers.py:734
+#: common/serializers.py:753
 msgid "Arguments"
 msgstr "引数"
 
-#: common/serializers.py:734
+#: common/serializers.py:753
 msgid "Task arguments"
 msgstr "タスク引数"
 
-#: common/serializers.py:737
+#: common/serializers.py:756
 msgid "Keyword Arguments"
 msgstr "キーワード論争"
 
-#: common/serializers.py:737
+#: common/serializers.py:756
 msgid "Task keyword arguments"
 msgstr "タスクキーワード引数"
 
-#: common/serializers.py:896
+#: common/serializers.py:915
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "このモデルの添付ファイルを作成または編集する権限がありません。"
 
-#: common/serializers.py:941
+#: common/serializers.py:960
 msgid "Only staff users can create or edit note templates"
 msgstr "メモテンプレートを作成・編集できるのはスタッフユーザーのみです"
 
-#: common/serializers.py:951
+#: common/serializers.py:970
 msgid "Invalid model type specified for note"
 msgstr "メモに無効なモデルタイプが指定されました"
 
-#: common/serializers.py:952
+#: common/serializers.py:971
 msgid "User does not have permission to create or edit notes for this model"
 msgstr "ユーザーにはこのモデルのメモを作成・編集する権限がありません"
 
-#: common/serializers.py:1125
+#: common/serializers.py:1144
 msgid "User does not have permission to create or edit parameters for this model"
 msgstr "ユーザーは、このモデルのパラメータを作成または編集する権限がありません。"
 
-#: common/serializers.py:1324
+#: common/serializers.py:1343
 msgid "Attachment Count"
 msgstr "添付ファイル数"
 
-#: common/serializers.py:1325
+#: common/serializers.py:1344
 msgid "Number of attachments associated with this instance"
 msgstr "このインスタンスに関連付けられた添付ファイルの数"
 
-#: common/serializers.py:1330
+#: common/serializers.py:1349
 msgid "Note Count"
 msgstr "メモ数"
 
-#: common/serializers.py:1331
+#: common/serializers.py:1350
 msgid "Number of notes associated with this instance"
 msgstr "このインスタンスに関連付けられたメモの数"
 
-#: common/serializers.py:1336
+#: common/serializers.py:1355
 msgid "Parameter Count"
 msgstr "パラメータ数"
 
-#: common/serializers.py:1337
+#: common/serializers.py:1356
 msgid "Number of parameters associated with this instance"
 msgstr "このインスタンスに関連付けられたパラメータの数"
 
@@ -6650,7 +6663,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "棚卸時の使用可能在庫数量"
 
 #: part/models.py:2662 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3847
+#: stock/models.py:3851
 msgid "Date"
 msgstr "日付"
 
@@ -9769,7 +9782,7 @@ msgstr "シリアル番号はリストとして提供されなければなりま
 msgid "Quantity does not match serial numbers"
 msgstr "数量がシリアル番号の数と一致しません"
 
-#: stock/models.py:2663 stock/models.py:3765
+#: stock/models.py:2663 stock/models.py:3769
 msgid "Test template does not exist"
 msgstr "テストテンプレートが存在しません"
 
@@ -9817,59 +9830,59 @@ msgstr "在庫状況コードが一致していること"
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "この在庫品は在庫として使用できる状態ではないため、移動できません。"
 
-#: stock/models.py:3735
+#: stock/models.py:3739
 msgid "Stock Item Test Result"
 msgstr "在庫品テスト結果"
 
-#: stock/models.py:3768
+#: stock/models.py:3772
 msgid "Value must be provided for this test"
 msgstr "このテストには値を指定する必要があります。"
 
-#: stock/models.py:3772
+#: stock/models.py:3776
 msgid "Attachment must be uploaded for this test"
 msgstr "このテストには添付ファイルをアップロードする必要があります。"
 
-#: stock/models.py:3777
+#: stock/models.py:3781
 msgid "Invalid value for this test"
 msgstr "このテストでは無効な値です。"
 
-#: stock/models.py:3801
+#: stock/models.py:3805
 msgid "Test result"
 msgstr "試験結果"
 
-#: stock/models.py:3808
+#: stock/models.py:3812
 msgid "Test output value"
 msgstr "テスト出力値"
 
-#: stock/models.py:3816 stock/serializers.py:260
+#: stock/models.py:3820 stock/serializers.py:260
 msgid "Test result attachment"
 msgstr "試験結果添付"
 
-#: stock/models.py:3820
+#: stock/models.py:3824
 msgid "Test notes"
 msgstr "テストノート"
 
-#: stock/models.py:3828
+#: stock/models.py:3832
 msgid "Test station"
 msgstr "テストステーション"
 
-#: stock/models.py:3829
+#: stock/models.py:3833
 msgid "The identifier of the test station where the test was performed"
 msgstr "試験が実施された試験ステーションの識別子。"
 
-#: stock/models.py:3835
+#: stock/models.py:3839
 msgid "Started"
 msgstr "開始"
 
-#: stock/models.py:3836
+#: stock/models.py:3840
 msgid "The timestamp of the test start"
 msgstr "テスト開始のタイムスタンプ"
 
-#: stock/models.py:3842 users/models.py:887
+#: stock/models.py:3846 users/models.py:887
 msgid "Finished"
 msgstr "完了"
 
-#: stock/models.py:3843
+#: stock/models.py:3847
 msgid "The timestamp of the test finish"
 msgstr "テスト終了のタイムスタンプ"
 
