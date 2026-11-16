@@ -540,6 +540,43 @@ class RepairOrderAuditTest(InvenTreeAPITestCase):
         self.assertEqual(entry.changes_dict['consumed'][1], '2.00000')
         self.assertEqual(entry.parent_object_pk, str(self.order.pk))
 
+    def test_complete_consumes_serialized_stock(self):
+        """A consumed serialized item records an event referencing the repair order."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from part.models import Part
+        from stock.models import StockItem, StockLocation
+        from stock.status_codes import StockHistoryCode
+
+        board = Part.objects.create(
+            name='Controller board', component=True, trackable=True
+        )
+        item = StockItem.objects.create(
+            part=board,
+            quantity=1,
+            serial='1001',
+            location=StockLocation.objects.first(),
+        )
+
+        line = RepairOrderLineItem.objects.create(
+            order=self.order, part=board, quantity=1
+        )
+        RepairOrderAllocation.objects.create(line=line, item=item, quantity=1)
+
+        n = self.entries(StockItem, item.pk).count()
+
+        self.order.complete_repair(user=self.user)
+
+        # A single entry records the event, along with the field changes
+        [entry] = self.entries(StockItem, item.pk).order_by('pk')[n:]
+
+        self.assertEqual(entry.event_type, StockHistoryCode.REPAIR_CONSUMED)
+        self.assertEqual(entry.actor, self.user)
+        self.assertEqual(
+            entry.additional_data['deltas']['repairorder']['pk'], self.order.pk
+        )
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 1)
+        self.assertIn('consumed_by_repair', entry.changes_dict)
+
     def test_consume_same_stock_item(self):
         """Multiple allocations against a single stock item are all consumed."""
         from build.models import RepairOrderAllocation, RepairOrderLineItem

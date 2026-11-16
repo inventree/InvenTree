@@ -353,6 +353,7 @@ class StockItemSerializer(
             'belongs_to',
             'build',
             'consumed_by',
+            'consumed_by_repair',
             'customer',
             'delete_on_deplete',
             'expiry_date',
@@ -533,6 +534,7 @@ class StockItemSerializer(
             'belongs_to',
             'sales_order',
             'consumed_by',
+            'consumed_by_repair',
         ).select_related('part', 'part__pricing_data')
 
         # Annotate the queryset with the total allocated to sales orders

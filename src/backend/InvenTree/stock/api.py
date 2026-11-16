@@ -598,6 +598,7 @@ class StockFilter(FilterSet):
             'build',
             'customer',
             'consumed_by',
+            'consumed_by_repair',
             'sales_order',
             'purchase_order',
             'tags__name',

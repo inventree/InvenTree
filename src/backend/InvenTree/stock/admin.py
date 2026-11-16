@@ -67,6 +67,7 @@ class StockItemAdmin(admin.ModelAdmin):
         'stocktake_user',
         'supplier_part',
         'consumed_by',
+        'consumed_by_repair',
     ]
 
 

@@ -276,6 +276,15 @@ export function StockDetailsPanel({
     },
     {
       type: 'link',
+      name: 'consumed_by_repair',
+      label: t`Consumed By`,
+      model: ModelType.repairorder,
+      hidden: !instance?.consumed_by_repair,
+      icon: 'repair_orders',
+      model_field: 'reference'
+    },
+    {
+      type: 'link',
       name: 'build',
       label: t`Build Order`,
       model: ModelType.build,

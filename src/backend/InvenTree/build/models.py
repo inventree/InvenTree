@@ -2882,6 +2882,8 @@ class RepairOrder(
         """Consume all stock which is allocated against this RepairOrder.
 
         - The allocated quantity is removed from each stock item (recorded as a REPAIR_CONSUMED event)
+        - Serialized stock items cannot be reduced in quantity, so (as for a build order)
+          the whole item is instead marked as consumed by this RepairOrder
         - The consumed quantity is added to the 'consumed' field of each line item
         - Each allocation is deleted once its stock has been consumed
 
@@ -2919,7 +2921,22 @@ class RepairOrder(
 
                 allocation.full_clean()
 
-                if not item.take_stock(
+                if item.serialized:
+                    # A serialized item is retained (with its history), and marked as consumed.
+                    # Its allocated quantity is always 1 (see RepairOrderAllocation.clean)
+                    with item.tracking_event(
+                        StockHistoryCode.REPAIR_CONSUMED,
+                        user,
+                        deltas={
+                            'repairorder': self,
+                            'quantity': float(allocation.quantity),
+                        },
+                    ):
+                        item.consumed_by_repair = self
+                        item.location = None
+                        item.save(add_note=False)
+
+                elif not item.take_stock(
                     quantity=allocation.quantity,
                     user=user,
                     code=StockHistoryCode.REPAIR_CONSUMED,
@@ -3015,6 +3032,10 @@ class RepairOrder(
                         continue
 
                     quantity = min(outstanding, available)
+
+                    if stock_item.serialized and quantity != 1:
+                        # A serialized item can only be allocated as a whole
+                        continue
 
                     allocation = RepairOrderAllocation(
                         line=line, item=stock_item, quantity=quantity
@@ -3179,6 +3200,16 @@ class RepairOrderAllocation(models.Model):
                 )
         except part.models.Part.DoesNotExist:
             errors['line'] = _('Cannot allocate stock to a line without a part')
+
+        if 'item' not in errors and not self.item.in_stock:
+            # Also checked when the stock is consumed, in case the stock item
+            # has become unavailable (e.g. quarantined) since it was allocated
+            errors['item'] = _('Stock item is not in stock')
+
+        if 'quantity' not in errors and 'item' not in errors:
+            if self.item.serialized and self.quantity != 1:
+                # A serialized item is consumed as a whole (see consume_allocated_stock)
+                errors['quantity'] = _('Quantity must be 1 for serialized stock item')
 
         if 'quantity' not in errors and 'item' not in errors:
             # Determine how much of this stock item is *actually* still available,

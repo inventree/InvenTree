@@ -211,6 +211,13 @@ export function StockColumn(props: StockColumnProps): TableColumn {
             size='sm'
           >{t`This stock item has been consumed by a build order`}</Text>
         );
+      } else if (stock_item.consumed_by_repair) {
+        extra.push(
+          <Text
+            key='consumed-by-repair'
+            size='sm'
+          >{t`This stock item has been consumed by a repair order`}</Text>
+        );
       } else if (!stock_item.in_stock) {
         extra.push(
           <Text

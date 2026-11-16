@@ -9,6 +9,7 @@ INVENTREE_API_TEXT = """
 v571 -> 2026-11-01 : https://github.com/inventree/InvenTree/pull/12072
     - Adds API endpoints for RepairOrder, RepairOrderLineItem, and RepairOrderAllocation models
     - RepairOrder status transitions use the generic transition API (adds /api/build/repair/<id>/_transitions/)
+    - Adds "consumed_by_repair" field (and filter) to the StockItem API
 
 v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
     - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only

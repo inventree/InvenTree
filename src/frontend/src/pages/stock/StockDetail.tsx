@@ -473,7 +473,10 @@ export default function StockDetail() {
     add: !stockitem.serial,
     remove: !stockitem.serial,
     assign: !!stockitem.in_stock && stockitem.part_detail?.salable,
-    return: !!stockitem.consumed_by || !!stockitem.customer,
+    return:
+      !!stockitem.consumed_by ||
+      !!stockitem.consumed_by_repair ||
+      !!stockitem.customer,
     merge: false
   });
 

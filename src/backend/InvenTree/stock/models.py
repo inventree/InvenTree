@@ -661,6 +661,7 @@ class StockItem(
         belongs_to=None,
         customer=None,
         consumed_by=None,
+        consumed_by_repair=None,
         is_building=False,
         status__in=StockStatusGroups.AVAILABLE_CODES,
     )
@@ -785,6 +786,7 @@ class StockItem(
             'belongs_to': StockItem,
             'customer': CompanyModels.Company,
             'consumed_by': build.models.Build,
+            'consumed_by_repair': build.models.RepairOrder,
             'sales_order': order.models.SalesOrder,
         }
 
@@ -1313,6 +1315,16 @@ class StockItem(
         related_name='consumed_stock',
     )
 
+    consumed_by_repair = models.ForeignKey(
+        'build.RepairOrder',
+        on_delete=models.CASCADE,
+        verbose_name=_('Consumed By Repair Order'),
+        blank=True,
+        null=True,
+        help_text=_('Repair order which consumed this stock item'),
+        related_name='consumed_stock',
+    )
+
     is_building = models.BooleanField(default=False)
 
     purchase_order = models.ForeignKey(
@@ -1653,8 +1665,12 @@ class StockItem(
         if item.consumed_by:
             tracking_info['build_order'] = item.consumed_by
 
+        if item.consumed_by_repair:
+            tracking_info['repairorder'] = item.consumed_by_repair
+
         # Clear out allocation information for the stock item
         item.consumed_by = None
+        item.consumed_by_repair = None
         item.customer = None
         item.belongs_to = None
         item.sales_order = None
@@ -2358,6 +2374,7 @@ class StockItem(
             self.belongs_to is None,  # Not installed inside another StockItem
             self.customer is None,  # Not assigned to a customer
             self.consumed_by is None,  # Not consumed by a build
+            self.consumed_by_repair is None,  # Not consumed by a repair order
         ])
 
     @property
