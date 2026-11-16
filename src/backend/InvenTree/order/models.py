@@ -3029,6 +3029,7 @@ class SalesOrderShipment(
         # Canonical (mutable) copy of each distinct StockItem being drawn from - multiple
         # allocations may draw from the same StockItem, so track running state
         seen_stock_items: dict = {}
+        remaining_quantities: dict = {}
 
         # Track the lines which have already been processed, to avoid double counting
         seen_lines: dict = {}
@@ -3043,11 +3044,19 @@ class SalesOrderShipment(
             if (locked_qty := locked_quantities.pop(stock_item.pk, None)) is not None:
                 # First encounter: refresh the quantity from the locked database row
                 stock_item.quantity = locked_qty
+                remaining_quantities[stock_item.pk] = locked_qty
             elif stock_item.pk not in seen_stock_items:
                 # The stock item no longer exists in the database - skip
                 continue
 
             seen_stock_items[stock_item.pk] = stock_item
+
+            quantity = min(quantity, remaining_quantities[stock_item.pk])
+
+            if quantity <= 0:
+                continue
+
+            remaining_quantities[stock_item.pk] -= quantity
 
             if quantity < stock_item.quantity:
                 # Split off exactly the shipped quantity into a new StockItem,
@@ -3087,7 +3096,7 @@ class SalesOrderShipment(
             seen_lines[line.pk] = line
 
         # Nothing to do?
-        if not seen_stock_items:
+        if not shipped_items:
             return
 
         # Bulk-create the newly split-off stock items - this resolves their primary keys,

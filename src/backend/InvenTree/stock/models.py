@@ -2984,6 +2984,19 @@ class StockItem(
         if quantity >= self.quantity:
             return None
 
+        remaining_quantity = self.quantity - quantity
+        allocated = self.allocation_count()
+        transferorder = kwargs.get('transferorder')
+        if transferorder is not None:
+            allocated -= self.transfer_order_allocation_count(
+                filter_allocations={'line__order': transferorder}
+            )
+
+        if remaining_quantity < max(allocated, 0):
+            raise ValidationError(
+                _('Stock quantity cannot be reduced below the allocated quantity')
+            )
+
         # Create a new StockItem object, duplicating relevant fields
         # Nullify the PK so a new record is created
         new_stock = StockItem.objects.get(pk=self.pk)
@@ -3252,7 +3265,7 @@ class StockItem(
         return True
 
     @transaction.atomic
-    def updateQuantity(self, quantity):
+    def updateQuantity(self, quantity, transferorder=None):
         """Update stock quantity for this item.
 
         If the quantity has reached zero, this StockItem will be deleted.
@@ -3272,6 +3285,19 @@ class StockItem(
             return
 
         quantity = max(quantity, 0)
+
+        # Do not reduce stock below the quantity reserved by active allocations.
+        # A transfer may consume its own reservation, so exclude that order.
+        allocated = self.allocation_count()
+        if transferorder is not None:
+            allocated -= self.transfer_order_allocation_count(
+                filter_allocations={'line__order': transferorder}
+            )
+
+        if quantity < max(allocated, 0):
+            raise ValidationError(
+                _('Stock quantity cannot be reduced below the allocated quantity')
+            )
 
         # No change if the quantity is the same as the current quantity
         if self.quantity == quantity:
@@ -3504,7 +3530,9 @@ class StockItem(
             event = nullcontext()
 
         with event:
-            self.updateQuantity(self.quantity - quantity)
+            self.updateQuantity(
+                self.quantity - quantity, transferorder=kwargs.get('transferorder')
+            )
 
         return True
 

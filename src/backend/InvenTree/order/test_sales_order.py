@@ -283,6 +283,37 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.line.refresh_from_db()
         self.assertEqual(self.line.shipped, 50)
 
+    def test_complete_allocation_uses_available_stock(self):
+        """A shipment must not record more stock than remains on the item."""
+        self.allocate_stock(True)
+
+        stock_item = self.shipment.allocations.first().item
+        StockItem.objects.filter(pk=stock_item.pk).update(quantity=10)
+        StockItem.objects.filter(pk=self.Sb.pk).update(quantity=0)
+
+        self.shipment.complete_allocations(self.shipment.allocations.all())
+
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 10)
+        self.assertEqual(
+            StockItem.objects.filter(sales_order=self.order).aggregate(
+                quantity=Sum('quantity')
+            )['quantity'],
+            10,
+        )
+
+    def test_cannot_remove_allocated_stock(self):
+        """Stock removal must preserve stock reserved by active allocations."""
+        self.allocate_stock(False)
+        stock_item = self.shipment.allocations.first().item
+        original_quantity = stock_item.quantity
+
+        with self.assertRaises(ValidationError):
+            stock_item.take_stock(original_quantity, self.user)
+
+        stock_item.refresh_from_db()
+        self.assertEqual(stock_item.quantity, original_quantity)
+
     def test_allocate_variant(self):
         """Allocate a variant of the designated item."""
         SalesOrderAllocation.objects.create(
