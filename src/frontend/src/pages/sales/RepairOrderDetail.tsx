@@ -30,13 +30,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { useRepairOrderFields } from '../../forms/RepairOrderForms';
 import {
@@ -44,7 +38,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
 import RepairOrderLineItemTable from '../../tables/sales/RepairOrderLineItemTable';
@@ -65,11 +58,6 @@ export default function RepairOrderDetail() {
       part_detail: true,
       tags: true
     }
-  });
-
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.repairorder,
-    modelId: order?.pk
   });
 
   const roStatus = useStatusCodes({ modelType: ModelType.repairorder });
@@ -158,8 +146,6 @@ export default function RepairOrderDetail() {
     );
   }, [order, instanceQuery]);
 
-  const showHistory = useShowHistoryPanel();
-
   const orderPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -189,29 +175,9 @@ export default function RepairOrderDetail() {
             </Accordion.Item>
           </Accordion>
         )
-      },
-      ParametersPanel({
-        model_type: ModelType.repairorder,
-        model_id: order.pk,
-        parameter_count: instanceInfo.parameter_count
-      }),
-      AttachmentPanel({
-        model_type: ModelType.repairorder,
-        model_id: order.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.repairorder,
-        model_id: order.pk,
-        note_count: instanceInfo.note_count
-      }),
-      HistoryPanel({
-        model_type: ModelType.repairorder,
-        model_id: order.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [order, id, user, lineItemsEditable, instanceInfo, showHistory]);
+  }, [order, id, user, lineItemsEditable, detailsPanel, refreshInstance]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

@@ -418,7 +418,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-
     # login / SSO
     'LOGIN_ENABLE_PWD_FORGOT': {
         'name': _('Enable password forgot'),
