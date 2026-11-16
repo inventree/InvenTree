@@ -3607,6 +3607,7 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
         'migrations',
         'cors',
         'basic_auth',
+        'plugin_integration',
     }
 
     @property
@@ -3685,6 +3686,123 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
         messages = self._messages()
         self.assertEqual(messages['migrations']['classifier'], 'success')
         self.assertEqual(messages['restart']['classifier'], 'success')
+
+    def test_plugin_integration(self):
+        """Active plugins which rely on a disabled plugin integration are reported."""
+        from plugin import registry
+
+        self.ensurePluginsLoaded()
+
+        def message() -> dict:
+            return self._messages()['plugin_integration']
+
+        # The 'sample' plugin makes use of the (gated) URL integration
+        registry.set_plugin_state('sample', True)
+
+        for key in [
+            'ENABLE_PLUGINS_APP',
+            'ENABLE_PLUGINS_NAVIGATION',
+            'ENABLE_PLUGINS_URL',
+        ]:
+            set_global_setting(key, True, None)
+
+        self.assertNotIn('SampleIntegrationPlugin', message()['message'])
+
+        # Disable the URL integration: the plugin is reported
+        set_global_setting('ENABLE_PLUGINS_URL', False, None)
+
+        msg = message()
+        self.assertEqual(msg['classifier'], 'warning')
+        self.assertEqual(msg['code'], 'INVE-W22')
+        self.assertIn('SampleIntegrationPlugin', msg['message'])
+
+        # The setting which needs to be enabled is named
+        self.assertIn(
+            'SampleIntegrationPlugin (Enable URL integration)', msg['message']
+        )
+
+        # A setting override (environment / config file) takes priority over the stored value
+        with override_settings(GLOBAL_SETTINGS_OVERRIDES={'ENABLE_PLUGINS_URL': True}):
+            self.assertNotIn('SampleIntegrationPlugin', message()['message'])
+
+        set_global_setting('ENABLE_PLUGINS_URL', True, None)
+
+        with override_settings(GLOBAL_SETTINGS_OVERRIDES={'ENABLE_PLUGINS_URL': False}):
+            self.assertIn('SampleIntegrationPlugin', message()['message'])
+
+        # An inactive plugin is not reported
+        set_global_setting('ENABLE_PLUGINS_URL', False, None)
+        registry.set_plugin_state('sample', False)
+
+        self.assertNotIn('SampleIntegrationPlugin', message()['message'])
+
+        # A plugin with a (lazily) translated name is reported correctly
+        registry.set_plugin_state('autocreatebuilds', True)
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False, None)
+
+        self.assertIn(
+            'Auto Create Builds (Enable event integration)', message()['message']
+        )
+
+        registry.set_plugin_state('autocreatebuilds', False)
+
+    def test_plugin_integration_edge_cases(self):
+        """Edge cases of the plugin integration check."""
+        from unittest import mock
+
+        from InvenTree.helpers import plugins_disabled_mixins
+        from plugin import PluginMixinEnum, registry
+        from plugin._internal.base import MixinBase
+
+        self.ensurePluginsLoaded()
+        registry.set_plugin_state('sample', True)
+        set_global_setting('ENABLE_PLUGINS_URL', False, None)
+
+        self.assertGreater(len(plugins_disabled_mixins()), 0)
+
+        # Nothing is reported if plugins are disabled entirely
+        with override_settings(PLUGINS_ENABLED=False):
+            self.assertEqual(plugins_disabled_mixins(), [])
+
+        # A plugin which fails to report its mixin state is skipped
+        def broken_mixin_enabled(key):
+            if key == PluginMixinEnum.BASE:
+                return True
+            raise ValueError('broken plugin')
+
+        with mock.patch.object(
+            MixinBase, 'mixin_enabled', side_effect=broken_mixin_enabled
+        ):
+            self.assertEqual(plugins_disabled_mixins(), [])
+
+        # Nothing is reported if all of the integrations are enabled
+        for key in [
+            'ENABLE_PLUGINS_APP',
+            'ENABLE_PLUGINS_EVENTS',
+            'ENABLE_PLUGINS_MAILS',
+            'ENABLE_PLUGINS_NAVIGATION',
+            'ENABLE_PLUGINS_SCHEDULE',
+            'ENABLE_PLUGINS_URL',
+            'ENABLE_PLUGINS_INTERFACE',
+        ]:
+            set_global_setting(key, True, None)
+
+        self.assertEqual(plugins_disabled_mixins(), [])
+
+        registry.set_plugin_state('sample', False)
+
+        # A failed check is not reported as successful, and other messages are still provided
+        with mock.patch(
+            'InvenTree.helpers.plugins_disabled_mixins',
+            side_effect=RuntimeError('check failed'),
+        ):
+            messages = self._messages()
+
+        msg = messages['plugin_integration']
+        self.assertEqual(msg['classifier'], 'warning')
+        self.assertEqual(msg['code'], 'INVE-W22')
+        self.assertEqual(msg['message'], 'Unable to check plugin integrations')
+        self.assertTrue(self.CORE_KEYS.issubset(messages.keys()))
 
     def test_plugin_messages(self):
         """Plugin-provided messages are merged in and sorted by severity."""
