@@ -32,9 +32,9 @@ from maintenance_mode.core import (
 )
 from opentelemetry import trace
 
-import InvenTree.models
 from common.settings import get_global_setting, set_global_setting
 from common.signals import post_currency_change
+from generic.models.modelmixins import PathStringMixin
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -788,7 +788,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
     model_class.rebuild_trees([tree_id])
 
     # Rebuild the 'pathstring' values for the entire tree (if applicable)
-    if issubclass(model_class, InvenTree.models.PathStringMixin):
+    if issubclass(model_class, PathStringMixin):
         model_class.rebuild_tree_pathstring_values([tree_id])  # ty: ignore[invalid-attribute-access]
 
 

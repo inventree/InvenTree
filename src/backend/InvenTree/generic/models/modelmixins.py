@@ -12,6 +12,7 @@ from django.urls import resolve
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from mptt.models import TreeForeignKey
 from rest_framework.exceptions import PermissionDenied
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
@@ -541,6 +542,255 @@ class InvenTreeImageMixin(ModelFeatureMixin, models.Model):
     def thumbnail_url(self) -> str:
         """Return the URL of the image thumbnail for this object."""
         return self.get_thumbnail_url()
+
+
+class PathStringMixin(models.Model):
+    """Mixin class for adding a 'pathstring' field to a model class.
+
+    The pathstring is a string representation of the path to this model instance,
+    which can be used for display purposes.
+
+    The pathstring is automatically generated when the model instance is saved.
+    """
+
+    # Field to use for constructing a "pathstring" for the tree
+    PATH_FIELD = 'name'
+
+    # Extra fields to include in the get_path result. E.g. icon
+    EXTRA_PATH_FIELDS = []
+
+    class Meta:
+        """Metaclass options for this mixin.
+
+        Note: abstract must be true, as this is only a mixin, not a separate table
+        """
+
+        abstract = True
+
+    name = models.CharField(
+        blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Name')
+    )
+
+    description = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Description (optional)'),
+    )
+
+    # When a category is deleted, graft the children onto its parent
+    parent = TreeForeignKey(
+        'self',
+        on_delete=models.DO_NOTHING,
+        blank=True,
+        null=True,
+        verbose_name='parent',
+        related_name='children',
+    )
+
+    # The 'pathstring' field is calculated each time the model is saved
+    pathstring = models.CharField(
+        blank=True, max_length=250, verbose_name=_('Path'), help_text=_('Path')
+    )
+
+    def save(self, *args, **kwargs):
+        """Update the pathstring field when saving the model instance."""
+        old_pathstring = self.pathstring
+
+        # Rebuild upper first, to ensure the lower nodes are updated correctly
+        super().save(*args, **kwargs)
+
+        # Determine if a tree rebuild task was already triggered by this save
+        # (e.g. if the node was re-parented) - if so, the pathstring values
+        # for any lower nodes are updated by that task
+        rebuild_offloaded = getattr(self, '_tree_rebuild_offloaded', False)
+
+        # Ensure that the pathstring is correctly constructed
+        pathstring = self.construct_pathstring(refresh=True)
+
+        if pathstring != old_pathstring:
+            kwargs.pop('force_insert', None)
+            kwargs['force_update'] = True
+
+            self.pathstring = pathstring
+            super().save(*args, **kwargs)
+
+            # Update the pathstring values for any lower nodes,
+            # by offloading the update to the background worker
+            if not rebuild_offloaded and self.get_descendant_count() > 0:
+                self.__class__.offload_tree_rebuild([self.tree_id])  # ty: ignore[invalid-attribute-access]
+
+    def delete(self, *args, **kwargs):
+        """Custom delete method for PathStringMixin.
+
+        - Before deleting the object, update the pathstring for any child nodes.
+        - Then, delete the object.
+        """
+        # Ensure that we have the latest version of the database object
+        try:
+            self.refresh_from_db()
+        except self.__class__.DoesNotExist:
+            # If the object no longer exists, raise a ValidationError
+            raise ValidationError(
+                'Object %s of type %s no longer exists', str(self), str(self.__class__)
+            )
+
+        # Store the node ID values for lower nodes, before we delete this one
+        lower_nodes = self.get_lower_nodes()
+
+        # Delete this node - after which we expect the tree structure will be updated
+        super().delete(*args, **kwargs)
+
+        # Rebuild the pathstring for lower nodes
+        self.rebuild_lower_nodes(lower_nodes)
+
+    def __str__(self):
+        """String representation of a category is the full path to that category."""
+        return f'{self.pathstring} - {self.description}'
+
+    def get_lower_nodes(self) -> list[int]:
+        """Return a list of all lower nodes in the tree."""
+        return list(
+            self.get_descendants(include_self=False).values_list('pk', flat=True)
+        )
+
+    def rebuild_lower_nodes(self, lower_nodes: list[int]):
+        """Rebuild the pathstring for lower nodes in the tree.
+
+        - This is used when the pathstring for this node is updated, and we need to update all lower nodes.
+        - We use a bulk-update to update the pathstring for all lower nodes in the tree.
+        """
+        nodes = self.__class__.objects.filter(pk__in=lower_nodes)
+
+        nodes_to_update = []
+
+        for node in nodes:
+            new_path = node.construct_pathstring()
+
+            if new_path != node.pathstring:
+                node.pathstring = new_path
+                nodes_to_update.append(node)
+
+        if len(nodes_to_update) > 0:
+            self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
+
+    @classmethod
+    def rebuild_tree_pathstring_values(cls, tree_ids) -> None:
+        """Rebuild the 'pathstring' values for all nodes in the specified trees.
+
+        Each tree is processed in a single pass:
+        the pathstring for each node is constructed from its parent node,
+        and any changed values are written back in a single bulk update.
+        """
+        tree_nodes = list(cls.objects.filter(tree_id__in=tree_ids))
+        node_map = {node.pk: node for node in tree_nodes}
+
+        # Cache of node ID -> list of path elements (from the top level down)
+        path_cache: dict[int, list[str]] = {}
+
+        def path_names(node) -> list[str]:
+            """Construct the path (list of names) for a node, via its parent chain."""
+            if node.pk in path_cache:
+                return path_cache[node.pk]
+
+            names = [str(getattr(node, cls.PATH_FIELD, node.pk))]
+
+            if node.parent_id:
+                parent = node_map.get(node.parent_id)
+
+                if parent is None:
+                    # Parent node exists outside the selected trees
+                    parent = cls.objects.get(pk=node.parent_id)
+                    node_map[node.parent_id] = parent
+
+                names = [*path_names(parent), *names]
+
+            path_cache[node.pk] = names
+            return names
+
+        nodes_to_update = []
+
+        for node in tree_nodes:
+            pathstring = InvenTree.helpers.constructPathString(path_names(node))
+
+            if pathstring != node.pathstring:
+                node.pathstring = pathstring
+                nodes_to_update.append(node)
+
+        if len(nodes_to_update) > 0:
+            cls.objects.bulk_update(nodes_to_update, ['pathstring'], batch_size=250)
+
+    def construct_pathstring(self, refresh: bool = False) -> str:
+        """Construct the pathstring for this tree node.
+
+        Arguments:
+            refresh: If True, force a refresh of the model instance
+        """
+        if refresh:
+            # Refresh the model instance from the database
+            self.refresh_from_db()
+
+        return InvenTree.helpers.constructPathString([
+            getattr(item, self.PATH_FIELD, item.pk) for item in self.path
+        ])
+
+    def validate_unique(self, exclude=None):
+        """Validate that this tree instance satisfies our uniqueness requirements.
+
+        Note that a 'unique_together' requirement for ('name', 'parent') is insufficient,
+        as it ignores cases where parent=None (i.e. top-level items)
+        """
+        super().validate_unique(exclude)
+
+        results = self.__class__.objects.filter(
+            name=self.name, parent=self.parent
+        ).exclude(pk=self.pk)
+
+        if results.exists():
+            raise ValidationError(
+                _('Duplicate names cannot exist under the same parent')
+            )
+
+    @property
+    @report.mixins.report_attribute()
+    def parentpath(self) -> list:
+        """Construct the parent path of this tree node.
+
+        Returns:
+            List of category names from the top level to the parent of this category
+        """
+        return list(self.get_ancestors())
+
+    @property
+    @report.mixins.report_attribute()
+    def path(self) -> list:
+        """Construct the complete part of this tree node.
+
+        e.g. ["Top", "Second", "Third", "This"]
+
+        Returns:
+            List of category names from the top level to this category
+        """
+        return [*self.parentpath, self]
+
+    def get_path(self) -> list:
+        """Return a list of element in the item tree.
+
+        Contains the full path to this item, with each entry containing the following data:
+
+        {
+            pk: <pk>,
+            name: <name>,
+        }
+        """
+        return [
+            {
+                'pk': item.pk,
+                'name': getattr(item, self.PATH_FIELD, item.pk),
+                **{k: getattr(item, k, None) for k in self.EXTRA_PATH_FIELDS},
+            }
+            for item in self.path
+        ]
 
 
 class InvenTreeTagsMixin(ModelFeatureMixin, models.Model):
