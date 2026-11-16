@@ -32,6 +32,7 @@ from maintenance_mode.core import (
 )
 from opentelemetry import trace
 
+import InvenTree.models
 from common.settings import get_global_setting, set_global_setting
 from common.signals import post_currency_change
 from plugin import registry
@@ -771,7 +772,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
     """
     from django.apps import apps
 
-    import InvenTree.models
+    from generic.models.base import InvenTreeTree
 
     try:
         model_class = apps.get_model(model)
@@ -779,7 +780,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
         logger.warning("rebuild_model_tree: Model '%s' does not exist", model)
         return
 
-    if not issubclass(model_class, InvenTree.models.InvenTreeTree):
+    if not issubclass(model_class, InvenTreeTree):
         logger.warning("rebuild_model_tree: Model '%s' is not a tree model", model)
         return
 

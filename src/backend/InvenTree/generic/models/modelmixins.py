@@ -19,7 +19,8 @@ from taggit.managers import TaggableManager
 import InvenTree.helpers
 import report.mixins
 from generic.modelfeatures import ModelFeatureMixin
-from generic.models.internal import InvenTreePermissionCheckMixin
+
+from .internal import InvenTreePermissionCheckMixin
 
 logger = structlog.get_logger('inventree')
 

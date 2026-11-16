@@ -29,6 +29,7 @@ import report.mixins
 from audit.helpers import audited_update
 from common.currency import currency_code_default
 from common.settings import get_global_setting
+from generic.models.base import InvenTreeMetadataModel, InvenTreeModel
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeBarcodeMixin,
@@ -102,7 +103,7 @@ class Company(
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTreeImageMixin,
-    InvenTree.models.InvenTreeMetadataModel,
+    InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
 
@@ -347,9 +348,7 @@ class Company(
         ).distinct()
 
 
-class Contact(
-    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
-):
+class Contact(InvenTree.models.InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
     Attributes:
@@ -392,7 +391,7 @@ class Contact(
         return self.name
 
 
-class Address(InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeModel):
+class Address(InvenTree.models.InvenTreeAuditMixin, InvenTreeModel):
     """An address represents a physical location where the company is located. It is possible for a company to have multiple locations.
 
     Attributes:
@@ -575,7 +574,7 @@ class ManufacturerPart(
     InvenTreeBarcodeMixin,
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeMetadataModel,
+    InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
@@ -696,7 +695,7 @@ class SupplierPart(
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
     common.models.MetaMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeModel,
 ):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 

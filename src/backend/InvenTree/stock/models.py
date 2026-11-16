@@ -41,6 +41,7 @@ from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from generic.enums import StringEnum
+from generic.models.base import InvenTreeMetadataModel, InvenTreeModel, InvenTreeTree
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeBarcodeMixin,
@@ -135,7 +136,7 @@ class StockLocation(
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.PathStringMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTreeTree,
 ):
     """Organization tree for StockItem objects.
 
@@ -445,7 +446,7 @@ class StockItem(
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeModel,
 ):
     """A StockItem object represents a quantity of physical instances of a part.
 
@@ -3714,7 +3715,7 @@ def rename_stock_item_test_result_attachment(instance, filename):
     )
 
 
-class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
+class StockItemTestResult(InvenTreeMetadataModel):
     """A StockItemTestResult records results of custom tests against individual StockItem objects.
 
     This is useful for tracking unit acceptance tests, and particularly useful when integrated

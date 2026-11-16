@@ -51,6 +51,7 @@ from company.models import (
     SupplierPart,
     default_internal_company,
 )
+from generic.models.base import InvenTreeMetadataModel, InvenTreeModel
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeBarcodeMixin,
@@ -372,7 +373,7 @@ class Order(
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.ReferenceIndexingMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeModel,
 ):
     """Abstract model for an order.
 
@@ -2192,7 +2193,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
             SalesOrderShipment.objects.create(order=instance, reference='1')
 
 
-class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
+class OrderLineItem(InvenTreeMetadataModel):
     """Abstract model for an order line item.
 
     Attributes:
@@ -2762,7 +2763,7 @@ class SalesOrderShipment(
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeModel,
 ):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 

@@ -67,6 +67,7 @@ import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import get_global_setting, global_setting_overrides
 from generic.enums import StringEnum
+from generic.models.base import InvenTreeMetadataModel, InvenTreeModel
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeNoteMixin,
@@ -157,9 +158,7 @@ class UpdatedUserMixin(models.Model):
     )
 
 
-class ProjectCode(
-    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
-):
+class ProjectCode(InvenTree.models.InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
     IMPORT_ID_FIELDS = ['code']
@@ -2042,7 +2041,7 @@ class Attachment(
     InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.MetadataMixin,
     InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeModel,
 ):
     """Class which represents an uploaded file attachment.
 
@@ -2548,7 +2547,7 @@ class InvenTreeCustomUserStateModel(models.Model):
                 return cls
 
 
-class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+class SelectionList(InvenTree.models.MetadataMixin, InvenTreeModel):
     """Class which represents a list of selectable items for parameters.
 
     A lists selection options can be either manually defined, or sourced from a plugin.
@@ -2748,9 +2747,7 @@ class SelectionListEntry(models.Model):
 
 
 class ParameterTemplate(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.MetadataMixin, InvenTreeModel
 ):
     """A ParameterTemplate provides a template for defining parameter values against various models.
 
@@ -2985,7 +2982,7 @@ class Parameter(
     InvenTree.models.InvenTreeAuditMixin,
     UpdatedUserMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeModel,
 ):
     """Class which represents a parameter value assigned to a particular model instance.
 
@@ -3264,9 +3261,7 @@ class Parameter(
         return self.template.description
 
 
-class Note(
-    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
-):
+class Note(UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTreeModel):
     """Class which represents a note assigned to a particular model instance.
 
     Attributes:
@@ -3607,7 +3602,7 @@ def after_notesimage_deleted(sender, instance, **kwargs):
         )
 
 
-class BarcodeScanResult(InvenTree.models.InvenTreeModel):
+class BarcodeScanResult(InvenTreeModel):
     """Model for storing barcode scans results."""
 
     BARCODE_SCAN_MAX_LEN = 250
@@ -3940,7 +3935,7 @@ class EmailMessage(models.Model):
         return super().delete(*args, **kwargs)
 
 
-class EmailThread(InvenTree.models.InvenTreeMetadataModel):
+class EmailThread(InvenTreeMetadataModel):
     """Model for storing email threads."""
 
     class Meta:
