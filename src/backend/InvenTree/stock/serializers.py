@@ -2042,7 +2042,6 @@ class StockAddSerializer(StockAdjustmentSerializer):
 
                 stock_item.add_stock(quantity, request.user, notes=notes, **extra)
 
-
 class StockRemoveSerializer(StockAdjustmentSerializer):
     """Serializer for removing stock from stock item(s)."""
 
@@ -2074,9 +2073,17 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
                     if field_value := item.get(field_name, None):
                         extra[field_name] = field_value
 
-                stock_item.take_stock(quantity, request.user, notes=notes, **extra)
+                if not stock_item.lock_quantity():
+                    continue
 
+                if quantity > stock_item.unallocated_quantity():
+                    raise serializers.ValidationError(
+                        _('Cannot remove stock that is allocated to an order or build')
+                    )
 
+                stock_item.take_stock(
+                    quantity, request.user, notes=notes, **extra
+                )
 class StockTransferSerializer(StockAdjustmentSerializer):
     """Serializer for transferring (moving) stock item(s)."""
 
