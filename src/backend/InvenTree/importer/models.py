@@ -2,7 +2,7 @@
 
 import json
 from collections import OrderedDict
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 
 from django.contrib.auth.models import User
@@ -859,9 +859,23 @@ class DataImportRow(models.Model):
         if commit:
             self.save()
 
-    def convert_date_field(self, value: str) -> Optional[str]:
-        """Convert an incoming date field to the correct format for the database."""
+    def convert_date_field(self, value) -> Optional[str]:
+        """Convert an incoming date field to the correct format for the database.
+
+        The value may be a string (CSV / JSON import), or a native date / datetime
+        object (Excel import via tablib/openpyxl returns date-formatted cells as
+        datetime.datetime objects).
+        """
         if value in [None, '']:
+            return None
+
+        # Native date / datetime objects (note: datetime is a subclass of date)
+        if isinstance(value, date):
+            return value.strftime('%Y-%m-%d')
+
+        value = str(value).strip()
+
+        if not value:
             return None
 
         # Attempt conversion using accepted formats
@@ -869,12 +883,19 @@ class DataImportRow(models.Model):
 
         for fmt in date_formats:
             try:
-                dt = datetime.strptime(value.strip(), fmt)
+                dt = datetime.strptime(value, fmt)
 
                 # If the date is valid, convert it to the standard format and return
                 return dt.strftime('%Y-%m-%d')
             except ValueError:
                 continue
+
+        # Full ISO-8601 datetime string - e.g. a native datetime which has been
+        # round-tripped through DjangoJSONEncoder when row_data was saved
+        try:
+            return datetime.fromisoformat(value).strftime('%Y-%m-%d')
+        except ValueError:
+            pass
 
         # If none of the formats matched, return the original value
         return value

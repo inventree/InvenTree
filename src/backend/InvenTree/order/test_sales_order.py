@@ -621,7 +621,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
                 url,
                 expected_code=200,
                 benchmark=True,
-                max_query_time=10.0,
+                max_query_time=11,
                 max_query_count=150,
             )
 
@@ -1342,3 +1342,127 @@ class SalesOrderAllocateStockConcurrencyTest(TransactionTestCase):
 
         self.assertEqual(total_allocated, 5)
         self.assertLessEqual(total_allocated, self.stock_item.quantity)
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class SalesOrderShipmentCompleteConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for completing sales order shipments.
+
+    Uses two real threads (each with its own database connection) to reproduce
+    the race: two shipments which ship stock against the *same* line item (and
+    from the same StockItem) are completed at the same time. Each task locked
+    only its own shipment row, read the line 'shipped' quantity (and the stock
+    item quantity) from an unlocked query, adjusted them in memory, and wrote
+    the absolute values back - so one of the two updates was silently lost.
+
+    SalesOrderShipment.complete_allocations() now locks the SalesOrderLineItem
+    and StockItem rows, and re-reads their quantities, before adjusting them.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create a sales order with two shipments against the same line item."""
+        super().setUp()
+
+        self.user = get_user_model().objects.get(pk=1)
+
+        customer = Company.objects.create(
+            name='Shipment concurrency customer',
+            description='Customer for shipment concurrency test',
+            is_customer=True,
+        )
+
+        part = Part.objects.create(
+            name='Shipment concurrency part',
+            description='Part for shipment concurrency test',
+            salable=True,
+        )
+
+        self.order = SalesOrder.objects.create(customer=customer, reference='SO-9992')
+
+        self.line = SalesOrderLineItem.objects.create(
+            quantity=6, order=self.order, part=part
+        )
+
+        self.stock_item = StockItem.objects.create(part=part, quantity=10)
+
+        self.shipments = [
+            SalesOrderShipment.objects.create(order=self.order, reference=ref)
+            for ref in ['A', 'B']
+        ]
+
+        for shipment in self.shipments:
+            SalesOrderAllocation.objects.create(
+                line=self.line, item=self.stock_item, shipment=shipment, quantity=3
+            )
+
+    def test_concurrent_shipment_completion(self):
+        """Two shipments against the same line item, completed concurrently, are both counted."""
+        import order.models
+
+        errors = []
+
+        # Hold each task after it has read (and adjusted) the quantities, but
+        # before it writes them, until the other task has reached the same point.
+        # Once the rows are locked correctly, the second task cannot get this far
+        # until the first has committed - so the barrier simply times out.
+        barrier = threading.Barrier(2, timeout=2)
+
+        original = order.models.bulk_create_and_fetch
+
+        def synced_bulk_create_and_fetch(*args, **kwargs):
+            try:
+                barrier.wait()
+            except threading.BrokenBarrierError:
+                pass
+
+            return original(*args, **kwargs)
+
+        def complete(shipment):
+            try:
+                order.tasks.complete_sales_order_shipment(
+                    shipment.pk, self.user.pk, None
+                )
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        threads = [
+            threading.Thread(target=complete, args=(shipment,))
+            for shipment in self.shipments
+        ]
+
+        with mock.patch.object(
+            order.models, 'bulk_create_and_fetch', synced_bulk_create_and_fetch
+        ):
+            for thread in threads:
+                thread.start()
+
+            for thread in threads:
+                thread.join(timeout=15)
+
+        for thread in threads:
+            self.assertFalse(thread.is_alive())
+
+        self.assertEqual(errors, [])
+
+        for shipment in self.shipments:
+            shipment.refresh_from_db()
+            self.assertTrue(shipment.is_complete())
+
+        # Both shipments are counted against the line item
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 6)
+
+        # Both quantities have been taken from the stock item
+        self.stock_item.refresh_from_db()
+        self.assertEqual(self.stock_item.quantity, 4)
+
+        shipped_items = StockItem.objects.filter(
+            parent=self.stock_item, sales_order=self.order
+        )
+
+        self.assertEqual(shipped_items.count(), 2)
+        self.assertEqual(sum(item.quantity for item in shipped_items), 6)

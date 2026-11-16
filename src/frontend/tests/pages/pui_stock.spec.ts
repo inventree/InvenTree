@@ -354,6 +354,13 @@ test('Stock - Stock Actions', async ({ browser }) => {
     .getByRole('menuitem', { name: 'action-menu-stock-item-actions-duplicate' })
     .click();
   await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Wait until we have navigated to the newly created (duplicate) stock item
+  await page.waitForURL(
+    (url) =>
+      /\/stock\/item\/\d+\//.test(url.pathname) &&
+      !url.pathname.includes('/stock/item/1225/')
+  );
   await page.waitForLoadState('networkidle');
 
   // Check for required values

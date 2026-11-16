@@ -143,6 +143,30 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         row = DataImportRow.objects.get(session=session, row_index=0)
         self.assertEqual(row.row_data['COMMENT'], '2024-05-01T12:30:00')
 
+    def test_convert_date_field(self):
+        """Test conversion of date values for import.
+
+        Regression test for a Sentry crash: "'datetime.datetime' object has no
+        attribute 'strip'". Excel imports provide date cells as native datetime
+        objects, which convert_date_field() previously assumed to be strings.
+        """
+        row = DataImportRow(row_index=0, row_data={})
+
+        for value, expected in [
+            (None, None),
+            ('', None),
+            ('   ', None),
+            (datetime.datetime(2024, 5, 1, 12, 30), '2024-05-01'),
+            (datetime.date(2024, 5, 1), '2024-05-01'),
+            # Native datetime after round-trip through DjangoJSONEncoder
+            ('2024-05-01T12:30:00', '2024-05-01'),
+            (' 2024-05-01 ', '2024-05-01'),
+            ('01/05/2024', '2024-05-01'),
+            ('2024/05/01', '2024-05-01'),
+            ('not a date', 'not a date'),
+        ]:
+            self.assertEqual(row.convert_date_field(value), expected, msg=value)
+
     def test_import_header_whitespace(self):
         """Test that column headers with leading/trailing whitespace are handled correctly.
 
@@ -757,6 +781,79 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
 
         # Check that there are new database records
         self.assertEqual(PartCategory.objects.count(), N + 4)
+
+    def test_manual_correction_revalidates_import_row(self):
+        """Import manually corrected data instead of the invalid CSV value."""
+        from part.models import Part
+        from stock.models import StockItem
+
+        part = Part.objects.create(
+            name='Manual correction test part',
+            description='Target part for a corrected import row',
+        )
+        initial_count = StockItem.objects.count()
+        self.assignRole('stock.change')
+
+        # Upload a row containing an invalid part reference.
+        session_data = self.post(
+            reverse('api-importer-session-list'),
+            {
+                'model_type': 'stockitem',
+                'data_file': ContentFile(
+                    'Part,Quantity\nunknown-part,5\n', 'manual_correction.csv'
+                ),
+            },
+            format='multipart',
+            expected_code=201,
+        ).data
+        session_id = session_data['pk']
+
+        # Accept the column mapping to extract and validate the CSV row.
+        self.post(
+            reverse('api-import-session-accept-fields', kwargs={'pk': session_id}),
+            expected_code=200,
+        )
+
+        row = DataImportRow.objects.get(session_id=session_id)
+        self.assertFalse(row.valid)
+        self.assertFalse(row.complete)
+        self.assertIn('part', row.errors)
+        self.assertEqual(row.row_data['Part'], 'unknown-part')
+        self.assertEqual(StockItem.objects.count(), initial_count)
+
+        original_row_data = row.row_data.copy()
+        corrected_data = {**row.data, 'part': part.pk}
+
+        # Correct the part reference through the same API used by the UI.
+        response = self.patch(
+            reverse('api-importer-row-detail', kwargs={'pk': row.pk}),
+            {'data': corrected_data},
+            format='json',
+            expected_code=200,
+        )
+        self.assertTrue(response.data['valid'])
+        self.assertFalse(response.data['errors'])
+
+        # The correction must persist and clear the previous validation error.
+        row.refresh_from_db()
+        self.assertEqual(row.data['part'], part.pk)
+        self.assertTrue(row.valid)
+        self.assertFalse(row.errors)
+        self.assertFalse(row.complete)
+        self.assertEqual(row.row_data, original_row_data)
+        self.assertEqual(StockItem.objects.count(), initial_count)
+
+        # Confirm the corrected row and check the actual imported record.
+        self.post(
+            reverse('api-import-session-accept-rows', kwargs={'pk': session_id}),
+            {'rows': [row.pk]},
+            format='json',
+            expected_code=201,
+        )
+
+        self.assertEqual(StockItem.objects.count(), initial_count + 1)
+        item = StockItem.objects.get(part=part)
+        self.assertEqual(item.quantity, 5)
 
     def test_column_mapping_lookup_field(self):
         """Test that the 'lookup_field' option can be specified via the column-mapping API."""

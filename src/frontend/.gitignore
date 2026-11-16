@@ -30,6 +30,8 @@ dist-ssr
 /.nyc_output/
 /coverage/
 /flakiness-report/
+/report/
+/blob-report/
 
 # Report generation
 stats.html

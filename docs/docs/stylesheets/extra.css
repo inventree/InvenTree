@@ -68,12 +68,20 @@ p {
 	text-align: justify;
 }
 
-div:nth-of-type(1) p {
+div:nth-of-type(1) p:not(.admonition-title) {
 	padding-top: 12px;
 }
 
-/* Remove page title  */
-.md-content h1:first-child {
+/* Use the theme code font (bootstrap.css otherwise overrides it) */
+.md-typeset code,
+.md-typeset kbd,
+.md-typeset pre {
+	font-family: var(--md-code-font-family);
+}
+
+/* Remove page title (Zensical inserts a skip-link anchor before the h1) */
+.md-content h1:first-child,
+.md-content #__skip + h1 {
 	display: none;
 }
 
@@ -153,4 +161,85 @@ div:nth-of-type(1) p {
 .badge.inventree.info {
 	background-color: #5bc0de;
 	color: #555;
+}
+
+/* HTTP method badges for the generated API schema documentation */
+.api-method {
+	display: inline-block;
+	min-width: 4.2em;
+	padding: 0.1em 0.5em;
+	border-radius: 0.2rem;
+	color: #fff;
+	font-family: var(--md-code-font-family);
+	font-size: 0.75em;
+	font-weight: 700;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.api-method-get { background-color: #2b8a3e; }
+.api-method-post { background-color: #1971c2; }
+.api-method-put { background-color: #e67700; }
+.api-method-patch { background-color: #9c36b5; }
+.api-method-delete { background-color: #c92a2a; }
+.api-method-head, .api-method-options { background-color: #495057; }
+
+/* Image carousel: scale every image to the slide height, keeping aspect ratio */
+.splide__slide {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.splide__slide img {
+	height: 100%;
+	width: auto;
+	/* Very wide images shrink to fit the carousel on narrow screens */
+	max-width: calc(100vw - 2rem);
+	object-fit: contain;
+}
+
+/* Widen the page layout (theme default is 61rem), and keep ~5% horizontal
+ * padding so the content does not run to the window edges */
+.md-grid {
+	max-width: 80rem;
+	padding-left: 5%;
+	padding-right: 5%;
+}
+
+/* ...but not for grids nested inside page content (e.g. the home page hero) */
+.md-content .md-grid {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+/* Solid primary-colour header and navigation tabs, as in the classic theme.
+ * (The Zensical "modern" variant uses a translucent neutral header.) */
+.md-header,
+.md-tabs {
+	background-color: var(--md-primary-fg-color);
+	color: var(--md-primary-bg-color);
+}
+
+.md-header {
+	backdrop-filter: none;
+}
+
+/* Search button on the coloured header (darker blue box, white text) */
+.md-header .md-search__button {
+	background-color: rgba(0, 0, 0, 0.26);
+	color: var(--md-primary-bg-color);
+}
+
+.md-header .md-search__button:hover {
+	background-color: rgba(0, 0, 0, 0.32);
+}
+
+.md-header .md-search__button::before {
+	background-color: var(--md-primary-bg-color);
+}
+
+.md-header .md-search__button::after {
+	background-color: rgba(0, 0, 0, 0.2);
+	color: var(--md-primary-bg-color);
 }

@@ -3,6 +3,7 @@
 import json
 import re
 from datetime import timedelta
+from http.cookies import SimpleCookie
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -64,9 +65,17 @@ class OAuth2ScopeTests(InvenTreeAPITestCase):
         """Perform an API request with an OAuth2 token, the way a non-browser client can.
 
         CSRF checks are enforced, but the client provides a matching CSRF cookie and header.
+
+        The client is reused, as constructing a new one reloads the middleware chain
+        (including a full WhiteNoise static file scan) on every request. Cookies are
+        reset for each request, so no session state carries over between requests.
         """
-        client = APIClient(enforce_csrf_checks=True, raise_request_exception=False)
-        client.cookies['csrftoken'] = CSRF_TOKEN
+        client = getattr(self, '_oauth2_client', None)
+        if client is None:
+            client = APIClient(enforce_csrf_checks=True, raise_request_exception=False)
+            self._oauth2_client = client
+
+        client.cookies = SimpleCookie({'csrftoken': CSRF_TOKEN})
 
         return client.generic(
             method,

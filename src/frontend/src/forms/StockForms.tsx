@@ -2195,6 +2195,7 @@ export function useStockLocationFields(): ApiFormFieldSet {
     },
     structural: {},
     external: {},
+    exclude_from_stock: {},
     custom_icon: {
       field_type: 'icon'
     },

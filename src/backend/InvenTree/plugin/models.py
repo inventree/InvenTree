@@ -14,9 +14,8 @@ from django.utils.translation import gettext_lazy as _
 import common.models
 import InvenTree.models
 import plugin.staticfiles
-from plugin import InvenTreePlugin
+from plugin import InvenTreePlugin, registry
 from plugin.events import PluginEvents, trigger_event
-from plugin.registry import registry
 
 
 class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
@@ -142,6 +141,25 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         )  # plugin cannot be pickled in some circumstances when used with drf views, remove it (#5408)
         return state
 
+    def warn_reload(self, stacklevel: int = 2):
+        """Emit a warning (in plugin testing mode) that this config triggered a registry reload."""
+        if settings.PLUGIN_TESTING:
+            warnings.warn(
+                f'A plugin registry reload was triggered for plugin {self.key}',
+                stacklevel=stacklevel,
+            )
+
+    def reload_required(self) -> bool:
+        """Return True if saving this config would require a plugin registry reload.
+
+        A reload is required when the 'active' status has changed since the
+        config was loaded (or last saved), unless the plugin is mandatory.
+        """
+        if self.is_mandatory():
+            return False
+
+        return self.active != self.__org_active
+
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
         no_reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
@@ -152,14 +170,12 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             # Force active if mandatory plugin
             self.active = True
 
+        reload_required = self.reload_required()
+
         super().save(force_insert, force_update, *args, **kwargs)
 
-        if not no_reload and self.active != self.__org_active and not mandatory:
-            if settings.PLUGIN_TESTING:
-                warnings.warn(
-                    f'A plugin registry reload was triggered for plugin {self.key}',
-                    stacklevel=2,
-                )
+        if not no_reload and reload_required:
+            self.warn_reload(stacklevel=3)
             registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
         self.__org_active = self.active

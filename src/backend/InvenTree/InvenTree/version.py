@@ -15,7 +15,7 @@ from datetime import timedelta as td
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '1.7.0 dev'
+INVENTREE_SW_VERSION = '1.8.0 dev'
 
 # Minimum supported Python version
 MIN_PYTHON_VERSION = (3, 12)
@@ -34,19 +34,8 @@ try:
         main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
         main_commit = main_repo[main_repo.head()]
     except NotGitRepository:
-        output = logger.warning
-
-        try:
-            from django.conf import settings
-
-            if settings.DOCKER:
-                output = logger.info
-        except Exception:
-            # We may not have access to settings at this point
-            pass
-
-        output(git_warning_txt)
-
+        if os.environ.get('INVENTREE_DOCKER', 'false') != 'true':
+            logger.warning(git_warning_txt)
         main_repo = None
         main_commit = None
 

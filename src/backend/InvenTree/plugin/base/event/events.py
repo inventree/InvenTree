@@ -16,8 +16,7 @@ import InvenTree.exceptions
 from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData, isRunningMigrations
 from InvenTree.tasks import bulk_offload_task, offload_task
-from plugin import PluginMixinEnum
-from plugin.registry import registry
+from plugin import PluginMixinEnum, registry
 
 tracer = trace.get_tracer(__name__)
 logger = structlog.get_logger('inventree')

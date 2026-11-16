@@ -47,6 +47,7 @@ from build.status_codes import (
     RepairOrderStatusGroups,
 )
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from generic.states.api import StatusView
 from generic.states.api_helpers import FSMTransitionMixin
 from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
@@ -59,6 +60,7 @@ from InvenTree.filters import (
 from InvenTree.helpers import str2bool
 from InvenTree.helpers_api import InvenTreeApiRouter, RetrieveUpdateDestroyModelViewSet
 from InvenTree.mixins import (
+    ActionLockMixin,
     CreateAPI,
     ListCreateAPI,
     OutputOptionsMixin,
@@ -358,6 +360,7 @@ class BuildListOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
 
 
+@search_provider(ref_names=['build'])
 class BuildList(
     DataExportViewMixin,
     BuildMixin,
@@ -754,8 +757,14 @@ class BuildLineDetail(BuildLineMixin, OutputOptionsMixin, RetrieveUpdateDestroyA
         return None
 
 
-class BuildOrderContextMixin:
-    """Mixin class which adds build order as serializer context variable."""
+class BuildOrderContextMixin(ActionLockMixin):
+    """Mixin class which adds build order as serializer context variable.
+
+    The build order row is locked for the duration of the action (see ActionLockMixin),
+    so the action operates on (and saves) up-to-date build order data.
+    """
+
+    lock_model = Build
 
     def get_build(self):
         """Return the Build object associated with this API endpoint."""
@@ -1430,6 +1439,7 @@ class RepairOrderFilter(FilterSet):
         return queryset.filter(q1 | q2 | q3).distinct()
 
 
+@search_provider(ref_names=['repairorder'])
 class RepairOrderViewSet(
     DataExportViewMixin,
     OutputOptionsMixin,

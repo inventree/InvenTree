@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from common.admin_shared import NoAddAdminMixin
 from plugin import models
-from plugin.registry import registry as pl_registry
+from plugin import registry as pl_registry
 
 
 def plugin_update(queryset, new_status: bool):

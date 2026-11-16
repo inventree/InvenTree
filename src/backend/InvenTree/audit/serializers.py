@@ -159,7 +159,11 @@ class AuditLogEntrySerializer(
 
     changes_detail = OptionalField(
         serializer_class=serializers.SerializerMethodField,
-        serializer_kwargs={'read_only': True, 'label': _('Change Details')},
+        serializer_kwargs={
+            'read_only': True,
+            'allow_null': True,
+            'label': _('Change Details'),
+        },
         default_include=False,
     )
 

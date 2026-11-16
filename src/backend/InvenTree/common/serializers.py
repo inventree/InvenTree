@@ -16,10 +16,12 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from taggit.models import Tag
 
+import common.admin_messages
 import common.filters
 import common.models as common_models
 import common.validators
 import generic.states.custom
+from generic.modelfeatures import get_model_features
 from importer.registry import register_importer
 from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.helpers import get_objectreference
@@ -506,6 +508,31 @@ class CustomStateSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
     )
 
 
+class AdminMessageSerializer(serializers.Serializer):
+    """Serializer for a (read-only) staff-facing system message.
+
+    Instances are common.admin_messages.AdminMessage dataclass objects.
+    """
+
+    key = serializers.CharField(read_only=True)
+    title = serializers.CharField(read_only=True)
+    message = serializers.CharField(read_only=True)
+    classifier = serializers.ChoiceField(
+        read_only=True,
+        choices=[
+            (c.value, c.value) for c in common.admin_messages.AdminMessageClassifier
+        ],
+    )
+    code = serializers.CharField(read_only=True, allow_null=True)
+    plugin = serializers.CharField(read_only=True, allow_null=True)
+
+
+class AdminMessageListSerializer(serializers.Serializer):
+    """Serializer for the staff-only system messages endpoint."""
+
+    messages = AdminMessageSerializer(many=True, read_only=True)
+
+
 class FlagSerializer(serializers.Serializer):
     """Serializer for feature flags."""
 
@@ -528,7 +555,7 @@ class FlagSerializer(serializers.Serializer):
         return data
 
 
-class ContentTypeSerializer(serializers.Serializer):
+class ContentTypeSerializer(FilterableSerializerMixin, serializers.ModelSerializer):
     """Serializer for ContentType models."""
 
     pk = serializers.IntegerField(read_only=True)
@@ -537,15 +564,33 @@ class ContentTypeSerializer(serializers.Serializer):
     app_labeled_name = serializers.CharField(read_only=True)
     is_plugin = serializers.SerializerMethodField('get_is_plugin', read_only=True)
 
+    features = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'read_only': True},
+        default_include=False,
+        filter_name='features',
+    )
+
     class Meta:
         """Meta options for ContentTypeSerializer."""
 
         model = ContentType
-        fields = ['pk', 'app_label', 'model', 'app_labeled_name', 'is_plugin']
+        fields = [
+            'pk',
+            'app_label',
+            'model',
+            'app_labeled_name',
+            'is_plugin',
+            'features',
+        ]
 
     def get_is_plugin(self, obj) -> bool:
         """Return True if the model is a plugin model."""
         return obj.app_label in plugin_registry.installed_apps
+
+    def get_features(self, obj) -> list[str]:
+        """Return the list of generic features supported by this model type."""
+        return get_model_features(obj.model_class())
 
 
 @register_importer()

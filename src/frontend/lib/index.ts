@@ -76,6 +76,12 @@ export {
 } from './functions/Navigation';
 
 export {
+  renderLink,
+  sanitizeLinkUrl,
+  type RenderLinkOptions
+} from './functions/Links';
+
+export {
   permissionDenied,
   invalidResponse,
   showTimeoutNotification

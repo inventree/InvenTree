@@ -40,6 +40,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { openGlobalPreview } from '../../states/PreviewDrawerState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import {
   PARAMETER_FILTER_OPERATORS,
@@ -169,6 +170,12 @@ export default function ParametricDataTable({
   const table = useTable(`parametric-data-${modelType}`);
   const user = useUserState();
   const navigate = useNavigate();
+
+  const userSettings = useUserSettingsState();
+
+  const showPreviewPanel = useMemo(() => {
+    return userSettings.isSet('ENABLE_PREVIEW_PANEL');
+  }, [userSettings]);
 
   useEffect(() => {
     if (refreshRef) {
@@ -502,7 +509,7 @@ export default function ParametricDataTable({
               onParameterClick(col.extra.template, record);
             } else if (record?.pk) {
               const url = getDetailUrl(modelType, record.pk);
-              if (eventModified(event as any)) {
+              if (!showPreviewPanel || eventModified(event as any)) {
                 navigateToLink(url, navigate, event);
               } else {
                 openGlobalPreview(modelType, record.pk);

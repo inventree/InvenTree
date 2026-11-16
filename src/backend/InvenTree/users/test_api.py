@@ -1,12 +1,19 @@
 """API tests for various user / auth API endpoints."""
 
 import datetime
+import time
 from unittest import mock
 
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
 
+from allauth.account.internal.flows.login import (
+    _AUTHENTICATION_METHODS_USER_SESSION_KEY,
+    AUTHENTICATION_METHODS_SESSION_KEY,
+)
+from allauth.account.internal.userkit import user_id_to_str
 from allauth.account.models import EmailAddress
+from allauth.mfa.models import Authenticator
 
 import InvenTree.helpers
 from common.models import NotificationMessage
@@ -376,10 +383,16 @@ class UserAPITests(InvenTreeAPITestCase):
         ]:
             self.assertIn(field, response.data)
 
-        # Change their own username
-        for name in ['Henry', 'Sally']:
-            response = self.patch(url, data={'username': name}, expected_code=200)
-            self.assertEqual(response.data['username'], name)
+        # Username and email are read-only
+        for name in ['username', 'email']:
+            self.assertTrue(fields[name]['read_only'])
+
+        # Users can change their own name
+        response = self.patch(
+            url, data={'first_name': 'Henry', 'last_name': 'Sally'}, expected_code=200
+        )
+        self.assertEqual(response.data['first_name'], 'Henry')
+        self.assertEqual(response.data['last_name'], 'Sally')
 
         # Defined starting point for the user
         for v in [True, False]:
@@ -403,6 +416,144 @@ class UserAPITests(InvenTreeAPITestCase):
 
         # User cannot fetch their own details if they are not active
         response = self.get(url, expected_code=401)
+
+    def test_me_endpoint_identity_fields_read_only(self):
+        """A user must not be able to change their own username or email via '/api/user/me/'.
+
+        - Setting another user's email breaks email-based flows (login link) for that user
+        - Changing email bypasses allauth email verification
+        - Claiming an unused username hijacks a future LDAP / remote-user login
+        """
+        url = reverse('api-user-me')
+
+        victim = User.objects.create_user(
+            username='victim', email='victim@example.com', password='password'
+        )
+
+        original_username = self.user.username
+        original_email = self.user.email
+
+        for data in [
+            {'email': victim.email},
+            {'email': 'unverified@example.com'},
+            {'username': 'not_yet_logged_in'},
+            {'username': 'not_yet_logged_in', 'email': 'other@example.com'},
+        ]:
+            # Read-only fields are silently ignored
+            response = self.patch(url, data=data, expected_code=200)
+            self.assertEqual(response.data['username'], original_username)
+            self.assertEqual(response.data['email'], original_email)
+
+            self.user.refresh_from_db()
+            self.assertEqual(self.user.username, original_username)
+            self.assertEqual(self.user.email, original_email)
+
+        # The victim's email must still be unique
+        self.assertEqual(User.objects.filter(email__iexact=victim.email).count(), 1)
+        self.assertFalse(User.objects.filter(username='not_yet_logged_in').exists())
+
+        # Full update (PUT) must not change the fields either
+        response = self.put(
+            url,
+            data={
+                'username': 'not_yet_logged_in',
+                'email': victim.email,
+                'first_name': 'A',
+                'last_name': 'B',
+            },
+            expected_code=200,
+        )
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, original_username)
+        self.assertEqual(self.user.email, original_email)
+        self.assertEqual(self.user.first_name, 'A')
+
+    def test_admin_can_edit_user_identity(self):
+        """A staff user with the 'admin' role can still change another user's username and email."""
+        other = User.objects.create_user(
+            username='other', email='other@example.com', password='password'
+        )
+        url = reverse('api-user-detail', kwargs={'pk': other.pk})
+
+        # Without staff + admin role, no write access
+        self.patch(url, data={'username': 'renamed'}, expected_code=403)
+
+        self.assignRole('admin.change')
+        self.user.is_staff = True
+        self.user.save()
+
+        response = self.patch(
+            url,
+            data={'username': 'renamed', 'email': 'renamed@example.com'},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['username'], 'renamed')
+        self.assertEqual(response.data['email'], 'renamed@example.com')
+
+        other.refresh_from_db()
+        self.assertEqual(other.username, 'renamed')
+        self.assertEqual(other.email, 'renamed@example.com')
+
+    def test_admin_cannot_set_duplicate_email(self):
+        """An admin cannot assign an email address which is already in use by another user.
+
+        Email-based flows (password reset, login link) fail silently for
+        a user whose email address is shared with another account.
+        """
+        self.assignRole('admin.change')
+        self.assignRole('admin.add')
+        self.user.is_staff = True
+        self.user.save()
+
+        first = User.objects.create_user(
+            username='first', email='first@example.com', password='password'
+        )
+        second = User.objects.create_user(
+            username='second', email='second@example.com', password='password'
+        )
+
+        # An address known only to allauth (e.g. a secondary address) is also taken
+        EmailAddress.objects.create(
+            user=first, email='first.alt@example.com', verified=True
+        )
+
+        url = reverse('api-user-detail', kwargs={'pk': second.pk})
+
+        for email in [
+            'first@example.com',
+            'FIRST@Example.com',  # Case-insensitive match
+            'first.alt@example.com',
+        ]:
+            response = self.patch(url, data={'email': email}, expected_code=400)
+            self.assertIn(
+                'A user with this email address already exists',
+                str(response.data['email']),
+            )
+
+        second.refresh_from_db()
+        self.assertEqual(second.email, 'second@example.com')
+
+        # Re-submitting the user's own address (e.g. a full PUT from the edit form) is fine
+        response = self.patch(
+            url,
+            data={'email': 'SECOND@example.com', 'first_name': 'Sec'},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['first_name'], 'Sec')
+
+        # As is a new, unused address, or a blank one
+        for email in ['new@example.com', '']:
+            response = self.patch(url, data={'email': email}, expected_code=200)
+            self.assertEqual(response.data['email'], email)
+
+        # User creation also rejects duplicates
+        response = self.post(
+            reverse('api-user-list'),
+            data={'username': 'third', 'email': 'First@example.com'},
+            expected_code=400,
+        )
+        self.assertIn('email', response.data)
+        self.assertFalse(User.objects.filter(username='third').exists())
 
     def test_me_endpoint_delete_is_blocked(self):
         """A user must not be able to delete their own account via '/api/user/me/'."""
@@ -765,6 +916,76 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertEqual(token.token_version, 2)
         self.assertIsNone(token.last_seen)
 
+    def set_auth_time(self, age: float):
+        """Record an allauth authentication event in the test client session.
+
+        Arguments:
+            age: How many seconds ago the authentication occurred
+        """
+        session = self.client.session
+        session[AUTHENTICATION_METHODS_SESSION_KEY] = [
+            {
+                'method': 'mfa',
+                'type': 'totp',
+                'reauthenticated': True,
+                'at': time.time() - age,
+            }
+        ]
+        session[_AUTHENTICATION_METHODS_USER_SESSION_KEY] = user_id_to_str(self.user)
+        session.save()
+
+    def test_token_mfa_reauthentication(self):
+        """Test that MFA users must have recently authenticated to mint a token.
+
+        Every endpoint which issues a new API token must enforce this check.
+        Otherwise an aged (or stolen) session could be converted into a
+        long-lived API token without the second factor.
+        """
+        Authenticator.objects.create(
+            user=self.user, type=Authenticator.Type.TOTP, data={'secret': 'abc'}
+        )
+
+        n_tokens = ApiToken.objects.filter(user=self.user).count()
+
+        endpoints = [
+            lambda name: self.get(
+                reverse('api-token'), data={'name': name}, expected_code=None
+            ),
+            lambda name: self.get(
+                reverse('api-token_legacy'), data={'name': name}, expected_code=None
+            ),
+            lambda name: self.post(
+                reverse('api-token-list'), data={'name': name}, expected_code=None
+            ),
+        ]
+
+        # No authentication record, or an aged one: reauthentication is required
+        for age in [None, 600]:
+            if age is not None:
+                self.set_auth_time(age)
+
+            for idx, mint in enumerate(endpoints):
+                response = mint(f'mfa-{age}-{idx}')
+                self.assertEqual(response.status_code, 401, response.data)
+                self.assertEqual(response.data['id'], 'reauthentication_required')
+
+                flows = [flow['id'] for flow in response.data['data']['flows']]
+                self.assertIn('mfa_reauthenticate', flows)
+
+        # No tokens were issued
+        self.assertEqual(ApiToken.objects.filter(user=self.user).count(), n_tokens)
+
+        # After recent (re)authentication, tokens can be issued
+        self.set_auth_time(10)
+
+        self.get(reverse('api-token'), data={'name': 'mfa-ok-0'}, expected_code=200)
+        response = self.post(
+            reverse('api-token-list'), data={'name': 'mfa-ok-1'}, expected_code=201
+        )
+        self.assertIn('token', response.data)
+
+        self.assertEqual(ApiToken.objects.filter(user=self.user).count(), n_tokens + 2)
+
     def test_token_v1(self):
         """Test that v1 API tokens still work."""
         # Create a v1 token via model - this is NOT recommended; use v2 tokens
@@ -899,3 +1120,126 @@ class RuleSetPermissionTests(InvenTreeAPITestCase):
 
         self.patch(group_url, {'name': 'renamed-group'}, expected_code=403)
         self.patch(ruleset_url, {'can_change': True}, expected_code=403)
+
+
+class NewUserMfaOnboardingTests(InvenTreeAPITestCase):
+    """Regression tests for onboarding admin-created users while MFA is enforced.
+
+    Ref: https://github.com/inventree/InvenTree/issues/13238
+    """
+
+    NEW_PASSWORD = 'Corr3ct-Horse-Battery-Staple!'
+
+    def setUp(self):
+        """Allow the test user to create other users."""
+        super().setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.assignRole('admin.add')
+
+    def create_user(self, username='newbie', email='newbie@example.org'):
+        """Create a new user via the API, as an administrator would."""
+        self.post(
+            reverse('api-user-list'),
+            data={
+                'username': username,
+                'first_name': 'New',
+                'last_name': 'User',
+                'email': email,
+            },
+            expected_code=201,
+        )
+        return User.objects.get(username=username)
+
+    def reset_password(self, user):
+        """Complete the headless password reset flow using a valid reset key."""
+        from allauth.account.forms import default_token_generator
+        from allauth.account.utils import user_pk_to_url_str
+
+        key = f'{user_pk_to_url_str(user)}-{default_token_generator.make_token(user)}'
+
+        response = self.client.post(
+            reverse('browser:account:reset_password'),
+            {'key': key, 'password': self.NEW_PASSWORD},
+            content_type='application/json',
+        )
+        # Password reset does not log the user in -> 401 'unauthenticated' response
+        self.assertIn(response.status_code, [200, 401], response.content)
+
+    def get_totp(self):
+        """Request a TOTP secret (first step of MFA registration)."""
+        return self.client.get(reverse('browser:mfa:manage_totp'))
+
+    def test_new_user_can_register_mfa(self):
+        """A new user must be able to register MFA after resetting their password."""
+        new_user = self.create_user()
+
+        email = EmailAddress.objects.get(user=new_user)
+        self.assertFalse(email.verified)
+        self.assertFalse(new_user.has_usable_password())
+
+        self.client.logout()
+
+        with mock.patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}):
+            self.reset_password(new_user)
+
+            # Completing the reset proves ownership of the mailbox
+            email.refresh_from_db()
+            self.assertTrue(email.verified)
+
+            # The new user can now log in with their new password...
+            response = self.client.post(
+                reverse('browser:account:login'),
+                {'username': 'newbie', 'password': self.NEW_PASSWORD},
+                content_type='application/json',
+            )
+            self.assertEqual(response.status_code, 200, response.content)
+
+            # ...is still blocked from the API until MFA is set up...
+            response = self.client.get(reverse('api-part-list'))
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response.json()['id'], 'mfa_register')
+
+            # ...but can obtain a TOTP secret to register MFA
+            response = self.get_totp()
+            self.assertEqual(response.status_code, 404, response.content)
+            self.assertIn('secret', response.json()['meta'])
+
+    def test_unverified_email_blocks_mfa_registration(self):
+        """Without a verified email, MFA registration is refused (the original bug)."""
+        new_user = self.create_user()
+        new_user.set_password(self.NEW_PASSWORD)
+        new_user.save()
+
+        self.client.logout()
+        self.client.login(username='newbie', password=self.NEW_PASSWORD)
+
+        response = self.get_totp()
+        self.assertEqual(response.status_code, 409, response.content)
+        self.assertEqual(response.json()['errors'][0]['code'], 'unverified_email')
+
+    def test_reset_with_multiple_addresses(self):
+        """Do not verify any address if the user has more than one."""
+        new_user = self.create_user()
+        EmailAddress.objects.create(
+            user=new_user, email='other@example.org', primary=False, verified=False
+        )
+
+        self.client.logout()
+        self.reset_password(new_user)
+
+        self.assertFalse(
+            EmailAddress.objects.filter(user=new_user, verified=True).exists()
+        )
+
+    def test_reset_with_mismatched_address(self):
+        """Do not verify an address which does not match the account email."""
+        new_user = self.create_user()
+        EmailAddress.objects.filter(user=new_user).update(email='stale@example.org')
+
+        self.client.logout()
+        self.reset_password(new_user)
+
+        self.assertFalse(
+            EmailAddress.objects.filter(user=new_user, verified=True).exists()
+        )

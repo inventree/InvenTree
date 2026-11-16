@@ -14,6 +14,12 @@ To make MFA mandatory for all users:
 
 1. Enable it in the [global settings](../settings/global.md).
 
+### Email Verification
+
+Setting up MFA requires a verified email address. Users created by an administrator start with an unverified address; completing the password reset from their welcome email verifies it, after which they can set up MFA on first login.
+
+If a user's email address is still unverified (for example, if their account has more than one address), the MFA setup page offers to resend the verification email. As a last resort, an admin can mark the address as verified in the [Database Admin interface](../settings/db_admin.md) (*Accounts* → *Email addresses*).
+
 ### Security Consideration
 
 Password based [basic authentication](../api/index.md#basic-auth) against the API is refused for users with MFA configured, and for all users while MFA is enforced. API clients should use tokens (generated in the user interface) or OAuth2 instead.

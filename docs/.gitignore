@@ -12,6 +12,7 @@ site/
 
 # Generated API schema files
 docs/api/schema/*.yml
+docs/api/schema/*.md
 
 # Temporary cache files
 url_cache.txt

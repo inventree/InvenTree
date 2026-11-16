@@ -19,6 +19,7 @@ from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections, transaction
 from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -32,6 +33,7 @@ from maintenance_mode.core import (
 from opentelemetry import trace
 
 from common.settings import get_global_setting, set_global_setting
+from common.signals import post_currency_change
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -1093,6 +1095,12 @@ def update_exchange_rates(force: bool = False):
         logger.warning('Could not update exchange rates - database not ready')
     except Exception as e:  # pragma: no cover
         logger.exception('Error updating exchange rates: %s', type(e))
+
+
+@receiver(post_currency_change, dispatch_uid='receive_update_exchange_rates')
+def receive_update_exchange_rates(*args, **kwargs):
+    """Trigger exchange rate update."""
+    update_exchange_rates(True)
 
 
 @tracer.start_as_current_span('run_backup')
