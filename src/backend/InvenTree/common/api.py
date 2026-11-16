@@ -1517,7 +1517,7 @@ class InstanceInfoView(APIView):
     )
     def get(self, request, *args, **kwargs):
         """Return counts of attachments, notes and parameters for the given instance."""
-        from InvenTree.models import (
+        from generic.models.modelmixins import (
             InvenTreeAttachmentMixin,
             InvenTreeNoteMixin,
             InvenTreeParameterMixin,

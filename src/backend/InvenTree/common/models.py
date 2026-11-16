@@ -67,6 +67,12 @@ import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import get_global_setting, global_setting_overrides
 from generic.enums import StringEnum
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
@@ -2035,7 +2041,7 @@ def rename_attachment(instance, filename: str):
 class Attachment(
     InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeTagsMixin,
     InvenTree.models.InvenTreeModel,
 ):
     """Class which represents an uploaded file attachment.
@@ -2322,8 +2328,6 @@ class Attachment(
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this attachment."""
-        from InvenTree.models import InvenTreeAttachmentMixin
-
         model_class = common.validators.attachment_model_class_from_label(
             self.model_type
         )
@@ -3183,8 +3187,6 @@ class Parameter(
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this parameter."""
-        from InvenTree.models import InvenTreeParameterMixin
-
         model_class = self.model_type.model_class()
 
         if not issubclass(model_class, InvenTreeParameterMixin):
@@ -3198,8 +3200,6 @@ class Parameter(
         The linked content_object can implement custom checks by overriding
         the 'check_parameter_edit' method.
         """
-        from InvenTree.models import InvenTreeParameterMixin
-
         # content_object is None (rather than raising) if the target row is
         # missing - GenericForeignKey.__get__ catches ObjectDoesNotExist
         # internally, it never propagates it.
@@ -3210,8 +3210,6 @@ class Parameter(
 
     def check_delete(self):
         """Check if this parameter can be deleted."""
-        from InvenTree.models import InvenTreeParameterMixin
-
         instance = self.content_object
 
         if instance and isinstance(instance, InvenTreeParameterMixin):
@@ -3475,8 +3473,6 @@ class Note(
 
     def check_save(self):
         """Check if this note can be saved."""
-        from InvenTree.models import InvenTreeNoteMixin
-
         if self.template or not self.model_type:
             return
 
@@ -3490,8 +3486,6 @@ class Note(
 
     def check_delete(self):
         """Check if this note can be deleted."""
-        from InvenTree.models import InvenTreeNoteMixin
-
         if self.template or not self.model_type:
             return
 
@@ -3507,8 +3501,6 @@ class Note(
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this note."""
-        from InvenTree.models import InvenTreeNoteMixin
-
         if self.template:
             return user.is_staff
 

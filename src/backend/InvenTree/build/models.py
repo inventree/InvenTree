@@ -49,6 +49,11 @@ from build.validators import (
 from common.models import ProjectCode
 from common.settings import get_global_setting
 from generic.enums import StringEnum
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import (
     DEFERRABLE,
     Deprecations,
@@ -65,6 +70,7 @@ from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = structlog.get_logger('inventree')
+from generic.models.modelmixins import InvenTreeBarcodeMixin, InvenTreeParameterMixin
 
 
 class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
@@ -95,11 +101,11 @@ class Build(
     InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     InvenTree.models.ReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,

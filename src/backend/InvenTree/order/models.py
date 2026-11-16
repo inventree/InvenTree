@@ -51,6 +51,13 @@ from company.models import (
     SupplierPart,
     default_internal_company,
 )
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import (
     RETURN_VALUE,
     Deprecations,
@@ -357,11 +364,11 @@ class TransferOrderReportContext(BaseOrderReportContext, TypedDict):
 class Order(
     StatusCodeMixin,
     StateTransitionMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.ReferenceIndexingMixin,
@@ -2748,11 +2755,11 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict
 
 class SalesOrderShipment(
     InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeModel,

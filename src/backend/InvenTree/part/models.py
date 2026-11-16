@@ -46,6 +46,14 @@ from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.icons import validate_icon
 from common.settings import get_global_setting
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeImageMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeTagsMixin,
+)
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
@@ -64,7 +72,7 @@ logger = structlog.get_logger('inventree')
 class PartCategory(
     InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
-    InvenTree.models.InvenTreeParameterMixin,
+    InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PathStringMixin,
     InvenTree.models.InvenTreeTree,
@@ -464,13 +472,13 @@ class PartReportContext(report.mixins.BaseReportContext, TypedDict):
 class Part(
     InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.InvenTreeImageMixin,
+    InvenTreeImageMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeTree,
 ):

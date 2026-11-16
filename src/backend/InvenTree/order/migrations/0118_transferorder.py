@@ -12,6 +12,7 @@ import order.status_codes
 import order.validators
 from django.conf import settings
 from django.db import migrations, models
+import generic.models.modelmixins
 
 
 class Migration(migrations.Migration):
@@ -289,7 +290,7 @@ class Migration(migrations.Migration):
             bases=(
                 generic.states.states.StatusCodeMixin,
                 generic.states.transition.StateTransitionMixin,
-                InvenTree.models.InvenTreeAttachmentMixin,
+                generic.models.modelmixins.InvenTreeAttachmentMixin,
                 InvenTree.models.InvenTreePermissionCheckMixin,
                 InvenTree.models.ContentTypeMixin,
                 InvenTree.models.PluginValidationMixin,

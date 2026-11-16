@@ -29,6 +29,14 @@ import report.mixins
 from audit.helpers import audited_update
 from common.currency import currency_code_default
 from common.settings import get_global_setting
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeImageMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeTagsMixin,
+)
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from order.status_codes import PurchaseOrderStatusGroups
 
@@ -88,12 +96,12 @@ def default_internal_company() -> Optional[int]:
 
 class Company(
     InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeParameterMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.InvenTreeImageMixin,
+    InvenTreeImageMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
@@ -562,11 +570,11 @@ class Address(InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMo
 
 class ManufacturerPart(
     InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeParameterMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
@@ -681,12 +689,12 @@ class ManufacturerPart(
 
 class SupplierPart(
     InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     common.models.MetaMixin,
     InvenTree.models.InvenTreeModel,
 ):

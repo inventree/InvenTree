@@ -41,6 +41,13 @@ from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from generic.enums import StringEnum
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -122,9 +129,9 @@ class StockLocationReportContext(report.mixins.BaseReportContext):
 
 class StockLocation(
     InvenTree.models.PluginValidationMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeParameterMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.PathStringMixin,
     InvenTree.models.MetadataMixin,
@@ -430,10 +437,10 @@ STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 class StockItem(
     InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
