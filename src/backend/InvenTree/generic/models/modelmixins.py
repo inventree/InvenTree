@@ -26,6 +26,17 @@ from .internal import InvenTreePermissionCheckMixin
 logger = structlog.get_logger('inventree')
 
 
+class ContentTypeMixin:
+    """Mixin class which supports retrieval of the ContentType for a model instance."""
+
+    @classmethod
+    def get_content_type(cls):
+        """Return the ContentType object associated with this model."""
+        from django.contrib.contenttypes.models import ContentType
+
+        return ContentType.objects.get_for_model(cls)
+
+
 class InvenTreeAuditMixin(ModelFeatureMixin):
     """Opt a model in to the audit log (field-level change history).
 

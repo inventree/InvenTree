@@ -12,11 +12,8 @@ from mptt.models import MPTTModel
 
 import InvenTree.exceptions
 import InvenTree.sentry
-from generic.models.modelmixins import (
-    ContentTypeMixin,
-    MetadataMixin,
-    PluginValidationMixin,
-)
+from generic.models.internal import ContentTypeMixin
+from generic.models.modelmixins import MetadataMixin, PluginValidationMixin
 
 logger = structlog.get_logger('inventree')
 

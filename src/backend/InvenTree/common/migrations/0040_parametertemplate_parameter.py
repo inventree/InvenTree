@@ -6,7 +6,7 @@ import django.core.validators
 import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
-
+import generic.models.internal
 
 class Migration(migrations.Migration):
 
@@ -124,7 +124,7 @@ class Migration(migrations.Migration):
                         "db_table": "part_partparametertemplate",
                     },
                     bases=(
-                        InvenTree.models.ContentTypeMixin,
+                        generic.models.internal.ContentTypeMixin,
                         InvenTree.models.PluginValidationMixin,
                         models.Model,
                     ),
@@ -237,7 +237,7 @@ class Migration(migrations.Migration):
                         "unique_together": {("model_type", "model_id", "template")},
                     },
                     bases=(
-                        InvenTree.models.ContentTypeMixin,
+                        generic.models.internal.ContentTypeMixin,
                         InvenTree.models.PluginValidationMixin,
                         models.Model,
                     ),

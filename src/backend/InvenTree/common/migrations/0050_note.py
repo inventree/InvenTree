@@ -5,6 +5,7 @@ import InvenTree.models
 import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
+import generic.models.internal
 
 
 class Migration(migrations.Migration):
@@ -118,7 +119,7 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "Notes",
             },
             bases=(
-                InvenTree.models.ContentTypeMixin,
+                generic.models.internal.ContentTypeMixin,
                 InvenTree.models.PluginValidationMixin,
                 models.Model,
             ),

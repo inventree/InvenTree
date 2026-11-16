@@ -20,3 +20,14 @@ class InvenTreePermissionCheckMixin:
         """
         perm = f'{cls._meta.app_label}.{permission}_{cls._meta.model_name}'
         return user.has_perm(perm)
+
+
+class ContentTypeMixin:
+    """Mixin class which supports retrieval of the ContentType for a model instance."""
+
+    @classmethod
+    def get_content_type(cls):
+        """Return the ContentType object associated with this model."""
+        from django.contrib.contenttypes.models import ContentType
+
+        return ContentType.objects.get_for_model(cls)

@@ -292,7 +292,7 @@ class Migration(migrations.Migration):
                 generic.states.transition.StateTransitionMixin,
                 generic.models.modelmixins.InvenTreeAttachmentMixin,
                 generic.models.internal.InvenTreePermissionCheckMixin,
-                InvenTree.models.ContentTypeMixin,
+                generic.models.internal.ContentTypeMixin,
                 InvenTree.models.PluginValidationMixin,
                 models.Model,
             ),
@@ -423,7 +423,7 @@ class Migration(migrations.Migration):
                 "verbose_name": "Transfer Order Line Item",
             },
             bases=(
-                InvenTree.models.ContentTypeMixin,
+                generic.models.internal.ContentTypeMixin,
                 InvenTree.models.PluginValidationMixin,
                 models.Model,
             ),

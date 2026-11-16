@@ -463,17 +463,6 @@ class ReferenceIndexingMixin(models.Model):
     reference_int = models.BigIntegerField(default=0)
 
 
-class ContentTypeMixin:
-    """Mixin class which supports retrieval of the ContentType for a model instance."""
-
-    @classmethod
-    def get_content_type(cls):
-        """Return the ContentType object associated with this model."""
-        from django.contrib.contenttypes.models import ContentType
-
-        return ContentType.objects.get_for_model(cls)
-
-
 def notify_staff_users_of_error(instance, label: str, context: dict):
     """Helper function to notify staff users of an error."""
     import common.models
