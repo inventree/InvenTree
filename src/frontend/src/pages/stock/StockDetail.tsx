@@ -40,11 +40,6 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -63,7 +58,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -116,11 +110,6 @@ export default function StockDetail() {
     pk: stockitem?.part,
     hasPrimaryKey: true,
     defaultValue: {}
-  });
-
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.stockitem,
-    modelId: stockitem?.pk
   });
 
   const showBuildAllocations: boolean = useMemo(() => {
@@ -186,8 +175,6 @@ export default function StockDetail() {
     // Fall back to whether this is an assembly or not
     return stockitem?.part_detail?.assembly;
   }, [trackedBomItemQuery, stockitem]);
-
-  const showHistory = useShowHistoryPanel();
 
   const stockPanels: PanelType[] = useMemo(() => {
     return [
@@ -323,32 +310,15 @@ export default function StockDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      AttachmentPanel({
-        model_type: ModelType.stockitem,
-        model_id: stockitem.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.stockitem,
-        model_id: stockitem.pk,
-        note_count: instanceInfo.note_count
-      }),
-      HistoryPanel({
-        model_type: ModelType.stockitem,
-        model_id: stockitem.pk,
-        visible: showHistory
-      })
+      }
     ];
   }, [
-    showHistory,
     showSalesAllocations,
     showBuildAllocations,
     showInstalledItems,
     stockitem,
     id,
-    user,
-    instanceInfo
+    user
   ]);
 
   const breadcrumbs = useMemo(
