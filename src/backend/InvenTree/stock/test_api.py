@@ -63,11 +63,13 @@ class StockAPITestCase(InvenTreeAPITestCase):
 
     def allocate_to_sales_order(self, item: StockItem, quantity):
         """Allocate a quantity of the provided stock item against an open sales order."""
+        n = order.models.SalesOrder.objects.count() + 1
+
         customer = company.models.Company.objects.create(
-            name=f'Allocation Customer {item.pk}', is_customer=True
+            name=f'Allocation Customer {n}', is_customer=True
         )
         so = order.models.SalesOrder.objects.create(
-            customer=customer, reference=f'SO-{9000 + item.pk}'
+            customer=customer, reference=f'SO-ALLOC-{n}'
         )
         line = order.models.SalesOrderLineItem.objects.create(
             order=so, part=item.part, quantity=quantity
@@ -1182,6 +1184,87 @@ class StockItemListTest(StockAPITestCase):
             data = self.process_csv(data_file)
 
             self.assertGreaterEqual(len(data), 2500)
+
+    def test_allocated_quantity(self):
+        """The 'allocated' API field must match StockItem.allocation_count().
+
+        Only active allocations are counted:
+        - Build order allocations
+        - Sales order allocations against open orders, which are not yet shipped
+        - Transfer order allocations against open orders
+        """
+        from order.status_codes import SalesOrderStatus, TransferOrderStatus
+
+        assembly = Part.objects.create(
+            name='AQ Assembly', description='Allocated quantity test', assembly=True
+        )
+        component = Part.objects.create(
+            name='AQ Component',
+            description='Allocated quantity test',
+            component=True,
+            salable=True,
+        )
+        part.models.BomItem.objects.create(
+            part=assembly, sub_part=component, quantity=1
+        )
+
+        item = StockItem.objects.create(part=component, quantity=100, location_id=1)
+
+        url = reverse('api-stock-detail', kwargs={'pk': item.pk})
+
+        def check(expected):
+            self.assertEqual(item.allocation_count(), expected)
+            self.assertEqual(self.get(url).data['allocated'], expected)
+
+            response = self.get(reverse('api-stock-list'), {'part': component.pk})
+            self.assertEqual(response.data[0]['allocated'], expected)
+
+        check(0)
+
+        # Build order allocation
+        bo = build.models.Build.objects.create(part=assembly, quantity=10)
+        build.models.BuildItem.objects.create(
+            stock_item=item, build_line=bo.build_lines.first(), quantity=1
+        )
+        check(1)
+
+        # Open sales order allocation
+        self.allocate_to_sales_order(item, 2)
+        check(3)
+
+        # Sales order allocation against a shipped shipment is not counted
+        allocation = self.allocate_to_sales_order(item, 4)
+        allocation.shipment = order.models.SalesOrderShipment.objects.create(
+            order=allocation.line.order,
+            reference='AQ-1',
+            shipment_date=datetime.now().date(),
+        )
+        allocation.save()
+        check(3)
+
+        # Sales order allocation against a closed order is not counted
+        allocation = self.allocate_to_sales_order(item, 8)
+        allocation.line.order.status = SalesOrderStatus.CANCELLED.value
+        allocation.line.order.save()
+        check(3)
+
+        # Open transfer order allocation
+        for idx, (to_status, quantity) in enumerate([
+            (TransferOrderStatus.ISSUED, 16),
+            (TransferOrderStatus.CANCELLED, 32),
+        ]):
+            to = order.models.TransferOrder.objects.create(
+                reference=f'TO-AQ-{idx}', status=to_status.value
+            )
+            line = order.models.TransferOrderLineItem.objects.create(
+                order=to, part=component, quantity=quantity
+            )
+            order.models.TransferOrderAllocation.objects.create(
+                line=line, item=item, quantity=quantity
+            )
+
+        # Only the open transfer order is counted
+        check(19)
 
     def test_filter_by_allocated(self):
         """Test that we can filter by "allocated" status.

@@ -43,6 +43,7 @@ from InvenTree.serializers import (
     TreePathSerializer,
 )
 from InvenTree.tasks import batch_offload_tasks
+from order.status_codes import SalesOrderStatusGroups, TransferOrderStatusGroups
 from plugin.base.event.events import batch_events
 from users.serializers import UserSerializer
 
@@ -548,13 +549,26 @@ class StockItemSerializer(
             'consumed_by',
         )
 
-        # Annotate the queryset with the total allocated to sales orders
+        # Annotate the queryset with the total allocated quantity
+        # Note: this must match the calculation in StockItem.allocation_count()
         queryset = queryset.annotate(
             allocated=Coalesce(
-                SubquerySum('sales_order_allocations__quantity'), Decimal(0)
+                SubquerySum(
+                    'sales_order_allocations__quantity',
+                    filter=Q(
+                        line__order__status__in=SalesOrderStatusGroups.OPEN,
+                        shipment__shipment_date=None,
+                    ),
+                ),
+                Decimal(0),
             )
-            # For now, stock allocated to a transfer order will not impact its availability
-            # + Coalesce(SubquerySum('transfer_order_allocations__quantity'), Decimal(0))
+            + Coalesce(
+                SubquerySum(
+                    'transfer_order_allocations__quantity',
+                    filter=Q(line__order__status__in=TransferOrderStatusGroups.OPEN),
+                ),
+                Decimal(0),
+            )
             + Coalesce(SubquerySum('allocations__quantity'), Decimal(0))
         )
 
