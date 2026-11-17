@@ -3382,6 +3382,85 @@ class StocktakeTest(StockAPITestCase):
         entry = stock_events(item, event_type=StockHistoryCode.STOCK_UPDATE).last()
         self.assertEqual(entry.additional_data['deltas']['quantity'], 10)
 
+    def test_transfer_allocated(self):
+        """A partial transfer must not split stock across an allocation boundary.
+
+        An allocated item can be transferred in full (allocations move with it),
+        or partially up to the unallocated quantity - but not in between.
+        """
+        assembly = Part.objects.create(
+            name='TA Assembly', description='Transfer allocation test', assembly=True
+        )
+        component = Part.objects.create(
+            name='TA Component', description='Transfer allocation test', component=True
+        )
+        part.models.BomItem.objects.create(
+            part=assembly, sub_part=component, quantity=1
+        )
+        bo = build.models.Build.objects.create(part=assembly, quantity=10)
+        build_line = bo.build_lines.first()
+
+        location = StockLocation.objects.get(pk=5)
+
+        item = StockItem.objects.create(part=component, location=location, quantity=10)
+        other = StockItem.objects.create(part=component, location=location, quantity=10)
+
+        allocation = build.models.BuildItem.objects.create(
+            stock_item=item, build_line=build_line, quantity=4
+        )
+
+        url = reverse('api-stock-transfer')
+
+        def transfer(*rows, expected_code=201):
+            return self.post(
+                url,
+                {'items': [{'pk': pk, 'quantity': q} for pk, q in rows], 'location': 1},
+                expected_code=expected_code,
+            )
+
+        # Crossing the allocation boundary is rejected - error is on the offending row
+        for q in [7, 9]:
+            response = transfer((other.pk, 1), (item.pk, q), expected_code=400)
+            errors = response.data['items']
+            self.assertNotIn(0, errors)
+            self.assertIn('unallocated quantity (6)', str(errors[1]['quantity']))
+
+        # Repeated rows which cumulatively cross the boundary are also rejected
+        response = transfer((item.pk, 4), (item.pk, 3), expected_code=400)
+        errors = response.data['items']
+        self.assertNotIn(0, errors)
+        self.assertIn('unallocated quantity (2)', str(errors[1]['quantity']))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 10)
+        self.assertEqual(item.location.pk, 5)
+
+        # Transfer of the unallocated quantity is allowed - allocated stock stays put
+        transfer((item.pk, 6))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(item.location.pk, 5)
+
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.stock_item, item)
+
+        # Now fully allocated: any partial transfer is rejected
+        transfer((item.pk, 1), expected_code=400)
+
+        # Transfer of the entire item is allowed - allocation moves with it
+        transfer((item.pk, 4))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(item.location.pk, 1)
+
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.stock_item, item)
+
+        # Partial transfer of an unallocated item is unaffected
+        transfer((other.pk, 3))
+
     def test_count_with_location(self):
         """Test that the stock count endpoint correctly handles the optional location field."""
         url = reverse('api-stock-count')

@@ -1819,8 +1819,64 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         # Either True / False / None
         self.require_in_stock = kwargs.pop('require_in_stock', True)
         self.require_non_zero = kwargs.pop('require_non_zero', False)
+        self.check_allocations = kwargs.pop('check_allocations', False)
 
         super().__init__(*args, **kwargs)
+
+    def validate(self, data):
+        """Validate a single stock adjustment row."""
+        data = super().validate(data)
+
+        if self.check_allocations:
+            self.validate_allocation_boundary(data['pk'], data['quantity'])
+
+        return data
+
+    def validate_allocation_boundary(self, stock_item: StockItem, quantity) -> None:
+        """Prevent a partial adjustment from splitting stock across an allocation boundary.
+
+        If a stock item is allocated (to a build, sales or transfer order),
+        the entire item must be moved (so the allocations move with it),
+        or no more than the unallocated quantity (so the allocated stock stays put).
+
+        Allocated quantities are bulk-fetched by the parent serializer into the
+        '_stock_allocated' context cache. Running totals are tracked in the
+        '_stock_remaining' context cache, as the same item may appear in multiple rows.
+        """
+        allocated_cache = self.context.get('_stock_allocated')
+
+        if allocated_cache is None:
+            allocated = stock_item.allocation_count()
+        else:
+            allocated = allocated_cache.get(stock_item.pk, Decimal(0))
+
+        if allocated <= 0:
+            return
+
+        remaining = self.context.setdefault('_stock_remaining', {})
+
+        item_qty, unallocated_qty = remaining.get(
+            stock_item.pk,
+            (
+                Decimal(stock_item.quantity),
+                max(Decimal(stock_item.quantity) - allocated, Decimal(0)),
+            ),
+        )
+
+        if quantity >= item_qty:
+            # Entire stock item is moved - allocations move with it
+            remaining[stock_item.pk] = (Decimal(0), Decimal(0))
+            return
+
+        if quantity > unallocated_qty:
+            raise ValidationError({
+                'quantity': _(
+                    'Stock item is allocated: move the entire quantity, '
+                    'or no more than the unallocated quantity ({unallocated})'
+                ).format(unallocated=InvenTree.helpers.normalize(unallocated_qty))
+            })
+
+        remaining[stock_item.pk] = (item_qty - quantity, unallocated_qty - quantity)
 
     pk = PrefetchedPrimaryKeyRelatedField(
         cache_key='_stockitems',
@@ -1932,6 +1988,13 @@ class StockAdjustmentSerializer(serializers.Serializer):
                     'part', 'location'
                 )
             }
+
+        if getattr(self.fields['items'].child, 'check_allocations', False):
+            # Bulk-fetch allocated quantities for the per-row allocation boundary check
+            self.context['_stock_allocated'] = StockItem.bulk_allocation_count(
+                self.context.get('_stockitems', {}).values()
+            )
+            self.context['_stock_remaining'] = {}
 
         return super().to_internal_value(data)
 
@@ -2085,7 +2148,9 @@ class StockTransferSerializer(StockAdjustmentSerializer):
 
         fields = ['items', 'notes', 'location']
 
-    items = StockAdjustmentItemSerializer(many=True, require_non_zero=True)
+    items = StockAdjustmentItemSerializer(
+        many=True, require_non_zero=True, check_allocations=True
+    )
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.filter(),
