@@ -2,6 +2,8 @@
 title: Sponsored Resources
 ---
 
+## Sponsored Resources
+
 The InvenTree project is grateful to receive resources from various vendors free of charge.
 
 Individuals and companies can also support via [GitHub sponsors](https://github.com/sponsors/inventree).

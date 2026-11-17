@@ -763,6 +763,38 @@ export function ApiForm({
               invalidResponse(error.response.status);
               props.onFormError?.(error, form);
               break;
+            case 409:
+              // The item is locked by another process (e.g. a background task),
+              // and the request was not applied - the user can retry
+              setNonFieldErrors([
+                error.response.data?.detail ??
+                  t`This item is being updated by another process. Please try again.`
+              ]);
+              props.onFormError?.(error, form);
+              break;
+            case 500: {
+              // Internal server error - display the error within the form,
+              // so that the user can see what went wrong (and retry if appropriate)
+              const _serverErrors: string[] = [t`Internal server error`];
+              const data = error.response.data;
+
+              // Only extract messages from a structured (JSON) response.
+              // A non-JSON response (e.g. an HTML error page) is not displayed.
+              if (data && typeof data === 'object' && !Array.isArray(data)) {
+                for (const key of ['error', 'detail']) {
+                  const value = data[key];
+
+                  if (typeof value === 'string' && value.trim()) {
+                    _serverErrors.push(value);
+                  }
+                }
+              }
+
+              invalidResponse(error.response.status);
+              setNonFieldErrors(_serverErrors);
+              props.onFormError?.(error, form);
+              break;
+            }
             default:
               // Unexpected state on form error
               invalidResponse(error.response.status);

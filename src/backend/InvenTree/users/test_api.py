@@ -7,7 +7,11 @@ from unittest import mock
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
 
-from allauth.account.internal.flows.login import AUTHENTICATION_METHODS_SESSION_KEY
+from allauth.account.internal.flows.login import (
+    _AUTHENTICATION_METHODS_USER_SESSION_KEY,
+    AUTHENTICATION_METHODS_SESSION_KEY,
+)
+from allauth.account.internal.userkit import user_id_to_str
 from allauth.account.models import EmailAddress
 from allauth.mfa.models import Authenticator
 
@@ -920,8 +924,14 @@ class UserTokenTests(InvenTreeAPITestCase):
         """
         session = self.client.session
         session[AUTHENTICATION_METHODS_SESSION_KEY] = [
-            {'method': 'mfa', 'type': 'totp', 'at': time.time() - age}
+            {
+                'method': 'mfa',
+                'type': 'totp',
+                'reauthenticated': True,
+                'at': time.time() - age,
+            }
         ]
+        session[_AUTHENTICATION_METHODS_USER_SESSION_KEY] = user_id_to_str(self.user)
         session.save()
 
     def test_token_mfa_reauthentication(self):
@@ -1009,6 +1019,77 @@ class UserTokenTests(InvenTreeAPITestCase):
         # staff users are allowed to see the database field
         self.assertIn('database', response_data)
         self.assertIsNotNone(response_data.get('database'))
+
+
+class UnprivilegedUserTokenTests(InvenTreeAPITestCase):
+    """Token tests for a non-staff user without any assigned roles.
+
+    Regression tests for https://github.com/inventree/InvenTree/issues/13299
+    """
+
+    fixtures = ['users']
+    is_staff = False
+    roles = []
+
+    def test_user_is_unprivileged(self):
+        """Sanity check: the test user has no elevated access."""
+        self.assertFalse(self.user.is_staff)
+        self.assertFalse(self.user.is_superuser)
+        self.assertFalse(self.user.has_perm('users.view_apitoken'))
+        self.assertFalse(self.user.has_perm('users.add_apitoken'))
+
+    def test_token_options(self):
+        """The OPTIONS metadata must advertise token creation to any authenticated user.
+
+        The frontend builds the "Generate Token" form from these actions,
+        so missing actions prevent users from minting their own tokens.
+        """
+        # Token generation endpoint (used by the frontend)
+        actions = self.options(reverse('api-token'), expected_code=200).data['actions']
+        self.assertIn('GET', actions)
+        self.assertIn('name', actions['GET'])
+
+        # Token list / create endpoint
+        actions = self.options(reverse('api-token-list'), expected_code=200).data[
+            'actions'
+        ]
+        self.assertIn('GET', actions)
+        self.assertIn('POST', actions)
+        self.assertIn('name', actions['POST'])
+
+    def test_token_create_and_revoke(self):
+        """An unprivileged user can create, list and revoke their own tokens."""
+        # Generate via the 'me' endpoint
+        data = self.get(
+            reverse('api-token'), data={'name': 'via-get'}, expected_code=200
+        ).data
+        self.assertTrue(data['token'].startswith('inv-'))
+
+        # Create via the token list endpoint
+        data = self.post(
+            reverse('api-token-list'), data={'name': 'via-post'}, expected_code=201
+        ).data
+        self.assertTrue(data['token'].startswith('inv-'))
+
+        tokens = self.get(reverse('api-token-list'), expected_code=200).data
+        self.assertEqual({t['name'] for t in tokens}, {'via-get', 'via-post'})
+
+        for token in ApiToken.objects.filter(user=self.user):
+            self.delete(
+                reverse('api-token-detail', kwargs={'pk': token.pk}), expected_code=204
+            )
+            token.refresh_from_db()
+            self.assertTrue(token.revoked)
+
+    def test_no_model_permission_bypass(self):
+        """The authenticated-user fallback must not expose actions on role-protected endpoints."""
+        self.assignRole('part.view')
+
+        actions = self.options(reverse('api-part-list'), expected_code=200).data[
+            'actions'
+        ]
+        self.assertIn('GET', actions)
+        self.assertNotIn('POST', actions)
 
 
 class GroupDetailTests(InvenTreeAPITestCase):
@@ -1110,3 +1191,126 @@ class RuleSetPermissionTests(InvenTreeAPITestCase):
 
         self.patch(group_url, {'name': 'renamed-group'}, expected_code=403)
         self.patch(ruleset_url, {'can_change': True}, expected_code=403)
+
+
+class NewUserMfaOnboardingTests(InvenTreeAPITestCase):
+    """Regression tests for onboarding admin-created users while MFA is enforced.
+
+    Ref: https://github.com/inventree/InvenTree/issues/13238
+    """
+
+    NEW_PASSWORD = 'Corr3ct-Horse-Battery-Staple!'
+
+    def setUp(self):
+        """Allow the test user to create other users."""
+        super().setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.assignRole('admin.add')
+
+    def create_user(self, username='newbie', email='newbie@example.org'):
+        """Create a new user via the API, as an administrator would."""
+        self.post(
+            reverse('api-user-list'),
+            data={
+                'username': username,
+                'first_name': 'New',
+                'last_name': 'User',
+                'email': email,
+            },
+            expected_code=201,
+        )
+        return User.objects.get(username=username)
+
+    def reset_password(self, user):
+        """Complete the headless password reset flow using a valid reset key."""
+        from allauth.account.forms import default_token_generator
+        from allauth.account.utils import user_pk_to_url_str
+
+        key = f'{user_pk_to_url_str(user)}-{default_token_generator.make_token(user)}'
+
+        response = self.client.post(
+            reverse('browser:account:reset_password'),
+            {'key': key, 'password': self.NEW_PASSWORD},
+            content_type='application/json',
+        )
+        # Password reset does not log the user in -> 401 'unauthenticated' response
+        self.assertIn(response.status_code, [200, 401], response.content)
+
+    def get_totp(self):
+        """Request a TOTP secret (first step of MFA registration)."""
+        return self.client.get(reverse('browser:mfa:manage_totp'))
+
+    def test_new_user_can_register_mfa(self):
+        """A new user must be able to register MFA after resetting their password."""
+        new_user = self.create_user()
+
+        email = EmailAddress.objects.get(user=new_user)
+        self.assertFalse(email.verified)
+        self.assertFalse(new_user.has_usable_password())
+
+        self.client.logout()
+
+        with mock.patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}):
+            self.reset_password(new_user)
+
+            # Completing the reset proves ownership of the mailbox
+            email.refresh_from_db()
+            self.assertTrue(email.verified)
+
+            # The new user can now log in with their new password...
+            response = self.client.post(
+                reverse('browser:account:login'),
+                {'username': 'newbie', 'password': self.NEW_PASSWORD},
+                content_type='application/json',
+            )
+            self.assertEqual(response.status_code, 200, response.content)
+
+            # ...is still blocked from the API until MFA is set up...
+            response = self.client.get(reverse('api-part-list'))
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response.json()['id'], 'mfa_register')
+
+            # ...but can obtain a TOTP secret to register MFA
+            response = self.get_totp()
+            self.assertEqual(response.status_code, 404, response.content)
+            self.assertIn('secret', response.json()['meta'])
+
+    def test_unverified_email_blocks_mfa_registration(self):
+        """Without a verified email, MFA registration is refused (the original bug)."""
+        new_user = self.create_user()
+        new_user.set_password(self.NEW_PASSWORD)
+        new_user.save()
+
+        self.client.logout()
+        self.client.login(username='newbie', password=self.NEW_PASSWORD)
+
+        response = self.get_totp()
+        self.assertEqual(response.status_code, 409, response.content)
+        self.assertEqual(response.json()['errors'][0]['code'], 'unverified_email')
+
+    def test_reset_with_multiple_addresses(self):
+        """Do not verify any address if the user has more than one."""
+        new_user = self.create_user()
+        EmailAddress.objects.create(
+            user=new_user, email='other@example.org', primary=False, verified=False
+        )
+
+        self.client.logout()
+        self.reset_password(new_user)
+
+        self.assertFalse(
+            EmailAddress.objects.filter(user=new_user, verified=True).exists()
+        )
+
+    def test_reset_with_mismatched_address(self):
+        """Do not verify an address which does not match the account email."""
+        new_user = self.create_user()
+        EmailAddress.objects.filter(user=new_user).update(email='stale@example.org')
+
+        self.client.logout()
+        self.reset_password(new_user)
+
+        self.assertFalse(
+            EmailAddress.objects.filter(user=new_user, verified=True).exists()
+        )

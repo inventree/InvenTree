@@ -181,6 +181,52 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
+test('Forms - Server Error', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'purchasing/index/suppliers'
+  });
+  await page.waitForURL('**/purchasing/index/**');
+
+  // Simulate an internal server error when submitting the form
+  await page.route('**/api/company/', async (route) => {
+    if (route.request().method() !== 'POST') {
+      return route.fallback();
+    }
+
+    // Mock a 500 server response
+    await route.fulfill({
+      status: 500,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        error: 'ValueError',
+        detail: 'Something went wrong on the server',
+        status_code: 500
+      })
+    });
+  });
+
+  await page.getByLabel('action-button-add-company').click();
+  await page
+    .getByLabel('text-field-name', { exact: true })
+    .fill(`Supplier ${new Date().getTime()}`);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // The error is displayed within the form, which remains open
+  await page.getByText('Form Error').waitFor();
+  await page.getByText('Internal server error').waitFor();
+  await page.getByText('ValueError').waitFor();
+  await page.getByText('Something went wrong on the server').waitFor();
+  await expect(page.getByRole('dialog')).toBeVisible();
+
+  // The "invalid response" notification also fires
+  await page.getByText('Invalid Return Code').waitFor();
+  await page.getByText('Server returned status 500').waitFor();
+
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await page.unroute('**/api/company/');
+});
+
 test('Forms - Keep form open option', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     user: stevenuser,

@@ -22,6 +22,9 @@ class AutoCreateBuildsTest(InvenTreeTestCase):
         """
         super().setUpTestData()
 
+        # Changing plugin state forces a registry reload - do it once per class
+        registry.set_plugin_state('autocreatebuilds', True)
+
         cls.top = Part.objects.create(name='Top', description='Top', assembly=True)
         cls.sub_1 = Part.objects.create(
             name='Sub 1', description='Sub 1', assembly=True, component=True
@@ -41,7 +44,6 @@ class AutoCreateBuildsTest(InvenTreeTestCase):
         """Activate the plugin and create a top-level build order."""
         super().setUp()
 
-        registry.set_plugin_state('autocreatebuilds', True)
         self.plugin = registry.get_plugin('autocreatebuilds')
 
         self.build = Build.objects.create(

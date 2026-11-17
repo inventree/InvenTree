@@ -1,7 +1,11 @@
 """Tests for tasks in app common."""
 
+from unittest.mock import patch
+
 from django.conf import settings
 from django.test import TestCase
+
+import requests
 
 from common.models import NewsFeedEntry, NotificationEntry
 from InvenTree.tasks import offload_task
@@ -58,8 +62,17 @@ class NewsFeedTests(TestCase):
         """
         settings.INVENTREE_NEWS_URL = 'http://10.255.255.1:81'
 
-        with self.assertLogs('inventree', level='WARNING'):
+        # Simulate the connection timing out, rather than waiting for a real timeout
+        with (
+            patch(
+                'common.tasks.requests.get',
+                side_effect=requests.exceptions.ConnectTimeout,
+            ) as mock_get,
+            self.assertLogs('inventree', level='WARNING'),
+        ):
             common_tasks.update_news_feed()
+
+        mock_get.assert_called_once_with(settings.INVENTREE_NEWS_URL, timeout=30)
 
         self.assertEqual(NewsFeedEntry.objects.all().count(), 0)
 

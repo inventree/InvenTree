@@ -128,6 +128,13 @@ An InvenTree process (web server or background worker) reloaded its plugins, but
 
 The affected process stops reloading its plugins to prevent an endless reload loop. Restart all InvenTree server and background worker processes to resolve this error. See [reloading plugins](../plugins/install.md#reloading-plugins) for further information.
 
+#### INVE-E21
+**Resource locked by another process - Backend**
+
+An API request attempted to modify an object that is currently locked by another long-running process. This typically occurs when multiple processes are trying to update the same object concurrently.
+
+The request will return a `409 Conflict` response. Retry the request after the other process has completed its operation.
+
 ## Warning Codes
 
 ### INVE-W (InvenTree Warning)
@@ -280,6 +287,15 @@ Password authentication is not allowed if the user has MFA enabled or if MFA is 
 The `middleware` or `authentication_backends` list provided in the configuration file includes a class which is not supported, as it would bypass security checks.
 
 The class has been removed automatically. To remove this warning, remove it from the list in your configuration file.
+
+#### INVE-W22
+**Plugin integration is disabled - Backend**
+
+An active plugin makes use of a plugin integration (mixin) which is disabled in the global settings. The affected functionality of the plugin (e.g. custom URLs, scheduled tasks, event handling or user interface elements) will not work until the integration is enabled.
+
+The message lists each affected plugin, together with the plugin settings which need to be enabled. Enable the listed settings in the [plugin settings](./global.md#plugin-settings) (a server restart may be required), or deactivate the plugin if it is not needed.
+
+If the check itself fails, the message "Unable to check plugin integrations" is shown instead. Check the server log for details.
 
 
 ### INVE-I (InvenTree Information)

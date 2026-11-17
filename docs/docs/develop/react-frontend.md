@@ -2,7 +2,7 @@
 title: React Frontend Development
 ---
 
-## Setup
+## React Frontend Development
 
 The following documentation details how to setup and run a development installation of the InvenTree frontend user interface. It is assumed that you are using the [InvenTree devcontainer setup](./devcontainer.md).
 

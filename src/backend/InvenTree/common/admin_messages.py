@@ -98,11 +98,57 @@ def _pending_migrations() -> int:
         return 0
 
 
+def _disabled_plugin_integrations() -> Optional[list[str]]:
+    """Return the active plugins which rely on a disabled plugin integration.
+
+    Returns:
+        A list of plugin names, each with the settings which need to be enabled,
+        or None if the check could not be performed
+    """
+    from InvenTree.helpers import plugins_disabled_mixins
+
+    try:
+        entries = plugins_disabled_mixins()
+    except Exception:
+        # This check must never prevent the other messages from being reported
+        logger.exception('Failed to check for disabled plugin integrations')
+        return None
+
+    from common.models import InvenTreeSetting
+
+    # Group the settings which need to be enabled by plugin
+    # (a plugin may be affected by multiple disabled integrations)
+    required: dict[str, set[str]] = {}
+
+    for entry in entries:
+        plugin = str(entry['name'] or entry['plugin'])
+        setting = str(
+            InvenTreeSetting.get_setting_name(entry['setting']) or entry['setting']
+        )
+        required.setdefault(plugin, set()).add(setting)
+
+    # e.g. "Auto Create Builds (Enable event integration)"
+    return [
+        f'{plugin} ({", ".join(sorted(names))})'
+        for plugin, names in sorted(required.items())
+    ]
+
+
 def get_core_admin_messages() -> list[AdminMessage]:
     """Return the set of core InvenTree system messages."""
     # Imported here to avoid circular imports at app load
     from InvenTree.helpers_email import is_email_configured
     from InvenTree.status import is_worker_running
+
+    disabled_integrations = _disabled_plugin_integrations()
+
+    if disabled_integrations is None:
+        # The check failed: do not report it as successful
+        plugin_integration_message = _('Unable to check plugin integrations')
+    else:
+        plugin_integration_message = _(
+            'Active plugins require a plugin integration which is disabled. Enable the listed plugin settings: {plugins}'
+        ).format(plugins=', '.join(disabled_integrations))
 
     return [
         _check(
@@ -153,6 +199,13 @@ def get_core_admin_messages() -> list[AdminMessage]:
             _('Basic (username:password) authentication is enabled for the API.'),
             bool(settings.BASIC_AUTH_ENABLED),
             code='INVE-W18',
+        ),
+        _check(
+            'plugin_integration',
+            _('Plugin Integration'),
+            plugin_integration_message,
+            disabled_integrations is None or len(disabled_integrations) > 0,
+            code='INVE-W22',
         ),
     ]
 

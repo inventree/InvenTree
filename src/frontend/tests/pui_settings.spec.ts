@@ -1,9 +1,15 @@
 import type { Page } from '@playwright/test';
 import { createApi } from './api.js';
 import { expect, test } from './baseFixtures.js';
-import { adminuser, allaccessuser, stevenuser } from './defaults.js';
+import {
+  adminuser,
+  allaccessuser,
+  readeruser,
+  stevenuser
+} from './defaults.js';
 import {
   clearTableSearch,
+  clickOnRowMenu,
   getRowFromCell,
   loadTab,
   navigate,
@@ -725,19 +731,76 @@ test('Settings - Auth - Tokens', async ({ browser }) => {
     url: 'settings/user/'
   });
 
+  const tokenName = `testtoken-${Date.now()}`;
+
   await page.getByRole('tab', { name: 'Security' }).click();
   await page.getByRole('button', { name: 'Access Tokens' }).click();
   await page
     .getByRole('button', { name: 'action-button-generate-token' })
     .click();
-  await page
-    .getByRole('textbox', { name: 'text-field-name' })
-    .fill('testtoken');
+  await page.getByRole('textbox', { name: 'text-field-name' }).fill(tokenName);
   await page.getByRole('button', { name: 'Submit', exact: true }).click();
   await page.getByText('Tokens are only shown once').waitFor();
   await page
     .getByTestId('generated-api-token')
     .locator('.mantine-CloseButton-root')
     .click();
-  await page.getByRole('cell', { name: 'testtoken' }).waitFor();
+  await page.getByRole('cell', { name: tokenName }).waitFor();
+});
+
+// Regression test for https://github.com/inventree/InvenTree/issues/13299
+// A non-staff user (without API token model permissions) must be able to mint their own tokens
+test('Settings - Auth - Tokens - Non-staff user', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: readeruser,
+    url: 'settings/user/'
+  });
+
+  const tokenName = `reader-token-${Date.now()}`;
+
+  await page.getByRole('tab', { name: 'Security' }).click();
+  await page.getByRole('button', { name: 'Access Tokens' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-generate-token' })
+    .click();
+  await page.getByRole('textbox', { name: 'text-field-name' }).fill(tokenName);
+  await page.getByRole('button', { name: 'Submit', exact: true }).click();
+  await page.getByText('Tokens are only shown once').waitFor();
+
+  // The generated token is displayed to the user
+  await expect(
+    page.getByTestId('generated-api-token').getByText(/^inv-/)
+  ).toBeVisible();
+
+  await page
+    .getByTestId('generated-api-token')
+    .locator('.mantine-CloseButton-root')
+    .click();
+
+  await page.getByText('Token generated').waitFor();
+
+  const tokenCell = page.getByRole('cell', { name: tokenName });
+  await tokenCell.waitFor();
+
+  // The user can also revoke the newly minted token
+  const revocationReason = `revoked-${tokenName}`;
+
+  await clickOnRowMenu(tokenCell);
+  await page.getByRole('menuitem', { name: 'Revoke' }).click();
+
+  const revokeDialog = page.getByRole('dialog', { name: 'Revoke Token' });
+  await revokeDialog
+    .getByRole('textbox', { name: 'Revocation Reason' })
+    .fill(revocationReason);
+  await revokeDialog.getByRole('button', { name: 'Revoke' }).click();
+  await revokeDialog.waitFor({ state: 'hidden' });
+
+  await page.getByText('The token has been successfully revoked').waitFor();
+
+  // The table refreshes to show the token as revoked
+  const tokenRow = await getRowFromCell(tokenCell);
+  await tokenRow.getByRole('cell', { name: revocationReason }).waitFor();
+
+  // A revoked token cannot be revoked again (no row actions are available)
+  await expect(tokenRow.getByLabel(/row-action-menu-/i)).toHaveCount(0);
 });
