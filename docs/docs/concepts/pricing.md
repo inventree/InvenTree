@@ -23,6 +23,34 @@ Throughout this documentation (and within InvenTree) the concepts of *cost* and 
 | Price | The theoretical amount of money required to pay for something. |
 | Cost | The actual amount of money paid. |
 
+### Pricing and Cost Data
+
+Pricing and cost information is stored in a number of places within InvenTree:
+
+| Data | Description | Documentation |
+| --- | --- | --- |
+| Part Pricing | The calculated price range of a part, from supplier pricing, purchase history, internal pricing, BOM data, etc. | [Part Pricing](../part/pricing.md) |
+| Supplier Pricing | Price breaks for purchasing a part from a particular supplier | [Supplier Parts](../purchasing/supplier.md#supplier-part-pricing) |
+| Sale Pricing | Price breaks for selling a part | [Part Pricing](../part/pricing.md#sale-pricing) |
+| Order Line Items | The unit price of each line item on a purchase, sales or return order | [Line Items](#line-items) |
+| Stock Item Costs | The actual costs associated with an individual stock item (purchase cost, freight, fees, etc.) | [Stock Item Costs](../stock/costs.md) |
+
+### Permissions
+
+Access to pricing and cost data is controlled by the *Pricing* [user role](../settings/permissions.md#roles), which is separate from the roles which control access to the underlying parts and stock items. This allows pricing information to be restricted to particular users.
+
+Refer to the [part pricing permissions](../part/pricing.md#pricing-permissions) and [stock item cost permissions](../stock/costs.md#permissions) documentation for more information.
+
+### Cost Tracking
+
+Each [stock item](../stock/index.md) can record the actual costs which have been incurred for that stock item - such as the price paid to the supplier, freight and import duty, or fees. Costs are recorded *per unit*, can be specified as a range (for estimated costs), and are recorded in any currency.
+
+Costs are recorded automatically when stock is received against a [purchase order](../purchasing/purchase_order.md#item-cost), and are carried through when stock is split, duplicated, merged or disassembled. Additional costs can be added manually at any time.
+
+Stock item costs are used to calculate the value of stock (e.g. for [stocktake](../part/stocktake.md)), and can contribute to the [purchase history](../part/pricing.md#stock-item-costs) of a part.
+
+Refer to the [stock item costs](../stock/costs.md) documentation for more information.
+
 ## Line Items
 
 Orders (Purchase Orders, Sales Orders, and Return Orders) are made up of *line items*, each linking a *Quantity* to a *Unit Price*. A line item's *Line Total* is calculated as follows:

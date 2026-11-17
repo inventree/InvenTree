@@ -54,7 +54,7 @@ The disassembly form displays a count of installed items against each matching B
 
 ### Automatic Cost Allocation
 
-If the original stock item has a recorded unit cost, and no explicit *Unit Cost* has been entered for the generated lines, InvenTree attempts to automatically apportion that cost across the newly generated components. The allocated cost is recorded as a cost entry against each generated stock item:
+If the original stock item has a recorded [unit cost](./costs.md#unit-cost), and no explicit *Unit Cost* has been entered for the generated lines, InvenTree attempts to automatically apportion that cost across the newly generated components. The allocated cost is recorded as a cost entry against each generated stock item:
 
 - The total cost (unit cost &times; disassembled quantity) is split across the lines, weighted by the existing [pricing](../part/pricing.md) data (average of minimum and maximum overall price) for each component part
 - If pricing data is not available for *every* line, the cost is instead split evenly on a per-unit basis across all generated units

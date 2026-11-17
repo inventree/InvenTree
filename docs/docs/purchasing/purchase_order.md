@@ -135,13 +135,15 @@ Serial numbers are *not* required to receive a trackable part - if left blank, a
 
 ### Item Cost
 
-When items are received against a purchase order line which has a price, a *purchase* cost entry is recorded against each of the created stock items:
+When items are received against a purchase order line which has a price, a *purchase* [cost entry](../stock/costs.md) is recorded against each of the created stock items:
 
 - The line price is per supplier pack, so it is divided by the [pack quantity](./supplier.md#supplier-part-pack-size) of the supplier part to give a cost per (base) unit of the stock item
 - The cost is recorded in the currency of the purchase order line item
 - The cost is also converted to the [default currency](../concepts/pricing.md#default-currency) of the system, at the exchange rate at the time of receipt. Both the original and the converted values are stored, and the unit cost of the stock item is calculated from the converted values
 
 Recording these costs does not require the *pricing* role - users who can receive items against a purchase order can assign the incoming cost. Viewing stock item costs requires the *pricing* role.
+
+Additional costs (such as freight charges, once the invoice arrives) can be added to the received stock items afterwards. Refer to the [stock item costs](../stock/costs.md) documentation for more information.
 
 ## Bundled Items
 

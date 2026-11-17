@@ -13,7 +13,7 @@ Pricing information can be determined from multiple sources:
 | --- | --- | ---|
 | Internal Price | How much a part costs to make | [Part](../part/index.md) |
 | Supplier Price | The price to theoretically purchase a part from a given supplier (with price-breaks) | [Supplier](../purchasing/supplier.md) |
-| Purchase Cost | Historical cost information for parts purchased | [Purchase Order](../purchasing/purchase_order.md) |
+| Purchase Cost | Historical cost information for parts purchased, and the recorded purchase cost of stock items | [Purchase Order](../purchasing/purchase_order.md), [Stock Item Costs](../stock/costs.md) |
 | BOM Price | Total price for an assembly (total price of all component items) | [Part](../part/index.md) |
 
 ### Override Pricing
@@ -40,6 +40,7 @@ The *Pricing* role covers the following data:
 | Cached Pricing | The calculated [pricing overview](#pricing-overview) data for each part, including any [pricing overrides](#override-pricing) |
 | Sale Price Breaks | The [sale pricing](#sale-pricing) defined for a salable part |
 | Internal Price Breaks | The [internal pricing](#internal-pricing) defined for a part |
+| Stock Item Costs | The [costs](../stock/costs.md) recorded against individual stock items (refer to the [stock item cost permissions](../stock/costs.md#permissions)) |
 
 The permissions within the *Pricing* role apply as follows:
 
@@ -102,6 +103,17 @@ If the Part is designated as *purchaseable*, then historical purchase cost infor
 
 {{ image("part/pricing_purchase_history.png", "Purchase History") }}
 
+#### Stock Item Costs
+
+If the {{ globalsetting("PRICING_USE_STOCK_PRICING", short=True) }} setting is enabled, the [costs recorded against individual stock items](../stock/costs.md) are also included in the purchase cost range of the part:
+
+- Only *Purchase* type costs are included - other costs (such as landed costs or fees) are excluded
+- If a stock item has multiple *Purchase* cost entries, these are added together
+- An [estimated](../stock/costs.md#estimated-costs) cost contributes its minimum and maximum unit cost to the purchase cost range
+- Costs which could not be [converted](../stock/costs.md#currency-conversion) to the default currency are excluded
+
+The {{ globalsetting("PRICING_STOCK_ITEM_AGE_DAYS", short=True) }} setting can be used to exclude older stock item costs. If set, only cost entries which were recorded (or updated) within the specified number of days are included.
+
 ### Supplier Pricing
 
 If supplier pricing information is available, this can be also used to determine price range data.
@@ -163,6 +175,7 @@ If automated pricing updates are enabled, the pricing data updated *automaticall
 When underlying pricing data changes, the cached pricing data is automatically updated. This includes (but is not limited to):
 
 - Stock items being received against a [Purchase Order](../purchasing/purchase_order.md) with provided pricing
+- [Stock item costs](../stock/costs.md) being added, edited or removed
 - Stock items being sold against a [Sales Order](../sales/sales_order.md) with provided pricing
 - [Bills of Material](../manufacturing//bom.md) being created or modified, which may change the pricing of an assembly
 
