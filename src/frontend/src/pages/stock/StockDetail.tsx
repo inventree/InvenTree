@@ -649,8 +649,22 @@ export default function StockDetail() {
   }, [id, stockitem, part, user, stockAdjustActions.menuActions]);
 
   const stockBadges: ReactNode[] = useMemo(() => {
-    let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
+    const quantity: number = stockitem?.quantity ?? 0;
+    const allocated: number = stockitem?.allocated ?? 0;
+
+    let available = quantity - allocated;
     available = Math.max(0, available);
+
+    // Tolerance for comparing (decimal) quantities
+    const epsilon = 1e-6;
+
+    const isAllocated: boolean = allocated > epsilon;
+    const overAllocated: boolean =
+      isAllocated && allocated > quantity + epsilon;
+    const fullyAllocated: boolean =
+      isAllocated && !overAllocated && allocated >= quantity - epsilon;
+
+    const allocatedTooltip = `${t`Allocated Quantity`}: ${formatDecimal(allocated)} / ${formatDecimal(quantity)}`;
 
     return instanceQuery.isLoading
       ? []
@@ -685,6 +699,27 @@ export default function StockDetail() {
               available != stockitem.quantity
             }
             key='available'
+          />,
+          <DetailsBadge
+            color='blue'
+            label={`${t`Allocated`}: ${formatDecimal(allocated)}`}
+            tooltip={allocatedTooltip}
+            visible={isAllocated}
+            key='allocated'
+          />,
+          <DetailsBadge
+            color='orange'
+            label={t`Fully Allocated`}
+            tooltip={allocatedTooltip}
+            visible={fullyAllocated}
+            key='fully-allocated'
+          />,
+          <DetailsBadge
+            color='red'
+            label={t`Over Allocated`}
+            tooltip={allocatedTooltip}
+            visible={overAllocated}
+            key='over-allocated'
           />,
           <DetailsBadge
             color='blue'
