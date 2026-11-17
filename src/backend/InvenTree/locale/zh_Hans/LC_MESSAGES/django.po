@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-15 06:01+0000\n"
-"PO-Revision-Date: 2026-11-15 06:05\n"
+"POT-Creation-Date: 2026-11-16 21:08+0000\n"
+"PO-Revision-Date: 2026-11-16 21:12\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -53,7 +53,7 @@ msgstr "此字段的值必须是唯一的。"
 msgid "Item no longer matches the provided criteria"
 msgstr "项目不再符合提供的条件"
 
-#: InvenTree/api.py:872 InvenTree/models.py:1664
+#: InvenTree/api.py:872 InvenTree/models.py:1681
 msgid "User does not have permission to view this model"
 msgstr "用户没有权限查阅当前模型。"
 
@@ -89,7 +89,7 @@ msgstr "提供的数量无效"
 
 #: InvenTree/exceptions.py:33
 msgid "INVE-E21: This item is currently being updated by another process - please try again"
-msgstr ""
+msgstr "INVE-E21：该条目正在被另一个进程更新，请重试"
 
 #: InvenTree/exceptions.py:144
 msgid "Server is temporarily reloading, please retry the request"
@@ -111,7 +111,7 @@ msgstr "无效的数值"
 #: build/serializers.py:601 build/serializers.py:1782 common/models.py:3290
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
-#: stock/models.py:3820 stock/serializers.py:786 stock/serializers.py:970
+#: stock/models.py:3824 stock/serializers.py:786 stock/serializers.py:970
 #: stock/serializers.py:1163 stock/serializers.py:1330
 #: stock/serializers.py:1621 stock/serializers.py:1711
 #: stock/serializers.py:1910
@@ -211,59 +211,59 @@ msgstr "CSRF 校验失败。请正确配置 INVENTREE_SITE_URL 与 INVENTREE_TRU
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "您必须启用双重身份验证才能进行后续操作。"
 
-#: InvenTree/models.py:138
+#: InvenTree/models.py:139
 msgid "Error running plugin validation"
 msgstr "运行插件验证时出错"
 
-#: InvenTree/models.py:220
+#: InvenTree/models.py:221
 msgid "Metadata must be a python dict object"
 msgstr "元数据必须是 Python dict 对象"
 
-#: InvenTree/models.py:226
+#: InvenTree/models.py:227
 msgid "Plugin Metadata"
 msgstr "插件元数据"
 
-#: InvenTree/models.py:227
+#: InvenTree/models.py:228
 msgid "JSON metadata field, for use by external plugins"
 msgstr "供外部插件使用的JSON元数据字段"
 
-#: InvenTree/models.py:410
+#: InvenTree/models.py:411
 msgid "Improperly formatted pattern"
 msgstr "格式错误"
 
-#: InvenTree/models.py:417
+#: InvenTree/models.py:418
 msgid "Unknown format key specified"
 msgstr "使用了未知的格式键值"
 
-#: InvenTree/models.py:423
+#: InvenTree/models.py:424
 msgid "Missing required format key"
 msgstr "缺少必需的格式键值"
 
-#: InvenTree/models.py:434
+#: InvenTree/models.py:435
 msgid "Reference field cannot be empty"
 msgstr "参考字段不能为空"
 
-#: InvenTree/models.py:442
+#: InvenTree/models.py:443
 msgid "Reference must match required pattern"
 msgstr "参考字段必须符合指定格式"
 
-#: InvenTree/models.py:473
+#: InvenTree/models.py:474
 msgid "Reference number is too large"
 msgstr "参考编号过大"
 
-#: InvenTree/models.py:1179
+#: InvenTree/models.py:1192
 msgid "Invalid choice"
 msgstr "无效选项"
 
-#: InvenTree/models.py:1349 common/api.py:1854 common/models.py:1540
+#: InvenTree/models.py:1362 common/api.py:1854 common/models.py:1540
 #: common/models.py:1980 common/models.py:2447 common/models.py:2580
-#: common/models.py:2903 common/serializers.py:730
+#: common/models.py:2903 common/serializers.py:749
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1141
 #: plugin/models.py:53 report/models.py:233 stock/models.py:86
 msgid "Name"
 msgstr "名称"
 
-#: InvenTree/models.py:1355 build/models.py:284 common/models.py:192
+#: InvenTree/models.py:1368 build/models.py:284 common/models.py:192
 #: common/models.py:2587 common/models.py:2728 common/models.py:2918
 #: common/models.py:3564 company/models.py:641 company/models.py:913
 #: order/models.py:549 order/models.py:2342 part/models.py:1164
@@ -273,47 +273,47 @@ msgstr "名称"
 msgid "Description"
 msgstr "描述"
 
-#: InvenTree/models.py:1356 stock/models.py:93
+#: InvenTree/models.py:1369 stock/models.py:93
 msgid "Description (optional)"
 msgstr "描述（选填）"
 
-#: InvenTree/models.py:1371 common/models.py:3653
+#: InvenTree/models.py:1384 common/models.py:3653
 msgid "Path"
 msgstr "路径"
 
-#: InvenTree/models.py:1529
+#: InvenTree/models.py:1542
 msgid "Duplicate names cannot exist under the same parent"
 msgstr "同一父级下不能存在重复名称"
 
-#: InvenTree/models.py:1620
+#: InvenTree/models.py:1637
 msgid "Barcode Data"
 msgstr "条码数据"
 
-#: InvenTree/models.py:1621
+#: InvenTree/models.py:1638
 msgid "Third party barcode data"
 msgstr "第三方条码数据"
 
-#: InvenTree/models.py:1627
+#: InvenTree/models.py:1644
 msgid "Barcode Hash"
 msgstr "条码哈希值"
 
-#: InvenTree/models.py:1628
+#: InvenTree/models.py:1645
 msgid "Unique hash of barcode data"
 msgstr "条码数据的唯一哈希值"
 
-#: InvenTree/models.py:1718
+#: InvenTree/models.py:1735
 msgid "Existing barcode found"
 msgstr "检测到已存在条码"
 
-#: InvenTree/models.py:1858
+#: InvenTree/models.py:1875
 msgid "Server Error"
 msgstr "服务器错误"
 
-#: InvenTree/models.py:1859
+#: InvenTree/models.py:1876
 msgid "An error has been logged by the server."
 msgstr "服务器记录了一个错误。"
 
-#: InvenTree/models.py:1901 common/models.py:3589
+#: InvenTree/models.py:1920 common/models.py:3589
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -572,9 +572,9 @@ msgstr "无效的物理单位"
 msgid "Not a valid currency code"
 msgstr "无效的货币代码"
 
-#: audit/api.py:92 audit/serializers.py:107 common/serializers.py:867
-#: common/serializers.py:1023 common/serializers.py:1069
-#: common/serializers.py:1137 importer/models.py:104 report/api.py:42
+#: audit/api.py:92 audit/serializers.py:107 common/serializers.py:886
+#: common/serializers.py:1042 common/serializers.py:1088
+#: common/serializers.py:1156 importer/models.py:104 report/api.py:42
 #: report/models.py:389 report/serializers.py:69
 msgid "Model Type"
 msgstr "模型类型"
@@ -1770,61 +1770,74 @@ msgstr "逾期的生产订单"
 msgid "No issues detected"
 msgstr "未发现问题"
 
-#: common/admin_messages.py:110 report/system_settings.py:33
+#: common/admin_messages.py:147
+msgid "Unable to check plugin integrations"
+msgstr ""
+
+#: common/admin_messages.py:150
+#, python-brace-format
+msgid "Active plugins require a plugin integration which is disabled. Enable the listed plugin settings: {plugins}"
+msgstr ""
+
+#: common/admin_messages.py:156 report/system_settings.py:33
 msgid "Debug Mode"
 msgstr "调试模式"
 
-#: common/admin_messages.py:111
+#: common/admin_messages.py:157
 msgid "The server is running in debug mode."
 msgstr "服务器正在调试模式下运行。"
 
-#: common/admin_messages.py:117
+#: common/admin_messages.py:163
 msgid "Background Worker"
 msgstr "后台工作进程"
 
-#: common/admin_messages.py:118
+#: common/admin_messages.py:164
 msgid "The background worker process is not running."
 msgstr "后台工作进程未运行。"
 
-#: common/admin_messages.py:124
+#: common/admin_messages.py:170
 msgid "Server Restart"
 msgstr "服务器重启"
 
-#: common/admin_messages.py:125
+#: common/admin_messages.py:171
 msgid "The server requires a restart to apply changes."
 msgstr "服务器需要重启才能应用更改。"
 
-#: common/admin_messages.py:131
+#: common/admin_messages.py:177
 msgid "Email settings"
 msgstr "电子邮件设置"
 
-#: common/admin_messages.py:132
+#: common/admin_messages.py:178
 msgid "Email settings not configured."
 msgstr "未配置电子邮件设置。"
 
-#: common/admin_messages.py:138
+#: common/admin_messages.py:184
 msgid "Database Migrations"
 msgstr "数据库迁移"
 
-#: common/admin_messages.py:139
+#: common/admin_messages.py:185
 msgid "There are pending database migrations."
 msgstr "有待处理的数据库迁移。"
 
-#: common/admin_messages.py:145
+#: common/admin_messages.py:191
 msgid "CORS Settings"
 msgstr "CORS 设置"
 
-#: common/admin_messages.py:146
+#: common/admin_messages.py:192
 msgid "CORS is set to allow all origins."
 msgstr "CORS 已设置为允许所有来源。"
 
-#: common/admin_messages.py:152
+#: common/admin_messages.py:198
 msgid "Basic Authentication"
 msgstr "基本认证"
 
-#: common/admin_messages.py:153
+#: common/admin_messages.py:199
 msgid "Basic (username:password) authentication is enabled for the API."
 msgstr "API 已启用基本认证（用户名:密码）。"
+
+#: common/admin_messages.py:205
+msgid "Plugin Integration"
+msgstr ""
 
 #: common/api.py:858
 msgid "Has Thumbnail"
@@ -1838,7 +1851,7 @@ msgstr "是否链接"
 msgid "Is File"
 msgstr "是否为文件"
 
-#: common/api.py:886 common/serializers.py:860
+#: common/api.py:886 common/serializers.py:879
 msgid "Filename"
 msgstr "文件名"
 
@@ -1874,7 +1887,7 @@ msgstr "该字段为必填项"
 msgid "Invalid model ID"
 msgstr "无效的模型 ID"
 
-#: common/api.py:1632 common/serializers.py:1194 common/serializers.py:1242
+#: common/api.py:1632 common/serializers.py:1213 common/serializers.py:1261
 msgid "Selection list is locked"
 msgstr "选择列表已锁定"
 
@@ -2200,7 +2213,7 @@ msgstr "定义"
 msgid "Unit definition"
 msgstr "单位定义"
 
-#: common/models.py:2071 common/models.py:2243 stock/models.py:3815
+#: common/models.py:2071 common/models.py:2243 stock/models.py:3819
 #: stock/serializers.py:259
 msgid "Attachment"
 msgstr "附件"
@@ -2289,7 +2302,7 @@ msgstr "文件大小"
 msgid "File size in bytes"
 msgstr "文件大小，以字节为单位"
 
-#: common/models.py:2332 common/serializers.py:894
+#: common/models.py:2332 common/serializers.py:913
 msgid "Invalid model type specified for attachment"
 msgstr "为附件指定的模型类型无效"
 
@@ -2318,7 +2331,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "等同于商业逻辑中自定义状态的状态逻辑键"
 
 #: common/models.py:2441 common/models.py:2716 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3807
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3811
 msgid "Value"
 msgstr "值"
 
@@ -2587,7 +2600,7 @@ msgstr "无效的参数值选择"
 msgid "Parameter value must be unique"
 msgstr "参数值必须唯一"
 
-#: common/models.py:3191 common/serializers.py:1123
+#: common/models.py:3191 common/serializers.py:1142
 msgid "Invalid model type specified for parameter"
 msgstr "为附件指定的模型类型无效"
 
@@ -2630,8 +2643,8 @@ msgstr "备注"
 msgid "Optional note field"
 msgstr "可选备注字段"
 
-#: common/models.py:3393 common/models.py:3395 common/serializers.py:996
-#: common/serializers.py:1000
+#: common/models.py:3393 common/models.py:3395 common/serializers.py:1015
+#: common/serializers.py:1019
 msgid "This field is required."
 msgstr "该字段为必填项。"
 
@@ -2716,7 +2729,7 @@ msgid "Response data from the barcode scan"
 msgstr "扫描条形码的响应数据"
 
 #: common/models.py:3676 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3801
+#: stock/models.py:3805
 msgid "Result"
 msgstr "结果"
 
@@ -2883,127 +2896,127 @@ msgstr "已根据采购订单收到物品"
 msgid "Items have been received against a return order"
 msgstr "已收到退货订单中的物品"
 
-#: common/serializers.py:131
+#: common/serializers.py:132
 msgid "Indicates if changing this setting requires confirmation"
 msgstr "指示是否更改此设置需要确认"
 
-#: common/serializers.py:139
+#: common/serializers.py:140
 msgid "Indicating behavior or purpose of setting."
 msgstr "说明该设置的作用或用途。"
 
-#: common/serializers.py:151
+#: common/serializers.py:152
 msgid "This setting requires confirmation before changing. Please confirm the change."
 msgstr "此设置需要确认后才能更改。请确认更改。"
 
-#: common/serializers.py:195
+#: common/serializers.py:196
 msgid "Indicates if the setting is overridden by an environment variable"
 msgstr "表示设置是否被环境变量覆盖"
 
-#: common/serializers.py:197 plugin/serializers.py:293
+#: common/serializers.py:198 plugin/serializers.py:293
 msgid "Override"
 msgstr "覆盖"
 
-#: common/serializers.py:693
+#: common/serializers.py:712
 msgid "Is Running"
 msgstr "正在运行"
 
-#: common/serializers.py:699
+#: common/serializers.py:718
 msgid "Pending Tasks"
 msgstr "等待完成的任务"
 
-#: common/serializers.py:705
+#: common/serializers.py:724
 msgid "Scheduled Tasks"
 msgstr "预定的任务"
 
-#: common/serializers.py:711
+#: common/serializers.py:730
 msgid "Failed Tasks"
 msgstr "失败的任务"
 
-#: common/serializers.py:726
+#: common/serializers.py:745
 msgid "Task ID"
 msgstr "任务ID"
 
-#: common/serializers.py:726
+#: common/serializers.py:745
 msgid "Unique task ID"
 msgstr "唯一任务ID"
 
-#: common/serializers.py:728
+#: common/serializers.py:747
 msgid "Lock"
 msgstr "锁定"
 
-#: common/serializers.py:728
+#: common/serializers.py:747
 msgid "Lock time"
 msgstr "锁定时间"
 
-#: common/serializers.py:730
+#: common/serializers.py:749
 msgid "Task name"
 msgstr "任务名称"
 
-#: common/serializers.py:732
+#: common/serializers.py:751
 msgid "Function"
 msgstr "功能"
 
-#: common/serializers.py:732
+#: common/serializers.py:751
 msgid "Function name"
 msgstr "功能名称"
 
-#: common/serializers.py:734
+#: common/serializers.py:753
 msgid "Arguments"
 msgstr "参数"
 
-#: common/serializers.py:734
+#: common/serializers.py:753
 msgid "Task arguments"
 msgstr "任务参数"
 
-#: common/serializers.py:737
+#: common/serializers.py:756
 msgid "Keyword Arguments"
 msgstr "关键字参数"
 
-#: common/serializers.py:737
+#: common/serializers.py:756
 msgid "Task keyword arguments"
 msgstr "任务关键词参数"
 
-#: common/serializers.py:896
+#: common/serializers.py:915
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "用户无权为此模式创建或编辑附件"
 
-#: common/serializers.py:941
+#: common/serializers.py:960
 msgid "Only staff users can create or edit note templates"
 msgstr "只有职员用户才能创建或编辑备注模板"
 
-#: common/serializers.py:951
+#: common/serializers.py:970
 msgid "Invalid model type specified for note"
 msgstr "为备注指定的模型类型无效"
 
-#: common/serializers.py:952
+#: common/serializers.py:971
 msgid "User does not have permission to create or edit notes for this model"
 msgstr "用户无权为该模型创建或编辑备注"
 
-#: common/serializers.py:1125
+#: common/serializers.py:1144
 msgid "User does not have permission to create or edit parameters for this model"
 msgstr "用户没有权限为此模型创建或编辑参数"
 
-#: common/serializers.py:1324
+#: common/serializers.py:1343
 msgid "Attachment Count"
 msgstr "附件数"
 
-#: common/serializers.py:1325
+#: common/serializers.py:1344
 msgid "Number of attachments associated with this instance"
 msgstr "与此实例关联的附件数量"
 
-#: common/serializers.py:1330
+#: common/serializers.py:1349
 msgid "Note Count"
 msgstr "备注数"
 
-#: common/serializers.py:1331
+#: common/serializers.py:1350
 msgid "Number of notes associated with this instance"
 msgstr "与此实例关联的备注数量"
 
-#: common/serializers.py:1336
+#: common/serializers.py:1355
 msgid "Parameter Count"
 msgstr "参数数"
 
-#: common/serializers.py:1337
+#: common/serializers.py:1356
 msgid "Number of parameters associated with this instance"
 msgstr "与此实例关联的参数数量"
 
@@ -6652,7 +6665,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "盘点时可用库存总额"
 
 #: part/models.py:2662 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3847
+#: stock/models.py:3851
 msgid "Date"
 msgstr "日期"
 
@@ -9771,7 +9784,7 @@ msgstr "必须以列表形式提供序列号"
 msgid "Quantity does not match serial numbers"
 msgstr "数量不匹配序列号"
 
-#: stock/models.py:2663 stock/models.py:3765
+#: stock/models.py:2663 stock/models.py:3769
 msgid "Test template does not exist"
 msgstr "测试模板不存在"
 
@@ -9819,59 +9832,59 @@ msgstr "库存状态码必须匹配"
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "库存项不能移动，因为它没有库存"
 
-#: stock/models.py:3735
+#: stock/models.py:3739
 msgid "Stock Item Test Result"
 msgstr "库存项测试结果"
 
-#: stock/models.py:3768
+#: stock/models.py:3772
 msgid "Value must be provided for this test"
 msgstr "必须为此测试提供值"
 
-#: stock/models.py:3772
+#: stock/models.py:3776
 msgid "Attachment must be uploaded for this test"
 msgstr "测试附件必须上传"
 
-#: stock/models.py:3777
+#: stock/models.py:3781
 msgid "Invalid value for this test"
 msgstr "此测试的值无效"
 
-#: stock/models.py:3801
+#: stock/models.py:3805
 msgid "Test result"
 msgstr "测试结果"
 
-#: stock/models.py:3808
+#: stock/models.py:3812
 msgid "Test output value"
 msgstr "测试输出值"
 
-#: stock/models.py:3816 stock/serializers.py:260
+#: stock/models.py:3820 stock/serializers.py:260
 msgid "Test result attachment"
 msgstr "测验结果附件"
 
-#: stock/models.py:3820
+#: stock/models.py:3824
 msgid "Test notes"
 msgstr "测试备注"
 
-#: stock/models.py:3828
+#: stock/models.py:3832
 msgid "Test station"
 msgstr "测试站"
 
-#: stock/models.py:3829
+#: stock/models.py:3833
 msgid "The identifier of the test station where the test was performed"
 msgstr "进行测试的测试站的标识符"
 
-#: stock/models.py:3835
+#: stock/models.py:3839
 msgid "Started"
 msgstr "已开始"
 
-#: stock/models.py:3836
+#: stock/models.py:3840
 msgid "The timestamp of the test start"
 msgstr "测试开始的时间戳"
 
-#: stock/models.py:3842 users/models.py:887
+#: stock/models.py:3846 users/models.py:887
 msgid "Finished"
 msgstr "已完成"
 
-#: stock/models.py:3843
+#: stock/models.py:3847
 msgid "The timestamp of the test finish"
 msgstr "测试结束的时间戳"
 

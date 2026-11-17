@@ -3343,6 +3343,44 @@ class StocktakeTest(StockAPITestCase):
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
+    def test_transfer_more_than_available(self):
+        """Transferring more than the available quantity moves the entire item.
+
+        The tracking entry must record the quantity which was actually moved,
+        not the (larger) quantity which was requested.
+        """
+        item = StockItem.objects.create(
+            part=Part.objects.get(pk=1),
+            location=StockLocation.objects.get(pk=5),
+            quantity=10,
+        )
+
+        url = reverse('api-stock-transfer')
+
+        # Move to a different location
+        self.post(
+            url,
+            {'items': [{'pk': item.pk, 'quantity': 25}], 'location': 1},
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.location.pk, 1)
+        self.assertEqual(item.quantity, 10)
+
+        entry = stock_events(item, event_type=StockHistoryCode.STOCK_MOVE).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 10)
+
+        # "Move" into the same location (records a stock update)
+        self.post(
+            url,
+            {'items': [{'pk': item.pk, 'quantity': 25}], 'location': 1},
+            expected_code=201,
+        )
+
+        entry = stock_events(item, event_type=StockHistoryCode.STOCK_UPDATE).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 10)
+
     def test_count_with_location(self):
         """Test that the stock count endpoint correctly handles the optional location field."""
         url = reverse('api-stock-count')
