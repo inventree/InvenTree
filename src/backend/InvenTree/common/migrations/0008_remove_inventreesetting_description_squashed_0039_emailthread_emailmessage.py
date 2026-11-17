@@ -234,7 +234,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Attachment',
             },
-            bases=(generic.models.modelmixins.PluginValidationMixin, models.Model),
+            bases=(generic.models.modelmixins.InvenTreePluginValidationMixin, models.Model),
         ),
         migrations.AlterField(
             model_name='customunit',
@@ -279,7 +279,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Barcode Scan',
             },
-            bases=(generic.models.modelmixins.PluginValidationMixin, models.Model),
+            bases=(generic.models.modelmixins.InvenTreePluginValidationMixin, models.Model),
         ),
         migrations.CreateModel(
             name='SelectionList',
@@ -298,7 +298,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Selection List',
                 'verbose_name_plural': 'Selection Lists',
             },
-            bases=(generic.models.modelmixins.PluginValidationMixin, models.Model),
+            bases=(generic.models.modelmixins.InvenTreePluginValidationMixin, models.Model),
         ),
         migrations.CreateModel(
             name='SelectionListEntry',
@@ -371,7 +371,7 @@ class Migration(migrations.Migration):
                 'ordering': ['-updated'],
                 'unique_together': {('key', 'global_id')},
             },
-            bases=(generic.models.modelmixins.PluginValidationMixin, models.Model),
+            bases=(generic.models.modelmixins.InvenTreePluginValidationMixin, models.Model),
         ),
         migrations.CreateModel(
             name='EmailMessage',

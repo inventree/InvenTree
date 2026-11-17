@@ -56,8 +56,8 @@ from generic.models.modelmixins import (
     InvenTreeMetadataMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
+    InvenTreePluginValidationMixin,
     InvenTreeTagsMixin,
-    PluginValidationMixin,
     ReferenceIndexingMixin,
 )
 from generic.states import (
@@ -104,7 +104,7 @@ class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
 
 class Build(
     InvenTreeAuditMixin,
-    PluginValidationMixin,
+    InvenTreePluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTreeParameterMixin,
     InvenTreeAttachmentMixin,

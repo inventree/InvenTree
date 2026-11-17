@@ -55,8 +55,8 @@ from generic.models.modelmixins import (
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreePathStringMixin,
+    InvenTreePluginValidationMixin,
     InvenTreeTagsMixin,
-    PluginValidationMixin,
 )
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
@@ -75,7 +75,7 @@ logger = structlog.get_logger('inventree')
 
 class PartCategory(
     InvenTreeAuditMixin,
-    PluginValidationMixin,
+    InvenTreePluginValidationMixin,
     InvenTreeParameterMixin,
     InvenTreeMetadataMixin,
     InvenTreePathStringMixin,
@@ -475,7 +475,7 @@ class PartReportContext(report.mixins.BaseReportContext, TypedDict):
 @cleanup.ignore
 class Part(
     InvenTreeAuditMixin,
-    PluginValidationMixin,
+    InvenTreePluginValidationMixin,
     InvenTreeParameterMixin,
     InvenTreeAttachmentMixin,
     InvenTreeBarcodeMixin,

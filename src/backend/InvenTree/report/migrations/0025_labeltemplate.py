@@ -33,6 +33,6 @@ class Migration(migrations.Migration):
                 'abstract': False,
                 'unique_together': {('name', 'model_type')},
             },
-            bases=(generic.models.modelmixins.PluginValidationMixin, models.Model),
+            bases=(generic.models.modelmixins.InvenTreePluginValidationMixin, models.Model),
         ),
     ]

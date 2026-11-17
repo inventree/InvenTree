@@ -28,7 +28,6 @@ from generic.models.modelmixins import (  # noqa: F401
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreeTagsMixin,
-    PluginValidationMixin,
     ReferenceIndexingMixin,
 )
 from generic.models.modelmixins import (
@@ -36,6 +35,9 @@ from generic.models.modelmixins import (
 )
 from generic.models.modelmixins import (
     InvenTreePathStringMixin as PathStringMixin,  # noqa: F401
+)
+from generic.models.modelmixins import (
+    InvenTreePluginValidationMixin as PluginValidationMixin,  # noqa: F401
 )
 
 logger = structlog.get_logger('inventree')

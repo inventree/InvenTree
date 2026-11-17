@@ -13,12 +13,15 @@ from mptt.models import MPTTModel
 import InvenTree.exceptions
 import InvenTree.sentry
 from generic.models.internal import ContentTypeMixin
-from generic.models.modelmixins import InvenTreeMetadataMixin, PluginValidationMixin
+from generic.models.modelmixins import (
+    InvenTreeMetadataMixin,
+    InvenTreePluginValidationMixin,
+)
 
 logger = structlog.get_logger('inventree')
 
 
-class InvenTreeModel(ContentTypeMixin, PluginValidationMixin, models.Model):
+class InvenTreeModel(ContentTypeMixin, InvenTreePluginValidationMixin, models.Model):
     """Base class for InvenTree models, which provides some common functionality.
 
     Includes the following mixins by default:

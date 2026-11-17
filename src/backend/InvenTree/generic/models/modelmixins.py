@@ -30,7 +30,7 @@ from .internal import DiffMixin, InvenTreePermissionCheckMixin
 logger = structlog.get_logger('inventree')
 
 
-class PluginValidationMixin(DiffMixin):
+class InvenTreePluginValidationMixin(DiffMixin):
     """Mixin class which exposes the model instance to plugin validation.
 
     Any model class which inherits from this mixin will be exposed to the plugin validation system.

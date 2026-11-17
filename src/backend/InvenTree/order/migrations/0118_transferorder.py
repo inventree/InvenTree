@@ -292,7 +292,7 @@ class Migration(migrations.Migration):
                 generic.models.modelmixins.InvenTreeAttachmentMixin,
                 generic.models.internal.InvenTreePermissionCheckMixin,
                 generic.models.internal.ContentTypeMixin,
-                generic.models.modelmixins.PluginValidationMixin,
+                generic.models.modelmixins.InvenTreePluginValidationMixin,
                 models.Model,
             ),
         ),
@@ -423,7 +423,7 @@ class Migration(migrations.Migration):
             },
             bases=(
                 generic.models.internal.ContentTypeMixin,
-                generic.models.modelmixins.PluginValidationMixin,
+                generic.models.modelmixins.InvenTreePluginValidationMixin,
                 models.Model,
             ),
         ),

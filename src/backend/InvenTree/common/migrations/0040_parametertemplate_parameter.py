@@ -125,7 +125,7 @@ class Migration(migrations.Migration):
                     },
                     bases=(
                         generic.models.internal.ContentTypeMixin,
-                        generic.models.modelmixins.PluginValidationMixin,
+                        generic.models.modelmixins.InvenTreePluginValidationMixin,
                         models.Model,
                     ),
                 ),
@@ -238,7 +238,7 @@ class Migration(migrations.Migration):
                     },
                     bases=(
                         generic.models.internal.ContentTypeMixin,
-                        generic.models.modelmixins.PluginValidationMixin,
+                        generic.models.modelmixins.InvenTreePluginValidationMixin,
                         models.Model,
                     ),
                 ),
