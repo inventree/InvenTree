@@ -276,7 +276,7 @@ export default function StockDetail() {
       },
       {
         name: 'costs',
-        label: t`Costs`,
+        label: t`Item Costs`,
         icon: <IconCurrencyDollar />,
         hidden: !user.hasViewRole(UserRoles.pricing),
         content: stockitem?.pk ? (

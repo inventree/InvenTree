@@ -75,7 +75,7 @@ export default function StockItemCostEntryTable({
 
   const newCostEntry = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.stock_cost_entry_list),
-    title: t`Add Cost`,
+    title: t`Add Item Cost`,
     fields: costEntryForm.fields,
     processFormData: costEntryForm.processFormData,
     onFormSuccess: onFormSuccess
@@ -84,7 +84,7 @@ export default function StockItemCostEntryTable({
   const editCostEntry = useEditApiFormModal({
     url: apiUrl(ApiEndpoints.stock_cost_entry_list),
     pk: selectedEntry,
-    title: t`Edit Cost`,
+    title: t`Edit Item Cost`,
     fields: costEntryForm.fields,
     processFormData: costEntryForm.processFormData,
     onFormSuccess: onFormSuccess
@@ -93,7 +93,7 @@ export default function StockItemCostEntryTable({
   const deleteCostEntry = useDeleteApiFormModal({
     url: apiUrl(ApiEndpoints.stock_cost_entry_list),
     pk: selectedEntry,
-    title: t`Delete Cost`,
+    title: t`Delete Item Cost`,
     onFormSuccess: onFormSuccess
   });
 
