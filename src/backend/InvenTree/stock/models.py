@@ -3288,16 +3288,19 @@ class StockItem(
 
         # Do not reduce stock below the quantity reserved by active allocations.
         # A transfer may consume its own reservation, so exclude that order.
-        allocated = self.allocation_count()
-        if transferorder is not None:
-            allocated -= self.transfer_order_allocation_count(
-                filter_allocations={'line__order': transferorder}
-            )
+        if quantity < self.quantity:
+            allocated = getattr(self, '_allocation_count_cache', None)
+            if allocated is None:
+                allocated = self.allocation_count()
+            if transferorder is not None:
+                allocated -= self.transfer_order_allocation_count(
+                    filter_allocations={'line__order': transferorder}
+                )
 
-        if quantity < max(allocated, 0):
-            raise ValidationError(
-                _('Stock quantity cannot be reduced below the allocated quantity')
-            )
+            if quantity < max(allocated, 0):
+                raise ValidationError(
+                    _('Stock quantity cannot be reduced below the allocated quantity')
+                )
 
         # No change if the quantity is the same as the current quantity
         if self.quantity == quantity:
@@ -3507,6 +3510,7 @@ class StockItem(
 
         deltas = {}
 
+        transferorder = kwargs.get('transferorder')
         status = self._resolve_status_kwarg(kwargs)
         self._apply_status_change(status, deltas)
         self._apply_model_reference_fields(kwargs, deltas)
@@ -3530,9 +3534,7 @@ class StockItem(
             event = nullcontext()
 
         with event:
-            self.updateQuantity(
-                self.quantity - quantity, transferorder=kwargs.get('transferorder')
-            )
+            self.updateQuantity(self.quantity - quantity, transferorder=transferorder)
 
         return True
 

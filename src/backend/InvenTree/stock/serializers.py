@@ -1992,9 +1992,24 @@ class StockCountSerializer(StockAdjustmentSerializer):
             write_batched(),
             batch_offload_tasks(),
         ):
+            # Lock stock rows before reading allocations, so another adjustment
+            # cannot change their reservations between the bulk read and updates.
+            list(
+                StockItem.objects.select_for_update()
+                .filter(pk__in=[item['pk'].pk for item in items])
+                .order_by('pk')
+                .values_list('pk', flat=True)
+            )
+            allocation_counts = StockItem.bulk_allocation_count(
+                [item['pk'] for item in items]
+            )
+
             for item in items:
                 stock_item = item['pk']
                 quantity = item['quantity']
+                stock_item._allocation_count_cache = allocation_counts.get(
+                    stock_item.pk, 0
+                )
 
                 # Optional fields
                 extra = {}
@@ -2059,9 +2074,22 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
             write_batched(),
             batch_offload_tasks(),
         ):
+            list(
+                StockItem.objects.select_for_update()
+                .filter(pk__in=[item['pk'].pk for item in data['items']])
+                .order_by('pk')
+                .values_list('pk', flat=True)
+            )
+            allocation_counts = StockItem.bulk_allocation_count(
+                [item['pk'] for item in data['items']]
+            )
+
             for item in data['items']:
                 stock_item = item['pk']
                 quantity = item['quantity']
+                stock_item._allocation_count_cache = allocation_counts.get(
+                    stock_item.pk, 0
+                )
 
                 # Ignore in this case - no stock to remove
                 if quantity is None or quantity <= 0:

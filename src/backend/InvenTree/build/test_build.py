@@ -867,7 +867,9 @@ class BuildTest(BuildTestBase):
             build_line=self.line_1, stock_item=depleted, quantity=5
         )
 
-        depleted.take_stock(5, self.user)
+        # Simulate an out-of-band depletion so the allocation is stale. The
+        # normal stock removal API now correctly refuses to reduce allocated stock.
+        StockItem.objects.filter(pk=depleted.pk).update(quantity=0)
         depleted.refresh_from_db()
         self.assertEqual(depleted.quantity, 0)
 
