@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 580
+INVENTREE_API_VERSION = 581
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v581 -> 2026-11-17 : https://github.com/inventree/InvenTree/pull/13305
+    - Assign correct BOM permission role to part/copy-bom API endpoint
 
 v580 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13072
     - Adds feature info to contenttype endpoint

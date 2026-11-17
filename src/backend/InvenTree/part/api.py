@@ -538,10 +538,16 @@ class PartSerialNumberDetail(RetrieveAPI):
 
 
 class PartCopyBOM(CreateAPI):
-    """API endpoint for duplicating a BOM."""
+    """API endpoint for duplicating a BOM.
+
+    Requires the 'bom.add' permission.
+    If existing BOM items are to be removed, 'bom.delete' is also required
+    (this is enforced by the serializer).
+    """
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartCopyBOMSerializer
+    role_required = 'bom'
 
     def get_serializer_context(self):
         """Add custom information to the serializer context for this endpoint."""
