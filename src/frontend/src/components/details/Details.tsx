@@ -10,7 +10,8 @@ import {
   Skeleton,
   Stack,
   Table,
-  Text
+  Text,
+  Tooltip
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { getValueAtPath } from 'mantine-datatable';
@@ -39,6 +40,7 @@ export type DetailsField = {
   icon?: keyof InvenTreeIconType;
   name: string;
   label?: string;
+  tooltip?: string;
   badge?: BadgeType;
   copy?: boolean;
   value_formatter?: () => ValueFormatterReturn;
@@ -441,7 +443,11 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   }
 
   return (
-    <>
+    <Tooltip
+      label={props.field_data.tooltip}
+      disabled={!props.field_data.tooltip}
+      withArrow
+    >
       {make_link ? (
         <Anchor href={absoluteUrl} onClick={handleLinkClick}>
           <Text>{value}</Text>
@@ -449,7 +455,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
       ) : (
         <Text c={color}>{value}</Text>
       )}
-    </>
+    </Tooltip>
   );
 }
 

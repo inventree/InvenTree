@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 581
+INVENTREE_API_VERSION = 582
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v581 -> 2026-11-16 : https://github.com/inventree/InvenTree/pull/13243
+v582 -> 2026-11-17 : https://github.com/inventree/InvenTree/pull/13243
     - breaking: The /api/part/<id>/bom-copy/ endpoint now requires the 'bom.add' role (and 'bom.delete' if remove_existing is set)
     - breaking: Stock action endpoints (count, add, remove, transfer, return, change_status, assign, merge) now require the 'stock.change' role
     - Write operations on API views without a resolvable permission model now fall back to the queryset model, or are denied
+
+v581 -> 2026-11-17 : https://github.com/inventree/InvenTree/pull/13305
+    - Assign correct BOM permission role to part/copy-bom API endpoint
 
 v580 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13072
     - Adds feature info to contenttype endpoint
