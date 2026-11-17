@@ -57,8 +57,8 @@ from generic.models.modelmixins import (
     InvenTreeBarcodeMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
+    InvenTreeReferenceIndexingMixin,
     InvenTreeTagsMixin,
-    ReferenceIndexingMixin,
 )
 from generic.states import (
     RETURN_VALUE,
@@ -372,7 +372,7 @@ class Order(
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    ReferenceIndexingMixin,
+    InvenTreeReferenceIndexingMixin,
     InvenTreeMetadataModel,
 ):
     """Abstract model for an order.

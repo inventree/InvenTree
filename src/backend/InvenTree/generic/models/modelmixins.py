@@ -195,7 +195,7 @@ class InvenTreeMetadataMixin(models.Model):
             self.save()
 
 
-class ReferenceIndexingMixin(models.Model):
+class InvenTreeReferenceIndexingMixin(models.Model):
     """A mixin for keeping track of numerical copies of the "reference" field.
 
     Here, we attempt to convert a "reference" field value (char) to an integer,

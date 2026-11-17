@@ -57,8 +57,8 @@ from generic.models.modelmixins import (
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreePluginValidationMixin,
+    InvenTreeReferenceIndexingMixin,
     InvenTreeTagsMixin,
-    ReferenceIndexingMixin,
 )
 from generic.states import (
     DEFERRABLE,
@@ -111,7 +111,7 @@ class Build(
     InvenTreeBarcodeMixin,
     InvenTreeNoteMixin,
     InvenTreeTagsMixin,
-    ReferenceIndexingMixin,
+    InvenTreeReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,
     InvenTreeMetadataMixin,
