@@ -65,7 +65,6 @@ from stock.models import (
 )
 from stock.status_codes import StockHistoryCode, StockStatus
 from stock.system_settings import stock_expiry_enabled
-from users.permissions import check_user_permission
 
 
 class GenerateBatchCode(GenericAPIView):
