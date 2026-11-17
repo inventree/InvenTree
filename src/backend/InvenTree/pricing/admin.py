@@ -56,14 +56,13 @@ class StockItemCostEntryAdmin(admin.ModelAdmin):
         'stock_item',
         'cost_type',
         'source',
-        'estimated',
         'min_cost',
         'max_cost',
         'currency',
         'date',
     )
 
-    list_filter = ('cost_type', 'estimated')
+    list_filter = ('cost_type',)
 
     search_fields = ('source', 'notes')
 
@@ -84,12 +83,11 @@ class StockItemCostAdmin(admin.ModelAdmin):
         'min_cost',
         'max_cost',
         'currency',
-        'estimated',
         'incomplete',
         'date',
     )
 
-    list_filter = ('estimated', 'incomplete')
+    list_filter = ('incomplete',)
 
     autocomplete_fields = ('stock_item',)
 

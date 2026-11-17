@@ -546,7 +546,6 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
             entry = item.cost_entries.get()
             self.assertEqual(entry.cost_type, CostType.PURCHASE)
             self.assertEqual(entry.source, CostSource.PURCHASE_ORDER)
-            self.assertFalse(entry.estimated)
             self.assertIsNone(entry.user)
             self.assertEqual(entry.currency, 'USD')
             self.assertEqual(entry.min_cost, Decimal(100))
@@ -568,7 +567,6 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
             self.assertEqual(summary.currency, 'USD')
             self.assertEqual(summary.min_cost, Decimal(100))
             self.assertEqual(summary.max_cost, Decimal(100))
-            self.assertFalse(summary.estimated)
             self.assertFalse(summary.incomplete)
 
     def test_receive_cost_entries(self):

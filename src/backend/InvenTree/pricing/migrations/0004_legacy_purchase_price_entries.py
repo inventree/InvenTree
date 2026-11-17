@@ -105,7 +105,6 @@ def update_summaries(apps, stock_item_ids, currency: str):
                 max_total=Sum('converted_max_cost', filter=valid),
                 entry_count=Count('pk'),
                 valid_count=Count('pk', filter=valid),
-                estimated_count=Count('pk', filter=Q(estimated=True)),
             )
         )
 
@@ -115,7 +114,6 @@ def update_summaries(apps, stock_item_ids, currency: str):
                 currency=currency,
                 min_cost=row['min_total'] if row['valid_count'] else None,
                 max_cost=row['max_total'] if row['valid_count'] else None,
-                estimated=row['estimated_count'] > 0,
                 incomplete=row['valid_count'] < row['entry_count'],
             )
             for row in totals
@@ -168,7 +166,6 @@ def create_legacy_entries(apps, schema_editor):
                 stock_item_id=pk,
                 cost_type=COST_TYPE_PURCHASE,
                 source=SOURCE_LEGACY,
-                estimated=False,
                 currency=price_currency,
                 min_cost=price,
                 max_cost=price,

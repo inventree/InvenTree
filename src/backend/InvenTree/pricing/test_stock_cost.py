@@ -366,7 +366,6 @@ class StockItemCostSummaryTests(StockItemCostTestBase):
         summary = self.summary()
         self.assertEqual(summary.min_cost, Decimal('11.5'))
         self.assertEqual(summary.max_cost, Decimal('14.5'))
-        self.assertFalse(summary.estimated)
         self.assertFalse(summary.incomplete)
 
         # Accessible via the stock item
@@ -376,32 +375,6 @@ class StockItemCostSummaryTests(StockItemCostTestBase):
 
         # Other stock items are not affected
         self.assertIsNone(self.summary(self.other_item))
-
-    def test_estimated(self):
-        """The summary is marked as estimated if any entry is estimated."""
-        entry = StockItemCostEntry.objects.create_cost(
-            self.item, CostType.PURCHASE, CostSource.MANUAL, min_cost=10
-        )
-
-        self.assertFalse(self.summary().estimated)
-
-        estimate = StockItemCostEntry.objects.create_cost(
-            self.item,
-            CostType.MATERIAL,
-            CostSource.MANUAL,
-            min_cost=5,
-            max_cost=8,
-            estimated=True,
-        )
-
-        self.assertTrue(self.summary().estimated)
-
-        estimate.delete()
-        self.assertFalse(self.summary().estimated)
-
-        entry.estimated = True
-        entry.save()
-        self.assertTrue(self.summary().estimated)
 
     def test_update_and_delete(self):
         """The summary is updated when entries are edited or deleted."""
@@ -446,7 +419,6 @@ class StockItemCostSummaryTests(StockItemCostTestBase):
                 'cost_type': CostType.LANDED,
                 'min_cost': 1,
                 'max_cost': 2,
-                'estimated': True,
                 'source': CostSource.MANUAL,
             },
             {
@@ -462,12 +434,10 @@ class StockItemCostSummaryTests(StockItemCostTestBase):
         summary = self.summary()
         self.assertEqual(summary.min_cost, Decimal('11'))
         self.assertEqual(summary.max_cost, Decimal('12'))
-        self.assertTrue(summary.estimated)
 
         other = self.summary(self.other_item)
         self.assertEqual(other.min_cost, Decimal('4'))
         self.assertEqual(other.max_cost, Decimal('4'))
-        self.assertFalse(other.estimated)
 
         entry = StockItemCostEntry.objects.get(source='purchase_order')
         self.assertEqual(entry.converted_min_cost, Decimal('10'))
@@ -856,7 +826,7 @@ class StockItemCostRecorderTests(StockItemCostTestBase):
 
         # A range, and an additional entry for the same item
         costs.add(items[2], CostType.PURCHASE, min_cost=1, max_cost=2)
-        costs.add(items[2], CostType.LANDED, cost=Money(1, 'USD'), estimated=True)
+        costs.add(items[2], CostType.LANDED, cost=Money(1, 'USD'))
 
         # No cost - nothing is recorded
         self.assertFalse(costs.add(items[0], CostType.FEES, cost=None))
@@ -884,12 +854,10 @@ class StockItemCostRecorderTests(StockItemCostTestBase):
             summary = self.summary(item)
             self.assertEqual(summary.min_cost, Decimal(5))
             self.assertEqual(summary.max_cost, Decimal(5))
-            self.assertFalse(summary.estimated)
 
         summary = self.summary(items[2])
         self.assertEqual(summary.min_cost, Decimal(2))
         self.assertEqual(summary.max_cost, Decimal(3))
-        self.assertTrue(summary.estimated)
 
         # Saving again creates nothing
         self.assertEqual(costs.save(), [])

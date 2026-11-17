@@ -290,7 +290,6 @@ class StockItemCostEntrySerializer(
             'cost_type',
             'cost_type_text',
             'source',
-            'estimated',
             'currency',
             'min_cost',
             'max_cost',
@@ -366,7 +365,6 @@ class StockItemCostSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'currency',
             'min_cost',
             'max_cost',
-            'estimated',
             'incomplete',
             'date',
         ]
@@ -392,7 +390,7 @@ class StockItemCostBriefSerializer(InvenTree.serializers.InvenTreeModelSerialize
         """Metaclass options."""
 
         model = StockItemCost
-        fields = ['currency', 'min_cost', 'max_cost', 'estimated', 'incomplete', 'date']
+        fields = ['currency', 'min_cost', 'max_cost', 'incomplete', 'date']
 
         read_only_fields = fields
 

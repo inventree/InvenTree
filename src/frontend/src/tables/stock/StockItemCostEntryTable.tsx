@@ -17,14 +17,16 @@ import type { TableColumn } from '@lib/types/Tables';
 import { RenderCostRange } from '../../components/render/Pricing';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import {
-  BooleanColumn,
   DateColumn,
   NoteColumn,
   UserColumn
 } from '../../components/tables/ColumnRenderers';
 import { StatusFilterOptions } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
-import { useStockItemCostEntryFields } from '../../forms/PricingForms';
+import {
+  isCostRange,
+  useStockItemCostEntryFields
+} from '../../forms/PricingForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -61,7 +63,8 @@ export default function StockItemCostEntryTable({
     [user]
   );
 
-  const costEntryFields = useStockItemCostEntryFields({
+  // Note: Shared by the create and edit forms (only one is open at a time)
+  const costEntryForm = useStockItemCostEntryFields({
     stockItemId: stockItem.pk
   });
 
@@ -73,7 +76,8 @@ export default function StockItemCostEntryTable({
   const newCostEntry = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.stock_cost_entry_list),
     title: t`Add Cost`,
-    fields: costEntryFields,
+    fields: costEntryForm.fields,
+    processFormData: costEntryForm.processFormData,
     onFormSuccess: onFormSuccess
   });
 
@@ -81,7 +85,8 @@ export default function StockItemCostEntryTable({
     url: apiUrl(ApiEndpoints.stock_cost_entry_list),
     pk: selectedEntry,
     title: t`Edit Cost`,
-    fields: costEntryFields,
+    fields: costEntryForm.fields,
+    processFormData: costEntryForm.processFormData,
     onFormSuccess: onFormSuccess
   });
 
@@ -146,10 +151,6 @@ export default function StockItemCostEntryTable({
           );
         }
       },
-      BooleanColumn({
-        accessor: 'estimated',
-        title: t`Estimated`
-      }),
       {
         accessor: 'source',
         title: t`Source`,
@@ -172,12 +173,6 @@ export default function StockItemCostEntryTable({
         label: t`Cost Type`,
         description: t`Filter by cost type`,
         choiceFunction: StatusFilterOptions(COST_TYPE_STATUS)
-      },
-      {
-        name: 'estimated',
-        label: t`Estimated`,
-        description: t`Show estimated costs`,
-        type: 'boolean'
       }
     ];
   }, []);
@@ -187,11 +182,14 @@ export default function StockItemCostEntryTable({
       <AddItemButton
         key='add-cost-entry'
         tooltip={t`Add Cost`}
-        onClick={() => newCostEntry.open()}
+        onClick={() => {
+          costEntryForm.setEstimate(false);
+          newCostEntry.open();
+        }}
         hidden={!user.hasAddRole(UserRoles.pricing) || !canChangeStock}
       />
     ];
-  }, [user, canChangeStock]);
+  }, [user, canChangeStock, costEntryForm.setEstimate]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -199,6 +197,8 @@ export default function StockItemCostEntryTable({
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.pricing) || !canChangeStock,
           onClick: () => {
+            // An entry with a range of costs is an estimate
+            costEntryForm.setEstimate(isCostRange(record));
             setSelectedEntry(record.pk);
             editCostEntry.open();
           }
@@ -212,7 +212,7 @@ export default function StockItemCostEntryTable({
         })
       ];
     },
-    [user, canChangeStock]
+    [user, canChangeStock, costEntryForm.setEstimate]
   );
 
   return (

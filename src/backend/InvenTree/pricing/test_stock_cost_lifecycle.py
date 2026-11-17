@@ -45,7 +45,6 @@ class StockItemCostLifecycleBase(StockItemCostTestBase):
             (
                 entry.cost_type,
                 entry.source,
-                entry.estimated,
                 entry.currency,
                 entry.min_cost,
                 entry.max_cost,
@@ -59,13 +58,12 @@ class StockItemCostLifecycleBase(StockItemCostTestBase):
             for entry in item.cost_entries.order_by('cost_type', 'pk')
         ]
 
-    def assertSummary(self, item, min_cost, max_cost, estimated=False):
+    def assertSummary(self, item, min_cost, max_cost):
         """Check the cost summary of a stock item."""
         summary = StockItemCost.objects.get(stock_item=item)
         self.assertEqual(summary.currency, 'USD')
         self.assertAlmostEqual(summary.min_cost, Decimal(min_cost), places=4)
         self.assertAlmostEqual(summary.max_cost, Decimal(max_cost), places=4)
-        self.assertEqual(summary.estimated, estimated)
 
 
 class CopyCostTests(StockItemCostLifecycleBase):
@@ -84,7 +82,6 @@ class CopyCostTests(StockItemCostLifecycleBase):
             CostType.LANDED,
             min_cost=Money(3, 'AUD'),
             max_cost=Money(6, 'AUD'),
-            estimated=True,
             source_data={'invoice': 'INV-1'},
             notes='Freight',
         )
@@ -107,7 +104,7 @@ class CopyCostTests(StockItemCostLifecycleBase):
 
         for target in targets:
             self.assertEqual(self.entry_values(target), self.entry_values(source))
-            self.assertSummary(target, 12, 14, estimated=True)
+            self.assertSummary(target, 12, 14)
 
         # The source is unchanged (copying onto itself is ignored)
         self.assertEqual(source.cost_entries.count(), 2)
@@ -219,7 +216,6 @@ class MergeCostTests(StockItemCostLifecycleBase):
         self.assertEqual(purchase.currency, 'USD')
         self.assertEqual(purchase.min_cost, Decimal('6.5'))
         self.assertEqual(purchase.max_cost, Decimal('8'))
-        self.assertFalse(purchase.estimated)
 
         self.assertEqual(purchase.source_data['merged_items'], merged_pks)
         # The original entries are recorded against the merged entry
@@ -251,7 +247,7 @@ class MergeCostTests(StockItemCostLifecycleBase):
         # 15 AUD = 10 USD
         self.add_cost(b, min_cost=Money(15, 'AUD'))
 
-        # No exchange rate available - excluded (contributes zero), and marked as estimated
+        # No exchange rate available - excluded (contributes zero)
         self.add_cost(c, min_cost=Money(1000, 'JPY'))
 
         a.merge_stock_items([b, c])
@@ -261,10 +257,9 @@ class MergeCostTests(StockItemCostLifecycleBase):
 
         # (10 x 10 + 10 x 10 + 0 x 20) / 40 = 5
         self.assertEqual(entry.min_cost, Decimal(5))
-        self.assertTrue(entry.estimated)
         self.assertEqual(len(entry.source_data['excluded_entries']), 1)
 
-        self.assertSummary(a, 5, 5, estimated=True)
+        self.assertSummary(a, 5, 5)
 
     def test_merge_single_currency(self):
         """A cost type with a single (non default) currency is averaged in that currency."""
@@ -326,7 +321,6 @@ class DisassemblyCostTests(StockItemCostLifecycleBase):
         item = self.make_item(quantity=5, part=self.assembly)
 
         self.add_cost(item, min_cost=Money(10, 'USD'), max_cost=Money(12, 'USD'))
-        self.add_cost(item, CostType.LANDED, min_cost=Money(0, 'USD'), estimated=True)
 
         components = self.disassemble(
             item,
@@ -348,12 +342,11 @@ class DisassemblyCostTests(StockItemCostLifecycleBase):
             self.assertEqual(entry.min_cost, Decimal(2))
             self.assertEqual(entry.max_cost, Decimal('2.4'))
 
-            # The assembly cost includes an estimate
-            self.assertTrue(entry.estimated)
+            # The cost range (estimate) of the assembly carries through
             self.assertEqual(entry.source_data['stock_item'], item.pk)
             self.assertEqual(entry.source_data['allocation'], 'even')
 
-            self.assertSummary(component, 2, '2.4', estimated=True)
+            self.assertSummary(component, 2, '2.4')
 
     def test_no_cost_data(self):
         """Components of an assembly without cost data have no cost entries."""

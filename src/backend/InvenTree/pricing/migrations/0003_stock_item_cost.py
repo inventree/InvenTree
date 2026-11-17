@@ -61,14 +61,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    'estimated',
-                    models.BooleanField(
-                        default=False,
-                        help_text='One or more cost entries is an estimate',
-                        verbose_name='Estimated',
-                    ),
-                ),
-                (
                     'incomplete',
                     models.BooleanField(
                         default=False,
@@ -135,14 +127,6 @@ class Migration(migrations.Migration):
                         max_length=100,
                         validators=[pricing.models.validate_cost_source],
                         verbose_name='Source',
-                    ),
-                ),
-                (
-                    'estimated',
-                    models.BooleanField(
-                        default=False,
-                        help_text='This cost is an estimate',
-                        verbose_name='Estimated',
                     ),
                 ),
                 (

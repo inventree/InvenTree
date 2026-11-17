@@ -399,7 +399,7 @@ class StockItemCostApiTestBase(InvenTreeAPITestCase):
         )
 
         StockItemCostEntry.objects.create_cost(
-            cls.item, CostType.LANDED, CostSource.MANUAL, min_cost=1, estimated=True
+            cls.item, CostType.LANDED, CostSource.MANUAL, min_cost=1
         )
 
         StockItemCostEntry.objects.create_cost(
@@ -434,7 +434,6 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
             'cost_type',
             'cost_type_text',
             'source',
-            'estimated',
             'currency',
             'min_cost',
             'max_cost',
@@ -458,9 +457,6 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
         response = self.get(self.LIST_URL, {'source': 'plugin:test'})
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], self.entry.pk)
-
-        response = self.get(self.LIST_URL, {'estimated': True})
-        self.assertEqual(len(response.data), 1)
 
         response = self.get(self.LIST_URL, {'user_detail': True})
         self.assertIn('user_detail', response.data[0])
@@ -489,7 +485,7 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
         self.assertEqual(data['max_cost'], 1.25)
         self.assertEqual(data['converted_currency'], 'USD')
         self.assertEqual(data['converted_min_cost'], 1.25)
-        self.assertFalse(data['estimated'])
+        self.assertNotIn('estimated', data)
 
         summary = StockItemCost.objects.get(stock_item=self.other_item)
         self.assertEqual(summary.min_cost, Decimal('6.25'))
@@ -503,7 +499,6 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
                 'min_cost': -2,
                 'max_cost': -1,
                 'source': 'plugin:my-plugin',
-                'estimated': True,
                 'converted_min_cost': 999,
             },
         )
@@ -514,7 +509,6 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
         summary.refresh_from_db()
         self.assertEqual(summary.min_cost, Decimal('4.25'))
         self.assertEqual(summary.max_cost, Decimal('5.25'))
-        self.assertTrue(summary.estimated)
 
     def test_user_detail_queries(self):
         """The 'user_detail' field is prefetched (no additional queries per row)."""
@@ -728,7 +722,6 @@ class StockItemPricingDetailTests(StockItemCostApiTestBase):
         self.assertEqual(data['currency'], 'USD')
         self.assertEqual(data['min_cost'], 11)
         self.assertEqual(data['max_cost'], 13)
-        self.assertTrue(data['estimated'])
         self.assertFalse(data['incomplete'])
         self.assertNotIn('stock_item', data)
 
@@ -837,12 +830,10 @@ class StockItemCostApiTests(StockItemCostApiTestBase):
         self.assertEqual(data['currency'], 'USD')
         self.assertEqual(data['min_cost'], 11)
         self.assertEqual(data['max_cost'], 13)
-        self.assertTrue(data['estimated'])
         self.assertFalse(data['incomplete'])
 
-        response = self.get(self.LIST_URL, {'estimated': False})
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['stock_item'], self.other_item.pk)
+        # An estimate is recorded as a cost range - there is no separate 'estimated' field
+        self.assertNotIn('estimated', data)
 
     def test_read_only(self):
         """Cost summaries cannot be created or edited via the API."""

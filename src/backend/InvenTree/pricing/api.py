@@ -181,7 +181,7 @@ class StockItemCostEntryFilter(FilterSet):
         """Metaclass options."""
 
         model = StockItemCostEntry
-        fields = ['stock_item', 'cost_type', 'source', 'estimated', 'user']
+        fields = ['stock_item', 'cost_type', 'source', 'user']
 
     min_date = InvenTreeDateFilter(
         label='Updated after', field_name='date', lookup_expr='gt'
@@ -221,7 +221,6 @@ class StockItemCostEntryList(
         'date',
         'cost_type',
         'source',
-        'estimated',
         'converted_min_cost',
         'converted_max_cost',
     ]
@@ -252,7 +251,7 @@ class StockItemCostFilter(FilterSet):
         """Metaclass options."""
 
         model = StockItemCost
-        fields = ['stock_item', 'estimated', 'incomplete']
+        fields = ['stock_item', 'incomplete']
 
 
 class StockItemCostMixin(StockItemCostPermissionMixin):

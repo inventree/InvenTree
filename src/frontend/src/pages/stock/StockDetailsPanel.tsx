@@ -329,7 +329,6 @@ export function StockDetailsPanel({
           minCost={instance.pricing_detail.min_cost}
           maxCost={instance.pricing_detail.max_cost}
           currency={instance.pricing_detail.currency}
-          estimated={instance.pricing_detail.estimated}
           incomplete={instance.pricing_detail.incomplete}
         />
       )

@@ -60,7 +60,7 @@ If the original stock item has a recorded unit cost, and no explicit *Unit Cost*
 - If pricing data is not available for *every* line, the cost is instead split evenly on a per-unit basis across all generated units
 - Cost is only allocated across newly *created* stock items - any matched installed items retain their own existing cost entries, and are excluded from the cost split entirely
 - If any line has an explicit *Unit Cost* provided by the user, automatic cost allocation is skipped entirely, and costs are only recorded where explicitly set
-- If the cost of the original stock item is an estimate (or is incomplete), the allocated costs are marked as estimated
+- If the cost of the original stock item is a range (an estimate), the range is carried through to the allocated costs
 
 ### Traceability
 

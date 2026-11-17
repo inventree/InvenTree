@@ -2175,7 +2175,6 @@ class StockItem(
                 min_cost=unit_cost(summary.min_cost),
                 max_cost=unit_cost(summary.max_cost),
                 currency=summary.currency,
-                estimated=summary.estimated or summary.incomplete,
                 source_data={
                     'stock_item': self.pk,
                     'quantity': str(quantity),

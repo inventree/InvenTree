@@ -9,7 +9,7 @@ class CostType(StatusCode):
     """Defines the category of a StockItemCostEntry - i.e. *what* the cost is for.
 
     Note that the category does not describe who (or what) created the cost entry
-    (see StockItemCostEntry.source), or how certain the cost is (see StockItemCostEntry.estimated).
+    (see StockItemCostEntry.source). An estimated cost is recorded as a range (min_cost < max_cost).
 
     Attributes:
         PURCHASE: Unit price paid to the supplier

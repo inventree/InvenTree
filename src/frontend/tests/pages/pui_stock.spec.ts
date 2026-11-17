@@ -778,6 +778,10 @@ test('Stock - Item Costs', async ({ browser }) => {
 
   await page.getByLabel('choice-field-cost_type').click();
   await page.getByRole('option', { name: 'Landed' }).click();
+  // The maximum cost is only shown for an estimate (a range of costs)
+  await expect(page.getByLabel('number-field-max_cost')).toHaveCount(0);
+  await page.getByRole('switch', { name: 'boolean-field-estimate' }).click();
+
   await page.getByLabel('number-field-min_cost').fill('12.5');
   await page.getByLabel('number-field-max_cost').fill('15');
   await page
@@ -791,6 +795,15 @@ test('Stock - Item Costs', async ({ browser }) => {
     .getByRole('cell', { name: 'manual', exact: true })
     .first()
     .waitFor();
+
+  // Editing a cost range opens with the "estimate" switch enabled
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  await expect(
+    page.getByRole('switch', { name: 'boolean-field-estimate' })
+  ).toBeChecked();
+  await expect(page.getByLabel('number-field-max_cost')).toHaveValue('15');
+  await page.getByRole('button', { name: 'Cancel' }).click();
 
   // The cost summary is displayed on the stock item details panel
   await loadTab(page, 'Stock Details');

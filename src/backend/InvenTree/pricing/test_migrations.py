@@ -283,7 +283,7 @@ class TestLegacyPurchasePriceEntries(MigratorTestCase):
             'zero': make_item(Decimal('0'), 'AUD'),
             # No price
             'none': make_item(None),
-            # Existing (estimated) cost entry, and a stale summary
+            # Existing cost entry (a range), and a stale summary
             'existing': make_item(Decimal('5'), 'AUD'),
             # Existing legacy entry (e.g. migration re-applied) - not duplicated
             'legacy': make_item(Decimal('7'), 'AUD'),
@@ -293,7 +293,6 @@ class TestLegacyPurchasePriceEntries(MigratorTestCase):
             stock_item_id=self.items['existing'],
             cost_type=20,
             source='manual',
-            estimated=True,
             currency='AUD',
             min_cost=2,
             max_cost=3,
@@ -352,7 +351,6 @@ class TestLegacyPurchasePriceEntries(MigratorTestCase):
             entry = legacy_entry(key)
 
             self.assertEqual(entry.cost_type, 10)
-            self.assertFalse(entry.estimated)
             self.assertEqual(entry.currency, currency)
             self.assertEqual(entry.min_cost, value)
             self.assertEqual(entry.max_cost, value)
@@ -365,7 +363,6 @@ class TestLegacyPurchasePriceEntries(MigratorTestCase):
             self.assertEqual(cost.currency, 'AUD')
             self.assertEqual(cost.min_cost, converted)
             self.assertEqual(cost.max_cost, converted)
-            self.assertFalse(cost.estimated)
             self.assertFalse(cost.incomplete)
             self.assertIsNotNone(cost.date)
 
@@ -399,7 +396,6 @@ class TestLegacyPurchasePriceEntries(MigratorTestCase):
         cost = summary('existing')
         self.assertEqual(cost.min_cost, Decimal('7'))
         self.assertEqual(cost.max_cost, Decimal('8'))
-        self.assertTrue(cost.estimated)
         self.assertFalse(cost.incomplete)
         self.assertEqual(
             StockItemCost.objects.filter(stock_item_id=self.items['existing']).count(),

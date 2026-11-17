@@ -1371,7 +1371,7 @@ class StockItemCostEntryManager(models.Manager):
         or shipped), so that the new stock item carries the same unit cost as its source.
         Valid because all costs are *per unit* (see StockItemCostEntry).
 
-        Every field is copied verbatim - including the source, user, estimated flag,
+        Every field is copied verbatim - including the source, user,
         and the stored converted values (no reconversion takes place).
         The cached StockItemCost summary of each target stock item is then (re)calculated.
 
@@ -1443,7 +1443,7 @@ class StockItemCostEntryManager(models.Manager):
         - A stock item without an entry of a particular cost type contributes zero for that type
         - If every entry of a cost type has the same (original) currency, the average is
           calculated in that currency. Otherwise, the stored converted values are used, and any
-          entry without a converted value is excluded (and the result marked as estimated)
+          entry without a converted value is excluded (and recorded in 'source_data')
 
         Arguments:
             target: The StockItem which the other items are being merged into
@@ -1523,8 +1523,6 @@ class StockItemCostEntryManager(models.Manager):
                 'min_cost': min_total / total_quantity,
                 'max_cost': max_total / total_quantity,
                 'currency': currency,
-                'estimated': bool(excluded)
-                or any(entry.estimated for entry in type_entries),
                 'notes': str(_('Weighted average of merged stock items')),
                 'source_data': {
                     'merged_items': sorted(contributing),
@@ -1637,7 +1635,6 @@ class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
         stock_item: The StockItem that this cost entry applies to
         cost_type: The category of this cost entry (see CostType)
         source: Identifies who or what created this cost entry (e.g. a plugin slug)
-        estimated: True if this cost is an estimate, rather than a known cost
         currency: Currency code for the min_cost and max_cost values
         min_cost: Minimum unit cost for this entry
         max_cost: Maximum unit cost for this entry
@@ -1702,12 +1699,6 @@ class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
         help_text=_(
             "Identifies who or what created this cost entry (e.g. 'manual', or 'plugin:<slug>')"
         ),
-    )
-
-    estimated = models.BooleanField(
-        default=False,
-        verbose_name=_('Estimated'),
-        help_text=_('This cost is an estimate'),
     )
 
     currency = models.CharField(
@@ -1826,7 +1817,6 @@ class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
             'stock_item': self.stock_item_id,
             'cost_type': self.cost_type,
             'source': self.source,
-            'estimated': self.estimated,
             'currency': self.currency,
             'min_cost': value(self.min_cost),
             'max_cost': value(self.max_cost),
@@ -1997,7 +1987,6 @@ class StockItemCostManager(models.Manager):
                 max_total=Sum('converted_max_cost', filter=valid),
                 entry_count=Count('pk'),
                 valid_count=Count('pk', filter=valid),
-                estimated_count=Count('pk', filter=Q(estimated=True)),
             )
         )
 
@@ -2007,7 +1996,6 @@ class StockItemCostManager(models.Manager):
                 currency=currency,
                 min_cost=row['min_total'] if row['valid_count'] else None,
                 max_cost=row['max_total'] if row['valid_count'] else None,
-                estimated=row['estimated_count'] > 0,
                 incomplete=row['valid_count'] < row['entry_count'],
             )
             for row in totals
@@ -2026,7 +2014,6 @@ class StockItemCostManager(models.Manager):
                         'currency',
                         'min_cost',
                         'max_cost',
-                        'estimated',
                         'incomplete',
                         'date',
                     ],
@@ -2080,7 +2067,6 @@ class StockItemCost(models.Model):
         currency: Currency code for the min_cost and max_cost values
         min_cost: Sum of the (converted) minimum cost of all entries
         max_cost: Sum of the (converted) maximum cost of all entries
-        estimated: True if any of the entries is an estimate
         incomplete: True if any of the entries could not be included (e.g. no exchange rate available)
         date: Date at which this summary was last calculated
     """
@@ -2128,12 +2114,6 @@ class StockItemCost(models.Model):
         blank=True,
         verbose_name=_('Maximum Cost'),
         help_text=_('Maximum total unit cost, calculated from all cost entries'),
-    )
-
-    estimated = models.BooleanField(
-        default=False,
-        verbose_name=_('Estimated'),
-        help_text=_('One or more cost entries is an estimate'),
     )
 
     incomplete = models.BooleanField(

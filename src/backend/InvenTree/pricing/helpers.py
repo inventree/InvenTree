@@ -57,7 +57,7 @@ class StockItemCostRecorder:
             cost: A single (point) unit cost - shorthand for min_cost = max_cost = cost
             min_cost: Minimum unit cost (Money, or a value in the provided 'currency')
             max_cost: Maximum unit cost (Money, or a value in the provided 'currency')
-            **fields: Any other StockItemCostEntry fields (e.g. currency, estimated, source_data, notes)
+            **fields: Any other StockItemCostEntry fields (e.g. currency, source_data, notes)
 
         Returns:
             True if entries were added, False if no cost was provided (nothing is recorded)
