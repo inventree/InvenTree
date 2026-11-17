@@ -110,7 +110,7 @@ class PluginValidationMixin(DiffMixin):
         super().delete(*args, **kwargs)
 
 
-class MetadataMixin(models.Model):
+class InvenTreeMetadataMixin(models.Model):
     """Model mixin class which adds a JSON metadata field to a model, for use by any (and all) plugins.
 
     The intent of this mixin is to provide a metadata field on a model instance,

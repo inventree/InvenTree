@@ -53,10 +53,10 @@ from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeAuditMixin,
     InvenTreeBarcodeMixin,
+    InvenTreeMetadataMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreeTagsMixin,
-    MetadataMixin,
     PluginValidationMixin,
     ReferenceIndexingMixin,
 )
@@ -114,7 +114,7 @@ class Build(
     ReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,
-    MetadataMixin,
+    InvenTreeMetadataMixin,
     InvenTreeTree,
 ):
     """A Build object organizes the creation of new StockItem objects from other existing StockItem objects.

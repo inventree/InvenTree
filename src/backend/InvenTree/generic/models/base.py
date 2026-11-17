@@ -13,7 +13,7 @@ from mptt.models import MPTTModel
 import InvenTree.exceptions
 import InvenTree.sentry
 from generic.models.internal import ContentTypeMixin
-from generic.models.modelmixins import MetadataMixin, PluginValidationMixin
+from generic.models.modelmixins import InvenTreeMetadataMixin, PluginValidationMixin
 
 logger = structlog.get_logger('inventree')
 
@@ -32,7 +32,7 @@ class InvenTreeModel(ContentTypeMixin, PluginValidationMixin, models.Model):
         abstract = True
 
 
-class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
+class InvenTreeMetadataModel(InvenTreeMetadataMixin, InvenTreeModel):
     """Base class for an InvenTree model which includes a metadata field."""
 
     class Meta:

@@ -45,10 +45,10 @@ from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeAuditMixin,
     InvenTreeBarcodeMixin,
+    InvenTreeMetadataMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreeTagsMixin,
-    MetadataMixin,
     PathStringMixin,
     PluginValidationMixin,
 )
@@ -67,7 +67,7 @@ from users.models import Owner
 logger = structlog.get_logger('inventree')
 
 
-class StockLocationType(MetadataMixin, models.Model):
+class StockLocationType(InvenTreeMetadataMixin, models.Model):
     """A type of stock location like Warehouse, room, shelf, drawer.
 
     Attributes:
@@ -138,7 +138,7 @@ class StockLocation(
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     PathStringMixin,
-    MetadataMixin,
+    InvenTreeMetadataMixin,
     InvenTreeTree,
 ):
     """Organization tree for StockItem objects.

@@ -31,7 +31,9 @@ from generic.models.modelmixins import (  # noqa: F401
     PluginValidationMixin,
     ReferenceIndexingMixin,
 )
-from generic.models.modelmixins import MetadataMixin as MetadataMixin
+from generic.models.modelmixins import (
+    InvenTreeMetadataMixin as MetadataMixin,  # noqa: F401
+)
 from generic.models.modelmixins import PathStringMixin as PathStringMixin
 
 logger = structlog.get_logger('inventree')

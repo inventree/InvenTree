@@ -51,10 +51,10 @@ from generic.models.modelmixins import (
     InvenTreeAuditMixin,
     InvenTreeBarcodeMixin,
     InvenTreeImageMixin,
+    InvenTreeMetadataMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreeTagsMixin,
-    MetadataMixin,
     PathStringMixin,
     PluginValidationMixin,
 )
@@ -77,7 +77,7 @@ class PartCategory(
     InvenTreeAuditMixin,
     PluginValidationMixin,
     InvenTreeParameterMixin,
-    MetadataMixin,
+    InvenTreeMetadataMixin,
     PathStringMixin,
     InvenTreeTree,
 ):
@@ -483,7 +483,7 @@ class Part(
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTreeImageMixin,
-    MetadataMixin,
+    InvenTreeMetadataMixin,
     InvenTreeTree,
 ):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
