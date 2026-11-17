@@ -21,6 +21,7 @@ import {
   Textarea
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import { IconAlertTriangle, IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
@@ -212,6 +213,10 @@ export function ApiTokenTable({
         table.refreshTable();
         setRevokeTokenId(null);
         setRevocationReason('');
+        notifications.show({
+          title: t`Token revoked`,
+          message: t`The token has been successfully revoked`
+        });
       })
       .catch((error) => {
         showApiErrorMessage({
@@ -270,7 +275,7 @@ export function ApiTokenTable({
           setRevokeTokenId(null);
           setRevocationReason('');
         }}
-        title={t`Revoke Token`}
+        title={<StylishText size='lg'>{t`Revoke Token`}</StylishText>}
         centered
       >
         <Textarea
