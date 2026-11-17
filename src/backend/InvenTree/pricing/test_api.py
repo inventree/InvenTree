@@ -516,6 +516,41 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
         self.assertEqual(summary.max_cost, Decimal('5.25'))
         self.assertTrue(summary.estimated)
 
+    def test_user_detail_queries(self):
+        """The 'user_detail' field is prefetched (no additional queries per row)."""
+        from django.contrib.auth.models import User
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        def count_queries(limit):
+            with CaptureQueriesContext(connection) as ctx:
+                response = self.get(
+                    self.LIST_URL, {'user_detail': True, 'limit': limit}
+                )
+
+            results = response.data['results']
+            self.assertEqual(len(results), limit)
+
+            for row in results:
+                self.assertEqual(row['user_detail']['pk'], row['user'])
+
+            return len(ctx.captured_queries)
+
+        # Create entries against a number of different users
+        for idx in range(8):
+            StockItemCostEntry.objects.create_cost(
+                self.other_item,
+                CostType.FEES,
+                CostSource.MANUAL,
+                min_cost=idx,
+                user=User.objects.create(username=f'cost-user-{idx}'),
+            )
+
+        # Warm up (first request performs one-off session / settings queries)
+        count_queries(1)
+
+        self.assertEqual(count_queries(2), count_queries(8))
+
     def test_invalid_source(self):
         """The source must follow the naming convention."""
         for source in ['my-plugin', 'plugin:', 'plugin:Bad Slug']:

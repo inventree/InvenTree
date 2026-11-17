@@ -13,6 +13,7 @@ from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
 from InvenTree.mixins import (
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
@@ -203,7 +204,9 @@ class StockItemCostEntryMixin(StockItemCostPermissionMixin):
         return user if user and user.is_authenticated else None
 
 
-class StockItemCostEntryList(StockItemCostEntryMixin, ListCreateAPI):
+class StockItemCostEntryList(
+    StockItemCostEntryMixin, OutputOptionsMixin, ListCreateAPI
+):
     """API endpoint for listing (and creating) StockItemCostEntry objects.
 
     A stock item may have any number of cost entries - posting always creates a new entry.
@@ -232,7 +235,9 @@ class StockItemCostEntryList(StockItemCostEntryMixin, ListCreateAPI):
         serializer.save(user=self.user_or_none(), source=source)
 
 
-class StockItemCostEntryDetail(StockItemCostEntryMixin, RetrieveUpdateDestroyAPI):
+class StockItemCostEntryDetail(
+    StockItemCostEntryMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """Detail API endpoint for a single StockItemCostEntry object."""
 
     def perform_update(self, serializer):
