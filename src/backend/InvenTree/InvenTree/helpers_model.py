@@ -92,9 +92,27 @@ _real_getaddrinfo = socket.getaddrinfo
 
 
 def _is_unsafe_ip(host: str) -> bool:
-    """Return True if the given (already-resolved) address string is private/reserved."""
+    """Return True if the given (already-resolved) address string is not safe to connect to.
+
+    Any address which is not globally routable is treated as unsafe. This covers
+    ranges such as 100.64.0.0/10 (RFC 6598 shared address space, used for carrier-grade
+    NAT, Tailscale and some cloud metadata services) which are neither "private" nor
+    "reserved" according to the ipaddress module.
+
+    The explicit checks are retained in addition to `is_global`, as some special-use
+    ranges (e.g. the NAT64 prefix 64:ff9b::/96, which can embed loopback or link-local
+    IPv4 addresses) are reported as global but are still caught by `is_reserved`.
+    """
     ip = ipaddress.ip_address(host)
-    return ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved
+    return (
+        not ip.is_global
+        or ip.is_private
+        or ip.is_loopback
+        or ip.is_link_local
+        or ip.is_reserved
+        or ip.is_multicast
+        or ip.is_unspecified
+    )
 
 
 def _guarded_getaddrinfo(host, *args, **kwargs):
