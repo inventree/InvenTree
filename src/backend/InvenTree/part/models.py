@@ -54,8 +54,8 @@ from generic.models.modelmixins import (
     InvenTreeMetadataMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
+    InvenTreePathStringMixin,
     InvenTreeTagsMixin,
-    PathStringMixin,
     PluginValidationMixin,
 )
 from InvenTree import helpers, validators
@@ -78,7 +78,7 @@ class PartCategory(
     PluginValidationMixin,
     InvenTreeParameterMixin,
     InvenTreeMetadataMixin,
-    PathStringMixin,
+    InvenTreePathStringMixin,
     InvenTreeTree,
 ):
     """PartCategory provides hierarchical organization of Part objects.

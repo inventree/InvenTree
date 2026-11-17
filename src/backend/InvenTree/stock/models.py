@@ -48,8 +48,8 @@ from generic.models.modelmixins import (
     InvenTreeMetadataMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
+    InvenTreePathStringMixin,
     InvenTreeTagsMixin,
-    PathStringMixin,
     PluginValidationMixin,
 )
 from generic.states import StatusCodeMixin
@@ -137,7 +137,7 @@ class StockLocation(
     InvenTreeBarcodeMixin,
     InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    PathStringMixin,
+    InvenTreePathStringMixin,
     InvenTreeMetadataMixin,
     InvenTreeTree,
 ):

@@ -928,7 +928,7 @@ class InvenTreeImageMixin(ModelFeatureMixin, models.Model):
         return self.get_thumbnail_url()
 
 
-class PathStringMixin(models.Model):
+class InvenTreePathStringMixin(models.Model):
     """Mixin class for adding a 'pathstring' field to a model class.
 
     The pathstring is a string representation of the path to this model instance,

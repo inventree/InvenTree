@@ -772,7 +772,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
     from django.apps import apps
 
     from generic.models.base import InvenTreeTree
-    from generic.models.modelmixins import PathStringMixin
+    from generic.models.modelmixins import InvenTreePathStringMixin
 
     try:
         model_class = apps.get_model(model)
@@ -788,7 +788,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
     model_class.rebuild_trees([tree_id])
 
     # Rebuild the 'pathstring' values for the entire tree (if applicable)
-    if issubclass(model_class, PathStringMixin):
+    if issubclass(model_class, InvenTreePathStringMixin):
         model_class.rebuild_tree_pathstring_values([tree_id])  # ty: ignore[invalid-attribute-access]
 
 
