@@ -825,6 +825,37 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
 
+        # Completing again must report the order as already complete,
+        # rather than a generic "transition not available" message
+        response = self.post(url, {'accept_incomplete': True}, expected_code=400)
+        self.assertEqual(response.data['detail'], 'Purchase Order is already Complete')
+
+    def test_po_complete_rejected_on_save(self):
+        """A validation error raised while saving the completed order is reported as-is.
+
+        Regression test: django-fsm sets the status to the target before the save, so a
+        save-time rejection (e.g. from a validation plugin) was previously reported as
+        "Transition 'complete_order' is not available from state '30'", hiding the cause.
+        """
+        po = models.PurchaseOrder.objects.get(pk=3)
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
+
+        url = reverse('api-po-complete', kwargs={'pk': po.pk})
+        self.assignRole('purchase_order.add')
+
+        with mock.patch.object(
+            models.PurchaseOrder,
+            'run_plugin_validation',
+            side_effect=ValidationError('Rejected by plugin'),
+        ):
+            response = self.post(url, {'accept_incomplete': True}, expected_code=400)
+
+        self.assertEqual(response.data['detail'], 'Rejected by plugin')
+        self.assertEqual(response.data['state'], PurchaseOrderStatus.PLACED.value)
+
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
+
     def test_po_complete_stale_instance_is_noop(self):
         """A second completion attempt with a stale order instance must be a no-op.
 
