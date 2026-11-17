@@ -485,7 +485,13 @@ class StockItemSerializer(
                 'label': _('Copy Test Results'),
                 'help_text': _('Copy test results from the original stock item'),
                 'default': False,
-            }
+            },
+            {
+                'name': 'copy_costs',
+                'label': _('Copy Costs'),
+                'help_text': _('Copy cost data from the original stock item'),
+                'default': True,
+            },
         ],
     )
 

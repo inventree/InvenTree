@@ -1296,20 +1296,31 @@ class StockList(
         # Extract location information
         location = serializer.validated_data.get('location', None)
 
-        def apply_duplicate_options(item):
-            """Apply any provided 'duplicate' options to a newly created StockItem."""
+        def apply_duplicate_options(items):
+            """Apply any provided 'duplicate' options to the newly created StockItem(s)."""
             if not duplicate:
                 return
 
             original = duplicate['original']
 
-            # copy_tests doesn't follow the copy_<x>_from() naming
-            # convention (copyTestResultsFrom), so still needs
-            # handling here - only copy_notes can go through the shared helper
-            apply_duplicate_copy_options(item, duplicate, original, copy_notes=True)
+            for item in items:
+                # copy_tests doesn't follow the copy_<x>_from() naming
+                # convention (copyTestResultsFrom), so still needs
+                # handling here - only copy_notes can go through the shared helper
+                apply_duplicate_copy_options(item, duplicate, original, copy_notes=True)
 
-            if duplicate.get('copy_tests', False):
-                item.copyTestResultsFrom(original)
+                if duplicate.get('copy_tests', False):
+                    item.copyTestResultsFrom(original)
+
+            # Copy the (per unit) cost entries of the original item to every new item.
+            # Note: No 'pricing' role is required - the costs are copied as part of creating
+            # the stock, and are not exposed to the user
+            if duplicate.get('copy_costs', True):
+                from pricing.models import StockItemCostEntry
+
+                StockItemCostEntry.objects.copy_costs(
+                    (original, item) for item in items
+                )
 
         with transaction.atomic():
             if serials:
@@ -1337,8 +1348,7 @@ class StockList(
                     **create_data,
                 )
 
-                for item in items:
-                    apply_duplicate_options(item)
+                apply_duplicate_options(items)
 
                 # Annotate the stock items with part information
                 queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
@@ -1360,7 +1370,7 @@ class StockList(
                 item.save(user=user)
                 item.refresh_from_db()
 
-                apply_duplicate_options(item)
+                apply_duplicate_options([item])
 
                 response_data = [
                     StockSerializers.StockItemSerializer(

@@ -2,6 +2,7 @@ import { ActionButton } from '@lib/components/ActionButton';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
@@ -83,6 +84,7 @@ import {
 } from '../hooks/UseGenerator';
 import useStatusCodes from '../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../states/SettingsStates';
+import { useUserState } from '../states/UserState';
 import { DuplicateField, TagsField } from './CommonFields';
 
 /**
@@ -106,6 +108,7 @@ export function useStockFields({
   duplicateStockItem?: any;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
+  const user = useUserState();
 
   // Keep track of the "part" instance
   const [partInstance, setPartInstance] = useState<any>({});
@@ -298,6 +301,12 @@ export function useStockFields({
             copy_tests: {
               value: false,
               hidden: !duplicateStockItem?.part_detail?.testable
+            },
+            // Costs are always copied by default - the option is only shown
+            // to users who can view cost data
+            copy_costs: {
+              value: true,
+              hidden: !user.hasViewRole(UserRoles.pricing)
             }
           }
         })
@@ -318,7 +327,8 @@ export function useStockFields({
     serialGenerator.result,
     batchGenerator.result,
     duplicateStockItem,
-    create
+    create,
+    user
   ]);
 }
 

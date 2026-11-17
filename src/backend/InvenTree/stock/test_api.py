@@ -1824,6 +1824,98 @@ class StockItemTest(StockAPITestCase):
         no_notes_item = StockItem.objects.get(pk=response.data[0]['pk'])
         self.assertEqual(no_notes_item.notes.count(), 0)
 
+    def test_duplicate_copies_costs(self):
+        """Test that cost entries are copied when duplicating a StockItem via the API.
+
+        Costs are copied by default (copy_costs=True), and no 'pricing' role is required.
+        """
+        from pricing.models import StockItemCost
+
+        self.assertFalse(
+            self.user.groups.filter(
+                rule_sets__name='pricing', rule_sets__can_view=True
+            ).exists()
+        )
+
+        part = Part.objects.create(
+            name='Duplicate Costs Part', description='x', trackable=True
+        )
+
+        original = StockItem.objects.create(part=part, quantity=10)
+
+        StockItemCostEntry.objects.create_cost(
+            original, CostType.PURCHASE, CostSource.MANUAL, min_cost=Money(4, 'USD')
+        )
+        StockItemCostEntry.objects.create_cost(
+            original,
+            CostType.LANDED,
+            CostSource.plugin('freight'),
+            min_cost=Money(1, 'USD'),
+            max_cost=Money(2, 'USD'),
+        )
+
+        def cost_values(item):
+            return list(
+                item.cost_entries.order_by('cost_type').values_list(
+                    'cost_type', 'source', 'currency', 'min_cost', 'max_cost'
+                )
+            )
+
+        # Costs are copied by default
+        response = self.post(
+            self.list_url,
+            data={
+                'part': part.pk,
+                'quantity': 5,
+                'duplicate': {'original': original.pk},
+            },
+            expected_code=201,
+        )
+
+        item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertEqual(cost_values(item), cost_values(original))
+
+        summary = StockItemCost.objects.get(stock_item=item)
+        self.assertEqual(summary.min_cost, 5)
+        self.assertEqual(summary.max_cost, 6)
+
+        # Explicitly disabling copy_costs must not copy any costs
+        response = self.post(
+            self.list_url,
+            data={
+                'part': part.pk,
+                'quantity': 5,
+                'duplicate': {'original': original.pk, 'copy_costs': False},
+            },
+            expected_code=201,
+        )
+
+        item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertFalse(item.cost_entries.exists())
+        self.assertFalse(StockItemCost.objects.filter(stock_item=item).exists())
+
+        # Costs are copied to every serialized item
+        response = self.post(
+            self.list_url,
+            data={
+                'part': part.pk,
+                'quantity': 3,
+                'serial_numbers': 'DUP-1, DUP-2, DUP-3',
+                'duplicate': {'original': original.pk},
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(len(response.data), 3)
+
+        for row in response.data:
+            item = StockItem.objects.get(pk=row['pk'])
+            self.assertEqual(cost_values(item), cost_values(original))
+            self.assertEqual(StockItemCost.objects.get(stock_item=item).min_cost, 5)
+
+        # The original item is unchanged
+        self.assertEqual(original.cost_entries.count(), 2)
+
     def test_stock_item_create(self):
         """Test creation of a StockItem via the API."""
         # POST with an empty part reference
