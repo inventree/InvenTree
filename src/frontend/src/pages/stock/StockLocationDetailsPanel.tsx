@@ -48,6 +48,10 @@ export function StockLocationDetailsPanel({
       icon: 'location',
       label: t`Parent Location`,
       model: ModelType.stocklocation,
+      model_formatter: (location: any) =>
+        location?.description
+          ? `${location.name} - ${location.description}`
+          : location?.name,
       hidden: !instance?.parent
     }
   ];
