@@ -61,6 +61,21 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'part.view',
     ]
 
+    def allocate_to_sales_order(self, item: StockItem, quantity):
+        """Allocate a quantity of the provided stock item against an open sales order."""
+        customer = company.models.Company.objects.create(
+            name=f'Allocation Customer {item.pk}', is_customer=True
+        )
+        so = order.models.SalesOrder.objects.create(
+            customer=customer, reference=f'SO-{9000 + item.pk}'
+        )
+        line = order.models.SalesOrderLineItem.objects.create(
+            order=so, part=item.part, quantity=quantity
+        )
+        return order.models.SalesOrderAllocation.objects.create(
+            line=line, item=item, quantity=quantity
+        )
+
 
 class StockLocationTest(StockAPITestCase):
     """Series of API tests for the StockLocation API."""
@@ -1919,6 +1934,34 @@ class StockItemTest(StockAPITestCase):
         for new_item in new_items:
             self.assertIsNotNone(new_item.creation_date)
 
+    def test_serialize_allocated(self):
+        """Serialization must not take stock which is allocated."""
+        # Stock item 100: part 25 (trackable), quantity 10
+        item = StockItem.objects.get(pk=100)
+        self.allocate_to_sales_order(item, 4)
+
+        url = reverse('api-stock-item-serialize', kwargs={'pk': item.pk})
+
+        response = self.post(
+            url,
+            {'quantity': 7, 'serial_numbers': '911-917', 'destination': 1},
+            expected_code=400,
+        )
+        self.assertIn(
+            'must not exceed the unallocated quantity (6)',
+            str(response.data['quantity']),
+        )
+
+        self.post(
+            url,
+            {'quantity': 6, 'serial_numbers': '911-916', 'destination': 1},
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(item.allocation_count(), 4)
+
     def test_bulk_serialize_benchmark(self):
         """Benchmark: measure the number of DB queries required to serialize 100 stock items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
@@ -2418,6 +2461,42 @@ class StockItemTest(StockAPITestCase):
         self.assertIsNone(sub_item.belongs_to)
         self.assertEqual(sub_item.location.pk, 1)
 
+    def test_install_allocated(self):
+        """Installation must not take stock which is allocated."""
+        parent = StockItem.objects.create(
+            part=part.models.Part.objects.get(pk=100), serial='ALLOC-1', quantity=1
+        )
+        sub_part = part.models.Part.objects.get(pk=50)
+
+        url = reverse('api-stock-item-install', kwargs={'pk': parent.pk})
+
+        # Partially allocated item: install up to the unallocated quantity
+        sub_item = StockItem.objects.create(part=sub_part, quantity=10, location_id=1)
+        self.allocate_to_sales_order(sub_item, 4)
+
+        response = self.post(
+            url, {'stock_item': sub_item.pk, 'quantity': 7}, expected_code=400
+        )
+        self.assertIn(
+            'must not exceed the unallocated quantity (6)',
+            str(response.data['quantity']),
+        )
+
+        self.post(url, {'stock_item': sub_item.pk, 'quantity': 6}, expected_code=201)
+
+        sub_item.refresh_from_db()
+        self.assertEqual(sub_item.quantity, 4)
+        self.assertIsNone(sub_item.belongs_to)
+
+        # Fully allocated (serialized) item cannot be installed
+        serialized = StockItem.objects.create(
+            part=sub_part, serial='ALLOC-2', quantity=1, location_id=1
+        )
+        self.allocate_to_sales_order(serialized, 1)
+
+        response = self.post(url, {'stock_item': serialized.pk}, expected_code=400)
+        self.assertIn('unallocated quantity (0)', str(response.data['quantity']))
+
     def test_return_from_customer(self):
         """Test that we can return a StockItem from a customer, via the API."""
         # Assign item to customer
@@ -2764,6 +2843,29 @@ class StockItemDisassembleTest(StockAPITestCase):
         )
 
         self.assertIn('Duplicate BOM items provided', str(response.data))
+
+    def test_disassemble_allocated(self):
+        """Disassembly must not take stock which is allocated."""
+        self.allocate_to_sales_order(self.item, 4)
+
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 70}], 'quantity': 7},
+            expected_code=400,
+        )
+        self.assertIn(
+            'must not exceed the unallocated quantity (6)',
+            str(response.data['quantity']),
+        )
+
+        self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 60}], 'quantity': 6},
+            expected_code=201,
+        )
+
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.quantity, 4)
 
     def test_consumable_and_virtual_excluded(self):
         """Consumable BOM lines, and lines pointing to a virtual part, cannot be disassembled."""
@@ -3430,6 +3532,12 @@ class StocktakeTest(StockAPITestCase):
         errors = response.data['items']
         self.assertNotIn(0, errors)
         self.assertIn('unallocated quantity (2)', str(errors[1]['quantity']))
+
+        # A full move relocates the entire item - a later row is still checked against it
+        response = transfer((item.pk, 10), (item.pk, 7), expected_code=400)
+        errors = response.data['items']
+        self.assertNotIn(0, errors)
+        self.assertIn('unallocated quantity (6)', str(errors[1]['quantity']))
 
         item.refresh_from_db()
         self.assertEqual(item.quantity, 10)
