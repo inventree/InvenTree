@@ -311,8 +311,19 @@ test('Stock - Serialize', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  // Initially - quantity too high for available stock
   await page
-    .getByText('Number of unique serial numbers (51) must match quantity (100)')
+    .getByText(
+      'Stock item is allocated: quantity must not exceed the unallocated quantity'
+    )
+    .waitFor();
+
+  // Reduce quantity and re-submit
+  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('90');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page
+    .getByText('Number of unique serial numbers (51) must match quantity (90)')
     .waitFor();
 
   await page
@@ -322,7 +333,7 @@ test('Stock - Serialize', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 
   await page
-    .getByText('Number of unique serial numbers (3) must match quantity (100)')
+    .getByText('Number of unique serial numbers (3) must match quantity (90)')
     .waitFor();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
