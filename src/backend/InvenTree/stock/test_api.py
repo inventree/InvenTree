@@ -61,6 +61,23 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'part.view',
     ]
 
+    def allocate_to_sales_order(self, item: StockItem, quantity):
+        """Allocate a quantity of the provided stock item against an open sales order."""
+        n = order.models.SalesOrder.objects.count() + 1
+
+        customer = company.models.Company.objects.create(
+            name=f'Allocation Customer {n}', is_customer=True
+        )
+        so = order.models.SalesOrder.objects.create(
+            customer=customer, reference=f'SO-ALLOC-{n}'
+        )
+        line = order.models.SalesOrderLineItem.objects.create(
+            order=so, part=item.part, quantity=quantity
+        )
+        return order.models.SalesOrderAllocation.objects.create(
+            line=line, item=item, quantity=quantity
+        )
+
 
 class StockLocationTest(StockAPITestCase):
     """Series of API tests for the StockLocation API."""
@@ -1168,6 +1185,87 @@ class StockItemListTest(StockAPITestCase):
 
             self.assertGreaterEqual(len(data), 2500)
 
+    def test_allocated_quantity(self):
+        """The 'allocated' API field must match StockItem.allocation_count().
+
+        Only active allocations are counted:
+        - Build order allocations
+        - Sales order allocations against open orders, which are not yet shipped
+        - Transfer order allocations against open orders
+        """
+        from order.status_codes import SalesOrderStatus, TransferOrderStatus
+
+        assembly = Part.objects.create(
+            name='AQ Assembly', description='Allocated quantity test', assembly=True
+        )
+        component = Part.objects.create(
+            name='AQ Component',
+            description='Allocated quantity test',
+            component=True,
+            salable=True,
+        )
+        part.models.BomItem.objects.create(
+            part=assembly, sub_part=component, quantity=1
+        )
+
+        item = StockItem.objects.create(part=component, quantity=100, location_id=1)
+
+        url = reverse('api-stock-detail', kwargs={'pk': item.pk})
+
+        def check(expected):
+            self.assertEqual(item.allocation_count(), expected)
+            self.assertEqual(self.get(url).data['allocated'], expected)
+
+            response = self.get(reverse('api-stock-list'), {'part': component.pk})
+            self.assertEqual(response.data[0]['allocated'], expected)
+
+        check(0)
+
+        # Build order allocation
+        bo = build.models.Build.objects.create(part=assembly, quantity=10)
+        build.models.BuildItem.objects.create(
+            stock_item=item, build_line=bo.build_lines.first(), quantity=1
+        )
+        check(1)
+
+        # Open sales order allocation
+        self.allocate_to_sales_order(item, 2)
+        check(3)
+
+        # Sales order allocation against a shipped shipment is not counted
+        allocation = self.allocate_to_sales_order(item, 4)
+        allocation.shipment = order.models.SalesOrderShipment.objects.create(
+            order=allocation.line.order,
+            reference='AQ-1',
+            shipment_date=datetime.now().date(),
+        )
+        allocation.save()
+        check(3)
+
+        # Sales order allocation against a closed order is not counted
+        allocation = self.allocate_to_sales_order(item, 8)
+        allocation.line.order.status = SalesOrderStatus.CANCELLED.value
+        allocation.line.order.save()
+        check(3)
+
+        # Open transfer order allocation
+        for idx, (to_status, quantity) in enumerate([
+            (TransferOrderStatus.ISSUED, 16),
+            (TransferOrderStatus.CANCELLED, 32),
+        ]):
+            to = order.models.TransferOrder.objects.create(
+                reference=f'TO-AQ-{idx}', status=to_status.value
+            )
+            line = order.models.TransferOrderLineItem.objects.create(
+                order=to, part=component, quantity=quantity
+            )
+            order.models.TransferOrderAllocation.objects.create(
+                line=line, item=item, quantity=quantity
+            )
+
+        # Only the open transfer order is counted
+        check(19)
+
     def test_filter_by_allocated(self):
         """Test that we can filter by "allocated" status.
 
@@ -1919,6 +2017,34 @@ class StockItemTest(StockAPITestCase):
         for new_item in new_items:
             self.assertIsNotNone(new_item.creation_date)
 
+    def test_serialize_allocated(self):
+        """Serialization must not take stock which is allocated."""
+        # Stock item 100: part 25 (trackable), quantity 10
+        item = StockItem.objects.get(pk=100)
+        self.allocate_to_sales_order(item, 4)
+
+        url = reverse('api-stock-item-serialize', kwargs={'pk': item.pk})
+
+        response = self.post(
+            url,
+            {'quantity': 7, 'serial_numbers': '911-917', 'destination': 1},
+            expected_code=400,
+        )
+        self.assertIn(
+            'must not exceed the unallocated quantity (6)',
+            str(response.data['quantity']),
+        )
+
+        self.post(
+            url,
+            {'quantity': 6, 'serial_numbers': '911-916', 'destination': 1},
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(item.allocation_count(), 4)
+
     def test_bulk_serialize_benchmark(self):
         """Benchmark: measure the number of DB queries required to serialize 100 stock items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
@@ -2418,6 +2544,42 @@ class StockItemTest(StockAPITestCase):
         self.assertIsNone(sub_item.belongs_to)
         self.assertEqual(sub_item.location.pk, 1)
 
+    def test_install_allocated(self):
+        """Installation must not take stock which is allocated."""
+        parent = StockItem.objects.create(
+            part=part.models.Part.objects.get(pk=100), serial='ALLOC-1', quantity=1
+        )
+        sub_part = part.models.Part.objects.get(pk=50)
+
+        url = reverse('api-stock-item-install', kwargs={'pk': parent.pk})
+
+        # Partially allocated item: install up to the unallocated quantity
+        sub_item = StockItem.objects.create(part=sub_part, quantity=10, location_id=1)
+        self.allocate_to_sales_order(sub_item, 4)
+
+        response = self.post(
+            url, {'stock_item': sub_item.pk, 'quantity': 7}, expected_code=400
+        )
+        self.assertIn(
+            'must not exceed the unallocated quantity (6)',
+            str(response.data['quantity']),
+        )
+
+        self.post(url, {'stock_item': sub_item.pk, 'quantity': 6}, expected_code=201)
+
+        sub_item.refresh_from_db()
+        self.assertEqual(sub_item.quantity, 4)
+        self.assertIsNone(sub_item.belongs_to)
+
+        # Fully allocated (serialized) item cannot be installed
+        serialized = StockItem.objects.create(
+            part=sub_part, serial='ALLOC-2', quantity=1, location_id=1
+        )
+        self.allocate_to_sales_order(serialized, 1)
+
+        response = self.post(url, {'stock_item': serialized.pk}, expected_code=400)
+        self.assertIn('unallocated quantity (0)', str(response.data['quantity']))
+
     def test_return_from_customer(self):
         """Test that we can return a StockItem from a customer, via the API."""
         # Assign item to customer
@@ -2764,6 +2926,29 @@ class StockItemDisassembleTest(StockAPITestCase):
         )
 
         self.assertIn('Duplicate BOM items provided', str(response.data))
+
+    def test_disassemble_allocated(self):
+        """Disassembly must not take stock which is allocated."""
+        self.allocate_to_sales_order(self.item, 4)
+
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 70}], 'quantity': 7},
+            expected_code=400,
+        )
+        self.assertIn(
+            'must not exceed the unallocated quantity (6)',
+            str(response.data['quantity']),
+        )
+
+        self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 60}], 'quantity': 6},
+            expected_code=201,
+        )
+
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.quantity, 4)
 
     def test_consumable_and_virtual_excluded(self):
         """Consumable BOM lines, and lines pointing to a virtual part, cannot be disassembled."""
@@ -3343,6 +3528,129 @@ class StocktakeTest(StockAPITestCase):
             'Incorrect type. Expected pk value',
             status_code=status.HTTP_400_BAD_REQUEST,
         )
+
+    def test_transfer_more_than_available(self):
+        """Transferring more than the available quantity moves the entire item.
+
+        The tracking entry must record the quantity which was actually moved,
+        not the (larger) quantity which was requested.
+        """
+        item = StockItem.objects.create(
+            part=Part.objects.get(pk=1),
+            location=StockLocation.objects.get(pk=5),
+            quantity=10,
+        )
+
+        url = reverse('api-stock-transfer')
+
+        # Move to a different location
+        self.post(
+            url,
+            {'items': [{'pk': item.pk, 'quantity': 25}], 'location': 1},
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.location.pk, 1)
+        self.assertEqual(item.quantity, 10)
+
+        entry = stock_events(item, event_type=StockHistoryCode.STOCK_MOVE).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 10)
+
+        # "Move" into the same location (records a stock update)
+        self.post(
+            url,
+            {'items': [{'pk': item.pk, 'quantity': 25}], 'location': 1},
+            expected_code=201,
+        )
+
+        entry = stock_events(item, event_type=StockHistoryCode.STOCK_UPDATE).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 10)
+
+    def test_transfer_allocated(self):
+        """A partial transfer must not split stock across an allocation boundary.
+
+        An allocated item can be transferred in full (allocations move with it),
+        or partially up to the unallocated quantity - but not in between.
+        """
+        assembly = Part.objects.create(
+            name='TA Assembly', description='Transfer allocation test', assembly=True
+        )
+        component = Part.objects.create(
+            name='TA Component', description='Transfer allocation test', component=True
+        )
+        part.models.BomItem.objects.create(
+            part=assembly, sub_part=component, quantity=1
+        )
+        bo = build.models.Build.objects.create(part=assembly, quantity=10)
+        build_line = bo.build_lines.first()
+
+        location = StockLocation.objects.get(pk=5)
+
+        item = StockItem.objects.create(part=component, location=location, quantity=10)
+        other = StockItem.objects.create(part=component, location=location, quantity=10)
+
+        allocation = build.models.BuildItem.objects.create(
+            stock_item=item, build_line=build_line, quantity=4
+        )
+
+        url = reverse('api-stock-transfer')
+
+        def transfer(*rows, expected_code=201):
+            return self.post(
+                url,
+                {'items': [{'pk': pk, 'quantity': q} for pk, q in rows], 'location': 1},
+                expected_code=expected_code,
+            )
+
+        # Crossing the allocation boundary is rejected - error is on the offending row
+        for q in [7, 9]:
+            response = transfer((other.pk, 1), (item.pk, q), expected_code=400)
+            errors = response.data['items']
+            self.assertNotIn(0, errors)
+            self.assertIn('unallocated quantity (6)', str(errors[1]['quantity']))
+
+        # Repeated rows which cumulatively cross the boundary are also rejected
+        response = transfer((item.pk, 4), (item.pk, 3), expected_code=400)
+        errors = response.data['items']
+        self.assertNotIn(0, errors)
+        self.assertIn('unallocated quantity (2)', str(errors[1]['quantity']))
+
+        # A full move relocates the entire item - a later row is still checked against it
+        response = transfer((item.pk, 10), (item.pk, 7), expected_code=400)
+        errors = response.data['items']
+        self.assertNotIn(0, errors)
+        self.assertIn('unallocated quantity (6)', str(errors[1]['quantity']))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 10)
+        self.assertEqual(item.location.pk, 5)
+
+        # Transfer of the unallocated quantity is allowed - allocated stock stays put
+        transfer((item.pk, 6))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(item.location.pk, 5)
+
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.stock_item, item)
+
+        # Now fully allocated: any partial transfer is rejected
+        transfer((item.pk, 1), expected_code=400)
+
+        # Transfer of the entire item is allowed - allocation moves with it
+        transfer((item.pk, 4))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(item.location.pk, 1)
+
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.stock_item, item)
+
+        # Partial transfer of an unallocated item is unaffected
+        transfer((other.pk, 3))
 
     def test_count_with_location(self):
         """Test that the stock count endpoint correctly handles the optional location field."""

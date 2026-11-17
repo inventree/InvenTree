@@ -6,6 +6,7 @@ import inspect
 from typing import Any
 
 from django.apps import apps
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
@@ -51,13 +52,32 @@ def current_state(instance: Any, field_name: str | None = None) -> str | None:
     return getattr(instance, field_name, None)
 
 
+def _is_transition_target(meta: Any, state: Any) -> bool:
+    """Return True if ``state`` is a target state of the transition described by ``meta``.
+
+    Args:
+        meta: The django-fsm metadata of a transition method (or None).
+        state: The current state value of the instance.
+    """
+    if meta is None or state is None:
+        return False
+
+    for transition in getattr(meta, 'transitions', {}).values():
+        # Unwrap State proxies (e.g. DEFERRABLE) which carry their real target
+        target = getattr(transition.target, 'target', transition.target)
+        if target is not None and target == state:
+            return True
+
+    return False
+
+
 def transition_error(
     instance: Any, transition_name: str, exc: Exception
 ) -> dict[str, Any]:
     """Build the error body for a refused transition.
 
     Args:
-        instance: The instance the transition was attempted on, still in its source state.
+        instance: The instance the transition was attempted on.
         transition_name: Name of the transition function that refused.
         exc: The ``ValidationError`` the FSM raised.
 
@@ -67,6 +87,16 @@ def transition_error(
     meta = transition_methods(type(instance)).get(transition_name)
     field = getattr(meta, 'field', None) if meta is not None else None
     field_name = field if isinstance(field, str) else getattr(field, 'name', None)
+
+    # django-fsm sets the state field to the target *before* the instance is saved.
+    # If the save fails (e.g. a validation plugin rejects it), the database change is
+    # rolled back but the in-memory instance still carries the target state.
+    # Re-read the state so the response reflects where the object actually is.
+    if field_name and getattr(instance, 'pk', None) is not None:
+        try:
+            instance.refresh_from_db(fields=[field_name])
+        except ObjectDoesNotExist:  # pragma: no cover
+            pass
 
     state = current_state(instance, field_name)
     info = next(
@@ -83,9 +113,13 @@ def transition_error(
     reason: str | None = None
 
     if info is None:
-        detail = (
-            f"Transition '{transition_name}' is not available from state '{state}'."
-        )
+        # Only replace the model's message for a genuinely unreachable transition.
+        # When the instance already sits in the target state (e.g. completing an order
+        # which is already complete), the model's own "already ..." message is clearer.
+        if not _is_transition_target(meta, state):
+            detail = (
+                f"Transition '{transition_name}' is not available from state '{state}'."
+            )
     elif info.blocked:
         reason = info.blocking_reason
         detail = reason or detail

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-15 06:01+0000\n"
-"PO-Revision-Date: 2026-11-15 06:05\n"
+"POT-Creation-Date: 2026-11-16 21:08+0000\n"
+"PO-Revision-Date: 2026-11-16 21:12\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -53,7 +53,7 @@ msgstr "Este campo deve ser único."
 msgid "Item no longer matches the provided criteria"
 msgstr "O item não corresponde mais aos critérios fornecidos"
 
-#: InvenTree/api.py:872 InvenTree/models.py:1664
+#: InvenTree/api.py:872 InvenTree/models.py:1681
 msgid "User does not have permission to view this model"
 msgstr "O usuário não tem permissão para visualizar esse modelo"
 
@@ -111,7 +111,7 @@ msgstr "Valor decimal inválido"
 #: build/serializers.py:601 build/serializers.py:1782 common/models.py:3290
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
-#: stock/models.py:3820 stock/serializers.py:786 stock/serializers.py:970
+#: stock/models.py:3824 stock/serializers.py:786 stock/serializers.py:970
 #: stock/serializers.py:1163 stock/serializers.py:1330
 #: stock/serializers.py:1621 stock/serializers.py:1711
 #: stock/serializers.py:1910
@@ -211,59 +211,59 @@ msgstr "Falha na verificação CSRF. Certifique-se de que INVENTREE_SITE_URL e I
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "Você deve habilitar a autenticação de dois fatores antes de fazer qualquer coisa."
 
-#: InvenTree/models.py:138
+#: InvenTree/models.py:139
 msgid "Error running plugin validation"
 msgstr "Erro ao executar a validação do plugin"
 
-#: InvenTree/models.py:220
+#: InvenTree/models.py:221
 msgid "Metadata must be a python dict object"
 msgstr "Metadados deve ser um objeto dict python"
 
-#: InvenTree/models.py:226
+#: InvenTree/models.py:227
 msgid "Plugin Metadata"
 msgstr "Plugin de metadados"
 
-#: InvenTree/models.py:227
+#: InvenTree/models.py:228
 msgid "JSON metadata field, for use by external plugins"
 msgstr "Campo de metadados JSON, para uso de plugins externos"
 
-#: InvenTree/models.py:410
+#: InvenTree/models.py:411
 msgid "Improperly formatted pattern"
 msgstr "Padrão formatado incorretamente"
 
-#: InvenTree/models.py:417
+#: InvenTree/models.py:418
 msgid "Unknown format key specified"
 msgstr "Chave de formato desconhecida especificada"
 
-#: InvenTree/models.py:423
+#: InvenTree/models.py:424
 msgid "Missing required format key"
 msgstr "Chave de formato obrigatório ausente"
 
-#: InvenTree/models.py:434
+#: InvenTree/models.py:435
 msgid "Reference field cannot be empty"
 msgstr "O campo de referência não deve ficar vazio"
 
-#: InvenTree/models.py:442
+#: InvenTree/models.py:443
 msgid "Reference must match required pattern"
 msgstr "A referência deve corresponder ao padrão exigido"
 
-#: InvenTree/models.py:473
+#: InvenTree/models.py:474
 msgid "Reference number is too large"
 msgstr "O número de referência é muito longo"
 
-#: InvenTree/models.py:1179
+#: InvenTree/models.py:1192
 msgid "Invalid choice"
 msgstr "Escolha inválida"
 
-#: InvenTree/models.py:1349 common/api.py:1854 common/models.py:1540
+#: InvenTree/models.py:1362 common/api.py:1854 common/models.py:1540
 #: common/models.py:1980 common/models.py:2447 common/models.py:2580
-#: common/models.py:2903 common/serializers.py:730
+#: common/models.py:2903 common/serializers.py:749
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1141
 #: plugin/models.py:53 report/models.py:233 stock/models.py:86
 msgid "Name"
 msgstr "Nome"
 
-#: InvenTree/models.py:1355 build/models.py:284 common/models.py:192
+#: InvenTree/models.py:1368 build/models.py:284 common/models.py:192
 #: common/models.py:2587 common/models.py:2728 common/models.py:2918
 #: common/models.py:3564 company/models.py:641 company/models.py:913
 #: order/models.py:549 order/models.py:2342 part/models.py:1164
@@ -273,47 +273,47 @@ msgstr "Nome"
 msgid "Description"
 msgstr "Descrição"
 
-#: InvenTree/models.py:1356 stock/models.py:93
+#: InvenTree/models.py:1369 stock/models.py:93
 msgid "Description (optional)"
 msgstr "Descrição (opcional)"
 
-#: InvenTree/models.py:1371 common/models.py:3653
+#: InvenTree/models.py:1384 common/models.py:3653
 msgid "Path"
 msgstr "Caminho"
 
-#: InvenTree/models.py:1529
+#: InvenTree/models.py:1542
 msgid "Duplicate names cannot exist under the same parent"
 msgstr "Nomes duplicados não podem existir sob o mesmo parental"
 
-#: InvenTree/models.py:1620
+#: InvenTree/models.py:1637
 msgid "Barcode Data"
 msgstr "Dados de código de barras"
 
-#: InvenTree/models.py:1621
+#: InvenTree/models.py:1638
 msgid "Third party barcode data"
 msgstr "Dados de código de barras de terceiros"
 
-#: InvenTree/models.py:1627
+#: InvenTree/models.py:1644
 msgid "Barcode Hash"
 msgstr "Hash de código de barras"
 
-#: InvenTree/models.py:1628
+#: InvenTree/models.py:1645
 msgid "Unique hash of barcode data"
 msgstr "Hash exclusivo de dados de código de barras"
 
-#: InvenTree/models.py:1718
+#: InvenTree/models.py:1735
 msgid "Existing barcode found"
 msgstr "Código de barras existente encontrado"
 
-#: InvenTree/models.py:1858
+#: InvenTree/models.py:1875
 msgid "Server Error"
 msgstr "Erro de servidor"
 
-#: InvenTree/models.py:1859
+#: InvenTree/models.py:1876
 msgid "An error has been logged by the server."
 msgstr "Um erro foi registrado pelo servidor."
 
-#: InvenTree/models.py:1901 common/models.py:3589
+#: InvenTree/models.py:1920 common/models.py:3589
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -572,9 +572,9 @@ msgstr "Unidade física inválida"
 msgid "Not a valid currency code"
 msgstr "O código de moeda não é válido"
 
-#: audit/api.py:92 audit/serializers.py:107 common/serializers.py:867
-#: common/serializers.py:1023 common/serializers.py:1069
-#: common/serializers.py:1137 importer/models.py:104 report/api.py:42
+#: audit/api.py:92 audit/serializers.py:107 common/serializers.py:886
+#: common/serializers.py:1042 common/serializers.py:1088
+#: common/serializers.py:1156 importer/models.py:104 report/api.py:42
 #: report/models.py:389 report/serializers.py:69
 msgid "Model Type"
 msgstr "Categoria de modelo"
@@ -1770,61 +1770,74 @@ msgstr "Pedido de produção vencido"
 msgid "No issues detected"
 msgstr "Nenhum problema detectado"
 
-#: common/admin_messages.py:110 report/system_settings.py:33
+#: common/admin_messages.py:147
+msgid "Unable to check plugin integrations"
+msgstr ""
+
+#: common/admin_messages.py:150
+#, python-brace-format
+msgid "Active plugins require a plugin integration which is disabled. Enable the listed plugin settings: {plugins}"
+msgstr ""
+
+#: common/admin_messages.py:156 report/system_settings.py:33
 msgid "Debug Mode"
 msgstr "Modo de depuração"
 
-#: common/admin_messages.py:111
+#: common/admin_messages.py:157
 msgid "The server is running in debug mode."
 msgstr "O servidor está em execução no modo de depuração."
 
-#: common/admin_messages.py:117
+#: common/admin_messages.py:163
 msgid "Background Worker"
 msgstr "Worker em segundo plano"
 
-#: common/admin_messages.py:118
+#: common/admin_messages.py:164
 msgid "The background worker process is not running."
 msgstr "O processo do worker em segundo plano não está em execução."
 
-#: common/admin_messages.py:124
+#: common/admin_messages.py:170
 msgid "Server Restart"
 msgstr "Reinicialização do servidor"
 
-#: common/admin_messages.py:125
+#: common/admin_messages.py:171
 msgid "The server requires a restart to apply changes."
 msgstr "O servidor precisa ser reiniciado para aplicar as alterações."
 
-#: common/admin_messages.py:131
+#: common/admin_messages.py:177
 msgid "Email settings"
 msgstr "Configurações de e-mail"
 
-#: common/admin_messages.py:132
+#: common/admin_messages.py:178
 msgid "Email settings not configured."
 msgstr "Configurações de e-mail não configuradas."
 
-#: common/admin_messages.py:138
+#: common/admin_messages.py:184
 msgid "Database Migrations"
 msgstr "Migrações do banco de dados"
 
-#: common/admin_messages.py:139
+#: common/admin_messages.py:185
 msgid "There are pending database migrations."
 msgstr "Há migrações do banco de dados pendentes."
 
-#: common/admin_messages.py:145
+#: common/admin_messages.py:191
 msgid "CORS Settings"
 msgstr "Configurações de CORS"
 
-#: common/admin_messages.py:146
+#: common/admin_messages.py:192
 msgid "CORS is set to allow all origins."
 msgstr "O CORS está configurado para permitir todas as origens."
 
-#: common/admin_messages.py:152
+#: common/admin_messages.py:198
 msgid "Basic Authentication"
 msgstr "Autenticação básica"
 
-#: common/admin_messages.py:153
+#: common/admin_messages.py:199
 msgid "Basic (username:password) authentication is enabled for the API."
 msgstr "A autenticação básica (usuário:senha) está habilitada para a API."
+
+#: common/admin_messages.py:205
+msgid "Plugin Integration"
+msgstr ""
 
 #: common/api.py:858
 msgid "Has Thumbnail"
@@ -1838,7 +1851,7 @@ msgstr "É um link"
 msgid "Is File"
 msgstr "É um arquivo"
 
-#: common/api.py:886 common/serializers.py:860
+#: common/api.py:886 common/serializers.py:879
 msgid "Filename"
 msgstr "Nome do arquivo"
 
@@ -1874,7 +1887,7 @@ msgstr "Este campo é obrigatório"
 msgid "Invalid model ID"
 msgstr "ID de modelo inválido"
 
-#: common/api.py:1632 common/serializers.py:1194 common/serializers.py:1242
+#: common/api.py:1632 common/serializers.py:1213 common/serializers.py:1261
 msgid "Selection list is locked"
 msgstr "Lista de seleção bloqueada"
 
@@ -2200,7 +2213,7 @@ msgstr "Definição"
 msgid "Unit definition"
 msgstr "Definição de unidade"
 
-#: common/models.py:2071 common/models.py:2243 stock/models.py:3815
+#: common/models.py:2071 common/models.py:2243 stock/models.py:3819
 #: stock/serializers.py:259
 msgid "Attachment"
 msgstr "Anexo"
@@ -2289,7 +2302,7 @@ msgstr "Tamanho do arquivo"
 msgid "File size in bytes"
 msgstr "Tamanho do arquivo em bytes"
 
-#: common/models.py:2332 common/serializers.py:894
+#: common/models.py:2332 common/serializers.py:913
 msgid "Invalid model type specified for attachment"
 msgstr "Categoria de modelo especificado inválido para anexo"
 
@@ -2318,7 +2331,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Chave lógica de estado que é igual a este estado personalizado na lógica de negócios"
 
 #: common/models.py:2441 common/models.py:2716 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3807
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3811
 msgid "Value"
 msgstr "Valor"
 
@@ -2587,7 +2600,7 @@ msgstr "Opção inválida para o valor do parâmetro"
 msgid "Parameter value must be unique"
 msgstr "O valor do parâmetro deve ser único"
 
-#: common/models.py:3191 common/serializers.py:1123
+#: common/models.py:3191 common/serializers.py:1142
 msgid "Invalid model type specified for parameter"
 msgstr "Tipo de modelo inválido especificado para o parâmetro"
 
@@ -2630,8 +2643,8 @@ msgstr "Anotação"
 msgid "Optional note field"
 msgstr "Campo opcional de notas"
 
-#: common/models.py:3393 common/models.py:3395 common/serializers.py:996
-#: common/serializers.py:1000
+#: common/models.py:3393 common/models.py:3395 common/serializers.py:1015
+#: common/serializers.py:1019
 msgid "This field is required."
 msgstr "Este campo é obrigatório."
 
@@ -2716,7 +2729,7 @@ msgid "Response data from the barcode scan"
 msgstr "Dados de resposta da verificação de código de barras"
 
 #: common/models.py:3676 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3801
+#: stock/models.py:3805
 msgid "Result"
 msgstr "Resultado"
 
@@ -2883,127 +2896,127 @@ msgstr "Os itens de um pedido de compra foram recebidos"
 msgid "Items have been received against a return order"
 msgstr "Os itens de um pedido de devolução foram recebidos"
 
-#: common/serializers.py:131
+#: common/serializers.py:132
 msgid "Indicates if changing this setting requires confirmation"
 msgstr "Indica se a alteração desta configuração requer confirmação"
 
-#: common/serializers.py:139
+#: common/serializers.py:140
 msgid "Indicating behavior or purpose of setting."
 msgstr "Indica o comportamento ou finalidade da configuração."
 
-#: common/serializers.py:151
+#: common/serializers.py:152
 msgid "This setting requires confirmation before changing. Please confirm the change."
 msgstr "Esta configuração requer confirmação antes de ser alterada. Confirme a alteração."
 
-#: common/serializers.py:195
+#: common/serializers.py:196
 msgid "Indicates if the setting is overridden by an environment variable"
 msgstr "É indicado se a configuração é substituída por uma variável de ambiente"
 
-#: common/serializers.py:197 plugin/serializers.py:293
+#: common/serializers.py:198 plugin/serializers.py:293
 msgid "Override"
 msgstr "Substituir"
 
-#: common/serializers.py:693
+#: common/serializers.py:712
 msgid "Is Running"
 msgstr "Está em execução"
 
-#: common/serializers.py:699
+#: common/serializers.py:718
 msgid "Pending Tasks"
 msgstr "Tarefas pendentes"
 
-#: common/serializers.py:705
+#: common/serializers.py:724
 msgid "Scheduled Tasks"
 msgstr "Tarefas agendadas"
 
-#: common/serializers.py:711
+#: common/serializers.py:730
 msgid "Failed Tasks"
 msgstr "Tarefas com falhas"
 
-#: common/serializers.py:726
+#: common/serializers.py:745
 msgid "Task ID"
 msgstr "ID da tarefa"
 
-#: common/serializers.py:726
+#: common/serializers.py:745
 msgid "Unique task ID"
 msgstr "ID único da tarefa"
 
-#: common/serializers.py:728
+#: common/serializers.py:747
 msgid "Lock"
 msgstr "Bloquear"
 
-#: common/serializers.py:728
+#: common/serializers.py:747
 msgid "Lock time"
 msgstr "Congelar tempo"
 
-#: common/serializers.py:730
+#: common/serializers.py:749
 msgid "Task name"
 msgstr "Nome da tarefa"
 
-#: common/serializers.py:732
+#: common/serializers.py:751
 msgid "Function"
 msgstr "Função"
 
-#: common/serializers.py:732
+#: common/serializers.py:751
 msgid "Function name"
 msgstr "Nome da função"
 
-#: common/serializers.py:734
+#: common/serializers.py:753
 msgid "Arguments"
 msgstr "Argumentos"
 
-#: common/serializers.py:734
+#: common/serializers.py:753
 msgid "Task arguments"
 msgstr "Argumentos da tarefa"
 
-#: common/serializers.py:737
+#: common/serializers.py:756
 msgid "Keyword Arguments"
 msgstr "Argumentos de palavra-chave"
 
-#: common/serializers.py:737
+#: common/serializers.py:756
 msgid "Task keyword arguments"
 msgstr "Argumentos palavra-chave da tarefa"
 
-#: common/serializers.py:896
+#: common/serializers.py:915
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "Usuário não tem permissão para criar ou editar anexos para este modelo"
 
-#: common/serializers.py:941
+#: common/serializers.py:960
 msgid "Only staff users can create or edit note templates"
 msgstr "Somente usuários da equipe podem criar ou editar templates de nota"
 
-#: common/serializers.py:951
+#: common/serializers.py:970
 msgid "Invalid model type specified for note"
 msgstr "Tipo de modelo inválido especificado para a nota"
 
-#: common/serializers.py:952
+#: common/serializers.py:971
 msgid "User does not have permission to create or edit notes for this model"
 msgstr "O usuário não tem permissão para criar ou editar notas para este modelo"
 
-#: common/serializers.py:1125
+#: common/serializers.py:1144
 msgid "User does not have permission to create or edit parameters for this model"
 msgstr "O usuário não tem permissão para criar ou editar parâmetros para este modelo"
 
-#: common/serializers.py:1324
+#: common/serializers.py:1343
 msgid "Attachment Count"
 msgstr "Quantidade de anexos"
 
-#: common/serializers.py:1325
+#: common/serializers.py:1344
 msgid "Number of attachments associated with this instance"
 msgstr "Número de anexos associados a esta instância"
 
-#: common/serializers.py:1330
+#: common/serializers.py:1349
 msgid "Note Count"
 msgstr "Quantidade de notas"
 
-#: common/serializers.py:1331
+#: common/serializers.py:1350
 msgid "Number of notes associated with this instance"
 msgstr "Número de notas associadas a esta instância"
 
-#: common/serializers.py:1336
+#: common/serializers.py:1355
 msgid "Parameter Count"
 msgstr "Quantidade de parâmetros"
 
-#: common/serializers.py:1337
+#: common/serializers.py:1356
 msgid "Number of parameters associated with this instance"
 msgstr "Número de parâmetros associados a esta instância"
 
@@ -6650,7 +6663,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "Estoque total disponível no momento do inventário"
 
 #: part/models.py:2662 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3847
+#: stock/models.py:3851
 msgid "Date"
 msgstr "Data"
 
@@ -9769,7 +9782,7 @@ msgstr "Os números de série devem ser fornecidos como uma lista"
 msgid "Quantity does not match serial numbers"
 msgstr "A quantidade não corresponde aos números de série"
 
-#: stock/models.py:2663 stock/models.py:3765
+#: stock/models.py:2663 stock/models.py:3769
 msgid "Test template does not exist"
 msgstr "O modelo de teste não existe"
 
@@ -9817,59 +9830,59 @@ msgstr "Os códigos de status do estoque devem coincidir"
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "O item de estoque não pode ser movido porque não está em estoque"
 
-#: stock/models.py:3735
+#: stock/models.py:3739
 msgid "Stock Item Test Result"
 msgstr "Resultado de teste do item de estoque"
 
-#: stock/models.py:3768
+#: stock/models.py:3772
 msgid "Value must be provided for this test"
 msgstr "Um valor deve ser fornecido para este teste"
 
-#: stock/models.py:3772
+#: stock/models.py:3776
 msgid "Attachment must be uploaded for this test"
 msgstr "Um anexo deve ser enviado para este teste"
 
-#: stock/models.py:3777
+#: stock/models.py:3781
 msgid "Invalid value for this test"
 msgstr "Valor inválido para este teste"
 
-#: stock/models.py:3801
+#: stock/models.py:3805
 msgid "Test result"
 msgstr "Resultado do teste"
 
-#: stock/models.py:3808
+#: stock/models.py:3812
 msgid "Test output value"
 msgstr "Valor de saída do teste"
 
-#: stock/models.py:3816 stock/serializers.py:260
+#: stock/models.py:3820 stock/serializers.py:260
 msgid "Test result attachment"
 msgstr "Anexo do resultado do teste"
 
-#: stock/models.py:3820
+#: stock/models.py:3824
 msgid "Test notes"
 msgstr "Notas do teste"
 
-#: stock/models.py:3828
+#: stock/models.py:3832
 msgid "Test station"
 msgstr "Estação de teste"
 
-#: stock/models.py:3829
+#: stock/models.py:3833
 msgid "The identifier of the test station where the test was performed"
 msgstr "O identificador da estação de teste onde o teste foi realizado"
 
-#: stock/models.py:3835
+#: stock/models.py:3839
 msgid "Started"
 msgstr "Iniciado"
 
-#: stock/models.py:3836
+#: stock/models.py:3840
 msgid "The timestamp of the test start"
 msgstr "A data/hora de início do teste"
 
-#: stock/models.py:3842 users/models.py:887
+#: stock/models.py:3846 users/models.py:887
 msgid "Finished"
 msgstr "Concluído"
 
-#: stock/models.py:3843
+#: stock/models.py:3847
 msgid "The timestamp of the test finish"
 msgstr "A data/hora de término do teste"
 

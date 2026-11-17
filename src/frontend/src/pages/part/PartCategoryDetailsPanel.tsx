@@ -49,6 +49,10 @@ export function PartCategoryDetailsPanel({
         icon: 'location',
         label: t`Parent Category`,
         model: ModelType.partcategory,
+        model_formatter: (category: any) =>
+          category?.description
+            ? `${category.name} - ${category.description}`
+            : category?.name,
         hidden: !instance?.parent
       },
       {
@@ -88,6 +92,10 @@ export function PartCategoryDetailsPanel({
         name: 'parent_default_location',
         label: t`Parent default location`,
         model: ModelType.stocklocation,
+        model_formatter: (location: any) =>
+          location?.description
+            ? `${location.name} - ${location.description}`
+            : location?.name,
         hidden:
           !instance?.parent_default_location || !!instance?.default_location
       },
@@ -96,6 +104,10 @@ export function PartCategoryDetailsPanel({
         name: 'default_location',
         label: t`Default location`,
         model: ModelType.stocklocation,
+        model_formatter: (location: any) =>
+          location?.description
+            ? `${location.name} - ${location.description}`
+            : location?.name,
         hidden: !instance?.default_location
       }
     ],

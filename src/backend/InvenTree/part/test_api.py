@@ -3330,6 +3330,42 @@ class BomItemTest(InvenTreeAPITestCase):
         # 9,000 stock directly available
         self.assertEqual(data['available_stock'], 9000)
 
+    def test_bom_copy_permissions(self):
+        """Test that copying a BOM requires the correct 'bom' role permissions."""
+        url = reverse('api-part-bom-copy', kwargs={'pk': 101})
+
+        target = Part.objects.get(pk=101)
+        n_target = target.bom_items.count()
+        n_total = BomItem.objects.count()
+
+        self.assertGreater(n_target, 0)
+
+        data = {'part': 100, 'skip_invalid': True}
+
+        # No 'bom' role permissions - request is rejected
+        self.post(url, data, expected_code=403)
+        self.post(url, {**data, 'remove_existing': False}, expected_code=403)
+
+        self.assertEqual(target.bom_items.count(), n_target)
+        self.assertEqual(BomItem.objects.count(), n_total)
+
+        # 'bom.add' allows copying, but not removal of existing BOM items
+        self.assignRole('bom.add')
+
+        self.post(url, data, expected_code=403)
+        self.assertEqual(target.bom_items.count(), n_target)
+
+        self.post(url, {**data, 'remove_existing': False}, expected_code=201)
+        self.assertGreater(target.bom_items.count(), n_target)
+
+        # 'bom.delete' allows existing BOM items to be removed
+        self.assignRole('bom.delete')
+
+        self.post(url, data, expected_code=201)
+
+        # Existing BOM item (sub_part=100) was removed
+        self.assertFalse(target.bom_items.filter(sub_part=100).exists())
+
     def test_bom_item_uses(self):
         """Tests for the 'uses' field."""
         url = reverse('api-bom-list')

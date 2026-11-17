@@ -136,20 +136,10 @@ class InvenTreeMetadata(SimpleMetadata):
                     role_required and check_user_role(user, role_required, permission)
                 )
 
-                # check if simple IsAuthenticated permission class is used
+                # Views guarded only by an "any authenticated user" permission class
+                # do not require model permissions (e.g. users managing their own API tokens)
                 if not result:
-                    result = (
-                        view.permission_classes
-                        and len(view.permission_classes) == 1
-                        and any(
-                            perm
-                            in [
-                                permissions.IsAuthenticated,
-                                InvenTree.permissions.IsAuthenticatedOrReadScope,
-                            ]
-                            for perm in view.permission_classes
-                        )
-                    )
+                    result = self.allows_any_authenticated_user(view)
 
                 if method in actions and not result:
                     del actions[method]
@@ -172,6 +162,24 @@ class InvenTreeMetadata(SimpleMetadata):
             metadata['filters'] = filters
 
         return metadata
+
+    @staticmethod
+    def allows_any_authenticated_user(view) -> bool:
+        """Return True if the view is guarded by a single permission class which grants access to any authenticated user.
+
+        Such views do not require model / role permissions,
+        so the available actions should not be filtered by them.
+        """
+        permission_classes = getattr(view, 'permission_classes', None) or []
+
+        if len(permission_classes) != 1:
+            return False
+
+        perm = permission_classes[0]
+
+        return perm is permissions.IsAuthenticated or bool(
+            getattr(perm, 'allows_any_authenticated_user', False)
+        )
 
     def get_filter_metadata(self, request, view) -> dict:
         """Return information on the choice filters available for an API endpoint.

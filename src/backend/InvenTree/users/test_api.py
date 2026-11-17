@@ -1021,6 +1021,77 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertIsNotNone(response_data.get('database'))
 
 
+class UnprivilegedUserTokenTests(InvenTreeAPITestCase):
+    """Token tests for a non-staff user without any assigned roles.
+
+    Regression tests for https://github.com/inventree/InvenTree/issues/13299
+    """
+
+    fixtures = ['users']
+    is_staff = False
+    roles = []
+
+    def test_user_is_unprivileged(self):
+        """Sanity check: the test user has no elevated access."""
+        self.assertFalse(self.user.is_staff)
+        self.assertFalse(self.user.is_superuser)
+        self.assertFalse(self.user.has_perm('users.view_apitoken'))
+        self.assertFalse(self.user.has_perm('users.add_apitoken'))
+
+    def test_token_options(self):
+        """The OPTIONS metadata must advertise token creation to any authenticated user.
+
+        The frontend builds the "Generate Token" form from these actions,
+        so missing actions prevent users from minting their own tokens.
+        """
+        # Token generation endpoint (used by the frontend)
+        actions = self.options(reverse('api-token'), expected_code=200).data['actions']
+        self.assertIn('GET', actions)
+        self.assertIn('name', actions['GET'])
+
+        # Token list / create endpoint
+        actions = self.options(reverse('api-token-list'), expected_code=200).data[
+            'actions'
+        ]
+        self.assertIn('GET', actions)
+        self.assertIn('POST', actions)
+        self.assertIn('name', actions['POST'])
+
+    def test_token_create_and_revoke(self):
+        """An unprivileged user can create, list and revoke their own tokens."""
+        # Generate via the 'me' endpoint
+        data = self.get(
+            reverse('api-token'), data={'name': 'via-get'}, expected_code=200
+        ).data
+        self.assertTrue(data['token'].startswith('inv-'))
+
+        # Create via the token list endpoint
+        data = self.post(
+            reverse('api-token-list'), data={'name': 'via-post'}, expected_code=201
+        ).data
+        self.assertTrue(data['token'].startswith('inv-'))
+
+        tokens = self.get(reverse('api-token-list'), expected_code=200).data
+        self.assertEqual({t['name'] for t in tokens}, {'via-get', 'via-post'})
+
+        for token in ApiToken.objects.filter(user=self.user):
+            self.delete(
+                reverse('api-token-detail', kwargs={'pk': token.pk}), expected_code=204
+            )
+            token.refresh_from_db()
+            self.assertTrue(token.revoked)
+
+    def test_no_model_permission_bypass(self):
+        """The authenticated-user fallback must not expose actions on role-protected endpoints."""
+        self.assignRole('part.view')
+
+        actions = self.options(reverse('api-part-list'), expected_code=200).data[
+            'actions'
+        ]
+        self.assertIn('GET', actions)
+        self.assertNotIn('POST', actions)
+
+
 class GroupDetailTests(InvenTreeAPITestCase):
     """Tests for the GroupDetail API endpoint."""
 
