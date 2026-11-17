@@ -100,6 +100,10 @@ export function PurchaseOrderDetailsPanel({
       link: true,
       name: 'destination',
       label: t`Destination`,
+      model_formatter: (location: any) =>
+        location?.description
+          ? `${location.name} - ${location.description}`
+          : location?.name,
       hidden: !instance?.destination
     },
     {
