@@ -105,13 +105,13 @@ generate-hashes=true
 extra-paths = ["src/backend/InvenTree"]
 
 [tool.ty.rules]
-unresolved-attribute="ignore"  # 837 # need Plugin Mixin typing
-call-non-callable="ignore"  # 8 ##
-invalid-assignment="ignore"  # 40  # need to wait for better django field stubs
-invalid-method-override="ignore" # 103
-invalid-return-type="ignore"  # 44 ##
-invalid-argument-type="ignore"  # 49
-no-matching-overload="ignore"  # 10  # need to wait for betterdjango field stubs
+unresolved-attribute="ignore"  # 1061 # need Plugin Mixin typing
+call-non-callable="ignore"  # 12 ##
+invalid-assignment="ignore"  # 100  # need to wait for better django field stubs
+invalid-method-override="ignore" # 110
+invalid-return-type="ignore"  # 58 ##
+invalid-argument-type="ignore"  # 414
+no-matching-overload="ignore"  # 16  # need to wait for betterdjango field stubs
 
 # warn about unused ignore comments
 unused-ignore-comment = "error"
