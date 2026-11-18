@@ -62,6 +62,14 @@ export function BuildOrderDetailsPanel({
       copy: true
     },
     {
+      type: 'text',
+      name: 'part_detail.description',
+      icon: 'description',
+      label: t`Part Description`,
+      hidden: !instance?.part_detail?.description,
+      copy: true
+    },
+    {
       type: 'status',
       name: 'status',
       label: t`Status`,
@@ -170,6 +178,10 @@ export function BuildOrderDetailsPanel({
       icon: 'location',
       hidden: !instance?.take_from,
       model: ModelType.stocklocation,
+      model_formatter: (location: any) =>
+        location?.description
+          ? `${location.name} - ${location.description}`
+          : location?.name,
       label: t`Source Location`,
       backup_value: t`Any location`
     },
@@ -178,6 +190,10 @@ export function BuildOrderDetailsPanel({
       name: 'destination',
       icon: 'location',
       model: ModelType.stocklocation,
+      model_formatter: (location: any) =>
+        location?.description
+          ? `${location.name} - ${location.description}`
+          : location?.name,
       label: t`Destination Location`,
       hidden: !instance?.destination
     },

@@ -163,8 +163,12 @@ export const test = baseTest.extend<TestFixtures, {}>({
         !url.includes('/api/user/me/token/') &&
         !url.includes('/api/auth/v1/auth/login') &&
         !url.includes('/api/auth/v1/auth/session') &&
+        !url.includes('/api/auth/v1/auth/2fa/authenticate') &&
+        !url.includes('/api/auth/v1/auth/webauthn/authenticate') &&
+        !url.includes('/api/auth/v1/auth/2fa/reauthenticate') &&
         !url.includes('/api/auth/v1/auth/provider/signup') &&
         !url.includes('/api/auth/v1/account/authenticators/totp') &&
+        !url.includes('/api/auth/v1/account/authenticators/webauthn') &&
         !url.includes('/api/auth/v1/account/password/change') &&
         !url.includes('/api/barcode/') &&
         !url.includes('/favicon.ico') &&

@@ -3,6 +3,7 @@ import { test } from '../baseFixtures.ts';
 import {
   activateCalendarView,
   clearTableFilters,
+  clearTableSearch,
   clickOnRowMenu,
   getRowFromCell,
   loadTab,
@@ -12,6 +13,7 @@ import {
   showCalendarView,
   showParametricView,
   showTableView,
+  tableSearch,
   waitForDataOutput
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
@@ -164,6 +166,12 @@ test('Build Order - Tags', async ({ browser }) => {
   });
 
   await expect(tagsField).toBeVisible();
+
+  // Existing tags are pre-filled in the edit form
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByText('Electronics', { exact: true })).toBeVisible();
+  await expect(dialog.getByText('PCB Assembly', { exact: true })).toBeVisible();
+
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
@@ -275,7 +283,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await clearTableFilters(page);
 
   // We have now loaded the "Build Order" table. Check for some expected texts
-  await page.getByRole('textbox', { name: 'table-search-input' }).fill('1');
+  await tableSearch(page, '1');
   await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending').first().waitFor();
 
@@ -757,11 +765,11 @@ test('Build Order - Filters', async ({ browser }) => {
 
   // Toggle 'Outstanding' filter
   await setTableChoiceFilter(page, 'Outstanding', 'Yes');
-  await page.getByRole('textbox', { name: 'table-search-input' }).fill('1');
+  await tableSearch(page, '1');
   await page.getByRole('cell', { name: 'BO0017' }).waitFor();
 
   await clearTableFilters(page);
-  await page.getByRole('textbox', { name: 'table-search-input' }).fill('');
+  await clearTableSearch(page);
   await setTableChoiceFilter(page, 'Outstanding', 'No');
 
   await page.getByText(/1 - \d+ \/ \d+/).waitFor();

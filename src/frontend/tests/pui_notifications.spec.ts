@@ -62,14 +62,32 @@ test('Notifications - link targets', async ({ page }) => {
       return;
     }
 
+    // Absolute link to a page on the same server (as provided by the backend)
+    const origin = new URL(page.url()).origin;
+
+    const results = [
+      ...notifications,
+      {
+        ...notifications[1],
+        pk: 4,
+        target: {
+          ...notifications[1].target,
+          link: `${origin}/web/part/category/index/`
+        },
+        category: 'test_absolute',
+        name: 'Absolute Notification',
+        message: 'Absolute notification link'
+      }
+    ];
+
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        count: notifications.length,
+        count: results.length,
         next: null,
         previous: null,
-        results: notifications
+        results: results
       })
     });
   });
@@ -89,4 +107,18 @@ test('Notifications - link targets', async ({ page }) => {
   await expect(
     page.getByRole('link', { name: 'Base Notification' })
   ).toHaveAttribute('href', '/web/settings/admin/');
+
+  await expect(
+    page.getByRole('link', { name: 'Absolute Notification' })
+  ).toHaveAttribute('href', '/web/part/category/index/');
+
+  // Clicking an internal link should route within the app (no page reload)
+  await page.evaluate(() => {
+    (window as any).__noReload = true;
+  });
+
+  await page.getByRole('link', { name: 'Absolute Notification' }).click();
+  await page.waitForURL('**/web/part/category/index/**');
+
+  expect(await page.evaluate(() => (window as any).__noReload)).toBe(true);
 });

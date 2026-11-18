@@ -93,6 +93,7 @@ export function ApiFormField({
       placeholderWarning: undefined,
       placeholderWarningCompare: undefined,
       singleFetchFunction: undefined,
+      fetchParams: undefined,
       autoFillFilters: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,

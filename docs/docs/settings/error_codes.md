@@ -128,6 +128,13 @@ An InvenTree process (web server or background worker) reloaded its plugins, but
 
 The affected process stops reloading its plugins to prevent an endless reload loop. Restart all InvenTree server and background worker processes to resolve this error. See [reloading plugins](../plugins/install.md#reloading-plugins) for further information.
 
+#### INVE-E21
+**Resource locked by another process - Backend**
+
+An API request attempted to modify an object that is currently locked by another long-running process. This typically occurs when multiple processes are trying to update the same object concurrently.
+
+The request will return a `409 Conflict` response. Retry the request after the other process has completed its operation.
+
 ## Warning Codes
 
 ### INVE-W (InvenTree Warning)
@@ -254,6 +261,41 @@ The CORS settings are set to allow all origins. This might lead to security issu
 CORS settings only affect user browsers that respect them. Setting them correctly is not a replacement for proper network segmentation (via firewalls, VPNs, proxies, etc.) and should be used in addition to them.
 
 Use the INVENTREE_CORS_ORIGIN_ALLOW_ALL and INVENTREE_CORS_ORIGIN_WHITELIST settings - see the [Server Access settings](../start/config.md#server-access).
+
+#### INVE-W17
+**Audit log middleware missing from configuration - Backend**
+
+The `middleware` list provided in the configuration file does not include the audit log middleware (`audit.middleware.InvenTreeAuditlogMiddleware`). This middleware is required for audit log entries to record which user made each change.
+
+The middleware has been added automatically. To remove this warning, add it to the `middleware` list in your configuration file (after `django_structlog.middlewares.RequestMiddleware`).
+
+#### INVE-W18
+**Basic authentication is enabled - Backend**
+
+Basic (username:password) authentication against the API is enabled via the `INVENTREE_BASIC_AUTH_ENABLED` / `basic_auth_enabled` setting. Sending the user password with every request increases the impact of leaked credentials and makes the API a simpler target for brute-force attacks. Basic authentication also bypasses the interactive login flow and does not work for users with multi-factor authentication enabled.
+
+It is recommended to disable basic authentication and use [Token or OAuth2 authentication](../api/index.md#authentication) instead - see the [Authentication settings](../start/config.md#authentication).
+
+#### INVE-W20
+**Password authentication not allowed due to MFA - Backend**
+
+Password authentication is not allowed if the user has MFA enabled or if MFA is enforced globally. Use token or OAuth2 authentication instead.
+
+#### INVE-W21
+**Unsupported class removed from configuration - Backend**
+
+The `middleware` or `authentication_backends` list provided in the configuration file includes a class which is not supported, as it would bypass security checks.
+
+The class has been removed automatically. To remove this warning, remove it from the list in your configuration file.
+
+#### INVE-W22
+**Plugin integration is disabled - Backend**
+
+An active plugin makes use of a plugin integration (mixin) which is disabled in the global settings. The affected functionality of the plugin (e.g. custom URLs, scheduled tasks, event handling or user interface elements) will not work until the integration is enabled.
+
+The message lists each affected plugin, together with the plugin settings which need to be enabled. Enable the listed settings in the [plugin settings](./global.md#plugin-settings) (a server restart may be required), or deactivate the plugin if it is not needed.
+
+If the check itself fails, the message "Unable to check plugin integrations" is shown instead. Check the server log for details.
 
 
 ### INVE-I (InvenTree Information)

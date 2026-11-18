@@ -19,6 +19,7 @@ import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers, viewsets
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import clone_request
 from rest_framework.response import Response
@@ -29,14 +30,16 @@ import InvenTree.config
 import InvenTree.filters
 import InvenTree.permissions
 import InvenTree.version
+from audit.helpers import write_batched
 from common.settings import get_global_setting
+from generic.search import get_search_filters, get_search_providers
 from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
+from InvenTree.proof import calculate_proof
 from InvenTree.tasks import batch_offload_tasks
 from plugin.base.event.events import batch_events
 from plugin.serializers import MetadataSerializer
-from users.models import ApiToken
 from users.permissions import check_user_permission, prefetch_rule_sets
 
 from .helpers import plugins_info, str2bool
@@ -248,6 +251,9 @@ class InfoApiSerializer(serializers.Serializer):
 
     server = serializers.CharField(read_only=True)
     id = serializers.CharField(read_only=True, allow_null=True)
+    link = serializers.CharField(
+        read_only=True, allow_null=True, help_text='Temporary identity proof'
+    )
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
     apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
@@ -286,11 +292,20 @@ class InfoView(APIView):
         return OrmQ.objects.count()
 
     @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='link_nonce',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Nonce for short-term identity proof',
+            )
+        ],
         responses={
             200: OpenApiResponse(
                 response=InfoApiSerializer, description='InvenTree server information'
             )
-        }
+        },
     )
     def get(self, request, *args, **kwargs):
         """Serve current server information."""
@@ -341,23 +356,26 @@ class InfoView(APIView):
                     'LOGIN_ENABLE_PWD_FORGOT'
                 ),
             },
-            'system_state': {'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS},
+            'system_state': {
+                'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS,
+                'basic_auth_enabled': settings.BASIC_AUTH_ENABLED if is_staff else None,
+            },
         }
+        if nonce := request.query_params.get('link_nonce'):
+            data['link'] = calculate_proof(nonce)
 
         return JsonResponse(data)
 
     def check_auth_header(self, request):
         """Check if user is authenticated via a token in the header."""
         from InvenTree.middleware import get_token_from_request
+        from users.authentication import validate_api_token
 
         if token := get_token_from_request(request):
-            # Does the provided token match a valid user?
+            # Check if the token is valid and the user is a staff member
             try:
-                token = ApiToken.get_from_string(token)
-                # Check if the token is active and the user is a staff member
-                if token and token.active and token.user and token.user.is_staff:
-                    return True
-            except ApiToken.DoesNotExist:
+                return validate_api_token(token).user.is_staff
+            except AuthenticationFailed:
                 pass
 
         return False
@@ -519,7 +537,12 @@ class BulkCreateMixin:
                 if has_unique_errors:
                     raise ValidationError(unique_errors)
 
-            with transaction.atomic(), batch_events(), batch_offload_tasks():
+            with (
+                transaction.atomic(),
+                batch_events(),
+                batch_offload_tasks(),
+                write_batched(),
+            ):
                 for item in data:
                     serializer = self.get_serializer(data=item)
                     if serializer.is_valid():
@@ -775,37 +798,11 @@ class APISearchView(GenericAPIView):
 
     def get_result_types(self):
         """Construct a list of search types we can return."""
-        import build.api
-        import company.api
-        import order.api
-        import part.api
-        import stock.api
-
-        return {
-            'build': build.api.BuildList,
-            'company': company.api.CompanyList,
-            'supplier': company.api.CompanyList,
-            'manufacturer': company.api.CompanyList,
-            'customer': company.api.CompanyList,
-            'manufacturerpart': company.api.ManufacturerPartList,
-            'supplierpart': company.api.SupplierPartList,
-            'part': part.api.PartList,
-            'partcategory': part.api.CategoryList,
-            'purchaseorder': order.api.PurchaseOrderViewSet,
-            'returnorder': order.api.ReturnOrderList,
-            'salesorder': order.api.SalesOrderList,
-            'salesordershipment': order.api.SalesOrderShipmentList,
-            'stockitem': stock.api.StockList,
-            'stocklocation': stock.api.StockLocationList,
-        }
+        return get_search_providers()
 
     def get_result_filters(self):
         """Provide extra filtering options for particular search groups."""
-        return {
-            'supplier': {'is_supplier': True},
-            'manufacturer': {'is_manufacturer': True},
-            'customer': {'is_customer': True},
-        }
+        return get_search_filters()
 
     def post(self, request, *args, **kwargs):
         """Perform search query against available models."""

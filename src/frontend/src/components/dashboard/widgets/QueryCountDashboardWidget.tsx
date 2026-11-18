@@ -1,14 +1,13 @@
 import { ActionIcon, Anchor, Group, RollingNumber } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { type ReactNode, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useDocumentVisibility } from '@mantine/hooks';
 import { useApi } from '../../../contexts/ApiContext';
@@ -32,7 +31,6 @@ function QueryCountWidget({
 }>): ReactNode {
   const api = useApi();
   const user = useUserState();
-  const navigate = useNavigate();
   const visibility = useDocumentVisibility();
 
   const modelProperties = ModelInformationDict[modelType];
@@ -62,27 +60,21 @@ function QueryCountWidget({
     }
   });
 
-  const onFollowLink = useCallback(
-    (event: any) => {
-      if (!query.isFetched) {
-        return;
-      }
+  const url = useMemo(() => {
+    if (!modelProperties.url_overview) {
+      return undefined;
+    }
 
-      if (modelProperties.url_overview) {
-        let url = modelProperties.url_overview;
+    const searchParams = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([key, value]) => {
+      searchParams.set(key, String(value));
+    });
 
-        if (params) {
-          url += '?';
-          for (const key in params) {
-            url += `${key}=${params[key]}&`;
-          }
-        }
-
-        navigateToLink(url, navigate, event);
-      }
-    },
-    [query.isFetched, modelProperties, params]
-  );
+    const queryString = searchParams.toString();
+    return queryString
+      ? `${modelProperties.url_overview}?${queryString}`
+      : modelProperties.url_overview;
+  }, [modelProperties.url_overview, params]);
 
   const result: ReactNode = useMemo(() => {
     if (query.isError) {
@@ -98,26 +90,32 @@ function QueryCountWidget({
     }
   }, [query.isFetching, query.isError, query.data]);
 
-  return (
-    <Anchor href='#' onClick={onFollowLink} underline='never'>
-      <Group
-        gap='xs'
-        wrap='nowrap'
-        justify='space-between'
-        align='center'
-        style={{ height: '100%' }}
-      >
-        <Group gap='xs'>
-          <InvenTreeIcon icon={icon ?? modelProperties.icon} />
-          <StylishText size='md'>{title}</StylishText>
-        </Group>
-        <Group gap='xs' wrap='nowrap' justify='space-apart'>
-          <Group gap='xs' wrap='nowrap' justify='right'>
-            {result}
-          </Group>
+  const content = (
+    <Group
+      gap='xs'
+      wrap='nowrap'
+      justify='space-between'
+      align='center'
+      style={{ height: '100%' }}
+    >
+      <Group gap='xs'>
+        <InvenTreeIcon icon={icon ?? modelProperties.icon} />
+        <StylishText size='md'>{title}</StylishText>
+      </Group>
+      <Group gap='xs' wrap='nowrap' justify='space-apart'>
+        <Group gap='xs' wrap='nowrap' justify='right'>
+          {result}
         </Group>
       </Group>
+    </Group>
+  );
+
+  return url ? (
+    <Anchor component={Link} to={url} underline='never'>
+      {content}
     </Anchor>
+  ) : (
+    content
   );
 }
 

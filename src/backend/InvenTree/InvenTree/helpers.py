@@ -182,7 +182,70 @@ def getMediaUrl(
     if name is not None:
         file = regenerate_imagefile(file, name)
 
-    return default_storage.url(file.name)
+    return get_media_url(file.name)
+
+
+# Request cache key for the default storage base URL (see get_media_url)
+MEDIA_BASE_URL_CACHE_KEY = 'media_storage_base_url'
+
+# Matches '.' or '..' path segments, which urljoin() would resolve
+_DOT_SEGMENT_REGEX = re.compile(r'(^|/)\.\.?(/|$)')
+
+
+def _get_filesystem_base_url() -> str:
+    """Return the base URL of the default storage, if it is a plain FileSystemStorage.
+
+    Returns an empty string for any other storage backend
+    (e.g. S3, or a subclass which may override url()),
+    or if the base URL is not in the expected format.
+
+    The result is cached for the duration of the current request.
+    """
+    from django.core.files.storage import FileSystemStorage
+
+    from InvenTree.cache import get_session_cache, set_session_cache
+
+    base_url = get_session_cache(MEDIA_BASE_URL_CACHE_KEY)
+
+    if base_url is None:
+        base_url = ''
+
+        # Note: default_storage is a LazyObject - __class__ is proxied to the wrapped storage
+        if default_storage.__class__ is FileSystemStorage:
+            storage_base_url = default_storage.base_url
+
+            if isinstance(storage_base_url, str) and storage_base_url.endswith('/'):
+                base_url = storage_base_url
+
+        set_session_cache(MEDIA_BASE_URL_CACHE_KEY, base_url)
+
+    return base_url
+
+
+def get_media_url(name: str) -> str:
+    """Return the URL for the named file in the default (media) storage.
+
+    Equivalent to default_storage.url(name), but for the default FileSystemStorage
+    backend the URL is constructed directly, which avoids the overhead of urljoin().
+    This is significant when rendering URLs for large API list queries.
+
+    Arguments:
+        name: The name (path) of the file within the storage
+    """
+    if base_url := _get_filesystem_base_url():
+        from django.utils.encoding import filepath_to_uri
+
+        url = filepath_to_uri(name)
+
+        if url is not None:
+            url = url.lstrip('/')
+
+            # urljoin() resolves '.' and '..' segments, and collapses empty segments ('//')
+            # Defer to the storage backend for these (rare) cases
+            if '//' not in url and not _DOT_SEGMENT_REGEX.search(url):
+                return base_url + url
+
+    return default_storage.url(name)
 
 
 def regenerate_imagefile(_file, _name: str):
@@ -508,6 +571,30 @@ def GetExportOptions() -> list:
 def GetExportFormats() -> list:
     """Return a list of allowable file formats for importing or exporting tabular data."""
     return [opt[0] for opt in GetExportOptions()]
+
+
+def escape_export_value(value):
+    """Escape a value for export to a tabular data file, to prevent formula injection.
+
+    String values which start with a character that a spreadsheet application
+    may interpret as a formula are prefixed with a single quote character.
+    Non-string values are returned unchanged, as are strictly numeric
+    strings (e.g. "-222", "+1.5", "12e6"), which are not a formula risk.
+
+    Ref: https://owasp.org/www-community/attacks/CSV_Injection
+    """
+    if not isinstance(value, str):
+        return value
+
+    if value.startswith(('+', '-')) and re.fullmatch(
+        r'[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?', value
+    ):
+        return value
+
+    if value.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + value
+
+    return value
 
 
 def DownloadFile(
@@ -1130,8 +1217,7 @@ def pui_url(subpath: str) -> str:
 
 def plugins_info(*args, **kwargs):
     """Return information about activated plugins."""
-    from plugin import PluginMixinEnum
-    from plugin.registry import registry
+    from plugin import PluginMixinEnum, registry
 
     # Check if plugins are even enabled
     if not settings.PLUGINS_ENABLED:
@@ -1146,6 +1232,74 @@ def plugins_info(*args, **kwargs):
     ]
 
 
+def plugins_disabled_mixins() -> list[dict]:
+    """Return information about active plugins which rely on a globally disabled integration.
+
+    Some plugin mixins only have an effect if the matching global setting is enabled
+    (e.g. a plugin which uses the UrlsMixin requires the 'ENABLE_PLUGINS_URL' setting).
+    If the setting is disabled, the plugin silently "does nothing" for that mixin -
+    which is hard to diagnose for an administrator.
+
+    Returns:
+        list: One entry for each (plugin, mixin) combination which is not operational
+    """
+    from common.settings import get_global_setting
+    from plugin import PluginMixinEnum, registry
+
+    # Check if plugins are even enabled
+    if not settings.PLUGINS_ENABLED:
+        return []
+
+    # Map each "gated" mixin to the global setting which enables it
+    mixin_settings = {
+        PluginMixinEnum.APP: 'ENABLE_PLUGINS_APP',
+        PluginMixinEnum.EVENTS: 'ENABLE_PLUGINS_EVENTS',
+        PluginMixinEnum.MAIL: 'ENABLE_PLUGINS_MAILS',
+        PluginMixinEnum.NAVIGATION: 'ENABLE_PLUGINS_NAVIGATION',
+        PluginMixinEnum.SCHEDULE: 'ENABLE_PLUGINS_SCHEDULE',
+        PluginMixinEnum.URLS: 'ENABLE_PLUGINS_URL',
+        PluginMixinEnum.USER_INTERFACE: 'ENABLE_PLUGINS_INTERFACE',
+    }
+
+    # Use the "effective" setting value (which respects any overrides),
+    # to match the value which is used when the mixins are activated
+    enabled_settings = {
+        setting
+        for setting in mixin_settings.values()
+        if str2bool(get_global_setting(setting, False, create=False))
+    }
+
+    disabled_mixins = {
+        mixin: setting
+        for mixin, setting in mixin_settings.items()
+        if setting not in enabled_settings
+    }
+
+    if not disabled_mixins:
+        return []
+
+    results = []
+
+    # Only active plugins which actually make use of the mixin are reported
+    for plg in registry.with_mixin(PluginMixinEnum.BASE, active=True):
+        for mixin, setting in disabled_mixins.items():
+            try:
+                if not plg.mixin_enabled(mixin):
+                    continue
+            except Exception:
+                continue
+
+            results.append({
+                'plugin': plg.slug,
+                # The plugin name may be a lazily translated string
+                'name': str(plg.name),
+                'mixin': str(mixin.value),
+                'setting': setting,
+            })
+
+    return results
+
+
 def sanitize_token(token_value: str, front=8, back=12) -> str:
     """Sanitize a token by replacing the middle characters with asterisks.
 
@@ -1156,8 +1310,18 @@ def sanitize_token(token_value: str, front=8, back=12) -> str:
 
     Returns:
         The sanitized token string
+
+    Note:
+        Values too short to keep the 'front' and 'back' sections visible
+        are almost entirely masked, so that the full value is never exposed.
     """
-    middle = len(token_value) - (front + back)
+    length = len(token_value)
+
+    if length <= front + back:
+        visible = min(front, length // 4)
+        return token_value[:visible] + '*' * (length - visible)
+
+    middle = length - (front + back)
     return token_value[:front] + '*' * middle + token_value[-back:]
 
 

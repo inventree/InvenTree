@@ -1,10 +1,11 @@
 """Schema processing functions for cleaning up generated schema."""
 
 from itertools import chain
-from typing import Any, Optional
+from typing import Any, Optional, TypedDict
 
 from django.conf import settings
 
+from drf_spectacular.authentication import BasicScheme
 from drf_spectacular.contrib.django_oauth_toolkit import DjangoOAuthToolkitScheme
 from drf_spectacular.drainage import warn
 from drf_spectacular.openapi import AutoSchema
@@ -20,7 +21,14 @@ from rest_framework import serializers, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
 from InvenTree.permissions import OASTokenMixin
-from users.oauth2_scopes import oauth2_scopes
+from users.oauth2_scopes import DEFAULT_READ, oauth2_scopes
+
+
+class _SchemaPathDetails(TypedDict):
+    method: str
+    oauth: list[str]
+    alternatives: list[list[str]]
+    sec: bool
 
 
 class ExtendedOAuth2Scheme(DjangoOAuthToolkitScheme):
@@ -35,13 +43,37 @@ class ExtendedOAuth2Scheme(DjangoOAuthToolkitScheme):
             return ret
 
         # If no security requirement is found, try if the view uses our OASTokenMixin
+        # A token has to satisfy *all* of these permissions, so their alternatives are combined
+        alternatives = None
         for permission in auto_schema.view.get_permissions():
             if isinstance(permission, OASTokenMixin):
                 alt_scopes = permission.get_required_alternate_scopes(
                     auto_schema.view.request, auto_schema.view
                 )
                 alt_scopes = alt_scopes.get(auto_schema.method, [])
-                return [{self.name: group} for group in alt_scopes]
+                alternatives = (
+                    alt_scopes
+                    if alternatives is None
+                    else combine_scope_alternatives(alternatives, alt_scopes)
+                )
+
+        if alternatives is not None:
+            return [{self.name: group} for group in alternatives]
+
+
+def combine_scope_alternatives(
+    first: list[list[str]], second: list[list[str]]
+) -> list[list[str]]:
+    """Combine two lists of scope alternatives, which both have to be satisfied."""
+    combined = []
+
+    for a in first:
+        for b in second:
+            group = [*a, *(scope for scope in b if scope not in a)]
+            if group not in combined:
+                combined.append(group)
+
+    return combined
 
 
 class ExtendedAutoSchema(AutoSchema):
@@ -212,6 +244,12 @@ class ExtendedAutoSchema(AutoSchema):
         return data
 
 
+class InvenTreeBasicAuthExtension(BasicScheme):
+    """Fix for custom basic authentication class."""
+
+    target_class = 'users.authentication.InvenTreeBasicAuthentication'
+
+
 def postprocess_schema_enums(result, generator, **kwargs):
     """Override call to drf-spectacular's enum postprocessor to filter out specific warnings."""
     from drf_spectacular import drainage
@@ -281,7 +319,7 @@ def postprocess_required_nullable(result, generator, request, public):
 
 def postprocess_print_stats(result, generator, request, public):
     """Prints statistics against schema."""
-    rlt_dict = {}
+    rlt_dict: dict[str, _SchemaPathDetails] = {}
     for path in result['paths']:
         for method in result['paths'][path]:
             sec = result['paths'][path][method].get('security', [])
@@ -289,6 +327,7 @@ def postprocess_print_stats(result, generator, request, public):
             rlt_dict[f'{path}:{method}'] = {
                 'method': method,
                 'oauth': list(chain(*scopes)),
+                'alternatives': scopes,
                 'sec': sec is None,
             }
 
@@ -333,6 +372,20 @@ def postprocess_print_stats(result, generator, request, public):
         warn(
             f'Found {len(wrong_url)} paths without oauth2 that are not excluded:\n{", ".join(wrong_url)}. '
             '\n\nPlease check the schema and add oauth2 scopes where necessary.'
+        )
+
+    # Raise error if a write operation can be performed with the general read scope
+    read_scopes = {DEFAULT_READ, 'openid'}
+    read_writable = [
+        path
+        for path, details in rlt_dict.items()
+        if details['method'] not in ('get', 'head', 'options')
+        and any(set(group) <= read_scopes for group in details['alternatives'])
+    ]
+    if len(read_writable) > 0:
+        warn(
+            f'Found {len(read_writable)} write operations which are accessible with the read scope:\n{", ".join(read_writable)}. '
+            '\n\nPlease check the scopes of these paths.'
         )
 
     return result

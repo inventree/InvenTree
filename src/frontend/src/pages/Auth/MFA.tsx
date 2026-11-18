@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Button, Checkbox, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { handleMfaLogin, handleWebauthnLogin } from '../../functions/auth';
@@ -19,8 +19,18 @@ export default function Mfa() {
   );
   const mfa_types = mfa_context?.types || [];
 
+  // Only start the WebAuthn flow once per page load.
+  // The effect may re-run (e.g. when the auth context is updated mid-flow),
+  // which would otherwise start concurrent (conflicting) WebAuthn requests.
+  const webauthnStarted = useRef<boolean>(false);
+
   useEffect(() => {
+    if (webauthnStarted.current) {
+      return;
+    }
+
     if (mfa_types.includes('webauthn') || mfa_types.includes('webauthn_2fa')) {
+      webauthnStarted.current = true;
       handleWebauthnLogin(navigate, location);
     }
   }, [mfa_types]);

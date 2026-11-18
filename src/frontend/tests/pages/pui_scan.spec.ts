@@ -38,7 +38,7 @@ test('Barcode Scanning - Basic', async ({ browser }) => {
 
   // Navigate to the 'scan' page
   await page.getByLabel('navigation-menu').click();
-  await page.getByRole('button', { name: 'Scan Barcode' }).click();
+  await page.getByRole('link', { name: 'Scan Barcode' }).click();
 
   await page.getByText('Scan or enter barcode data').waitFor();
 
@@ -72,6 +72,56 @@ test('Barcode Scanning - Stockitem', async ({ browser }) => {
   await page.getByText('1551ABK').waitFor();
   await page.getByText('Quantity: 100').waitFor();
   await page.getByRole('cell', { name: 'Quantity: 100' }).waitFor();
+});
+
+test('Barcode Scanning - Stock Actions', async ({ browser }) => {
+  // Create a new stock item, so that other tests are not affected
+  const api = await createApi({});
+
+  const stockItem = await api
+    .post('stock/', {
+      data: { part: 1, quantity: 25, location: 3 }
+    })
+    .then((response) => response.json())
+    .then((data) => data[0]);
+
+  await api.dispose();
+
+  const page = await doCachedLogin(browser, { url: 'scan/' });
+
+  // Nothing selected - no actions are available
+  await page.getByText('Scan and select items to perform actions').waitFor();
+
+  // Scan a non-stock item - no stock actions are available
+  await scan(page, '{"part": 1}');
+  await page.getByRole('cell', { name: 'part', exact: true }).waitFor();
+  await page
+    .getByRole('row', { name: /R_10R_0402_1%/ })
+    .getByLabel('Select record')
+    .check();
+  await page.getByText('No actions available for the selected items').waitFor();
+  await page
+    .getByRole('row', { name: /R_10R_0402_1%/ })
+    .getByLabel('Select record')
+    .uncheck();
+
+  // Scan the new stock item
+  await scan(page, `{"stockitem": ${stockItem.pk}}`);
+  await page.getByRole('cell', { name: 'Quantity: 25' }).waitFor();
+
+  const stockRow = page.getByRole('row', { name: /Quantity: 25/ });
+  await stockRow.getByLabel('Select record').check();
+
+  // Count the selected stock item
+  await page.getByLabel('action-menu-stock-actions').click();
+  await page.getByLabel('action-menu-stock-actions-count-stock').click();
+  await page.getByText('Count the selected stock items').waitFor();
+  await page.getByLabel('number-field-quantity').fill('17');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Stock counted').waitFor();
+
+  // The scanned item is reloaded with the new quantity
+  await page.getByRole('cell', { name: 'Quantity: 17' }).waitFor();
 });
 
 test('Barcode Scanning - StockLocation', async ({ browser }) => {

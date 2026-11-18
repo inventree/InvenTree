@@ -1,7 +1,7 @@
 {
     "name": "@inventreedb/ui",
     "description": "UI components for the InvenTree project",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "private": false,
     "type": "module",
     "license": "MIT",
@@ -58,7 +58,7 @@
         "@fullcalendar/core": "^6.1.21",
         "@fullcalendar/daygrid": "^6.1.21",
         "@fullcalendar/interaction": "^6.1.21",
-        "@fullcalendar/react": "6.1.21",
+        "@fullcalendar/react": "6.1.22",
         "@lingui/core": "^5.9.2",
         "@lingui/react": "^5.9.2",
         "@mantine/carousel": "^9.7.1",

@@ -1,4 +1,4 @@
-import type { ModelType } from '@lib/enums/ModelType';
+import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import type { InvenTreeIconType } from '@lib/types/Icons';
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
 import type { TemplateI } from '../../tables/settings/TemplateTable';
@@ -87,7 +87,11 @@ export type NavigationUIFeature = {
 
 export type PrimaryActionUIFeature = {
   featureType: 'primary_action';
-  requestContext: {};
+  requestContext: {
+    location: string;
+    target_model?: ModelType | PluginPanelKey;
+    target_id?: number | string | null;
+  };
   responseOptions: PluginUIFeature;
   featureContext: {};
   featureReturnType: undefined;

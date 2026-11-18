@@ -17,6 +17,7 @@ from allauth.socialaccount.signals import social_account_updated
 import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
+from generic.modelfeatures import build_model_features_cache
 from InvenTree.config import get_setting
 from InvenTree.ready import ignore_ready_warning
 
@@ -44,6 +45,12 @@ class InvenTreeConfig(AppConfig):
         - Collecting state transition methods
         - Adding users set in the current environment
         """
+        from django.core import checks
+
+        from InvenTree.checks import check_optional_field_prefetch
+
+        checks.register(check_optional_field_prefetch, checks.Tags.urls)
+
         # skip loading if plugin registry is not loaded or we run in a background thread
 
         if not InvenTree.ready.isPluginRegistryLoaded():
@@ -96,6 +103,7 @@ class InvenTreeConfig(AppConfig):
 
         self.update_site_url()
         self.load_unit_registry()
+        build_model_features_cache()
 
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
@@ -117,6 +125,7 @@ class InvenTreeConfig(AppConfig):
             'label.tasks.cleanup_old_label_outputs',
             'report.tasks.cleanup_old_report_outputs',
             'stock.tasks.delete_old_stock_items',
+            'stock.tasks.delete_old_stock_tracking',
         ]
 
         try:

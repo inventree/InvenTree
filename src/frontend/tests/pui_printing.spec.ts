@@ -5,6 +5,7 @@ import {
   activateTableView,
   loadTab,
   navigate,
+  tableSearch,
   waitForDataOutput
 } from './helpers.js';
 import { doCachedLogin } from './login.js';
@@ -243,9 +244,7 @@ test('Printing - Broken Template', async ({ browser }) => {
 
   // Next, check error message from the template editor preview
   await navigate(page, 'settings/admin/reports');
-  await page
-    .getByRole('textbox', { name: 'table-search-input' })
-    .fill('broken');
+  await tableSearch(page, 'broken');
   await page.getByRole('cell', { name: 'Broken Sales Order Report' }).click();
 
   await page.getByLabel('split-button-preview-options-action').click();

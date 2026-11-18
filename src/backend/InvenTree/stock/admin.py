@@ -3,15 +3,7 @@
 from django.contrib import admin
 from django.db.models import Count
 
-from common.admin_shared import ReadOnlyAdminMixin
-
-from .models import (
-    StockItem,
-    StockItemTestResult,
-    StockItemTracking,
-    StockLocation,
-    StockLocationType,
-)
+from .models import StockItem, StockItemTestResult, StockLocation, StockLocationType
 
 
 class LocationInline(admin.TabularInline):
@@ -76,17 +68,6 @@ class StockItemAdmin(admin.ModelAdmin):
         'supplier_part',
         'consumed_by',
     ]
-
-
-@admin.register(StockItemTracking)
-class StockTrackingAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
-    """Admin class for StockTracking - read-only to preserve audit trail integrity."""
-
-    list_display = ('item', 'date', 'label')
-
-    search_fields = ['item__part__name', 'item__serial', 'notes']
-
-    autocomplete_fields = ['item']
 
 
 @admin.register(StockItemTestResult)

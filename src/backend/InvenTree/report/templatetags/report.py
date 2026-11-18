@@ -44,6 +44,7 @@ import report.helpers
 from common.settings import get_global_setting
 from company.models import Company
 from part.models import Part
+from report.security import ReportAccessDenied, is_model_blocked
 
 register = template.Library()
 
@@ -142,6 +143,11 @@ def filter_db_model(model_name: str, **kwargs) -> Optional[QuerySet]:
 
     if model is None:
         return None
+
+    if is_model_blocked(model):
+        raise ReportAccessDenied(
+            'Access to this model is not allowed in report templates'
+        )
 
     queryset = model.objects.all()
 

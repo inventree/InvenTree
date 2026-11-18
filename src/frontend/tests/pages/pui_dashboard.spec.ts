@@ -26,6 +26,8 @@ test('Dashboard - Basic', async ({ browser }) => {
 
   await page.getByLabel('add-widget-ovr-so').click();
   await page.getByLabel('add-widget-ovr-po').click();
+  await page.getByLabel('dashboard-widgets-filter-input').fill('latest parts');
+  await page.getByLabel('add-widget-latest-parts').click();
 
   await page.getByLabel('dashboard-widgets-filter-clear').click();
 
@@ -37,6 +39,17 @@ test('Dashboard - Basic', async ({ browser }) => {
   // Check that the widgets are visible
   await page.getByText('Overdue Sales Orders').waitFor();
   await page.getByText('Overdue Purchase Orders').waitFor();
+  await page.getByText('Latest parts').waitFor();
+
+  await expect(
+    page.getByRole('link', { name: /Overdue Sales Orders/ })
+  ).toHaveAttribute('href', /\/web\/sales\/index\/salesorders\?overdue=true$/);
+  await expect(
+    page.getByRole('link', { name: 'Latest parts' })
+  ).toHaveAttribute(
+    'href',
+    /\/web\/part\/category\/index\/parts\?ordering=-id$/
+  );
 
   // Let's remove one of the widgets
   await page.getByLabel('dashboard-menu').click();

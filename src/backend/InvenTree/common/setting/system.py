@@ -2,22 +2,18 @@
 
 import json
 import os
-import re
 import uuid
+from importlib import import_module
+from importlib.util import find_spec
 
+from django.apps import apps
 from django.conf import settings as django_settings
-from django.contrib.auth.models import Group
-from django.core.exceptions import FieldDoesNotExist, ValidationError
-from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
 
-from jinja2.sandbox import SandboxedEnvironment
-
-import build.validators
 import common.currency
 import common.validators
-import order.validators
-import report.helpers
 from common.setting.type import InvenTreeSettingsKeyType, SettingFlag
 
 
@@ -37,45 +33,6 @@ def validate_internal_company(value):
         raise ValidationError({
             'value': _('Selected company must be marked as an internal company')
         })
-
-
-def validate_part_name_format(value):
-    """Validate part name format.
-
-    Make sure that each template container has a field of Part Model
-    """
-    # Make sure that the field_name exists in Part model
-    from part.models import Part
-
-    jinja_template_regex = re.compile(r'{{.*?}}')
-    field_name_regex = re.compile(r'(?<=part\.)[A-z]+')
-
-    for jinja_template in jinja_template_regex.findall(str(value)):
-        # make sure at least one and only one field is present inside the parser
-        field_names = field_name_regex.findall(jinja_template)
-        if len(field_names) < 1:
-            raise ValidationError({
-                'value': 'At least one field must be present inside a jinja template container i.e {{}}'
-            })
-
-        for field_name in field_names:
-            try:
-                Part._meta.get_field(field_name)
-            except FieldDoesNotExist:
-                raise ValidationError({
-                    'value': f'{field_name} does not exist in Part Model'
-                })
-
-    # Attempt to render the template with a dummy Part instance
-    # Use pk=1 to ensure conditional checks like {% if part.pk %} are evaluated
-    p = Part(pk=1, name='test part', description='some test part')
-
-    try:
-        SandboxedEnvironment().from_string(value).render({'part': p})
-    except Exception as exc:
-        raise ValidationError({'value': str(exc)})
-
-    return True
 
 
 def _get_site_object():
@@ -111,6 +68,8 @@ def update_instance_url(setting):
 
 def settings_group_options():
     """Build up group tuple for settings based on your choices."""
+    from django.contrib.auth.models import Group
+
     return [('', _('No group')), *[(str(a.pk), str(a)) for a in Group.objects.all()]]
 
 
@@ -235,6 +194,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             'Announce the instance ID of the server in the server status info (unauthenticated)'
         ),
         'default': False,
+        'validator': bool,
+    },
+    'INVENTREE_LINK_PROOF': {
+        'name': _('Allow Link Proof'),
+        'description': _(
+            'Allow other instances to verify the server identity without revealing the instance ID'
+        ),
+        'default': True,
         'validator': bool,
     },
     'INVENTREE_INSTANCE': {
@@ -437,306 +404,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': barcode_plugins,
         'default': 'inventreebarcode',
     },
-    'PART_ENABLE_LOCKING': {
-        'name': _('Part Locking'),
-        'description': _('Enable locking of parts to prevent modification'),
-        'validator': bool,
-        'default': True,
-        'flags': [SettingFlag.TOGGLE],
-    },
-    'PART_ENABLE_REVISION': {
-        'name': _('Part Revisions'),
-        'description': _('Enable revision field for Part'),
-        'validator': bool,
-        'default': True,
-        'flags': [SettingFlag.TOGGLE],
-    },
-    'PART_REVISION_ASSEMBLY_ONLY': {
-        'name': _('Assembly Revision Only'),
-        'description': _('Only allow revisions for assembly parts'),
-        'validator': bool,
-        'default': False,
-    },
-    'PART_ALLOW_DELETE_FROM_ASSEMBLY': {
-        'name': _('Allow Deletion from Assembly'),
-        'description': _('Allow deletion of parts which are used in an assembly'),
-        'validator': bool,
-        'default': False,
-    },
-    'PART_IPN_REGEX': {
-        'name': _('IPN Regex'),
-        'description': _('Regular expression pattern for matching Part IPN'),
-    },
-    'PART_ALLOW_DUPLICATE_IPN': {
-        'name': _('Allow Duplicate IPN'),
-        'description': _('Allow multiple parts to share the same IPN'),
-        'default': True,
-        'validator': bool,
-    },
-    'PART_ALLOW_EDIT_IPN': {
-        'name': _('Allow Editing IPN'),
-        'description': _('Allow changing the IPN value while editing a part'),
-        'default': True,
-        'validator': bool,
-    },
-    'PART_COPY_BOM': {
-        'name': _('Copy Part BOM Data'),
-        'description': _('Copy BOM data by default when duplicating a part'),
-        'default': True,
-        'validator': bool,
-    },
-    'PART_COPY_PARAMETERS': {
-        'name': _('Copy Part Parameter Data'),
-        'description': _('Copy parameter data by default when duplicating a part'),
-        'default': True,
-        'validator': bool,
-    },
-    'PART_COPY_TESTS': {
-        'name': _('Copy Part Test Data'),
-        'description': _('Copy test data by default when duplicating a part'),
-        'default': True,
-        'validator': bool,
-    },
-    'PART_CATEGORY_PARAMETERS': {
-        'name': _('Copy Category Parameter Templates'),
-        'description': _('Copy category parameter templates when creating a part'),
-        'default': True,
-        'validator': bool,
-    },
-    'PART_TEMPLATE': {
-        'name': _('Template'),
-        'description': _('Parts are templates by default'),
-        'default': False,
-        'validator': bool,
-    },
-    'PART_ASSEMBLY': {
-        'name': _('Assembly'),
-        'description': _('Parts can be assembled from other components by default'),
-        'default': False,
-        'validator': bool,
-    },
-    'PART_COMPONENT': {
-        'name': _('Component'),
-        'description': _('Parts can be used as sub-components by default'),
-        'default': True,
-        'validator': bool,
-    },
-    'PART_PURCHASEABLE': {
-        'name': _('Purchaseable'),
-        'description': _('Parts are purchaseable by default'),
-        'default': True,
-        'validator': bool,
-    },
-    'PART_SALABLE': {
-        'name': _('Salable'),
-        'description': _('Parts are salable by default'),
-        'default': False,
-        'validator': bool,
-    },
-    'PART_TRACKABLE': {
-        'name': _('Trackable'),
-        'description': _('Parts are trackable by default'),
-        'default': False,
-        'validator': bool,
-    },
-    'PART_VIRTUAL': {
-        'name': _('Virtual'),
-        'description': _('Parts are virtual by default'),
-        'default': False,
-        'validator': bool,
-    },
-    'PART_SHOW_RELATED': {
-        'name': _('Show related parts'),
-        'description': _('Display related parts for a part'),
-        'default': True,
-        'validator': bool,
-    },
-    'PART_CREATE_INITIAL': {
-        'name': _('Initial Stock Data'),
-        'description': _('Allow creation of initial stock when adding a new part'),
-        'default': False,
-        'validator': bool,
-    },
-    'PART_CREATE_SUPPLIER': {
-        'name': _('Initial Supplier Data'),
-        'description': _(
-            'Allow creation of initial supplier data when adding a new part'
-        ),
-        'default': True,
-        'validator': bool,
-    },
-    'PART_NAME_FORMAT': {
-        'name': _('Part Name Display Format'),
-        'description': _('Format to display the part name'),
-        'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
-        '{{ part.revision if part.revision }}',
-        'validator': validate_part_name_format,
-    },
-    'PART_CATEGORY_DEFAULT_ICON': {
-        'name': _('Part Category Default Icon'),
-        'description': _('Part category default icon (empty means no icon)'),
-        'default': '',
-        'validator': common.validators.validate_icon,
-    },
-    'PRICING_DECIMAL_PLACES_MIN': {
-        'name': _('Minimum Pricing Decimal Places'),
-        'description': _(
-            'Minimum number of decimal places to display when rendering pricing data'
-        ),
-        'default': 0,
-        'validator': [
-            int,
-            MinValueValidator(0),
-            MaxValueValidator(4),
-            common.validators.validate_decimal_places_min,
-        ],
-    },
-    'PRICING_DECIMAL_PLACES': {
-        'name': _('Maximum Pricing Decimal Places'),
-        'description': _(
-            'Maximum number of decimal places to display when rendering pricing data'
-        ),
-        'default': 6,
-        'validator': [
-            int,
-            MinValueValidator(2),
-            MaxValueValidator(6),
-            common.validators.validate_decimal_places_max,
-        ],
-    },
-    'PRICING_USE_SUPPLIER_PRICING': {
-        'name': _('Use Supplier Pricing'),
-        'description': _(
-            'Include supplier price breaks in overall pricing calculations'
-        ),
-        'default': True,
-        'validator': bool,
-    },
-    'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER': {
-        'name': _('Purchase History Override'),
-        'description': _(
-            'Historical purchase order pricing overrides supplier price breaks'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'PRICING_USE_STOCK_PRICING': {
-        'name': _('Use Stock Item Pricing'),
-        'description': _(
-            'Use pricing from manually entered stock data for pricing calculations'
-        ),
-        'default': True,
-        'validator': bool,
-    },
-    'PRICING_STOCK_ITEM_AGE_DAYS': {
-        'name': _('Stock Item Pricing Age'),
-        'description': _(
-            'Exclude stock items older than this number of days from pricing calculations'
-        ),
-        'default': 0,
-        'units': _('days'),
-        'validator': [int, MinValueValidator(0)],
-    },
-    'PRICING_USE_VARIANT_PRICING': {
-        'name': _('Use Variant Pricing'),
-        'description': _('Include variant pricing in overall pricing calculations'),
-        'default': True,
-        'validator': bool,
-    },
-    'PRICING_ACTIVE_VARIANTS': {
-        'name': _('Active Variants Only'),
-        'description': _(
-            'Only use active variant parts for calculating variant pricing'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'PRICING_AUTO_UPDATE': {
-        'name': _('Auto Update Pricing'),
-        'description': _(
-            'Automatically update part pricing when internal data changes'
-        ),
-        'default': True,
-        'validator': bool,
-    },
-    'PRICING_UPDATE_DAYS': {
-        'name': _('Pricing Rebuild Interval'),
-        'description': _('Number of days before part pricing is automatically updated'),
-        'units': _('days'),
-        'default': 30,
-        'validator': [int, MinValueValidator(0)],
-    },
-    'PART_INTERNAL_PRICE': {
-        'name': _('Internal Prices'),
-        'description': _('Enable internal prices for parts'),
-        'default': False,
-        'validator': bool,
-    },
-    'PART_BOM_USE_INTERNAL_PRICE': {
-        'name': _('Internal Price Override'),
-        'description': _(
-            'If available, internal prices override price range calculations'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'PART_BOM_ALLOW_ZERO_QUANTITY': {
-        'name': _('Allow BOM Zero Quantity'),
-        'description': _(
-            'Accept a zero quantity for BOM item for part. Enables using setup quantity to define a quantity required per build, independent of build quantity'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'LABEL_ENABLE': {
-        'name': _('Enable label printing'),
-        'description': _('Enable label printing from the web interface'),
-        'default': True,
-        'validator': bool,
-        'flags': [SettingFlag.TOGGLE],
-    },
-    'LABEL_DPI': {
-        'name': _('Label Image DPI'),
-        'description': _(
-            'DPI resolution when generating image files to supply to label printing plugins'
-        ),
-        'default': 300,
-        'validator': [int, MinValueValidator(100)],
-    },
-    'REPORT_ENABLE': {
-        'name': _('Enable Reports'),
-        'description': _('Enable generation of reports'),
-        'default': False,
-        'validator': bool,
-        'flags': [SettingFlag.TOGGLE],
-    },
-    'REPORT_DEBUG_MODE': {
-        'name': _('Debug Mode'),
-        'description': _('Generate reports in debug mode (HTML output)'),
-        'default': False,
-        'validator': bool,
-        'flags': [SettingFlag.SECURITY],
-    },
-    'REPORT_FETCH_URLS': {
-        'name': _('Report URL Fetching'),
-        'description': _('Allow fetching of remote URLs when generating reports'),
-        'default': False,
-        'validator': bool,
-        'flags': [SettingFlag.SECURITY],
-    },
-    'REPORT_LOG_ERRORS': {
-        'name': _('Log Report Errors'),
-        'description': _('Log errors which occur when generating reports'),
-        'default': False,
-        'validator': bool,
-        'flags': [SettingFlag.SECURITY],
-    },
-    'REPORT_DEFAULT_PAGE_SIZE': {
-        'name': _('Page Size'),
-        'description': _('Default page size for PDF reports'),
-        'default': 'A4',
-        'choices': report.helpers.report_page_size_options,
-    },
     'PARAMETER_ENFORCE_UNITS': {
         'name': _('Enforce Parameter Units'),
         'description': _(
@@ -750,321 +417,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Serial numbers for stock items must be globally unique'),
         'default': False,
         'validator': bool,
-    },
-    'STOCK_DELETE_DEPLETED_DEFAULT': {
-        'name': _('Delete Depleted Stock'),
-        'description': _('Determines default behavior when a stock item is depleted'),
-        'default': True,
-        'validator': bool,
-    },
-    'STOCK_ALLOW_EDIT_SERIAL': {
-        'name': _('Allow Edit Serial Number'),
-        'description': _('Allow editing of serial number for stock items'),
-        'default': True,
-        'validator': bool,
-    },
-    'STOCK_ALLOW_DELETE_SERIALIZED': {
-        'name': _('Delete Serialized Stock'),
-        'description': _('Allow deletion of stock items which have a serial number'),
-        'default': True,
-        'validator': bool,
-    },
-    'STOCK_BATCH_CODE_TEMPLATE': {
-        'name': _('Batch Code Template'),
-        'description': _('Template for generating default batch codes for stock items'),
-        'default': '',
-    },
-    'STOCK_ENABLE_EXPIRY': {
-        'name': _('Stock Expiry'),
-        'description': _('Enable stock expiry functionality'),
-        'default': False,
-        'validator': bool,
-        'flags': [SettingFlag.TOGGLE],
-    },
-    'STOCK_ALLOW_EXPIRED_SALE': {
-        'name': _('Sell Expired Stock'),
-        'description': _('Allow sale of expired stock'),
-        'default': False,
-        'validator': bool,
-    },
-    'STOCK_STALE_DAYS': {
-        'name': _('Stock Stale Time'),
-        'description': _(
-            'Number of days stock items are considered stale before expiring'
-        ),
-        'default': 0,
-        'units': _('days'),
-        'validator': [int],
-    },
-    'STOCK_ALLOW_EXPIRED_BUILD': {
-        'name': _('Build Expired Stock'),
-        'description': _('Allow building with expired stock'),
-        'default': False,
-        'validator': bool,
-    },
-    'STOCK_OWNERSHIP_CONTROL': {
-        'name': _('Stock Ownership Control'),
-        'description': _('Enable ownership control over stock locations and items'),
-        'default': False,
-        'validator': bool,
-        'flags': [SettingFlag.TOGGLE],
-    },
-    'STOCK_LOCATION_DEFAULT_ICON': {
-        'name': _('Stock Location Default Icon'),
-        'description': _('Stock location default icon (empty means no icon)'),
-        'default': '',
-        'validator': common.validators.validate_icon,
-    },
-    'STOCK_SHOW_INSTALLED_ITEMS': {
-        'name': _('Show Installed Stock Items'),
-        'description': _('Display installed stock items in stock tables'),
-        'default': False,
-        'validator': bool,
-    },
-    'STOCK_ENFORCE_BOM_INSTALLATION': {
-        'name': _('Check BOM when installing items'),
-        'description': _(
-            'Installed stock items must exist in the BOM for the parent part'
-        ),
-        'default': True,
-        'validator': bool,
-    },
-    'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER': {
-        'name': _('Allow Out of Stock Transfer'),
-        'description': _(
-            'Allow stock items which are not in stock to be transferred between stock locations'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'STOCK_MERGE_ON_TRANSFER': {
-        'name': _('Merge stock with existing stock on transfer by default'),
-        'description': _(
-            'Default state for merge stock on transfer behaviour. (Can be changed per transfer if desired)'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'BUILDORDER_REFERENCE_PATTERN': {
-        'name': _('Build Order Reference Pattern'),
-        'description': _('Required pattern for generating Build Order reference field'),
-        'default': 'BO-{ref:04d}',
-        'validator': build.validators.validate_build_order_reference_pattern,
-    },
-    'BUILDORDER_REQUIRE_RESPONSIBLE': {
-        'name': _('Require Responsible Owner'),
-        'description': _('A responsible owner must be assigned to each order'),
-        'default': False,
-        'validator': bool,
-    },
-    'BUILDORDER_REQUIRE_ACTIVE_PART': {
-        'name': _('Require Active Part'),
-        'description': _('Prevent build order creation for inactive parts'),
-        'default': False,
-        'validator': bool,
-    },
-    'BUILDORDER_REQUIRE_LOCKED_PART': {
-        'name': _('Require Locked Part'),
-        'description': _('Prevent build order creation for unlocked parts'),
-        'default': False,
-        'validator': bool,
-    },
-    'BUILDORDER_REQUIRE_VALID_BOM': {
-        'name': _('Require Valid BOM'),
-        'description': _('Prevent build order creation unless BOM has been validated'),
-        'default': False,
-        'validator': bool,
-    },
-    'BUILDORDER_REQUIRE_CLOSED_CHILDS': {
-        'name': _('Require Closed Child Orders'),
-        'description': _(
-            'Prevent build order completion until all child orders are closed'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'BUILDORDER_EXTERNAL_BUILDS': {
-        'name': _('External Build Orders'),
-        'description': _('Enable external build order functionality'),
-        'default': False,
-        'validator': bool,
-    },
-    'BUILDORDER_EXTERNAL_REQUIRED': {
-        'name': _('Require External Build Orders'),
-        'description': _(
-            'Require an external build order when ordering assembled parts from an external supplier'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
-        'name': _('Block Until Tests Pass'),
-        'description': _(
-            'Prevent build outputs from being completed until all required tests pass'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'RETURNORDER_ENABLED': {
-        'name': _('Enable Return Orders'),
-        'description': _('Enable return order functionality in the user interface'),
-        'validator': bool,
-        'default': False,
-        'flags': [SettingFlag.TOGGLE],
-    },
-    'RETURNORDER_REFERENCE_PATTERN': {
-        'name': _('Return Order Reference Pattern'),
-        'description': _(
-            'Required pattern for generating Return Order reference field'
-        ),
-        'default': 'RMA-{ref:04d}',
-        'validator': order.validators.validate_return_order_reference_pattern,
-    },
-    'RETURNORDER_REQUIRE_RESPONSIBLE': {
-        'name': _('Require Responsible Owner'),
-        'description': _('A responsible owner must be assigned to each order'),
-        'default': False,
-        'validator': bool,
-    },
-    'RETURNORDER_EDIT_COMPLETED_ORDERS': {
-        'name': _('Edit Completed Return Orders'),
-        'description': _(
-            'Allow editing of return orders after they have been completed'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'SALESORDER_REFERENCE_PATTERN': {
-        'name': _('Sales Order Reference Pattern'),
-        'description': _('Required pattern for generating Sales Order reference field'),
-        'default': 'SO-{ref:04d}',
-        'validator': order.validators.validate_sales_order_reference_pattern,
-    },
-    'SALESORDER_REQUIRE_RESPONSIBLE': {
-        'name': _('Require Responsible Owner'),
-        'description': _('A responsible owner must be assigned to each order'),
-        'default': False,
-        'validator': bool,
-    },
-    'SALESORDER_DEFAULT_SHIPMENT': {
-        'name': _('Sales Order Default Shipment'),
-        'description': _('Enable creation of default shipment with sales orders'),
-        'default': False,
-        'validator': bool,
-    },
-    'SALESORDER_EDIT_COMPLETED_ORDERS': {
-        'name': _('Edit Completed Sales Orders'),
-        'description': _(
-            'Allow editing of sales orders after they have been shipped or completed'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'SALESORDER_SHIPMENT_REQUIRES_CHECK': {
-        'name': _('Shipment Requires Checking'),
-        'description': _(
-            'Prevent completion of shipments until items have been checked'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'SALESORDER_SHIP_COMPLETE': {
-        'name': _('Mark Shipped Orders as Complete'),
-        'description': _(
-            'Sales orders marked as shipped will automatically be completed, bypassing the "shipped" status'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'TRANSFERORDER_ENABLED': {
-        'name': _('Enable Transfer Orders'),
-        'description': _('Enable transfer order functionality in the user interface'),
-        'validator': bool,
-        'default': False,
-        'flags': [SettingFlag.TOGGLE],
-    },
-    'TRANSFERORDER_REFERENCE_PATTERN': {
-        'name': _('Transfer Order Reference Pattern'),
-        'description': _(
-            'Required pattern for generating Transfer Order reference field'
-        ),
-        'default': 'TO-{ref:04d}',
-        'validator': order.validators.validate_transfer_order_reference_pattern,
-    },
-    'TRANSFERORDER_REQUIRE_RESPONSIBLE': {
-        'name': _('Require Responsible Owner'),
-        'description': _('A responsible owner must be assigned to each order'),
-        'default': False,
-        'validator': bool,
-    },
-    'TRANSFERORDER_EDIT_COMPLETED_ORDERS': {
-        'name': _('Edit Completed Transfer Orders'),
-        'description': _(
-            'Allow editing of transfer orders after they have been completed'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS': {
-        'name': _('Block Incomplete Item Tests'),
-        'description': _(
-            'Prevent allocation of stock items to sales orders if required item tests are incomplete'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'PURCHASEORDER_REFERENCE_PATTERN': {
-        'name': _('Purchase Order Reference Pattern'),
-        'description': _(
-            'Required pattern for generating Purchase Order reference field'
-        ),
-        'default': 'PO-{ref:04d}',
-        'validator': order.validators.validate_purchase_order_reference_pattern,
-    },
-    'PURCHASEORDER_REQUIRE_RESPONSIBLE': {
-        'name': _('Require Responsible Owner'),
-        'description': _('A responsible owner must be assigned to each order'),
-        'default': False,
-        'validator': bool,
-    },
-    'PURCHASEORDER_EDIT_COMPLETED_ORDERS': {
-        'name': _('Edit Completed Purchase Orders'),
-        'description': _(
-            'Allow editing of purchase orders after they have been shipped or completed'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'PURCHASEORDER_CONVERT_CURRENCY': {
-        'name': _('Convert Currency'),
-        'description': _('Convert item value to base currency when receiving stock'),
-        'default': False,
-        'validator': bool,
-    },
-    'PURCHASEORDER_AUTO_COMPLETE': {
-        'name': _('Auto Complete Purchase Orders'),
-        'description': _(
-            'Automatically mark purchase orders as complete when all line items are received'
-        ),
-        'default': True,
-        'validator': bool,
-    },
-    'PURCHASEORDER_MERGE_LINE_ITEMS': {
-        'name': _('Merge Purchase Order Line Items'),
-        'description': _(
-            'Merge new purchase order line items with existing lines that share the same part, destination, and target date'
-        ),
-        'default': True,
-        'validator': bool,
-    },
-    'PURCHASEORDER_DEFAULT_RECEIVE_LOCATION': {
-        'name': _('Default Receive Location'),
-        'description': _(
-            'Default destination location for received goods on new purchase orders'
-        ),
-        'default': '',
-        'model': 'stock.stocklocation',
-        'model_filters': {'structural': False},
     },
     # login / SSO
     'LOGIN_ENABLE_PWD_FORGOT': {
@@ -1184,7 +536,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'confirm': True,
         'confirm_text': _(
-            'Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately.'
+            'Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately, and API tokens of users without multifactor authentication will stop working.'
         ),
         'flags': [SettingFlag.SECURITY],
         'after_save': enforce_mfa,
@@ -1268,63 +620,36 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'flags': [SettingFlag.TOGGLE],
     },
-    'STOCKTAKE_ENABLE': {
-        'name': _('Enable Stocktake'),
-        'description': _(
-            'Enable functionality for recording historical stock levels and value'
-        ),
-        'flags': [SettingFlag.TOGGLE],
+    'AUDIT_LOG_ENABLED': {
+        'name': _('Enable Audit Log'),
+        'description': _('Record a history of changes made to supported models'),
+        'default': True,
         'validator': bool,
-        'default': False,
     },
-    'STOCKTAKE_EXCLUDE_EXTERNAL': {
-        'name': _('Exclude External Locations'),
+    'AUDIT_LOG_DELETE_OLD_ENTRIES': {
+        'name': _('Delete Old Audit Log Entries'),
         'description': _(
-            'Exclude stock items in external locations from stocktake calculations'
-        ),
-        'validator': bool,
-        'default': False,
-    },
-    'STOCKTAKE_AUTO_DAYS': {
-        'name': _('Automatic Stocktake Period'),
-        'description': _('Number of days between automatic stocktake recording'),
-        'validator': [int, MinValueValidator(1)],
-        'default': 7,
-        'units': _('days'),
-    },
-    'STOCKTAKE_DELETE_OLD_ENTRIES': {
-        'name': _('Delete Old Stocktake Entries'),
-        'description': _(
-            'Delete stocktake entries older than the specified number of days'
+            'Delete audit log entries older than the specified number of days'
         ),
         'default': False,
         'validator': bool,
     },
-    'STOCKTAKE_DELETE_DAYS': {
-        'name': _('Stocktake Deletion Interval'),
+    'AUDIT_LOG_DELETE_KEEP_SUMMARY': {
+        'name': _('Retain Audit Log Summary'),
         'description': _(
-            'Stocktake entries will be deleted after specified number of days'
+            'When deleting old audit log entries, always keep the creation entry and the most recent entry for each item'
+        ),
+        'default': True,
+        'validator': bool,
+    },
+    'AUDIT_LOG_DELETE_DAYS': {
+        'name': _('Audit Log Deletion Interval'),
+        'description': _(
+            'Audit log entries will be deleted after specified number of days'
         ),
         'default': 365,
         'units': _('days'),
-        'validator': [int, MinValueValidator(30)],
-    },
-    'STOCK_TRACKING_DELETE_OLD_ENTRIES': {
-        'name': _('Delete Old Stock Tracking Entries'),
-        'description': _(
-            'Delete stock tracking entries older than the specified number of days'
-        ),
-        'default': False,
-        'validator': bool,
-    },
-    'STOCK_TRACKING_DELETE_DAYS': {
-        'name': _('Stock Tracking Deletion Interval'),
-        'description': _(
-            'Stock tracking entries will be deleted after specified number of days'
-        ),
-        'default': 365,
-        'units': _('days'),
-        'validator': [int, MinValueValidator(30)],
+        'validator': [int, MinValueValidator(7)],
     },
     'DISPLAY_FULL_NAMES': {
         'name': _('Display Users full names'),
@@ -1376,25 +701,32 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
-    'SALESORDER_ENABLED': {
-        'name': _('Enable Sales Orders'),
-        'description': _('Enable sales order functionality in the user interface'),
-        'validator': bool,
-        'default': True,
-        'flags': [SettingFlag.TOGGLE],
-    },
-    'PURCHASEORDER_ENABLED': {
-        'name': _('Enable Purchase Orders'),
-        'description': _('Enable purchase order functionality in the user interface'),
-        'validator': bool,
-        'default': True,
-        'flags': [SettingFlag.TOGGLE],
-    },
-    'BUILDORDER_ENABLED': {
-        'name': _('Enable Build Orders'),
-        'description': _('Enable build order functionality in the user interface'),
-        'validator': bool,
-        'default': True,
-        'flags': [SettingFlag.TOGGLE],
-    },
 }
+_settings_collected = False
+
+
+def collect_system_settings() -> None:
+    """Collect the domain-specific system settings from built-in apps."""
+    global _settings_collected
+
+    if _settings_collected:
+        return
+
+    _settings_collected = True
+
+    for app in apps.get_app_configs():
+        module_name = f'{app.name}.system_settings'
+
+        try:
+            if find_spec(module_name) is None:
+                continue
+        except ModuleNotFoundError:  # pragma: no cover
+            continue
+
+        settings = import_module(module_name).SYSTEM_SETTINGS
+
+        duplicates = sorted(SYSTEM_SETTINGS.keys() & settings.keys())
+        if duplicates:
+            raise ValueError(f'Duplicate system settings in {app.name}: {duplicates}')
+
+        SYSTEM_SETTINGS.update(settings)

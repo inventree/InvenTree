@@ -12,7 +12,7 @@ The following models can be tagged:
 - [Supplier Parts](../purchasing/supplier.md#supplier-parts)
 - [Manufacturer Part](../purchasing/manufacturer.md#manufacturer-parts)
 - [Stock Items](../stock/index.md#stock-item)
-- [Stock Location](../stock/index.md#stock-location)
+- [Stock Location](../stock/index.md#stock-locations)
 
 
 ## Accessing Tags

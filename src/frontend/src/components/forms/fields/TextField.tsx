@@ -76,7 +76,14 @@ function TextField({
           // Bypass debounce on enter key
           onTextChange(event.currentTarget.value);
         }
-        onKeyDown(event.code);
+
+        // Do not submit the form when Enter is used to confirm IME input.
+        // Some browsers report keyCode 229 even when isComposing is false.
+        const isComposing =
+          event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229;
+        if (!isComposing) {
+          onKeyDown(event.code);
+        }
       }}
       rightSection={
         placeholderAutofill && (

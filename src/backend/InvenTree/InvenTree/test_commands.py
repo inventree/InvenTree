@@ -165,9 +165,8 @@ class CommandTestCase(TestCase):
         """bulk_create() must not overwrite fixture values for auto_now_add fields.
 
         Covers both an auto_now_add DateTimeField (BarcodeScanResult.timestamp,
-        StockItem.creation_date, StockItemTracking.date) and an auto_now_add
-        DateField (Part.creation_date) - StockItem/StockItemTracking are also
-        the models the bug was originally reported against.
+        StockItem.creation_date) and an auto_now_add DateField (Part.creation_date)
+        - StockItem is also the model the bug was originally reported against.
         """
         import datetime
 
@@ -176,8 +175,7 @@ class CommandTestCase(TestCase):
 
         from common.models import BarcodeScanResult
         from part.models import Part
-        from stock.models import StockItem, StockItemTracking
-        from stock.status_codes import StockHistoryCode
+        from stock.models import StockItem
 
         # JSON fixtures only round-trip datetimes to millisecond precision
         # (DjangoJSONEncoder truncates microseconds) - use a value already at
@@ -207,27 +205,13 @@ class CommandTestCase(TestCase):
         item.refresh_from_db()
         self.assertEqual(item.creation_date, original_timestamp)
 
-        tracking = StockItemTracking.objects.create(
-            item=item, tracking_type=StockHistoryCode.CREATED
-        )
-        tracking.date = original_timestamp
-        tracking.save()
-        tracking.refresh_from_db()
-        self.assertEqual(tracking.date, original_timestamp)
-
-        pks = {
-            'barcode': entry.pk,
-            'part': part.pk,
-            'item': item.pk,
-            'tracking': tracking.pk,
-        }
+        pks = {'barcode': entry.pk, 'part': part.pk, 'item': item.pk}
 
         # Serialize parent-before-child, so bulkloaddata's per-model
         # bulk_create() calls happen in an order that satisfies FK constraints.
-        data = serializers.serialize('json', [entry, part, item, tracking])
+        data = serializers.serialize('json', [entry, part, item])
 
         # Use queryset deletes - Part.delete() refuses to delete an active part
-        StockItemTracking.objects.filter(pk=tracking.pk).delete()
         StockItem.objects.filter(pk=item.pk).delete()
         Part.objects.filter(pk=part.pk).delete()
         BarcodeScanResult.objects.filter(pk=entry.pk).delete()
@@ -247,10 +231,7 @@ class CommandTestCase(TestCase):
             reloaded_item = StockItem.objects.get(pk=pks['item'])
             self.assertEqual(reloaded_item.creation_date, original_timestamp)
 
-            reloaded_tracking = StockItemTracking.objects.get(pk=pks['tracking'])
-            self.assertEqual(reloaded_tracking.date, original_timestamp)
         finally:
-            StockItemTracking.objects.filter(pk=pks['tracking']).delete()
             StockItem.objects.filter(pk=pks['item']).delete()
             Part.objects.filter(pk=pks['part']).delete()
             BarcodeScanResult.objects.filter(pk=pks['barcode']).delete()

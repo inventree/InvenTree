@@ -9,6 +9,7 @@ import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
+  Alert,
   Badge,
   Button,
   Code,
@@ -20,9 +21,11 @@ import {
   Textarea
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconCircleX } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import { IconAlertTriangle, IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
+import { useReauthenticate } from '../../components/modals/ReauthenticateModal';
 import {
   BooleanColumn,
   UserColumn
@@ -36,9 +39,12 @@ export function ApiTokenTable({
   only_myself = true
 }: Readonly<{ only_myself: boolean }>) {
   const [token, setToken] = useState<string>('');
+  const [tokenWarning, setTokenWarning] = useState<string>('');
   const [opened, { open, close }] = useDisclosure(false);
   const [revokeTokenId, setRevokeTokenId] = useState<string | null>(null);
   const [revocationReason, setRevocationReason] = useState<string>('');
+
+  const { handleReauthError, modals: reauthModals } = useReauthenticate();
 
   const generateToken = useCreateApiFormModal({
     url: ApiEndpoints.user_me_token,
@@ -46,8 +52,13 @@ export function ApiTokenTable({
     title: t`Generate Token`,
     fields: { name: {} },
     successMessage: t`Token generated`,
+    onFormError: (error: any) => {
+      // MFA users must have recently authenticated to generate a token
+      handleReauthError(error);
+    },
     onFormSuccess: (data: any) => {
       setToken(data.token);
+      setTokenWarning(data.warning ?? '');
       open();
       table.refreshTable();
     }
@@ -202,6 +213,10 @@ export function ApiTokenTable({
         table.refreshTable();
         setRevokeTokenId(null);
         setRevocationReason('');
+        notifications.show({
+          title: t`Token revoked`,
+          message: t`The token has been successfully revoked`
+        });
       })
       .catch((error) => {
         showApiErrorMessage({
@@ -221,6 +236,7 @@ export function ApiTokenTable({
       {only_myself && (
         <>
           {generateToken.modal}
+          {reauthModals}
           <Modal
             opened={opened}
             onClose={close}
@@ -233,6 +249,17 @@ export function ApiTokenTable({
                 Tokens are only shown once - make sure to note it down.
               </Trans>
             </Text>
+            {tokenWarning && (
+              <Alert
+                color='red'
+                variant='filled'
+                icon={<IconAlertTriangle />}
+                title={t`Notification could not be sent`}
+                data-testid='api-token-email-warning'
+              >
+                {tokenWarning}
+              </Alert>
+            )}
             <Paper p='sm'>
               <Flex>
                 <Code>{token}</Code>
@@ -248,7 +275,7 @@ export function ApiTokenTable({
           setRevokeTokenId(null);
           setRevocationReason('');
         }}
-        title={t`Revoke Token`}
+        title={<StylishText size='lg'>{t`Revoke Token`}</StylishText>}
         centered
       >
         <Textarea

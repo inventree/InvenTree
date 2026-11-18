@@ -77,6 +77,9 @@ An assembly requires 4 pieces of tubing, each 500mm long, with 5% attrition:
 !!! note "Default Behavior"
     When `piece_count` is left at its default value of 1, the BOM line item behaves exactly as it did before this feature was introduced. Existing BOMs are unaffected.
 
+!!! info "Where Piece Count Applies"
+    The total material per assembly (`quantity x piece_count`) is used wherever InvenTree calculates component requirements for an assembly, including the [required build quantity](./required.md), the *Can Build* quantity, [BOM pricing](../part/pricing.md#bom-pricing), and the *Total Quantity* column of the [BOM Exporter](../plugins/builtin/bom_exporter.md).
+
 !!! tip "When to Use Piece Count"
     Use `piece_count` when you are cutting or dividing a material into multiple identical pieces. If each piece has a different length, create separate BOM line items instead.
 
@@ -216,7 +219,7 @@ In the example above, the *Doohickey* sub-assembly is required three times for e
 Other columns (such as *Available Stock*) display the same values as they would in the BOM for the sub-assembly itself.
 
 !!! info "Setup Quantity and Attrition"
-    The calculated quantity values are based on the line item quantities only. The [setup quantity](#bom-line-items) and [attrition](#bom-line-items) of any upstream sub-assemblies are not included in the calculation.
+    The calculated quantity values are based on the line item quantities only. The quantity of each upstream sub-assembly includes its [piece count](#piece-count-cut-to-length-parts) (`quantity x piece_count`). The [setup quantity](#bom-line-items) and [attrition](#bom-line-items) of any upstream sub-assemblies are not included in the calculation.
 
 #### Behavior
 

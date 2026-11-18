@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
-  ActionIcon,
   Alert,
   Divider,
   Grid,
@@ -12,19 +11,15 @@ import {
   Text
 } from '@mantine/core';
 import { randomId, useListState, useLocalStorage } from '@mantine/hooks';
-import {
-  IconAlertCircle,
-  IconNumber,
-  IconQuestionMark
-} from '@tabler/icons-react';
+import { IconAlertCircle, IconQuestionMark } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import type { ModelType } from '@lib/enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { notYetImplemented } from '@lib/functions/Notification';
+import type { StockOperationProps } from '@lib/types/Forms';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
 import { api } from '../../App';
@@ -32,6 +27,7 @@ import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import PageTitle from '../../components/nav/PageTitle';
 import { showApiErrorMessage } from '../../functions/notifications';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
 export default function Scan() {
@@ -45,6 +41,21 @@ export default function Scan() {
   });
 
   const [selection, setSelection] = useState<string[]>([]);
+
+  // Fetch the instance data for a given scan item
+  const fetchInstanceData = useCallback(async (item: BarcodeScanItem) => {
+    const model_info = ModelInformationDict[item.model!];
+
+    return api
+      .get(apiUrl(model_info.api_endpoint, item.pk), {
+        // Stock adjustment forms require location detail for each item
+        params:
+          item.model == ModelType.stockitem
+            ? { part_detail: true, location_detail: true }
+            : undefined
+      })
+      .then((response) => response.data);
+  }, []);
 
   // Fetch model instance based on scan item
   const fetchInstance = useCallback(
@@ -66,12 +77,9 @@ export default function Scan() {
         return;
       }
 
-      const model_info = ModelInformationDict[item.model];
-
-      api
-        .get(apiUrl(model_info.api_endpoint, item.pk))
-        .then((response) => {
-          item.instance = response.data;
+      fetchInstanceData(item)
+        .then((instance) => {
+          item.instance = instance;
           historyHandlers.append(item);
         })
         .catch((error) => {
@@ -82,7 +90,7 @@ export default function Scan() {
           });
         });
     },
-    [api, history]
+    [fetchInstanceData, history]
   );
 
   // Barcode scanning callback function
@@ -149,46 +157,114 @@ export default function Scan() {
     return history.filter((item) => selection.includes(item.id));
   }, [selection, history]);
 
+  // Reload instance data for the selected items (e.g. after a stock adjustment)
+  const refreshSelectedItems = useCallback(() => {
+    const items = selectedItems.filter((item) => item.model && item.pk);
+
+    if (items.length == 0) {
+      return;
+    }
+
+    Promise.all(
+      items.map((item) =>
+        fetchInstanceData(item)
+          .then((instance) => ({ id: item.id, instance: instance }))
+          .catch((error) => ({
+            id: item.id,
+            // The item no longer exists (e.g. it was merged into another item)
+            missing: error?.response?.status == 404
+          }))
+      )
+    ).then((results) => {
+      historyHandlers.apply((item) => {
+        const result: any = results.find((r) => r.id == item.id);
+
+        if (result?.instance) {
+          return { ...item, instance: result.instance };
+        } else if (result?.missing) {
+          return { ...item, instance: undefined };
+        }
+
+        // Retain existing data if the item could not be reloaded
+        return item;
+      });
+    });
+  }, [fetchInstanceData, selectedItems]);
+
+  // Scan history may be stale, so reload instance data when the selection changes
+  useEffect(() => {
+    refreshSelectedItems();
+  }, [selection]);
+
+  // The single model type shared by all selected items (if any)
+  const selectedModelType: ModelType | undefined = useMemo(() => {
+    const modelTypes = new Set(selectedItems.map((item) => item.model));
+
+    return modelTypes.size == 1 ? selectedItems[0]?.model : undefined;
+  }, [selectedItems]);
+
+  const stockOperationProps: StockOperationProps = useMemo(() => {
+    return {
+      items:
+        selectedModelType == ModelType.stockitem
+          ? selectedItems
+              .map((item) => item.instance)
+              .filter((instance) => !!instance)
+          : [],
+      refresh: refreshSelectedItems
+    };
+  }, [selectedModelType, selectedItems, refreshSelectedItems]);
+
+  const stockAdjustActions = useStockAdjustActions({
+    formProps: stockOperationProps,
+    enabled: selectedModelType == ModelType.stockitem,
+    delete: false
+  });
+
   // selected actions component
   const SelectedActions = useMemo(() => {
     const uniqueObjectTypes = new Set(selectedItems.map((item) => item.model));
 
-    if (uniqueObjectTypes.size === 0) {
-      return (
-        <Group gap={0}>
-          <IconQuestionMark color='orange' />
-          <Trans>Selected elements are not known</Trans>
-        </Group>
-      );
-    } else if (uniqueObjectTypes.size > 1) {
+    if (uniqueObjectTypes.size > 1) {
       return (
         <Group gap={0}>
           <IconAlertCircle color='orange' />
           <Trans>Multiple object types selected</Trans>
         </Group>
       );
+    } else if (!selectedModelType) {
+      return (
+        <Group gap={0}>
+          <IconQuestionMark color='orange' />
+          <Trans>Selected elements are not known</Trans>
+        </Group>
+      );
+    }
+
+    if (
+      selectedModelType != ModelType.stockitem ||
+      !stockAdjustActions.hasActions
+    ) {
+      return (
+        <Text fz='sm' c='dimmed'>
+          <Trans>No actions available for the selected items</Trans>
+        </Text>
+      );
     }
 
     return (
-      <>
+      <Group justify='space-between'>
         <Text fz='sm' c='dimmed'>
-          <Trans>Actions ... </Trans>
+          <Trans>Stock Actions</Trans>
         </Text>
-        <Group>
-          <ActionIcon
-            onClick={notYetImplemented}
-            title={t`Count`}
-            variant='default'
-          >
-            <IconNumber />
-          </ActionIcon>
-        </Group>
-      </>
+        {stockAdjustActions.dropdown}
+      </Group>
     );
-  }, [selectedItems]);
+  }, [selectedItems, selectedModelType, stockAdjustActions]);
 
   return (
     <>
+      {stockAdjustActions.modals.map((modal) => modal.modal)}
       <PageTitle title={t`Barcode Scanning`} />
       <Group justify='space-between'>
         <Group justify='left'>

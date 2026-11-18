@@ -12,7 +12,7 @@ We strongly recommend that you use the [Plugin Creator](./creator.md) tool when 
 
 ## Determine Requirements
 
-Before starting, you should have a clear understanding of what you want your plugin to do. In particular, consider the functionality provided by the available [plugin mixins](./index.md#plugin-mixins), and whether your plugin can be built using these mixins.
+Before starting, you should have a clear understanding of what you want your plugin to do. In particular, consider the functionality provided by the available [plugin mixins](#plugin-mixins), and whether your plugin can be built using these mixins.
 
 Consider the use-case for your plugin and define the exact function of the plugin, maybe write it down in a short readme. Then pick the mixins you need (they help reduce custom code and keep the system reliable if internal calls change).
 
@@ -27,7 +27,7 @@ Consider the use-case for your plugin and define the exact function of the plugi
 
 ### Define Metadata
 
-Do not forget to [declare the metadata](./index.md#plugin-options) for your plugin, those will be used in the settings. At least provide a web link so users can file issues / reach you.
+Do not forget to [declare the metadata](#plugin-options) for your plugin, those will be used in the settings. At least provide a web link so users can file issues / reach you.
 
 ### Development Guidelines
 
@@ -36,14 +36,14 @@ If you want to make your life easier, try to follow these guidelines; break wher
 - Keep it simple - more that 1000 LOC are normally to much for a plugin
 - Use mixins where possible - we try to keep coverage high for them so they are not likely to break
 - Do not use internal functions - if a functions name starts with `_` it is internal and might change at any time
-- Keep you imports clean - the APIs for plugins and mixins are young and evolving (see [here](./index.md#imports)). Use
+- Keep you imports clean - the APIs for plugins and mixins are young and evolving (see [here](#imports)). Use
 ```
 from plugin import InvenTreePlugin, registry
 from plugin.mixins import APICallMixin, SettingsMixin, ScheduleMixin, BarcodeMixin
 ```
 - Deliver as a package (see [below](#packaging))
 - If you need to use a private infrastructure, use the 'Releases' functions in GitHub or Gitlab. Point to the 'latest' release endpoint when installing to make sure the update function works
-- Tag your GitHub repo with `inventree` and `inventreeplugins` to make discovery easier. A discovery mechanism using these tags is on the roadmap.
+- Tag your GitHub repo with `inventree` and `inventreeplugins` to make discovery easier.
 - Use GitHub actions to test your plugin regularly (you can [schedule actions](https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#schedule)) against the 'latest' [docker-build](https://hub.docker.com/r/inventree/inventree) of InvenTree
 - If you use the AppMixin pin your plugin against the stable branch of InvenTree, your migrations might get messed up otherwise
 
@@ -52,7 +52,7 @@ from plugin.mixins import APICallMixin, SettingsMixin, ScheduleMixin, BarcodeMix
 
 ### Plugin Base Class
 
-Custom plugins must inherit from the [InvenTreePlugin class]({{ sourcefile("src/backend/InvenTree/plugin/plugin.py") }}). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
+Custom plugins must inherit from the [InvenTreePlugin class]({{ sourcefile("src/backend/InvenTree/plugin/_internal/base.py") }}). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
 
 ### Imports
 
@@ -126,25 +126,25 @@ Supported mixin classes are:
 
 | Mixin | Description |
 | --- | --- |
-| [ActionMixin](./mixins/action.md) | Run custom actions |
+| [ActionMixin](./mixins/action.md) | Run custom actions triggered via a HTTP endpoint |
 | [AllocateMixin](./mixins/allocate.md) | Customize automatic stock allocation |
-| [APICallMixin](./mixins/api.md) | Perform calls to external APIs |
-| [AppMixin](./mixins/app.md) | Integrate additional database tables |
+| [APICallMixin](./mixins/api.md) | Perform calls to external APIs respecting built-in safety mechanism |
+| [AppMixin](./mixins/app.md) | Add models (database tables) and complex django logic  |
 | [BarcodeMixin](./mixins/barcode.md) | Support custom barcode actions |
 | [CurrencyExchangeMixin](./mixins/currency.md) | Custom interfaces for currency exchange rates |
 | [DataExport](./mixins/export.md) | Customize data export functionality |
-| [EventMixin](./mixins/event.md) | Respond to events |
-| [LabelPrintingMixin](./mixins/label.md) | Custom label printing support |
-| [LocateMixin](./mixins/locate.md) | Locate and identify stock items |
+| [EventMixin](./mixins/event.md) | Respond to events within the platform |
+| [LabelPrintingMixin](./mixins/label.md) | Customize label printing control flow and operations |
+| [LocateMixin](./mixins/locate.md) | React to locate events on stock and customize handling |
 | [MachineDriverMixin](./mixins/machine.md) | Integrate custom machine drivers
-| [MailMixin](./mixins/mail.md) | Send custom emails |
+| [MailMixin](./mixins/mail.md) | Customize email handling (incoming and outgoing) |
 | [NavigationMixin](./mixins/navigation.md) | Add custom pages to the web interface |
-| [NotificationMixin](./mixins/notification.md) | Send custom notifications in response to system events |
-| [ReportMixin](./mixins/report.md) | Add custom context data to reports |
+| [NotificationMixin](./mixins/notification.md) | Add custom ways to deliver notifications to users |
+| [ReportMixin](./mixins/report.md) | Expose custom context data to reports and labels on generation |
 | [ScheduleMixin](./mixins/schedule.md) | Schedule periodic tasks |
-| [SettingsMixin](./mixins/settings.md) | Integrate user configurable settings |
-| [UserInterfaceMixin](./mixins/ui.md) | Add custom user interface features |
-| [UrlsMixin](./mixins/urls.md) | Respond to custom URL endpoints |
+| [SettingsMixin](./mixins/settings.md) | Define configurable settings (for system or user) for your plugin |
+| [UserInterfaceMixin](./mixins/ui.md) | Customize the web interface (add pages, actions, panels, navigation items, ...) |
+| [UrlsMixin](./mixins/urls.md) | Add to custom URL endpoints / views |
 | [ValidationMixin](./mixins/validation.md) | Provide custom validation of database models |
 | [WellKnownMixin](./mixins/wellknown.md) | Provide well-known endpoints on the root of an instance |
 

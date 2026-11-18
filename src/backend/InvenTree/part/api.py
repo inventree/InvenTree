@@ -16,6 +16,7 @@ import common.filters
 import common.serializers
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from InvenTree.api import (
     BulkDeleteMixin,
     BulkUpdateMixin,
@@ -218,6 +219,7 @@ class CategoryOutputOption(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption(flag='path_detail')]
 
 
+@search_provider(ref_names=['partcategory'])
 class CategoryList(
     CategoryMixin,
     BulkUpdateMixin,
@@ -536,10 +538,16 @@ class PartSerialNumberDetail(RetrieveAPI):
 
 
 class PartCopyBOM(CreateAPI):
-    """API endpoint for duplicating a BOM."""
+    """API endpoint for duplicating a BOM.
+
+    Requires the 'bom.add' permission.
+    If existing BOM items are to be removed, 'bom.delete' is also required
+    (this is enforced by the serializer).
+    """
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartCopyBOMSerializer
+    role_required = 'bom'
 
     def get_serializer_context(self):
         """Add custom information to the serializer context for this endpoint."""
@@ -1025,6 +1033,7 @@ class PartOutputOptions(OutputConfiguration):
     ]
 
 
+@search_provider(ref_names=['part'])
 class PartList(
     PartMixin,
     BulkUpdateMixin,

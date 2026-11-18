@@ -4,7 +4,6 @@ from decimal import Decimal
 from typing import cast
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import F, Q
@@ -20,7 +19,7 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import APIException, NotFound
 from rest_framework.response import Response
 
 import build.models
@@ -32,6 +31,7 @@ import company.models
 import stock.models as stock_models
 import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from generic.states.api import FSMTransitionMixin, StatusView
 from InvenTree.api import (
     BulkDeleteMixin,
@@ -52,6 +52,7 @@ from InvenTree.helpers_api import (
 )
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
+    ActionLockMixin,
     CreateAPI,
     ListAPI,
     ListCreateAPI,
@@ -71,6 +72,7 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part.models import Part
+from users.authentication import InvenTreeBasicAuthentication
 from users.models import Owner
 from users.permissions import check_user_permission
 
@@ -383,6 +385,7 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('supplier_detail')]
 
 
+@search_provider(ref_names=['purchaseorder'])
 class PurchaseOrderViewSet(
     SerializerContextMixin,
     OrderCreateMixin,
@@ -458,8 +461,14 @@ class PurchaseOrderViewSet(
 
     def get_order(self):
         """Return the PurchaseOrder object associated with this API endpoint."""
+        pk = self.kwargs.get('pk', None)
+
+        # No order is associated with a list request: avoid a pointless DB query
+        if pk is None:
+            raise NotFound(_('Purchase order not found'))
+
         try:
-            return models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
+            return models.PurchaseOrder.objects.get(pk=pk)
         except (ValueError, models.PurchaseOrder.DoesNotExist):
             raise NotFound(_('Purchase order not found'))
 
@@ -491,11 +500,14 @@ class PurchaseOrderViewSet(
     )
     def receive(self, request, pk=None):
         """API endpoint to receive stock items against a PurchaseOrder."""
-        self.get_order()
+        # The order row is locked while the items are received
+        with self.locked_action(models.PurchaseOrder, pk):
+            self.get_order()
 
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        items = serializer.save()
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            items = serializer.save()
+
         queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
 
         response = stock_serializers.StockItemSerializer(
@@ -905,6 +917,7 @@ class SalesOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('customer_detail')]
 
 
+@search_provider(ref_names=['salesorder'])
 class SalesOrderList(
     SalesOrderMixin,
     OrderCreateMixin,
@@ -1166,15 +1179,24 @@ class SalesOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.SalesOrderExtraLineSerializer
 
 
-class SalesOrderContextMixin:
+class SalesOrderContextMixin(ActionLockMixin):
     """Mixin to add sales order object as serializer context variable."""
 
     queryset = models.SalesOrder.objects.all()
 
+    # The order row is locked for the duration of the action
+    lock_model = models.SalesOrder
+
     def get_order(self):
         """Return the SalesOrder object associated with this API endpoint."""
+        pk = self.kwargs.get('pk', None)
+
+        # No order is associated with a list request: avoid a pointless DB query
+        if pk is None:
+            raise NotFound(_('Sales order not found'))
+
         try:
-            return models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
+            return models.SalesOrder.objects.get(pk=pk)
         except (ValueError, models.SalesOrder.DoesNotExist):
             raise NotFound(_('Sales order not found'))
 
@@ -1547,7 +1569,10 @@ class SalesOrderShipmentMixin:
         return queryset
 
 
-class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
+@search_provider(ref_names=['salesordershipment'])
+class SalesOrderShipmentList(
+    SalesOrderShipmentMixin, OutputOptionsMixin, ListCreateAPI
+):
     """API list endpoint for SalesOrderShipment model."""
 
     filterset_class = SalesOrderShipmentFilter
@@ -1566,10 +1591,13 @@ class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI
     """API detail endpoint for SalesOrderShipment model."""
 
 
-class SalesOrderShipmentComplete(CreateAPI):
+class SalesOrderShipmentComplete(ActionLockMixin, CreateAPI):
     """API endpoint for completing (shipping) a SalesOrderShipment."""
 
     queryset = models.SalesOrderShipment.objects.all()
+
+    # The shipment row is locked for the duration of the action
+    lock_model = models.SalesOrderShipment
     serializer_class = serializers.SalesOrderShipmentCompleteSerializer
 
     def get_shipment(self):
@@ -1695,6 +1723,7 @@ class ReturnOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption(flag='customer_detail')]
 
 
+@search_provider(ref_names=['returnorder'])
 class ReturnOrderList(
     ReturnOrderMixin,
     OrderCreateMixin,
@@ -1747,15 +1776,24 @@ class ReturnOrderDetail(ReturnOrderMixin, OutputOptionsMixin, RetrieveUpdateDest
     output_options = ReturnOrderOutputOptions
 
 
-class ReturnOrderContextMixin:
+class ReturnOrderContextMixin(ActionLockMixin):
     """Simple mixin class to add a ReturnOrder to the serializer context."""
 
     queryset = models.ReturnOrder.objects.all()
 
+    # The order row is locked for the duration of the action
+    lock_model = models.ReturnOrder
+
     def get_order(self):
         """Return the ReturnOrder object associated with this API endpoint."""
+        pk = self.kwargs.get('pk', None)
+
+        # No order is associated with a list request: avoid a pointless DB query
+        if pk is None:
+            raise NotFound(_('Return order not found'))
+
         try:
-            return models.ReturnOrder.objects.get(pk=self.kwargs.get('pk', None))
+            return models.ReturnOrder.objects.get(pk=pk)
         except (ValueError, models.ReturnOrder.DoesNotExist):
             raise NotFound(_('Return order not found'))
 
@@ -2050,15 +2088,24 @@ class TransferOrderDetail(
     # output_options = TransferOrderOutputOptions
 
 
-class TransferOrderContextMixin:
+class TransferOrderContextMixin(ActionLockMixin):
     """Simple mixin class to add a TransferOrder to the serializer context."""
 
     queryset = models.TransferOrder.objects.all()
 
+    # The order row is locked for the duration of the action
+    lock_model = models.TransferOrder
+
     def get_order(self):
         """Return the TransferOrder object associated with this API endpoint."""
+        pk = self.kwargs.get('pk', None)
+
+        # No order is associated with a list request: avoid a pointless DB query
+        if pk is None:
+            raise NotFound(_('Transfer order not found'))
+
         try:
-            return models.TransferOrder.objects.get(pk=self.kwargs.get('pk', None))
+            return models.TransferOrder.objects.get(pk=pk)
         except (ValueError, models.TransferOrder.DoesNotExist):
             raise NotFound(_('Transfer order not found'))
 
@@ -2519,26 +2566,19 @@ class OrderCalendarExport(ICalFeed):
         https://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django
         https://www.djangosnippets.org/snippets/243/
         """
-        import base64
-
         if request.user.is_authenticated:
             # Authenticated on first try - maybe normal browser call?
             if forbidden := self.check_permission(request, **kwargs):
                 return forbidden
             return super().__call__(request, *args, **kwargs)
 
-        # No login yet - check in headers
-        if 'authorization' in request.headers:
-            auth = request.headers['authorization'].split()
-            if len(auth) == 2:
-                # NOTE: We are only support basic authentication for now.
-                #
-                if auth[0].lower() == 'basic':
-                    uname, passwd = base64.b64decode(auth[1]).decode('ascii').split(':')
-                    user = authenticate(username=uname, password=passwd)
-                    if user is not None and user.is_active:
-                        login(request, user)
-                        request.user = user
+        # No login yet - check for basic auth in headers
+        try:
+            if auth := InvenTreeBasicAuthentication().authenticate(request):
+                request.user = auth[0]
+        except APIException:
+            # Malformed or refused credentials - fall through to the 401 response
+            pass
 
         # Check again
         if request.user.is_authenticated:
@@ -2552,7 +2592,8 @@ class OrderCalendarExport(ICalFeed):
         response = JsonResponse({
             'detail': 'Authentication credentials were not provided.'
         })
-        response['WWW-Authenticate'] = 'Basic realm="api"'
+        if settings.BASIC_AUTH_ENABLED:
+            response['WWW-Authenticate'] = 'Basic realm="api"'
         response.status_code = 401
         return response
 

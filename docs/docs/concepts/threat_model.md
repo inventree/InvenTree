@@ -29,7 +29,7 @@ Deploying InvenTree to production requires to knowledge of the security assumpti
 ## Possible Attack Vectors
 
 1. Malicious plugins or templates can overwrite or delete files on the server, bypass security checks, or leak sensitive information.
-2. Token phishing attacks can be used to impersonate users. Tokens are not scoped to specific IPs or devices. Limit their usage and use lowest possible user permissions.
+2. Token phishing attacks can be used to impersonate users. Tokens are not scoped to specific IPs or devices. Limit their usage and use lowest possible user permissions. API tokens are bearer credentials and are not challenged for a second factor on use - a leaked token gives access without the user's MFA device until it is revoked or expires.
 3. Malicious file uploads. Attachments are served (by default) under the same domain as the backend - this can lead to XSS attacks.
 
 There are various checks to gate against common attack vectors but above vectors are explicitly not addressed as they require organisational policies and procedures to mitigate.

@@ -11,22 +11,40 @@
 </div>
 
 <script>
-	document.addEventListener( 'DOMContentLoaded', function () {
-		new Splide(
+	// With navigation.instant, page content is swapped in without a new
+	// DOMContentLoaded event, so mount immediately if the document has loaded
+	(function () {
+	function mountCarousel() {
+
+        if (window.carouselInstance) {
+			window.carouselInstance.destroy();
+		}
+		window.carouselInstance = new Splide(
             '.splide', {
                 type: 'loop',
                 perPage: {{ per_page }},
                 autoplay: true,
                 pagination: false,
-                // cover: true,
-                // autoWidth: true,
-                height: '25rem',
+                // Each slide is as wide as its image, so that all images
+                // are scaled to the same height (set in extra.css)
+                autoWidth: true,
+                height: '{{ height | default("14rem") }}',
+                breakpoints: {
+                    // Narrow screens (e.g. mobile)
+                    700: {
+                        height: '{{ mobile_height | default("8rem") }}',
+                    },
+                },
+                gap: '1rem',
                 focus: 'center',
-                padding: {
-                    left: '5rem',
-                    right: '5rem',
-                }
             }
         ).mount();
-	} );
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', mountCarousel);
+	} else {
+		mountCarousel();
+	}
+	})();
 </script>

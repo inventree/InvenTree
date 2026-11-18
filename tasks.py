@@ -20,13 +20,22 @@ import invoke
 from invoke import Collection, task
 from invoke.exceptions import Exit, UnexpectedExit
 
+try:
+    import structlog
+
+    logger = structlog.get_logger('inventree')
+except ImportError:
+    import logging
+
+    logger = logging.getLogger('inventree')
+
 
 def safe_value(fnc):
     """Helper function to safely get value from function, catching import exceptions."""
     try:
         return fnc()
     except (ModuleNotFoundError, ImportError):
-        return wrap_color('N/A', '93')  # Yellow color for "Not Available"
+        return wrap_color('N/A', 93)  # Yellow color for "Not Available"
 
 
 def is_true(x):
@@ -167,28 +176,36 @@ def wrap_color(text: str, color: str) -> str:
     return f'\033[{color}m{text}\033[0m'
 
 
+JSON_LOG = os.environ.get('INVENTREE_JSON_LOG', 'false').lower() == 'true'
+COLOR_MAP = {92: 20, 91: 40, 93: 30, 94: 20}
+
+
+def _structured_logging(color: int, *args):
+    msg = ' '.join(map(str, args))
+    if JSON_LOG:
+        logger.log(COLOR_MAP.get(color, 10), msg)
+    else:
+        print(wrap_color(msg, str(color)))
+
+
 def success(*args):
     """Print a success message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '92'))
+    _structured_logging(92, *args)
 
 
 def error(*args):
     """Print an error message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '91'))
+    _structured_logging(91, *args)
 
 
 def warning(*args):
     """Print a warning message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '93'))
+    _structured_logging(93, *args)
 
 
 def info(*args):
     """Print an informational message to the console."""
-    msg = ' '.join(map(str, args))
-    print(wrap_color(msg, '94'))
+    _structured_logging(94, *args)
 
 
 def state_logger(fn=None, method_name=None):
@@ -319,6 +336,7 @@ def main():
 def builtin_apps():
     """Returns a list of installed apps."""
     return [
+        'audit',
         'build',
         'common',
         'company',
@@ -1206,9 +1224,11 @@ def update(
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
+        'include_remote_addr': 'Include remote IP addresses for audit log entries in the output file (default = False)',
         'prettify': 'Pretty-print the output file with indentation (default = False)',
         'bulk': 'Use bulkdumpdata for improved performance on large datasets (default = False)',
         'verbose': 'Print verbose output from management commands',
+        'summary': 'Write a summary of the exported records (record counts and metadata) to the specified JSON file',
     }
 )
 @state_logger
@@ -1222,9 +1242,11 @@ def export_records(
     exclude_plugins: bool = False,
     include_sso: bool = False,
     include_session: bool = False,
+    include_remote_addr: bool = False,
     prettify: bool = False,
     bulk: bool = False,
     verbose: bool = False,
+    summary: Optional[str] = None,
 ):
     """Export all database records to a file."""
     # Get an absolute path to the file
@@ -1232,11 +1254,21 @@ def export_records(
     if not target.is_absolute():
         target = local_dir().joinpath(filename).resolve()
 
+    summary_target = None
+
+    if summary:
+        summary_target = Path(summary)
+        if not summary_target.is_absolute():
+            summary_target = local_dir().joinpath(summary).resolve()
+
     info(f"Exporting database records to file '{target}'")
 
     wait(c, verbose=verbose)
 
     check_file_existence(target, overwrite)
+
+    if summary_target:
+        check_file_existence(summary_target, overwrite)
 
     excludes = content_excludes(
         allow_email=include_email,
@@ -1298,9 +1330,16 @@ def export_records(
                 if model_name == 'auth.user':
                     entry['fields']['user_permissions'] = []
 
+            # Remove remote IP addresses from audit log entries
+            if include_remote_addr is False and model_name == 'audit.auditlogentry':
+                entry['fields']['remote_addr'] = None
+
             yield entry
 
     indent = 2 if prettify else None
+
+    # Number of exported records, for each model type
+    record_counts: dict[str, int] = {}
 
     # Write the processed data to file, one entry at a time - avoids ever
     # holding a second full copy of the (potentially huge) dataset in memory,
@@ -1313,9 +1352,24 @@ def export_records(
             if prettify:
                 f_out.write('\n')
             f_out.write(json.dumps(entry, indent=indent))
+
+            if model_name := entry.get('model'):
+                record_counts[model_name] = record_counts.get(model_name, 0) + 1
         if prettify:
             f_out.write('\n')
         f_out.write(']')
+
+    if summary_target:
+        info(f"Writing export summary to file '{summary_target}'")
+
+        summary_data = {
+            'metadata': metadata_entry,
+            'total_records': sum(record_counts.values()),
+            'records': dict(sorted(record_counts.items())),
+        }
+
+        with open(summary_target, 'w', encoding='utf-8') as f_out:
+            json.dump(summary_data, f_out, indent=2)
 
     success('Data export completed')
 
@@ -2126,6 +2180,8 @@ def export_definitions(c, basedir: str = ''):
         base_path.joinpath('inventree_report_context.json'),
         base_path.joinpath('inventree_status_codes.json'),
         base_path.joinpath('inventree_roles.json'),
+        base_path.joinpath('inventree_audited_models.json'),
+        base_path.joinpath('inventree_fsm.json'),
     ]
 
     info('Exporting definitions...')
@@ -2145,6 +2201,12 @@ def export_definitions(c, basedir: str = ''):
 
     check_file_existence(filenames[5], overwrite=True)
     manage(c, f'export_roles {filenames[5]}', pty=True)
+
+    check_file_existence(filenames[6], overwrite=True)
+    manage(c, f'export_audited_models {filenames[6]}', pty=True)
+
+    check_file_existence(filenames[7], overwrite=True)
+    manage(c, f'export_fsm {filenames[7]}', pty=True)
 
     info('Exporting definitions complete')
 
@@ -2555,6 +2617,22 @@ def doc_schema(c):
     run(c, 'python docs/extract_schema.py docs/generated/schema.yml')
 
 
+# Configuration file for building the documentation with zensical
+DOCS_CONFIG = 'docs/mkdocs.yml'
+
+
+def doc_checks(c):
+    """Check that all settings and status codes are documented.
+
+    Zensical does not support mkdocs hooks, so the 'on_post_build' hook
+    is run separately, after the documentation has been built.
+    """
+    run(
+        c,
+        'python -c "import sys; sys.path.insert(0, \'docs/docs\'); import hooks; hooks.on_post_build()"',
+    )
+
+
 @task(
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
@@ -2568,7 +2646,7 @@ def docs_server(
     compile_schema: bool = False,
     export_settings: bool = True,
 ):
-    """Start a local mkdocs server to view the documentation."""
+    """Start a local zensical server to view the documentation."""
     # Extract settings definitions
     if export_settings:
         export_definitions(c, basedir='docs')
@@ -2576,23 +2654,27 @@ def docs_server(
     if compile_schema:
         doc_schema(c)
 
-    run(c, f'mkdocs serve -a {address} -f docs/mkdocs.yml')
+    run(c, f'zensical serve -a {address} -f {DOCS_CONFIG}')
 
 
 @task(
-    help={'mkdocs': 'Build the documentation using mkdocs at the end (default: False)'}
+    help={
+        'build': 'Build the documentation using zensical at the end (default: False)',
+        'clean': 'Clear the zensical build cache first (default: False)',
+    }
 )
-def build_docs(c, mkdocs=False):
-    """Build the required documents for building the docs. Optionally build the documentation using mkdocs."""
+def build_docs(c, build=False, clean=False):
+    """Build the required documents for building the docs. Optionally build the documentation using zensical."""
     migrate(c)
     export_definitions(c, basedir='docs')
     doc_schema(c)
 
-    if mkdocs:
-        run(c, 'mkdocs build  -f docs/mkdocs.yml')
+    if build:
+        run(c, f'zensical build {"--clean " if clean else ""}-f {DOCS_CONFIG}')
+        doc_checks(c)
         info('Documentation build complete')
     else:
-        info('Documentation build complete, but mkdocs not requested')
+        info('Documentation build complete, but zensical build not requested')
 
 
 @task

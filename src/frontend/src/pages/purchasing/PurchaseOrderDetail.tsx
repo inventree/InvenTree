@@ -23,10 +23,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import {
@@ -34,7 +31,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -66,11 +62,6 @@ export default function PurchaseOrderDetail() {
     refetchOnMount: true
   });
 
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.purchaseorder,
-    modelId: order?.pk
-  });
-
   const orderCurrency = useMemo(
     () =>
       order.order_currency ||
@@ -91,7 +82,6 @@ export default function PurchaseOrderDetail() {
     pk: id,
     title: t`Edit Purchase Order`,
     fields: purchaseOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }
@@ -202,30 +192,9 @@ export default function PurchaseOrderDetail() {
             }}
           />
         )
-      },
-      ParametersPanel({
-        model_type: ModelType.purchaseorder,
-        model_id: order.pk,
-        parameter_count: instanceInfo.parameter_count
-      }),
-      AttachmentPanel({
-        model_type: ModelType.purchaseorder,
-        model_id: order.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.purchaseorder,
-        model_id: order.pk,
-        note_count: instanceInfo.note_count,
-        // TODO @matmair - change API to include a "locked" attribute that we can check here
-        editable:
-          order.status == poStatus.COMPLETE &&
-          !globalSettings.isSet('PURCHASEORDER_EDIT_COMPLETED_ORDERS')
-            ? false
-            : undefined
-      })
+      }
     ];
-  }, [order, id, user, instanceInfo]);
+  }, [order, id, user]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
@@ -374,6 +343,8 @@ export default function PurchaseOrderDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
+            model={ModelType.purchaseorder}
+            id={order.pk}
             title={`${t`Purchase Order`}: ${order.reference}`}
             subtitle={subtitle}
             imageUrl={order.supplier_detail?.image}

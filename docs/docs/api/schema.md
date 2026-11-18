@@ -2,12 +2,14 @@
 title: InvenTree API Schema
 ---
 
+## InvenTree API Schema
+
 The InvenTree API is implemented using the [Django REST framework](https://www.django-rest-framework.org).
 The API schema as documented below is generated using the [drf-spectactular](https://github.com/tfranzel/drf-spectacular/) extension.
 
 ## API Version
 
-This documentation is for API version: `459`
+This documentation is for API version: `579`
 
 !!! tip "API Schema History"
     We track API schema changes, and provide a snapshot of each API schema version in the [API schema repository](https://github.com/inventree/schema/).
@@ -28,12 +30,13 @@ API schema documentation is split into the following categories:
 | [Bill of Materials](./schema/bom.md) | Bill of Materials |
 | [Build Order Management](./schema/build.md) | Build Order Management |
 | [Company Management](./schema/company.md) | Company Management |
+| [Data Importing](./schema/importer.md) | Data Importing |
 | [Label Printing](./schema/label.md) | Label Printing |
 | [External Machine Management](./schema/machine.md) | External Machine Management |
 | [External Order Management](./schema/order.md) | External Order Management |
 | [Parts and Part Categories](./schema/part.md) | Parts and Part Categories |
 | [Plugin Functionality](./schema/plugins.md) | Plugin Functionality |
-| [Pricing Information](./schema/pricing.md) | Part Pricing |
+| [Part and Stock Pricing](./schema/pricing.md) | Part and Stock Pricing |
 | [Report Generation](./schema/report.md) | Report Generation |
 | [Settings Management](./schema/settings.md) | Settings Management |
 | [Stock and Stock Locations](./schema/stock.md) | Stock and Stock Locations |

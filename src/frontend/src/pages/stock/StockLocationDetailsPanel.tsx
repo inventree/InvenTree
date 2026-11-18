@@ -48,6 +48,10 @@ export function StockLocationDetailsPanel({
       icon: 'location',
       label: t`Parent Location`,
       model: ModelType.stocklocation,
+      model_formatter: (location: any) =>
+        location?.description
+          ? `${location.name} - ${location.description}`
+          : location?.name,
       hidden: !instance?.parent
     }
   ];
@@ -77,6 +81,11 @@ export function StockLocationDetailsPanel({
       type: 'boolean',
       name: 'external',
       label: t`External`
+    },
+    {
+      type: 'boolean',
+      name: 'exclude_from_stock',
+      label: t`Exclude from Stock`
     },
     {
       type: 'string',

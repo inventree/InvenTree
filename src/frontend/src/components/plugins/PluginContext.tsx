@@ -11,6 +11,7 @@ import {
 import { useUserState } from '../../states/UserState';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ApiFormModalProps } from '@lib/types/Forms';
 import {
   INVENTREE_MANTINE_VERSION,
   INVENTREE_PLUGIN_VERSION,
@@ -39,6 +40,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { closeGlobalForm, openGlobalForm } from '../../states/GlobalFormState';
 import {
   type ImporterOpenOptions,
   closeGlobalImporter,
@@ -135,6 +137,12 @@ export const useInvenTreeContext = () => {
         delete: useDeleteApiFormModal,
         edit: useEditApiFormModal,
         editApiForm: EditApiForm,
+        openCreate: (props: ApiFormModalProps) =>
+          openGlobalForm('create', props),
+        openEdit: (props: ApiFormModalProps) => openGlobalForm('edit', props),
+        openDelete: (props: ApiFormModalProps) =>
+          openGlobalForm('delete', props),
+        close: closeGlobalForm,
         stockActions: {
           addStock: useAddStockItem,
           assignStock: useAssignStockItem,

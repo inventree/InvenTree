@@ -5,13 +5,15 @@ import io
 import json
 import threading
 from datetime import date, datetime, timedelta
+from decimal import Decimal
 from typing import Optional
 from unittest import mock
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import connection
-from django.test import TransactionTestCase, skipUnlessDBFeature
+from django.test import TransactionTestCase, override_settings, skipUnlessDBFeature
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
@@ -24,7 +26,8 @@ from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
 from company.models import Address, Company, Contact, SupplierPart, SupplierPriceBreak
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.helpers_mfa import get_codes
+from InvenTree.unit_test import InvenTreeAPITestCase, stock_history
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
 from order.serializers import TransferOrderSerialAllocationSerializer
@@ -38,7 +41,7 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part.models import Part
-from stock.models import StockItem, StockItemTracking, StockLocation, StockSortOrder
+from stock.models import StockItem, StockLocation, StockSortOrder
 from stock.status_codes import StockHistoryCode, StockStatus
 from users.models import Owner
 
@@ -631,6 +634,16 @@ class PurchaseOrderTest(OrderTest):
         po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
         self.assertEqual(po.creation_date, creation_date)
 
+        # Next, check that the creation_date is read-only on update
+        po_pk = po.pk
+        response = self.patch(
+            reverse('api-po-detail', kwargs={'pk': po_pk}),
+            {'creation_date': '2000-01-01'},
+            expected_code=200,
+        )
+        po.refresh_from_db()
+        self.assertEqual(po.creation_date, creation_date)
+
     def test_po_duplicate(self):
         """Test that we can duplicate a PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
@@ -812,6 +825,37 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
 
+        # Completing again must report the order as already complete,
+        # rather than a generic "transition not available" message
+        response = self.post(url, {'accept_incomplete': True}, expected_code=400)
+        self.assertEqual(response.data['detail'], 'Purchase Order is already Complete')
+
+    def test_po_complete_rejected_on_save(self):
+        """A validation error raised while saving the completed order is reported as-is.
+
+        Regression test: django-fsm sets the status to the target before the save, so a
+        save-time rejection (e.g. from a validation plugin) was previously reported as
+        "Transition 'complete_order' is not available from state '30'", hiding the cause.
+        """
+        po = models.PurchaseOrder.objects.get(pk=3)
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
+
+        url = reverse('api-po-complete', kwargs={'pk': po.pk})
+        self.assignRole('purchase_order.add')
+
+        with mock.patch.object(
+            models.PurchaseOrder,
+            'run_plugin_validation',
+            side_effect=ValidationError('Rejected by plugin'),
+        ):
+            response = self.post(url, {'accept_incomplete': True}, expected_code=400)
+
+        self.assertEqual(response.data['detail'], 'Rejected by plugin')
+        self.assertEqual(response.data['state'], PurchaseOrderStatus.PLACED.value)
+
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
+
     def test_po_complete_stale_instance_is_noop(self):
         """A second completion attempt with a stale order instance must be a no-op.
 
@@ -992,6 +1036,7 @@ class PurchaseOrderTest(OrderTest):
             resp_dict['detail'], 'Authentication credentials were not provided.'
         )
 
+    @override_settings(BASIC_AUTH_ENABLED=True)
     def test_po_calendar_auth(self):
         """Test accessing calendar with header authorization."""
         self.client.logout()
@@ -1004,6 +1049,76 @@ class PurchaseOrderTest(OrderTest):
             headers={'authorization': f'basic {base64_token}'},
         )
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(BASIC_AUTH_ENABLED=False)
+    def test_po_calendar_auth_disabled(self):
+        """Test that header authorization is rejected if basic auth is disabled."""
+        self.client.logout()
+        base64_token = base64.b64encode(
+            f'{self.username}:{self.password}'.encode('ascii')
+        ).decode('ascii')
+        response = self.client.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
+            format='json',
+            headers={'authorization': f'basic {base64_token}'},
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertNotIn('WWW-Authenticate', response)
+
+    @override_settings(BASIC_AUTH_ENABLED=True)
+    def test_po_calendar_auth_password_colon(self):
+        """Test header authorization with a password containing a colon."""
+        password = 'pass:word:123'
+        self.user.set_password(password)
+        self.user.save()
+        self.client.logout()
+
+        base64_token = base64.b64encode(f'{self.username}:{password}'.encode()).decode(
+            'ascii'
+        )
+        response = self.client.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
+            format='json',
+            headers={'authorization': f'basic {base64_token}'},
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(BASIC_AUTH_ENABLED=True)
+    def test_po_calendar_auth_malformed(self):
+        """Test that malformed basic authorization headers return 401, not 500."""
+        self.client.logout()
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'})
+
+        for token in [
+            'not-base64!!',  # invalid base64
+            base64.b64encode(b'\xff\xfe\xfd').decode('ascii'),  # invalid utf-8
+            base64.b64encode(b'no-colon-here').decode('ascii'),  # no separator
+        ]:
+            response = self.client.get(
+                url, format='json', headers={'authorization': f'basic {token}'}
+            )
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response['WWW-Authenticate'], 'Basic realm="api"')
+
+    @override_settings(BASIC_AUTH_ENABLED=True)
+    def test_po_calendar_auth_mfa(self):
+        """Test that header authorization creates no session, and is refused for users with MFA."""
+        self.client.logout()
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'})
+        base64_token = base64.b64encode(
+            f'{self.username}:{self.password}'.encode('ascii')
+        ).decode('ascii')
+        headers = {'authorization': f'basic {base64_token}'}
+
+        response = self.client.get(url, format='json', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(settings.SESSION_COOKIE_NAME, response.cookies)
+
+        get_codes(self.user)
+
+        response = self.client.get(url, format='json', headers=headers)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response['WWW-Authenticate'], 'Basic realm="api"')
 
     def test_po_calendar_no_permission(self):
         """Test that an authenticated user without purchase_order view permission is denied."""
@@ -1923,7 +2038,7 @@ class PurchaseOrderReceiveTest(OrderTest):
             'batch_code': stock_field('batch'),
             'packaging': stock_field('packaging'),
             'barcode': stock_field('barcode_data'),
-            'note': StockItemTracking.NOTES_MAX_LENGTH,
+            'note': StockItem.TRACKING_NOTES_MAX_LENGTH,
         }
 
         line_data = {'line_item': 1, 'quantity': 10}
@@ -2105,6 +2220,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         N_ITEMS = StockItem.objects.count()
 
         # Receive all items in a single request
+        # Includes a fixed overhead (independent of N_LINES) for recording audit entries
         response = self.post(
             url,
             {
@@ -2118,7 +2234,7 @@ class PurchaseOrderReceiveTest(OrderTest):
                 ],
                 'location': location.pk,
             },
-            max_query_count=104 + 3 * N_LINES,
+            max_query_count=124 + 3 * N_LINES,
         ).data
 
         # Check for expected response
@@ -2132,13 +2248,15 @@ class PurchaseOrderReceiveTest(OrderTest):
             self.assertEqual(item['status'], StockStatus.QUARANTINED)
 
             stock_item = StockItem.objects.get(pk=item['pk'])
-            # Check that the item has tracking entries
-            self.assertEqual(stock_item.tracking_info.count(), 1)
-            entry = stock_item.tracking_info.first()
-            self.assertEqual(entry.deltas['quantity'], stock_item.quantity)
-            self.assertEqual(entry.user, self.user)
+            # Check that the item has a single stock history entry (its creation)
+            self.assertEqual(stock_history(stock_item).count(), 1)
+            entry = stock_history(stock_item).first()
             self.assertEqual(
-                entry.tracking_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+                Decimal(entry.changes_dict['quantity'][1]), stock_item.quantity
+            )
+            self.assertEqual(entry.actor, self.user)
+            self.assertEqual(
+                entry.event_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
             )
 
         # Check that the order has been completed
@@ -2173,10 +2291,10 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         stock_item = StockItem.objects.get(pk=response[0]['pk'])
 
-        self.assertEqual(stock_item.tracking_info.count(), 1)
-        entry = stock_item.tracking_info.first()
+        self.assertEqual(stock_history(stock_item).count(), 1)
+        entry = stock_history(stock_item).first()
         self.assertEqual(
-            entry.tracking_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+            entry.event_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
         )
         self.assertEqual(entry.notes, 'Damaged box, 2 units short')
 
@@ -2205,9 +2323,85 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         for i in range(200, 203):
             item = StockItem.objects.get(serial_int=i)
-            self.assertEqual(item.tracking_info.count(), 1)
-            entry = item.tracking_info.first()
+            self.assertEqual(stock_history(item).count(), 1)
+            entry = stock_history(item).first()
+            self.assertEqual(
+                entry.event_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+            )
             self.assertEqual(entry.notes, 'Received via serialized batch')
+
+    def test_receive_serialized_status(self):
+        """Test that the selected status (including custom status values) is applied to received serialized items.
+
+        Regression test: the status was previously only applied to the (already created)
+        serialized items in memory, and was never saved to the database.
+        """
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 3,
+                        'serial_numbers': '300+',
+                        'status': StockStatus.DAMAGED.value,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        for i in range(300, 303):
+            item = StockItem.objects.get(serial_int=i)
+            self.assertEqual(item.status, StockStatus.DAMAGED.value)
+
+            # The status is recorded against the creation of the item
+            [entry] = stock_history(item)
+            self.assertEqual(
+                entry.changes_dict['status'], [None, StockStatus.DAMAGED.value]
+            )
+
+        # A custom status value is also applied (and recorded)
+        custom_status = InvenTreeCustomUserStateModel.objects.create(
+            key=1055,
+            name='Damaged (cosmetic)',
+            label='Damaged (cosmetic)',
+            color='warning',
+            logical_key=StockStatus.DAMAGED.value,
+            model=ContentType.objects.get_for_model(StockItem),
+            reference_status='StockStatus',
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 3,
+                        'serial_numbers': '400+',
+                        'status': custom_status.key,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        for i in range(400, 403):
+            item = StockItem.objects.get(serial_int=i)
+            self.assertEqual(item.status, StockStatus.DAMAGED.value)
+            self.assertEqual(item.status_custom_key, custom_status.key)
+            self.assertEqual(item.get_custom_status(), custom_status.key)
+
+            [entry] = stock_history(item)
+            self.assertEqual(
+                entry.changes_dict['status'], [None, StockStatus.DAMAGED.value]
+            )
+            self.assertEqual(
+                entry.changes_dict['status_custom_key'], [None, custom_status.key]
+            )
 
     def test_bulk_receive_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to receive 100 line items at once."""
@@ -2240,11 +2434,12 @@ class PurchaseOrderReceiveTest(OrderTest):
             'location': location.pk,
         }
 
+        # Includes a fixed overhead (independent of N_LINES) for recording audit entries
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
             response = self.post(
-                url, data, max_query_count=400, benchmark=True, format='json'
+                url, data, max_query_count=420, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -3539,6 +3734,25 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(self.shipment.delivery_date, datetime(2023, 12, 5).date())
         self.assertTrue(self.shipment.is_delivered())
 
+    def test_shipment_barcode_hash_read_only(self):
+        """The 'barcode_hash' field cannot be changed via the SalesOrderShipment API."""
+        url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
+
+        self.assertEqual(self.shipment.barcode_hash, '')
+
+        # The 'barcode_hash' value is ignored, other fields are updated
+        data = self.patch(
+            url,
+            {'barcode_hash': 'abc123', 'tracking_number': 'TRK999'},
+            expected_code=200,
+        ).data
+
+        self.assertEqual(data['barcode_hash'], '')
+        self.assertEqual(data['tracking_number'], 'TRK999')
+
+        self.shipment.refresh_from_db()
+        self.assertEqual(self.shipment.barcode_hash, '')
+
     def test_shipment_delivery_date(self):
         """Test delivery date functions via API."""
         url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
@@ -3966,7 +4180,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         rma = models.ReturnOrder.objects.first()
         url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
 
-        max_length = StockItemTracking.NOTES_MAX_LENGTH
+        max_length = StockItem.TRACKING_NOTES_MAX_LENGTH
 
         response = self.post(
             url,
@@ -4187,7 +4401,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # Get a reference to one of the stock items
         stock_item = rma.lines.first().item
 
-        n_tracking = stock_item.tracking_info.count()
+        n_tracking = stock_history(stock_item).count()
 
         # Receive items successfully
         data = receive(
@@ -4199,16 +4413,19 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             self.assertTrue(line.received)
             self.assertIsNotNone(line.received_date)
 
-        # A single tracking entry should have been added to the item
-        self.assertEqual(stock_item.tracking_info.count(), n_tracking + 1)
+        # A single audit entry should have been added to the item
+        self.assertEqual(stock_history(stock_item).count(), n_tracking + 1)
 
-        tracking_entry = stock_item.tracking_info.last()
-        deltas = tracking_entry.deltas
+        entry = stock_history(stock_item).last()
+        self.assertEqual(
+            entry.event_type, StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER
+        )
 
-        self.assertEqual(deltas['status'], StockStatus.QUARANTINED)
-        self.assertEqual(deltas['customer'], customer.pk)
-        self.assertEqual(deltas['location'], 1)
-        self.assertEqual(deltas['returnorder'], rma.pk)
+        # Field changes are recorded as such (and not duplicated in the deltas)
+        self.assertEqual(entry.changes_dict['status'][1], StockStatus.QUARANTINED)
+        self.assertEqual(entry.changes_dict['customer'], [customer.pk, None])
+        self.assertEqual(entry.changes_dict['location'][1], 1)
+        self.assertEqual(entry.additional_data['deltas']['returnorder']['pk'], rma.pk)
 
     def test_receive_untracked(self):
         """Test that we can receive untracked items against a ReturnOrder.
@@ -4463,8 +4680,99 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         )
 
 
+class OrderDateReadOnlyTests(InvenTreeAPITestCase):
+    """The 'issue_date' and 'complete_date' fields are set by issuing / completing an order."""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+        'return_order',
+        'transfer_order',
+    ]
+
+    superuser = True
+
+    def test_dates_read_only(self):
+        """The 'issue_date' and 'complete_date' fields cannot be changed via the order API."""
+        orders = [
+            (models.PurchaseOrder, 'api-po-detail', ['issue_date', 'complete_date']),
+            (models.SalesOrder, 'api-so-detail', ['issue_date']),
+            (
+                models.ReturnOrder,
+                'api-return-order-detail',
+                ['issue_date', 'complete_date'],
+            ),
+            (
+                models.TransferOrder,
+                'api-transfer-order-detail',
+                ['issue_date', 'complete_date'],
+            ),
+        ]
+
+        for model, url_name, fields in orders:
+            with self.subTest(model=model.__name__):
+                # Select a "pending" order, which can be freely edited
+                order = model.objects.filter(status=10).first()
+                self.assertIsNotNone(order)
+
+                # Start from a known state, without going via the API
+                # (some fixture orders do not have a valid reference)
+                model.objects.filter(pk=order.pk).update(
+                    reference=model.generate_reference(), **dict.fromkeys(fields)
+                )
+
+                url = reverse(url_name, kwargs={'pk': order.pk})
+
+                # The date values are ignored, other fields are updated
+                data = self.patch(
+                    url,
+                    {**dict.fromkeys(fields, '2024-01-01'), 'description': 'Updated'},
+                    expected_code=200,
+                ).data
+
+                self.assertEqual(data['description'], 'Updated')
+
+                order.refresh_from_db()
+
+                for field in fields:
+                    self.assertIsNone(data[field])
+                    self.assertIsNone(getattr(order, field))
+
+
 class ReturnOrderLineItemTests(InvenTreeAPITestCase):
     """Unit tests for ReturnOrderLineItem API endpoints."""
+
+    def test_received_date_read_only(self):
+        """The 'received_date' field cannot be changed via the ReturnOrderLineItem API.
+
+        Line items must be received via the return order 'receive' endpoint,
+        otherwise the returned stock item is never actually received into stock.
+        """
+        self.assignRole('return_order.change')
+
+        line = models.ReturnOrderLineItem.objects.filter(received_date=None).first()
+        self.assertIsNotNone(line)
+
+        url = reverse('api-return-order-line-detail', kwargs={'pk': line.pk})
+
+        # The 'received_date' value is ignored, other fields are updated
+        data = self.patch(
+            url,
+            {'received_date': '2024-01-01', 'reference': 'Updated'},
+            expected_code=200,
+        ).data
+
+        self.assertIsNone(data['received_date'])
+        self.assertEqual(data['reference'], 'Updated')
+
+        line.refresh_from_db()
+        self.assertIsNone(line.received_date)
 
     fixtures = [
         'category',

@@ -55,6 +55,10 @@ export type InvenTreeFormsContext = {
   delete: (props: ApiFormModalProps) => UseModalReturn;
   edit: (props: ApiFormModalProps) => UseModalReturn;
   editApiForm: (props: { id?: string; props: ApiFormProps }) => React.ReactNode;
+  openCreate: (props: ApiFormModalProps) => string;
+  openEdit: (props: ApiFormModalProps) => string;
+  openDelete: (props: ApiFormModalProps) => string;
+  close: (id: string) => void;
   stockActions: StockAdjustmentFormsContext;
 };
 

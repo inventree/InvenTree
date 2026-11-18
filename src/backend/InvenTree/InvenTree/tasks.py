@@ -19,6 +19,7 @@ from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections, transaction
 from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -32,6 +33,7 @@ from maintenance_mode.core import (
 from opentelemetry import trace
 
 from common.settings import get_global_setting, set_global_setting
+from common.signals import post_currency_change
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -346,7 +348,7 @@ def batch_offload_tasks():
     Nesting is not supported: a nested batch_offload_tasks() call reuses the outer batch,
     and only the outermost call schedules a flush.
 
-    This mirrors plugin.base.event.events.batch_events() and stock.models.batch_tracking_entries()
+    This mirrors plugin.base.event.events.batch_events() and audit.helpers.write_batched()
     - see batch_events()'s docstring for the reasoning behind the on-commit flush and the
     context-local (rather than parameter-based) design.
 
@@ -515,9 +517,14 @@ def offload_task(
                 )
                 return False
 
+        from audit.context import audit_task
+
         # Workers are not running: run it as synchronous task
         try:
-            with tracer.start_as_current_span(f'sync worker: {taskname}'):
+            with (
+                tracer.start_as_current_span(f'sync worker: {taskname}'),
+                audit_task(taskname),
+            ):
                 _func(*args, **kwargs)
         except Exception as exc:
             log_error('offload_task', scope='worker')
@@ -1088,6 +1095,12 @@ def update_exchange_rates(force: bool = False):
         logger.warning('Could not update exchange rates - database not ready')
     except Exception as e:  # pragma: no cover
         logger.exception('Error updating exchange rates: %s', type(e))
+
+
+@receiver(post_currency_change, dispatch_uid='receive_update_exchange_rates')
+def receive_update_exchange_rates(*args, **kwargs):
+    """Trigger exchange rate update."""
+    update_exchange_rates(True)
 
 
 @tracer.start_as_current_span('run_backup')

@@ -57,6 +57,7 @@ export enum ApiEndpoints {
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
   news = 'news/',
+  system_messages = 'system/messages/',
   global_status = 'generic/status/',
   custom_state_list = 'generic/status/custom/',
   version = 'version/',
@@ -145,7 +146,6 @@ export enum ApiEndpoints {
 
   // Stock item API endpoints
   stock_item_list = 'stock/',
-  stock_tracking_list = 'stock/track/',
   stock_test_result_list = 'stock/test/',
   stock_transfer = 'stock/transfer/',
   stock_remove = 'stock/remove/',
@@ -253,6 +253,7 @@ export enum ApiEndpoints {
 
   // Miscellaneous API endpoints
   attachment_list = 'attachment/',
+  audit_log_list = 'audit/',
   instance_info = 'instance-info/',
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',

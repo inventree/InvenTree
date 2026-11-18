@@ -3,7 +3,15 @@
 from __future__ import annotations
 
 from django.contrib.auth.models import User
-from django.db.models import DecimalField, F, OuterRef, Q, Subquery, Sum
+from django.db.models import (
+    DecimalField,
+    ExpressionWrapper,
+    F,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+)
 from django.db.models.functions import Coalesce
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -26,6 +34,7 @@ import stock.serializers
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
@@ -36,6 +45,7 @@ from InvenTree.filters import (
 )
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
+    ActionLockMixin,
     CreateAPI,
     ListCreateAPI,
     OutputOptionsMixin,
@@ -333,6 +343,7 @@ class BuildListOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
 
 
+@search_provider(ref_names=['build'])
 class BuildList(
     DataExportViewMixin,
     BuildMixin,
@@ -614,8 +625,16 @@ class BuildLineMixin(SerializerContextMixin):
 
         source_build = self.source_build
 
-        return build.serializers.BuildLineSerializer.annotate_queryset(
+        queryset = build.serializers.BuildLineSerializer.annotate_queryset(
             queryset, build=source_build
+        )
+
+        # Quantity required per assembly (used for ordering)
+        return queryset.alias(
+            unit_quantity=ExpressionWrapper(
+                F('bom_item__quantity') * F('bom_item__piece_count'),
+                output_field=DecimalField(),
+            )
         )
 
 
@@ -682,7 +701,6 @@ class BuildLineList(
         'part': 'bom_item__sub_part__name',
         'IPN': 'bom_item__sub_part__IPN',
         'reference': 'bom_item__reference',
-        'unit_quantity': 'bom_item__quantity',
         'category': 'bom_item__sub_part__category__name',
         'consumable': 'bom_item__consumable',
         'optional': 'bom_item__optional',
@@ -722,8 +740,14 @@ class BuildLineDetail(BuildLineMixin, OutputOptionsMixin, RetrieveUpdateDestroyA
         return None
 
 
-class BuildOrderContextMixin:
-    """Mixin class which adds build order as serializer context variable."""
+class BuildOrderContextMixin(ActionLockMixin):
+    """Mixin class which adds build order as serializer context variable.
+
+    The build order row is locked for the duration of the action (see ActionLockMixin),
+    so the action operates on (and saves) up-to-date build order data.
+    """
+
+    lock_model = Build
 
     def get_build(self):
         """Return the Build object associated with this API endpoint."""

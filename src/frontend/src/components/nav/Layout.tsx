@@ -18,6 +18,7 @@ import {
   useUserSettingsState
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
+import GlobalFormModals from '../forms/GlobalFormModals';
 import GlobalImporterDrawer from '../importer/GlobalImporterDrawer';
 import { ApiIcon } from '../items/ApiIcon';
 import { useInvenTreeContext } from '../plugins/PluginContext';
@@ -148,6 +149,7 @@ export default function LayoutComponent() {
           )}
         </Flex>
         <GlobalImporterDrawer />
+        <GlobalFormModals />
         <GlobalPreviewDrawer />
       </>
     </ProtectedRoute>

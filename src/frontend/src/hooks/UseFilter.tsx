@@ -15,13 +15,15 @@ type UseFilterProps = {
   params?: any;
   accessor?: string;
   transform: (item: any) => TableFilterChoice;
+  // Set to false to skip fetching the filter choices (default = true)
+  enabled?: boolean;
 };
 
 export function useFilters(props: UseFilterProps) {
   const api = useApi();
 
   const query = useQuery({
-    enabled: true,
+    enabled: props.enabled ?? true,
     gcTime: 500,
     queryKey: [props.url, props.method, props.params],
     queryFn: async () => {

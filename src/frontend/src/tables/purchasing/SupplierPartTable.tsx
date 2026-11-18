@@ -143,7 +143,15 @@ export function SupplierPartTable({
       }),
       DecimalColumn({
         accessor: 'in_stock',
-        sortable: true
+        sortable: true,
+        filter: ['has_stock']
+      }),
+      DecimalColumn({
+        accessor: 'on_order',
+        title: t`On Order`,
+        sortable: true,
+        defaultVisible: false,
+        filter: ['on_order']
       }),
       {
         accessor: 'packaging',
@@ -273,6 +281,11 @@ export function SupplierPartTable({
         name: 'has_stock',
         label: t`In Stock`,
         description: t`Show supplier parts with stock`
+      },
+      {
+        name: 'on_order',
+        label: t`On Order`,
+        description: t`Show supplier parts on order`
       }
     ];
   }, []);

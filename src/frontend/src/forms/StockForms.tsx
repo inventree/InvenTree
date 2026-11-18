@@ -342,7 +342,6 @@ export function useStockFields({
           originalId: duplicateStockItem.pk,
           extraFields: {
             copy_notes: { value: true },
-            copy_history: { value: false },
             copy_tests: {
               value: false,
               hidden: !duplicateStockItem?.part_detail?.testable
@@ -1119,14 +1118,11 @@ function useStockItems({
   items?: any[] | any;
   filters?: { [key: string]: any };
 }>) {
+  // Only query the API if the items are not provided directly
   const query = useQuery({
-    enabled: opened,
+    enabled: opened && items === undefined,
     queryKey: ['stockItems', filters],
     queryFn: async () => {
-      if (items !== undefined) {
-        return Array.isArray(items) ? items : [items];
-      }
-
       if (!opened) {
         return [];
       }
@@ -1152,8 +1148,12 @@ function useStockItems({
       return [];
     }
 
+    if (items !== undefined) {
+      return Array.isArray(items) ? items : [items];
+    }
+
     return query.data ?? [];
-  }, [opened, query.data]);
+  }, [opened, items, query.data]);
 }
 
 function ReturnStockMoveButton({
@@ -2195,6 +2195,7 @@ export function useStockLocationFields(): ApiFormFieldSet {
     },
     structural: {},
     external: {},
+    exclude_from_stock: {},
     custom_icon: {
       field_type: 'icon'
     },

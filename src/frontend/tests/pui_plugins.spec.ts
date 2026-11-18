@@ -1,4 +1,4 @@
-import { test } from './baseFixtures';
+import { expect, test } from './baseFixtures';
 
 import { adminuser } from './defaults.js';
 import {
@@ -6,7 +6,8 @@ import {
   clickOnRowMenu,
   loadTab,
   navigate,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  tableSearch
 } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
@@ -26,7 +27,7 @@ test('Plugins - Settings', async ({ browser }) => {
   // Navigate and select the plugin
   await navigate(page, 'settings/admin/plugin/');
   await clearTableFilters(page);
-  await page.getByLabel('table-search-input').fill('integration');
+  await tableSearch(page, 'integration');
   await page.waitForTimeout(250);
   await page.waitForLoadState('networkidle');
 
@@ -83,9 +84,20 @@ test('Plugins - User Settings', async ({ browser }) => {
   await page.getByText('User Setting 3').waitFor();
 
   // Check for expected setting options
-  await page.getByLabel('edit-setting-USER_SETTING_3').click();
+  // Note: the settings list may re-render (e.g. if the plugin registry reloads
+  // due to concurrent tests), so retry until the edit modal is displayed
+  const choiceField = page.getByLabel('choice-field-value');
 
-  const val = await page.getByLabel('choice-field-value').inputValue();
+  await expect(async () => {
+    if (!(await choiceField.isVisible())) {
+      await page
+        .getByLabel('edit-setting-USER_SETTING_3')
+        .click({ timeout: 5000 });
+    }
+    await expect(choiceField).toBeVisible({ timeout: 5000 });
+  }).toPass({ timeout: 45000 });
+
+  const val = await choiceField.inputValue();
 
   await page.getByLabel('choice-field-value').click();
 
@@ -184,6 +196,16 @@ test('Plugins - Panels', async ({ browser }) => {
   await loadTab(page, 'Part Panel');
   await page.getByText('This content has been rendered by a custom plugin');
 
+  // Launch an API form from the plugin, via the plugin context
+  await page.getByRole('button', { name: 'Edit Part' }).click();
+  await page.getByText('Edit Part from Plugin').waitFor();
+  await page.getByRole('textbox', { name: 'text-field-name' }).waitFor();
+  await expect(
+    page.getByRole('textbox', { name: 'text-field-description' })
+  ).not.toHaveValue('');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByText('Edit Part from Plugin')).toBeHidden();
+
   // Disable the plugin, and ensure it is no longer visible
   await setPluginState({
     plugin: 'sampleui',
@@ -199,17 +221,20 @@ test('Plugins - Custom Admin', async ({ browser }) => {
     user: adminuser
   });
 
-  // Ensure that the SampleUI plugin is enabled
-  await setPluginState({
-    plugin: 'sampleui',
-    state: true
-  });
+  // Ensure that the SampleUI plugin is enabled, and open the plugin drawer.
+  // Note: other tests (running concurrently) may toggle this plugin,
+  // which reloads the plugin registry - so retry if required
+  await expect(async () => {
+    await setPluginState({
+      plugin: 'sampleui',
+      state: true
+    });
 
-  // Navigate to the "admin" page
-  await navigate(page, 'settings/admin/plugin/');
+    await navigate(page, 'settings/admin/plugin/');
+    await page.getByText('SampleUI').first().click({ timeout: 10000 });
+  }).toPass({ timeout: 60000 });
 
-  // Open the plugin drawer, and ensure that the custom admin elements are visible
-  await page.getByText('SampleUI').click();
+  // Ensure that the custom admin elements are visible
   await page.getByRole('button', { name: 'Plugin Information' }).click();
   await page
     .getByLabel('Plugin Detail')
@@ -305,7 +330,7 @@ test('Plugins - Creator', async ({ browser }) => {
 
   // View a custom table
   await page.getByRole('button', { name: 'Custom Table Example' }).click();
-  await page.getByRole('textbox', { name: 'table-search-input' }).fill('red');
+  await tableSearch(page, 'red');
   await page.waitForLoadState('networkidle');
   await page.getByRole('cell', { name: 'Red Square Table' }).first().waitFor();
 });

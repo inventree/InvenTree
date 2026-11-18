@@ -112,6 +112,10 @@ export function PartDetailsPanel({
       type: 'link',
       name: 'category',
       label: t`Category`,
+      model_formatter: (category: any) =>
+        category?.description
+          ? `${category.name} - ${category.description}`
+          : category?.name,
       model: ModelType.partcategory
     },
     {
@@ -119,6 +123,10 @@ export function PartDetailsPanel({
       name: 'default_location',
       label: t`Default Location`,
       model: ModelType.stocklocation,
+      model_formatter: (default_location: any) =>
+        default_location?.description
+          ? `${default_location.name} - ${default_location.description}`
+          : default_location?.name,
       hidden: !instance?.default_location
     },
     {
@@ -126,6 +134,10 @@ export function PartDetailsPanel({
       name: 'category_default_location',
       label: t`Category Default Location`,
       model: ModelType.stocklocation,
+      model_formatter: (location: any) =>
+        location?.description
+          ? `${location.name} - ${location.description}`
+          : location?.name,
       hidden: instance?.default_location || !instance?.category_default_location
     },
     {
@@ -266,6 +278,7 @@ export function PartDetailsPanel({
       label: t`Saleable Part`
     },
     { type: 'boolean', name: 'virtual', label: t`Virtual Part` },
+    { type: 'boolean', name: 'consumable', label: t`Consumable Part` },
     { type: 'boolean', name: 'starred', label: t`Subscribed`, icon: 'bell' }
   ];
 

@@ -27,7 +27,7 @@ Barcodes can be linked with the following data model types:
 
 - [Part](../part/index.md#part)
 - [Stock Item](../stock/index.md#stock-item)
-- [Stock Location](../stock/index.md#stock-location)
+- [Stock Location](../stock/index.md#stock-locations)
 - [Supplier Part](../purchasing/supplier.md#supplier-parts)
 - [Purchase Order](../purchasing/purchase_order.md#purchase-orders)
 - [Sales Order](../sales/sales_order.md#sales-orders)
@@ -68,6 +68,12 @@ To access this page, select *Scan Barcode* from the main navigation menu:
 
 {{ image("barcode/barcode_nav_menu.png", "Barcode menu item") }}
 {{ image("barcode/barcode_scan_page.png", "Barcode scan page") }}
+
+#### Stock Actions
+
+If all of the selected items are [stock items](../stock/index.md), the *Stock Actions* menu provides access to the [stock adjustment](../stock/adjust.md) actions (such as counting, adding, removing or transferring stock). These actions are only available to users with the *change* permission for stock items.
+
+Stock items cannot be deleted from the scan page. Other model types do not currently support any actions on the scan page.
 
 ## Barcodes in Forms
 

@@ -1,8 +1,8 @@
 """Unit testing for the Stock API."""
 
 import os
-import random
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -23,12 +23,13 @@ from InvenTree.unit_test import (
     InvenTreeAPIPerformanceTestCase,
     InvenTreeAPITestCase,
     findOffloadedEvent,
+    stock_events,
+    stock_history,
 )
 from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
     StockItemTestResult,
-    StockItemTracking,
     StockLocation,
     StockLocationType,
 )
@@ -59,6 +60,23 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock.delete',
         'part.view',
     ]
+
+    def allocate_to_sales_order(self, item: StockItem, quantity):
+        """Allocate a quantity of the provided stock item against an open sales order."""
+        n = order.models.SalesOrder.objects.count() + 1
+
+        customer = company.models.Company.objects.create(
+            name=f'Allocation Customer {n}', is_customer=True
+        )
+        so = order.models.SalesOrder.objects.create(
+            customer=customer, reference=f'SO-ALLOC-{n}'
+        )
+        line = order.models.SalesOrderLineItem.objects.create(
+            order=so, part=item.part, quantity=quantity
+        )
+        return order.models.SalesOrderAllocation.objects.create(
+            line=line, item=item, quantity=quantity
+        )
 
 
 class StockLocationTest(StockAPITestCase):
@@ -980,6 +998,14 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(external=False)
         self.assertEqual(len(response), 28)
 
+    def test_filter_exclude_from_stock(self):
+        """Filter StockItem by exclude_from_stock."""
+        response = self.get_stock(exclude_from_stock=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(exclude_from_stock=False)
+        self.assertEqual(len(response), 29)
+
     def test_filter_available(self):
         """Filter StockItem by available."""
         response = self.get_stock(available=True)
@@ -1159,6 +1185,87 @@ class StockItemListTest(StockAPITestCase):
 
             self.assertGreaterEqual(len(data), 2500)
 
+    def test_allocated_quantity(self):
+        """The 'allocated' API field must match StockItem.allocation_count().
+
+        Only active allocations are counted:
+        - Build order allocations
+        - Sales order allocations against open orders, which are not yet shipped
+        - Transfer order allocations against open orders
+        """
+        from order.status_codes import SalesOrderStatus, TransferOrderStatus
+
+        assembly = Part.objects.create(
+            name='AQ Assembly', description='Allocated quantity test', assembly=True
+        )
+        component = Part.objects.create(
+            name='AQ Component',
+            description='Allocated quantity test',
+            component=True,
+            salable=True,
+        )
+        part.models.BomItem.objects.create(
+            part=assembly, sub_part=component, quantity=1
+        )
+
+        item = StockItem.objects.create(part=component, quantity=100, location_id=1)
+
+        url = reverse('api-stock-detail', kwargs={'pk': item.pk})
+
+        def check(expected):
+            self.assertEqual(item.allocation_count(), expected)
+            self.assertEqual(self.get(url).data['allocated'], expected)
+
+            response = self.get(reverse('api-stock-list'), {'part': component.pk})
+            self.assertEqual(response.data[0]['allocated'], expected)
+
+        check(0)
+
+        # Build order allocation
+        bo = build.models.Build.objects.create(part=assembly, quantity=10)
+        build.models.BuildItem.objects.create(
+            stock_item=item, build_line=bo.build_lines.first(), quantity=1
+        )
+        check(1)
+
+        # Open sales order allocation
+        self.allocate_to_sales_order(item, 2)
+        check(3)
+
+        # Sales order allocation against a shipped shipment is not counted
+        allocation = self.allocate_to_sales_order(item, 4)
+        allocation.shipment = order.models.SalesOrderShipment.objects.create(
+            order=allocation.line.order,
+            reference='AQ-1',
+            shipment_date=datetime.now().date(),
+        )
+        allocation.save()
+        check(3)
+
+        # Sales order allocation against a closed order is not counted
+        allocation = self.allocate_to_sales_order(item, 8)
+        allocation.line.order.status = SalesOrderStatus.CANCELLED.value
+        allocation.line.order.save()
+        check(3)
+
+        # Open transfer order allocation
+        for idx, (to_status, quantity) in enumerate([
+            (TransferOrderStatus.ISSUED, 16),
+            (TransferOrderStatus.CANCELLED, 32),
+        ]):
+            to = order.models.TransferOrder.objects.create(
+                reference=f'TO-AQ-{idx}', status=to_status.value
+            )
+            line = order.models.TransferOrderLineItem.objects.create(
+                order=to, part=component, quantity=quantity
+            )
+            order.models.TransferOrderAllocation.objects.create(
+                line=line, item=item, quantity=quantity
+            )
+
+        # Only the open transfer order is counted
+        check(19)
+
     def test_filter_by_allocated(self):
         """Test that we can filter by "allocated" status.
 
@@ -1251,14 +1358,146 @@ class StockItemListTest(StockAPITestCase):
         self.assertIn(stock_1.pk, ids)
         self.assertIn(stock_2.pk, ids)
 
+    def test_consumed_by_detail(self):
+        """Consuming build details are optional, nullable, and read-only."""
+        self.assignRole('build.view')
+        assembly = Part.objects.create(name='Reference assembly', assembly=True)
+        part = Part.objects.first()
+        parent = StockItem.objects.create(part=part, quantity=10)
+        builds = [
+            build.models.Build.objects.create(
+                part=assembly, quantity=1, title=f'Consuming build {index}'
+            )
+            for index in range(2)
+        ]
+        consuming_builds = [*builds, None]
+        children = [
+            StockItem.objects.create(
+                part=part, quantity=1, parent=parent, consumed_by=build_order
+            )
+            for build_order in consuming_builds
+        ]
+        params = {'parent': parent.pk}
+        for options in [params, {**params, 'consumed_by_detail': False}]:
+            for record in self.get(self.list_url, options).data:
+                self.assertNotIn('consumed_by_detail', record)
+                self.assertNotIn('consumed_by_reference', record)
+
+        response = self.get(self.list_url, {**params, 'consumed_by_detail': True})
+        records = {item['pk']: item for item in response.data}
+        self.assertEqual(set(records), {item.pk for item in children})
+        for item, build_order in zip(children, consuming_builds, strict=True):
+            detail = records[item.pk]['consumed_by_detail']
+            self.assertEqual(
+                records[item.pk]['consumed_by'], build_order.pk if build_order else None
+            )
+            if build_order:
+                self.assertEqual(detail['pk'], build_order.pk)
+                self.assertEqual(detail['reference'], build_order.reference)
+                self.assertEqual(detail['title'], build_order.title)
+                self.assertEqual(detail['status'], build_order.status)
+            else:
+                self.assertIsNone(detail)
+
+        detail_url = reverse('api-stock-detail', kwargs={'pk': children[0].pk})
+        self.assertNotIn('consumed_by_detail', self.get(detail_url).data)
+        detail = self.get(detail_url, {'consumed_by_detail': True}).data
+        self.assertEqual(detail['consumed_by_detail']['reference'], builds[0].reference)
+
+        original_reference = builds[0].reference
+        self.patch(
+            detail_url, {'consumed_by_detail': {'reference': 'Cannot overwrite'}}
+        )
+        builds[0].refresh_from_db()
+        self.assertEqual(builds[0].reference, original_reference)
+        self.assertEqual(
+            StockItem.objects.get(pk=children[0].pk).consumed_by_id, builds[0].pk
+        )
+
+        # Requesting the field must not bypass build view permissions.
+        self.clearRoles()
+        self.assignRole('stock.view')
+        response = self.get(self.list_url, {**params, 'consumed_by_detail': True})
+        for record in response.data:
+            self.assertNotIn('consumed_by_detail', record)
+        self.assertNotIn(
+            'consumed_by_detail',
+            self.get(detail_url, {'consumed_by_detail': True}).data,
+        )
+
+    def test_consumed_by_detail_export(self):
+        """Export consuming references only when requested and permitted."""
+        self.assignRole('build.view')
+        assembly = Part.objects.create(name='Export assembly', assembly=True)
+        build_order = build.models.Build.objects.create(part=assembly, quantity=1)
+        part = Part.objects.first()
+        parent = StockItem.objects.create(part=part, quantity=10)
+        consumed = StockItem.objects.create(
+            part=part, quantity=1, parent=parent, consumed_by=build_order
+        )
+        unconsumed = StockItem.objects.create(part=part, quantity=1, parent=parent)
+        filters = {'parent': parent.pk}
+        params = {**filters, 'consumed_by_detail': True}
+        header = 'Consumed By.Reference'
+
+        with self.export_data(self.list_url, params=params) as data_file:
+            rows = self.process_csv(data_file, required_cols=[header], required_rows=2)
+        records = {int(row['ID']): row for row in rows}
+        self.assertEqual(records[consumed.pk][header], build_order.reference)
+        self.assertEqual(records[unconsumed.pk][header], '')
+
+        for options in [filters, {**filters, 'consumed_by_detail': False}]:
+            with self.export_data(self.list_url, params=options) as data_file:
+                self.process_csv(data_file, excluded_cols=[header], required_rows=2)
+
+        self.clearRoles()
+        self.assignRole('stock.view')
+        with self.export_data(self.list_url, params=params) as data_file:
+            self.process_csv(data_file, excluded_cols=[header], required_rows=2)
+
+    def test_consumed_by_detail_prefetch(self):
+        """Optional details prefetch builds even without StockApiMixin annotations."""
+        from stock.serializers import StockItemSerializer
+
+        assembly = Part.objects.create(name='Prefetch assembly', assembly=True)
+        builds = [
+            build.models.Build.objects.create(part=assembly, quantity=1)
+            for _ in range(10)
+        ]
+        StockItem.objects.bulk_create([
+            StockItem(part=assembly, quantity=1, consumed_by=build_order)
+            for build_order in builds
+        ])
+        queryset = StockItem.objects.filter(consumed_by__in=builds)
+        serializer = StockItemSerializer(consumed_by_detail=True)
+        self.assertIn('consumed_by', serializer.prefetch_list)
+        self.assertNotIn('consumed_by', StockItemSerializer().prefetch_list)
+        with self.assertNumQueries(2):
+            prefetched = list(serializer.prefetch_queryset(queryset))
+            references = [item.consumed_by.reference for item in prefetched]
+        self.assertCountEqual(
+            references, [build_order.reference for build_order in builds]
+        )
+
     def test_query_count(self):
         """Test that the number of queries required to fetch stock items is reasonable."""
         # Create a bunch of StockItem objects
         prt = Part.objects.first()
 
+        assembly = Part.objects.create(name='Query assembly', assembly=True)
+        builds = [
+            build.models.Build.objects.create(part=assembly, quantity=1)
+            for _ in range(10)
+        ]
+        # Include consuming builds so missing prefetches exceed the query budget.
         StockItem.objects.bulk_create([
-            StockItem(part=prt, quantity=1) for _ in range(100)
+            StockItem(part=prt, quantity=1, consumed_by=bo)
+            for bo in builds
+            for _ in range(10)
         ])
+
+        self.assignRole('build.view')
+        self.get(self.list_url, {'consumed_by_detail': True}, max_query_count=35)
 
         # List *all* stock items
         self.get(self.list_url, {}, max_query_count=35)
@@ -1621,9 +1860,10 @@ class StockItemTest(StockAPITestCase):
 
         # Check that the item was associated with the correct user
         item = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(item.tracking_info_count, 1)
-        tracking = item.tracking_info.first()
-        self.assertEqual(tracking.user, self.user)
+        self.assertEqual(stock_events(item).count(), 1)
+        tracking = stock_events(item).first()
+        self.assertEqual(tracking.event_type, StockHistoryCode.CREATED)
+        self.assertEqual(tracking.actor, self.user)
 
         # What if we explicitly set the location to a different value?
 
@@ -1776,6 +2016,34 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(new_items.count(), 3)
         for new_item in new_items:
             self.assertIsNotNone(new_item.creation_date)
+
+    def test_serialize_allocated(self):
+        """Serialization must not take stock which is allocated."""
+        # Stock item 100: part 25 (trackable), quantity 10
+        item = StockItem.objects.get(pk=100)
+        self.allocate_to_sales_order(item, 4)
+
+        url = reverse('api-stock-item-serialize', kwargs={'pk': item.pk})
+
+        response = self.post(
+            url,
+            {'quantity': 7, 'serial_numbers': '911-917', 'destination': 1},
+            expected_code=400,
+        )
+        self.assertIn(
+            'must not exceed the unallocated quantity (6)',
+            str(response.data['quantity']),
+        )
+
+        self.post(
+            url,
+            {'quantity': 6, 'serial_numbers': '911-916', 'destination': 1},
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(item.allocation_count(), 4)
 
     def test_bulk_serialize_benchmark(self):
         """Benchmark: measure the number of DB queries required to serialize 100 stock items at once."""
@@ -2073,8 +2341,73 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url).data
         self.assertEqual(data['purchase_price_currency'], 'NZD')
 
+    def test_build_fields_read_only(self):
+        """The 'is_building' and 'build' fields cannot be changed via the generic stock item API.
+
+        Build outputs must be completed (or scrapped) via the build order endpoints,
+        otherwise the build order 'completed' count, stock allocations and
+        tracking history are bypassed.
+        """
+        assembly = Part.objects.filter(assembly=True).first()
+        self.assertIsNotNone(assembly)
+
+        bo = build.models.Build.objects.create(
+            part=assembly, reference=build.models.Build.generate_reference(), quantity=5
+        )
+
+        output = bo.create_build_output(5).first()
+        self.assertTrue(output.is_building)
+
+        url = reverse('api-stock-detail', kwargs={'pk': output.pk})
+
+        # Attempting to mark the output as complete is silently ignored
+        data = self.patch(url, {'is_building': False}, expected_code=200).data
+        self.assertTrue(data['is_building'])
+
+        output.refresh_from_db()
+        self.assertTrue(output.is_building)
+
+        bo.refresh_from_db()
+        self.assertEqual(bo.completed, 0)
+
+        # The source build cannot be changed or removed
+        other_bo = build.models.Build.objects.create(
+            part=assembly, reference=build.models.Build.generate_reference(), quantity=5
+        )
+
+        for value in [other_bo.pk, None]:
+            data = self.patch(url, {'build': value}, expected_code=200).data
+            self.assertEqual(data['build'], bo.pk)
+
+        output.refresh_from_db()
+        self.assertEqual(output.build, bo)
+
+        # Nor can a new stock item be created as "in production" or against a build
+        response = self.post(
+            reverse('api-stock-list'),
+            {
+                'part': assembly.pk,
+                'quantity': 3,
+                'location': 1,
+                'is_building': True,
+                'build': bo.pk,
+            },
+            expected_code=201,
+        )
+
+        for item in response.data:
+            item = StockItem.objects.get(pk=item['pk'])
+            self.assertFalse(item.is_building)
+            self.assertIsNone(item.build)
+
+        # And an existing stock item cannot be assigned to a build
+        item_url = reverse('api-stock-detail', kwargs={'pk': 1})
+        data = self.patch(item_url, {'build': bo.pk}, expected_code=200).data
+        self.assertIsNone(data['build'])
+
     def test_output_options(self):
         """Test the output options for StockItemt detail."""
+        self.assignRole('build.view')
         self.run_output_test(
             reverse('api-stock-detail', kwargs={'pk': 1}),
             [
@@ -2083,6 +2416,7 @@ class StockItemTest(StockAPITestCase):
                 'supplier_part_detail',
                 'location_detail',
                 'tests',
+                'consumed_by_detail',
             ],
         )
 
@@ -2110,7 +2444,7 @@ class StockItemTest(StockAPITestCase):
 
     def test_note_max_length(self):
         """Test that overly long transaction notes are rejected with a validation error."""
-        max_length = StockItemTracking.NOTES_MAX_LENGTH
+        max_length = StockItem.TRACKING_NOTES_MAX_LENGTH
         note = 'x' * (max_length + 1)
 
         for url, data in [
@@ -2139,7 +2473,7 @@ class StockItemTest(StockAPITestCase):
         sub_part = part.models.Part.objects.get(pk=50)
         sub_item = StockItem.objects.create(part=sub_part, serial='xyz-123', quantity=1)
 
-        n_entries = sub_item.tracking_info.count()
+        n_entries = stock_events(sub_item).count()
 
         self.assertIsNone(sub_item.belongs_to)
 
@@ -2170,7 +2504,11 @@ class StockItemTest(StockAPITestCase):
 
         self.assertEqual(sub_item.belongs_to, item)
 
-        self.assertEqual(n_entries + 1, sub_item.tracking_info.count())
+        self.assertEqual(n_entries + 1, stock_events(sub_item).count())
+        self.assertEqual(
+            stock_events(sub_item).last().event_type,
+            StockHistoryCode.INSTALLED_INTO_ASSEMBLY,
+        )
 
         # Try to install again - this time, should fail because the StockItem is not available!
         response = self.post(
@@ -2206,6 +2544,42 @@ class StockItemTest(StockAPITestCase):
         self.assertIsNone(sub_item.belongs_to)
         self.assertEqual(sub_item.location.pk, 1)
 
+    def test_install_allocated(self):
+        """Installation must not take stock which is allocated."""
+        parent = StockItem.objects.create(
+            part=part.models.Part.objects.get(pk=100), serial='ALLOC-1', quantity=1
+        )
+        sub_part = part.models.Part.objects.get(pk=50)
+
+        url = reverse('api-stock-item-install', kwargs={'pk': parent.pk})
+
+        # Partially allocated item: install up to the unallocated quantity
+        sub_item = StockItem.objects.create(part=sub_part, quantity=10, location_id=1)
+        self.allocate_to_sales_order(sub_item, 4)
+
+        response = self.post(
+            url, {'stock_item': sub_item.pk, 'quantity': 7}, expected_code=400
+        )
+        self.assertIn(
+            'must not exceed the unallocated quantity (6)',
+            str(response.data['quantity']),
+        )
+
+        self.post(url, {'stock_item': sub_item.pk, 'quantity': 6}, expected_code=201)
+
+        sub_item.refresh_from_db()
+        self.assertEqual(sub_item.quantity, 4)
+        self.assertIsNone(sub_item.belongs_to)
+
+        # Fully allocated (serialized) item cannot be installed
+        serialized = StockItem.objects.create(
+            part=sub_part, serial='ALLOC-2', quantity=1, location_id=1
+        )
+        self.allocate_to_sales_order(serialized, 1)
+
+        response = self.post(url, {'stock_item': serialized.pk}, expected_code=400)
+        self.assertIn('unallocated quantity (0)', str(response.data['quantity']))
+
     def test_return_from_customer(self):
         """Test that we can return a StockItem from a customer, via the API."""
         # Assign item to customer
@@ -2215,7 +2589,7 @@ class StockItemTest(StockAPITestCase):
         item.customer = customer
         item.save()
 
-        n_entries = item.tracking_info_count
+        n_entries = stock_events(item).count()
 
         url = reverse('api-stock-return')
 
@@ -2249,8 +2623,12 @@ class StockItemTest(StockAPITestCase):
 
         item.refresh_from_db()
 
-        # A new stock tracking entry should have been created
-        self.assertEqual(n_entries + 1, item.tracking_info_count)
+        # A new stock tracking event should have been recorded
+        self.assertEqual(n_entries + 1, stock_events(item).count())
+
+        entry = stock_events(item).last()
+        self.assertEqual(entry.event_type, StockHistoryCode.RETURNED_TO_STOCK)
+        self.assertEqual(entry.notes, 'Returned from this customer for testing')
 
         # The item is now in stock
         self.assertIsNone(item.customer)
@@ -2300,6 +2678,18 @@ class StockItemTest(StockAPITestCase):
             stock_item.refresh_from_db()
             self.assertEqual(stock_item.part, variant)
 
+    def status_change(self, item):
+        """Return the most recent audit entry for the provided stock item."""
+        from audit.models import AuditLogEntry
+
+        return (
+            AuditLogEntry.objects
+            .get_for_object(item)
+            .filter(action=AuditLogEntry.Action.UPDATE)
+            .order_by('pk')
+            .last()
+        )
+
     def test_set_status(self):
         """Test API endpoint for setting StockItem status."""
         url = reverse('api-stock-change-status')
@@ -2317,11 +2707,12 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.OK.value)
-            self.assertEqual(item.tracking_info.count(), 1)
+            self.assertIsNone(self.status_change(item))
 
         data = {
             'items': [item.pk for item in items],
             'status': StockStatus.DAMAGED.value,
+            'note': 'Damaged in transit',
         }
 
         self.post(url, data, expected_code=201)
@@ -2330,20 +2721,22 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.DAMAGED.value)
-            self.assertEqual(item.tracking_info.count(), 2)
-            tracking = item.tracking_info.last()
-            self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
+
+            # The status change is recorded as a regular update
+            entry = self.status_change(item)
+            self.assertIsNone(entry.event_type)
+            self.assertEqual(entry.actor, self.user)
+            self.assertEqual(entry.notes, 'Damaged in transit')
             self.assertEqual(
-                tracking.deltas['old_status_logical'], StockStatus.OK.value
-            )
-            self.assertEqual(tracking.deltas['status'], StockStatus.DAMAGED.value)
-            self.assertEqual(
-                tracking.deltas['status_logical'], StockStatus.DAMAGED.value
+                entry.changes_dict['status'],
+                [StockStatus.OK.value, StockStatus.DAMAGED.value],
             )
 
         # Same test, but with one item unchanged
         items[0].set_status(StockStatus.ATTENTION.value)
         items[0].save()
+
+        unchanged = self.status_change(items[0])
 
         data['status'] = StockStatus.ATTENTION.value
 
@@ -2352,10 +2745,15 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.ATTENTION.value)
-            self.assertEqual(item.tracking_info.count(), 3)
 
-            tracking = item.tracking_info.last()
-            self.assertEqual(tracking.tracking_type, StockHistoryCode.EDITED.value)
+        # No entry is recorded for the unchanged item
+        self.assertEqual(self.status_change(items[0]).pk, unchanged.pk)
+
+        for item in items[1:]:
+            self.assertEqual(
+                self.status_change(item).changes_dict['status'],
+                [StockStatus.DAMAGED.value, StockStatus.ATTENTION.value],
+            )
 
     def test_set_custom_status(self):
         """Test API endpoint for setting StockItem custom status."""
@@ -2374,7 +2772,6 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.OK.value)
-            self.assertEqual(item.tracking_info.count(), 1)
 
         # Test tracking with custom status
         # *from* standard *to* custom
@@ -2389,35 +2786,36 @@ class StockItemTest(StockAPITestCase):
             item.refresh_from_db()
             self.assertEqual(item.status, self.inspect_custom_status.logical_key)
             self.assertEqual(item.get_custom_status(), self.inspect_custom_status.key)
-            tracking = item.tracking_info.last()
-            self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
+
+            changes = self.status_change(item).changes_dict
+
             self.assertEqual(
-                tracking.deltas['old_status_logical'], StockStatus.OK.value
+                changes['status'],
+                [StockStatus.OK.value, self.inspect_custom_status.logical_key],
             )
-            self.assertEqual(tracking.deltas['status'], self.inspect_custom_status.key)
             self.assertEqual(
-                tracking.deltas['status_logical'],
-                self.inspect_custom_status.logical_key,
+                changes['status_custom_key'], [None, self.inspect_custom_status.key]
             )
 
         # reverse case
         # *from* custom *to* standard
         data['status'] = StockStatus.OK.value
         self.post(url, data, expected_code=201)
+
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.OK.value)
             self.assertIsNone(item.get_custom_status())
-            tracking = item.tracking_info.last()
+
+            changes = self.status_change(item).changes_dict
+
             self.assertEqual(
-                tracking.deltas['old_status'], self.inspect_custom_status.key
+                changes['status'],
+                [self.inspect_custom_status.logical_key, StockStatus.OK.value],
             )
             self.assertEqual(
-                tracking.deltas['old_status_logical'],
-                self.inspect_custom_status.logical_key,
+                changes['status_custom_key'], [self.inspect_custom_status.key, None]
             )
-            self.assertEqual(tracking.deltas['status'], StockStatus.OK.value)
-            self.assertEqual(tracking.deltas['status_logical'], StockStatus.OK.value)
 
     def test_bulk_batch_change(self):
         """Test that we can bulk-change batch code for a set of stock items."""
@@ -2529,6 +2927,29 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         self.assertIn('Duplicate BOM items provided', str(response.data))
 
+    def test_disassemble_allocated(self):
+        """Disassembly must not take stock which is allocated."""
+        self.allocate_to_sales_order(self.item, 4)
+
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 70}], 'quantity': 7},
+            expected_code=400,
+        )
+        self.assertIn(
+            'must not exceed the unallocated quantity (6)',
+            str(response.data['quantity']),
+        )
+
+        self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 60}], 'quantity': 6},
+            expected_code=201,
+        )
+
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.quantity, 4)
+
     def test_consumable_and_virtual_excluded(self):
         """Consumable BOM lines, and lines pointing to a virtual part, cannot be disassembled."""
         # BOM line marked as consumable directly
@@ -2618,18 +3039,18 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         # Check stock tracking entries have been created
         self.assertTrue(
-            self.item.tracking_info.filter(
-                tracking_type=StockHistoryCode.DISASSEMBLED.value
-            ).exists()
+            stock_events(self.item, event_type=StockHistoryCode.DISASSEMBLED).exists()
         )
 
         for item in [item_1, item_50]:
-            entry = item.tracking_info.filter(
-                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            entry = stock_events(
+                item, event_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY
             ).first()
 
             self.assertIsNotNone(entry)
-            self.assertEqual(entry.deltas['stockitem'], self.item.pk)
+            self.assertEqual(
+                entry.additional_data['deltas']['stockitem']['pk'], self.item.pk
+            )
 
     def test_full_disassembly(self):
         """Test that a fully disassembled item is retained at zero quantity."""
@@ -2675,13 +3096,13 @@ class StockItemDisassembleTest(StockAPITestCase):
         # an output of the build) - instead it is recorded in the stock history
         self.assertIsNone(component.build)
 
-        entry = component.tracking_info.filter(
-            tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+        entry = stock_events(
+            component, event_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY
         ).first()
 
         self.assertIsNotNone(entry)
-        self.assertEqual(entry.deltas['buildorder'], bo.pk)
-        self.assertEqual(entry.deltas['purchaseorder'], po.pk)
+        self.assertEqual(entry.additional_data['deltas']['buildorder']['pk'], bo.pk)
+        self.assertEqual(entry.additional_data['deltas']['purchaseorder']['pk'], po.pk)
 
     def test_explicit_pricing(self):
         """Test that automatic cost allocation is skipped if explicit pricing is provided."""
@@ -2750,23 +3171,23 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         # Uninstalled items are updated, not created afresh
         self.assertTrue(
-            sub_1.tracking_info.filter(
-                tracking_type=StockHistoryCode.REMOVED_FROM_ASSEMBLY.value
+            stock_events(
+                sub_1, event_type=StockHistoryCode.REMOVED_FROM_ASSEMBLY
             ).exists()
         )
         self.assertFalse(
-            sub_1.tracking_info.filter(
-                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            stock_events(
+                sub_1, event_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY
             ).exists()
         )
         self.assertTrue(
-            self.item.tracking_info.filter(
-                tracking_type=StockHistoryCode.REMOVED_CHILD_ITEM.value
+            stock_events(
+                self.item, event_type=StockHistoryCode.REMOVED_CHILD_ITEM
             ).exists()
         )
         self.assertTrue(
-            new_item.tracking_info.filter(
-                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            stock_events(
+                new_item, event_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY
             ).exists()
         )
 
@@ -3017,7 +3438,7 @@ class StocktakeTest(StockAPITestCase):
 
     def test_notes_max_length(self):
         """Test that overly long notes are rejected with a validation error."""
-        max_length = StockItemTracking.NOTES_MAX_LENGTH
+        max_length = StockItem.TRACKING_NOTES_MAX_LENGTH
 
         for endpoint in [
             'api-stock-count',
@@ -3108,6 +3529,129 @@ class StocktakeTest(StockAPITestCase):
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
+    def test_transfer_more_than_available(self):
+        """Transferring more than the available quantity moves the entire item.
+
+        The tracking entry must record the quantity which was actually moved,
+        not the (larger) quantity which was requested.
+        """
+        item = StockItem.objects.create(
+            part=Part.objects.get(pk=1),
+            location=StockLocation.objects.get(pk=5),
+            quantity=10,
+        )
+
+        url = reverse('api-stock-transfer')
+
+        # Move to a different location
+        self.post(
+            url,
+            {'items': [{'pk': item.pk, 'quantity': 25}], 'location': 1},
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.location.pk, 1)
+        self.assertEqual(item.quantity, 10)
+
+        entry = stock_events(item, event_type=StockHistoryCode.STOCK_MOVE).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 10)
+
+        # "Move" into the same location (records a stock update)
+        self.post(
+            url,
+            {'items': [{'pk': item.pk, 'quantity': 25}], 'location': 1},
+            expected_code=201,
+        )
+
+        entry = stock_events(item, event_type=StockHistoryCode.STOCK_UPDATE).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 10)
+
+    def test_transfer_allocated(self):
+        """A partial transfer must not split stock across an allocation boundary.
+
+        An allocated item can be transferred in full (allocations move with it),
+        or partially up to the unallocated quantity - but not in between.
+        """
+        assembly = Part.objects.create(
+            name='TA Assembly', description='Transfer allocation test', assembly=True
+        )
+        component = Part.objects.create(
+            name='TA Component', description='Transfer allocation test', component=True
+        )
+        part.models.BomItem.objects.create(
+            part=assembly, sub_part=component, quantity=1
+        )
+        bo = build.models.Build.objects.create(part=assembly, quantity=10)
+        build_line = bo.build_lines.first()
+
+        location = StockLocation.objects.get(pk=5)
+
+        item = StockItem.objects.create(part=component, location=location, quantity=10)
+        other = StockItem.objects.create(part=component, location=location, quantity=10)
+
+        allocation = build.models.BuildItem.objects.create(
+            stock_item=item, build_line=build_line, quantity=4
+        )
+
+        url = reverse('api-stock-transfer')
+
+        def transfer(*rows, expected_code=201):
+            return self.post(
+                url,
+                {'items': [{'pk': pk, 'quantity': q} for pk, q in rows], 'location': 1},
+                expected_code=expected_code,
+            )
+
+        # Crossing the allocation boundary is rejected - error is on the offending row
+        for q in [7, 9]:
+            response = transfer((other.pk, 1), (item.pk, q), expected_code=400)
+            errors = response.data['items']
+            self.assertNotIn(0, errors)
+            self.assertIn('unallocated quantity (6)', str(errors[1]['quantity']))
+
+        # Repeated rows which cumulatively cross the boundary are also rejected
+        response = transfer((item.pk, 4), (item.pk, 3), expected_code=400)
+        errors = response.data['items']
+        self.assertNotIn(0, errors)
+        self.assertIn('unallocated quantity (2)', str(errors[1]['quantity']))
+
+        # A full move relocates the entire item - a later row is still checked against it
+        response = transfer((item.pk, 10), (item.pk, 7), expected_code=400)
+        errors = response.data['items']
+        self.assertNotIn(0, errors)
+        self.assertIn('unallocated quantity (6)', str(errors[1]['quantity']))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 10)
+        self.assertEqual(item.location.pk, 5)
+
+        # Transfer of the unallocated quantity is allowed - allocated stock stays put
+        transfer((item.pk, 6))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(item.location.pk, 5)
+
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.stock_item, item)
+
+        # Now fully allocated: any partial transfer is rejected
+        transfer((item.pk, 1), expected_code=400)
+
+        # Transfer of the entire item is allowed - allocation moves with it
+        transfer((item.pk, 4))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(item.location.pk, 1)
+
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.stock_item, item)
+
+        # Partial transfer of an unallocated item is unaffected
+        transfer((other.pk, 3))
+
     def test_count_with_location(self):
         """Test that the stock count endpoint correctly handles the optional location field."""
         url = reverse('api-stock-count')
@@ -3130,12 +3674,9 @@ class StocktakeTest(StockAPITestCase):
         item_a.refresh_from_db()
         self.assertEqual(item_a.location.pk, 1)
 
-        # Tracking entry records the location change
-        entry = StockItemTracking.objects.filter(
-            item=item_a, tracking_type=StockHistoryCode.STOCK_COUNT
-        ).latest('date')
-        self.assertEqual(entry.deltas.get('location'), 1)
-        self.assertEqual(entry.deltas.get('old_location'), 5)
+        # The stocktake event records the location change
+        entry = stock_events(item_a, event_type=StockHistoryCode.STOCK_COUNT).last()
+        self.assertEqual(entry.changes_dict['location'], [5, 1])
 
         # --- location is updated for multiple items simultaneously ---
         response = self.post(
@@ -3156,13 +3697,10 @@ class StocktakeTest(StockAPITestCase):
         self.assertEqual(item_a.location.pk, 2)
         self.assertEqual(item_b.location.pk, 2)
 
-        # Both items have a tracking entry with the new location
+        # Both items have a stocktake event with the new location
         for item, old_loc in [(item_a, 1), (item_b, 3)]:
-            entry = StockItemTracking.objects.filter(
-                item=item, tracking_type=StockHistoryCode.STOCK_COUNT
-            ).latest('date')
-            self.assertEqual(entry.deltas.get('location'), 2)
-            self.assertEqual(entry.deltas.get('old_location'), old_loc)
+            entry = stock_events(item, event_type=StockHistoryCode.STOCK_COUNT).last()
+            self.assertEqual(entry.changes_dict['location'], [old_loc, 2])
 
         # --- location is unchanged when not provided ---
         response = self.post(
@@ -3173,12 +3711,10 @@ class StocktakeTest(StockAPITestCase):
         # Location should still be 2 (unchanged from the previous count)
         self.assertEqual(item_a.location.pk, 2)
 
-        # Tracking entry has no location delta when location was not provided
-        entry = StockItemTracking.objects.filter(
-            item=item_a, tracking_type=StockHistoryCode.STOCK_COUNT
-        ).latest('date')
-        self.assertNotIn('location', entry.deltas)
-        self.assertNotIn('old_location', entry.deltas)
+        # No location change is recorded when location was not provided
+        entry = stock_events(item_a, event_type=StockHistoryCode.STOCK_COUNT).last()
+        self.assertNotIn('location', entry.changes_dict)
+        self.assertNotIn('location', (entry.additional_data or {}).get('deltas', {}))
 
         # --- structural location is rejected ---
         structural = StockLocation.objects.create(name='Structural', structural=True)
@@ -3234,14 +3770,13 @@ class StocktakeTest(StockAPITestCase):
         self.assertIsNotNone(item.stocktake_date)
 
         # The stock history entry must agree with the saved state
-        entry = StockItemTracking.objects.filter(
-            item=item, tracking_type=StockHistoryCode.STOCK_COUNT
-        ).latest('date')
-        self.assertEqual(entry.deltas.get('quantity'), float(quantity))
-        self.assertEqual(entry.deltas.get('location'), 1)
-        self.assertEqual(entry.deltas.get('old_location'), 5)
-        self.assertEqual(entry.deltas.get('status'), StockStatus.DAMAGED.value)
-        self.assertEqual(entry.deltas.get('old_status'), StockStatus.OK.value)
+        entry = stock_events(item, event_type=StockHistoryCode.STOCK_COUNT).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], float(quantity))
+        self.assertEqual(entry.changes_dict['location'], [5, 1])
+        self.assertEqual(
+            entry.changes_dict['status'],
+            [StockStatus.OK.value, StockStatus.DAMAGED.value],
+        )
 
     def test_bulk_count_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to count 100 stock items at once."""
@@ -3374,6 +3909,164 @@ class StocktakeTest(StockAPITestCase):
         self.assertEqual(len(response.data['items']), 100)
 
 
+class StockAdjustmentCustomStatusTest(StockAPITestCase):
+    """Tests for applying custom status values via the stock adjustment endpoints.
+
+    Regression tests for https://github.com/inventree/InvenTree/issues/13191
+    The available status choices for stock adjustment items were evaluated once
+    (at import time), so custom states created afterwards were rejected as invalid.
+    """
+
+    def setUp(self):
+        """Create a custom stock status *after* the serializer module has been imported."""
+        super().setUp()
+
+        self.custom_status = InvenTreeCustomUserStateModel.objects.create(
+            key=160,
+            name='Custom attention',
+            label='Custom attention',
+            color='warning',
+            logical_key=StockStatus.ATTENTION.value,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+
+        self.part = Part.objects.get(pk=1)
+        self.source = StockLocation.objects.get(pk=5)
+        self.dest = StockLocation.objects.get(pk=2)
+
+    def test_serializer_choices(self):
+        """The adjustment item serializer must offer the runtime custom state."""
+        from stock.serializers import StockAdjustmentItemSerializer
+
+        choices = StockAdjustmentItemSerializer().fields['status'].choices
+
+        self.assertIn(None, choices)
+        self.assertIn(StockStatus.OK.value, choices)
+        self.assertIn(self.custom_status.key, choices)
+
+        # A state created later must also be picked up by a new serializer instance
+        later_status = InvenTreeCustomUserStateModel.objects.create(
+            key=170,
+            name='Custom later',
+            label='Custom later',
+            color='info',
+            logical_key=StockStatus.OK.value,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+
+        choices = StockAdjustmentItemSerializer().fields['status'].choices
+        self.assertIn(later_status.key, choices)
+
+    def test_adjust_with_custom_status(self):
+        """Each stock adjustment endpoint must accept a custom status."""
+        # Note: transfer the full quantity, so that the original item is moved
+        for endpoint, quantity, extra in [
+            ('api-stock-transfer', 10, {'location': self.dest.pk}),
+            ('api-stock-count', 5, {}),
+            ('api-stock-add', 5, {}),
+            ('api-stock-remove', 5, {}),
+        ]:
+            with self.subTest(endpoint=endpoint):
+                item = StockItem.objects.create(
+                    part=self.part, location=self.source, quantity=10
+                )
+
+                self.assertEqual(item.status, StockStatus.OK.value)
+
+                self.post(
+                    reverse(endpoint),
+                    {
+                        'items': [
+                            {
+                                'pk': item.pk,
+                                'quantity': quantity,
+                                'status': self.custom_status.key,
+                            }
+                        ],
+                        'notes': 'Custom status adjustment',
+                        **extra,
+                    },
+                    expected_code=201,
+                )
+
+                item.refresh_from_db()
+                self.assertEqual(item.status_custom_key, self.custom_status.key)
+                self.assertEqual(item.status, StockStatus.ATTENTION.value)
+
+    def test_partial_transfer_with_custom_status(self):
+        """A partial transfer applies the custom status to the split item only."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+
+        self.post(
+            reverse('api-stock-transfer'),
+            {
+                'items': [
+                    {'pk': item.pk, 'quantity': 4, 'status': self.custom_status.key}
+                ],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 6)
+        self.assertEqual(item.location, self.source)
+        self.assertEqual(item.status, StockStatus.OK.value)
+        self.assertIsNone(item.status_custom_key)
+
+        new_item = StockItem.objects.get(
+            part=self.part, location=self.dest, parent=item
+        )
+        self.assertEqual(new_item.quantity, 4)
+        self.assertEqual(new_item.location, self.dest)
+        self.assertEqual(new_item.status_custom_key, self.custom_status.key)
+        self.assertEqual(new_item.status, StockStatus.ATTENTION.value)
+
+    def test_invalid_status_rejected(self):
+        """Unknown status values must still be rejected."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+
+        response = self.post(
+            reverse('api-stock-transfer'),
+            {
+                'items': [{'pk': item.pk, 'quantity': 5, 'status': 999}],
+                'location': self.dest.pk,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('is not a valid choice', str(response.data))
+
+        item.refresh_from_db()
+        self.assertEqual(item.location, self.source)
+        self.assertEqual(item.quantity, 10)
+
+    def test_no_status_change(self):
+        """Omitting the status (or passing a blank value) leaves the status unchanged."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+        item.set_status(self.custom_status.key)
+        item.save()
+
+        for idx, line in enumerate([{}, {'status': ''}]):
+            with self.subTest(line=line):
+                self.post(
+                    reverse('api-stock-count'),
+                    {'items': [{'pk': item.pk, 'quantity': 8 - idx, **line}]},
+                    expected_code=201,
+                )
+
+                item.refresh_from_db()
+                self.assertEqual(item.status_custom_key, self.custom_status.key)
+
+
 class StockTransferMergeTest(StockAPITestCase):
     """Tests for optional merge-on-transfer behavior."""
 
@@ -3475,9 +4168,6 @@ class StockTransferMergeTest(StockAPITestCase):
 
     def test_transfer_merge_does_not_copy_source_tracking(self):
         """Transfer merge keeps destination history and adds a single merge entry."""
-        # Track total number of tracking entries created
-        N_TRACKING_ENTRIES = StockItemTracking.objects.count()
-
         existing = StockItem.objects.create(
             part=self.part, location=self.dest, quantity=100
         )
@@ -3490,7 +4180,7 @@ class StockTransferMergeTest(StockAPITestCase):
         )
 
         incoming_pk = incoming.pk
-        tracking_count = existing.tracking_info.count()
+        tracking_count = stock_events(existing).count()
 
         self.post(
             self.url,
@@ -3503,35 +4193,39 @@ class StockTransferMergeTest(StockAPITestCase):
 
         existing.refresh_from_db()
 
+        # The history of the incoming item is not copied to the existing item
         self.assertFalse(
-            existing.tracking_info.filter(notes='Source tracking entry').exists()
+            stock_history(existing, notes='Source tracking entry').exists()
         )
-        self.assertEqual(existing.tracking_info.count(), tracking_count + 1)
-        merge_entry = existing.tracking_info.filter(
-            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        self.assertEqual(stock_events(existing).count(), tracking_count + 1)
+
+        merge_entry = stock_events(
+            existing, event_type=StockHistoryCode.MERGED_STOCK_ITEMS
         ).first()
+
         self.assertIsNotNone(merge_entry)
-        self.assertEqual(merge_entry.deltas['added'], 50.0)
-        self.assertEqual(merge_entry.deltas['quantity'], 150.0)
-        self.assertEqual(merge_entry.deltas['stockitem'], incoming_pk)
-        self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+        self.assertEqual(
+            [Decimal(value) for value in merge_entry.changes_dict['quantity']],
+            [100, 150],
+        )
 
-        self.assertEqual(StockItemTracking.objects.count(), N_TRACKING_ENTRIES + 4)
+        deltas = merge_entry.additional_data['deltas']
+        self.assertEqual(deltas['added'], 50.0)
+        self.assertEqual(deltas['stockitem']['pk'], incoming_pk)
+        self.assertEqual(deltas['location']['pk'], self.dest.pk)
 
-        # Ensure tracking entries were bulk created in the correct order
-        entries = list(StockItemTracking.objects.order_by('-pk')[:4])[::-1]
+        # Ensure the expected events were recorded (in order)
+        self.assertEqual(
+            list(stock_events(existing).values_list('event_type', flat=True)),
+            [StockHistoryCode.CREATED, StockHistoryCode.MERGED_STOCK_ITEMS],
+        )
+        self.assertEqual(
+            list(stock_events(incoming_pk).values_list('event_type', flat=True)),
+            [StockHistoryCode.CREATED, StockHistoryCode.STOCK_UPDATE],
+        )
 
-        for idx, tt in enumerate([
-            StockHistoryCode.CREATED,
-            StockHistoryCode.CREATED,
-            StockHistoryCode.STOCK_UPDATE,
-            StockHistoryCode.MERGED_STOCK_ITEMS,
-        ]):
-            self.assertEqual(
-                entries[idx].tracking_type,
-                tt,
-                f'Entry {idx} has unexpected tracking type {entries[idx].tracking_type}',
-            )
+        # The incoming item was deleted (as part of the merge)
+        self.assertTrue(stock_history(incoming_pk, action=2).exists())
 
     def test_transfer_merge_partial_reuses_split_transfer_deltas(self):
         """Partial merge reuses split transfer deltas on the merge tracking entry."""
@@ -3554,14 +4248,18 @@ class StockTransferMergeTest(StockAPITestCase):
         incoming.refresh_from_db()
         self.assertEqual(incoming.quantity, 70)
 
-        merge_entry = existing.tracking_info.filter(
-            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        merge_entry = stock_events(
+            existing, event_type=StockHistoryCode.MERGED_STOCK_ITEMS
         ).first()
-        self.assertEqual(merge_entry.deltas['stockitem'], incoming.pk)
-        self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+
+        deltas = merge_entry.additional_data['deltas']
+        self.assertEqual(deltas['stockitem']['pk'], incoming.pk)
+        self.assertEqual(deltas['location']['pk'], self.dest.pk)
+
+        # No split event is recorded against the source item
         self.assertFalse(
-            incoming.tracking_info.filter(
-                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM
+            stock_events(
+                incoming, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
             ).exists()
         )
 
@@ -3609,6 +4307,78 @@ class StockTransferMergeTest(StockAPITestCase):
 
         existing.refresh_from_db()
         self.assertEqual(existing.quantity, 100)
+
+    def test_transfer_merge_with_status_change(self):
+        """Merge-on-transfer must match against the *requested* status.
+
+        Regression test for https://github.com/inventree/InvenTree/issues/13086
+        The merge target used to be selected using the current status of the item,
+        so a full transfer with a new status was merged into stock with the old status.
+        """
+        damaged = StockStatus.DAMAGED.value
+
+        # Full quantity transfer, with no matching target at the destination
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=10
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=5
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {'pk': incoming.pk, 'quantity': 5, 'status': damaged, 'merge': True}
+                ],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 10)
+        self.assertEqual(existing.status, StockStatus.OK.value)
+
+        incoming.refresh_from_db()
+        self.assertEqual(incoming.location, self.dest)
+        self.assertEqual(incoming.quantity, 5)
+        self.assertEqual(incoming.status, damaged)
+
+        # Subsequent damaged stock should merge into the damaged item (not the OK item)
+        # Check both a full quantity (3 of 3) and a partial (2 of 5) transfer
+        for quantity, available in [(3, 3), (2, 5)]:
+            source = StockItem.objects.create(
+                part=self.part, location=self.source_loc, quantity=available
+            )
+
+            self.post(
+                self.url,
+                {
+                    'items': [
+                        {
+                            'pk': source.pk,
+                            'quantity': quantity,
+                            'status': damaged,
+                            'merge': True,
+                        }
+                    ],
+                    'location': self.dest.pk,
+                },
+                expected_code=201,
+            )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 10)
+        self.assertEqual(existing.status, StockStatus.OK.value)
+
+        incoming.refresh_from_db()
+        self.assertEqual(incoming.quantity, 10)
+        self.assertEqual(incoming.status, damaged)
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 2
+        )
 
 
 class StockItemDeletionTest(StockAPITestCase):
@@ -4014,127 +4784,6 @@ class StockTestResultTest(StockAPITestCase):
         self.run_output_test(
             reverse('api-stock-test-result-detail', kwargs={'pk': 1}),
             ['user_detail', 'template_detail'],
-        )
-
-
-class StockTrackingTest(StockAPITestCase):
-    """Tests for the StockTracking API endpoints."""
-
-    fixtures = [
-        *StockAPITestCase.fixtures,
-        'build',
-        'order',
-        'return_order',
-        'sales_order',
-    ]
-
-    @classmethod
-    def setUpTestData(cls):
-        """Initialize some test data for the StockTracking tests."""
-        super().setUpTestData()
-
-        import build.models
-        import company.models
-        import order.models
-        import stock.models
-        import stock.status_codes
-
-        entries = []
-
-        N_BO = build.models.Build.objects.count()
-        N_PO = order.models.PurchaseOrder.objects.count()
-        N_RO = order.models.ReturnOrder.objects.count()
-        N_SO = order.models.SalesOrder.objects.count()
-
-        N_COMPANY = company.models.Company.objects.count()
-        N_LOCATION = stock.models.StockLocation.objects.count()
-
-        # Generate a large quantity of tracking items
-        # Note that the pk values are not guaranteed to exist in the database
-        for item in StockItem.objects.all():
-            for i in range(50):
-                entries.append(
-                    StockItemTracking(
-                        item=item,
-                        notes='This is a test entry',
-                        tracking_type=stock.status_codes.StockHistoryCode.LEGACY.value,
-                        deltas={
-                            'quantity': 50 - i,
-                            'buildorder': random.randint(0, N_BO + 1),
-                            'purchaseorder': random.randint(0, N_PO + 1),
-                            'returnorder': random.randint(0, N_RO + 1),
-                            'salesorder': random.randint(0, N_SO + 1),
-                            'customer': random.randint(0, N_COMPANY + 1),
-                            'location': random.randint(0, N_LOCATION + 1),
-                        },
-                    )
-                )
-
-        StockItemTracking.objects.bulk_create(entries)
-
-    def get_url(self):
-        """Helper function to get stock tracking api url."""
-        return reverse('api-stock-tracking-list')
-
-    def test_count(self):
-        """Test list endpoint with limit = 1."""
-        url = self.get_url()
-
-        N = StockItemTracking.objects.count()
-
-        # Test counting
-        response = self.get(url, {'limit': 1})
-        self.assertEqual(response.data['count'], N)
-
-        # Test with search and pagination
-        response = self.get(url, {'limit': 1, 'offset': 10, 'search': 'berries'})
-
-        self.assertEqual(response.data['count'], 0)
-
-    def test_list(self):
-        """Test list endpoint."""
-        url = self.get_url()
-
-        N = StockItemTracking.objects.count()
-        self.assertGreater(N, 1000)
-
-        response = self.client.get(url, max_query_count=25)
-        self.assertEqual(len(response.data), N)
-
-        # Check expected delta values
-        keys = ['quantity', 'returnorder', 'buildorder', 'customer']
-
-        for item in response.data:
-            deltas = item['deltas']
-
-            for key in keys:
-                self.assertIn(key, deltas)
-                self.assertIsNotNone(deltas.get(key, None))
-
-    def test_output_options(self):
-        """Test output options."""
-        self.run_output_test(
-            self.get_url(),
-            ['item_detail', 'user_detail'],
-            additional_params={'limit': 2},
-            assert_fnc=lambda x: x.data['results'][0],
-        )
-
-    def test_status_codes_endpoint(self):
-        """The 'track/status/' endpoint must resolve to the status-codes view.
-
-        Regression test: ensures the literal 'status/' path is not shadowed by the
-        'track/<pk>/' detail route it sits alongside in the same urlconf.
-        """
-        response = self.get(
-            reverse('api-stock-tracking-status-codes'), expected_code=200
-        )
-
-        self.assertIn('status_class', response.data)
-        self.assertIn('values', response.data)
-        self.assertIn('CREATED', response.data['values'])
-        self.assertEqual(
-            response.data['values']['CREATED']['key'], StockHistoryCode.CREATED.value
         )
 
 

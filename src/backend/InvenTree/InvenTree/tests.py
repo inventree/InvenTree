@@ -815,6 +815,50 @@ class TestHelpers(TestCase):
         # Both the validation-time and connection-time lookups must have happened.
         self.assertEqual(calls['n'], 2)
 
+    def test_unsafe_ip_ranges(self):
+        """Non-globally-routable and special-use addresses must be treated as unsafe."""
+        unsafe = [
+            '127.0.0.1',
+            '10.0.0.1',
+            '172.16.0.1',
+            '192.168.1.1',
+            '169.254.169.254',
+            '0.0.0.0',
+            # RFC 6598 shared address space (CGNAT / Tailscale / Alibaba Cloud metadata)
+            '100.64.0.1',
+            '100.100.100.200',
+            '100.127.255.255',
+            '::ffff:100.64.0.1',
+            # Multicast
+            '224.0.0.1',
+            # IPv6
+            '::1',
+            '::',
+            'fe80::1',
+            'fd00:ec2::254',
+            '::ffff:127.0.0.1',
+            # NAT64 embeddings of link-local / loopback (reported as global by Python)
+            '64:ff9b::a9fe:a9fe',
+            '64:ff9b::7f00:1',
+        ]
+
+        safe = ['8.8.8.8', '93.184.216.34', '100.63.255.255', '100.128.0.1']
+
+        for addr in unsafe:
+            with self.subTest(addr=addr):
+                self.assertTrue(InvenTree.helpers_model._is_unsafe_ip(addr))
+
+        for addr in safe:
+            with self.subTest(addr=addr):
+                self.assertFalse(InvenTree.helpers_model._is_unsafe_ip(addr))
+
+    def test_validate_url_cgnat_blocked(self):
+        """A URL resolving into 100.64.0.0/10 must be rejected by the SSRF validator."""
+        for addr in ['100.64.0.10', '100.100.100.200']:
+            with self.subTest(addr=addr):
+                with self.assertRaises(ValueError):
+                    InvenTree.helpers_model.validate_url_no_ssrf(f'http://{addr}/x.png')
+
     def test_model_mixin(self):
         """Test the getModelsWithMixin function."""
         from InvenTree.models import InvenTreeBarcodeMixin
@@ -1715,6 +1759,28 @@ class BarcodeMixinTest(InvenTreeTestCase):
 
 class SanitizerTest(TestCase):
     """Simple tests for sanitizer functions."""
+
+    def test_sanitize_token(self):
+        """Test that sanitize_token never exposes a full (or near-full) value."""
+        sanitize = InvenTree.helpers.sanitize_token
+
+        # Long values keep the front and back sections
+        value = 'inv-2-' + 'a' * 20 + '.' + 'b' * 40 + '-20261101'
+        result = sanitize(value)
+        self.assertEqual(len(result), len(value))
+        self.assertTrue(result.startswith(value[:8]))
+        self.assertTrue(result.endswith(value[-12:]))
+        self.assertIn('*' * (len(value) - 20), result)
+
+        # Short values are almost entirely masked
+        for value in ['', 'a', 'abcd123', 'x' * 20, 'y' * 21]:
+            result = sanitize(value)
+            self.assertEqual(len(result), len(value))
+            if value:
+                self.assertNotEqual(result, value)
+
+        self.assertEqual(sanitize('abcd123'), 'a******')
+        self.assertEqual(sanitize('0123456789abcdefghij'), '01234*' + '*' * 14)
 
     def test_svg_sanitizer(self):
         """Test that SVGs are sanitized accordingly."""

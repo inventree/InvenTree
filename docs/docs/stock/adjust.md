@@ -12,7 +12,7 @@ Stock adjustments can be accessed in any stock items table using the "Stock Opti
 
 ### Move Stock
 
-Multiple stock items can be moved to a new location in a single operation. Each item is moved to the selected location, and a stock tracking entry is added to the stock item history.
+Multiple stock items can be moved to a new location in a single operation. Each item is moved to the selected location, and a [stock tracking](./tracking.md) event is recorded against each stock item.
 
 {{ image("stock/stock_move.png", "Stock Move") }}
 

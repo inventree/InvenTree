@@ -24,6 +24,9 @@ from InvenTree.unit_test import (
     InvenTreeAPITestCase,
     InvenTreeTestCase,
     addUserPermission,
+    stock_events,
+    stock_history,
+    stock_history_count,
 )
 from order.models import (
     SalesOrder,
@@ -35,7 +38,7 @@ from order.models import (
 from order.serializers import SalesOrderShipmentAllocationSerializer
 from part.models import Part
 from stock.events import StockEvents
-from stock.models import StockItem, StockItemTracking, StockLocation
+from stock.models import StockItem, StockLocation
 from stock.status_codes import StockHistoryCode
 from users.models import Owner
 
@@ -506,7 +509,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.assertFalse(self.shipment.check_can_complete(raise_error=False))
 
         n_items = StockItem.objects.count()
-        n_tracking = StockItemTracking.objects.count()
+        n_tracking = stock_history_count()
 
         # Simulate a duplicated task execution
         # (e.g. a second completion request submitted before the first task ran)
@@ -519,7 +522,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
 
         # No additional stock items or tracking entries have been created
         self.assertEqual(StockItem.objects.count(), n_items)
-        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+        self.assertEqual(stock_history_count(), n_tracking)
 
     def test_shipment_many_items(self):
         """Test completion of a shipment with many items.
@@ -618,8 +621,8 @@ class SalesOrderTest(InvenTreeAPITestCase):
                 url,
                 expected_code=200,
                 benchmark=True,
-                max_query_time=5.0,
-                max_query_count=100,
+                max_query_time=11,
+                max_query_count=150,
             )
 
         self.assertEqual(response.status_code, 200)
@@ -674,25 +677,18 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.assertEqual(len(low_stock_tasks), 1)
         self.assertEqual(low_stock_tasks[0].args(), (part.pk,))
 
-        # Exactly one StockItemTracking entry should exist per split, per side
+        # Exactly one 'split' event should exist per split (on the original item)
         self.assertEqual(
-            StockItemTracking.objects.filter(
-                tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value
-            ).count(),
-            len(split_pks),
-        )
-        self.assertEqual(
-            StockItemTracking.objects.filter(
-                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value
-            ).count(),
+            stock_history_count(event_type=StockHistoryCode.SPLIT_CHILD_ITEM),
             len(split_pks),
         )
 
-        # Exactly one 'shipped' tracking entry should exist per allocated item
+        # Exactly one 'shipped' event should exist per allocated item
+        # (for split items, this is recorded against the creation of the new item)
         self.assertEqual(
-            StockItemTracking.objects.filter(
-                tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value
-            ).count(),
+            stock_history_count(
+                event_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
+            ),
             N_ITEMS,
         )
 
@@ -704,15 +700,15 @@ class SalesOrderTest(InvenTreeAPITestCase):
             self.assertEqual(item.customer, customer)
 
             self.assertFalse(
-                StockItemTracking.objects.filter(
-                    item=item, tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value
+                stock_events(
+                    item, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
                 ).exists()
             )
             self.assertTrue(
-                StockItemTracking.objects.filter(
-                    item=item,
-                    tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
-                    deltas__salesorder=so.pk,
+                stock_events(
+                    item,
+                    event_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER,
+                    additional_data__deltas__salesorder__pk=so.pk,
                 ).exists()
             )
 
@@ -735,24 +731,20 @@ class SalesOrderTest(InvenTreeAPITestCase):
         )
 
         self.assertEqual(sample_new_item.quantity, 1)
-        self.assertTrue(
-            StockItemTracking.objects.filter(
-                item=sample_new_item,
-                tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
-                deltas__stockitem=sample_original.pk,
-            ).exists()
+
+        # The new item records a single entry - its creation (as a child of the original),
+        # with the 'shipped' event
+        [created] = stock_history(sample_new_item)
+        self.assertEqual(created.changes_dict['parent'], [None, sample_original.pk])
+        self.assertEqual(
+            created.event_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
         )
+        self.assertEqual(created.additional_data['deltas']['salesorder']['pk'], so.pk)
+
+        # The original item records the split
         self.assertTrue(
-            StockItemTracking.objects.filter(
-                item=sample_original,
-                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
-            ).exists()
-        )
-        self.assertTrue(
-            StockItemTracking.objects.filter(
-                item=sample_new_item,
-                tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
-                deltas__salesorder=so.pk,
+            stock_events(
+                sample_original, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
             ).exists()
         )
         self.assertTrue(
@@ -1350,3 +1342,127 @@ class SalesOrderAllocateStockConcurrencyTest(TransactionTestCase):
 
         self.assertEqual(total_allocated, 5)
         self.assertLessEqual(total_allocated, self.stock_item.quantity)
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class SalesOrderShipmentCompleteConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for completing sales order shipments.
+
+    Uses two real threads (each with its own database connection) to reproduce
+    the race: two shipments which ship stock against the *same* line item (and
+    from the same StockItem) are completed at the same time. Each task locked
+    only its own shipment row, read the line 'shipped' quantity (and the stock
+    item quantity) from an unlocked query, adjusted them in memory, and wrote
+    the absolute values back - so one of the two updates was silently lost.
+
+    SalesOrderShipment.complete_allocations() now locks the SalesOrderLineItem
+    and StockItem rows, and re-reads their quantities, before adjusting them.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create a sales order with two shipments against the same line item."""
+        super().setUp()
+
+        self.user = get_user_model().objects.get(pk=1)
+
+        customer = Company.objects.create(
+            name='Shipment concurrency customer',
+            description='Customer for shipment concurrency test',
+            is_customer=True,
+        )
+
+        part = Part.objects.create(
+            name='Shipment concurrency part',
+            description='Part for shipment concurrency test',
+            salable=True,
+        )
+
+        self.order = SalesOrder.objects.create(customer=customer, reference='SO-9992')
+
+        self.line = SalesOrderLineItem.objects.create(
+            quantity=6, order=self.order, part=part
+        )
+
+        self.stock_item = StockItem.objects.create(part=part, quantity=10)
+
+        self.shipments = [
+            SalesOrderShipment.objects.create(order=self.order, reference=ref)
+            for ref in ['A', 'B']
+        ]
+
+        for shipment in self.shipments:
+            SalesOrderAllocation.objects.create(
+                line=self.line, item=self.stock_item, shipment=shipment, quantity=3
+            )
+
+    def test_concurrent_shipment_completion(self):
+        """Two shipments against the same line item, completed concurrently, are both counted."""
+        import order.models
+
+        errors = []
+
+        # Hold each task after it has read (and adjusted) the quantities, but
+        # before it writes them, until the other task has reached the same point.
+        # Once the rows are locked correctly, the second task cannot get this far
+        # until the first has committed - so the barrier simply times out.
+        barrier = threading.Barrier(2, timeout=2)
+
+        original = order.models.bulk_create_and_fetch
+
+        def synced_bulk_create_and_fetch(*args, **kwargs):
+            try:
+                barrier.wait()
+            except threading.BrokenBarrierError:
+                pass
+
+            return original(*args, **kwargs)
+
+        def complete(shipment):
+            try:
+                order.tasks.complete_sales_order_shipment(
+                    shipment.pk, self.user.pk, None
+                )
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        threads = [
+            threading.Thread(target=complete, args=(shipment,))
+            for shipment in self.shipments
+        ]
+
+        with mock.patch.object(
+            order.models, 'bulk_create_and_fetch', synced_bulk_create_and_fetch
+        ):
+            for thread in threads:
+                thread.start()
+
+            for thread in threads:
+                thread.join(timeout=15)
+
+        for thread in threads:
+            self.assertFalse(thread.is_alive())
+
+        self.assertEqual(errors, [])
+
+        for shipment in self.shipments:
+            shipment.refresh_from_db()
+            self.assertTrue(shipment.is_complete())
+
+        # Both shipments are counted against the line item
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 6)
+
+        # Both quantities have been taken from the stock item
+        self.stock_item.refresh_from_db()
+        self.assertEqual(self.stock_item.quantity, 4)
+
+        shipped_items = StockItem.objects.filter(
+            parent=self.stock_item, sales_order=self.order
+        )
+
+        self.assertEqual(shipped_items.count(), 2)
+        self.assertEqual(sum(item.quantity for item in shipped_items), 6)

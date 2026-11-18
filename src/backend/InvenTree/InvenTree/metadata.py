@@ -136,20 +136,10 @@ class InvenTreeMetadata(SimpleMetadata):
                     role_required and check_user_role(user, role_required, permission)
                 )
 
-                # check if simple IsAuthenticated permission class is used
+                # Views guarded only by an "any authenticated user" permission class
+                # do not require model permissions (e.g. users managing their own API tokens)
                 if not result:
-                    result = (
-                        view.permission_classes
-                        and len(view.permission_classes) == 1
-                        and any(
-                            perm
-                            in [
-                                permissions.IsAuthenticated,
-                                InvenTree.permissions.IsAuthenticatedOrReadScope,
-                            ]
-                            for perm in view.permission_classes
-                        )
-                    )
+                    result = self.allows_any_authenticated_user(view)
 
                 if method in actions and not result:
                     del actions[method]
@@ -168,7 +158,91 @@ class InvenTreeMetadata(SimpleMetadata):
             # then we don't need a permission
             pass
 
+        if filters := self.get_filter_metadata(request, view):
+            metadata['filters'] = filters
+
         return metadata
+
+    @staticmethod
+    def allows_any_authenticated_user(view) -> bool:
+        """Return True if the view is guarded by a single permission class which grants access to any authenticated user.
+
+        Such views do not require model / role permissions,
+        so the available actions should not be filtered by them.
+        """
+        permission_classes = getattr(view, 'permission_classes', None) or []
+
+        if len(permission_classes) != 1:
+            return False
+
+        perm = permission_classes[0]
+
+        return perm is permissions.IsAuthenticated or bool(
+            getattr(perm, 'allows_any_authenticated_user', False)
+        )
+
+    def get_filter_metadata(self, request, view) -> dict:
+        """Return information on the choice filters available for an API endpoint.
+
+        For each ChoiceFilter (or MultipleChoiceFilter) defined by the view's filterset,
+        the available choices are provided, e.g. so that a client can render a filter selection.
+        Model-backed choice filters (ModelChoiceFilter etc) are excluded.
+
+        The filterset is instantiated with the current request, so that the
+        choices can be specific to the requesting user.
+
+        Returns:
+            dict: A mapping of filter name -> {'type', 'label', 'choices'}
+        """
+        from django_filters import (
+            ChoiceFilter,
+            ModelChoiceFilter,
+            ModelMultipleChoiceFilter,
+            MultipleChoiceFilter,
+        )
+
+        filterset_class = getattr(view, 'filterset_class', None)
+
+        if filterset_class is None:
+            return {}
+
+        try:
+            filterset = filterset_class(
+                data={}, queryset=view.get_queryset(), request=request
+            )
+        except Exception:
+            # Filter information is optional - never prevent the OPTIONS response
+            logger.exception(
+                'Could not construct filterset for %s', view.__class__.__name__
+            )
+            return {}
+
+        filters = {}
+
+        for name, filter_instance in filterset.filters.items():
+            if not isinstance(filter_instance, (ChoiceFilter, MultipleChoiceFilter)):
+                continue
+
+            # Model-backed choices (e.g. foreign key filters) are not exposed:
+            # these may be unbounded, and would expose related objects to the client
+            if isinstance(
+                filter_instance, (ModelChoiceFilter, ModelMultipleChoiceFilter)
+            ):
+                continue
+
+            choices = [
+                {'value': value, 'display_name': str(label)}
+                for value, label in filter_instance.field.choices
+                if value not in ('', None)
+            ]
+
+            filters[name] = {
+                'type': 'choice',
+                'label': str(filter_instance.label or name),
+                'choices': choices,
+            }
+
+        return filters
 
     def override_value(self, field_name: str, field_key: str, field_value, model_value):
         """Override a value on the serializer with a matching value for the model.

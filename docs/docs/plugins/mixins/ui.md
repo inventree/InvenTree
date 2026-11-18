@@ -187,6 +187,14 @@ The `get_ui_template_previews` feature type can be used to provide custom templa
 
 The `get_ui_primary_actions` method can be used to provide custom primary action, which are rendered in the header of the page, next to the title/name and any status indicators. These primary actions are typically used to provide quick access to common actions related to the current page.
 
+The `context` dictionary provided to this method contains the following keys:
+
+| Key | Description |
+| --- | --- |
+| `location` | The URL path of the current page |
+| `target_model` | The model type of the current page (e.g. `part`), or the page key for index pages (e.g. `purchasing`). Not provided for all pages. |
+| `target_id` | The primary key of the instance displayed on the current page. Not provided for all pages. |
+
 ::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_primary_actions
     options:
       show_bases: False
@@ -249,7 +257,7 @@ When distributing a custom UI plugin, the plugin should include the necessary fr
 
 The simplest (and recommended) way to achieve this is to distribute the compiled javascript files with the plugin package, in a top-level `static` directory. This directory will be automatically collected by InvenTree when the plugin is installed, and the files will be copied to the appropriate location.
 
-Read more about [static plugin files](../index.md#static-files) for more information.
+Read more about [static plugin files](../develop.md#static-files) for more information.
 
 ## Sample Plugin
 

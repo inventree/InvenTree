@@ -106,6 +106,30 @@ This set of components is passed through at render time to the plugin function, 
 
 For example, the plugin can make use of the authenticated api instance, to make calls to the InvenTree API, or use the `navigate` function to redirect the user to a different page.
 
+### Launching Forms
+
+The `forms` object provides two ways for a plugin to display an API-driven form in a modal dialog.
+
+The `create`, `edit` and `delete` functions are React hooks, which must be called from within a React component. The returned `modal` element must be rendered by the plugin component, and the form is displayed by calling the returned `open` function.
+
+Alternatively, the `openCreate`, `openEdit` and `openDelete` functions can be called from anywhere - including from outside of a React component, such as a primary action callback. The form modal is rendered by the InvenTree user interface, and the plugin does not need to render anything itself. These functions accept the same form properties as the hook functions, and return an identifier which can be passed to `forms.close` to close the form programmatically.
+
+```javascript
+const formId = context.forms.openCreate({
+    url: '/plugin/my-plugin/items/',
+    title: 'Create Item',
+    fields: {
+        name: {},
+        description: {},
+    },
+    onFormSuccess: (data) => {
+        console.log('Item created:', data);
+    },
+});
+```
+
+Note that the form properties are captured when the form is opened, and are not updated afterwards.
+
 ## Externalized Libraries
 
 To create a plugin which integrates natively into the InvenTree UI, it is important that the plugin is compiled in a way that allows it to run within the same React context as the InvenTree frontend code.

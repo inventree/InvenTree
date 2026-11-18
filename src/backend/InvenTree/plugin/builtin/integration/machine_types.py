@@ -2,8 +2,9 @@
 
 from django.utils.translation import gettext_lazy as _
 
-from machine.machine_type import BaseDriver, BaseMachineType
 from plugin import InvenTreePlugin
+from plugin.machine import BaseDriver, BaseMachineType
+from plugin.machine.machine_types import LabelPrinterMachine
 from plugin.mixins import MachineDriverMixin
 
 
@@ -19,8 +20,6 @@ class InvenTreeMachineTypes(MachineDriverMixin, InvenTreePlugin):
 
     def get_machine_types(self) -> list[BaseMachineType]:
         """Return all built-in machine types."""
-        from machine.machine_types.label_printer import LabelPrinterMachine
-
         return [LabelPrinterMachine]
 
     def get_machine_drivers(self) -> list[BaseDriver]:

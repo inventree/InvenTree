@@ -28,6 +28,7 @@ The `OPTIONS` endpoint provides the following information:
 | name | The human-readable name of the API endpoint |
 | description | Descriptive detail for the endpoint, extracted from the python docstring |
 | actions | Contains the available HTTP actions and field information (see below) |
+| filters | For list endpoints, the available choices for any choice-based query filters (e.g. `model_type` for the audit log). Only filters with a fixed set of choices are listed - filters on related models are not |
 
 Specific details are provided on the available attributes of each field:
 

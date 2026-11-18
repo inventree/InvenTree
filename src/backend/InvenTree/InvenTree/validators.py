@@ -123,21 +123,5 @@ def invalid_site_url_hint(site_url: str) -> str:
     return ''
 
 
-def validate_purchase_order_reference(value):
-    """Validate the 'reference' field of a PurchaseOrder."""
-    from order.models import PurchaseOrder
-
-    # If we get to here, run the "default" validation routine
-    PurchaseOrder.validate_reference_field(value)
-
-
-def validate_sales_order_reference(value):
-    """Validate the 'reference' field of a SalesOrder."""
-    from order.models import SalesOrder
-
-    # If we get to here, run the "default" validation routine
-    SalesOrder.validate_reference_field(value)
-
-
 def validate_tree_name(value):
     """Placeholder for legacy function used in migrations."""

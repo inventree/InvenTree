@@ -44,7 +44,7 @@ export default function CoreIndex() {
 
   return (
     <Stack>
-      <PageDetail title={t`System Overview`} />
+      <PageDetail model={PluginPanelKey.core} title={t`System Overview`} />
       <PanelGroup
         pageKey='core-index'
         panels={panels}

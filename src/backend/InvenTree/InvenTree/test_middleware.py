@@ -2,6 +2,7 @@
 
 from unittest.mock import patch
 
+from django.contrib.auth.models import User
 from django.http import Http404, HttpRequest
 from django.urls import reverse
 
@@ -10,6 +11,7 @@ from error_report.models import Error
 from InvenTree.exceptions import log_error
 from InvenTree.helpers_mfa import get_codes
 from InvenTree.unit_test import InvenTreeTestCase
+from users.models import ApiToken
 
 
 class MiddlewareTests(InvenTreeTestCase):
@@ -88,6 +90,74 @@ class MiddlewareTests(InvenTreeTestCase):
             self.assertEqual(rsp3.status_code, 200)
             self.check_path(url)
 
+    def test_Check2FAMiddleware_token(self):
+        """Test that no API token can be generated before MFA is set up, if MFA is enforced."""
+        url = reverse('api-token')
+
+        with patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}):
+            response = self.check_path(url, 401)
+            self.assertContains(
+                response,
+                'You must enable two-factor authentication before doing anything else.',
+                status_code=401,
+            )
+
+        # Not enforced - token can be generated
+        self.check_path(url)
+
+    def test_Check2FAMiddleware_token_header(self):
+        """Test that a token header only bypasses MFA if it validly authenticates the same user."""
+        target = reverse('api-license')
+        token_url = reverse('api-token')
+
+        other_user = User.objects.create_user(username='other', password='password')
+        other_token = ApiToken.objects.create(user=other_user, name='other').token
+
+        with patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}):
+            for header in [
+                'Bearer junk',
+                'token: junk',
+                'Token junk',
+                f'Token {other_token}',
+                f'Bearer {other_token}',
+            ]:
+                response = self.check_path(target, 401, auth_header=header)
+                self.assertContains(response, 'mfa_register', status_code=401)
+
+                # Token issuance must not be reachable either
+                response = self.check_path(token_url, 401, auth_header=header)
+                self.assertContains(response, 'mfa_register', status_code=401)
+
+            self.assertFalse(ApiToken.objects.filter(user=self.user).exists())
+
+    def test_token_auth_mfa_enforced(self):
+        """Test that tokens of users without MFA are refused while MFA is enforced."""
+        api_target = reverse('api-license')
+        target = reverse('auth-check')
+
+        raw_token = ApiToken.objects.create(user=self.user, name='mfa-test').token
+        self.client.logout()
+
+        self.check_path(api_target, auth_header=f'Token {raw_token}')
+        self.check_path(target, auth_header=f'Token {raw_token}')
+
+        with patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}):
+            # User has no MFA set up - token is refused
+            response = self.check_path(
+                api_target, 401, auth_header=f'Token {raw_token}'
+            )
+            self.assertContains(
+                response,
+                'Multi-factor authentication must be enabled for this account',
+                status_code=401,
+            )
+            self.check_path(target, 401, auth_header=f'Token {raw_token}')
+
+            # User sets up MFA - token works again
+            get_codes(self.user)
+            self.check_path(api_target, auth_header=f'Token {raw_token}')
+            self.check_path(target, auth_header=f'Token {raw_token}')
+
     def test_token_auth(self):
         """Test auth with token auth."""
         target = reverse('api-license')
@@ -113,6 +183,90 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # Request something that is not on the API - should still work
         self.check_path(reverse('auth-check'), auth_header=f'Token {token}')
+
+    def test_token_auth_inactive_user(self):
+        """Tokens for inactive users, or revoked tokens, must be rejected outside the API."""
+        target = reverse('auth-check')
+
+        token = ApiToken.objects.create(user=self.user, name='middleware-test')
+        raw_token = token.token
+        self.client.logout()
+
+        self.check_path(target, auth_header=f'Token {raw_token}')
+
+        # Inactive users are rejected
+        self.user.is_active = False
+        self.user.save()
+        self.check_path(target, 401, auth_header=f'Token {raw_token}')
+        self.user.is_active = True
+        self.user.save()
+
+        # Revoked tokens are rejected
+        token.revoked = True
+        token.save()
+        self.check_path(target, 401, auth_header=f'Token {raw_token}')
+
+    def test_token_auth_rejection_logged(self):
+        """Rejected tokens are logged (sanitized) along with the reason."""
+        target = reverse('auth-check')
+
+        token = ApiToken.objects.create(user=self.user, name='log-test')
+        raw_token = token.token
+        token.revoked = True
+        token.save()
+        self.client.logout()
+
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            self.check_path(target, 401, auth_header=f'Token {raw_token}')
+
+        output = '\n'.join(captured.output)
+        self.assertIn('Access denied for token', output)
+        self.assertIn('Token has been revoked', output)
+        # The secret must not appear in the logs
+        self.assertNotIn(raw_token, output)
+
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            self.check_path(
+                target, 401, auth_header='Token inv-unknown-token-value-0123456789'
+            )
+
+        self.assertIn('Invalid token', '\n'.join(captured.output))
+
+    def test_token_auth_case(self):
+        """The auth scheme is case-insensitive, but the token value is not."""
+        target = reverse('auth-check')
+
+        raw_token = ApiToken.objects.create(user=self.user, name='case-test').token
+        self.client.logout()
+
+        for scheme in ['Token', 'TOKEN', 'token', 'bearer', 'Bearer:']:
+            self.check_path(target, auth_header=f'{scheme} {raw_token}')
+
+        self.check_path(target, 401, auth_header=f'Token {raw_token.upper()}')
+
+        # A (legacy) mixed-case key must not be lowercased before lookup
+        key = 'inv-' + 'AbCdEf0123456789' * 2
+        ApiToken.objects.create(user=self.user, name='legacy', key=key)
+        self.check_path(target, auth_header=f'Token {key}')
+
+    def test_info_view_inactive_staff(self):
+        """InfoView must not treat a token for an inactive staff user as staff."""
+        self.user.is_staff = True
+        self.user.save()
+
+        raw_token = ApiToken.objects.create(user=self.user, name='info-test').token
+        self.client.logout()
+
+        # Use the 'Bearer' scheme, so that DRF token auth does not handle the request,
+        # and InfoView falls back to its own token check
+        url = reverse('api-inventree-info')
+        response = self.check_path(url, auth_header=f'Bearer {raw_token}')
+        self.assertIsNotNone(response.json()['database'])
+
+        self.user.is_active = False
+        self.user.save()
+        response = self.check_path(url, auth_header=f'Bearer {raw_token}')
+        self.assertIsNone(response.json()['database'])
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""

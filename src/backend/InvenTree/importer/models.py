@@ -2,11 +2,11 @@
 
 import json
 from collections import OrderedDict
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 
 from django.contrib.auth.models import User
-from django.core.exceptions import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist, FieldError
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import FileExtensionValidator
@@ -15,6 +15,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import structlog
+from auditlog.context import disable_auditlog
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 import importer.operations
@@ -54,6 +55,15 @@ class DataImportSession(models.Model):
     def get_api_url():
         """Return the API URL associated with the DataImportSession model."""
         return reverse('api-importer-session-list')
+
+    def clean(self):
+        """Validate the DataImportSession object."""
+        super().clean()
+
+        try:
+            importer.validators.validate_field_filters(self.field_filters)
+        except DjangoValidationError as exc:
+            raise DjangoValidationError({'field_filters': exc.messages})
 
     def save(self, *args, **kwargs):
         """Save the DataImportSession object."""
@@ -158,6 +168,27 @@ class DataImportSession(models.Model):
         from importer.registry import supported_models
 
         return supported_models().get(self.model_type, None)
+
+    def check_import_permission(self, user) -> bool:
+        """Check if the provided user is allowed to import data into the target model.
+
+        - Models marked with IMPORT_REQUIRES_STAFF require the user to be staff,
+          matching the API write permissions for that model.
+        - The user must also have 'change' permission for the target model.
+        """
+        from users.permissions import check_user_permission
+
+        model_class = self.model_class
+
+        if not model_class:
+            return True
+
+        if getattr(model_class, 'IMPORT_REQUIRES_STAFF', False) and not getattr(
+            user, 'is_staff', False
+        ):
+            return False
+
+        return check_user_permission(user, model_class, 'change')
 
     def get_lookup_fields_for_field(self, field_name: str) -> list:
         """Return the valid lookup fields for a given related (FK) field.
@@ -828,9 +859,23 @@ class DataImportRow(models.Model):
         if commit:
             self.save()
 
-    def convert_date_field(self, value: str) -> Optional[str]:
-        """Convert an incoming date field to the correct format for the database."""
+    def convert_date_field(self, value) -> Optional[str]:
+        """Convert an incoming date field to the correct format for the database.
+
+        The value may be a string (CSV / JSON import), or a native date / datetime
+        object (Excel import via tablib/openpyxl returns date-formatted cells as
+        datetime.datetime objects).
+        """
         if value in [None, '']:
+            return None
+
+        # Native date / datetime objects (note: datetime is a subclass of date)
+        if isinstance(value, date):
+            return value.strftime('%Y-%m-%d')
+
+        value = str(value).strip()
+
+        if not value:
             return None
 
         # Attempt conversion using accepted formats
@@ -838,12 +883,19 @@ class DataImportRow(models.Model):
 
         for fmt in date_formats:
             try:
-                dt = datetime.strptime(value.strip(), fmt)
+                dt = datetime.strptime(value, fmt)
 
                 # If the date is valid, convert it to the standard format and return
                 return dt.strftime('%Y-%m-%d')
             except ValueError:
                 continue
+
+        # Full ISO-8601 datetime string - e.g. a native datetime which has been
+        # round-tripped through DjangoJSONEncoder when row_data was saved
+        try:
+            return datetime.fromisoformat(value).strftime('%Y-%m-%d')
+        except ValueError:
+            pass
 
         # If none of the formats matched, return the original value
         return value
@@ -889,12 +941,21 @@ class DataImportRow(models.Model):
             else {}
         )
 
+        # Re-validate filters before applying them to the queryset
+        # (e.g. sessions created before filter validation was enforced)
+        importer.validators.validate_field_filters({field_name: base_filters})
+
         if lookup_field and type(lookup_field) is str:
             # A specific lookup field has been chosen by the user — query only that field
             try:
                 queryset = model.objects.filter(**{lookup_field: value}, **base_filters)
             except ValueError:
                 return value
+            except FieldError:
+                # Field filters reference a field which does not exist on the related model
+                raise DjangoValidationError(
+                    _('Invalid filters for field: {field}').format(field=field_name)
+                )
 
             results = list(queryset[:2])
 
@@ -917,6 +978,11 @@ class DataImportRow(models.Model):
                 queryset = model.objects.filter(**{id_field: value}, **base_filters)
             except ValueError:
                 continue
+            except FieldError:
+                # Field filters reference a field which does not exist on the related model
+                raise DjangoValidationError(
+                    _('Invalid filters for field: {field}').format(field=field_name)
+                )
 
             # Evaluate at most two results to determine if there is exactly one match
             results = list(queryset[:2])
@@ -1014,7 +1080,9 @@ class DataImportRow(models.Model):
 
             if commit:
                 try:
-                    serializer.save()
+                    # Data imports are not recorded in the audit log
+                    with disable_auditlog():
+                        serializer.save()
                     self.complete = True
 
                 except ValueError as e:  # Exception as e:

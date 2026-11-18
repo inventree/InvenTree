@@ -39,18 +39,14 @@ import {
   useMemo,
   useState
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { resolveItem } from '@lib/functions/Conversion';
-import {
-  eventModified,
-  getDetailUrl,
-  navigateToLink
-} from '@lib/functions/Navigation';
+import { eventModified, getDetailUrl } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { useApi } from '../../contexts/ApiContext';
 import { useUserSettingsState } from '../../states/SettingsStates';
@@ -81,7 +77,6 @@ export default function NavigationTree({
   children?: ReactNode;
 }>) {
   const api = useApi();
-  const navigate = useNavigate();
   const treeState = useTree();
 
   const userSettings = useUserSettingsState();
@@ -177,10 +172,17 @@ export default function NavigationTree({
     treeState.collapseAllNodes();
   }, [debouncedSearch]);
 
-  // Expand all nodes once search results have fully arrived
+  // Expand all nodes once search results have fully arrived.
+  // Note: treeState.expandAllNodes() only expands nodes which are already present
+  // in the (possibly stale) expanded state, so nodes which only appear in the search
+  // results would remain collapsed. Instead, explicitly expand every returned node.
   useEffect(() => {
     if (debouncedSearch && !query.isFetching && query.data?.length) {
-      treeState.expandAllNodes();
+      const expanded: Record<string, boolean> = {};
+      for (const node of query.data) {
+        expanded[node.pk.toString()] = true;
+      }
+      treeState.setExpandedState(expanded);
     }
   }, [debouncedSearch, query.data, query.isFetching]);
 
@@ -231,19 +233,6 @@ export default function NavigationTree({
       }
     },
     [loadingNodes, allNodes, api, endpoint, childIdentifier]
-  );
-
-  const follow = useCallback(
-    (node: TreeNodeData, event?: any) => {
-      const url = getDetailUrl(modelType, node.value);
-      if (eventModified(event)) {
-        navigateToLink(url, navigate, event);
-      } else {
-        onClose();
-        navigate(url);
-      }
-    },
-    [modelType, navigate]
   );
 
   // In search mode use the query results directly; in browse mode use the accumulated lazy-load list
@@ -356,7 +345,19 @@ export default function NavigationTree({
           >
             <HoverCard.Target>
               <Anchor
-                onClick={(event: any) => follow(payload.node, event)}
+                component={Link}
+                to={getDetailUrl(modelType, payload.node.value)}
+                onClick={(event) => {
+                  event.stopPropagation();
+
+                  if (
+                    event.button === 0 &&
+                    !eventModified(event) &&
+                    !event.altKey
+                  ) {
+                    onClose();
+                  }
+                }}
                 aria-label={`nav-tree-item-${payload.node.value}`}
                 c='var(--mantine-color-text)'
               >
@@ -385,7 +386,8 @@ export default function NavigationTree({
     [
       treeState,
       childIdentifier,
-      follow,
+      modelType,
+      onClose,
       loadingNodes,
       fetchChildren,
       debouncedSearch

@@ -5,7 +5,6 @@ import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconHistory,
   IconInfoCircle,
   IconPackages,
   IconShoppingCart,
@@ -40,8 +39,6 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -60,7 +57,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -69,7 +65,6 @@ import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTa
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
-import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 import TransferOrderAllocationTable from '../../tables/stock/TransferOrderAllocationTable';
 import { StockDetailsPanel } from './StockDetailsPanel';
 
@@ -111,11 +106,6 @@ export default function StockDetail() {
     pk: stockitem?.part,
     hasPrimaryKey: true,
     defaultValue: {}
-  });
-
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.stockitem,
-    modelId: stockitem?.pk
   });
 
   const showBuildAllocations: boolean = useMemo(() => {
@@ -195,16 +185,6 @@ export default function StockDetail() {
             showSerialNav
             refreshInstance={refreshInstance}
           />
-        )
-      },
-      {
-        name: 'tracking',
-        label: t`Stock Tracking`,
-        icon: <IconHistory />,
-        content: stockitem.pk ? (
-          <StockTrackingTable itemId={stockitem.pk} />
-        ) : (
-          <Skeleton />
         )
       },
       {
@@ -305,22 +285,14 @@ export default function StockDetail() {
         content: stockitem?.pk ? (
           <StockItemTable
             tableName='child-stock'
+            showConsumedBy
+            defaultInStock={null}
             params={{ parent: stockitem.pk }}
           />
         ) : (
           <Skeleton />
         )
-      },
-      AttachmentPanel({
-        model_type: ModelType.stockitem,
-        model_id: stockitem.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.stockitem,
-        model_id: stockitem.pk,
-        note_count: instanceInfo.note_count
-      })
+      }
     ];
   }, [
     showSalesAllocations,
@@ -328,8 +300,7 @@ export default function StockDetail() {
     showInstalledItems,
     stockitem,
     id,
-    user,
-    instanceInfo
+    user
   ]);
 
   const breadcrumbs = useMemo(
@@ -356,7 +327,6 @@ export default function StockDetail() {
     title: t`Edit Stock Item`,
     modalId: 'edit-stock-item',
     fields: editStockItemFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
@@ -651,8 +621,22 @@ export default function StockDetail() {
   }, [id, stockitem, part, user, stockAdjustActions.menuActions]);
 
   const stockBadges: ReactNode[] = useMemo(() => {
-    let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
+    const quantity: number = stockitem?.quantity ?? 0;
+    const allocated: number = stockitem?.allocated ?? 0;
+
+    let available = quantity - allocated;
     available = Math.max(0, available);
+
+    // Tolerance for comparing (decimal) quantities
+    const epsilon = 1e-6;
+
+    const isAllocated: boolean = allocated > epsilon;
+    const overAllocated: boolean =
+      isAllocated && allocated > quantity + epsilon;
+    const fullyAllocated: boolean =
+      isAllocated && !overAllocated && allocated >= quantity - epsilon;
+
+    const allocatedTooltip = `${t`Allocated Quantity`}: ${formatDecimal(allocated)} / ${formatDecimal(quantity)}`;
 
     return instanceQuery.isLoading
       ? []
@@ -660,23 +644,27 @@ export default function StockDetail() {
           <DetailsBadge
             color='yellow'
             label={t`In Production`}
+            tooltip={t`This stock item is currently being built`}
             visible={stockitem.is_building}
           />,
           <DetailsBadge
             color='blue'
             label={`${t`Serial Number`}: ${stockitem.serial}`}
+            tooltip={t`Serial number of this stock item`}
             visible={!!stockitem.serial}
             key='serial'
           />,
           <DetailsBadge
             color='blue'
             label={`${t`Quantity`}: ${formatDecimal(stockitem.quantity)}`}
+            tooltip={t`Total quantity of this stock item`}
             visible={!stockitem.serial}
             key='quantity'
           />,
           <DetailsBadge
             color='yellow'
             label={`${t`Available`}: ${formatDecimal(available)}`}
+            tooltip={t`Quantity which is not allocated to orders`}
             visible={
               stockitem.in_stock &&
               !stockitem.serial &&
@@ -686,7 +674,29 @@ export default function StockDetail() {
           />,
           <DetailsBadge
             color='blue'
+            label={`${t`Allocated`}: ${formatDecimal(allocated)}`}
+            tooltip={allocatedTooltip}
+            visible={isAllocated}
+            key='allocated'
+          />,
+          <DetailsBadge
+            color='orange'
+            label={t`Fully Allocated`}
+            tooltip={allocatedTooltip}
+            visible={fullyAllocated}
+            key='fully-allocated'
+          />,
+          <DetailsBadge
+            color='red'
+            label={t`Over Allocated`}
+            tooltip={allocatedTooltip}
+            visible={overAllocated}
+            key='over-allocated'
+          />,
+          <DetailsBadge
+            color='blue'
             label={`${t`Batch Code`}: ${stockitem.batch}`}
+            tooltip={t`Batch code of this stock item`}
             visible={!!stockitem.batch}
             key='batch'
           />,
@@ -702,18 +712,21 @@ export default function StockDetail() {
           <DetailsBadge
             color='yellow'
             label={t`Stale`}
+            tooltip={t`This stock item is approaching its expiry date`}
             visible={enableExpiry && stockitem.stale && !stockitem.expired}
             key='stale'
           />,
           <DetailsBadge
             color='orange'
             label={t`Expired`}
+            tooltip={t`This stock item has passed its expiry date`}
             visible={enableExpiry && stockitem.expired}
             key='expired'
           />,
           <DetailsBadge
             color='red'
             label={t`Unavailable`}
+            tooltip={t`This stock item is not available in stock`}
             visible={stockitem.in_stock == false}
             key='unavailable'
           />
@@ -740,6 +753,8 @@ export default function StockDetail() {
           >
             <Stack>
               <PageDetail
+                model={ModelType.stockitem}
+                id={stockitem.pk}
                 title={t`Stock Item`}
                 subtitle={stockitem.part_detail?.full_name}
                 imageUrl={stockitem.part_detail?.thumbnail}

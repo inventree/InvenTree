@@ -19,6 +19,7 @@ import order.models
 import part.filters as part_filters
 import stock.models
 import stock.serializers
+from audit.helpers import write_batched
 from common.settings import get_global_setting
 from company.serializers import (
     AddressBriefSerializer,
@@ -53,7 +54,6 @@ from order.status_codes import (
 )
 from part.serializers import PartBriefSerializer
 from plugin.base.event.events import batch_events
-from stock.models import batch_tracking_entries
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
@@ -131,7 +131,7 @@ class AbstractOrderSerializer(
             'many': False,
         },
         default_include=True,
-        prefetch_fields=['responsible'],
+        prefetch_fields=['responsible', 'responsible__owner'],
     )
 
     project_code_label = common.filters.enable_project_label_filter()
@@ -159,6 +159,8 @@ class AbstractOrderSerializer(
 
     barcode_hash = serializers.CharField(read_only=True)
 
+    # Note: The creation date may be specified (e.g. when creating a historical order),
+    # otherwise it defaults to the current date when the order is created
     creation_date = serializers.DateField(
         required=False, allow_null=True, label=_('Creation Date')
     )
@@ -197,6 +199,16 @@ class AbstractOrderSerializer(
             raise ValidationError(_('Invalid custom status key for this order status'))
 
         return value
+
+    def get_fields(self):
+        """Dynamically set creation_date as read-only on update operations."""
+        fields = super().get_fields()
+
+        # Make creation_date read-only when updating an existing order
+        if self.instance is not None and 'creation_date' in fields:
+            fields['creation_date'].read_only = True
+
+        return fields
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -407,12 +419,7 @@ class PurchaseOrderSerializer(
             'delivery_address_detail',
             'updated_at',
         ])
-        read_only_fields = [
-            'issue_date',
-            'complete_date',
-            'creation_date',
-            'updated_at',
-        ]
+        read_only_fields = ['issue_date', 'complete_date', 'updated_at']
         extra_kwargs = {
             'supplier': {'required': True},
             'order_currency': {'required': False},
@@ -927,7 +934,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=stock.models.StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=stock.models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Additional note for incoming stock items'),
         required=False,
@@ -1127,7 +1134,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
             with (
                 transaction.atomic(),
                 batch_events(),
-                batch_tracking_entries(),
+                write_batched(),
                 batch_offload_tasks(),
             ):
                 items = order.receive_line_items(
@@ -1168,7 +1175,7 @@ class SalesOrderSerializer(
             'updated_at',
             'tags',
         ])
-        read_only_fields = ['status', 'creation_date', 'shipment_date', 'updated_at']
+        read_only_fields = ['status', 'issue_date', 'shipment_date', 'updated_at']
         extra_kwargs = {'order_currency': {'required': False}}
 
     def skip_create_fields(self):
@@ -1492,6 +1499,9 @@ class SalesOrderShipmentSerializer(
             'shipment_address_detail',
             'tags',
         ]
+
+        # Note: Barcodes are assigned via the dedicated barcode endpoints
+        read_only_fields = ['barcode_hash']
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -2209,7 +2219,7 @@ class ReturnOrderSerializer(
             'total_price',
             'updated_at',
         ])
-        read_only_fields = ['creation_date', 'updated_at']
+        read_only_fields = ['issue_date', 'complete_date', 'updated_at']
 
     def skip_create_fields(self):
         """Skip these fields when instantiating a new object."""
@@ -2344,7 +2354,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=stock.models.StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=stock.models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Additional note for incoming stock items'),
         required=False,
@@ -2415,6 +2425,9 @@ class ReturnOrderLineItemSerializer(
             'item_detail',
             'part_detail',
         ])
+
+        # Note: Line items are marked as received via the 'receive' endpoint
+        read_only_fields = ['received_date']
 
     order_detail = OptionalField(
         serializer_class=ReturnOrderSerializer,
@@ -2505,7 +2518,7 @@ class TransferOrderSerializer(
             'consume',
             'complete_date',
         ])
-        read_only_fields = ['creation_date']
+        read_only_fields = ['issue_date', 'complete_date']
         extra_kwargs = {}
 
     def skip_create_fields(self):
@@ -2559,6 +2572,7 @@ class TransferOrderSerializer(
             'allow_null': True,
         },
         default_include=True,
+        prefetch_fields=['take_from', 'take_from__location_type'],
     )
 
     destination_detail = OptionalField(
@@ -2570,6 +2584,7 @@ class TransferOrderSerializer(
             'allow_null': True,
         },
         default_include=True,
+        prefetch_fields=['destination', 'destination__location_type'],
     )
 
 
