@@ -134,7 +134,9 @@ def generate_permission_dict(permissions) -> dict:
     perms = {}
 
     for permission in permissions:
-        perm, model = permission.codename.split('_')
+        # Split on the first underscore only: a plugin permission may have a
+        # codename like 'back_date_signoff' (the model part may contain underscores)
+        perm, model = permission.codename.split('_', 1)
 
         if model not in perms:
             perms[model] = []

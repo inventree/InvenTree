@@ -346,6 +346,20 @@ class UserAPITests(InvenTreeAPITestCase):
 
         self.assertEqual(len(data['permissions']), len(perms) + len(build_perms))
 
+    def test_permission_codename_with_underscores(self):
+        """A permission whose codename has several underscores must not break the roles."""
+        from types import SimpleNamespace
+
+        from users.serializers import generate_permission_dict
+
+        perms = generate_permission_dict([
+            SimpleNamespace(codename='view_part'),
+            SimpleNamespace(codename='back_date_signoff'),
+        ])
+
+        self.assertEqual(perms['part'], ['view'])
+        self.assertEqual(perms['date_signoff'], ['back'])
+
     def test_me_endpoint(self):
         """Test against the users /me/ endpoint."""
         url = reverse('api-user-me')
