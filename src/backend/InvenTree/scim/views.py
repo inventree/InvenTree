@@ -18,6 +18,7 @@ from rest_framework.exceptions import (
     APIException,
     AuthenticationFailed,
     NotAuthenticated,
+    ParseError,
 )
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
@@ -27,6 +28,7 @@ from scim2_models import (
     AuthenticationScheme,
     Bulk,
     ChangePassword,
+    Context,
     Error,
     ETag,
     Filter,
@@ -132,6 +134,9 @@ class ScimAPIView(APIView):
                 str(exc.detail) if hasattr(exc, 'detail') else str(exc),
                 None,
             )
+
+        if isinstance(exc, ParseError):
+            return scim_error(exc.status_code, str(exc.detail), 'invalidSyntax')
 
         if isinstance(exc, APIException):  # pragma: no cover
             detail = exc.detail
@@ -317,7 +322,9 @@ class UsersView(BaseResourceView):
 
     def post(self, request, *args, **kwargs):
         """Provision a new user."""
-        scim_user = User.model_validate(request.data)
+        scim_user = User.model_validate(
+            request.data, scim_ctx=Context.RESOURCE_CREATION_REQUEST
+        )
 
         if DjangoUser.objects.filter(username__iexact=scim_user.user_name).exists():
             return scim_error(
@@ -351,7 +358,9 @@ class UserDetailView(ScimAPIView):
     def put(self, request, pk, *args, **kwargs):
         """Replace a user's attributes."""
         user = self.get_object(pk)
-        scim_user = User.model_validate(request.data)
+        scim_user = User.model_validate(
+            request.data, scim_ctx=Context.RESOURCE_REPLACEMENT_REQUEST
+        )
         apply_scim_to_user(scim_user, user)
         user.save()
         return ScimResponse(user)
@@ -398,7 +407,9 @@ class GroupsView(BaseResourceView):
 
     def post(self, request, *args, **kwargs):
         """Provision a new group."""
-        scim_group = Group.model_validate(request.data)
+        scim_group = Group.model_validate(
+            request.data, scim_ctx=Context.RESOURCE_CREATION_REQUEST
+        )
 
         if DjangoGroup.objects.filter(name__iexact=scim_group.display_name).exists():
             return scim_error(
@@ -431,7 +442,9 @@ class GroupDetailView(ScimAPIView):
     def put(self, request, pk, *args, **kwargs):
         """Replace a group's attributes and membership."""
         group = self.get_object(pk)
-        scim_group = Group.model_validate(request.data)
+        scim_group = Group.model_validate(
+            request.data, scim_ctx=Context.RESOURCE_REPLACEMENT_REQUEST
+        )
         apply_scim_to_group(scim_group, group)
         group.save()
         set_group_members(group, scim_group.members)

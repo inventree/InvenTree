@@ -236,6 +236,11 @@ export function StockDetailsPanel({
       name: 'location',
       label: t`Location`,
       model: ModelType.stocklocation,
+      tooltip: instance?.location_detail?.pathstring,
+      model_formatter: (location: any) =>
+        location?.description
+          ? `${location.name} - ${location.description}`
+          : location?.name,
       hidden: !instance?.location
     },
     {

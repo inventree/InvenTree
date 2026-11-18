@@ -1,4 +1,4 @@
-import { Anchor, Group } from '@mantine/core';
+import { Anchor, Box, Group } from '@mantine/core';
 import {
   IconFile,
   IconFileTypeCsv,
@@ -85,16 +85,25 @@ export function AttachmentLink({
   }, [attachment, external]);
 
   return (
-    <Group justify='left' gap='sm' wrap='nowrap'>
-      {thumbnail ? (
-        <Thumbnail src={thumbnail} hover size={16} />
-      ) : external ? (
-        <IconLink />
-      ) : (
-        attachmentIcon(attachment)
-      )}
+    <Group justify='left' gap='sm' wrap='nowrap' miw={0} maw='100%'>
+      <Box display='flex' style={{ flexShrink: 0 }}>
+        {thumbnail ? (
+          <Thumbnail src={thumbnail} hover size={16} />
+        ) : external ? (
+          <IconLink />
+        ) : (
+          attachmentIcon(attachment)
+        )}
+      </Box>
       {!!attachment ? (
-        <Anchor href={url} target='_blank' rel='noopener noreferrer'>
+        <Anchor
+          href={url}
+          target='_blank'
+          rel='noopener noreferrer'
+          title={text}
+          truncate='end'
+          miw={0}
+        >
           {text}
         </Anchor>
       ) : (

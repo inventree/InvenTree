@@ -1,15 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 581
+INVENTREE_API_VERSION = 582
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v581 -> 2026-11-16 : https://github.com/inventree/InvenTree/pull/XXXX
+v582 -> 2026-11-16 : https://github.com/inventree/InvenTree/pull/13294
     - Adds StockItemCostEntry and StockItemCost (summary) models to the "pricing" app
-    - Adds /api/pricing/stock-cost-entry/ list and detail endpoints (and /api/pricing/stock-cost-entry/status/)
     - Adds /api/pricing/stock-cost/ list and detail endpoints (read-only)
     - Access to these endpoints requires the "pricing" role, and the "stock" role (view to read, change to write)
     - Adds optional "pricing_detail" field to the StockItem API (requires the "pricing" view role)
@@ -20,8 +19,10 @@ v581 -> 2026-11-16 : https://github.com/inventree/InvenTree/pull/XXXX
     - Breaking: Explicit per-line "purchase_price" values for stock disassembly now create cost entries (and no longer set the purchase price), and default to the default currency
     - Breaking: Removes the "PURCHASEORDER_CONVERT_CURRENCY" global setting
 
+v581 -> 2026-11-17 : https://github.com/inventree/InvenTree/pull/13305
+    - Assign correct BOM permission role to part/copy-bom API endpoint
+
 v580 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13072
-    - Adds feature info to contenttype endpoint
 
 v579 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13271
     - The "consumed" field on the BuildLine API is now read-only - stock must be consumed via the build order endpoints

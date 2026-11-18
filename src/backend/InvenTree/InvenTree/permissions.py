@@ -367,6 +367,10 @@ class IsSuperuserOrReadOnlyOrScope(OASTokenMixin, permissions.IsAdminUser):
 class IsAuthenticatedOrReadScope(OASTokenMixin, permissions.IsAuthenticated):
     """Allows access only to authenticated users or read / write scope tokens."""
 
+    # Any authenticated user may access the endpoint, regardless of model permissions
+    # (see InvenTreeMetadata.determine_metadata)
+    allows_any_authenticated_user = True
+
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
         return map_scope(
@@ -382,6 +386,10 @@ class IsAuthenticatedNotOAuth2(OASTokenMixin, permissions.IsAuthenticated):
     Used for endpoints which issue or manage credentials (e.g. API tokens):
     a scoped OAuth2 token must not be able to obtain an unscoped credential.
     """
+
+    # Any authenticated user may access the endpoint, regardless of model permissions
+    # (see InvenTreeMetadata.determine_metadata)
+    allows_any_authenticated_user = True
 
     def get_required_alternate_scopes(self, request, view):
         """No scope grants access to this endpoint."""
