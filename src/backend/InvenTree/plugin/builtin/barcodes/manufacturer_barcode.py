@@ -7,8 +7,11 @@ a manufacturer part number (MPN).
 The following barcode formats are supported:
 
 - ISO/IEC 15434 / ECIA 2D barcodes (e.g. DataMatrix) with GS / RS field separators,
-  containing a '1P' (manufacturer part number) or 'P' data identifier field.
-- A single field with a '1P' or 'P' prefix, followed by the MPN (e.g. '1PLM358' or 'PLM358').
+  containing a '1P' (manufacturer part number), '50P' or 'P' data identifier field.
+- A single field with a '1P', '50P' or 'P' prefix, followed by the MPN (e.g. '1PLM358' or 'PLM358').
+
+Support for the '50P' data identifier is controlled by the ENABLE_50P plugin setting,
+and is treated identically to a '1P' field.
 - The raw MPN string (e.g. 'LM358').
 
 A match is only returned if exactly one ManufacturerPart matches the MPN exactly.
@@ -25,7 +28,7 @@ import structlog
 
 from company.models import ManufacturerPart
 from plugin import InvenTreePlugin
-from plugin.mixins import BarcodeMixin
+from plugin.mixins import BarcodeMixin, SettingsMixin
 from users.permissions import check_user_permission
 
 logger = structlog.get_logger('inventree')
@@ -43,10 +46,14 @@ DATA_IDENTIFIER_REGEX = re.compile(r'^(\d{0,3}[A-Z])')
 CONTROL_CHAR_REGEX = re.compile(r'[\x00-\x1f\x7f]')
 
 # Data identifiers which may contain a manufacturer part number, in order of preference
-MPN_IDENTIFIERS = ['1P', 'P']
+MPN_IDENTIFIERS = ['1P', '50P', 'P']
+
+# Optional data identifiers, which can be disabled via plugin settings
+# Maps identifier -> setting key
+OPTIONAL_MPN_IDENTIFIERS = {'50P': 'ENABLE_50P'}
 
 
-class ManufacturerBarcodePlugin(BarcodeMixin, InvenTreePlugin):
+class ManufacturerBarcodePlugin(BarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Fallback barcode plugin for matching manufacturer part numbers."""
 
     NAME = 'ManufacturerBarcodePlugin'
@@ -55,11 +62,31 @@ class ManufacturerBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     DESCRIPTION = _(
         'Fallback barcode support for matching manufacturer part numbers (MPN)'
     )
-    VERSION = '1.0.0'
+    VERSION = '1.1.0'
     AUTHOR = _('InvenTree contributors')
 
     # Fallback plugin - query after all other barcode plugins
     BARCODE_PRIORITY = -100
+
+    SETTINGS = {
+        'ENABLE_50P': {
+            'name': _('Enable 50P Codes'),
+            'description': _(
+                "Treat '50P' data identifier fields as manufacturer part numbers (same as '1P')"
+            ),
+            'default': True,
+            'validator': bool,
+        }
+    }
+
+    def mpn_identifiers(self) -> list[str]:
+        """Return the list of enabled MPN data identifiers, in order of preference."""
+        return [
+            identifier
+            for identifier in MPN_IDENTIFIERS
+            if identifier not in OPTIONAL_MPN_IDENTIFIERS
+            or self.get_setting(OPTIONAL_MPN_IDENTIFIERS[identifier], backup_value=True)
+        ]
 
     @staticmethod
     def max_mpn_length() -> int:
@@ -84,17 +111,23 @@ class ManufacturerBarcodePlugin(BarcodeMixin, InvenTreePlugin):
         return fields
 
     @classmethod
-    def extract_mpn_candidates(cls, barcode_data: str) -> list[str]:
+    def extract_mpn_candidates(
+        cls, barcode_data: str, identifiers: list[str] | None = None
+    ) -> list[str]:
         """Extract a list of candidate MPN values from the provided barcode data.
 
         Arguments:
             barcode_data: The raw barcode data
+            identifiers: Data identifiers to match, in order of preference (default = all supported)
 
         Returns:
             A list of candidate MPN strings (may be empty)
         """
         if not isinstance(barcode_data, str) or not barcode_data:
             return []
+
+        if identifiers is None:
+            identifiers = MPN_IDENTIFIERS
 
         candidates = []
 
@@ -103,9 +136,9 @@ class ManufacturerBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             # Only the MPN fields are considered - never the raw barcode data
             fields = cls.parse_data_identifier_fields(barcode_data)
 
-            for identifier in MPN_IDENTIFIERS:
+            for identifier in identifiers:
                 if value := fields.get(identifier, '').strip():
-                    # Prefer '1P' over 'P' - a 'P' field is typically a
+                    # Prefer '1P' / '50P' over 'P' - a 'P' field is typically a
                     # customer or supplier part number when '1P' is present
                     candidates.append(value)
                     break
@@ -116,8 +149,8 @@ class ManufacturerBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             if not data or CONTROL_CHAR_REGEX.search(data):
                 return []
 
-            # Single field with a '1P' or 'P' prefix
-            for identifier in MPN_IDENTIFIERS:
+            # Single field with a '1P', '50P' or 'P' prefix
+            for identifier in identifiers:
                 if data.startswith(identifier):
                     candidates.append(data[len(identifier) :].strip())
                     break
@@ -146,7 +179,9 @@ class ManufacturerBarcodePlugin(BarcodeMixin, InvenTreePlugin):
         Returns:
             A dict containing the matched ManufacturerPart, or None if there is not exactly one match
         """
-        candidates = self.extract_mpn_candidates(barcode_data)
+        candidates = self.extract_mpn_candidates(
+            barcode_data, identifiers=self.mpn_identifiers()
+        )
 
         if not candidates:
             return None
