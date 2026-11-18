@@ -4069,34 +4069,24 @@ class StockAdjustmentCustomStatusTest(StockAPITestCase):
     def test_remove_allocated_stock_rejected(self):
         """Stock removal must not reduce quantity below active allocations."""
         item = StockItem.objects.create(
-            part=self.part,
-            location=self.source,
-            quantity=10,
+            part=self.part, location=self.source, quantity=10
         )
 
         customer = company.models.Company.objects.create(
-            name='Allocation test customer',
-            is_customer=True,
+            name='Allocation test customer', is_customer=True
         )
         sales_order = order.models.SalesOrder.objects.create(
-            customer=customer,
-            reference='SO-ALLOCATION-TEST',
+            customer=customer, reference='SO-ALLOCATION-TEST'
         )
         shipment = order.models.SalesOrderShipment.objects.create(
-            order=sales_order,
-            reference='SHIP-ALLOCATION-TEST',
+            order=sales_order, reference='SHIP-ALLOCATION-TEST'
         )
         line = order.models.SalesOrderLineItem.objects.create(
-            order=sales_order,
-            part=self.part,
-            quantity=10,
+            order=sales_order, part=self.part, quantity=10
         )
 
         order.models.SalesOrderAllocation.objects.create(
-            line=line,
-            shipment=shipment,
-            item=item,
-            quantity=10,
+            line=line, shipment=shipment, item=item, quantity=10
         )
 
         self.post(
@@ -4110,6 +4100,7 @@ class StockAdjustmentCustomStatusTest(StockAPITestCase):
 
         item.refresh_from_db()
         self.assertEqual(item.quantity, 10)
+
 
 class StockTransferMergeTest(StockAPITestCase):
     """Tests for optional merge-on-transfer behavior."""

@@ -998,22 +998,19 @@ class SalesOrderTest(InvenTreeAPITestCase):
         stock_item = StockItem.objects.create(part=self.part, quantity=10)
 
         SalesOrderAllocation.objects.create(
-            line=self.line,
-            shipment=self.shipment,
-            item=stock_item,
-            quantity=10,
+            line=self.line, shipment=self.shipment, item=stock_item, quantity=10
         )
 
         # Simulate stock being reduced while the allocation remains unchanged
         StockItem.objects.filter(pk=stock_item.pk).update(quantity=2)
 
         self.shipment.complete_allocations(
-            self.shipment.allocations.all(),
-            user=self.user,
+            self.shipment.allocations.all(), user=self.user
         )
 
         self.line.refresh_from_db()
         self.assertEqual(self.line.shipped, 2)
+
 
 class SalesOrderAutoAllocateTest(InvenTreeTestCase):
     """Tests for SalesOrder.auto_allocate_stock()."""

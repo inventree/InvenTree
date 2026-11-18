@@ -2164,6 +2164,7 @@ class StockAddSerializer(StockAdjustmentSerializer):
 
                 stock_item.add_stock(quantity, request.user, notes=notes, **extra)
 
+
 class StockRemoveSerializer(StockAdjustmentSerializer):
     """Serializer for removing stock from stock item(s)."""
 
@@ -2203,9 +2204,9 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
                         _('Cannot remove stock that is allocated to an order or build')
                     )
 
-                stock_item.take_stock(
-                    quantity, request.user, notes=notes, **extra
-                )
+                stock_item.take_stock(quantity, request.user, notes=notes, **extra)
+
+
 class StockTransferSerializer(StockAdjustmentSerializer):
     """Serializer for transferring (moving) stock item(s)."""
 

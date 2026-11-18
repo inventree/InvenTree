@@ -3039,7 +3039,6 @@ class SalesOrderShipment(
         for allocation in allocations:
             stock_item = seen_stock_items.get(allocation.item_id) or allocation.item
 
-
             if (locked_qty := locked_quantities.pop(stock_item.pk, None)) is not None:
                 # First encounter: refresh the quantity from the locked database row
                 stock_item.quantity = locked_qty
