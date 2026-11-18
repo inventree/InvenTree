@@ -159,6 +159,7 @@ jobs:
       contents: read
       packages: write
       id-token: write
+      attestations: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       python_version: 3.12
@@ -231,9 +232,16 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           sbom: true
-          provenance: false
+          provenance: mode=max
           target: production
           tags: ${{ env.docker_tags }}
           build-args: |
             commit_hash=${{ env.git_commit_hash }}
             commit_date=${{ env.git_commit_date }}
+      - name: Attest build provenance (GHCR)
+        if: github.event_name != 'pull_request'
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-name: ghcr.io/inventree/inventree
+          subject-digest: ${{ steps.push-docker.outputs.digest }}
+          push-to-registry: true
