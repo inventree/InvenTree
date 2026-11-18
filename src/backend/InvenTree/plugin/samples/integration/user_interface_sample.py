@@ -235,7 +235,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             {
                 'key': 'sample-stock-table-action',
                 'title': _('Sample Stock Table Action'),
-                'icon': 'ti:plus:outline',
+                'icon': 'ti:puzzle:outline',
                 'source': self.plugin_static_file('sample_table_action.js'),
                 'options': {'requires_selection': True},
             }

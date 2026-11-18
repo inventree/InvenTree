@@ -243,6 +243,8 @@ The path is relative to the plugin's own URL namespace and uses React Router pat
 
 The `get_ui_table_actions` method can add additional actions to selectable table headers. The UI requests actions using the current `location` (pathname), `model_type`, `table_url`, and optional `table_id`. Use these fields to restrict which tables show your action. For tables without a model type, or to distinguish two tables with the same model and URL, the table should set a stable `pluginTableId` in its `InvenTreeTable` props (it is required when there is no model type). Do not use the table's changing refresh key as an identifier.
 
+{{ image("plugin/table_actions.png", "Highlighted sample action with two stock items selected") }}
+
 ::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_table_actions
     options:
       show_bases: False

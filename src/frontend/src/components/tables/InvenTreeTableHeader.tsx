@@ -282,6 +282,7 @@ export default function InvenTreeTableHeader({
               <ActionButton
                 key={`${action.plugin_name}-${action.key}`}
                 tooltip={action.title}
+                tooltipAlignment='bottom'
                 icon={
                   action.icon ? <ApiIcon name={action.icon} /> : <IconBolt />
                 }
