@@ -49,12 +49,29 @@ class ManufacturerBarcodeParseTests(InvenTreeAPITestCase):
         # Empty MPN field
         self.assertEqual(extract(ecia('1P', 'Q10')), [])
 
+        # 50P field (treated the same as 1P)
+        self.assertEqual(extract(ecia('K123', '50PLM358', 'Q10')), ['LM358'])
+        self.assertEqual(extract(ecia('PSKU-123', '50PLM358')), ['LM358'])
+
+        # 1P is preferred over 50P
+        self.assertEqual(extract(ecia('50PXYZ', '1PLM358')), ['LM358'])
+
+        # 50P support disabled
+        self.assertEqual(
+            extract(ecia('50PLM358', 'PSKU-123'), identifiers=['1P', 'P']), ['SKU-123']
+        )
+        self.assertEqual(extract(ecia('50PLM358'), identifiers=['1P', 'P']), [])
+
     def test_simple(self):
         """Test extraction from simple (single field) barcodes."""
         extract = ManufacturerBarcodePlugin.extract_mpn_candidates
 
         self.assertEqual(extract('1PLM358'), ['LM358', '1PLM358'])
         self.assertEqual(extract('PLM358'), ['LM358', 'PLM358'])
+        self.assertEqual(extract('50PLM358'), ['LM358', '50PLM358'])
+
+        # 50P support disabled - only the raw data is a candidate
+        self.assertEqual(extract('50PLM358', identifiers=['1P', 'P']), ['50PLM358'])
         self.assertEqual(extract('  LM358 \n'), ['LM358'])
         self.assertEqual(extract('LM358'), ['LM358'])
 
@@ -181,6 +198,35 @@ class ManufacturerBarcodeTests(InvenTreeAPITestCase):
 
         # Raw MPN which happens to start with 'P'
         self.assertMatch('PIC16F84A', self.pic)
+
+    def test_50p(self):
+        """Test scanning of '50P' barcodes, which can be disabled via plugin setting."""
+        plugin = registry.get_plugin(PLUGIN_SLUG)
+
+        # Enabled by default
+        self.assertTrue(plugin.get_setting('ENABLE_50P'))
+        self.assertMatch(ecia('K123', '50PLM358', 'Q10'), self.lm358)
+        self.assertMatch('50PLM358', self.lm358)
+
+        # 50P takes precedence over P
+        self.assertMatch(ecia('PPIC16F84A', '50PLM358'), self.lm358)
+
+        plugin.set_setting('ENABLE_50P', False)
+
+        try:
+            self.assertEqual(plugin.mpn_identifiers(), ['1P', 'P'])
+            self.assertNoMatch(ecia('K123', '50PLM358', 'Q10'))
+            self.assertNoMatch('50PLM358')
+
+            # Falls back to the P field
+            self.assertMatch(ecia('PPIC16F84A', '50PLM358'), self.pic)
+
+            # 1P is unaffected
+            self.assertMatch(ecia('1PLM358'), self.lm358)
+        finally:
+            plugin.set_setting('ENABLE_50P', True)
+
+        self.assertEqual(plugin.mpn_identifiers(), ['1P', '50P', 'P'])
 
     def test_exact_match(self):
         """Partial matches are not accepted."""

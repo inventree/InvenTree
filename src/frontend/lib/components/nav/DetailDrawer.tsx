@@ -16,6 +16,7 @@ import * as classes from './DetailDrawer.css';
  * @param position - drawer position
  * @param renderContent - function used to render the drawer content
  * @param urlPrefix - set an additional url segment, useful when multiple drawers are rendered on one page (e.g. "user/")
+ * @param onBeforeClose - optional callback to intercept closing of the drawer (e.g. to confirm unsaved changes). Call the provided "close" function to actually close the drawer.
  */
 export interface DrawerProps {
   title: string;
@@ -24,6 +25,7 @@ export interface DrawerProps {
   urlPrefix?: string;
   size?: UiSizeType;
   closeOnEscape?: boolean;
+  onBeforeClose?: (close: () => void) => void;
 }
 
 export function DetailDrawerComponent({
@@ -31,7 +33,8 @@ export function DetailDrawerComponent({
   position = 'right',
   size,
   closeOnEscape = true,
-  renderContent
+  renderContent,
+  onBeforeClose
 }: Readonly<DrawerProps>) {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -43,13 +46,27 @@ export function DetailDrawerComponent({
     useShallow((state) => [state.detailDrawerStack, state.addDetailDrawer])
   );
 
+  // Run a "close" action, optionally allowing the owner of the drawer to intercept it
+  const guardedClose = useCallback(
+    (close: () => void) => {
+      if (onBeforeClose) {
+        onBeforeClose(close);
+      } else {
+        close();
+      }
+    },
+    [onBeforeClose]
+  );
+
   return (
     <Drawer
       opened={opened}
-      onClose={() => {
-        navigate('../');
-        addDetailDrawer(false);
-      }}
+      onClose={() =>
+        guardedClose(() => {
+          navigate('../');
+          addDetailDrawer(false);
+        })
+      }
       position={position}
       closeOnEscape={closeOnEscape}
       size={size}
@@ -60,10 +77,12 @@ export function DetailDrawerComponent({
           {detailDrawerStack > 0 && (
             <ActionIcon
               variant='outline'
-              onClick={() => {
-                navigate(-1);
-                addDetailDrawer(-1);
-              }}
+              onClick={() =>
+                guardedClose(() => {
+                  navigate(-1);
+                  addDetailDrawer(-1);
+                })
+              }
             >
               <IconChevronLeft />
             </ActionIcon>

@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 581
+INVENTREE_API_VERSION = 582
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v581 -> 2026-11-16 : https://github.com/inventree/InvenTree/pull/12072
+v582 -> 2026-11-19 : https://github.com/inventree/InvenTree/pull/12072
     - Adds API endpoints for RepairOrder, RepairOrderLineItem, and RepairOrderAllocation models
     - RepairOrder status transitions use the generic transition API (adds /api/build/repair/<id>/_transitions/)
     - Adds "consumed_by_repair" field (and filter) to the StockItem API
+
+v581 -> 2026-11-17 : https://github.com/inventree/InvenTree/pull/13305
+    - Assign correct BOM permission role to part/copy-bom API endpoint
 
 v580 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13072
     - Adds feature info to contenttype endpoint

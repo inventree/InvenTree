@@ -1,3 +1,6 @@
-export { TemplateEditor } from './TemplateEditor';
+export {
+  TemplateEditor,
+  useTemplateEditorCloseGuard
+} from './TemplateEditor';
 export { CodeEditor } from './CodeEditor';
 export { PdfPreview } from './PdfPreview';
