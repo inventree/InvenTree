@@ -23,6 +23,7 @@ FeatureType = Literal[
     'navigation',  # Custom navigation items
     'primary_action',  # Custom primary action buttons
     'route',  # Custom react router path
+    'table_action',  # Actions for a table and its selected records
 ]
 
 
@@ -110,6 +111,7 @@ class UserInterfaceMixin:
             'template_preview': self.get_ui_template_previews,
             'primary_action': self.get_ui_primary_actions,
             'route': self.get_ui_routes,
+            'table_action': self.get_ui_table_actions,
         }
 
         if feature_type in feature_map:
@@ -206,6 +208,24 @@ class UserInterfaceMixin:
             list: A list of custom navigation items to be injected into the UI
         """
         # Default implementation returns an empty list
+        return []
+
+    def get_ui_table_actions(
+        self, request: Request, context: dict, **kwargs
+    ) -> list[UIFeature]:
+        """Return actions for a table header.
+
+        Args:
+            request: HTTP request (including the current user).
+            context: Query parameters: location, model_type, table_url and
+                optional table_id. The selected items are not sent here; the
+                client supplies them to the action handler when clicked.
+
+        Returns:
+            Custom actions available in this table. An action's source must
+            export getFeature (or specify another function in the source URL).
+            Options may include color and requires_selection (default True).
+        """
         return []
 
     def get_ui_primary_actions(
