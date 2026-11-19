@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-16 21:08+0000\n"
-"PO-Revision-Date: 2026-11-16 21:12\n"
+"POT-Creation-Date: 2026-11-18 00:52+0000\n"
+"PO-Revision-Date: 2026-11-18 00:56\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -111,10 +111,10 @@ msgstr "غير صالح عشري قيمة"
 #: build/serializers.py:601 build/serializers.py:1782 common/models.py:3290
 #: company/models.py:922 order/models.py:2289
 #: report/templates/report/inventree_build_order_report.html:171
-#: stock/models.py:3824 stock/serializers.py:786 stock/serializers.py:970
-#: stock/serializers.py:1163 stock/serializers.py:1330
-#: stock/serializers.py:1621 stock/serializers.py:1711
-#: stock/serializers.py:1910
+#: stock/models.py:3824 stock/serializers.py:800 stock/serializers.py:994
+#: stock/serializers.py:1187 stock/serializers.py:1359
+#: stock/serializers.py:1650 stock/serializers.py:1740
+#: stock/serializers.py:2025
 msgid "Notes"
 msgstr "ملاحظات"
 
@@ -146,51 +146,51 @@ msgstr "لم يتم العثور على أرقام متسلسلة"
 msgid "Remove HTML tags from this value"
 msgstr "إزالة علامات HTML من هذه القيمة"
 
-#: InvenTree/helpers_model.py:168
+#: InvenTree/helpers_model.py:186
 msgid "Invalid URL: no hostname"
 msgstr "غير صالح URL: لا hostname"
 
-#: InvenTree/helpers_model.py:173
+#: InvenTree/helpers_model.py:191
 msgid "Invalid URL: hostname could not be resolved"
 msgstr "غير صالح URL: hostname يمكن غير يكون resolved"
 
-#: InvenTree/helpers_model.py:177
+#: InvenTree/helpers_model.py:195
 msgid "URL points to a private or reserved IP address"
 msgstr "URL points إلى خاص أو reserved IP عنوان"
 
-#: InvenTree/helpers_model.py:258
+#: InvenTree/helpers_model.py:276
 msgid "Too many redirects"
 msgstr "أيضًا many redirects"
 
-#: InvenTree/helpers_model.py:263
+#: InvenTree/helpers_model.py:281
 msgid "Connection error"
 msgstr "خطأ فى الاتصال"
 
-#: InvenTree/helpers_model.py:268 InvenTree/helpers_model.py:277
+#: InvenTree/helpers_model.py:286 InvenTree/helpers_model.py:295
 msgid "Server responded with invalid status code"
 msgstr "خادم responded مع غير صالح حالة رمز"
 
-#: InvenTree/helpers_model.py:273
+#: InvenTree/helpers_model.py:291
 msgid "Exception occurred"
 msgstr "Exception حدث"
 
-#: InvenTree/helpers_model.py:283
+#: InvenTree/helpers_model.py:301
 msgid "Server responded with invalid Content-Length value"
 msgstr "خادم responded مع غير صالح Content-Length قيمة"
 
-#: InvenTree/helpers_model.py:286
+#: InvenTree/helpers_model.py:304
 msgid "Image size is too large"
 msgstr "صورة حجم هو أيضًا large"
 
-#: InvenTree/helpers_model.py:298
+#: InvenTree/helpers_model.py:316
 msgid "Image download exceeded maximum size"
 msgstr "صورة تنزيل exceeded أقصى حجم"
 
-#: InvenTree/helpers_model.py:303
+#: InvenTree/helpers_model.py:321
 msgid "Remote server returned empty response"
 msgstr "بعيد خادم مرتجع فارغ استجابة"
 
-#: InvenTree/helpers_model.py:311
+#: InvenTree/helpers_model.py:329
 msgid "Supplied URL is not a valid image file"
 msgstr "مورد URL هو غير صالح صورة ملف"
 
@@ -360,7 +360,7 @@ msgstr "نسخ معلمات"
 msgid "Copy parameters from the original item"
 msgstr "نسخ معلمات من ال أصلي عنصر"
 
-#: InvenTree/serializers.py:1159 part/serializers.py:929
+#: InvenTree/serializers.py:1159 part/serializers.py:931
 msgid "Copy Notes"
 msgstr "نسخ ملاحظات"
 
@@ -721,10 +721,10 @@ msgstr "تضمين متغيرات"
 #: order/api.py:329 order/api.py:333 order/api.py:1005 order/api.py:1347
 #: order/api.py:1350 order/api.py:2213 order/api.py:2216 order/api.py:2371
 #: order/models.py:2474 order/models.py:2650 order/models.py:2651
-#: order/models.py:4239 order/models.py:4240 part/api.py:1123 part/api.py:1126
-#: part/api.py:1343 part/models.py:537 part/models.py:2643 part/models.py:2700
+#: order/models.py:4239 order/models.py:4240 part/api.py:1129 part/api.py:1132
+#: part/api.py:1349 part/models.py:537 part/models.py:2643 part/models.py:2700
 #: part/models.py:2841 part/models.py:3183 part/models.py:3681
-#: part/serializers.py:1290 part/serializers.py:1778 pricing/models.py:724
+#: part/serializers.py:1292 part/serializers.py:1780 pricing/models.py:724
 #: pricing/models.py:880 pricing/models.py:909
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
@@ -735,8 +735,8 @@ msgstr "تضمين متغيرات"
 #: report/templates/report/inventree_sales_order_shipment_report.html:27
 #: report/templates/report/inventree_stock_location_report.html:102
 #: report/templates/report/inventree_transfer_order_report.html:24
-#: stock/api.py:656 stock/serializers.py:120 stock/serializers.py:172
-#: stock/serializers.py:429 stock/serializers.py:637 stock/serializers.py:1247
+#: stock/api.py:656 stock/serializers.py:121 stock/serializers.py:173
+#: stock/serializers.py:430 stock/serializers.py:651 stock/serializers.py:1276
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
@@ -747,9 +747,9 @@ msgstr "تضمين متغيرات"
 msgid "Part"
 msgstr "الصنف"
 
-#: build/api.py:133 build/api.py:136 build/serializers.py:1498 part/api.py:955
-#: part/api.py:1354 part/models.py:413 part/models.py:1182 part/models.py:2728
-#: part/serializers.py:1300 part/serializers.py:1540 stock/api.py:944
+#: build/api.py:133 build/api.py:136 build/serializers.py:1498 part/api.py:961
+#: part/api.py:1360 part/models.py:413 part/models.py:1182 part/models.py:2728
+#: part/serializers.py:1302 part/serializers.py:1542 stock/api.py:944
 msgid "Category"
 msgstr "الفئة"
 
@@ -823,7 +823,7 @@ msgid "Optional"
 msgstr "اختياري"
 
 #: build/api.py:490 build/serializers.py:1470 part/models.py:1297
-#: part/serializers.py:1485 part/serializers.py:1511 part/system_settings.py:92
+#: part/serializers.py:1487 part/serializers.py:1513 part/system_settings.py:92
 #: stock/api.py:709
 msgid "Assembly"
 msgstr "تجميع"
@@ -858,8 +858,8 @@ msgstr "متاح"
 
 #: build/api.py:591 build/serializers.py:1529 company/api.py:340
 #: company/serializers.py:458 order/serializers.py:1447
-#: order/serializers.py:2793 part/serializers.py:796 part/serializers.py:1151
-#: part/serializers.py:1549 templates/email/low_stock_notification.html:18
+#: order/serializers.py:2793 part/serializers.py:798 part/serializers.py:1153
+#: part/serializers.py:1551 templates/email/low_stock_notification.html:18
 msgid "On Order"
 msgstr "قيد الطلب"
 
@@ -869,7 +869,7 @@ msgstr "إنتاج غير تم العثور"
 
 #: build/api.py:1147 build/models.py:139 order/models.py:2507
 #: report/templates/report/inventree_build_order_report.html:104
-#: stock/serializers.py:93 templates/email/build_order_completed.html:16
+#: stock/serializers.py:94 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "أمر إنتاج"
@@ -878,17 +878,17 @@ msgstr "أمر إنتاج"
 #: build/serializers.py:526 build/serializers.py:578 build/serializers.py:1264
 #: build/serializers.py:1270 order/api.py:1394 order/api.py:1399
 #: order/api.py:2252 order/api.py:2257 order/serializers.py:885
-#: order/serializers.py:1029 order/serializers.py:2352 part/serializers.py:1310
-#: stock/api.py:1059 stock/serializers.py:111 stock/serializers.py:649
-#: stock/serializers.py:778 stock/serializers.py:964 stock/serializers.py:1087
-#: stock/serializers.py:1155 stock/serializers.py:1703
-#: stock/serializers.py:1967 stock/serializers.py:2095
-#: stock/serializers.py:2211 templates/email/purchase_order_received.html:17
+#: order/serializers.py:1029 order/serializers.py:2352 part/serializers.py:1312
+#: stock/api.py:1059 stock/serializers.py:112 stock/serializers.py:663
+#: stock/serializers.py:792 stock/serializers.py:988 stock/serializers.py:1111
+#: stock/serializers.py:1179 stock/serializers.py:1732
+#: stock/serializers.py:2089 stock/serializers.py:2219
+#: stock/serializers.py:2335 templates/email/purchase_order_received.html:17
 #: templates/email/stale_stock_notification.html:18 users/models.py:803
 msgid "Location"
 msgstr "الموقع"
 
-#: build/api.py:1173 part/serializers.py:1335
+#: build/api.py:1173 part/serializers.py:1337
 msgid "Output"
 msgstr "مخرج"
 
@@ -1013,8 +1013,8 @@ msgid "Build status code"
 msgstr "إنتاج حالة رمز"
 
 #: build/models.py:375 build/serializers.py:407 order/serializers.py:902
-#: order/serializers.py:1035 stock/models.py:1283 stock/serializers.py:85
-#: stock/serializers.py:1870
+#: order/serializers.py:1035 stock/models.py:1283 stock/serializers.py:86
+#: stock/serializers.py:1985
 msgid "Batch Code"
 msgstr "رمز الدفعة"
 
@@ -1129,8 +1129,8 @@ msgstr ""
 #: order/models.py:921 order/serializers.py:661 order/serializers.py:896
 #: part/models.py:3073 stock/models.py:1123 stock/models.py:1548
 #: stock/models.py:1631 stock/models.py:1948 stock/models.py:2158
-#: stock/models.py:2529 stock/serializers.py:756 stock/serializers.py:1078
-#: stock/serializers.py:1140 stock/serializers.py:1859
+#: stock/models.py:2529 stock/serializers.py:770 stock/serializers.py:1102
+#: stock/serializers.py:1164 stock/serializers.py:1974
 msgid "Quantity must be greater than zero"
 msgstr "يجب أن يكون الكمية أكبر من صفر"
 
@@ -1181,8 +1181,8 @@ msgstr "إنتاج كائن"
 #: report/templates/report/inventree_test_report.html:90
 #: report/templates/report/inventree_test_report.html:169
 #: report/templates/report/inventree_transfer_order_report.html:26
-#: stock/serializers.py:136 stock/serializers.py:180 stock/serializers.py:744
-#: stock/serializers.py:1071 stock/serializers.py:1128
+#: stock/serializers.py:137 stock/serializers.py:181 stock/serializers.py:758
+#: stock/serializers.py:1095 stock/serializers.py:1152
 #: templates/email/build_order_completed.html:18
 #: templates/email/purchase_order_received.html:16
 #: templates/email/stale_stock_notification.html:19
@@ -1221,8 +1221,8 @@ msgstr "عنصر المخزون هو over-allocated"
 #: order/serializers.py:1770 order/serializers.py:1791
 #: order/serializers.py:2816 order/serializers.py:2837
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
-#: stock/api.py:1517 stock/models.py:497 stock/serializers.py:102
-#: stock/serializers.py:875 stock/serializers.py:1554 stock/serializers.py:1671
+#: stock/api.py:1517 stock/models.py:497 stock/serializers.py:103
+#: stock/serializers.py:894 stock/serializers.py:1583 stock/serializers.py:1700
 msgid "Stock Item"
 msgstr "عنصر مخزون"
 
@@ -1246,7 +1246,7 @@ msgstr "الوجهة عنصر المخزون"
 msgid "Build Level"
 msgstr "إنتاج مستوى"
 
-#: build/serializers.py:143 part/serializers.py:1237
+#: build/serializers.py:143 part/serializers.py:1239
 msgid "Part Name"
 msgstr "صنف اسم"
 
@@ -1283,7 +1283,7 @@ msgid "Integer quantity required, as the bill of materials contains trackable pa
 msgstr "عدد صحيح كمية مطلوب، بصفته ال قائمة المواد يحتوي قابل للتتبع أصناف"
 
 #: build/serializers.py:414 order/serializers.py:918 order/serializers.py:1946
-#: order/serializers.py:3044 stock/serializers.py:767
+#: order/serializers.py:3044 stock/serializers.py:781
 msgid "Serial Numbers"
 msgstr "الأرقام التسلسلية"
 
@@ -1332,8 +1332,8 @@ msgstr "Reason لـ scrapping مخرجات الإنتاج(s)"
 msgid "Location for completed build outputs"
 msgstr "موقع لـ مكتمل إنتاج مخرجات"
 
-#: build/serializers.py:586 stock/serializers.py:980 stock/serializers.py:1975
-#: stock/serializers.py:2103 stock/serializers.py:2219
+#: build/serializers.py:586 stock/serializers.py:1004 stock/serializers.py:2097
+#: stock/serializers.py:2227 stock/serializers.py:2343
 msgid "Structural locations cannot be assigned stock items"
 msgstr "هيكلي مواقع لا يمكن يكون مسند عناصر المخزون"
 
@@ -1441,7 +1441,7 @@ msgstr "إنتاج بند"
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.صنف يجب نقطة إلى ال نفس صنف بصفته ال أمر الإنتاج"
 
-#: build/serializers.py:921 stock/serializers.py:1567
+#: build/serializers.py:921 stock/serializers.py:1596
 msgid "Item must be in stock"
 msgstr "يجب أن يكون عنصر في مخزون"
 
@@ -1552,11 +1552,11 @@ msgstr "إنتاج"
 
 #: build/serializers.py:1302 company/models.py:731 order/api.py:342
 #: order/api.py:347 order/api.py:552 order/serializers.py:653
-#: stock/models.py:1219 stock/serializers.py:616
+#: stock/models.py:1219 stock/serializers.py:630
 msgid "Supplier Part"
 msgstr "صنف المورد"
 
-#: build/serializers.py:1318 stock/serializers.py:679
+#: build/serializers.py:1318 stock/serializers.py:693
 msgid "Allocated Quantity"
 msgstr "كمية مخصص"
 
@@ -1581,24 +1581,24 @@ msgid "Allow Variants"
 msgstr "السماح متغيرات"
 
 #: build/serializers.py:1446 build/serializers.py:1452 part/models.py:2947
-#: part/models.py:3673 stock/api.py:957 stock/serializers.py:1062
+#: part/models.py:3673 stock/api.py:957 stock/serializers.py:1086
 msgid "BOM Item"
 msgstr "عنصر قائمة المواد"
 
 #: build/serializers.py:1530 order/serializers.py:1448
-#: order/serializers.py:2794 part/serializers.py:1155 part/serializers.py:1553
+#: order/serializers.py:2794 part/serializers.py:1157 part/serializers.py:1555
 msgid "In Production"
 msgstr "قيد الإنتاج"
 
-#: build/serializers.py:1532 part/serializers.py:787 part/serializers.py:1159
+#: build/serializers.py:1532 part/serializers.py:789 part/serializers.py:1161
 msgid "Scheduled to Build"
 msgstr "مجدول إلى إنتاج"
 
-#: build/serializers.py:1535 part/serializers.py:820
+#: build/serializers.py:1535 part/serializers.py:822
 msgid "External Stock"
 msgstr "خارجي مخزون"
 
-#: build/serializers.py:1536 part/serializers.py:1145 part/serializers.py:1621
+#: build/serializers.py:1536 part/serializers.py:1147 part/serializers.py:1623
 msgid "Available Stock"
 msgstr "متاح مخزون"
 
@@ -2214,7 +2214,7 @@ msgid "Unit definition"
 msgstr "وحدة definition"
 
 #: common/models.py:2071 common/models.py:2243 stock/models.py:3819
-#: stock/serializers.py:259
+#: stock/serializers.py:260
 msgid "Attachment"
 msgstr "المرفق"
 
@@ -2610,7 +2610,7 @@ msgstr "ID لـ ال هدف نموذج لـ هذا معلمة"
 
 #: common/models.py:3233 common/models.py:3530 part/system_settings.py:86
 #: report/models.py:481 report/models.py:815 report/serializers.py:115
-#: report/serializers.py:166 stock/serializers.py:246
+#: report/serializers.py:166 stock/serializers.py:247
 msgid "Template"
 msgstr "قالب"
 
@@ -2635,11 +2635,11 @@ msgstr "معلمة قيمة"
 #: report/templates/report/inventree_sales_order_report.html:31
 #: report/templates/report/inventree_stock_location_report.html:105
 #: report/templates/report/inventree_transfer_order_report.html:28
-#: stock/serializers.py:889
+#: stock/serializers.py:908
 msgid "Note"
 msgstr "ملاحظة"
 
-#: common/models.py:3250 stock/serializers.py:787 stock/serializers.py:1164
+#: common/models.py:3250 stock/serializers.py:801 stock/serializers.py:1188
 msgid "Optional note field"
 msgstr "اختياري ملاحظة حقل"
 
@@ -4095,7 +4095,7 @@ msgid "Supplier is Active"
 msgstr "مورد هو نشط"
 
 #: company/api.py:313 company/models.py:618 company/serializers.py:510
-#: part/serializers.py:421
+#: part/serializers.py:423
 msgid "Manufacturer"
 msgstr "الشركة المصنعة"
 
@@ -4307,7 +4307,7 @@ msgid "Manufacturer Part"
 msgstr "صنف الشركة المصنعة"
 
 #: company/models.py:607 company/models.py:859 stock/models.py:1208
-#: stock/serializers.py:428
+#: stock/serializers.py:429
 msgid "Base Part"
 msgstr "أساس صنف"
 
@@ -4320,11 +4320,11 @@ msgid "Select manufacturer"
 msgstr "تحديد شركة مصنعة"
 
 #: company/models.py:625 company/serializers.py:549 order/serializers.py:782
-#: part/serializers.py:431
+#: part/serializers.py:433
 msgid "MPN"
 msgstr ""
 
-#: company/models.py:626 stock/serializers.py:608
+#: company/models.py:626 stock/serializers.py:622
 msgid "Manufacturer Part Number"
 msgstr "صنف الشركة المصنعة رقم"
 
@@ -4349,7 +4349,7 @@ msgid "Linked manufacturer part must reference the same base part"
 msgstr "مرتبط صنف الشركة المصنعة يجب مرجع ال نفس أساس صنف"
 
 #: company/models.py:869 company/serializers.py:497 company/serializers.py:532
-#: order/models.py:811 part/serializers.py:405
+#: order/models.py:811 part/serializers.py:407
 #: plugin/builtin/suppliers/digikey.py:26 plugin/builtin/suppliers/lcsc.py:27
 #: plugin/builtin/suppliers/mouser.py:25 plugin/builtin/suppliers/tme.py:27
 #: stock/api.py:637 templates/email/overdue_purchase_order.html:16
@@ -4360,7 +4360,7 @@ msgstr "المورد"
 msgid "Select supplier"
 msgstr "تحديد مورد"
 
-#: company/models.py:876 part/serializers.py:416
+#: company/models.py:876 part/serializers.py:418
 msgid "Supplier stock keeping unit"
 msgstr "مورد مخزون keeping وحدة"
 
@@ -4393,7 +4393,7 @@ msgid "Minimum charge (e.g. stocking fee)"
 msgstr "أدنى charge (e.g. stocking fee)"
 
 #: company/models.py:938 order/serializers.py:929 stock/models.py:1239
-#: stock/serializers.py:1882
+#: stock/serializers.py:1997
 msgid "Packaging"
 msgstr "تعبئة"
 
@@ -4441,7 +4441,7 @@ msgstr "افتراضي عملة مستخدم لـ هذا مورد"
 msgid "Company Name"
 msgstr "شركة اسم"
 
-#: company/serializers.py:454 part/serializers.py:792 stock/serializers.py:454
+#: company/serializers.py:454 part/serializers.py:794 stock/serializers.py:455
 msgid "In Stock"
 msgstr "متوفر في المخزون"
 
@@ -4477,7 +4477,7 @@ msgstr "تصدير إضافة"
 msgid "Select export plugin"
 msgstr "تحديد تصدير إضافة"
 
-#: generic/states/api_helpers.py:396
+#: generic/states/api_helpers.py:430
 msgid "User does not have permission to view or change this object"
 msgstr ""
 
@@ -4634,7 +4634,7 @@ msgstr "أصلي صف بيانات"
 msgid "Errors"
 msgstr "أخطاء"
 
-#: importer/models.py:722 part/serializers.py:1113
+#: importer/models.py:722 part/serializers.py:1115
 msgid "Valid"
 msgstr "صالح"
 
@@ -5037,7 +5037,7 @@ msgstr ""
 #: order/api.py:2614 order/models.py:699 order/models.py:2456
 #: order/models.py:2582
 #: report/templates/report/inventree_purchase_order_report.html:13
-#: stock/serializers.py:129 templates/email/overdue_purchase_order.html:15
+#: stock/serializers.py:130 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "طلب شراء"
 
@@ -5170,7 +5170,7 @@ msgid "Order reference"
 msgstr "طلب مرجع"
 
 #: order/models.py:801 order/models.py:1595 order/models.py:3525
-#: order/models.py:3955 stock/serializers.py:1024 users/models.py:796
+#: order/models.py:3955 stock/serializers.py:1048 users/models.py:796
 msgid "Status"
 msgstr "الحالة"
 
@@ -5263,7 +5263,7 @@ msgid "Unserialized stock only"
 msgstr "Unserialized مخزون فقط"
 
 #: order/models.py:1582 order/models.py:3512 stock/models.py:1261
-#: stock/models.py:1262 stock/serializers.py:1606
+#: stock/models.py:1262 stock/serializers.py:1635
 #: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
@@ -5418,8 +5418,8 @@ msgstr "مستلم"
 msgid "Number of items received"
 msgstr "عدد عناصر مستلم"
 
-#: order/models.py:2491 stock/models.py:1391 stock/serializers.py:693
-#: stock/serializers.py:1096
+#: order/models.py:2491 stock/models.py:1391 stock/serializers.py:707
+#: stock/serializers.py:1120
 msgid "Purchase Price"
 msgstr "سعر الشراء"
 
@@ -5784,7 +5784,7 @@ msgstr "تلقائي التسعير"
 msgid "Automatically calculate purchase price based on supplier part data"
 msgstr "تلقائيًا calculate سعر الشراء استنادًا إلى على صنف المورد بيانات"
 
-#: order/serializers.py:727 stock/serializers.py:1106
+#: order/serializers.py:727 stock/serializers.py:1130
 msgid "Purchase price currency"
 msgstr "سعر الشراء عملة"
 
@@ -5796,11 +5796,11 @@ msgstr "دمج عناصر"
 msgid "Merge items with the same part, destination and target date into one line item"
 msgstr "دمج عناصر مع ال نفس صنف، الوجهة و التاريخ المستهدف إلى واحد بند"
 
-#: order/serializers.py:775 part/serializers.py:415
+#: order/serializers.py:775 part/serializers.py:417
 msgid "SKU"
 msgstr ""
 
-#: order/serializers.py:789 part/models.py:1191 part/serializers.py:333
+#: order/serializers.py:789 part/models.py:1191 part/serializers.py:335
 msgid "Internal Part Number"
 msgstr "داخلي صنف رقم"
 
@@ -5875,7 +5875,7 @@ msgid "Enter batch code for incoming stock items - applied to any line item whic
 msgstr ""
 
 #: order/serializers.py:1059 order/serializers.py:2378
-#: stock/serializers.py:1187
+#: stock/serializers.py:1216
 msgid "Line items must be provided"
 msgstr "يجب أن يكون البنود مقدم"
 
@@ -6270,75 +6270,75 @@ msgstr "حد ال depth لـ ال فئة tree"
 msgid "Has Results"
 msgstr "لديه نتائج"
 
-#: part/api.py:615
+#: part/api.py:621
 msgid "Is Variant"
 msgstr "هو متغير"
 
-#: part/api.py:623
+#: part/api.py:629
 msgid "Is Revision"
 msgstr "هو مراجعة"
 
-#: part/api.py:633
+#: part/api.py:639
 msgid "Has Revisions"
 msgstr "لديه مراجعات"
 
-#: part/api.py:840
+#: part/api.py:846
 msgid "BOM Valid"
 msgstr "BOM صالح"
 
-#: part/api.py:949
+#: part/api.py:955
 msgid "Cascade Categories"
 msgstr "Cascade فئات"
 
-#: part/api.py:950
+#: part/api.py:956
 msgid "If true, include items in child categories of the given category"
 msgstr "إذا صحيح، تضمين عناصر في فرعي فئات لـ ال معطى فئة"
 
-#: part/api.py:956
+#: part/api.py:962
 msgid "Filter by numeric category ID or the literal 'null'"
 msgstr "تصفية حسب numeric فئة ID أو ال literal 'null'"
 
-#: part/api.py:1271
+#: part/api.py:1277
 msgid "Assembly part is active"
 msgstr "تجميع صنف هو نشط"
 
-#: part/api.py:1275
+#: part/api.py:1281
 msgid "Assembly part is trackable"
 msgstr "تجميع صنف هو قابل للتتبع"
 
-#: part/api.py:1279
+#: part/api.py:1285
 msgid "Assembly part is testable"
 msgstr "تجميع صنف هو قابل للاختبار"
 
-#: part/api.py:1283
+#: part/api.py:1289
 msgid "Assembly part is locked"
 msgstr "تجميع صنف هو مقفل"
 
-#: part/api.py:1288
+#: part/api.py:1294
 msgid "Component part is active"
 msgstr "مكوّن صنف هو نشط"
 
-#: part/api.py:1292
+#: part/api.py:1298
 msgid "Component part is trackable"
 msgstr "مكوّن صنف هو قابل للتتبع"
 
-#: part/api.py:1296
+#: part/api.py:1302
 msgid "Component part is testable"
 msgstr "مكوّن صنف هو قابل للاختبار"
 
-#: part/api.py:1300
+#: part/api.py:1306
 msgid "Component part is an assembly"
 msgstr "مكوّن صنف هو تجميع"
 
-#: part/api.py:1304
+#: part/api.py:1310
 msgid "Component part is virtual"
 msgstr "مكوّن صنف هو افتراضي"
 
-#: part/api.py:1308
+#: part/api.py:1314
 msgid "Has available stock"
 msgstr "لديه متاح مخزون"
 
-#: part/api.py:1365
+#: part/api.py:1371
 msgid "Uses"
 msgstr ""
 
@@ -6379,7 +6379,7 @@ msgstr "افتراضي keywords لـ أصناف في هذا فئة"
 msgid "Icon"
 msgstr "أيقونة"
 
-#: part/models.py:138 part/serializers.py:170 part/serializers.py:204
+#: part/models.py:138 part/serializers.py:172 part/serializers.py:206
 #: stock/models.py:186
 msgid "Icon (optional)"
 msgstr "أيقونة (اختياري)"
@@ -6400,7 +6400,7 @@ msgstr "افتراضي قيمة"
 msgid "Default Parameter Value"
 msgstr "افتراضي معلمة قيمة"
 
-#: part/models.py:538 part/serializers.py:130 users/ruleset.py:46
+#: part/models.py:538 part/serializers.py:132 users/ruleset.py:46
 msgid "Parts"
 msgstr "الأصناف"
 
@@ -6500,7 +6500,7 @@ msgstr "صنف keywords إلى improve visibility في بحث نتائج"
 msgid "Part category"
 msgstr "فئة الأصناف"
 
-#: part/models.py:1190 part/serializers.py:766
+#: part/models.py:1190 part/serializers.py:768
 #: report/templates/report/inventree_stock_location_report.html:103
 msgid "IPN"
 msgstr ""
@@ -6533,7 +6533,7 @@ msgstr "افتراضي انتهاء"
 msgid "Expiry time (in days) for stock items of this part"
 msgstr "انتهاء وقت (في أيام) لـ عناصر المخزون لـ هذا صنف"
 
-#: part/models.py:1272 part/serializers.py:836
+#: part/models.py:1272 part/serializers.py:838
 msgid "Minimum Stock"
 msgstr "الحد الأدنى للمخزون"
 
@@ -6541,7 +6541,7 @@ msgstr "الحد الأدنى للمخزون"
 msgid "Minimum allowed stock level"
 msgstr "أدنى مسموح مخزون مستوى"
 
-#: part/models.py:1281 part/serializers.py:840
+#: part/models.py:1281 part/serializers.py:842
 msgid "Maximum Stock"
 msgstr "الحد الأقصى للمخزون"
 
@@ -6557,7 +6557,7 @@ msgstr "وحدات لـ measure لـ هذا صنف"
 msgid "Can this part be built from other parts?"
 msgstr "يمكن هذا صنف يكون built من أخرى أصناف؟"
 
-#: part/models.py:1303 part/serializers.py:1520 part/serializers.py:1528
+#: part/models.py:1303 part/serializers.py:1522 part/serializers.py:1530
 #: part/system_settings.py:98
 msgid "Component"
 msgstr "مكوّن"
@@ -6787,7 +6787,7 @@ msgstr "Sub صنف"
 msgid "Select part to be used in BOM"
 msgstr "تحديد صنف إلى يكون مستخدم في BOM"
 
-#: part/models.py:3201 part/serializers.py:1458
+#: part/models.py:3201 part/serializers.py:1460
 msgid "Amount"
 msgstr ""
 
@@ -6831,11 +6831,11 @@ msgstr "Rounding متعدد"
 msgid "Round up required production quantity to nearest multiple of this value"
 msgstr "Round أعلى مطلوب الإنتاج كمية إلى nearest متعدد لـ هذا قيمة"
 
-#: part/models.py:3265 part/serializers.py:1476
+#: part/models.py:3265 part/serializers.py:1478
 msgid "Piece Count"
 msgstr ""
 
-#: part/models.py:3267 part/serializers.py:1478
+#: part/models.py:3267 part/serializers.py:1480
 msgid "Number of pieces required (for cut-to-length items). Total material = quantity x piece_count."
 msgstr ""
 
@@ -6928,312 +6928,316 @@ msgstr "صنف relationship لا يمكن يكون تم الإنشاء بين ص
 msgid "Duplicate relationship already exists"
 msgstr "نسخ relationship بالفعل موجود"
 
-#: part/serializers.py:61
+#: part/serializers.py:63
 msgid "Delete Subcategories"
 msgstr "حذف فئات فرعية"
 
-#: part/serializers.py:62
+#: part/serializers.py:64
 msgid "Delete all sub-categories contained within this category"
 msgstr "حذف الكل sub-categories contained ضمن هذا فئة"
 
-#: part/serializers.py:67
+#: part/serializers.py:69
 msgid "Delete Parts"
 msgstr "حذف الأصناف"
 
-#: part/serializers.py:68
+#: part/serializers.py:70
 msgid "Delete all parts contained within this category"
 msgstr "حذف الكل أصناف contained ضمن هذا فئة"
 
-#: part/serializers.py:125
+#: part/serializers.py:127
 msgid "Parent Category"
 msgstr "الأصل فئة"
 
-#: part/serializers.py:126
+#: part/serializers.py:128
 msgid "Parent part category"
 msgstr "الأصل فئة الأصناف"
 
-#: part/serializers.py:134 part/serializers.py:201
+#: part/serializers.py:136 part/serializers.py:203
 msgid "Subcategories"
 msgstr "فئات فرعية"
 
-#: part/serializers.py:240
+#: part/serializers.py:242
 msgid "Results"
 msgstr "نتائج"
 
-#: part/serializers.py:241
+#: part/serializers.py:243
 msgid "Number of results recorded against this template"
 msgstr "عدد نتائج recorded مقابل هذا قالب"
 
-#: part/serializers.py:274
+#: part/serializers.py:276
 msgid "File is not an image"
 msgstr "ملف هو غير صورة"
 
-#: part/serializers.py:379
+#: part/serializers.py:381
 msgid "Initial Stock Quantity"
 msgstr "كمية أولي مخزون"
 
-#: part/serializers.py:381
+#: part/serializers.py:383
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
 msgstr "تحديد أولي مخزون كمية لـ هذا صنف. إذا كمية هو صفر، لا مخزون هو تمت الإضافة."
 
-#: part/serializers.py:388
+#: part/serializers.py:390
 msgid "Initial Stock Location"
 msgstr "أولي موقع المخزون"
 
-#: part/serializers.py:389
+#: part/serializers.py:391
 msgid "Specify initial stock location for this Part"
 msgstr "تحديد أولي موقع المخزون لـ هذا صنف"
 
-#: part/serializers.py:406
+#: part/serializers.py:408
 msgid "Select supplier (or leave blank to skip)"
 msgstr "تحديد مورد (أو ترك فارغ إلى تخطي)"
 
-#: part/serializers.py:422
+#: part/serializers.py:424
 msgid "Select manufacturer (or leave blank to skip)"
 msgstr "تحديد شركة مصنعة (أو ترك فارغ إلى تخطي)"
 
-#: part/serializers.py:432
+#: part/serializers.py:434
 msgid "Manufacturer part number"
 msgstr "صنف الشركة المصنعة رقم"
 
-#: part/serializers.py:439
+#: part/serializers.py:441
 msgid "Selected company is not a valid supplier"
 msgstr "محدد شركة هو غير صالح مورد"
 
-#: part/serializers.py:448
+#: part/serializers.py:450
 msgid "Selected company is not a valid manufacturer"
 msgstr "محدد شركة هو غير صالح شركة مصنعة"
 
-#: part/serializers.py:459
+#: part/serializers.py:461
 msgid "Manufacturer part matching this MPN already exists"
 msgstr "صنف الشركة المصنعة مطابق هذا MPN بالفعل موجود"
 
-#: part/serializers.py:466
+#: part/serializers.py:468
 msgid "Supplier part matching this SKU already exists"
 msgstr "صنف المورد مطابق هذا SKU بالفعل موجود"
 
-#: part/serializers.py:751
+#: part/serializers.py:753
 msgid "Category Name"
 msgstr "فئة اسم"
 
-#: part/serializers.py:780
+#: part/serializers.py:782
 msgid "Building"
 msgstr ""
 
-#: part/serializers.py:781
+#: part/serializers.py:783
 msgid "Quantity of this part currently being in production"
 msgstr "كمية هذا صنف حاليًا being في الإنتاج"
 
-#: part/serializers.py:788
+#: part/serializers.py:790
 msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "متبقي كمية لـ هذا صنف مجدول إلى يكون built"
 
-#: part/serializers.py:808 stock/serializers.py:1313 stock/serializers.py:1503
+#: part/serializers.py:810 stock/serializers.py:1342 stock/serializers.py:1532
 #: users/ruleset.py:50
 msgid "Stock Items"
 msgstr "عناصر المخزون"
 
-#: part/serializers.py:812
+#: part/serializers.py:814
 msgid "Revisions"
 msgstr "مراجعات"
 
-#: part/serializers.py:816 part/serializers.py:1142
+#: part/serializers.py:818 part/serializers.py:1144
 #: templates/email/low_stock_notification.html:16
 #: templates/email/part_event_notification.html:17
 msgid "Total Stock"
 msgstr "إجمالي مخزون"
 
-#: part/serializers.py:824
+#: part/serializers.py:826
 msgid "Unallocated Stock"
 msgstr "غير مخصص مخزون"
 
-#: part/serializers.py:832
+#: part/serializers.py:834
 msgid "Variant Stock"
 msgstr "متغير مخزون"
 
-#: part/serializers.py:911
+#: part/serializers.py:913
 msgid "Duplicate Part"
 msgstr "نسخ صنف"
 
-#: part/serializers.py:912
+#: part/serializers.py:914
 msgid "Copy initial data from another Part"
 msgstr "نسخ أولي بيانات من آخر صنف"
 
-#: part/serializers.py:917
+#: part/serializers.py:919
 msgid "Copy Image"
 msgstr "نسخ صورة"
 
-#: part/serializers.py:918
+#: part/serializers.py:920
 msgid "Copy image from original part"
 msgstr "نسخ صورة من أصلي صنف"
 
-#: part/serializers.py:923
+#: part/serializers.py:925
 msgid "Copy BOM"
 msgstr "نسخ BOM"
 
-#: part/serializers.py:924
+#: part/serializers.py:926
 msgid "Copy bill of materials from original part"
 msgstr "نسخ قائمة المواد من أصلي صنف"
 
-#: part/serializers.py:930
+#: part/serializers.py:932
 msgid "Copy notes from original part"
 msgstr "نسخ ملاحظات من أصلي صنف"
 
-#: part/serializers.py:935
+#: part/serializers.py:937
 msgid "Copy Tests"
 msgstr "نسخ اختبارات"
 
-#: part/serializers.py:936
+#: part/serializers.py:938
 msgid "Copy test templates from original part"
 msgstr "نسخ اختبار قوالب من أصلي صنف"
 
-#: part/serializers.py:943
+#: part/serializers.py:945
 msgid "Initial Stock"
 msgstr "أولي مخزون"
 
-#: part/serializers.py:944
+#: part/serializers.py:946
 msgid "Create Part with initial stock quantity"
 msgstr "إنشاء كمية صنف مع أولي مخزون"
 
-#: part/serializers.py:950
+#: part/serializers.py:952
 msgid "Supplier Information"
 msgstr "مورد معلومات"
 
-#: part/serializers.py:951
+#: part/serializers.py:953
 msgid "Add initial supplier information for this part"
 msgstr "إضافة أولي مورد معلومات لـ هذا صنف"
 
-#: part/serializers.py:960
+#: part/serializers.py:962
 msgid "Copy Category Parameters"
 msgstr "نسخ فئة معلمات"
 
-#: part/serializers.py:961
+#: part/serializers.py:963
 msgid "Copy parameter templates from selected part category"
 msgstr "نسخ معلمة قوالب من محدد فئة الأصناف"
 
-#: part/serializers.py:966
+#: part/serializers.py:968
 msgid "Existing Image"
 msgstr "موجود صورة"
 
-#: part/serializers.py:967
+#: part/serializers.py:969
 msgid "Filename of an existing part image"
 msgstr "اسم الملف لـ موجود صنف صورة"
 
-#: part/serializers.py:984
+#: part/serializers.py:986
 msgid "Image file does not exist"
 msgstr "صورة ملف يقوم غير موجود"
 
-#: part/serializers.py:1114
+#: part/serializers.py:1116
 msgid "Validate entire Bill of Materials"
 msgstr "تحقق entire قائمة المواد"
 
-#: part/serializers.py:1148 part/serializers.py:1559
+#: part/serializers.py:1150 part/serializers.py:1561
 msgid "Can Build"
 msgstr "قابل للإنتاج"
 
-#: part/serializers.py:1165
+#: part/serializers.py:1167
 msgid "Required for Build Orders"
 msgstr "مطلوب لـ أوامر الإنتاج"
 
-#: part/serializers.py:1170
+#: part/serializers.py:1172
 msgid "Allocated to Build Orders"
 msgstr "مخصص إلى أوامر الإنتاج"
 
-#: part/serializers.py:1177
+#: part/serializers.py:1179
 msgid "Required for Sales Orders"
 msgstr "مطلوب لـ طلبات البيع"
 
-#: part/serializers.py:1181
+#: part/serializers.py:1183
 msgid "Allocated to Sales Orders"
 msgstr "مخصص إلى طلبات البيع"
 
-#: part/serializers.py:1241
+#: part/serializers.py:1243
 msgid "Part IPN"
 msgstr "صنف IPN"
 
-#: part/serializers.py:1248
+#: part/serializers.py:1250
 msgid "Part Description"
 msgstr "صنف وصف"
 
-#: part/serializers.py:1292
+#: part/serializers.py:1294
 msgid "Select a part to generate stocktake information for that part (and any variant parts)"
 msgstr "تحديد صنف إلى إنشاء جرد المخزون معلومات لـ ذلك صنف (و أي متغير أصناف)"
 
-#: part/serializers.py:1302
+#: part/serializers.py:1304
 msgid "Select a category to include all parts within that category (and subcategories)"
 msgstr "تحديد فئة إلى تضمين الكل أصناف ضمن ذلك فئة (و فئات فرعية)"
 
-#: part/serializers.py:1312
+#: part/serializers.py:1314
 msgid "Select a location to include all parts with stock in that location (including sub-locations)"
 msgstr "تحديد موقع إلى تضمين الكل أصناف مع مخزون في ذلك موقع (including sub-locations)"
 
-#: part/serializers.py:1319
+#: part/serializers.py:1321
 msgid "Generate Stocktake Entries"
 msgstr "إنشاء جرد المخزون سجلات"
 
-#: part/serializers.py:1320
+#: part/serializers.py:1322
 msgid "Save stocktake entries for the selected parts"
 msgstr "حفظ جرد المخزون سجلات لـ ال محدد أصناف"
 
-#: part/serializers.py:1327
+#: part/serializers.py:1329
 msgid "Generate Report"
 msgstr "إنشاء تقرير"
 
-#: part/serializers.py:1328
+#: part/serializers.py:1330
 msgid "Generate a stocktake report for the selected parts"
 msgstr "إنشاء جرد المخزون تقرير لـ ال محدد أصناف"
 
-#: part/serializers.py:1459
+#: part/serializers.py:1461
 msgid "Amount required for this item (can include units)"
 msgstr "Amount مطلوب لـ هذا عنصر (يمكن تضمين وحدات)"
 
-#: part/serializers.py:1486
+#: part/serializers.py:1488
 msgid "Select the parent assembly"
 msgstr "تحديد ال الأصل تجميع"
 
-#: part/serializers.py:1521
+#: part/serializers.py:1523
 msgid "Select the component part"
 msgstr "تحديد ال مكوّن صنف"
 
-#: part/serializers.py:1646
+#: part/serializers.py:1648
 msgid "Invalid quantity format"
 msgstr "غير صالح كمية تنسيق"
 
-#: part/serializers.py:1779
+#: part/serializers.py:1781
 msgid "Select part to copy BOM from"
 msgstr "تحديد صنف إلى نسخ BOM من"
 
-#: part/serializers.py:1787
+#: part/serializers.py:1789
 msgid "Remove Existing Data"
 msgstr "إزالة موجود بيانات"
 
-#: part/serializers.py:1788
+#: part/serializers.py:1790
 msgid "Remove existing BOM items before copying"
 msgstr "إزالة موجود BOM عناصر قبل copying"
 
-#: part/serializers.py:1793
+#: part/serializers.py:1795
 msgid "Include Inherited"
 msgstr "تضمين موروث"
 
-#: part/serializers.py:1794
+#: part/serializers.py:1796
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "تضمين BOM عناصر الذي هي موروث من templated أصناف"
 
-#: part/serializers.py:1799
+#: part/serializers.py:1801
 msgid "Skip Invalid Rows"
 msgstr "تخطي غير صالح صفوف"
 
-#: part/serializers.py:1800
+#: part/serializers.py:1802
 msgid "Enable this option to skip invalid rows"
 msgstr "تفعيل هذا خيار إلى تخطي غير صالح صفوف"
 
-#: part/serializers.py:1805
+#: part/serializers.py:1807
 msgid "Copy Substitute Parts"
 msgstr "نسخ بديل أصناف"
 
-#: part/serializers.py:1806
+#: part/serializers.py:1808
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "نسخ بديل أصناف عند نسخ BOM عناصر"
+
+#: part/serializers.py:1822
+msgid "You do not have permission to remove existing BOM items"
+msgstr ""
 
 #: part/system_settings.py:20
 msgid "Part Locking"
@@ -7838,7 +7842,7 @@ msgid "Provides native support for barcodes"
 msgstr "يوفر native الدعم لـ باركودات"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:34
-#: plugin/builtin/barcodes/manufacturer_barcode.py:59
+#: plugin/builtin/barcodes/manufacturer_barcode.py:66
 #: plugin/builtin/events/auto_create_builds.py:40
 #: plugin/builtin/events/auto_issue_orders.py:19
 #: plugin/builtin/exporter/bom_exporter.py:74
@@ -7884,15 +7888,23 @@ msgstr "Short باركود Prefix"
 msgid "Customize the prefix used for short barcodes, may be useful for environments with multiple InvenTree instances"
 msgstr "Customize ال prefix مستخدم لـ short باركودات، قد يكون useful لـ environments مع متعدد InvenTree instances"
 
-#: plugin/builtin/barcodes/manufacturer_barcode.py:54
+#: plugin/builtin/barcodes/manufacturer_barcode.py:61
 msgid "Manufacturer Part Barcodes"
 msgstr ""
 
-#: plugin/builtin/barcodes/manufacturer_barcode.py:56
+#: plugin/builtin/barcodes/manufacturer_barcode.py:63
 msgid "Fallback barcode support for matching manufacturer part numbers (MPN)"
 msgstr ""
 
-#: plugin/builtin/barcodes/manufacturer_barcode.py:176
+#: plugin/builtin/barcodes/manufacturer_barcode.py:73
+msgid "Enable 50P Codes"
+msgstr ""
+
+#: plugin/builtin/barcodes/manufacturer_barcode.py:75
+msgid "Treat '50P' data identifier fields as manufacturer part numbers (same as '1P')"
+msgstr ""
+
+#: plugin/builtin/barcodes/manufacturer_barcode.py:211
 msgid "Found matching manufacturer part"
 msgstr ""
 
@@ -9212,7 +9224,7 @@ msgstr "الإجمالي"
 #: report/templates/report/inventree_sales_order_shipment_report.html:44
 #: report/templates/report/inventree_stock_report_merge.html:88
 #: report/templates/report/inventree_test_report.html:88 stock/models.py:1266
-#: stock/serializers.py:164 templates/email/stale_stock_notification.html:21
+#: stock/serializers.py:165 templates/email/stale_stock_notification.html:21
 msgid "Serial Number"
 msgstr "الرقم التسلسلي"
 
@@ -9236,7 +9248,7 @@ msgstr "عنصر المخزون اختبار تقرير"
 
 #: report/templates/report/inventree_stock_report_merge.html:97
 #: report/templates/report/inventree_test_report.html:153
-#: stock/serializers.py:685
+#: stock/serializers.py:699
 msgid "Installed Items"
 msgstr "مثبت عناصر"
 
@@ -9385,7 +9397,7 @@ msgstr "تصفية حسب top-level مواقع"
 msgid "Include sub-locations in filtered results"
 msgstr "تضمين sub-locations في filtered نتائج"
 
-#: stock/api.py:393 stock/serializers.py:1499
+#: stock/api.py:393 stock/serializers.py:1528
 msgid "Parent Location"
 msgstr "الأصل موقع"
 
@@ -9477,7 +9489,7 @@ msgstr "انتهاء تاريخ قبل"
 msgid "Expiry date after"
 msgstr "انتهاء تاريخ بعد"
 
-#: stock/api.py:1029 stock/serializers.py:690
+#: stock/api.py:1029 stock/serializers.py:704
 msgid "Stale"
 msgstr "قديم"
 
@@ -9622,7 +9634,7 @@ msgstr "عناصر المخزون لا يمكن يكون located إلى هيكل
 msgid "Editing of serial numbers is not allowed - this item has already been assigned a serial number"
 msgstr "تحرير لـ الأرقام التسلسلية هو غير مسموح - هذا عنصر لديه بالفعل تم مسند الرقم التسلسلي"
 
-#: stock/models.py:1114 stock/serializers.py:495
+#: stock/models.py:1114 stock/serializers.py:496
 msgid "Stock item cannot be created for virtual parts"
 msgstr "عنصر المخزون لا يمكن يكون تم الإنشاء لـ افتراضي أصناف"
 
@@ -9662,7 +9674,7 @@ msgstr "تحديد مطابق صنف المورد لـ هذا عنصر المخ�
 msgid "Where is this stock item located?"
 msgstr "حيث هو هذا عنصر المخزون located؟"
 
-#: stock/models.py:1240 stock/serializers.py:1883
+#: stock/models.py:1240 stock/serializers.py:1998
 msgid "Packaging this stock item is stored in"
 msgstr "تعبئة هذا عنصر المخزون هو مخزن في"
 
@@ -9678,7 +9690,7 @@ msgstr "هو هذا عنصر مثبت في آخر عنصر؟"
 msgid "Serial number for this item"
 msgstr "الرقم التسلسلي لـ هذا عنصر"
 
-#: stock/models.py:1287 stock/serializers.py:1871
+#: stock/models.py:1287 stock/serializers.py:1986
 msgid "Batch code for this stock item"
 msgstr "رمز الدفعة لـ هذا عنصر المخزون"
 
@@ -9694,7 +9706,7 @@ msgstr "المصدر إنتاج"
 msgid "Build for this stock item"
 msgstr "إنتاج لـ هذا عنصر المخزون"
 
-#: stock/models.py:1312 stock/serializers.py:705
+#: stock/models.py:1312 stock/serializers.py:719
 msgid "Consumed By"
 msgstr "مستهلك حسب"
 
@@ -9750,7 +9762,7 @@ msgstr ""
 msgid "Cannot assign stock to structural location"
 msgstr "لا يمكن إسناد مخزون إلى هيكلي موقع"
 
-#: stock/models.py:2166 stock/serializers.py:1144
+#: stock/models.py:2166 stock/serializers.py:1168
 msgid "Quantity must not exceed available stock quantity"
 msgstr ""
 
@@ -9810,7 +9822,7 @@ msgstr "عنصر المخزون هو حاليًا في الإنتاج"
 msgid "Serialized stock cannot be merged"
 msgstr "مسلسل مخزون لا يمكن يكون merged"
 
-#: stock/models.py:2704 stock/serializers.py:1748
+#: stock/models.py:2704 stock/serializers.py:1777
 msgid "Duplicate stock items"
 msgstr "نسخ عناصر المخزون"
 
@@ -9854,7 +9866,7 @@ msgstr "نتيجة الاختبار"
 msgid "Test output value"
 msgstr "اختبار مخرج قيمة"
 
-#: stock/models.py:3820 stock/serializers.py:260
+#: stock/models.py:3820 stock/serializers.py:261
 msgid "Test result attachment"
 msgstr "نتيجة الاختبار مرفق"
 
@@ -9886,361 +9898,372 @@ msgstr ""
 msgid "The timestamp of the test finish"
 msgstr "ال طابع زمني لـ ال اختبار finish"
 
-#: stock/serializers.py:85
+#: stock/serializers.py:86
 msgid "Generated batch code"
 msgstr "تم الإنشاء رمز الدفعة"
 
-#: stock/serializers.py:94
+#: stock/serializers.py:95
 msgid "Select build order"
 msgstr "تحديد أمر الإنتاج"
 
-#: stock/serializers.py:103
+#: stock/serializers.py:104
 msgid "Select stock item to generate batch code for"
 msgstr "تحديد عنصر المخزون إلى إنشاء رمز الدفعة لـ"
 
-#: stock/serializers.py:112
+#: stock/serializers.py:113
 msgid "Select location to generate batch code for"
 msgstr "تحديد موقع إلى إنشاء رمز الدفعة لـ"
 
-#: stock/serializers.py:121
+#: stock/serializers.py:122
 msgid "Select part to generate batch code for"
 msgstr "تحديد صنف إلى إنشاء رمز الدفعة لـ"
 
-#: stock/serializers.py:130
+#: stock/serializers.py:131
 msgid "Select purchase order"
 msgstr "تحديد طلب الشراء"
 
-#: stock/serializers.py:137
+#: stock/serializers.py:138
 msgid "Enter quantity for batch code"
 msgstr "إدخال كمية لـ رمز الدفعة"
 
-#: stock/serializers.py:163
+#: stock/serializers.py:164
 msgid "Generated serial number"
 msgstr "تم الإنشاء الرقم التسلسلي"
 
-#: stock/serializers.py:173
+#: stock/serializers.py:174
 msgid "Select part to generate serial number for"
 msgstr "تحديد صنف إلى إنشاء الرقم التسلسلي لـ"
 
-#: stock/serializers.py:181
+#: stock/serializers.py:182
 msgid "Quantity of serial numbers to generate"
 msgstr "كمية الأرقام التسلسلية إلى إنشاء"
 
-#: stock/serializers.py:247
+#: stock/serializers.py:248
 msgid "Test template for this result"
 msgstr "اختبار قالب لـ هذا نتيجة"
 
-#: stock/serializers.py:290
+#: stock/serializers.py:291
 msgid "No matching test found for this part"
 msgstr "لا يوجد اختبار تم العثور لـ هذا صنف مطابق"
 
-#: stock/serializers.py:294
+#: stock/serializers.py:295
 msgid "Template ID or test name must be provided"
 msgstr "يجب أن يكون قالب ID أو اختبار اسم مقدم"
 
-#: stock/serializers.py:304
+#: stock/serializers.py:305
 msgid "The test finished time cannot be earlier than the test started time"
 msgstr "ال اختبار finished وقت لا يمكن يكون earlier من ال اختبار بدأ وقت"
 
-#: stock/serializers.py:437
+#: stock/serializers.py:438
 msgid "Parent Item"
 msgstr "الأصل عنصر"
 
-#: stock/serializers.py:438
+#: stock/serializers.py:439
 msgid "Parent stock item"
 msgstr "الأصل عنصر المخزون"
 
-#: stock/serializers.py:464
+#: stock/serializers.py:465
 msgid "Use pack size when adding: the quantity defined is the number of packs"
 msgstr "استخدام حزمة حجم عند إضافة: ال كمية محدد هو ال رقم لـ packs"
 
-#: stock/serializers.py:466
+#: stock/serializers.py:467
 msgid "Use pack size"
 msgstr "استخدام حزمة حجم"
 
-#: stock/serializers.py:473 stock/serializers.py:768
+#: stock/serializers.py:474 stock/serializers.py:782
 msgid "Enter serial numbers for new items"
 msgstr "إدخال الأرقام التسلسلية لـ جديد عناصر"
 
-#: stock/serializers.py:479
+#: stock/serializers.py:480
 msgid "Duplicate Stock Item"
 msgstr ""
 
-#: stock/serializers.py:480
+#: stock/serializers.py:481
 msgid "Copy initial data from another stock item"
 msgstr ""
 
-#: stock/serializers.py:485
+#: stock/serializers.py:486
 msgid "Copy Test Results"
 msgstr ""
 
-#: stock/serializers.py:486
+#: stock/serializers.py:487
 msgid "Copy test results from the original stock item"
 msgstr ""
 
-#: stock/serializers.py:601
+#: stock/serializers.py:615
 msgid "Supplier Part Number"
 msgstr "صنف المورد رقم"
 
-#: stock/serializers.py:682 users/models.py:375
+#: stock/serializers.py:696 users/models.py:375
 msgid "Expired"
 msgstr "منتهي"
 
-#: stock/serializers.py:688
+#: stock/serializers.py:702
 msgid "Child Items"
 msgstr "فرعي عناصر"
 
-#: stock/serializers.py:695
+#: stock/serializers.py:709
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr "سعر الشراء لـ هذا عنصر المخزون، per وحدة أو حزمة"
 
-#: stock/serializers.py:699
+#: stock/serializers.py:713
 msgid "Purchase currency of this stock item"
 msgstr "شراء عملة لـ هذا عنصر المخزون"
 
-#: stock/serializers.py:745
+#: stock/serializers.py:759
 msgid "Enter number of stock items to serialize"
 msgstr "إدخال رقم لـ عناصر المخزون إلى ترقيم تسلسلي"
 
-#: stock/serializers.py:753 stock/serializers.py:797 stock/serializers.py:835
-#: stock/serializers.py:990 stock/serializers.py:1137 stock/serializers.py:1179
+#: stock/serializers.py:767 stock/serializers.py:811 stock/serializers.py:854
+#: stock/serializers.py:1014 stock/serializers.py:1161
+#: stock/serializers.py:1203
 msgid "No stock item provided"
 msgstr "لا عنصر المخزون مقدم"
 
-#: stock/serializers.py:779 stock/serializers.py:1704 stock/serializers.py:2096
-#: stock/serializers.py:2212
+#: stock/serializers.py:793 stock/serializers.py:1733 stock/serializers.py:2220
+#: stock/serializers.py:2336
 msgid "Destination stock location"
 msgstr "الوجهة موقع المخزون"
 
-#: stock/serializers.py:800
+#: stock/serializers.py:814
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "الأرقام التسلسلية لا يمكن يكون مسند إلى هذا صنف"
 
-#: stock/serializers.py:820
+#: stock/serializers.py:839
 msgid "Serial numbers already exist"
 msgstr "الأرقام التسلسلية بالفعل موجود"
 
-#: stock/serializers.py:876
+#: stock/serializers.py:895
 msgid "Select stock item to install"
 msgstr "تحديد عنصر المخزون إلى تثبيت"
 
-#: stock/serializers.py:883
+#: stock/serializers.py:902
 msgid "Quantity to Install"
 msgstr "كمية إلى تثبيت"
 
-#: stock/serializers.py:884
+#: stock/serializers.py:903
 msgid "Enter the quantity of items to install"
 msgstr "إدخال ال كمية لـ عناصر إلى تثبيت"
 
-#: stock/serializers.py:890 stock/serializers.py:971 stock/serializers.py:1331
+#: stock/serializers.py:909 stock/serializers.py:995 stock/serializers.py:1360
 msgid "Add transaction note (optional)"
 msgstr "إضافة transaction ملاحظة (اختياري)"
 
-#: stock/serializers.py:898
+#: stock/serializers.py:917
 msgid "Quantity to install must be at least 1"
 msgstr "يجب أن يكون كمية إلى تثبيت عند أقل 1"
 
-#: stock/serializers.py:906 stock/serializers.py:1182
+#: stock/serializers.py:925 stock/serializers.py:1206
 msgid "Stock item is unavailable"
 msgstr "عنصر المخزون هو غير متاح"
 
-#: stock/serializers.py:917
+#: stock/serializers.py:936
 msgid "Selected part is not in the Bill of Materials"
 msgstr "محدد صنف هو غير في ال قائمة المواد"
 
-#: stock/serializers.py:930
+#: stock/serializers.py:949
 msgid "Quantity to install must not exceed available quantity"
 msgstr "كمية كمية إلى تثبيت يجب غير تجاوز متاح"
 
-#: stock/serializers.py:965
+#: stock/serializers.py:989
 msgid "Destination location for uninstalled item"
 msgstr "الوجهة موقع لـ غير مثبت عنصر"
 
-#: stock/serializers.py:1019
+#: stock/serializers.py:1043
 msgid "No Change"
 msgstr "لا تغيير"
 
-#: stock/serializers.py:1027
+#: stock/serializers.py:1051
 msgid "Stock item status code"
 msgstr "عنصر المخزون حالة رمز"
 
-#: stock/serializers.py:1063
+#: stock/serializers.py:1087
 msgid "BOM line which defines the component part to break out"
 msgstr ""
 
-#: stock/serializers.py:1072
+#: stock/serializers.py:1096
 msgid "Quantity of the component part to create"
 msgstr ""
 
-#: stock/serializers.py:1088
+#: stock/serializers.py:1112
 msgid "Destination location for the component items"
 msgstr ""
 
-#: stock/serializers.py:1092
+#: stock/serializers.py:1116
 msgid "Status code for the component items"
 msgstr ""
 
-#: stock/serializers.py:1101
+#: stock/serializers.py:1125
 msgid "Unit purchase price for the component items (leave blank for automatic cost allocation)"
 msgstr ""
 
-#: stock/serializers.py:1129
+#: stock/serializers.py:1153
 msgid "Number of assemblies to disassemble"
 msgstr ""
 
-#: stock/serializers.py:1156
+#: stock/serializers.py:1180
 msgid "Default destination location for the component items"
 msgstr ""
 
-#: stock/serializers.py:1203
+#: stock/serializers.py:1232
 msgid "BOM item is not valid for the selected stock item"
 msgstr ""
 
-#: stock/serializers.py:1207
+#: stock/serializers.py:1236
 msgid "Duplicate BOM items provided"
 msgstr ""
 
-#: stock/serializers.py:1248
+#: stock/serializers.py:1277
 msgid "Select part to convert stock item into"
 msgstr "تحديد صنف إلى تحويل عنصر المخزون إلى"
 
-#: stock/serializers.py:1261
+#: stock/serializers.py:1290
 msgid "Selected part is not a valid option for conversion"
 msgstr "محدد صنف هو غير صالح خيار لـ conversion"
 
-#: stock/serializers.py:1278
+#: stock/serializers.py:1307
 msgid "Cannot convert stock item with assigned SupplierPart"
 msgstr "لا يمكن تحويل عنصر المخزون مع مسند SupplierPart"
 
-#: stock/serializers.py:1314
+#: stock/serializers.py:1343
 msgid "Select stock items to change status"
 msgstr "تحديد حالة عناصر المخزون إلى تغيير"
 
-#: stock/serializers.py:1320
+#: stock/serializers.py:1349
 msgid "No stock items selected"
 msgstr "لا عناصر المخزون محدد"
 
-#: stock/serializers.py:1411 stock/serializers.py:1505
+#: stock/serializers.py:1440 stock/serializers.py:1534
 msgid "Sublocations"
 msgstr "مواقع فرعية"
 
-#: stock/serializers.py:1429
+#: stock/serializers.py:1458
 msgid "Delete Stock Items"
 msgstr "حذف عناصر المخزون"
 
-#: stock/serializers.py:1430
+#: stock/serializers.py:1459
 msgid "Delete all stock items contained within this location"
 msgstr "حذف الكل عناصر المخزون contained ضمن هذا موقع"
 
-#: stock/serializers.py:1435
+#: stock/serializers.py:1464
 msgid "Delete Sublocations"
 msgstr "حذف مواقع فرعية"
 
-#: stock/serializers.py:1436
+#: stock/serializers.py:1465
 msgid "Delete all sub-locations contained within this location"
 msgstr "حذف الكل sub-locations contained ضمن هذا موقع"
 
-#: stock/serializers.py:1500
+#: stock/serializers.py:1529
 msgid "Parent stock location"
 msgstr "الأصل موقع المخزون"
 
-#: stock/serializers.py:1571
+#: stock/serializers.py:1600
 msgid "Part must be salable"
 msgstr "يجب أن يكون الصنف قابل للبيع"
 
-#: stock/serializers.py:1575
+#: stock/serializers.py:1604
 msgid "Item is allocated to a sales order"
 msgstr "عنصر هو مخصص إلى طلب البيع"
 
-#: stock/serializers.py:1579
+#: stock/serializers.py:1608
 msgid "Item is allocated to a transfer order"
 msgstr "عنصر هو مخصص إلى طلب التحويل"
 
-#: stock/serializers.py:1583
+#: stock/serializers.py:1612
 msgid "Item is allocated to a build order"
 msgstr "عنصر هو مخصص إلى أمر الإنتاج"
 
-#: stock/serializers.py:1607
+#: stock/serializers.py:1636
 msgid "Customer to assign stock items"
 msgstr "عميل إلى إسناد عناصر المخزون"
 
-#: stock/serializers.py:1613
+#: stock/serializers.py:1642
 msgid "Selected company is not a customer"
 msgstr "محدد شركة هو غير عميل"
 
-#: stock/serializers.py:1622
+#: stock/serializers.py:1651
 msgid "Stock assignment notes"
 msgstr "مخزون assignment ملاحظات"
 
-#: stock/serializers.py:1632 stock/serializers.py:1945
+#: stock/serializers.py:1661 stock/serializers.py:2067
 msgid "A list of stock items must be provided"
 msgstr "يجب أن يكون قائمة لـ عناصر المخزون مقدم"
 
-#: stock/serializers.py:1712
+#: stock/serializers.py:1741
 msgid "Stock merging notes"
 msgstr "مخزون merging ملاحظات"
 
-#: stock/serializers.py:1717
+#: stock/serializers.py:1746
 msgid "Allow mismatched suppliers"
 msgstr "السماح mismatched موردون"
 
-#: stock/serializers.py:1718
+#: stock/serializers.py:1747
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr "السماح عناصر المخزون مع مختلف أصناف المورد إلى يكون merged"
 
-#: stock/serializers.py:1723
+#: stock/serializers.py:1752
 msgid "Allow mismatched status"
 msgstr "حالة السماح mismatched"
 
-#: stock/serializers.py:1724
+#: stock/serializers.py:1753
 msgid "Allow stock items with different status codes to be merged"
 msgstr "السماح عناصر المخزون مع مختلف حالة رموز إلى يكون merged"
 
-#: stock/serializers.py:1734
+#: stock/serializers.py:1763
 msgid "At least two stock items must be provided"
 msgstr "يجب أن يكون عند أقل two عناصر المخزون مقدم"
 
-#: stock/serializers.py:1832
+#: stock/serializers.py:1861
+#, python-brace-format
+msgid "Stock item is allocated: move the entire quantity, or no more than the unallocated quantity ({unallocated})"
+msgstr ""
+
+#: stock/serializers.py:1866
+#, python-brace-format
+msgid "Stock item is allocated: quantity must not exceed the unallocated quantity ({unallocated})"
+msgstr ""
+
+#: stock/serializers.py:1947
 msgid "StockItem primary key value"
 msgstr "StockItem أساسي مفتاح قيمة"
 
-#: stock/serializers.py:1845
+#: stock/serializers.py:1960
 msgid "Stock item is not in stock"
 msgstr "عنصر المخزون هو غير في مخزون"
 
-#: stock/serializers.py:1848
+#: stock/serializers.py:1963
 msgid "Stock item is already in stock"
 msgstr "عنصر المخزون هو بالفعل في مخزون"
 
-#: stock/serializers.py:1862
+#: stock/serializers.py:1977
 msgid "Quantity must not be negative"
 msgstr "كمية يجب غير يكون سالب"
 
-#: stock/serializers.py:1889 stock/serializers.py:2227
+#: stock/serializers.py:2004 stock/serializers.py:2351
 msgid "Merge into existing stock"
 msgstr "دمج إلى موجود مخزون"
 
-#: stock/serializers.py:1891
+#: stock/serializers.py:2006
 msgid "Merge this item into existing stock at the destination if possible"
 msgstr "دمج هذا عنصر إلى موجود مخزون عند ال الوجهة إذا possible"
 
-#: stock/serializers.py:1911
+#: stock/serializers.py:2026
 msgid "Stock transaction notes"
 msgstr "مخزون transaction ملاحظات"
 
-#: stock/serializers.py:1968
+#: stock/serializers.py:2090
 msgid "Set stock location for counted items (optional)"
 msgstr "تعيين موقع المخزون لـ counted عناصر (اختياري)"
 
-#: stock/serializers.py:2228
+#: stock/serializers.py:2352
 msgid "Merge returned items into existing stock items if possible"
 msgstr "دمج مرتجع عناصر إلى موجود عناصر المخزون إذا possible"
 
-#: stock/serializers.py:2271
+#: stock/serializers.py:2395
 msgid "Next Serial Number"
 msgstr "Next الرقم التسلسلي"
 
-#: stock/serializers.py:2277
+#: stock/serializers.py:2401
 msgid "Previous Serial Number"
 msgstr "Previous الرقم التسلسلي"
 
