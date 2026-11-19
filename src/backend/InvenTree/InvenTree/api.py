@@ -40,7 +40,7 @@ from InvenTree.proof import calculate_proof
 from InvenTree.tasks import batch_offload_tasks
 from plugin.base.event.events import batch_events
 from plugin.serializers import MetadataSerializer
-from users.permissions import check_user_permission, prefetch_rule_sets
+from users.permissions import prefetch_rule_sets
 
 from .helpers import plugins_info, str2bool
 from .helpers_email import is_email_configured
@@ -863,10 +863,13 @@ class APISearchView(GenericAPIView):
                 view.format_kwarg = 'format'
 
                 # Check permissions and update results dict with particular query
-                model = view.serializer_class.Meta.model
+                try:
+                    model = InvenTree.permissions.get_model_for_view(view)
+                except InvenTree.permissions.PermissionModelNotFoundError:
+                    model = None
 
-                if not check_user_permission(
-                    request.user, model, 'view', groups=groups
+                if model is None or not InvenTree.permissions.check_request_permission(
+                    request, model, 'view', groups=groups
                 ):
                     results[key] = {
                         'error': _('User does not have permission to view this model')

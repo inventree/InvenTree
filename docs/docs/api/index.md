@@ -176,6 +176,20 @@ r:delete:stock
 
 The general scopes `g:read` and `g:write` cover endpoints which are not associated with a specific role - `g:read` only grants read access (`GET`, `HEAD`, `OPTIONS`), write operations require `g:write`.
 
+##### Required scopes for an endpoint
+
+For most endpoints, the required scopes are determined by the type of data (model) which the endpoint provides, and the HTTP method of the request:
+
+| HTTP Method | Required Scope |
+| --- | --- |
+| `GET` / `HEAD` | `r:view:<role>` |
+| `POST` | `r:add:<role>` |
+| `PUT` / `PATCH` | `r:change:<role>` |
+| `DELETE` | `r:delete:<role>` |
+| `OPTIONS` | `g:read` |
+
+For example, `GET /api/stock/location/` requires `r:view:stock_location` (and `r:view:build`, see below), and `POST /api/part/category/` requires `r:add:part_category` (and `r:add:build`).
+
 !!! warning "Scopes restrict - they do not grant"
     A request with an oAuth2 token must satisfy both the scopes of the token *and* the permissions of the user who authorized the application. A token can therefore never do more than the user is allowed to do.
     oAuth2 tokens are only accepted by the API - they can not be used to log in to the web interface, or to issue (or manage) API tokens.

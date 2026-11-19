@@ -187,6 +187,13 @@ The `Edit BOM Item Substitutes` form will be displayed:
 
 Select a part in the list and click on "Add Substitute" button to confirm.
 
+### Copying a BOM
+
+The BOM of another part can be copied to an assembly via the API, using the `/api/part/<id>/bom-copy/` endpoint. By default, any existing BOM line items for the assembly are removed before the BOM is copied (the `remove_existing` option).
+
+!!! warning "Permissions"
+    Copying a BOM requires the *add* permission for the *BOM* role. If existing BOM line items are removed (`remove_existing`, which is enabled by default), the *delete* permission for the *BOM* role is also required. Refer to the [user permissions](../settings/permissions.md#api-permissions) documentation for more information.
+
 ## Multi Level BOMs
 
 Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimited number of levels.

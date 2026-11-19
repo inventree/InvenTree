@@ -16,7 +16,6 @@ import InvenTree.permissions
 import report.helpers
 import report.models
 import report.serializers
-import users.permissions
 from common.models import DataOutput
 from common.serializers import DataOutputSerializer
 from InvenTree.api import meta_path
@@ -163,8 +162,8 @@ class LabelPrint(GenericAPIView):
         template = serializer.validated_data['template']
 
         model_class = template.get_model()
-        if model_class and not users.permissions.check_user_permission(
-            request.user, model_class, 'view'
+        if model_class and not InvenTree.permissions.check_request_permission(
+            request, model_class, 'view'
         ):
             raise PermissionDenied(
                 _('You do not have permission to view this model type')
@@ -273,8 +272,8 @@ class ReportPrint(GenericAPIView):
         template = serializer.validated_data['template']
 
         model_class = template.get_model()
-        if model_class and not users.permissions.check_user_permission(
-            request.user, model_class, 'view'
+        if model_class and not InvenTree.permissions.check_request_permission(
+            request, model_class, 'view'
         ):
             raise PermissionDenied(
                 _('You do not have permission to view this model type')
