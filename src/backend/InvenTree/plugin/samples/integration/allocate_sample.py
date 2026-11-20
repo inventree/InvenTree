@@ -11,7 +11,7 @@ class SampleAllocatePlugin(AllocateMixin, InvenTreePlugin):
     """A sample plugin for demonstrating custom auto-allocation behavior.
 
     Any stock item with a batch code of 'REJECT' is excluded from
-    auto-allocation, for both build orders and sales orders.
+    auto-allocation, for build orders, sales orders and repair orders.
     """
 
     NAME = 'SampleAllocate'
@@ -27,5 +27,9 @@ class SampleAllocatePlugin(AllocateMixin, InvenTreePlugin):
         return [item for item in stock_items if item.batch != REJECT_BATCH_CODE]
 
     def filter_sales_order_allocation(self, order_line, stock_items, **kwargs):
+        """Exclude any stock item with a 'REJECT' batch code."""
+        return [item for item in stock_items if item.batch != REJECT_BATCH_CODE]
+
+    def filter_repair_order_allocation(self, order_line, stock_items, **kwargs):
         """Exclude any stock item with a 'REJECT' batch code."""
         return [item for item in stock_items if item.batch != REJECT_BATCH_CODE]

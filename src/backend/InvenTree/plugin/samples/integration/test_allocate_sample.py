@@ -1,6 +1,12 @@
 """Unit tests for the SampleAllocatePlugin class."""
 
-from build.models import Build, BuildLine, generate_next_build_reference
+from build.models import (
+    Build,
+    BuildLine,
+    RepairOrder,
+    RepairOrderLineItem,
+    generate_next_build_reference,
+)
 from company.models import Company
 from InvenTree.unit_test import InvenTreeTestCase
 from order.models import SalesOrder, SalesOrderLineItem
@@ -69,6 +75,45 @@ class SampleAllocatePluginTest(InvenTreeTestCase):
         self.assertEqual(
             list(order.stock_allocations.values_list('item', flat=True)),
             [good_stock.pk],
+        )
+
+        self.enable_plugin(False)
+
+    def test_repair_order_auto_allocate(self):
+        """The plugin should exclude 'REJECT' batches from repair order allocation."""
+        assembly = Part.objects.create(name='Repaired Assembly', assembly=True)
+        component = Part.objects.create(name='Spare Part', component=True)
+
+        order = RepairOrder.objects.create(description='Repair', part=assembly)
+        line = RepairOrderLineItem.objects.create(
+            order=order, part=component, quantity=5
+        )
+
+        # The 'REJECT' item would be selected first (larger quantity)
+        good_stock = StockItem.objects.create(part=component, quantity=10)
+        reject_stock = StockItem.objects.create(
+            part=component, quantity=20, batch='REJECT'
+        )
+
+        sort_by = '-quantity'
+
+        # With the plugin disabled, the 'REJECT' item is allocated
+        self.enable_plugin(False)
+        order.auto_allocate_stock(stock_sort_by=sort_by)
+
+        self.assertEqual(
+            list(line.allocations.values_list('item', flat=True)), [reject_stock.pk]
+        )
+
+        line.allocations.all().delete()
+
+        # With the plugin enabled, the 'REJECT' item is filtered out
+        self.enable_plugin(True)
+        order.auto_allocate_stock(stock_sort_by=sort_by)
+
+        self.assertEqual(line.unallocated_quantity(), 0)
+        self.assertEqual(
+            list(line.allocations.values_list('item', flat=True)), [good_stock.pk]
         )
 
         self.enable_plugin(False)

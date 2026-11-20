@@ -358,6 +358,7 @@ class StockItemSerializer(
             'build',
             'consumed_by',
             'consumed_by_detail',
+            'consumed_by_repair',
             'customer',
             'delete_on_deplete',
             'expiry_date',
@@ -547,6 +548,7 @@ class StockItemSerializer(
             'customer',
             'belongs_to',
             'consumed_by',
+            'consumed_by_repair',
         )
 
         # Annotate the queryset with the total allocated quantity
@@ -570,6 +572,7 @@ class StockItemSerializer(
                 Decimal(0),
             )
             + Coalesce(SubquerySum('allocations__quantity'), Decimal(0))
+            + Coalesce(SubquerySum('repair_order_allocations__quantity'), Decimal(0))
         )
 
         # Annotate the queryset with the number of tracking items
