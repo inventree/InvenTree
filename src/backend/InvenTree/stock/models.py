@@ -56,7 +56,11 @@ from users.models import Owner
 logger = structlog.get_logger('inventree')
 
 
-class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
+class StockLocationType(
+    InvenTree.models.InvenTreeParameterMixin,
+    InvenTree.models.MetadataMixin,
+    models.Model,
+):
     """A type of stock location like Warehouse, room, shelf, drawer.
 
     Attributes:

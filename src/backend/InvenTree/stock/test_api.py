@@ -17,7 +17,13 @@ import build.models
 import company.models
 import order.models
 import part.models
-from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting, Note
+from common.models import (
+    InvenTreeCustomUserStateModel,
+    InvenTreeSetting,
+    Note,
+    Parameter,
+    ParameterTemplate,
+)
 from common.settings import set_global_setting
 from InvenTree.unit_test import (
     InvenTreeAPIPerformanceTestCase,
@@ -614,6 +620,121 @@ class StockLocationTypeTest(StockAPITestCase):
             expected_code=200,
         ).json()
         self.assertEqual(res['icon'], 'ti:tag:outline')
+
+    def test_parameters(self):
+        """Type parameters are opt-in and independent of location parameters."""
+        location_type = StockLocationType.objects.create(name='Drawer')
+        location = StockLocation.objects.create(
+            name='Drawer A3', location_type=location_type
+        )
+        template = ParameterTemplate.objects.create(name='Internal width', units='mm')
+        location_parameter = Parameter.objects.create(
+            model_type=ContentType.objects.get_for_model(StockLocation),
+            model_id=location.pk,
+            template=template,
+            data='125 mm',
+        )
+        parameter = self.post(
+            reverse('api-parameter-list'),
+            {
+                'model_type': 'stock.stocklocationtype',
+                'model_id': location_type.pk,
+                'template': template.pk,
+                'data': '120 mm',
+            },
+        ).data
+
+        detail_url = reverse(
+            'api-location-type-detail', kwargs={'pk': location_type.pk}
+        )
+        for options in [{}, {'parameters': False}]:
+            self.assertNotIn('parameters', self.get(self.list_url, options).data[0])
+            self.assertNotIn('parameters', self.get(detail_url, options).data)
+
+        options = {'parameters': True}
+        for record in [
+            self.get(self.list_url, options).data[0],
+            self.get(detail_url, options).data,
+        ]:
+            self.assertEqual(record['location_count'], 1)
+            self.assertEqual([p['pk'] for p in record['parameters']], [parameter['pk']])
+
+        stock_location = self.get(
+            reverse('api-location-detail', kwargs={'pk': location.pk}), options
+        ).data
+        self.assertEqual(
+            [p['pk'] for p in stock_location['parameters']], [location_parameter.pk]
+        )
+        self.assertNotIn('parameters', stock_location['location_type_detail'])
+
+        self.delete(detail_url, expected_code=204)
+        location.refresh_from_db()
+        self.assertIsNone(location.location_type_id)
+        self.assertFalse(Parameter.objects.filter(pk=parameter['pk']).exists())
+        self.assertTrue(Parameter.objects.filter(pk=location_parameter.pk).exists())
+
+    def test_parameter_permissions(self):
+        """Reading and changing a type's parameters uses stock location permissions."""
+        location_type = StockLocationType.objects.create(name='Drawer')
+        model_type = ContentType.objects.get_for_model(StockLocationType)
+        template = ParameterTemplate.objects.create(
+            name='Internal width', model_type=model_type
+        )
+        parameter = Parameter.objects.create(
+            model_type=model_type,
+            model_id=location_type.pk,
+            template=template,
+            data='120',
+        )
+        params = {'model_type': model_type.model, 'model_id': location_type.pk}
+        parameter_list = reverse('api-parameter-list')
+        type_detail = reverse(
+            'api-location-type-detail', kwargs={'pk': location_type.pk}
+        )
+
+        self.clearRoles()
+        self.assertEqual(self.get(parameter_list, params).data, [])
+        self.get(type_detail, {'parameters': True}, expected_code=403)
+
+        self.assignRole('stock_location.view')
+        self.assertEqual(self.get(parameter_list, params).data[0]['pk'], parameter.pk)
+        self.assertEqual(
+            self.get(type_detail, {'parameters': True}).data['parameters'][0]['pk'],
+            parameter.pk,
+        )
+        self.patch(
+            reverse('api-parameter-detail', kwargs={'pk': parameter.pk}),
+            {'data': '150'},
+            expected_code=403,
+        )
+
+    def test_parameters_prefetch(self):
+        """Including parameters does not add per-type or per-template queries."""
+        model_type = ContentType.objects.get_for_model(StockLocationType)
+        for index in range(5):
+            location_type = StockLocationType.objects.create(name=f'Drawer {index}')
+            template = ParameterTemplate.objects.create(
+                name=f'Width {index}', model_type=model_type
+            )
+            Parameter.objects.create(
+                model_type=model_type,
+                model_id=location_type.pk,
+                template=template,
+                data='120',
+            )
+
+        options = {'parameters': True, 'search': 'Drawer 0'}
+        self.get(self.list_url, options)
+        with self.assertNumQueriesLessThan(self.MAX_QUERY_COUNT) as queries:
+            self.assertEqual(len(self.get(self.list_url, options).data), 1)
+
+        records = self.get(
+            self.list_url,
+            {'parameters': True, 'search': 'Drawer'},
+            max_query_count=len(queries.captured_queries) + 1,
+        ).data
+        self.assertEqual(len(records), 5)
+        self.assertTrue(all(len(record['parameters']) == 1 for record in records))
 
 
 class StockItemListTest(StockAPITestCase):

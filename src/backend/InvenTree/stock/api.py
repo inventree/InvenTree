@@ -540,17 +540,36 @@ class StockLocationTree(TreeMixin, ListAPI):
         return queryset
 
 
-class StockLocationTypeList(ListCreateAPI):
+class StockLocationTypeOutputOptions(OutputConfiguration):
+    """Output options for the stock location type endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            flag='parameters', description='Include parameters for each location type'
+        )
+    ]
+
+
+class StockLocationTypeMixin:
+    """Shared configuration for the stock location type endpoints."""
+
+    queryset = StockLocationType.objects.all()
+    serializer_class = StockSerializers.StockLocationTypeSerializer
+
+    def get_queryset(self):
+        """Include the number of locations assigned to each type."""
+        return self.serializer_class.annotate_queryset(super().get_queryset())
+
+
+class StockLocationTypeList(StockLocationTypeMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for a list of StockLocationType objects.
 
     - GET: Return a list of all StockLocationType objects
     - POST: Create a StockLocationType
     """
 
-    queryset = StockLocationType.objects.all()
-    serializer_class = StockSerializers.StockLocationTypeSerializer
-
     filter_backends = SEARCH_ORDER_FILTER
+    output_options = StockLocationTypeOutputOptions
 
     ordering_fields = ['name', 'location_count', 'icon']
 
@@ -558,17 +577,10 @@ class StockLocationTypeList(ListCreateAPI):
 
     search_fields = ['name', 'description']
 
-    def get_queryset(self):
-        """Override the queryset method to include location count."""
-        queryset = super().get_queryset()
-        queryset = StockSerializers.StockLocationTypeSerializer.annotate_queryset(
-            queryset
-        )
 
-        return queryset
-
-
-class StockLocationTypeDetail(RetrieveUpdateDestroyAPI):
+class StockLocationTypeDetail(
+    StockLocationTypeMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API detail endpoint for a StockLocationType object.
 
     - GET: return a single StockLocationType
@@ -577,17 +589,7 @@ class StockLocationTypeDetail(RetrieveUpdateDestroyAPI):
     - DELETE: delete a StockLocationType
     """
 
-    queryset = StockLocationType.objects.all()
-    serializer_class = StockSerializers.StockLocationTypeSerializer
-
-    def get_queryset(self):
-        """Override the queryset method to include location count."""
-        queryset = super().get_queryset()
-        queryset = StockSerializers.StockLocationTypeSerializer.annotate_queryset(
-            queryset
-        )
-
-        return queryset
+    output_options = StockLocationTypeOutputOptions
 
 
 class StockFilter(FilterSet):

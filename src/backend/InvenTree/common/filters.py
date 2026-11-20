@@ -443,7 +443,7 @@ def enable_parameters_filter():
             'parameters_list',
             'parameters_list__model_type',
             'parameters_list__updated_by',
-            'parameters_list__template',
+            'parameters_list__template__model_type',
         ],
     )
 
