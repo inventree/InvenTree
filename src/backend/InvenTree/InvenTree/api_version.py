@@ -1,15 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 582
+INVENTREE_API_VERSION = 583
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v582 -> 2026-11-16 : https://github.com/inventree/InvenTree/pull/13294
+v583 -> 2026-11-16 : https://github.com/inventree/InvenTree/pull/13294
     - Adds StockItemCostEntry and StockItemCost (summary) models to the "pricing" app
-    - Adds /api/pricing/stock-cost/ list and detail endpoints (read-only)
     - Access to these endpoints requires the "pricing" role, and the "stock" role (view to read, change to write)
     - Adds optional "pricing_detail" field to the StockItem API (requires the "pricing" view role)
     - Breaking: Removes the "purchase_price" and "purchase_price_currency" fields from the StockItem API (read and write) - stock item costs are managed via /api/pricing/stock-cost-entry/, and the cost summary is available via "pricing_detail"
@@ -19,8 +18,10 @@ v582 -> 2026-11-16 : https://github.com/inventree/InvenTree/pull/13294
     - Breaking: Explicit per-line "purchase_price" values for stock disassembly now create cost entries (and no longer set the purchase price), and default to the default currency
     - Breaking: Removes the "PURCHASEORDER_CONVERT_CURRENCY" global setting
 
+v582 -> 2026-11-19 : https://github.com/inventree/InvenTree/pull/13329
+    - The title tag of the part's override_min/max_currency had been moved by the API generator generating diff in the schema, no functional changes
+
 v581 -> 2026-11-17 : https://github.com/inventree/InvenTree/pull/13305
-    - Assign correct BOM permission role to part/copy-bom API endpoint
 
 v580 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13072
 

@@ -15,6 +15,7 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
+  BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -140,6 +141,13 @@ export default function ManufacturerPartDetail() {
         key='admin'
         model={ModelType.manufacturerpart}
         id={manufacturerPart.pk}
+      />,
+      <BarcodeActionDropdown
+        key='barcode'
+        model={ModelType.manufacturerpart}
+        pk={manufacturerPart.pk}
+        hash={manufacturerPart.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.purchase_order)}
       />,
       <OptionsActionDropdown
         key='options'
