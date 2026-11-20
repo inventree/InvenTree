@@ -8,12 +8,16 @@ import {
   RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { useNavigate } from 'react-router-dom';
 import { ApiIcon } from '../../components/items/ApiIcon';
+import { RenderInlineModel } from '../../components/render/Instance';
 import { DescriptionColumn } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import {
@@ -26,6 +30,7 @@ import { useUserState } from '../../states/UserState';
 export default function LocationTypesTable() {
   const table = useTable('location-types');
   const user = useUserState();
+  const navigate = useNavigate();
 
   const formFields: ApiFormFieldSet = useMemo(() => {
     return {
@@ -72,7 +77,14 @@ export default function LocationTypesTable() {
       {
         accessor: 'name',
         title: t`Name`,
-        sortable: true
+        sortable: true,
+        render: (record) => (
+          <RenderInlineModel
+            primary={record.name}
+            url={getDetailUrl(ModelType.stocklocationtype, record.pk)}
+            navigate={navigate}
+          />
+        )
       },
       DescriptionColumn({}),
       {
@@ -80,7 +92,7 @@ export default function LocationTypesTable() {
         sortable: true
       }
     ];
-  }, []);
+  }, [navigate]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {

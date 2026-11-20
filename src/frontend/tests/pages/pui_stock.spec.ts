@@ -1,3 +1,4 @@
+import { createApi } from '../api';
 import { expect, test } from '../baseFixtures.js';
 import { adminuser, stevenuser } from '../defaults.js';
 import {
@@ -6,7 +7,8 @@ import {
   loadTab,
   navigate,
   openFilterDrawer,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  tableSearch
 } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
@@ -87,6 +89,83 @@ test('Stock - Location Tree', async ({ browser }) => {
   await page.getByRole('textbox', { name: 'nav-tree-search' }).fill('room');
   await page.getByText('Storage Room A').first().waitFor();
   await page.getByText('Storage Room B').first().waitFor();
+});
+
+test('Stock - Location Type Parameters', async ({ browser }) => {
+  const api = await createApi({});
+  const suffix = Date.now();
+  const typeName = `Small Drawer ${suffix}`;
+  const templateName = `Internal Width ${suffix}`;
+  let typeId: number | undefined;
+  let locationId: number | undefined;
+  let templateId: number | undefined;
+
+  try {
+    const typeResponse = await api.post('stock/location-type/', {
+      data: { name: typeName }
+    });
+    await expect(typeResponse).toBeOK();
+    typeId = (await typeResponse.json()).pk;
+
+    const locationResponse = await api.post('stock/location/', {
+      data: { name: `Drawer ${suffix}`, location_type: typeId }
+    });
+    await expect(locationResponse).toBeOK();
+    locationId = (await locationResponse.json()).pk;
+
+    const templateResponse = await api.post('parameter/template/', {
+      data: {
+        name: templateName,
+        model_type: 'stock.stocklocationtype',
+        units: 'mm'
+      }
+    });
+    await expect(templateResponse).toBeOK();
+    templateId = (await templateResponse.json()).pk;
+
+    const page = await doCachedLogin(browser, {
+      user: adminuser,
+      url: 'settings/admin/location-types'
+    });
+    await tableSearch(page, typeName);
+    await page.getByRole('link', { name: typeName }).click();
+    await loadTab(page, 'Parameters');
+
+    await page
+      .getByRole('button', { name: 'action-menu-add-parameters' })
+      .click();
+    await page
+      .getByRole('menuitem', {
+        name: 'action-menu-add-parameters-create-parameter'
+      })
+      .click();
+    await page
+      .getByRole('combobox', { name: 'related-field-template' })
+      .fill(templateName);
+    await page.getByRole('option', { name: templateName }).click();
+    await page.getByRole('textbox', { name: 'text-field-data' }).fill('120 mm');
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await expect(
+      page.getByRole('cell', { name: '120 mm', exact: true })
+    ).toBeVisible();
+
+    await navigate(page, `stock/location/${locationId}/details`);
+    await page.getByRole('link', { name: typeName }).click();
+    await loadTab(page, 'Parameters');
+    await expect(
+      page.getByRole('cell', { name: '120 mm', exact: true })
+    ).toBeVisible();
+  } finally {
+    if (locationId) {
+      const response = await api.delete(`stock/location/${locationId}/`, {
+        data: { delete_stock_items: false, delete_sub_locations: false }
+      });
+      await expect.soft(response).toBeOK();
+    }
+    if (typeId) await api.delete(`stock/location-type/${typeId}/`);
+    if (templateId) await api.delete(`parameter/template/${templateId}/`);
+    await api.dispose();
+  }
 });
 
 test('Stock - Location Delete', async ({ browser }) => {

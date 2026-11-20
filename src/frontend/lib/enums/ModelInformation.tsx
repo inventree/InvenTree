@@ -145,6 +145,7 @@ export const ModelInformationDict: ModelDict = {
   stocklocationtype: {
     label: () => t`Stock Location Type`,
     label_multiple: () => t`Stock Location Types`,
+    url_detail: '/stock/location-type/:pk/',
     api_endpoint: ApiEndpoints.stock_location_type_list,
     icon: 'location'
   },

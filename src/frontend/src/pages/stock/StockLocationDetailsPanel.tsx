@@ -2,17 +2,22 @@ import { t } from '@lingui/core/macro';
 import { Group, Skeleton } from '@mantine/core';
 
 import { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { useNavigate } from 'react-router-dom';
 
 import type { DetailsField } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
 import { ApiIcon } from '../../components/items/ApiIcon';
+import { RenderInlineModel } from '../../components/render/Instance';
 
 export function StockLocationDetailsPanel({
   instance
 }: Readonly<{
   instance: any;
 }>) {
+  const navigate = useNavigate();
+
   const left: DetailsField[] = [
     {
       type: 'text',
@@ -92,7 +97,19 @@ export function StockLocationDetailsPanel({
       name: 'location_type_detail.name',
       label: t`Location Type`,
       hidden: !instance?.location_type,
-      icon: 'packages'
+      icon: 'packages',
+      value_formatter: instance?.location_type_detail?.name
+        ? () => (
+            <RenderInlineModel
+              primary={instance.location_type_detail.name}
+              url={getDetailUrl(
+                ModelType.stocklocationtype,
+                instance.location_type
+              )}
+              navigate={navigate}
+            />
+          )
+        : undefined
     }
   ];
 
