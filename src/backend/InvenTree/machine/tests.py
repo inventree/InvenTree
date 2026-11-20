@@ -10,8 +10,8 @@ from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from machine.models import MachineConfig
 from machine.registry import registry
 from part.models import Part
+from plugin import registry as plg_registry
 from plugin.models import PluginConfig
-from plugin.registry import registry as plg_registry
 from report.models import LabelTemplate
 
 

@@ -2,13 +2,15 @@
 title: InvenTree Mobile App
 ---
 
-{% with directory="appgallery", per_page=2 %}
+## InvenTree Mobile App
+
+The InvenTree Mobile App brings stock control to your pocket. Integrating seamlessly with the [InvenTree API](../api/index.md), the app provides immediate access to inventory data without requiring physical access to a computer.
+
+{% with directory="appgallery", per_page=2, height="25rem", mobile_height="25rem" %}
 {% include "carousel.html" %}
 {% endwith %}
 
 -----
-
-The InvenTree Mobile App brings stock control to your pocket. Integrating seamlessly with the [InvenTree API](../api/index.md), the app provides immediate access to inventory data without requiring physical access to a computer.
 
 Native barcode support provides a multitude of context-sensitive stock control actions, allowing streamlined inventory management at your fingertips. The app has been optimized for speed, providing instant access to stock knowledge and handy on-site functionality.
 
@@ -29,7 +31,9 @@ The InvenTree app can be downloaded from either the Android or Apple app stores,
 <span class='fab fa-android'></span> [Android Play Store](https://play.google.com/store/apps/details?id=inventree.inventree_app).
 
 !!! info "APK Download"
-    As an alternative to using the Android Play Store, the InvenTree app APK file can be downloaded directly via our [polar.sh](https://polar.sh/inventree/products/299bf0d5-af88-4e0f-becf-c007ad37ecf2) page.
+    As an alternative to using the Android Play Store, the InvenTree app APK file can be downloaded directly via our [polar.sh](https://buy.polar.sh/polar_cl_UnGILJ0c7P3hQrOrJs127oyLTTDOTHKrnqfCg30XtBI) page.
+
+
 
 ### iOS
 

@@ -166,6 +166,12 @@ test('Build Order - Tags', async ({ browser }) => {
   });
 
   await expect(tagsField).toBeVisible();
+
+  // Existing tags are pre-filled in the edit form
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByText('Electronics', { exact: true })).toBeVisible();
+  await expect(dialog.getByText('PCB Assembly', { exact: true })).toBeVisible();
+
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 

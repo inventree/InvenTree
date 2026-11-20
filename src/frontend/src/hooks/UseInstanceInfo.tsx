@@ -40,6 +40,8 @@ export function useInstanceInfo({
     // dots themselves - a stale value for a few minutes is an acceptable
     // trade-off against refetching on every page navigation/remount.
     staleTime: 5 * 60 * 1000,
+    placeholderData: (previousData, previousQuery) =>
+      previousQuery?.queryKey[1] === modelType ? previousData : undefined,
     queryFn: async () => {
       return api
         .get(apiUrl(ApiEndpoints.instance_info), {

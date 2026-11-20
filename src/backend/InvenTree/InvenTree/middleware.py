@@ -261,10 +261,10 @@ class Check2FAMiddleware(MiddlewareMixin):
         from allauth.mfa.utils import is_mfa_enabled
         from allauth.mfa.webauthn.internal.flows import did_use_passwordless_login
 
-        authns = get_authentication_records(request)
+        authns = get_authentication_records(request, request.user)
 
         return is_mfa_enabled(request.user) and (
-            did_use_passwordless_login(request)
+            did_use_passwordless_login(request, request.user)
             or any(record.get('method') == 'mfa' for record in authns)
         )
 

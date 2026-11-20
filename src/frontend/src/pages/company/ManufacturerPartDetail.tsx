@@ -15,6 +15,7 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import {
+  BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -22,13 +23,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -36,7 +31,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -61,13 +55,6 @@ export default function ManufacturerPartDetail() {
       tags: true
     }
   });
-
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.manufacturerpart,
-    modelId: manufacturerPart?.pk
-  });
-
-  const showHistory = useShowHistoryPanel();
 
   const panels: PanelType[] = useMemo(() => {
     return [
@@ -110,29 +97,9 @@ export default function ManufacturerPartDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      ParametersPanel({
-        model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk,
-        parameter_count: instanceInfo.parameter_count
-      }),
-      AttachmentPanel({
-        model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk,
-        note_count: instanceInfo.note_count
-      }),
-      HistoryPanel({
-        model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [user, manufacturerPart, instanceInfo, showHistory]);
+  }, [user, manufacturerPart]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
 
@@ -141,7 +108,6 @@ export default function ManufacturerPartDetail() {
     pk: manufacturerPart?.pk,
     title: t`Edit Manufacturer Part`,
     fields: editManufacturerPartFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
@@ -175,6 +141,13 @@ export default function ManufacturerPartDetail() {
         key='admin'
         model={ModelType.manufacturerpart}
         id={manufacturerPart.pk}
+      />,
+      <BarcodeActionDropdown
+        key='barcode'
+        model={ModelType.manufacturerpart}
+        pk={manufacturerPart.pk}
+        hash={manufacturerPart.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.purchase_order)}
       />,
       <OptionsActionDropdown
         key='options'

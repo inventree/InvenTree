@@ -2,6 +2,8 @@
 title: Helper Functions
 ---
 
+## Report Helper Functions
+
 Some common functions are provided for use in custom report and label templates. To include these, load the `report` functions at the start of the template:
 
 ```html

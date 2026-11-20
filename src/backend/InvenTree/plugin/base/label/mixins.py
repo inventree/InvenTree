@@ -10,9 +10,8 @@ from rest_framework.request import Request
 from common.models import DataOutput, InvenTreeSetting
 from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
-from plugin import PluginMixinEnum
+from plugin import MixinNotImplementedError, PluginMixinEnum
 from plugin.base.label import label as plugin_label
-from plugin.helpers import MixinNotImplementedError
 from report.models import LabelTemplate
 
 

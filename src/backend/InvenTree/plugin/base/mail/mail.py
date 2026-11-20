@@ -7,8 +7,7 @@ from django.core.mail.message import EmailMessage, EmailMultiAlternatives
 from common.models import EmailMessage as InventreeEmailMessage
 from common.settings import get_global_setting
 from InvenTree.backends import logger
-from plugin.plugin import PluginMixinEnum
-from plugin.registry import registry
+from plugin import PluginMixinEnum, registry
 
 
 def process_mail_out(

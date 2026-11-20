@@ -1,13 +1,14 @@
 """Utility file to enable simper imports."""
 
-from .helpers import MixinImplementationError, MixinNotImplementedError
-from .plugin import InvenTreePlugin, PluginMixinEnum
-from .registry import registry
+from ._internal.base import InvenTreePlugin, PluginMixinEnum
+from ._internal.helpers import MixinImplementationError, MixinNotImplementedError
+from ._internal.registry import call_plugin_function, registry
 
 __all__ = [
     'InvenTreePlugin',
     'MixinImplementationError',
     'MixinNotImplementedError',
     'PluginMixinEnum',
+    'call_plugin_function',
     'registry',
 ]

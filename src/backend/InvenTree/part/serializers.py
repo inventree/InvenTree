@@ -13,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 from sql_util.utils import SubqueryCount
 
 import common.filters
@@ -25,6 +26,7 @@ import part.filters as part_filters
 import part.helpers as part_helpers
 import stock.models
 import users.models
+import users.permissions
 from data_exporter.mixins import DataExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
@@ -196,6 +198,8 @@ class CategoryTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'subcategories',
         ]
 
+        read_only_fields = ['pathstring']
+
     subcategories = serializers.IntegerField(label=_('Subcategories'), read_only=True)
 
     icon = serializers.CharField(
@@ -323,7 +327,7 @@ class PartBriefSerializer(
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         read_only=True, allow_null=True
     )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    thumbnail = InvenTree.serializers.InvenTreeThumbnailField()
 
     IPN = serializers.CharField(
         required=False,
@@ -480,6 +484,7 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         model = stock_models.StockLocation
         fields = ['pk', 'name', 'pathstring']
+        read_only_fields = ['pathstring']
 
 
 @register_importer()
@@ -840,7 +845,7 @@ class PartSerializer(
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         required=False, allow_null=True
     )
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    thumbnail = InvenTree.serializers.InvenTreeThumbnailField()
     starred = serializers.SerializerMethodField()
 
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
@@ -1803,6 +1808,21 @@ class PartCopyBOMSerializer(serializers.Serializer):
         help_text=_('Copy substitute parts when duplicate BOM items'),
         default=True,
     )
+
+    def validate(self, data):
+        """Ensure the user has permission to remove existing BOM items, if requested."""
+        data = super().validate(data)
+
+        if data.get('remove_existing', True):
+            request = self.context.get('request')
+            user = getattr(request, 'user', None)
+
+            if not users.permissions.check_user_role(user, 'bom', 'delete'):
+                raise PermissionDenied(
+                    _('You do not have permission to remove existing BOM items')
+                )
+
+        return data
 
     def save(self):
         """Actually duplicate the BOM."""

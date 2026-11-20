@@ -34,6 +34,7 @@ import stock.serializers
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
@@ -44,6 +45,7 @@ from InvenTree.filters import (
 )
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
+    ActionLockMixin,
     CreateAPI,
     ListCreateAPI,
     OutputOptionsMixin,
@@ -341,6 +343,7 @@ class BuildListOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
 
 
+@search_provider(ref_names=['build'])
 class BuildList(
     DataExportViewMixin,
     BuildMixin,
@@ -737,8 +740,14 @@ class BuildLineDetail(BuildLineMixin, OutputOptionsMixin, RetrieveUpdateDestroyA
         return None
 
 
-class BuildOrderContextMixin:
-    """Mixin class which adds build order as serializer context variable."""
+class BuildOrderContextMixin(ActionLockMixin):
+    """Mixin class which adds build order as serializer context variable.
+
+    The build order row is locked for the duration of the action (see ActionLockMixin),
+    so the action operates on (and saves) up-to-date build order data.
+    """
+
+    lock_model = Build
 
     def get_build(self):
         """Return the Build object associated with this API endpoint."""

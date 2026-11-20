@@ -15,7 +15,7 @@ PLUGIN_BASE = 'plugin'  # Constant for links
 
 def get_plugin_urls():
     """Returns a urlpattern that can be integrated into the global urls."""
-    from plugin.registry import registry
+    from plugin import registry
 
     urls = []
 
@@ -60,7 +60,7 @@ def get_plugin_urls():
 
 def wellknownindexview(request):
     """Simple view that returns a list of all well-known URLs as JSON."""
-    from plugin.registry import registry
+    from plugin import registry
 
     well_known_urls = {}
     if registry.is_ready:
@@ -78,7 +78,7 @@ def wellknownindexview(request):
 
 def get_wellknown_urls():
     """Returns a urlpattern that can be integrated into the global urls (as redirects)."""
-    from plugin.registry import registry
+    from plugin import registry
 
     urls = []
 

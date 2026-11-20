@@ -20,3 +20,7 @@ To export API data to a file, add the `&export=<format>` modifier to the query. 
 Any other query filters used in the API request are also observed when downloading the data. For example, to download a list of all stock items in a given location:
 
 `<host>/api/stock/?format=csv&location=10`
+
+### Further Information
+
+For further information, refer to the [data export documentation](../concepts/data_export.md).

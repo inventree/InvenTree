@@ -107,10 +107,6 @@ ENTRYPOINT ["/bin/bash", "./init.sh"]
 # Multi-stage build to compile project requirements
 FROM inventree_base AS builder_stage
 
-# Copy source files
-COPY src ${INVENTREE_HOME}/src
-COPY tasks.py ${INVENTREE_HOME}/tasks.py
-
 # Install backend build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config build-essential \
@@ -124,6 +120,10 @@ RUN pip install --user --require-hashes -r base_requirements.txt --no-cache-dir 
     pip install --user --require-hashes -r requirements.txt --no-cache-dir && \
     pip cache purge && \
     rm -rf /root/.cache/pip
+
+# Copy source files
+COPY src ${INVENTREE_HOME}/src
+COPY tasks.py ${INVENTREE_HOME}/tasks.py
 
 # Install frontend build dependencies
 # pinned to v0.40.5

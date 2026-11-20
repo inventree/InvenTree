@@ -7,7 +7,7 @@ import structlog
 
 import common.notifications
 from InvenTree.exceptions import log_error
-from plugin.registry import registry
+from plugin import registry
 
 logger = structlog.get_logger('inventree')
 

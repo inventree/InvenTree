@@ -10,7 +10,7 @@ Plugins can be added from multiple sources:
 
 - Plugins can be installed using the PIP Python package manager
 - Plugins can be placed in the external [plugins directory](../start/config.md#plugin-options)
-- InvenTree [built-in](./builtin/index.md) plugins are located within the InvenTree source code
+- InvenTree [built-in](./builtin/overview.md) plugins are located within the InvenTree source code
 
 For further information, read more about [installing plugins](./install.md).
 
@@ -38,7 +38,7 @@ InvenTree plugins can be provided from a variety of sources, including built-in 
 
 InvenTree comes with a number of built-in plugins that provide additional functionality. These plugins are included in the InvenTree source code, and can be enabled or disabled via the configuration options.
 
-Refer to the [built-in plugins documentation](./builtin/index.md) for more information on the available built-in plugins.
+Refer to the [built-in plugins documentation](./builtin/overview.md) for more information on the available built-in plugins.
 
 ### Sample Plugins
 

@@ -23,6 +23,7 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     InvenTreeTaggitSerializer,
+    InvenTreeThumbnailField,
     OptionalField,
     apply_duplicate_copy_options,
 )
@@ -58,7 +59,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
 
     image = InvenTreeImageSerializerField(read_only=True)
 
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    thumbnail = InvenTreeThumbnailField()
 
 
 @register_importer()
@@ -267,6 +268,9 @@ class ManufacturerPartSerializer(
             'tags',
             'parameters',
         ]
+
+        # Note: Barcodes are assigned via the dedicated barcode endpoints
+        read_only_fields = ['barcode_hash']
 
     tags = common.filters.enable_tags_filter()
 

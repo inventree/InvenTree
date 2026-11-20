@@ -4,8 +4,8 @@ from django.conf import settings
 
 from company.models import Company, ManufacturerPart, SupplierPart, SupplierPriceBreak
 from part.models import Part
+from plugin import InvenTreePlugin
 from plugin.mixins import SupplierMixin, supplier
-from plugin.plugin import InvenTreePlugin
 
 
 class SampleSupplierPlugin(SupplierMixin, InvenTreePlugin):

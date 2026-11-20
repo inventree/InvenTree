@@ -1,45 +1,32 @@
 """Tests for the various validators in the settings."""
 
+from unittest import mock
+
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
 import common.setting.system
+from common.setting.system import SYSTEM_SETTINGS, collect_system_settings
 
 
-class SettingsValidatorTests(TestCase):
-    """Tests settings validators."""
+class SettingsTests(TestCase):
+    """Tests settings behaviour."""
 
-    def test_validate_part_name_format(self):
-        """Test error cases for validate_part_name_format."""
-        # No field
-        with self.assertRaises(ValidationError) as err:
-            common.setting.system.validate_part_name_format('abc{{}}')
-        self.assertEqual(
-            err.exception.messages[0],
-            'At least one field must be present inside a jinja template container i.e {{}}',
-        )
+    def test_collection(self):
+        """Test collection of system settings."""
+        # old keys are still there
+        for key in ['STOCKTAKE_ENABLE', 'STOCK_STALE_DAYS', 'PRICING_DECIMAL_PLACES']:
+            self.assertIn(key, SYSTEM_SETTINGS)
 
-        # Wrong field name
-        with self.assertRaises(ValidationError) as err:
-            common.setting.system.validate_part_name_format('{{part.wrong}}')
-        self.assertEqual(
-            err.exception.messages[0], 'wrong does not exist in Part Model'
-        )
+        # Re-run causes no issues
+        count = len(SYSTEM_SETTINGS)
+        collect_system_settings()
+        self.assertEqual(len(SYSTEM_SETTINGS), count)
 
-        # Broken templates
-        with self.assertRaises(ValidationError) as err:
-            common.setting.system.validate_part_name_format('{{')
-        self.assertEqual(err.exception.messages[0], "unexpected 'end of template'")
-
-        with self.assertRaises(ValidationError) as err:
-            common.setting.system.validate_part_name_format(None)
-        self.assertEqual(err.exception.messages[0], "Can't compile non template nodes")
-
-        # Correct template
-        self.assertTrue(
-            common.setting.system.validate_part_name_format('{{part.name}}'),
-            'test part',
-        )
+        # Duplicates cause an error
+        with mock.patch('common.setting.system._settings_collected', False):
+            with self.assertRaises(ValueError):
+                collect_system_settings()
 
     def test_update_instance_name_no_multi(self):
         """Test valid cases for update_instance_name."""

@@ -33,8 +33,7 @@ from common.settings import get_global_setting
 from company.models import Company
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
-from plugin import InvenTreePlugin, PluginMixinEnum
-from plugin.registry import registry
+from plugin import InvenTreePlugin, PluginMixinEnum, registry
 from report.security import restricted_db_access
 
 try:
