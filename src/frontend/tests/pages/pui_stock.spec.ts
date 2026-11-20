@@ -1,6 +1,6 @@
 import { createApi } from '../api';
 import { expect, test } from '../baseFixtures.js';
-import { adminuser, stevenuser } from '../defaults.js';
+import { adminuser, readeruser, stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
@@ -94,7 +94,8 @@ test('Stock - Location Tree', async ({ browser }) => {
 test('Stock - Location Type Parameters', async ({ browser }) => {
   const api = await createApi({});
   const suffix = Date.now();
-  const typeName = `Small Drawer ${suffix}`;
+  const typePrefix = `Small Drawer - ${suffix}`;
+  const typeName = `${typePrefix} for electronics assembly workbench storage, 120 mm wide and 200 mm deep`;
   const templateName = `Internal Width ${suffix}`;
   let typeId: number | undefined;
   let locationId: number | undefined;
@@ -127,8 +128,8 @@ test('Stock - Location Type Parameters', async ({ browser }) => {
       user: adminuser,
       url: 'settings/admin/location-types'
     });
-    await tableSearch(page, typeName);
-    await page.getByRole('link', { name: typeName }).click();
+    await tableSearch(page, typePrefix);
+    await page.getByRole('link', { name: typeName, exact: true }).click();
     await loadTab(page, 'Parameters');
 
     await page
@@ -148,13 +149,24 @@ test('Stock - Location Type Parameters', async ({ browser }) => {
     await expect(
       page.getByRole('cell', { name: '120 mm', exact: true })
     ).toBeVisible();
-
-    await navigate(page, `stock/location/${locationId}/details`);
-    await page.getByRole('link', { name: typeName }).click();
-    await loadTab(page, 'Parameters');
+    const bulkDeleteButton = 'action-button-delete-selected-records';
     await expect(
-      page.getByRole('cell', { name: '120 mm', exact: true })
+      page.getByRole('button', { name: bulkDeleteButton })
     ).toBeVisible();
+
+    const reader = await doCachedLogin(browser, {
+      user: readeruser,
+      url: `stock/location/${locationId}/details`
+    });
+    await reader.getByRole('link', { name: typeName, exact: true }).click();
+    await loadTab(reader, 'Parameters');
+    await expect(
+      reader.getByRole('cell', { name: '120 mm', exact: true })
+    ).toBeVisible();
+    await expect(
+      reader.getByRole('button', { name: bulkDeleteButton })
+    ).toHaveCount(0);
+    await expect(reader.getByLabel('Select all records')).toHaveCount(0);
   } finally {
     if (locationId) {
       const response = await api.delete(`stock/location/${locationId}/`, {
