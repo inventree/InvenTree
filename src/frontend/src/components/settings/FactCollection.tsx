@@ -1,4 +1,5 @@
 import { SimpleGrid } from '@mantine/core';
+import type { ReactNode } from 'react';
 
 import { FactItem } from './FactItem';
 
@@ -6,7 +7,7 @@ export function FactCollection({
   items,
   minItems = 3
 }: Readonly<{
-  items: { title: string; value: any }[];
+  items: { title: string; value: any; action?: ReactNode }[];
   minItems?: number;
 }>) {
   return (
@@ -24,6 +25,7 @@ export function FactCollection({
           key={`${index}-${item.value}`}
           title={item.title}
           value={item.value}
+          action={item.action}
         />
       ))}
     </SimpleGrid>
