@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Stack } from '@mantine/core';
+import { Accordion, Group, Paper, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -25,6 +25,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { formatCurrency } from '../../defaults/formatters';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import {
   useCreateApiFormModal,
@@ -142,42 +143,54 @@ export default function PurchaseOrderDetail() {
         label: t`Line Items`,
         icon: <IconList />,
         content: (
-          <Accordion
-            multiple={true}
-            defaultValue={['line-items', 'extra-items']}
-          >
-            <Accordion.Item value='line-items' key='lineitems'>
-              <Accordion.Control>
-                <StylishText size='lg'>{t`Line Items`}</StylishText>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <PurchaseOrderLineItemTable
-                  order={order}
-                  orderDetailRefresh={refreshInstance}
-                  currency={orderCurrency}
-                  orderId={Number(id)}
-                  editable={lineItemsEditable}
-                  supplierId={Number(order.supplier)}
-                />
-              </Accordion.Panel>
-            </Accordion.Item>
-            <Accordion.Item value='extra-items' key='extraitems'>
-              <Accordion.Control>
-                <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <ExtraLineItemTable
-                  endpoint={ApiEndpoints.purchase_order_extra_line_list}
-                  importModelType='purchaseorderextraline'
-                  orderId={order.pk}
-                  orderDetailRefresh={refreshInstance}
-                  currency={orderCurrency}
-                  editable={lineItemsEditable}
-                  role={UserRoles.purchase_order}
-                />
-              </Accordion.Panel>
-            </Accordion.Item>
-          </Accordion>
+          <Stack gap='xs'>
+            <Paper p='xs' withBorder>
+              <Group justify='space-between' gap='xs'>
+                <Text fw={500}>{t`Total Cost`}</Text>
+                <Text component='output' aria-label={t`Total Cost`}>
+                  {formatCurrency(order.total_price, {
+                    currency: orderCurrency
+                  }) ?? '-'}
+                </Text>
+              </Group>
+            </Paper>
+            <Accordion
+              multiple={true}
+              defaultValue={['line-items', 'extra-items']}
+            >
+              <Accordion.Item value='line-items' key='lineitems'>
+                <Accordion.Control>
+                  <StylishText size='lg'>{t`Line Items`}</StylishText>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <PurchaseOrderLineItemTable
+                    order={order}
+                    orderDetailRefresh={refreshInstance}
+                    currency={orderCurrency}
+                    orderId={Number(id)}
+                    editable={lineItemsEditable}
+                    supplierId={Number(order.supplier)}
+                  />
+                </Accordion.Panel>
+              </Accordion.Item>
+              <Accordion.Item value='extra-items' key='extraitems'>
+                <Accordion.Control>
+                  <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <ExtraLineItemTable
+                    endpoint={ApiEndpoints.purchase_order_extra_line_list}
+                    importModelType='purchaseorderextraline'
+                    orderId={order.pk}
+                    orderDetailRefresh={refreshInstance}
+                    currency={orderCurrency}
+                    editable={lineItemsEditable}
+                    role={UserRoles.purchase_order}
+                  />
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
+          </Stack>
         )
       },
       {
@@ -194,7 +207,7 @@ export default function PurchaseOrderDetail() {
         )
       }
     ];
-  }, [order, id, user]);
+  }, [order, id, orderCurrency, lineItemsEditable, refreshInstance]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
