@@ -86,6 +86,11 @@ class StockLocationType(
         """String representation of a StockLocationType."""
         return self.name
 
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        """Delete this type and its parameters in a single transaction."""
+        super().delete(*args, **kwargs)
+
     name = models.CharField(
         blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Name')
     )

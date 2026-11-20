@@ -3,9 +3,11 @@
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.db.models import Model
 from django.test.utils import override_settings
 from django.urls import reverse
 
@@ -581,6 +583,30 @@ class StockLocationTypeTest(StockAPITestCase):
         )
         self.assertEqual(StockLocationType.objects.count(), 0)
 
+    def test_delete_rolls_back_parameters(self):
+        """A failed location type deletion preserves its parameters and assignments."""
+        location_type = StockLocationType.objects.create(name='Drawer')
+        location = StockLocation.objects.create(
+            name='Drawer A3', location_type=location_type
+        )
+        template = ParameterTemplate.objects.create(name='Internal width')
+        parameter = Parameter.objects.create(
+            model_type=ContentType.objects.get_for_model(StockLocationType),
+            model_id=location_type.pk,
+            template=template,
+            data='120',
+        )
+
+        with (
+            patch.object(Model, 'delete', side_effect=RuntimeError('Delete failed')),
+            self.assertRaisesMessage(RuntimeError, 'Delete failed'),
+        ):
+            location_type.delete()
+
+        location.refresh_from_db()
+        self.assertEqual(location.location_type_id, location_type.pk)
+        self.assertTrue(Parameter.objects.filter(pk=parameter.pk).exists())
+
     def test_create(self):
         """Test that we can create a location type via API."""
         self.post(
@@ -620,6 +646,36 @@ class StockLocationTypeTest(StockAPITestCase):
             expected_code=200,
         ).json()
         self.assertEqual(res['icon'], 'ti:tag:outline')
+
+    def test_update_does_not_load_parameters(self):
+        """Editing a location type does not query or return its parameters."""
+        location_type = StockLocationType.objects.create(name='Drawer')
+        url = reverse('api-location-type-detail', kwargs={'pk': location_type.pk})
+        self.patch(url, {'description': 'Initial description'})
+        with self.assertNumQueriesLessThan(self.MAX_QUERY_COUNT) as queries:
+            self.patch(url, {'description': 'Empty drawer type'})
+
+        model_type = ContentType.objects.get_for_model(StockLocationType)
+        for index in range(10):
+            template = ParameterTemplate.objects.create(
+                name=f'Width {index}', model_type=model_type
+            )
+            Parameter.objects.create(
+                model_type=model_type,
+                model_id=location_type.pk,
+                template=template,
+                data='120',
+                updated_by=self.user,
+            )
+
+        for suffix in ['', '?parameters=true']:
+            response = self.patch(
+                url + suffix,
+                {'description': 'Updated drawer type'},
+                max_query_count=len(queries.captured_queries) + 1,
+            )
+            self.assertEqual(response.data['description'], 'Updated drawer type')
+            self.assertNotIn('parameters', response.data)
 
     def test_parameters(self):
         """Type parameters are opt-in and independent of location parameters."""

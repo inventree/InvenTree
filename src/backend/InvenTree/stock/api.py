@@ -16,6 +16,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -555,6 +556,13 @@ class StockLocationTypeMixin:
 
     queryset = StockLocationType.objects.all()
     serializer_class = StockSerializers.StockLocationTypeSerializer
+
+    def get_serializer_class(self):
+        """Include optional parameter data only on read requests."""
+        request = getattr(self, 'request', None)
+        if request is not None and request.method not in SAFE_METHODS:
+            return StockSerializers.StockLocationTypeBriefSerializer
+        return super().get_serializer_class()
 
     def get_queryset(self):
         """Include the number of locations assigned to each type."""

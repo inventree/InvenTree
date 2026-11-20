@@ -1397,7 +1397,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
 
 class StockLocationTypeBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for location types embedded in stock location responses."""
+    """Serializer for location type writes and embedded stock location details."""
 
     class Meta:
         """Serializer metaclass."""
