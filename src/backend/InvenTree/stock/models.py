@@ -56,7 +56,11 @@ from users.models import Owner
 logger = structlog.get_logger('inventree')
 
 
-class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
+class StockLocationType(
+    InvenTree.models.InvenTreeParameterMixin,
+    InvenTree.models.MetadataMixin,
+    models.Model,
+):
     """A type of stock location like Warehouse, room, shelf, drawer.
 
     Attributes:
@@ -81,6 +85,11 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
     def __str__(self):
         """String representation of a StockLocationType."""
         return self.name
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        """Delete this type and its parameters in a single transaction."""
+        super().delete(*args, **kwargs)
 
     name = models.CharField(
         blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Name')
