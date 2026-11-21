@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-17 12:40\n"
+"PO-Revision-Date: 2026-11-20 10:10\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -257,7 +257,7 @@ msgstr "Peças do fornecedor"
 
 #: lib/enums/ModelInformation.tsx:105
 #: src/components/previews/models/ManufacturerPartPreview.tsx:16
-#: src/pages/company/ManufacturerPartDetail.tsx:191
+#: src/pages/company/ManufacturerPartDetail.tsx:199
 #: src/pages/company/SupplierPartDetailsPanel.tsx:115
 #: src/tables/part/PartPurchaseOrdersTable.tsx:65
 #: src/tables/stock/StockItemTable.tsx:140
@@ -1909,19 +1909,19 @@ msgstr "Visualizar PDF"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:132
 msgid "The template has unsaved changes"
-msgstr ""
+msgstr "O template tem alterações não salvas"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:134
 msgid "If you close the editor now, your changes will be lost. Do you want to proceed?"
-msgstr ""
+msgstr "Se você fechar o editor agora, suas alterações serão perdidas. Deseja continuar?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:138
 msgid "Discard Changes"
-msgstr ""
+msgstr "Descartar alterações"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:139
 msgid "Keep Editing"
-msgstr ""
+msgstr "Continuar editando"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 #~ msgid "Save & Reload preview?"
@@ -2080,7 +2080,7 @@ msgstr "É necessária uma nova autenticação para continuar"
 
 #: src/components/forms/ApiForm.tsx:771
 msgid "This item is being updated by another process. Please try again."
-msgstr ""
+msgstr "Este item está sendo atualizado por outro processo. Tente novamente."
 
 #: src/components/forms/ApiForm.tsx:778
 #: src/functions/api.tsx:63
@@ -3467,7 +3467,7 @@ msgstr "Produção"
 #: src/defaults/links.tsx:62
 #: src/pages/Index/Settings/SystemSettings.tsx:343
 #: src/pages/company/ManufacturerDetail.tsx:9
-#: src/pages/company/ManufacturerPartDetail.tsx:168
+#: src/pages/company/ManufacturerPartDetail.tsx:176
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:186
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:351
@@ -3560,7 +3560,7 @@ msgid "Remove search group"
 msgstr "Remover grupo de busca"
 
 #: src/components/nav/SearchDrawer.tsx:320
-#: src/pages/company/ManufacturerPartDetail.tsx:88
+#: src/pages/company/ManufacturerPartDetail.tsx:89
 #: src/pages/part/PartDetail.tsx:378
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:123
@@ -3809,7 +3809,7 @@ msgstr "Erro ao carregar editor de plugin"
 
 #: src/components/plugins/PluginUIFeature.tsx:153
 msgid "The template preview is not ready yet."
-msgstr ""
+msgstr "A pré-visualização do template ainda não está pronta."
 
 #: src/components/plugins/PluginUIFeature.tsx:172
 msgid "Error occurred while rendering the template preview."
@@ -4666,7 +4666,7 @@ msgstr "Filtrar por usuário"
 #: src/components/tables/Filter.tsx:454
 #: src/pages/company/CompanyDetailsPanel.tsx:78
 #: src/pages/company/ManufacturerDetail.tsx:8
-#: src/pages/company/ManufacturerPartDetail.tsx:172
+#: src/pages/company/ManufacturerPartDetail.tsx:180
 #: src/pages/company/ManufacturerPartDetailsPanel.tsx:57
 #: src/pages/company/SupplierPartDetailsPanel.tsx:106
 #: src/tables/company/CompanyTable.tsx:101
@@ -6959,19 +6959,19 @@ msgstr "Falha ao configurar autenticação de múltiplos fatores"
 
 #: src/functions/auth.tsx:643
 msgid "An unknown error occurred"
-msgstr ""
+msgstr "Ocorreu um erro desconhecido"
 
 #: src/functions/auth.tsx:668
 msgid "Verification email sent"
-msgstr ""
+msgstr "E-mail de verificação enviado"
 
 #: src/functions/auth.tsx:669
 msgid "Check your inbox for a link to verify your email address"
-msgstr ""
+msgstr "Verifique sua caixa de entrada para encontrar o link de verificação do seu endereço de e-mail"
 
 #: src/functions/auth.tsx:675
 msgid "Verification email could not be sent"
-msgstr ""
+msgstr "Não foi possível enviar o e-mail de verificação"
 
 #: src/functions/auth.tsx:691
 msgid "MFA Setup successful"
@@ -7273,23 +7273,23 @@ msgstr "Configuração de MFA necessária"
 
 #: src/pages/Auth/MFASetup.tsx:42
 msgid "Email verification required"
-msgstr ""
+msgstr "Verificação de e-mail obrigatória"
 
 #: src/pages/Auth/MFASetup.tsx:44
 msgid "Your email address must be verified before multi-factor authentication can be set up."
-msgstr ""
+msgstr "Seu endereço de e-mail deve ser verificado antes que a autenticação multifator possa ser configurada."
 
 #: src/pages/Auth/MFASetup.tsx:50
 msgid "Send a verification email, follow the link it contains, then return here and try again."
-msgstr ""
+msgstr "Envie um e-mail de verificação, siga o link recebido, depois volte aqui e tente novamente."
 
 #: src/pages/Auth/MFASetup.tsx:62
 msgid "Send Verification Email"
-msgstr ""
+msgstr "Enviar e-mail de verificação"
 
 #: src/pages/Auth/MFASetup.tsx:69
 msgid "Try Again"
-msgstr ""
+msgstr "Tentar novamente"
 
 #: src/pages/Auth/MFASetup.tsx:89
 msgid "Add TOTP"
@@ -9656,34 +9656,34 @@ msgstr "Cliente"
 msgid "Internal"
 msgstr "Interna"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:62
+#: src/pages/company/ManufacturerPartDetail.tsx:63
 msgid "Manufacturer Part Details"
 msgstr "Detalhes de peça do fabricante"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:74
+#: src/pages/company/ManufacturerPartDetail.tsx:75
 #: src/pages/company/SupplierPartDetail.tsx:82
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:185
 msgid "Received Stock"
 msgstr "Estoque recebido"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:108
+#: src/pages/company/ManufacturerPartDetail.tsx:109
 #: src/tables/purchasing/ManufacturerPartTable.tsx:131
 msgid "Edit Manufacturer Part"
 msgstr "Editar peça do fabricante"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:119
+#: src/pages/company/ManufacturerPartDetail.tsx:120
 #: src/tables/purchasing/ManufacturerPartTable.tsx:118
 #: src/tables/purchasing/ManufacturerPartTable.tsx:142
 #: src/tables/purchasing/ManufacturerPartTable.tsx:184
 msgid "Add Manufacturer Part"
 msgstr "Adicionar peça do fabricante"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:131
+#: src/pages/company/ManufacturerPartDetail.tsx:132
 #: src/tables/purchasing/ManufacturerPartTable.tsx:153
 msgid "Delete Manufacturer Part"
 msgstr "Excluir peça do fabricante"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:146
+#: src/pages/company/ManufacturerPartDetail.tsx:154
 msgid "Manufacturer Part Actions"
 msgstr "Ações de peça do fabricante"
 
@@ -11229,11 +11229,11 @@ msgstr "Quantidade não alocada a pedidos"
 
 #: src/pages/stock/StockDetail.tsx:684
 msgid "Fully Allocated"
-msgstr ""
+msgstr "Totalmente alocado"
 
 #: src/pages/stock/StockDetail.tsx:691
 msgid "Over Allocated"
-msgstr ""
+msgstr "Superalocado"
 
 #: src/pages/stock/StockDetail.tsx:698
 #: src/tables/stock/StockItemTable.tsx:481
@@ -13897,11 +13897,11 @@ msgstr "Revogar"
 
 #: src/tables/settings/ApiTokenTable.tsx:217
 msgid "Token revoked"
-msgstr ""
+msgstr "Token revogado"
 
 #: src/tables/settings/ApiTokenTable.tsx:218
 msgid "The token has been successfully revoked"
-msgstr ""
+msgstr "O token foi revogado com sucesso"
 
 #: src/tables/settings/ApiTokenTable.tsx:224
 msgid "Error revoking token"

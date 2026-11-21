@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 00:52+0000\n"
-"PO-Revision-Date: 2026-11-18 00:56\n"
+"POT-Creation-Date: 2026-11-20 06:35+0000\n"
+"PO-Revision-Date: 2026-11-20 06:39\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -328,7 +328,7 @@ msgstr "Moet een geldig nummer zijn"
 msgid "Currency"
 msgstr "Valuta"
 
-#: InvenTree/serializers.py:627 pricing/serializers.py:67
+#: InvenTree/serializers.py:627
 msgid "Select currency from available options"
 msgstr "Selecteer valuta uit beschikbare opties"
 
@@ -8780,52 +8780,52 @@ msgstr "Periodieke verkoopprijs voor onderdelen"
 msgid "Part Internal Price Break"
 msgstr ""
 
-#: pricing/serializers.py:40 pricing/serializers.py:61
+#: pricing/serializers.py:39 pricing/serializers.py:60
 msgid "Currency for this price break"
 msgstr ""
 
-#: pricing/serializers.py:159
+#: pricing/serializers.py:143
 msgid "Minimum Price"
 msgstr "Minimale prijs"
 
-#: pricing/serializers.py:160
+#: pricing/serializers.py:144
 msgid "Override calculated value for minimum price"
 msgstr "Overschrijf berekende waarde voor minimale prijs"
 
-#: pricing/serializers.py:167
+#: pricing/serializers.py:151
 msgid "Minimum price currency"
 msgstr "Minimale prijs valuta"
 
-#: pricing/serializers.py:174
+#: pricing/serializers.py:155
 msgid "Maximum Price"
 msgstr "Maximale prijs"
 
-#: pricing/serializers.py:175
+#: pricing/serializers.py:156
 msgid "Override calculated value for maximum price"
 msgstr "Overschrijf de berekende waarde voor de maximale prijs"
 
-#: pricing/serializers.py:182
+#: pricing/serializers.py:163
 msgid "Maximum price currency"
 msgstr "Maximale prijs valuta"
 
-#: pricing/serializers.py:211
+#: pricing/serializers.py:189
 msgid "Update"
 msgstr "Bijwerken"
 
-#: pricing/serializers.py:212
+#: pricing/serializers.py:190
 msgid "Update pricing for this part"
 msgstr "Prijzen voor dit onderdeel bijwerken"
 
-#: pricing/serializers.py:241
+#: pricing/serializers.py:219
 #, python-brace-format
 msgid "Could not convert from provided currencies to {currency}"
 msgstr ""
 
-#: pricing/serializers.py:248
+#: pricing/serializers.py:226
 msgid "Minimum price must not be greater than maximum price"
 msgstr "Minimumprijs mag niet hoger zijn dan de maximale prijs"
 
-#: pricing/serializers.py:251
+#: pricing/serializers.py:229
 msgid "Maximum price must not be less than minimum price"
 msgstr "Maximale prijs mag niet lager zijn dan de minimale prijs"
 

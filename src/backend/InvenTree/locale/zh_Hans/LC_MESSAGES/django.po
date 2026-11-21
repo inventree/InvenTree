@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 00:52+0000\n"
-"PO-Revision-Date: 2026-11-18 00:56\n"
+"POT-Creation-Date: 2026-11-20 06:35+0000\n"
+"PO-Revision-Date: 2026-11-20 06:39\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -328,7 +328,7 @@ msgstr "必须是有效数字"
 msgid "Currency"
 msgstr "货币"
 
-#: InvenTree/serializers.py:627 pricing/serializers.py:67
+#: InvenTree/serializers.py:627
 msgid "Select currency from available options"
 msgstr "从可用选项中选择货币"
 
@@ -1772,12 +1772,12 @@ msgstr "未发现问题"
 
 #: common/admin_messages.py:147
 msgid "Unable to check plugin integrations"
-msgstr ""
+msgstr "无法检查插件集成"
 
 #: common/admin_messages.py:150
 #, python-brace-format
 msgid "Active plugins require a plugin integration which is disabled. Enable the listed plugin settings: {plugins}"
-msgstr ""
+msgstr "已启用的插件所需的某个插件集成已被禁用。请启用下列插件设置：{plugins}"
 
 #: common/admin_messages.py:156 report/system_settings.py:33
 msgid "Debug Mode"
@@ -1837,7 +1837,7 @@ msgstr "API 已启用基本认证（用户名:密码）。"
 
 #: common/admin_messages.py:205
 msgid "Plugin Integration"
-msgstr ""
+msgstr "插件集成"
 
 #: common/api.py:858
 msgid "Has Thumbnail"
@@ -7239,7 +7239,7 @@ msgstr "复制物料清单项目时复制替代品零件"
 
 #: part/serializers.py:1822
 msgid "You do not have permission to remove existing BOM items"
-msgstr ""
+msgstr "您无权删除现有的物料清单项"
 
 #: part/system_settings.py:20
 msgid "Part Locking"
@@ -7900,11 +7900,11 @@ msgstr "通过制造商零件号（MPN）匹配的备用条形码支持"
 
 #: plugin/builtin/barcodes/manufacturer_barcode.py:73
 msgid "Enable 50P Codes"
-msgstr ""
+msgstr "启用 50P 代码"
 
 #: plugin/builtin/barcodes/manufacturer_barcode.py:75
 msgid "Treat '50P' data identifier fields as manufacturer part numbers (same as '1P')"
-msgstr ""
+msgstr "将“50P”数据标识符字段视为制造商零件号（与“1P”相同）"
 
 #: plugin/builtin/barcodes/manufacturer_barcode.py:211
 msgid "Found matching manufacturer part"
@@ -8781,52 +8781,52 @@ msgstr "零件售出价格折扣"
 msgid "Part Internal Price Break"
 msgstr "零件内部批发价"
 
-#: pricing/serializers.py:40 pricing/serializers.py:61
+#: pricing/serializers.py:39 pricing/serializers.py:60
 msgid "Currency for this price break"
 msgstr "此阶梯价格使用的币种"
 
-#: pricing/serializers.py:159
+#: pricing/serializers.py:143
 msgid "Minimum Price"
 msgstr "最低价格"
 
-#: pricing/serializers.py:160
+#: pricing/serializers.py:144
 msgid "Override calculated value for minimum price"
 msgstr "覆盖已计算的最低价格值"
 
-#: pricing/serializers.py:167
+#: pricing/serializers.py:151
 msgid "Minimum price currency"
 msgstr "最低价格货币"
 
-#: pricing/serializers.py:174
+#: pricing/serializers.py:155
 msgid "Maximum Price"
 msgstr "最高价格"
 
-#: pricing/serializers.py:175
+#: pricing/serializers.py:156
 msgid "Override calculated value for maximum price"
 msgstr "覆盖已计算的最高价格值"
 
-#: pricing/serializers.py:182
+#: pricing/serializers.py:163
 msgid "Maximum price currency"
 msgstr "最高价格货币"
 
-#: pricing/serializers.py:211
+#: pricing/serializers.py:189
 msgid "Update"
 msgstr "更新"
 
-#: pricing/serializers.py:212
+#: pricing/serializers.py:190
 msgid "Update pricing for this part"
 msgstr "更新这个零件的价格"
 
-#: pricing/serializers.py:241
+#: pricing/serializers.py:219
 #, python-brace-format
 msgid "Could not convert from provided currencies to {currency}"
 msgstr "无法将所提供的币种转换为 {currency}"
 
-#: pricing/serializers.py:248
+#: pricing/serializers.py:226
 msgid "Minimum price must not be greater than maximum price"
 msgstr "最低价格不能高于最高价格。"
 
-#: pricing/serializers.py:251
+#: pricing/serializers.py:229
 msgid "Maximum price must not be less than minimum price"
 msgstr "最高价格不能低于最低价格"
 
@@ -10218,12 +10218,12 @@ msgstr "必须提供至少两件库存项"
 #: stock/serializers.py:1861
 #, python-brace-format
 msgid "Stock item is allocated: move the entire quantity, or no more than the unallocated quantity ({unallocated})"
-msgstr ""
+msgstr "库存项已分配：请整体移动，或移动数量不超过未分配数量（{unallocated}）"
 
 #: stock/serializers.py:1866
 #, python-brace-format
 msgid "Stock item is allocated: quantity must not exceed the unallocated quantity ({unallocated})"
-msgstr ""
+msgstr "库存项已分配：数量不得超过未分配数量（{unallocated}）"
 
 #: stock/serializers.py:1947
 msgid "StockItem primary key value"

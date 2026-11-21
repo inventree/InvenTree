@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 00:52+0000\n"
-"PO-Revision-Date: 2026-11-18 00:56\n"
+"POT-Creation-Date: 2026-11-20 06:35+0000\n"
+"PO-Revision-Date: 2026-11-20 06:39\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -89,7 +89,7 @@ msgstr "Quantidade inválida"
 
 #: InvenTree/exceptions.py:33
 msgid "INVE-E21: This item is currently being updated by another process - please try again"
-msgstr ""
+msgstr "INVE-E21: Este item está sendo atualizado por outro processo no momento - tente novamente"
 
 #: InvenTree/exceptions.py:144
 msgid "Server is temporarily reloading, please retry the request"
@@ -328,7 +328,7 @@ msgstr "Deve ser um número válido"
 msgid "Currency"
 msgstr "Moeda"
 
-#: InvenTree/serializers.py:627 pricing/serializers.py:67
+#: InvenTree/serializers.py:627
 msgid "Select currency from available options"
 msgstr "Selecione a moeda entre as opções disponíveis"
 
@@ -1772,12 +1772,12 @@ msgstr "Nenhum problema detectado"
 
 #: common/admin_messages.py:147
 msgid "Unable to check plugin integrations"
-msgstr ""
+msgstr "Não foi possível verificar as integrações de plugins"
 
 #: common/admin_messages.py:150
 #, python-brace-format
 msgid "Active plugins require a plugin integration which is disabled. Enable the listed plugin settings: {plugins}"
-msgstr ""
+msgstr "Há plugins ativos que exigem uma integração de plugin desabilitada. Habilite as configurações de plugin listadas: {plugins}"
 
 #: common/admin_messages.py:156 report/system_settings.py:33
 msgid "Debug Mode"
@@ -1837,7 +1837,7 @@ msgstr "A autenticação básica (usuário:senha) está habilitada para a API."
 
 #: common/admin_messages.py:205
 msgid "Plugin Integration"
-msgstr ""
+msgstr "Integração de plugin"
 
 #: common/api.py:858
 msgid "Has Thumbnail"
@@ -5163,7 +5163,7 @@ msgstr "O endereço de entrega não corresponde à empresa recebedora selecionad
 
 #: order/models.py:785 order/models.py:1564 order/models.py:3939
 msgid "deleted"
-msgstr ""
+msgstr "excluído"
 
 #: order/models.py:792 order/models.py:1571
 msgid "Order reference"
@@ -5606,7 +5606,7 @@ msgstr "Inserir a quantidade de alocação de estoque"
 
 #: order/models.py:3494
 msgid "no customer"
-msgstr ""
+msgstr "sem cliente"
 
 #: order/models.py:3501
 msgid "Return Order reference"
@@ -7237,7 +7237,7 @@ msgstr "Copiar peças substitutas ao duplicar itens da lista de materiais"
 
 #: part/serializers.py:1822
 msgid "You do not have permission to remove existing BOM items"
-msgstr ""
+msgstr "Você não tem permissão para remover itens de BOM existentes"
 
 #: part/system_settings.py:20
 msgid "Part Locking"
@@ -7898,11 +7898,11 @@ msgstr "Suporte alternativo a códigos de barras para correspondência de númer
 
 #: plugin/builtin/barcodes/manufacturer_barcode.py:73
 msgid "Enable 50P Codes"
-msgstr ""
+msgstr "Habilitar códigos 50P"
 
 #: plugin/builtin/barcodes/manufacturer_barcode.py:75
 msgid "Treat '50P' data identifier fields as manufacturer part numbers (same as '1P')"
-msgstr ""
+msgstr "Tratar os campos de identificador de dados '50P' como números de peça de fabricante (o mesmo que '1P')"
 
 #: plugin/builtin/barcodes/manufacturer_barcode.py:211
 msgid "Found matching manufacturer part"
@@ -8779,52 +8779,52 @@ msgstr "Faixa de preço de venda da peça"
 msgid "Part Internal Price Break"
 msgstr "Faixa de preço interno da peça"
 
-#: pricing/serializers.py:40 pricing/serializers.py:61
+#: pricing/serializers.py:39 pricing/serializers.py:60
 msgid "Currency for this price break"
 msgstr "Moeda para esta faixa de preço"
 
-#: pricing/serializers.py:159
+#: pricing/serializers.py:143
 msgid "Minimum Price"
 msgstr "Preço mínimo"
 
-#: pricing/serializers.py:160
+#: pricing/serializers.py:144
 msgid "Override calculated value for minimum price"
 msgstr "Substituir o valor calculado do preço mínimo"
 
-#: pricing/serializers.py:167
+#: pricing/serializers.py:151
 msgid "Minimum price currency"
 msgstr "Moeda do preço mínimo"
 
-#: pricing/serializers.py:174
+#: pricing/serializers.py:155
 msgid "Maximum Price"
 msgstr "Preço máximo"
 
-#: pricing/serializers.py:175
+#: pricing/serializers.py:156
 msgid "Override calculated value for maximum price"
 msgstr "Substituir o valor calculado do preço máximo"
 
-#: pricing/serializers.py:182
+#: pricing/serializers.py:163
 msgid "Maximum price currency"
 msgstr "Moeda do preço máximo"
 
-#: pricing/serializers.py:211
+#: pricing/serializers.py:189
 msgid "Update"
 msgstr "Atualizar"
 
-#: pricing/serializers.py:212
+#: pricing/serializers.py:190
 msgid "Update pricing for this part"
 msgstr "Atualizar preços desta peça"
 
-#: pricing/serializers.py:241
+#: pricing/serializers.py:219
 #, python-brace-format
 msgid "Could not convert from provided currencies to {currency}"
 msgstr "Não foi possível converter das moedas informadas para {currency}"
 
-#: pricing/serializers.py:248
+#: pricing/serializers.py:226
 msgid "Minimum price must not be greater than maximum price"
 msgstr "O preço mínimo não pode ser maior que o preço máximo"
 
-#: pricing/serializers.py:251
+#: pricing/serializers.py:229
 msgid "Maximum price must not be less than minimum price"
 msgstr "O preço máximo não pode ser menor que o preço mínimo"
 
@@ -9315,43 +9315,43 @@ msgstr "A tag company_image requer uma instância de Company"
 
 #: report/templatetags/report.py:830
 msgid "Null value provided to function"
-msgstr ""
+msgstr "Valor nulo fornecido à função"
 
 #: report/templatetags/report.py:851
 msgid "Cannot add values of incompatible types"
-msgstr ""
+msgstr "Não é possível somar valores de tipos incompatíveis"
 
 #: report/templatetags/report.py:874
 msgid "Cannot subtract values of incompatible types"
-msgstr ""
+msgstr "Não é possível subtrair valores de tipos incompatíveis"
 
 #: report/templatetags/report.py:898
 msgid "Cannot multiply values of incompatible types"
-msgstr ""
+msgstr "Não é possível multiplicar valores de tipos incompatíveis"
 
 #: report/templatetags/report.py:922
 msgid "Cannot divide values of incompatible types"
-msgstr ""
+msgstr "Não é possível dividir valores de tipos incompatíveis"
 
 #: report/templatetags/report.py:926
 msgid "Cannot divide by zero"
-msgstr ""
+msgstr "Não é possível dividir por zero"
 
 #: report/templatetags/report.py:950
 msgid "Cannot perform modulo operation with values of incompatible types"
-msgstr ""
+msgstr "Não é possível realizar a operação de módulo com valores de tipos incompatíveis"
 
 #: report/templatetags/report.py:954
 msgid "Cannot perform modulo operation with divisor of zero"
-msgstr ""
+msgstr "Não é possível realizar a operação de módulo com divisor igual a zero"
 
 #: report/templatetags/report.py:1080
 msgid "Invalid amount"
-msgstr ""
+msgstr "Valor inválido"
 
 #: report/templatetags/report.py:1113
 msgid "Missing exchange rate"
-msgstr ""
+msgstr "Taxa de câmbio ausente"
 
 #: scim/authentication.py:59
 msgid "Invalid SCIM authorization header"
@@ -10216,12 +10216,12 @@ msgstr "Pelo menos dois itens de estoque devem ser fornecidos"
 #: stock/serializers.py:1861
 #, python-brace-format
 msgid "Stock item is allocated: move the entire quantity, or no more than the unallocated quantity ({unallocated})"
-msgstr ""
+msgstr "O item de estoque está alocado: mova a quantidade total, ou no máximo a quantidade não alocada ({unallocated})"
 
 #: stock/serializers.py:1866
 #, python-brace-format
 msgid "Stock item is allocated: quantity must not exceed the unallocated quantity ({unallocated})"
-msgstr ""
+msgstr "O item de estoque está alocado: a quantidade não deve exceder a quantidade não alocada ({unallocated})"
 
 #: stock/serializers.py:1947
 msgid "StockItem primary key value"
