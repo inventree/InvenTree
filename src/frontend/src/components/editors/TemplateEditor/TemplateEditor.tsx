@@ -96,7 +96,7 @@ export type UnsavedChangesRef = React.MutableRefObject<
 
 // Compare template code, ignoring differences in line endings
 function codeDiffers(a: string, b: string): boolean {
-  return a.replace(/\r\n/g, '\n') !== b.replace(/\r\n/g, '\n');
+  return a.replaceAll('\r\n', '\n') !== b.replaceAll('\r\n', '\n');
 }
 
 /**
