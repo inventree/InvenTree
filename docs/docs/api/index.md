@@ -203,3 +203,7 @@ Or, when accessing the API from an account which has read-only permissions:
 ### Permission Denied
 
 If an API action outside of the user's role(s) is attempted, the server will respond with a 403 permission error message.
+
+### Conflict
+
+If an API request attempts to modify an object which is currently locked by another process (e.g. a background task), the server may respond with a `409 Conflict` error. No changes are made, and the request can safely be retried once the other process has finished. Refer to the [database concurrency](../concepts/concurrency.md) documentation for more information.

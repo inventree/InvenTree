@@ -118,6 +118,7 @@ nav:
     - Notes: concepts/notes.md
     - Tags: concepts/tags.md
     - Audit Log: concepts/audit.md
+    - Database Concurrency: concepts/concurrency.md
     - Barcodes:
       - Barcode Support: barcodes/index.md
       - Internal Barcodes: barcodes/internal.md
