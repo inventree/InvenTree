@@ -609,6 +609,12 @@ class StockItemCostManagerTests(StockItemCostTestBase):
         self.assertEqual(entry.min_cost, Decimal('5'))
         self.assertEqual(entry.max_cost, Decimal('5'))
 
+        # The summary is updated - no exchange rate is available, so the cost is not included
+        summary = self.summary()
+        self.assertTrue(summary.incomplete)
+        self.assertIsNone(summary.min_cost)
+        self.assertIsNone(summary.max_cost)
+
     def test_update_cost_stock_item(self):
         """Entries cannot be moved between stock items."""
         entry = StockItemCostEntry.objects.create_cost(
@@ -666,6 +672,36 @@ class StockItemCostManagerTests(StockItemCostTestBase):
 
         self.assertIsNone(self.summary())
         self.assertEqual(StockItemCostEntry.objects.delete_costs([]), 0)
+
+    def test_admin_delete(self):
+        """Deleting entries via the admin interface updates the affected summaries."""
+        from django.contrib import admin
+        from django.test import RequestFactory
+
+        a = StockItemCostEntry.objects.create_cost(
+            self.item, CostType.PURCHASE, CostSource.MANUAL, min_cost=10
+        )
+        b = StockItemCostEntry.objects.create_cost(
+            self.item, CostType.LANDED, CostSource.MANUAL, min_cost=2
+        )
+        c = StockItemCostEntry.objects.create_cost(
+            self.other_item, CostType.PURCHASE, CostSource.MANUAL, min_cost=5
+        )
+
+        model_admin = admin.site._registry[StockItemCostEntry]
+        request = RequestFactory().post('/')
+        request.user = self.user
+
+        # Single entry ('delete' view)
+        model_admin.delete_model(request, b)
+        self.assertEqual(self.summary().min_cost, Decimal('10'))
+
+        # Bulk 'delete selected' action
+        model_admin.delete_queryset(
+            request, StockItemCostEntry.objects.filter(pk__in=[a.pk, c.pk])
+        )
+        self.assertIsNone(self.summary())
+        self.assertIsNone(self.summary(self.other_item))
 
     def test_replace_costs(self):
         """Replacing entries from a single source leaves other sources untouched."""

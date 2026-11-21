@@ -27,7 +27,7 @@ from InvenTree.unit_test import (
     stock_history,
 )
 from part.models import Part, PartTestTemplate
-from pricing.models import CostSource, StockItemCostEntry
+from pricing.models import CostSource, StockItemCost, StockItemCostEntry
 from pricing.status_codes import CostType
 from stock.models import (
     StockItem,
@@ -3120,6 +3120,11 @@ class StockItemDisassembleTest(StockAPITestCase):
             self.assertEqual(entry.min_cost, Decimal(unit_cost))
             self.assertEqual(entry.max_cost, Decimal(unit_cost))
             self.assertEqual(entry.source_data['allocation'], 'pricing')
+
+            # The cost summary of each component is updated
+            summary = StockItemCost.objects.get(stock_item=item)
+            self.assertEqual(summary.min_cost, Decimal(unit_cost))
+            self.assertEqual(summary.max_cost, Decimal(unit_cost))
 
         # Check stock tracking entries have been created
         self.assertTrue(

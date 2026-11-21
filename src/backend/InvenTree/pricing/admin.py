@@ -70,6 +70,14 @@ class StockItemCostEntryAdmin(admin.ModelAdmin):
 
     autocomplete_fields = ('stock_item', 'user')
 
+    def delete_queryset(self, request, queryset):
+        """Delete the selected entries (bulk 'delete' action), and update the cost summaries.
+
+        The default implementation calls queryset.delete(), which bypasses
+        StockItemCostEntry.delete() - and would leave a stale StockItemCost summary.
+        """
+        models.StockItemCostEntry.objects.delete_costs(queryset)
+
 
 @admin.register(models.StockItemCost)
 class StockItemCostAdmin(admin.ModelAdmin):
