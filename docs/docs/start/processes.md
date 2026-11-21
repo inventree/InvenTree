@@ -28,6 +28,8 @@ If running InvenTree via [docker compose](./docker_install.md), the database pro
 
 While SQLite is supported, it is strongly *not* recommended for a production installation, especially where there may be multiple users accessing the system concurrently. SQLite is designed for low-concurrency applications, and can experience performance issues when multiple users are accessing the database at the same time.
 
+SQLite also does not support the row-level locking which InvenTree uses to protect against [concurrent updates](../concepts/concurrency.md#sqlite-limitations).
+
 In addition to concurrency issues, there are other structural limitations which exist in SQLite that can prevent operations on large querysets.
 
 If you are using SQLite, you should be aware of these limitations. It is important to ensure that the database file is stored on a fast storage medium (such as an SSD), and that the database options are configured correctly to minimize locking issues. Refer to the [database configuration guide](./config.md#database-options) for more information on configuring SQLite options.
