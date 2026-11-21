@@ -1,13 +1,13 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
-import { getOverviewUrl } from '@lib/functions/Navigation';
+import { getDetailUrl, getOverviewUrl } from '@lib/functions/Navigation';
 import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { DetailsTable } from '../../components/details/Details';
+import AdminButton from '../../components/buttons/AdminButton';
 import {
   DeleteItemAction,
   EditItemAction,
@@ -24,6 +24,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
+import { LocationTypeDetailsPanel } from './LocationTypeDetailsPanel';
 
 export default function LocationTypeDetail() {
   const { id } = useParams();
@@ -68,21 +69,7 @@ export default function LocationTypeDetail() {
         name: 'details',
         label: t`Details`,
         icon: <IconInfoCircle />,
-        content: (
-          <DetailsTable
-            item={locationType}
-            fields={[
-              { type: 'text', name: 'name', label: t`Name`, copy: true },
-              { type: 'text', name: 'description', label: t`Description` },
-              {
-                type: 'number',
-                name: 'location_count',
-                label: t`Stock Locations`,
-                icon: 'location'
-              }
-            ]}
-          />
-        )
+        content: <LocationTypeDetailsPanel instance={locationType} />
       }
     ],
     [locationType]
@@ -105,6 +92,11 @@ export default function LocationTypeDetail() {
           editAction={editLocationType.open}
           editEnabled={canEdit}
           actions={[
+            <AdminButton
+              key='admin'
+              model={ModelType.stocklocationtype}
+              id={locationType.pk}
+            />,
             <OptionsActionDropdown
               key='location-type-actions'
               tooltip={t`Location Type Actions`}
@@ -128,6 +120,12 @@ export default function LocationTypeDetail() {
                   }
                 ]
               : [])
+          ]}
+          lastCrumb={[
+            {
+              name: locationType.name,
+              url: getDetailUrl(ModelType.stocklocationtype, locationType.pk)
+            }
           ]}
         />
         <PanelGroup

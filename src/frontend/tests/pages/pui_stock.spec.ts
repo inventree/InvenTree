@@ -100,6 +100,8 @@ test('Stock - Location Type Parameters', async ({ browser }) => {
   const updatedDescription = `Drawer for sensitive electronics ${suffix}`;
   const templateName = `Internal Width ${suffix}`;
   const typeActions = 'action-menu-location-type-actions';
+  const adminAction = 'action-button-open-in-admin-interface';
+  const locationTypesPage = 'settings/admin/location-types';
   let typeId: number | undefined;
   let locationId: number | undefined;
   let templateId: number | undefined;
@@ -127,24 +129,56 @@ test('Stock - Location Type Parameters', async ({ browser }) => {
     await expect(templateResponse).toBeOK();
     templateId = (await templateResponse.json()).pk;
 
-    const page = await doCachedLogin(browser, {
-      user: adminuser,
-      url: 'settings/admin/location-types'
+    const page = await doCachedLogin(browser, { user: adminuser });
+    let previewEnabled = true;
+    await page.route('**/api/settings/user/', async (route) => {
+      const response = await route.fetch();
+      const settings: { key: string; value: unknown }[] = await response.json();
+      const overrides: Record<string, boolean> = {
+        ENABLE_PREVIEW_PANEL: previewEnabled,
+        ENABLE_LAST_BREADCRUMB: true
+      };
+
+      await route.fulfill({
+        response,
+        json: settings.map((setting) =>
+          setting.key in overrides
+            ? { ...setting, value: overrides[setting.key] }
+            : setting
+        )
+      });
     });
+    await navigate(page, locationTypesPage);
     await tableSearch(page, typePrefix);
-    await page
-      .getByRole('cell', { name: typeDescription, exact: true })
-      .click();
-    const previewLink = page.getByRole('link', {
+    const typeCell = page.getByRole('cell', {
+      name: typeDescription,
+      exact: true
+    });
+    await typeCell.click();
+    const preview = page.getByRole('dialog', {
       name: `details-stocklocationtype-${typeId}`
     });
-    const actionsMenu = page.getByRole('button', { name: typeActions });
-    await expect(previewLink.or(actionsMenu)).toBeVisible();
-    if (await previewLink.isVisible()) {
-      await previewLink.click();
-    }
-    await expect(page).toHaveURL(new RegExp(`/stock/location-type/${typeId}/`));
+    await expect(
+      preview.getByText(typeDescription, { exact: true })
+    ).toBeVisible();
+    await preview
+      .getByRole('link', { name: `details-stocklocationtype-${typeId}` })
+      .click();
+    const detailUrl = new RegExp(`/stock/location-type/${typeId}/`);
+    await expect(page).toHaveURL(detailUrl);
+
+    previewEnabled = false;
+    await navigate(page, locationTypesPage);
+    await tableSearch(page, typePrefix);
+    await typeCell.click();
+    await expect(page).toHaveURL(detailUrl);
     await loadTab(page, 'Details');
+    await expect(
+      page.getByTestId('breadcrumb-list').getByText(typeName, { exact: true })
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: adminAction })).toBeVisible();
+
+    const actionsMenu = page.getByRole('button', { name: typeActions });
     await actionsMenu.click();
     await page.getByRole('menuitem', { name: `${typeActions}-edit` }).click();
     const description = page.getByRole('textbox', {
@@ -187,6 +221,9 @@ test('Stock - Location Type Parameters', async ({ browser }) => {
     });
     await reader.getByRole('link', { name: typeName, exact: true }).click();
     await loadTab(reader, 'Parameters');
+    await expect(reader.getByRole('button', { name: adminAction })).toHaveCount(
+      0
+    );
     await expect(reader.getByRole('button', { name: typeActions })).toHaveCount(
       0
     );
