@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { createApi } from '../api.js';
 import { expect, test } from '../baseFixtures.js';
-import { readeruser, stevenuser } from '../defaults.js';
+import { adminuser, readeruser, stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickOnRowMenu,
@@ -266,4 +266,77 @@ test('Stock Costs - View', async ({ browser }) => {
   await page.getByLabel('table-select-columns').click();
   await page.getByRole('menuitem', { name: 'Unit Cost', exact: true }).click();
   await page.keyboard.press('Escape');
+});
+
+test('Stock Costs - Audit Log', async ({ browser }) => {
+  await removeManualCosts(EDIT_ITEM);
+
+  // Unique notes, to identify the entries created by this test run
+  // (audit log entries persist between test runs)
+  const suffix = Date.now();
+  const notes = `Audit cost ${suffix}`;
+  const updatedNotes = `Audit cost ${suffix} (updated)`;
+
+  // The 'admin' user has the 'DISPLAY_HISTORY_TAB' setting enabled
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: `stock/item/${EDIT_ITEM}/details`
+  });
+
+  await page.getByText('Green Square Table').first().waitFor();
+
+  // Create, edit and delete a cost entry via the "Item Costs" table
+  await loadTab(page, 'Item Costs');
+  await page.getByRole('button', { name: 'action-button-add-cost' }).click();
+  await page.getByText('Add Item Cost').waitFor();
+  await page.getByLabel('choice-field-cost_type').click();
+  await page.getByRole('option', { name: 'Fees' }).click();
+  await page.getByLabel('number-field-min_cost').fill('4.25');
+  await page.getByLabel('text-field-notes', { exact: true }).fill(notes);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await clickOnRowMenu(page.getByRole('cell', { name: notes, exact: true }));
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  await page.getByText('Edit Item Cost').waitFor();
+  await page.getByLabel('text-field-notes', { exact: true }).fill(updatedNotes);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  const cell = page.getByRole('cell', { name: updatedNotes, exact: true });
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByText('Are you sure you want to delete this item?').waitFor();
+  await page.getByRole('button', { name: 'Delete' }).click();
+  await expect(cell).toHaveCount(0);
+
+  // The changes are recorded in the audit log of the parent stock item
+  // (most recent first)
+  await loadTab(page, 'History', true);
+  await page.getByText(updatedNotes).first().waitFor();
+
+  const rows = page.getByRole('tabpanel').locator('tbody > tr');
+
+  const deleted = rows.nth(0);
+  await expect(deleted).toContainText('Deleted');
+  await expect(deleted).toContainText('Stock Item Cost Entry');
+  await expect(deleted).toContainText('Fees cost (manual)');
+  await expect(deleted).toContainText('Object was deleted');
+
+  const updated = rows.nth(1);
+  await expect(updated).toContainText('Updated');
+  await expect(updated).toContainText('Stock Item Cost Entry');
+  await expect(updated).toContainText(notes);
+  await expect(updated).toContainText(updatedNotes);
+
+  const created = rows.nth(2);
+  await expect(created).toContainText('Created');
+  await expect(created).toContainText('Stock Item Cost Entry');
+  await expect(created).toContainText('Fees cost (manual)');
+
+  // Changes to related items are hidden when "Include Related" is disabled
+  await setTableChoiceFilter(page, 'Include Related', 'No');
+  await expect(page.getByText(updatedNotes)).toHaveCount(0);
+  await expect(
+    page.getByRole('tabpanel').getByText('Stock Item Cost Entry')
+  ).toHaveCount(0);
+  await clearTableFilters(page);
 });
