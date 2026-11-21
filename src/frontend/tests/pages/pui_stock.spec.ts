@@ -3,7 +3,6 @@ import { adminuser, stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
-  clickOnRowMenu,
   loadTab,
   navigate,
   openFilterDrawer,
@@ -772,59 +771,4 @@ test('Stock - Default Location', async ({ browser }) => {
     .click();
   await expect(locationField()).toHaveValue('Factory/Mechanical Lab');
   await page.getByRole('button', { name: 'Cancel' }).click();
-});
-
-test('Stock - Item Costs', async ({ browser }) => {
-  // Admin user has the 'pricing' role (required to view stock item costs)
-  const page = await doCachedLogin(browser, {
-    user: adminuser,
-    url: 'stock/item/1194/details'
-  });
-
-  await page.getByText('D.123 | Doohickey').waitFor();
-
-  // Add a new cost entry
-  await loadTab(page, 'Costs');
-  await page.getByRole('button', { name: 'action-button-add-cost' }).click();
-
-  await page.getByLabel('choice-field-cost_type').click();
-  await page.getByRole('option', { name: 'Landed' }).click();
-  // The maximum cost is only shown for an estimate (a range of costs)
-  await expect(page.getByLabel('number-field-max_cost')).toHaveCount(0);
-  await page.getByRole('switch', { name: 'boolean-field-estimate' }).click();
-
-  await page.getByLabel('number-field-min_cost').fill('12.5');
-  await page.getByLabel('number-field-max_cost').fill('15');
-  await page
-    .getByLabel('text-field-notes', { exact: true })
-    .fill('Playwright freight cost');
-  await page.getByRole('button', { name: 'Submit' }).click();
-
-  const cell = page.getByRole('cell', { name: 'Playwright freight cost' });
-  await cell.waitFor();
-  await page
-    .getByRole('cell', { name: 'manual', exact: true })
-    .first()
-    .waitFor();
-
-  // Editing a cost range opens with the "estimate" switch enabled
-  await clickOnRowMenu(cell);
-  await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await expect(
-    page.getByRole('switch', { name: 'boolean-field-estimate' })
-  ).toBeChecked();
-  await expect(page.getByLabel('number-field-max_cost')).toHaveValue('15');
-  await page.getByRole('button', { name: 'Cancel' }).click();
-
-  // The cost summary is displayed on the stock item details panel
-  await loadTab(page, 'Stock Details');
-  await page.getByText('Unit Cost').waitFor();
-
-  // Remove the cost entry again
-  await loadTab(page, 'Costs');
-  await clickOnRowMenu(cell);
-  await page.getByRole('menuitem', { name: 'Delete' }).click();
-  await page.getByText('This action cannot be reversed').waitFor();
-  await page.getByRole('button', { name: 'Delete' }).click();
-  await expect(cell).toHaveCount(0);
 });
