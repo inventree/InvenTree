@@ -578,14 +578,17 @@ test('Parts - Locking', async ({ browser }) => {
     .waitFor();
 
   await loadTab(page, 'Parameters');
-  await page
-    .getByRole('button', { name: 'action-menu-add-parameters' })
-    .click();
-  await page
-    .getByRole('menuitem', {
-      name: 'action-menu-add-parameters-create-parameter'
-    })
-    .click();
+  await expect(async () => {
+    await page.keyboard.press('Escape');
+    await page
+      .getByRole('button', { name: 'action-menu-add-parameters' })
+      .click({ timeout: 3000 });
+    await page
+      .getByRole('menuitem', {
+        name: 'action-menu-add-parameters-create-parameter'
+      })
+      .click({ timeout: 3000 });
+  }).toPass({ timeout: 20000 });
 
   // Navigate to a known assembly which *is* locked
   await navigate(page, 'part/100/bom');
