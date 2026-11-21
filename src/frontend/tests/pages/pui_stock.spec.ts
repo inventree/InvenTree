@@ -96,14 +96,17 @@ test('Stock - Location Type Parameters', async ({ browser }) => {
   const suffix = Date.now();
   const typePrefix = `Small Drawer - ${suffix}`;
   const typeName = `${typePrefix} for electronics assembly workbench storage, 120 mm wide and 200 mm deep`;
+  const typeDescription = `Drawer for electronics storage ${suffix}`;
+  const updatedDescription = `Drawer for sensitive electronics ${suffix}`;
   const templateName = `Internal Width ${suffix}`;
+  const typeActions = 'action-menu-location-type-actions';
   let typeId: number | undefined;
   let locationId: number | undefined;
   let templateId: number | undefined;
 
   try {
     const typeResponse = await api.post('stock/location-type/', {
-      data: { name: typeName }
+      data: { name: typeName, description: typeDescription }
     });
     await expect(typeResponse).toBeOK();
     typeId = (await typeResponse.json()).pk;
@@ -129,7 +132,31 @@ test('Stock - Location Type Parameters', async ({ browser }) => {
       url: 'settings/admin/location-types'
     });
     await tableSearch(page, typePrefix);
-    await page.getByRole('link', { name: typeName, exact: true }).click();
+    await page
+      .getByRole('cell', { name: typeDescription, exact: true })
+      .click();
+    const previewLink = page.getByRole('link', {
+      name: `details-stocklocationtype-${typeId}`
+    });
+    const actionsMenu = page.getByRole('button', { name: typeActions });
+    await expect(previewLink.or(actionsMenu)).toBeVisible();
+    if (await previewLink.isVisible()) {
+      await previewLink.click();
+    }
+    await expect(page).toHaveURL(new RegExp(`/stock/location-type/${typeId}/`));
+    await loadTab(page, 'Details');
+    await actionsMenu.click();
+    await page.getByRole('menuitem', { name: `${typeActions}-edit` }).click();
+    const description = page.getByRole('textbox', {
+      name: 'text-field-description'
+    });
+    await expect(description).toHaveValue(typeDescription);
+    await description.fill(updatedDescription);
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await expect(
+      page.getByText(updatedDescription, { exact: true })
+    ).toBeVisible();
+
     await loadTab(page, 'Parameters');
 
     await page
@@ -160,6 +187,9 @@ test('Stock - Location Type Parameters', async ({ browser }) => {
     });
     await reader.getByRole('link', { name: typeName, exact: true }).click();
     await loadTab(reader, 'Parameters');
+    await expect(reader.getByRole('button', { name: typeActions })).toHaveCount(
+      0
+    );
     await expect(
       reader.getByRole('cell', { name: '120 mm', exact: true })
     ).toBeVisible();
@@ -167,6 +197,15 @@ test('Stock - Location Type Parameters', async ({ browser }) => {
       reader.getByRole('button', { name: bulkDeleteButton })
     ).toHaveCount(0);
     await expect(reader.getByLabel('Select all records')).toHaveCount(0);
+
+    await actionsMenu.click();
+    await page.getByRole('menuitem', { name: `${typeActions}-delete` }).click();
+    await page.getByRole('button', { name: 'Delete', exact: true }).click();
+    await expect(page).toHaveURL(/\/settings\/admin\/location-types\/?$/);
+    const remainingLocation = await api.get(`stock/location/${locationId}/`);
+    await expect(remainingLocation).toBeOK();
+    expect((await remainingLocation.json()).location_type).toBeNull();
+    typeId = undefined;
   } finally {
     if (locationId) {
       const response = await api.delete(`stock/location/${locationId}/`, {

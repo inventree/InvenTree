@@ -11,15 +11,12 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { Anchor } from '@mantine/core';
-import { Link } from 'react-router-dom';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { DescriptionColumn } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { getStockLocationTypeFields } from '../../forms/StockForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -31,22 +28,12 @@ export default function LocationTypesTable() {
   const table = useTable('location-types');
   const user = useUserState();
 
-  const formFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      name: {},
-      description: {},
-      icon: {
-        field_type: 'icon'
-      }
-    };
-  }, []);
-
   const [selectedLocationType, setSelectedLocationType] = useState<number>(0);
 
   const newLocationType = useCreateApiFormModal({
     url: ApiEndpoints.stock_location_type_list,
     title: t`Add Location Type`,
-    fields: useMemo(() => ({ ...formFields }), [formFields]),
+    fields: useMemo(getStockLocationTypeFields, []),
     onFormSuccess: table.refreshTable
   });
 
@@ -54,7 +41,7 @@ export default function LocationTypesTable() {
     url: ApiEndpoints.stock_location_type_list,
     pk: selectedLocationType,
     title: t`Edit Location Type`,
-    fields: useMemo(() => ({ ...formFields }), [formFields]),
+    fields: useMemo(getStockLocationTypeFields, []),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
@@ -76,16 +63,7 @@ export default function LocationTypesTable() {
       {
         accessor: 'name',
         title: t`Name`,
-        sortable: true,
-        render: (record) => (
-          <Anchor
-            component={Link}
-            to={getDetailUrl(ModelType.stocklocationtype, record.pk)}
-            size='sm'
-          >
-            {record.name}
-          </Anchor>
-        )
+        sortable: true
       },
       DescriptionColumn({}),
       {
@@ -138,6 +116,7 @@ export default function LocationTypesTable() {
         tableState={table}
         columns={tableColumns}
         props={{
+          modelType: ModelType.stocklocationtype,
           rowActions: rowActions,
           tableActions: tableActions
         }}

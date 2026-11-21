@@ -6,18 +6,37 @@ import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DetailsTable } from '../../components/details/Details';
+import {
+  DeleteItemAction,
+  EditItemAction,
+  OptionsActionDropdown
+} from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import { getStockLocationTypeFields } from '../../forms/StockForms';
+import {
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 
 export default function LocationTypeDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const isStaff = useUserState((state) => state.isStaff());
+  const canEdit = useUserState((state) =>
+    state.hasChangePermission(ModelType.stocklocationtype)
+  );
+  const canDelete = useUserState((state) =>
+    state.hasDeletePermission(ModelType.stocklocationtype)
+  );
+  const stockOverviewUrl = getOverviewUrl(ModelType.stocklocation);
+  const locationTypesUrl = '/settings/admin/location-types';
   const {
     instance: locationType,
     instanceQuery,
@@ -25,6 +44,22 @@ export default function LocationTypeDetail() {
   } = useInstance({
     endpoint: ApiEndpoints.stock_location_type_list,
     pk: id
+  });
+
+  const editLocationType = useEditApiFormModal({
+    url: ApiEndpoints.stock_location_type_list,
+    pk: id,
+    title: t`Edit Location Type`,
+    fields: useMemo(getStockLocationTypeFields, []),
+    onFormSuccess: refreshInstance
+  });
+
+  const deleteLocationType = useDeleteApiFormModal({
+    url: ApiEndpoints.stock_location_type_list,
+    pk: id,
+    title: t`Delete Location Type`,
+    onFormSuccess: () =>
+      navigate(isStaff ? locationTypesUrl : stockOverviewUrl, { replace: true })
   });
 
   const panels = useMemo<PanelType[]>(
@@ -58,6 +93,8 @@ export default function LocationTypeDetail() {
       query={instanceQuery}
       requiredPermission={ModelType.stocklocationtype}
     >
+      {editLocationType.modal}
+      {deleteLocationType.modal}
       <Stack gap='xs'>
         <PageDetail
           model={ModelType.stocklocationtype}
@@ -65,13 +102,29 @@ export default function LocationTypeDetail() {
           title={locationType.name}
           subtitle={t`Stock Location Type`}
           icon={locationType.icon && <ApiIcon name={locationType.icon} />}
+          editAction={editLocationType.open}
+          editEnabled={canEdit}
+          actions={[
+            <OptionsActionDropdown
+              key='location-type-actions'
+              tooltip={t`Location Type Actions`}
+              actions={[
+                ...(canEdit
+                  ? [EditItemAction({ onClick: editLocationType.open })]
+                  : []),
+                ...(canDelete
+                  ? [DeleteItemAction({ onClick: deleteLocationType.open })]
+                  : [])
+              ]}
+            />
+          ]}
           breadcrumbs={[
-            { name: t`Stock`, url: getOverviewUrl(ModelType.stocklocation) },
+            { name: t`Stock`, url: stockOverviewUrl },
             ...(isStaff
               ? [
                   {
                     name: t`Location Types`,
-                    url: '/settings/admin/location-types'
+                    url: locationTypesUrl
                   }
                 ]
               : [])
