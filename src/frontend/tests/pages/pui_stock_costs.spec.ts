@@ -20,6 +20,12 @@ import { doCachedLogin } from '../login.js';
  * - Stock item 230 (Green Square Table, quantity 34) has no cost entries
  * - Stock item 220 (1591BTBU, quantity 15) has a single legacy purchase cost of $7.50
  *   (migrated from the old 'purchase_price' field)
+ * - Stock item 317 (Test Board 2, quantity 6) has a single estimated (range) manufacturing
+ *   cost of $33.75 - $67.50
+ * - Stock item 331 (Widget Board (assembled), quantity 1) has a single estimated (range)
+ *   manufacturing cost of $65 - $130
+ * - Stock item 750 (C_10uF_0805, quantity 91) has a legacy purchase cost in AUD, which has
+ *   not been converted (no exchange rate), and a "Rework to current revision" cost of $5
  */
 
 // Stock item used to create / edit / delete cost entries
@@ -27,6 +33,32 @@ const EDIT_ITEM = 230;
 
 // Stock item with an existing (legacy) cost entry
 const VIEW_ITEM = 220;
+
+// Stock items with an existing estimated (range) cost entry
+const RANGE_ITEM = 317;
+const RANGE_SINGLE_ITEM = 331;
+
+// Stock item with a cost entry which could not be converted to the default currency
+const UNCONVERTED_ITEM = 750;
+
+const LEGACY_NOTES = 'Migrated from stock item purchase price';
+const REWORK_NOTES = 'Rework to current revision';
+
+/**
+ * Delete the given stock items (cleanup of items created by a test)
+ */
+const deleteStockItems = async (items: number[]) => {
+  const api = await createApi({});
+
+  try {
+    for (const pk of items) {
+      const res = await api.delete(`stock/${pk}/`);
+      expect([204, 404], await res.text()).toContain(res.status());
+    }
+  } finally {
+    await api.dispose();
+  }
+};
 
 /**
  * Remove any manual cost entries from the given stock item.
@@ -339,6 +371,152 @@ test('Stock Costs - Audit Log', async ({ browser }) => {
     page.getByRole('tabpanel').getByText('Stock Item Cost Entry')
   ).toHaveCount(0);
   await clearTableFilters(page);
+});
+
+test('Stock Costs - Cost Range', async ({ browser }) => {
+  // Existing estimated costs are displayed (and edited) as a range of costs
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: `stock/item/${RANGE_ITEM}/details`
+  });
+
+  await page.getByText('Test Board 2').first().waitFor();
+
+  // Unit cost range, and total cost range for the quantity of 6
+  await checkCostSummary(page, '$33.75 - $67.5', '$202.5 - $405');
+
+  await loadTab(page, 'Item Costs');
+  const notes = 'Estimated assembly labour - 0.75 to 1.5 h @ $45/h';
+  const row = await costRow(page, notes);
+  await expect(row).toContainText('Manufacturing');
+  await expect(row).toContainText('$33.75 - $67.5');
+
+  // The edit form shows the "estimate" switch enabled, with both cost fields
+  await clickOnRowMenu(page.getByRole('cell', { name: notes, exact: true }));
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  await page.getByText('Edit Item Cost').waitFor();
+
+  await expect(
+    page.getByRole('switch', { name: 'boolean-field-estimate' })
+  ).toBeChecked();
+  await page
+    .getByRole('dialog')
+    .getByText('Minimum Unit Cost', { exact: true })
+    .waitFor();
+  await expect(page.getByLabel('number-field-min_cost')).toHaveValue('33.75');
+  await expect(page.getByLabel('number-field-max_cost')).toHaveValue('67.5');
+
+  // Close the form without making any changes
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByText('Edit Item Cost')).toHaveCount(0);
+  await expect(row).toContainText('$33.75 - $67.5');
+
+  // Single item: unit cost range only (no total cost is displayed)
+  await navigate(page, `stock/item/${RANGE_SINGLE_ITEM}/details`);
+  await page.getByText('Widget Board (assembled)').first().waitFor();
+  await checkCostSummary(page, '$65 - $130', null);
+});
+
+test('Stock Costs - Unconverted Costs', async ({ browser }) => {
+  // A cost which cannot be converted to the default currency is excluded from the summary
+  const page = await doCachedLogin(browser, {
+    user: readeruser,
+    url: `stock/item/${UNCONVERTED_ITEM}/details`
+  });
+
+  await page.getByText('C_10uF_0805').first().waitFor();
+
+  // The summary only includes the converted cost, and is marked as incomplete
+  await checkCostSummary(page, '$5', '$455');
+  await expect(
+    page.getByRole('row').filter({
+      has: page.getByRole('cell', { name: 'Unit Cost', exact: true })
+    })
+  ).toContainText('Incomplete');
+
+  await loadTab(page, 'Item Costs');
+
+  const legacyRow = await costRow(page, LEGACY_NOTES);
+  await expect(legacyRow).toContainText('Purchase');
+  await expect(legacyRow).toContainText('A$0.5247');
+  await expect(legacyRow).toContainText('Not converted');
+
+  const reworkRow = await costRow(page, REWORK_NOTES);
+  await expect(reworkRow).toContainText('Other');
+  await expect(reworkRow).toContainText('$5');
+  await expect(reworkRow).not.toContainText('Not converted');
+});
+
+test('Stock Costs - Duplicate', async ({ browser }) => {
+  // Duplicating a stock item copies its cost entries (unless disabled)
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: `stock/item/${UNCONVERTED_ITEM}/details`
+  });
+
+  const created: number[] = [];
+
+  // Duplicate the stock item, and return the pk of the new item
+  const duplicate = async (copyCosts: boolean): Promise<number> => {
+    await navigate(page, `stock/item/${UNCONVERTED_ITEM}/details`);
+    await page.getByText('C_10uF_0805').first().waitFor();
+
+    await page
+      .getByRole('button', { name: 'action-menu-stock-item-actions' })
+      .click();
+    await page
+      .getByRole('menuitem', {
+        name: 'action-menu-stock-item-actions-duplicate'
+      })
+      .click();
+
+    // Costs are copied by default
+    const copy = page.getByRole('switch', {
+      name: 'boolean-field-duplicate.copy_costs'
+    });
+    await expect(copy).toBeChecked();
+
+    if (!copyCosts) {
+      await copy.click();
+      await expect(copy).not.toBeChecked();
+    }
+
+    await page.getByRole('button', { name: 'Submit' }).click();
+
+    // Wait until we have navigated to the newly created (duplicate) stock item
+    await page.waitForURL(
+      (url) =>
+        /\/stock\/item\/\d+\//.test(url.pathname) &&
+        !url.pathname.includes(`/stock/item/${UNCONVERTED_ITEM}/`)
+    );
+
+    const pk = Number(page.url().match(/\/stock\/item\/(\d+)\//)![1]);
+    created.push(pk);
+    await page.waitForLoadState('networkidle');
+
+    return pk;
+  };
+
+  try {
+    // Copy the costs - the entries (including unconverted entries) are copied verbatim
+    await duplicate(true);
+    await checkCostSummary(page, '$5', '$455');
+
+    await loadTab(page, 'Item Costs');
+    await expect(await costRow(page, LEGACY_NOTES)).toContainText(
+      'Not converted'
+    );
+    await expect(await costRow(page, REWORK_NOTES)).toContainText('$5');
+
+    // Do not copy the costs - the new item has no cost data
+    await duplicate(false);
+    await checkCostSummary(page, null, null);
+
+    await loadTab(page, 'Item Costs');
+    await page.getByText('No records found').waitFor();
+  } finally {
+    await deleteStockItems(created);
+  }
 });
 
 /*
