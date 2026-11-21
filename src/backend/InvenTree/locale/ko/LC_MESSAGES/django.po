@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 00:52+0000\n"
-"PO-Revision-Date: 2026-11-18 00:56\n"
+"POT-Creation-Date: 2026-11-20 06:35+0000\n"
+"PO-Revision-Date: 2026-11-20 06:39\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -328,7 +328,7 @@ msgstr "유효한 숫자여야 합니다"
 msgid "Currency"
 msgstr "통화"
 
-#: InvenTree/serializers.py:627 pricing/serializers.py:67
+#: InvenTree/serializers.py:627
 msgid "Select currency from available options"
 msgstr "사용 가능한 옵션에서 통화를 선택하세요"
 
@@ -8779,52 +8779,52 @@ msgstr "부품 판매 가격 구간"
 msgid "Part Internal Price Break"
 msgstr "부품 내부 가격 구간"
 
-#: pricing/serializers.py:40 pricing/serializers.py:61
+#: pricing/serializers.py:39 pricing/serializers.py:60
 msgid "Currency for this price break"
 msgstr ""
 
-#: pricing/serializers.py:159
+#: pricing/serializers.py:143
 msgid "Minimum Price"
 msgstr "최소 가격"
 
-#: pricing/serializers.py:160
+#: pricing/serializers.py:144
 msgid "Override calculated value for minimum price"
 msgstr "계산된 최소 가격 값을 재정의합니다"
 
-#: pricing/serializers.py:167
+#: pricing/serializers.py:151
 msgid "Minimum price currency"
 msgstr "최소 가격 통화"
 
-#: pricing/serializers.py:174
+#: pricing/serializers.py:155
 msgid "Maximum Price"
 msgstr "최대 가격"
 
-#: pricing/serializers.py:175
+#: pricing/serializers.py:156
 msgid "Override calculated value for maximum price"
 msgstr "계산된 최대 가격 값을 재정의합니다"
 
-#: pricing/serializers.py:182
+#: pricing/serializers.py:163
 msgid "Maximum price currency"
 msgstr "최대 가격 통화"
 
-#: pricing/serializers.py:211
+#: pricing/serializers.py:189
 msgid "Update"
 msgstr "업데이트"
 
-#: pricing/serializers.py:212
+#: pricing/serializers.py:190
 msgid "Update pricing for this part"
 msgstr "이 부품의 가격 정보를 업데이트합니다"
 
-#: pricing/serializers.py:241
+#: pricing/serializers.py:219
 #, python-brace-format
 msgid "Could not convert from provided currencies to {currency}"
 msgstr ""
 
-#: pricing/serializers.py:248
+#: pricing/serializers.py:226
 msgid "Minimum price must not be greater than maximum price"
 msgstr "최소 가격은 최대 가격보다 클 수 없습니다"
 
-#: pricing/serializers.py:251
+#: pricing/serializers.py:229
 msgid "Maximum price must not be less than minimum price"
 msgstr "최대 가격은 최소 가격보다 작을 수 없습니다"
 

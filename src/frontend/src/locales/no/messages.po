@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-17 12:40\n"
+"PO-Revision-Date: 2026-11-20 10:10\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -257,7 +257,7 @@ msgstr "Leverandørdeler"
 
 #: lib/enums/ModelInformation.tsx:105
 #: src/components/previews/models/ManufacturerPartPreview.tsx:16
-#: src/pages/company/ManufacturerPartDetail.tsx:191
+#: src/pages/company/ManufacturerPartDetail.tsx:199
 #: src/pages/company/SupplierPartDetailsPanel.tsx:115
 #: src/tables/part/PartPurchaseOrdersTable.tsx:65
 #: src/tables/stock/StockItemTable.tsx:140
@@ -3467,7 +3467,7 @@ msgstr ""
 #: src/defaults/links.tsx:62
 #: src/pages/Index/Settings/SystemSettings.tsx:343
 #: src/pages/company/ManufacturerDetail.tsx:9
-#: src/pages/company/ManufacturerPartDetail.tsx:168
+#: src/pages/company/ManufacturerPartDetail.tsx:176
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:186
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:351
@@ -3560,7 +3560,7 @@ msgid "Remove search group"
 msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:320
-#: src/pages/company/ManufacturerPartDetail.tsx:88
+#: src/pages/company/ManufacturerPartDetail.tsx:89
 #: src/pages/part/PartDetail.tsx:378
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:123
@@ -4666,7 +4666,7 @@ msgstr ""
 #: src/components/tables/Filter.tsx:454
 #: src/pages/company/CompanyDetailsPanel.tsx:78
 #: src/pages/company/ManufacturerDetail.tsx:8
-#: src/pages/company/ManufacturerPartDetail.tsx:172
+#: src/pages/company/ManufacturerPartDetail.tsx:180
 #: src/pages/company/ManufacturerPartDetailsPanel.tsx:57
 #: src/pages/company/SupplierPartDetailsPanel.tsx:106
 #: src/tables/company/CompanyTable.tsx:101
@@ -9656,34 +9656,34 @@ msgstr "Kunde"
 msgid "Internal"
 msgstr ""
 
-#: src/pages/company/ManufacturerPartDetail.tsx:62
+#: src/pages/company/ManufacturerPartDetail.tsx:63
 msgid "Manufacturer Part Details"
 msgstr ""
 
-#: src/pages/company/ManufacturerPartDetail.tsx:74
+#: src/pages/company/ManufacturerPartDetail.tsx:75
 #: src/pages/company/SupplierPartDetail.tsx:82
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:185
 msgid "Received Stock"
 msgstr "Mottatt lagerbeholdning"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:108
+#: src/pages/company/ManufacturerPartDetail.tsx:109
 #: src/tables/purchasing/ManufacturerPartTable.tsx:131
 msgid "Edit Manufacturer Part"
 msgstr "Rediger produsentdel"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:119
+#: src/pages/company/ManufacturerPartDetail.tsx:120
 #: src/tables/purchasing/ManufacturerPartTable.tsx:118
 #: src/tables/purchasing/ManufacturerPartTable.tsx:142
 #: src/tables/purchasing/ManufacturerPartTable.tsx:184
 msgid "Add Manufacturer Part"
 msgstr ""
 
-#: src/pages/company/ManufacturerPartDetail.tsx:131
+#: src/pages/company/ManufacturerPartDetail.tsx:132
 #: src/tables/purchasing/ManufacturerPartTable.tsx:153
 msgid "Delete Manufacturer Part"
 msgstr "Slett produsentdel"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:146
+#: src/pages/company/ManufacturerPartDetail.tsx:154
 msgid "Manufacturer Part Actions"
 msgstr ""
 

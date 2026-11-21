@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 00:52+0000\n"
-"PO-Revision-Date: 2026-11-18 00:56\n"
+"POT-Creation-Date: 2026-11-20 06:35+0000\n"
+"PO-Revision-Date: 2026-11-20 06:39\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -328,7 +328,7 @@ msgstr ""
 msgid "Currency"
 msgstr ""
 
-#: InvenTree/serializers.py:627 pricing/serializers.py:67
+#: InvenTree/serializers.py:627
 msgid "Select currency from available options"
 msgstr ""
 
@@ -8779,52 +8779,52 @@ msgstr ""
 msgid "Part Internal Price Break"
 msgstr ""
 
-#: pricing/serializers.py:40 pricing/serializers.py:61
+#: pricing/serializers.py:39 pricing/serializers.py:60
 msgid "Currency for this price break"
 msgstr ""
 
-#: pricing/serializers.py:159
+#: pricing/serializers.py:143
 msgid "Minimum Price"
 msgstr ""
 
-#: pricing/serializers.py:160
+#: pricing/serializers.py:144
 msgid "Override calculated value for minimum price"
 msgstr ""
 
-#: pricing/serializers.py:167
+#: pricing/serializers.py:151
 msgid "Minimum price currency"
 msgstr ""
 
-#: pricing/serializers.py:174
+#: pricing/serializers.py:155
 msgid "Maximum Price"
 msgstr ""
 
-#: pricing/serializers.py:175
+#: pricing/serializers.py:156
 msgid "Override calculated value for maximum price"
 msgstr ""
 
-#: pricing/serializers.py:182
+#: pricing/serializers.py:163
 msgid "Maximum price currency"
 msgstr ""
 
-#: pricing/serializers.py:211
+#: pricing/serializers.py:189
 msgid "Update"
 msgstr ""
 
-#: pricing/serializers.py:212
+#: pricing/serializers.py:190
 msgid "Update pricing for this part"
 msgstr ""
 
-#: pricing/serializers.py:241
+#: pricing/serializers.py:219
 #, python-brace-format
 msgid "Could not convert from provided currencies to {currency}"
 msgstr ""
 
-#: pricing/serializers.py:248
+#: pricing/serializers.py:226
 msgid "Minimum price must not be greater than maximum price"
 msgstr ""
 
-#: pricing/serializers.py:251
+#: pricing/serializers.py:229
 msgid "Maximum price must not be less than minimum price"
 msgstr ""
 

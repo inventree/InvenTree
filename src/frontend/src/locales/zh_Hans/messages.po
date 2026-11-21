@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-17 12:40\n"
+"PO-Revision-Date: 2026-11-20 10:10\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -257,7 +257,7 @@ msgstr "供应商零件"
 
 #: lib/enums/ModelInformation.tsx:105
 #: src/components/previews/models/ManufacturerPartPreview.tsx:16
-#: src/pages/company/ManufacturerPartDetail.tsx:191
+#: src/pages/company/ManufacturerPartDetail.tsx:199
 #: src/pages/company/SupplierPartDetailsPanel.tsx:115
 #: src/tables/part/PartPurchaseOrdersTable.tsx:65
 #: src/tables/stock/StockItemTable.tsx:140
@@ -1909,19 +1909,19 @@ msgstr "PDF 预览"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:132
 msgid "The template has unsaved changes"
-msgstr ""
+msgstr "模板有未保存的更改"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:134
 msgid "If you close the editor now, your changes will be lost. Do you want to proceed?"
-msgstr ""
+msgstr "如果现在关闭编辑器，您的更改将丢失。是否继续？"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:138
 msgid "Discard Changes"
-msgstr ""
+msgstr "放弃更改"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:139
 msgid "Keep Editing"
-msgstr ""
+msgstr "继续编辑"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 #~ msgid "Save & Reload preview?"
@@ -3467,7 +3467,7 @@ msgstr "生产"
 #: src/defaults/links.tsx:62
 #: src/pages/Index/Settings/SystemSettings.tsx:343
 #: src/pages/company/ManufacturerDetail.tsx:9
-#: src/pages/company/ManufacturerPartDetail.tsx:168
+#: src/pages/company/ManufacturerPartDetail.tsx:176
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:186
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:351
@@ -3560,7 +3560,7 @@ msgid "Remove search group"
 msgstr "移除搜索组"
 
 #: src/components/nav/SearchDrawer.tsx:320
-#: src/pages/company/ManufacturerPartDetail.tsx:88
+#: src/pages/company/ManufacturerPartDetail.tsx:89
 #: src/pages/part/PartDetail.tsx:378
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:123
@@ -3809,7 +3809,7 @@ msgstr "加载插件编辑器出错"
 
 #: src/components/plugins/PluginUIFeature.tsx:153
 msgid "The template preview is not ready yet."
-msgstr ""
+msgstr "模板预览尚未就绪。"
 
 #: src/components/plugins/PluginUIFeature.tsx:172
 msgid "Error occurred while rendering the template preview."
@@ -4666,7 +4666,7 @@ msgstr "按用户筛选"
 #: src/components/tables/Filter.tsx:454
 #: src/pages/company/CompanyDetailsPanel.tsx:78
 #: src/pages/company/ManufacturerDetail.tsx:8
-#: src/pages/company/ManufacturerPartDetail.tsx:172
+#: src/pages/company/ManufacturerPartDetail.tsx:180
 #: src/pages/company/ManufacturerPartDetailsPanel.tsx:57
 #: src/pages/company/SupplierPartDetailsPanel.tsx:106
 #: src/tables/company/CompanyTable.tsx:101
@@ -9656,34 +9656,34 @@ msgstr "客户"
 msgid "Internal"
 msgstr "内部"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:62
+#: src/pages/company/ManufacturerPartDetail.tsx:63
 msgid "Manufacturer Part Details"
 msgstr "制造商零件详情"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:74
+#: src/pages/company/ManufacturerPartDetail.tsx:75
 #: src/pages/company/SupplierPartDetail.tsx:82
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:185
 msgid "Received Stock"
 msgstr "接收库存"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:108
+#: src/pages/company/ManufacturerPartDetail.tsx:109
 #: src/tables/purchasing/ManufacturerPartTable.tsx:131
 msgid "Edit Manufacturer Part"
 msgstr "编辑制造商零件"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:119
+#: src/pages/company/ManufacturerPartDetail.tsx:120
 #: src/tables/purchasing/ManufacturerPartTable.tsx:118
 #: src/tables/purchasing/ManufacturerPartTable.tsx:142
 #: src/tables/purchasing/ManufacturerPartTable.tsx:184
 msgid "Add Manufacturer Part"
 msgstr "添加制造商零件"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:131
+#: src/pages/company/ManufacturerPartDetail.tsx:132
 #: src/tables/purchasing/ManufacturerPartTable.tsx:153
 msgid "Delete Manufacturer Part"
 msgstr "删除制造商零件"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:146
+#: src/pages/company/ManufacturerPartDetail.tsx:154
 msgid "Manufacturer Part Actions"
 msgstr "制造商零件操作"
 
@@ -11229,11 +11229,11 @@ msgstr "未分配给订单的数量"
 
 #: src/pages/stock/StockDetail.tsx:684
 msgid "Fully Allocated"
-msgstr ""
+msgstr "已完全分配"
 
 #: src/pages/stock/StockDetail.tsx:691
 msgid "Over Allocated"
-msgstr ""
+msgstr "已超额分配"
 
 #: src/pages/stock/StockDetail.tsx:698
 #: src/tables/stock/StockItemTable.tsx:481
@@ -13897,11 +13897,11 @@ msgstr "撤销"
 
 #: src/tables/settings/ApiTokenTable.tsx:217
 msgid "Token revoked"
-msgstr ""
+msgstr "令牌已撤销"
 
 #: src/tables/settings/ApiTokenTable.tsx:218
 msgid "The token has been successfully revoked"
-msgstr ""
+msgstr "令牌已成功撤销"
 
 #: src/tables/settings/ApiTokenTable.tsx:224
 msgid "Error revoking token"
