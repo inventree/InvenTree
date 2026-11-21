@@ -2199,10 +2199,9 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
                 if not stock_item.lock_quantity():
                     continue
 
-                if quantity > stock_item.unallocated_quantity():
-                    raise serializers.ValidationError(
-                        _('Cannot remove stock that is allocated to an order or build')
-                    )
+                validate_allocation_boundary(
+                    quantity, stock_item.quantity, stock_item.allocation_count()
+                )
 
                 stock_item.take_stock(quantity, request.user, notes=notes, **extra)
 
