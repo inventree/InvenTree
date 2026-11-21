@@ -135,7 +135,7 @@ When stock items are merged, the costs of the merged stock items are combined in
 
 ### Disassembly
 
-When a stock item is [disassembled](./disassemble.md), the cost of the disassembled units is apportioned across the generated component stock items. Refer to the [disassembly documentation](./disassemble.md#automatic-cost-allocation) for more information.
+When a stock item is [disassembled](./disassemble.md), *Material* cost entries are recorded against the generated component stock items - either the unit cost entered for each component, or a share of the remaining cost of the disassembled item (allocated using part pricing data). If pricing data is not available for every component without an entered unit cost, no cost is recorded for those components. Refer to the [disassembly documentation](./disassemble.md#component-costs) for more information.
 
 ### Legacy Purchase Prices
 

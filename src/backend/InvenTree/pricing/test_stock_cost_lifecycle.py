@@ -290,7 +290,13 @@ class MergeCostTests(StockItemCostLifecycleBase):
 
 
 class DisassemblyCostTests(StockItemCostLifecycleBase):
-    """Disassembled components receive a share of the cost of the assembly."""
+    """Cost entries recorded when disassembling a stock item.
+
+    - Explicit (per line) unit costs are recorded as provided
+    - The remaining cost of the assembly is allocated across the other lines,
+      weighted by part pricing - only if pricing is available for *every* such line
+    - All entries use the MATERIAL cost type
+    """
 
     def setUp(self):
         """Create an assembly with two components."""
@@ -310,17 +316,47 @@ class DisassemblyCostTests(StockItemCostLifecycleBase):
             for component in self.components
         ]
 
+    def set_pricing(self, part, min_price, max_price=None):
+        """Set the (overall) pricing data for a part."""
+        pricing = part.pricing
+        pricing.override_min = Money(min_price, 'USD')
+        pricing.override_max = Money(max_price or min_price, 'USD')
+        pricing.save()
+
+        self.assertEqual(part.pricing.overall_min.amount, min_price)
+
     def disassemble(self, item, lines, user=None):
         """Disassemble 2 units of the provided item."""
         return item.disassemble(
             2, [{'bom_item': bom_item, **line} for bom_item, line in lines], user=user
         )
 
-    def test_allocated_from_summary(self):
-        """The cost of the disassembled units is apportioned across the components."""
-        item = self.make_item(quantity=5, part=self.assembly)
+    def assertDecimals(self, values: list, expected: list):
+        """Check a list of (string) decimal values recorded in the source data."""
+        self.assertEqual(
+            [Decimal(value) for value in values], [Decimal(e) for e in expected]
+        )
 
+    def assertEntry(self, item, min_cost, max_cost, allocation):
+        """Check the (single) disassembly cost entry for a component."""
+        entry = item.cost_entries.get()
+
+        self.assertEqual(entry.cost_type, CostType.MATERIAL)
+        self.assertEqual(entry.source, CostSource.DISASSEMBLY)
+        self.assertAlmostEqual(float(entry.min_cost), float(min_cost), places=5)
+        self.assertAlmostEqual(float(entry.max_cost), float(max_cost), places=5)
+        self.assertEqual(entry.source_data['allocation'], allocation)
+
+        return entry
+
+    def test_allocated_from_pricing(self):
+        """The cost of the disassembled units is apportioned using part pricing."""
+        item = self.make_item(quantity=5, part=self.assembly)
         self.add_cost(item, min_cost=Money(10, 'USD'), max_cost=Money(12, 'USD'))
+
+        # Weights: 4 x 1 = 4 and 6 x 2 = 12 (1/4 and 3/4 of the total)
+        self.set_pricing(self.components[0], 1)
+        self.set_pricing(self.components[1], 1, 3)
 
         components = self.disassemble(
             item,
@@ -330,61 +366,200 @@ class DisassemblyCostTests(StockItemCostLifecycleBase):
             ],
         )
 
-        self.assertEqual(len(components), 2)
+        # Total cost = 2 x 10 (min) / 2 x 12 (max)
+        entry = self.assertEntry(components[0], 20 / 4 / 4, 24 / 4 / 4, 'pricing')
+        self.assertEntry(components[1], 20 * 3 / 4 / 6, 24 * 3 / 4 / 6, 'pricing')
 
-        # No part pricing data - the cost is split evenly per unit:
-        # total cost = 2 x 10 (min) / 2 x 12 (max) across 10 units
+        self.assertEqual(entry.source_data['stock_item'], item.pk)
+        self.assertDecimals(entry.source_data['allocated_cost'], [20, 24])
+
+        # The cost range (estimate) of the assembly carries through
+        self.assertSummary(components[0], '1.25', '1.5')
+
+    def test_missing_pricing(self):
+        """No cost is allocated unless pricing is available for every line."""
+        item = self.make_item(quantity=5, part=self.assembly)
+        self.add_cost(item, min_cost=Money(10, 'USD'))
+
+        # Pricing for only one of the two components
+        self.set_pricing(self.components[0], 1)
+
+        components = self.disassemble(
+            item,
+            [
+                (self.bom_items[0], {'quantity': 4}),
+                (self.bom_items[1], {'quantity': 6}),
+            ],
+        )
+
         for component in components:
-            entry = component.cost_entries.get()
-
-            self.assertEqual(entry.cost_type, CostType.PURCHASE)
-            self.assertEqual(entry.source, CostSource.DISASSEMBLY)
-            self.assertEqual(entry.min_cost, Decimal(2))
-            self.assertEqual(entry.max_cost, Decimal('2.4'))
-
-            # The cost range (estimate) of the assembly carries through
-            self.assertEqual(entry.source_data['stock_item'], item.pk)
-            self.assertEqual(entry.source_data['allocation'], 'even')
-
-            self.assertSummary(component, 2, '2.4')
+            self.assertFalse(component.cost_entries.exists())
+            self.assertFalse(
+                StockItemCost.objects.filter(stock_item=component).exists()
+            )
 
     def test_no_cost_data(self):
         """Components of an assembly without cost data have no cost entries."""
         item = self.make_item(quantity=5, part=self.assembly)
+        self.set_pricing(self.components[0], 1)
 
         components = self.disassemble(item, [(self.bom_items[0], {'quantity': 4})])
 
         self.assertFalse(components[0].cost_entries.exists())
 
-    def test_explicit_prices(self):
-        """Explicit prices are recorded (only for users with permission to add costs)."""
+    def test_explicit_costs(self):
+        """Explicit unit costs are recorded (no 'pricing' role is required)."""
         item = self.make_item(quantity=5, part=self.assembly)
         self.add_cost(item, min_cost=Money(10, 'USD'))
 
         lines = [
-            (self.bom_items[0], {'quantity': 4, 'purchase_price': Money(3, 'USD')}),
-            (self.bom_items[1], {'quantity': 6, 'purchase_price': Money(1, 'USD')}),
+            (self.bom_items[0], {'quantity': 4, 'unit_cost': Money(3, 'USD')}),
+            (self.bom_items[1], {'quantity': 6, 'unit_cost': Money(1, 'USD')}),
         ]
 
+        # Explicit costs do not require any pricing data
         components = self.disassemble(item, lines)
 
         for component, cost in zip(components, [3, 1], strict=True):
-            entry = component.cost_entries.get()
-            self.assertEqual(entry.min_cost, cost)
-            self.assertEqual(entry.source_data['allocation'], 'explicit')
+            self.assertEntry(component, cost, cost, 'explicit')
 
         # No 'pricing' role is required - the cost is part of the stock operation
         user = User.objects.create(username='no-pricing')
 
         item = self.make_item(quantity=5, part=self.assembly)
-        self.add_cost(item, min_cost=Money(10, 'USD'))
 
         components = self.disassemble(item, lines, user=user)
 
         for component, cost in zip(components, [3, 1], strict=True):
-            entry = component.cost_entries.get()
-            self.assertEqual(entry.min_cost, cost)
+            entry = self.assertEntry(component, cost, cost, 'explicit')
             self.assertEqual(entry.user, user)
+
+    def test_explicit_and_allocated(self):
+        """The remaining cost (after explicit costs) is allocated across the other lines."""
+        self.generate_exchange_rates()
+
+        item = self.make_item(quantity=5, part=self.assembly)
+        self.add_cost(item, min_cost=Money(10, 'USD'), max_cost=Money(12, 'USD'))
+
+        # Only the line *without* an explicit cost requires pricing data
+        self.set_pricing(self.components[1], 1)
+
+        # 4 x 1.5 AUD = 6 AUD = 4 USD
+        components = self.disassemble(
+            item,
+            [
+                (self.bom_items[0], {'quantity': 4, 'unit_cost': Money('1.5', 'AUD')}),
+                (self.bom_items[1], {'quantity': 6}),
+            ],
+        )
+
+        entry = components[0].cost_entries.get()
+        self.assertEqual(entry.currency, 'AUD')
+        self.assertEqual(entry.min_cost, Decimal('1.5'))
+
+        # Remaining cost: 20 - 4 = 16 (min) / 24 - 4 = 20 (max), across 6 units
+        entry = self.assertEntry(components[1], 16 / 6, 20 / 6, 'pricing')
+        self.assertDecimals([entry.source_data['explicit_cost']], [4])
+        self.assertDecimals(entry.source_data['allocated_cost'], [16, 20])
+
+    def test_explicit_without_pricing(self):
+        """Lines without an explicit cost (or pricing data) have no cost recorded."""
+        item = self.make_item(quantity=5, part=self.assembly)
+        self.add_cost(item, min_cost=Money(10, 'USD'))
+
+        components = self.disassemble(
+            item,
+            [
+                (self.bom_items[0], {'quantity': 4, 'unit_cost': Money(1, 'USD')}),
+                (self.bom_items[1], {'quantity': 6}),
+            ],
+        )
+
+        self.assertEntry(components[0], 1, 1, 'explicit')
+        self.assertFalse(components[1].cost_entries.exists())
+
+    def test_explicit_exceeds_cost(self):
+        """Nothing is allocated if the explicit costs exceed the cost of the assembly."""
+        item = self.make_item(quantity=5, part=self.assembly)
+        self.add_cost(item, min_cost=Money(10, 'USD'))
+        self.set_pricing(self.components[1], 1)
+
+        # 4 x 5 = 20 USD (the entire cost of the disassembled units)
+        components = self.disassemble(
+            item,
+            [
+                (self.bom_items[0], {'quantity': 4, 'unit_cost': Money(5, 'USD')}),
+                (self.bom_items[1], {'quantity': 6}),
+            ],
+        )
+
+        self.assertEntry(components[0], 5, 5, 'explicit')
+        self.assertFalse(components[1].cost_entries.exists())
+
+    def test_installed_items_deducted(self):
+        """The cost of installed items is deducted from the allocated cost."""
+        item = self.make_item(quantity=2, part=self.assembly)
+        self.add_cost(item, min_cost=Money(10, 'USD'))
+
+        self.set_pricing(self.components[0], 1)
+        self.set_pricing(self.components[1], 1)
+
+        # An installed item (2 x 3 USD) for the first component
+        installed = self.make_item(quantity=2, part=self.components[0])
+        installed.belongs_to = item
+        installed.save()
+        self.add_cost(installed, min_cost=Money(3, 'USD'))
+
+        # 2 x 10 USD - 2 x 3 USD = 14 USD remaining
+        components = item.disassemble(
+            2,
+            [
+                {'bom_item': self.bom_items[0], 'quantity': 4},
+                {'bom_item': self.bom_items[1], 'quantity': 2},
+            ],
+            user=None,
+        )
+
+        installed.refresh_from_db()
+        self.assertIsNone(installed.belongs_to)
+
+        # The installed item keeps its own cost
+        entry = installed.cost_entries.get()
+        self.assertEqual(entry.cost_type, CostType.PURCHASE)
+        self.assertEqual(entry.min_cost, 3)
+
+        # Two new items (2 units each, equal pricing) share the remaining 14 USD
+        created = [c for c in components if c.pk != installed.pk]
+        self.assertEqual(len(created), 2)
+
+        for component in created:
+            self.assertEqual(component.quantity, 2)
+            entry = self.assertEntry(component, '3.5', '3.5', 'pricing')
+            self.assertDecimals(entry.source_data['installed_cost'], [6, 6])
+
+    def test_installed_items_exceed_cost(self):
+        """Nothing is allocated if installed items account for the entire cost."""
+        item = self.make_item(quantity=1, part=self.assembly)
+        self.add_cost(item, min_cost=Money(5, 'USD'))
+        self.set_pricing(self.components[1], 1)
+
+        installed = self.make_item(quantity=1, part=self.components[0])
+        installed.belongs_to = item
+        installed.save()
+        self.add_cost(installed, min_cost=Money(8, 'USD'))
+
+        components = item.disassemble(
+            1,
+            [
+                {'bom_item': self.bom_items[0], 'quantity': 1},
+                {'bom_item': self.bom_items[1], 'quantity': 1},
+            ],
+            user=None,
+        )
+
+        created = [c for c in components if c.pk != installed.pk]
+        self.assertEqual(len(created), 1)
+        self.assertFalse(created[0].cost_entries.exists())
 
 
 class StocktakeCostTests(StockItemCostLifecycleBase):

@@ -2944,6 +2944,13 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         self.url = reverse('api-stock-item-disassemble', kwargs={'pk': self.item.pk})
 
+    def set_pricing(self, part_pk: int, price):
+        """Set the (overall) pricing data for a component part."""
+        pricing = part.models.Part.objects.get(pk=part_pk).pricing
+        pricing.override_min = Money(price, 'USD')
+        pricing.override_max = Money(price, 'USD')
+        pricing.save()
+
     def test_validation(self):
         """Test validation checks for the disassembly endpoint."""
         # Empty request
@@ -3052,6 +3059,10 @@ class StockItemDisassembleTest(StockAPITestCase):
         """Test a valid disassembly operation, using a subset of the BOM lines."""
         n = StockItem.objects.count()
 
+        # Pricing data is available for both components
+        self.set_pricing(1, 1)
+        self.set_pricing(50, 2)
+
         # Disassemble 4 assemblies, but only break out 2 of the 4 BOM lines
         # The second line specifies a custom location and status
         response = self.post(
@@ -3099,13 +3110,16 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assertEqual(item_1.parent.pk, self.item.pk)
         self.assertEqual(item_50.parent.pk, self.item.pk)
 
-        # Total cost (4 x 100 USD) is allocated evenly across 52 units
-        for item in [item_1, item_50]:
+        # Total cost (4 x 100 USD) is allocated using part pricing:
+        # weights 40 x 1 USD = 40 and 12 x 2 USD = 24
+        for item, unit_cost in [(item_1, '6.25'), (item_50, '12.5')]:
             entry = item.cost_entries.get()
             self.assertEqual(entry.source, CostSource.DISASSEMBLY)
+            self.assertEqual(entry.cost_type, CostType.MATERIAL)
             self.assertEqual(entry.currency, 'USD')
-            self.assertAlmostEqual(float(entry.min_cost), 400 / 52, places=4)
-            self.assertAlmostEqual(float(entry.max_cost), 400 / 52, places=4)
+            self.assertEqual(entry.min_cost, Decimal(unit_cost))
+            self.assertEqual(entry.max_cost, Decimal(unit_cost))
+            self.assertEqual(entry.source_data['allocation'], 'pricing')
 
         # Check stock tracking entries have been created
         self.assertTrue(
@@ -3174,15 +3188,73 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assertEqual(entry.additional_data['deltas']['buildorder']['pk'], bo.pk)
         self.assertEqual(entry.additional_data['deltas']['purchaseorder']['pk'], po.pk)
 
+    def test_missing_pricing(self):
+        """No cost is allocated unless pricing data is available for every component."""
+        # Pricing data for only one of the two components
+        self.set_pricing(1, 1)
+
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {'bom_item': 1, 'quantity': 10},
+                    {'bom_item': 4, 'quantity': 3},
+                ],
+                'quantity': 1,
+            },
+            expected_code=201,
+        )
+
+        for entry in response.data:
+            self.assertFalse(
+                StockItem.objects.get(pk=entry['pk']).cost_entries.exists()
+            )
+
+    def test_explicit_and_allocated(self):
+        """The remaining cost is allocated across lines without an explicit cost.
+
+        Note: The unit cost is provided without a currency (as the user interface does),
+        so the default currency is used
+        """
+        self.set_pricing(50, 1)
+
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {'bom_item': 1, 'quantity': 10, 'unit_cost': 5},
+                    {'bom_item': 4, 'quantity': 3, 'unit_cost': None},
+                ],
+                'quantity': 1,
+            },
+            expected_code=201,
+        )
+
+        items = {
+            entry['part']: StockItem.objects.get(pk=entry['pk'])
+            for entry in response.data
+        }
+
+        entry = items[1].cost_entries.get()
+        self.assertEqual(entry.currency, 'USD')
+        self.assertEqual(entry.min_cost, 5)
+        self.assertEqual(entry.source_data['allocation'], 'explicit')
+
+        # Remaining cost: 1 x 100 USD - 10 x 5 USD = 50 USD, across 3 units
+        entry = items[50].cost_entries.get()
+        self.assertEqual(entry.cost_type, CostType.MATERIAL)
+        self.assertEqual(entry.source_data['allocation'], 'pricing')
+        self.assertAlmostEqual(float(entry.min_cost), 50 / 3, places=4)
+
     def test_explicit_pricing(self):
-        """Explicit (per line) unit costs are recorded, and skip automatic cost allocation."""
+        """Explicit (per line) unit costs are recorded as provided."""
         data = {
             'items': [
                 {
                     'bom_item': 1,
                     'quantity': 10,
-                    'purchase_price': 5,
-                    'purchase_price_currency': 'NZD',
+                    'unit_cost': 5,
+                    'unit_cost_currency': 'NZD',
                 },
                 {'bom_item': 4, 'quantity': 3},
             ],
@@ -3208,9 +3280,10 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assertEqual(entry.user, self.user)
         self.assertEqual(entry.currency, 'NZD')
         self.assertEqual(entry.min_cost, 5)
+        self.assertEqual(entry.cost_type, CostType.MATERIAL)
         self.assertEqual(entry.source_data['allocation'], 'explicit')
 
-        # No automatic allocation for the line without an explicit cost
+        # No pricing data for the other component - no cost is allocated
         self.assertFalse(items[50].cost_entries.exists())
 
     def install_item(self, part_pk: int, quantity, **kwargs) -> StockItem:
@@ -3286,6 +3359,9 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         n = StockItem.objects.count()
 
+        # Pricing data for the component which is not installed
+        self.set_pricing(50, 1)
+
         response = self.post(
             self.url,
             {
@@ -3310,11 +3386,12 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assertEqual(entry.source, CostSource.MANUAL)
         self.assertEqual(entry.min_cost, 3)
 
-        # The total cost (10 x 100 USD) is spread only across newly created units
+        # The total cost (10 x 100 USD), less the cost of the installed item
+        # (120 x 3 USD), is spread only across newly created units
         new_item = StockItem.objects.get(part=50, parent=self.item)
         self.assertEqual(new_item.quantity, 30)
         self.assertAlmostEqual(
-            float(new_item.cost_entries.get().min_cost), 1000 / 30, places=4
+            float(new_item.cost_entries.get().min_cost), 640 / 30, places=4
         )
 
     def test_installed_items_leftover(self):

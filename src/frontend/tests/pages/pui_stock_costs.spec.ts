@@ -340,3 +340,141 @@ test('Stock Costs - Audit Log', async ({ browser }) => {
   ).toHaveCount(0);
   await clearTableFilters(page);
 });
+
+/*
+ * Disassembly - the form explains how component costs will be recorded.
+ *
+ * Demo data:
+ * - Part 907 (Widget Board (assembled)): pricing data is available for every component
+ * - Part 925 (XT90 10-Pack): no pricing data for its components (XT90-M / XT90-F)
+ */
+test('Stock Costs - Disassembly', async ({ browser }) => {
+  const api = await createApi({});
+
+  // Create a new assembly stock item (optionally with a unit cost)
+  const createAssembly = async (part: number, unitCost?: number) => {
+    const response = await api.post('stock/', {
+      data: { part: part, quantity: 2, location: 7 }
+    });
+    expect(response.status(), await response.text()).toBe(201);
+
+    const result = await response.json();
+    const pk: number = (Array.isArray(result) ? result[0] : result).pk;
+
+    if (unitCost !== undefined) {
+      const res = await api.post('pricing/stock-cost-entry/', {
+        data: { stock_item: pk, cost_type: 10, min_cost: unitCost }
+      });
+      expect(res.status(), await res.text()).toBe(201);
+    }
+
+    return pk;
+  };
+
+  const noCost = await createAssembly(925);
+  const noPricing = await createAssembly(925, 20);
+  const priced = await createAssembly(907, 50);
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: `stock/item/${noCost}/details`
+  });
+
+  const openDisassembly = async (pk: number) => {
+    await navigate(page, `stock/item/${pk}/details`);
+    await page
+      .getByRole('button', { name: 'action-menu-stock-operations' })
+      .click();
+    await page
+      .getByRole('menuitem', {
+        name: 'action-menu-stock-operations-disassemble'
+      })
+      .click();
+    await page.getByText('Disassemble Stock Item').waitFor();
+  };
+
+  // Explanation of how component costs will be recorded
+  const costInfo = page.getByRole('dialog').getByRole('alert');
+  const unitCosts = page.getByRole('textbox', {
+    name: 'number-field-unit_cost'
+  });
+
+  // 1. No recorded cost - no cost is recorded unless explicitly provided
+  await openDisassembly(noCost);
+  await expect(costInfo).toContainText('No Cost Will Be Recorded');
+  await expect(costInfo).toContainText(
+    'This stock item does not have a recorded cost'
+  );
+  await expect(unitCosts.first()).toHaveAttribute(
+    'placeholder',
+    'No cost recorded'
+  );
+
+  // Explicit costs for every component - nothing to explain
+  await unitCosts.nth(0).fill('1.5');
+  await unitCosts.nth(1).fill('2');
+  await expect(costInfo).toHaveCount(0);
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // 2. Missing pricing data - the components are listed
+  await openDisassembly(noPricing);
+  await expect(costInfo).toContainText('No Cost Will Be Recorded');
+  await expect(costInfo).toContainText('Part pricing data is not available');
+  await expect(costInfo).toContainText('XT90-M');
+  await expect(costInfo).toContainText('XT90-F');
+
+  // An explicit cost for one component - still no cost for the other
+  await unitCosts.nth(0).fill('3');
+  await expect(costInfo).toContainText('1 component(s) without a unit cost');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // 3. Pricing data for every component - the remaining cost is allocated
+  await openDisassembly(priced);
+  await expect(costInfo).toContainText('Automatic Cost Allocation');
+  await expect(costInfo).toContainText('($100)');
+  await expect(unitCosts.first()).toHaveAttribute('placeholder', 'Automatic');
+
+  // An explicit cost (for the first line) reduces the remaining cost
+  const firstQuantity = Number(
+    await page
+      .getByRole('textbox', { name: 'number-field-quantity' })
+      .nth(1)
+      .inputValue()
+  );
+  await unitCosts.nth(0).fill('2');
+  await expect(costInfo).toContainText(`($${100 - 2 * firstQuantity})`);
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Stock item disassembled').waitFor();
+
+  // Every component has a "material" cost entry - totalling the cost of the assembly
+  const children = await api
+    .get('stock/', { params: { parent: priced } })
+    .then((res) => res.json());
+  expect(children.length).toBeGreaterThan(1);
+
+  let total = 0;
+
+  for (const child of children) {
+    const entries = await api
+      .get('pricing/stock-cost-entry/', { params: { stock_item: child.pk } })
+      .then((res) => res.json());
+
+    expect(entries.length).toBe(1);
+    expect(entries[0].source).toBe('disassembly');
+    expect(entries[0].cost_type).toBe(40);
+
+    total += Number(entries[0].min_cost) * Number(child.quantity);
+  }
+
+  expect(total).toBeCloseTo(100, 2);
+
+  // Remove the stock items created by this test
+  const created = [noCost, noPricing, priced, ...children.map((c) => c.pk)];
+
+  for (const pk of created) {
+    await api.delete(`stock/${pk}/`);
+  }
+
+  await api.dispose();
+});

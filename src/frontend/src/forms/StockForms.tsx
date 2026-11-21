@@ -31,9 +31,11 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import {
+  IconAlertTriangle,
   IconCalendarExclamation,
   IconChevronDown,
   IconChevronUp,
+  IconCoin,
   IconCopy,
   IconLink,
   IconPackage,
@@ -46,7 +48,9 @@ import {
   type JSX,
   type ReactNode,
   Suspense,
+  createContext,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -71,6 +75,7 @@ import {
   RenderStockLocation
 } from '../components/render/Stock';
 import { StatusFilterOptions } from '../components/tables/Filter';
+import { formatPriceRange } from '../defaults/formatters';
 import { InvenTreeIcon } from '../functions/icons';
 import {
   useApiFormModal,
@@ -452,6 +457,310 @@ export function useStockItemSerializeFields({
   }, [serialGenerator.result]);
 }
 
+/**
+ * The outcome of the automatic cost allocation for a disassembly operation:
+ *
+ * - explicit: Every generated component has an explicit unit cost (nothing to allocate)
+ * - allocate: The remaining cost of the assembly is allocated across the other components
+ * - none: No cost is recorded for components without an explicit unit cost
+ * - unknown: The user cannot view pricing data, so the outcome cannot be determined
+ */
+export type DisassemblyCostStatus = {
+  mode: 'explicit' | 'allocate' | 'none' | 'unknown';
+  reason?: 'no-cost' | 'unconverted' | 'missing-pricing' | 'no-remaining';
+  // Components without pricing data (when reason = 'missing-pricing')
+  missingParts: string[];
+  // Number of components without an explicit unit cost
+  automaticCount: number;
+  // Remaining cost to be allocated (if it can be calculated)
+  remainingMin?: number;
+  remainingMax?: number;
+  currency?: string;
+};
+
+const DisassemblyCostContext = createContext<DisassemblyCostStatus | undefined>(
+  undefined
+);
+
+function isBlankValue(value: any): boolean {
+  return value === null || value === undefined || value === '';
+}
+
+/**
+ * Return true if usable pricing data is available for the BOM line.
+ * Mirrors StockItem.disassembly_cost_weights (server side)
+ */
+function bomLineHasPricing(record: any): boolean {
+  const values = [record?.pricing_min, record?.pricing_max]
+    .filter((value) => !isBlankValue(value))
+    .map(Number);
+
+  if (values.length == 0) {
+    return false;
+  }
+
+  return values.reduce((a, b) => a + b, 0) / values.length > 0;
+}
+
+/**
+ * Determine how component costs will be recorded for a disassembly operation.
+ *
+ * This mirrors StockItem.record_disassembly_costs (server side):
+ * - Components with an explicit unit cost are recorded at that cost
+ * - The remaining cost of the assembly (less installed items and explicit costs)
+ *   is allocated across the other components, weighted by part pricing -
+ *   but *only* if pricing data is available for every one of those components
+ * - Otherwise, no cost is recorded for components without an explicit unit cost
+ */
+export function getDisassemblyCostStatus({
+  stockItem,
+  lines,
+  records,
+  installedMap,
+  installedItems,
+  quantity,
+  canViewPricing,
+  defaultCurrency
+}: {
+  stockItem: any;
+  lines: any[];
+  records: Record<number, any>;
+  installedMap: Record<number, any[]>;
+  installedItems: any[];
+  quantity: any;
+  canViewPricing: boolean;
+  defaultCurrency: string;
+}): DisassemblyCostStatus {
+  // Quantity of new stock items created for each line (installed items are broken out instead)
+  const created = lines
+    .map((line: any) => {
+      const installed = (installedMap[line.bom_item] ?? []).reduce(
+        (total: number, item: any) => total + (Number(item.quantity) || 0),
+        0
+      );
+
+      return {
+        line: line,
+        record: records[line.bom_item],
+        quantity: Math.max(0, (Number(line.quantity) || 0) - installed)
+      };
+    })
+    .filter((entry) => entry.quantity > 0);
+
+  const explicit = created.filter(
+    (entry) => !isBlankValue(entry.line.unit_cost)
+  );
+  const automatic = created.filter((entry) =>
+    isBlankValue(entry.line.unit_cost)
+  );
+
+  const status: DisassemblyCostStatus = {
+    mode: 'explicit',
+    missingParts: [],
+    automaticCount: automatic.length
+  };
+
+  if (automatic.length == 0) {
+    return status;
+  }
+
+  if (!canViewPricing) {
+    return { ...status, mode: 'unknown' };
+  }
+
+  const cost = stockItem?.pricing_detail;
+  const minCost = cost?.min_cost ?? cost?.max_cost;
+  const maxCost = cost?.max_cost ?? cost?.min_cost;
+
+  if (isBlankValue(minCost) || isBlankValue(maxCost)) {
+    // A cost summary without values means the cost could not be converted
+    return {
+      ...status,
+      mode: 'none',
+      reason: cost?.incomplete ? 'unconverted' : 'no-cost'
+    };
+  }
+
+  const missing = automatic
+    .filter((entry) => !bomLineHasPricing(entry.record))
+    .map((entry) => entry.record?.sub_part_detail?.full_name ?? '-');
+
+  if (missing.length > 0) {
+    return {
+      ...status,
+      mode: 'none',
+      reason: 'missing-pricing',
+      missingParts: missing
+    };
+  }
+
+  // The remaining cost can only be calculated if all values are in the same currency
+  // (explicit costs are entered in the default currency)
+  const sameCurrency =
+    cost.currency == defaultCurrency &&
+    installedItems.every(
+      (item: any) =>
+        !item.pricing_detail || item.pricing_detail.currency == defaultCurrency
+    );
+
+  if (!sameCurrency) {
+    return { ...status, mode: 'allocate' };
+  }
+
+  const n = Number(quantity) || 0;
+
+  let installedMin = 0;
+  let installedMax = 0;
+
+  for (const item of installedItems) {
+    const itemCost = item.pricing_detail;
+
+    if (!itemCost) {
+      continue;
+    }
+
+    const values = [itemCost.min_cost, itemCost.max_cost]
+      .filter((value) => !isBlankValue(value))
+      .map(Number);
+
+    if (values.length > 0) {
+      installedMin += Math.min(...values) * (Number(item.quantity) || 0);
+      installedMax += Math.max(...values) * (Number(item.quantity) || 0);
+    }
+  }
+
+  const explicitTotal = explicit.reduce(
+    (total: number, entry) =>
+      total + (Number(entry.line.unit_cost) || 0) * entry.quantity,
+    0
+  );
+
+  const remainingMin = Math.max(
+    0,
+    Number(minCost) * n - installedMin - explicitTotal
+  );
+  const remainingMax = Math.max(
+    0,
+    Number(maxCost) * n - installedMax - explicitTotal
+  );
+
+  if (remainingMax <= 0) {
+    return { ...status, mode: 'none', reason: 'no-remaining' };
+  }
+
+  return {
+    ...status,
+    mode: 'allocate',
+    remainingMin: remainingMin,
+    remainingMax: remainingMax,
+    currency: defaultCurrency
+  };
+}
+
+/**
+ * Explain how component costs will be recorded for a disassembly operation
+ */
+function DisassemblyCostInfo({
+  status
+}: Readonly<{
+  status: DisassemblyCostStatus;
+}>) {
+  switch (status.mode) {
+    case 'allocate': {
+      const count = status.automaticCount;
+      const amount =
+        status.remainingMax === undefined
+          ? ''
+          : String(
+              formatPriceRange(
+                status.remainingMin ?? null,
+                status.remainingMax ?? null,
+                { currency: status.currency }
+              )
+            );
+
+      return (
+        <Alert
+          color='blue'
+          icon={<IconCoin />}
+          title={t`Automatic Cost Allocation`}
+        >
+          <Text size='sm'>
+            {amount
+              ? t`The remaining cost of this stock item (${amount}) will be allocated across the ${count} component(s) without a unit cost, weighted by part pricing.`
+              : t`The remaining cost of this stock item will be allocated across the ${count} component(s) without a unit cost, weighted by part pricing.`}
+          </Text>
+          <Text size='xs' c='dimmed'>
+            {t`The remaining cost excludes any unit costs entered above, and the cost of any installed items (which keep their own costs).`}
+          </Text>
+        </Alert>
+      );
+    }
+    case 'none': {
+      const count = status.automaticCount;
+      let reason: ReactNode = null;
+
+      switch (status.reason) {
+        case 'no-cost':
+          reason = t`This stock item does not have a recorded cost.`;
+          break;
+        case 'unconverted':
+          reason = t`The cost of this stock item could not be converted to the default currency (no exchange rate is available).`;
+          break;
+        case 'missing-pricing':
+          reason = (
+            <Stack gap={2}>
+              <Text size='sm'>
+                {t`Part pricing data is not available for the following components:`}
+              </Text>
+              <List size='sm'>
+                {status.missingParts.map((name: string, idx: number) => (
+                  <List.Item key={`${name}-${idx}`}>{name}</List.Item>
+                ))}
+              </List>
+            </Stack>
+          );
+          break;
+        case 'no-remaining':
+          reason = t`The cost of this stock item is already accounted for by the unit costs entered above and the cost of any installed items.`;
+          break;
+      }
+
+      return (
+        <Alert
+          color='orange'
+          icon={<IconAlertTriangle />}
+          title={t`No Cost Will Be Recorded`}
+        >
+          <Stack gap='xs'>
+            <Text size='sm' fw={500}>
+              {t`No cost will be recorded for the ${count} component(s) without a unit cost.`}
+            </Text>
+            {typeof reason === 'string' ? (
+              <Text size='sm'>{reason}</Text>
+            ) : (
+              reason
+            )}
+            <Text size='sm'>
+              {t`To record a cost for these components, enter a unit cost for each of them.`}
+            </Text>
+          </Stack>
+        </Alert>
+      );
+    }
+    case 'unknown':
+      return (
+        <Alert color='blue' icon={<IconCoin />} title={t`Component Costs`}>
+          <Text size='sm'>
+            {t`Components with a unit cost are recorded at that cost. The remaining cost of this stock item is only allocated to the other components if this stock item has a recorded cost and part pricing data is available for every one of them. Otherwise, no cost is recorded for components without a unit cost.`}
+          </Text>
+        </Alert>
+      );
+    default:
+      return null;
+  }
+}
+
 function DisassemblyLineRow({
   props,
   record,
@@ -472,6 +781,9 @@ function DisassemblyLineRow({
   const [edited, setEdited] = useState<boolean>(false);
 
   const [installedOpen, installedHandlers] = useDisclosure(false);
+
+  // How costs are recorded for lines without an explicit unit cost
+  const costStatus = useContext(DisassemblyCostContext);
 
   const [locationOpen, locationHandlers] = useDisclosure(false, {
     onClose: () => props.changeFn(props.rowId, 'location', undefined)
@@ -552,19 +864,21 @@ function DisassemblyLineRow({
         <Table.Td style={{ whiteSpace: 'nowrap' }}>
           <NumberInput
             radius='sm'
-            aria-label='number-field-purchase_price'
-            placeholder={t`Automatic`}
+            aria-label='number-field-unit_cost'
+            placeholder={
+              costStatus?.mode == 'none' ? t`No cost recorded` : t`Automatic`
+            }
             min={0}
             decimalScale={6}
-            value={props.item.purchase_price ?? ''}
+            value={props.item.unit_cost ?? ''}
             onChange={(value) => {
               props.changeFn(
                 props.rowId,
-                'purchase_price',
+                'unit_cost',
                 value === '' ? null : value
               );
             }}
-            error={props.rowErrors?.purchase_price?.message}
+            error={props.rowErrors?.unit_cost?.message}
           />
         </Table.Td>
         <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
@@ -789,7 +1103,10 @@ export function useDisassembleStockItem({
           params: {
             part: stockItem.part,
             sub_part_detail: true,
-            substitutes: true
+            substitutes: true,
+            // Part pricing data (only returned for users with the 'pricing' view role)
+            // is used to explain how component costs will be recorded
+            pricing: true
           }
         })
         .then((response) => response.data ?? [])
@@ -804,7 +1121,9 @@ export function useDisassembleStockItem({
         .get(apiUrl(ApiEndpoints.stock_item_list), {
           params: {
             belongs_to: stockItem.pk,
-            part_detail: true
+            part_detail: true,
+            // Cost data (only returned for users with the 'pricing' view role)
+            pricing_detail: true
           }
         })
         .then((response) => response.data ?? [])
@@ -867,10 +1186,70 @@ export function useDisassembleStockItem({
     []
   );
 
+  const user = useUserState();
+
+  const canViewPricing: boolean = useMemo(
+    () => user.hasViewRole(UserRoles.pricing),
+    [user]
+  );
+
+  const initialLines: any[] = useMemo(
+    () =>
+      bomItems.map((elem: any) => {
+        return {
+          id: elem.pk,
+          bom_item: elem.pk,
+          quantity:
+            (Number(elem.quantity) || 0) * (Number(stockItem.quantity) || 0),
+          // Explicit unit cost (in the default currency) - leave blank for automatic allocation
+          unit_cost: null
+        };
+      }),
+    [bomItems, stockItem.quantity]
+  );
+
+  // Track the current form values, to explain how component costs will be recorded
+  const [formLines, setFormLines] = useState<any[]>([]);
+  const [formQuantity, setFormQuantity] = useState<any>(stockItem.quantity);
+
+  const resetCostState = useCallback(() => {
+    setFormLines(initialLines);
+    setFormQuantity(stockItem.quantity);
+  }, [initialLines, stockItem.quantity]);
+
+  useEffect(() => {
+    resetCostState();
+  }, [resetCostState]);
+
+  const costStatus: DisassemblyCostStatus = useMemo(
+    () =>
+      getDisassemblyCostStatus({
+        stockItem: stockItem,
+        lines: formLines,
+        records: records,
+        installedMap: installedMap,
+        installedItems: installedQuery.data ?? [],
+        quantity: formQuantity,
+        canViewPricing: canViewPricing,
+        defaultCurrency: defaultCurrency
+      }),
+    [
+      stockItem,
+      formLines,
+      records,
+      installedMap,
+      installedQuery.data,
+      formQuantity,
+      canViewPricing,
+      defaultCurrency
+    ]
+  );
+
   const fields: ApiFormFieldSet = useMemo(() => {
     return {
       quantity: {
-        disabled: serialized
+        disabled: serialized,
+        onValueChange: (value: any) => setFormQuantity(value)
       },
       location: {
         filters: {
@@ -879,16 +1258,8 @@ export function useDisassembleStockItem({
       },
       items: {
         field_type: 'table',
-        value: bomItems.map((elem: any) => {
-          return {
-            id: elem.pk,
-            bom_item: elem.pk,
-            quantity:
-              (Number(elem.quantity) || 0) * (Number(stockItem.quantity) || 0),
-            // Explicit unit cost (in the default currency) - leave blank for automatic allocation
-            purchase_price: null
-          };
-        }),
+        value: initialLines,
+        onValueChange: (value: any) => setFormLines(value ?? []),
         modelRenderer: (row: TableFieldRowProps) => {
           const record = records[row.item.bom_item];
 
@@ -922,22 +1293,26 @@ export function useDisassembleStockItem({
       notes: {}
     };
   }, [
-    bomItems,
+    initialLines,
     records,
     installedMap,
-    stockItem,
     serialized,
     stockStatusCodes,
     defaultCurrency
   ]);
 
-  return useCreateApiFormModal({
+  const form = useCreateApiFormModal({
     url: ApiEndpoints.stock_disassemble,
     pk: stockItem.pk,
     title: t`Disassemble Stock Item`,
     fields: fields,
     preFormContent: <DisassemblyItemInfo stockItem={stockItem} />,
-    postFormContent: <DisassemblyLeftoverItems items={leftoverItems} />,
+    postFormContent: (
+      <Stack gap='xs'>
+        <DisassemblyCostInfo status={costStatus} />
+        <DisassemblyLeftoverItems items={leftoverItems} />
+      </Stack>
+    ),
     initialData: {
       quantity: stockItem.quantity,
       location: stockItem.location
@@ -948,8 +1323,19 @@ export function useDisassembleStockItem({
     onOpen: () => {
       // Ensure the installed items data is up to date when the form is opened
       installedQuery.refetch();
+      resetCostState();
     }
   });
+
+  // Provide the cost status to each line (rendered within the form)
+  return {
+    ...form,
+    modal: (
+      <DisassemblyCostContext.Provider value={costStatus}>
+        {form.modal}
+      </DisassemblyCostContext.Provider>
+    )
+  };
 }
 
 function StockItemDefaultMove({

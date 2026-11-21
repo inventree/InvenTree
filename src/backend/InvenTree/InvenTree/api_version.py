@@ -15,7 +15,8 @@ v583 -> 2026-11-16 : https://github.com/inventree/InvenTree/pull/13294
     - Breaking: Removes the "has_purchase_price" filter and "purchase_price" ordering option from the StockItem API
     - Adds "copy_costs" option (default True) when duplicating a StockItem via the API
     - Adds "has_unit_cost" filter and "unit_cost" ordering option to the StockItem API (ignored for users without the "pricing" view role)
-    - Breaking: Explicit per-line "purchase_price" values for stock disassembly now create cost entries (and no longer set the purchase price), and default to the default currency
+    - Breaking: The per-line "purchase_price" / "purchase_price_currency" fields of the stock disassembly endpoint are renamed to "unit_cost" / "unit_cost_currency". Explicit unit costs create "material" cost entries (and no longer set the purchase price), and default to the default currency
+    - Breaking: Stock disassembly only allocates the remaining cost of the assembly (less explicit unit costs and installed item costs) to lines without a unit cost if part pricing is available for every such line - otherwise no cost is recorded (no "even" split)
     - Breaking: Removes the "PURCHASEORDER_CONVERT_CURRENCY" global setting
 
 v582 -> 2026-11-19 : https://github.com/inventree/InvenTree/pull/13329

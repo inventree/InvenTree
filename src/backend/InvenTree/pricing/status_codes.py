@@ -15,7 +15,7 @@ class CostType(StatusCode):
         PURCHASE: Unit price paid to the supplier
         LANDED: Additional cost of getting the item in stock (freight, duty, handling)
         FEES: Supplier or transaction fees
-        MATERIAL: Cost of components consumed to manufacture the item (e.g. via a build order)
+        MATERIAL: Material cost - components consumed to manufacture the item (e.g. via a build order), or the share of an assembly cost recovered by disassembly
         MANUFACTURING: Manufacturing process cost (e.g. labor, overhead)
         ADJUSTMENT: Corrections, rebates and credits
         OTHER: Any other cost

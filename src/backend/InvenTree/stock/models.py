@@ -2053,19 +2053,19 @@ class StockItem(
             self.save()
 
     @staticmethod
-    def disassembly_cost_weights(lines: list) -> tuple[list[Decimal], str] | None:
-        """Calculate the share of the total cost to allocate to each disassembly line.
+    def disassembly_cost_weights(lines: list) -> list[Decimal] | None:
+        """Calculate the share of the cost to allocate to each disassembly line.
 
-        The cost is apportioned across the lines pro-rata, weighted by existing pricing
-        data for each component part. If pricing data is not available for *every* line,
-        the cost is split evenly across the generated units.
+        The cost is apportioned across the lines pro-rata, weighted by the existing
+        pricing data (average of the overall minimum and maximum price) of each
+        component part, multiplied by the line quantity.
 
         Args:
             lines: A list of dict objects (see the disassemble method)
 
         Returns:
-            A tuple of (fractions, method) - one fraction per line (summing to 1), and the
-            allocation method ('pricing' or 'even') - or None if no allocation is possible
+            A list of fractions (one per line, summing to 1) - or None if pricing data
+            is not available for *every* line (in which case no cost is allocated)
         """
         weights = []
 
@@ -2078,53 +2078,159 @@ class StockItem(
                 if price is not None
             ]
 
-            weight = None
+            if not price_range:
+                return None
 
-            if price_range:
-                mid = sum(price_range[1:], price_range[0]) / len(price_range)
+            mid = sum(price_range[1:], price_range[0]) / len(price_range)
 
-                if mid.amount > 0:
-                    weight = Decimal(mid.amount) * Decimal(line['quantity'])
+            if mid.amount <= 0:
+                return None
 
-            weights.append(weight)
-
-        method = 'pricing'
-
-        if any(weight is None for weight in weights):
-            # Insufficient pricing data - fall back to an even (per unit) split
-            weights = [Decimal(line['quantity']) for line in lines]
-            method = 'even'
+            weights.append(Decimal(mid.amount) * Decimal(line['quantity']))
 
         total_weight = sum(weights)
 
         if total_weight <= 0:
             return None
 
-        return [weight / total_weight for weight in weights], method
+        return [weight / total_weight for weight in weights]
+
+    def disassembly_cost_pool(
+        self, quantity, installed: list, explicit: list
+    ) -> dict | None:
+        """Calculate the cost of the disassembled units which remains to be allocated.
+
+        The remaining cost is the cost of the disassembled units (unit cost x quantity),
+        less the cost of any installed items which are broken out (these keep their own
+        cost entries), and less any explicit costs provided for the disassembly lines.
+        The minimum and maximum costs are calculated separately, and floored at zero.
+
+        Args:
+            quantity: The number of units of this stock item being disassembled
+            installed: The installed stock items which are broken out of this item
+            explicit: A list of (line, StockItem) pairs which have an explicit unit cost
+
+        Returns:
+            A dict of the remaining cost data, or None if there is no cost to allocate
+            (no cost data for this item, nothing remaining, or a currency conversion
+            is not possible)
+        """
+        from djmoney.money import Money
+
+        from common.currency import currency_code_default
+        from pricing.models import StockItemCost, convert_cost
+
+        summary = StockItemCost.objects.filter(stock_item=self).first()
+
+        if not summary:
+            return None
+
+        min_cost = (
+            summary.min_cost if summary.min_cost is not None else summary.max_cost
+        )
+        max_cost = (
+            summary.max_cost if summary.max_cost is not None else summary.min_cost
+        )
+
+        if min_cost is None or max_cost is None:
+            return None
+
+        currency = summary.currency
+        quantity = Decimal(quantity)
+
+        # Cost of the installed items (which retain their own cost entries)
+        installed_min = Decimal(0)
+        installed_max = Decimal(0)
+
+        installed_costs = StockItemCost.objects.filter(
+            stock_item__in=[item.pk for item in installed]
+        ).select_related('stock_item')
+
+        for cost in installed_costs:
+            item_quantity = Decimal(cost.stock_item.quantity)
+
+            values = [
+                convert_cost(value, cost.currency, currency)
+                for value in [cost.min_cost, cost.max_cost]
+                if value is not None
+            ]
+
+            if not values or None in values:
+                # Cannot determine the cost of this installed item
+                return None
+
+            installed_min += min(values) * item_quantity
+            installed_max += max(values) * item_quantity
+
+        # Explicit costs provided for the disassembly lines
+        explicit_total = Decimal(0)
+
+        for line, item in explicit:
+            unit_cost = line['unit_cost']
+
+            if isinstance(unit_cost, Money):
+                value = convert_cost(
+                    Decimal(unit_cost.amount), str(unit_cost.currency), currency
+                )
+            else:
+                # A plain value is in the default currency
+                value = convert_cost(
+                    Decimal(unit_cost), currency_code_default(), currency
+                )
+
+            if value is None:
+                return None
+
+            explicit_total += value * Decimal(item.quantity)
+
+        remaining_min = max(
+            Decimal(0), min_cost * quantity - installed_min - explicit_total
+        )
+        remaining_max = max(
+            Decimal(0), max_cost * quantity - installed_max - explicit_total
+        )
+
+        if remaining_max <= 0:
+            return None
+
+        return {
+            'currency': currency,
+            'min_cost': min_cost,
+            'max_cost': max_cost,
+            'installed_min': installed_min,
+            'installed_max': installed_max,
+            'explicit': explicit_total,
+            'remaining_min': remaining_min,
+            'remaining_max': remaining_max,
+            'incomplete': summary.incomplete,
+        }
 
     def record_disassembly_costs(
-        self, quantity, lines: list, created: list, user, explicit: bool
+        self, quantity, lines: list, created: list, installed: list, user
     ):
         """Record cost entries for the stock items created by disassembling this item.
 
-        - If explicit (per line) prices were provided, these are recorded as the unit cost
-          of each component
+        Costs are recorded with the MATERIAL cost type:
+
+        - Lines with an explicit unit cost are recorded at that cost
+        - The remaining cost of the disassembled units (see disassembly_cost_pool) is
+          apportioned across the other lines, weighted by part pricing - but *only* if
+          pricing data is available for every one of those lines
+          (see disassembly_cost_weights). Otherwise no cost is recorded for them.
 
         Note: No 'pricing' role is required - costs recorded as part of a stock operation
         are governed by the permissions for that operation (the 'pricing' role only applies
         to explicitly creating or adjusting stock item cost entries)
-        - Otherwise, the total cost of the disassembled units (from the cost summary of this item)
-          is apportioned across the components (see disassembly_cost_weights)
 
         Args:
             quantity: The number of units of this stock item being disassembled
             lines: The disassembly lines (see the disassemble method)
             created: A list of (line, StockItem) pairs for the newly created components
+            installed: The installed stock items which were broken out of this item
             user: The user performing the operation
-            explicit: True if explicit prices were provided for the lines
         """
         from pricing.helpers import StockItemCostRecorder
-        from pricing.models import CostSource, StockItemCost
+        from pricing.models import CostSource
         from pricing.status_codes import CostType
 
         if not created:
@@ -2132,60 +2238,63 @@ class StockItem(
 
         costs = StockItemCostRecorder(source=CostSource.DISASSEMBLY, user=user)
 
-        if explicit:
-            for line, item in created:
-                costs.add(
-                    item,
-                    CostType.PURCHASE,
-                    cost=line.get('purchase_price'),
-                    source_data={'stock_item': self.pk, 'allocation': 'explicit'},
-                )
+        explicit = [
+            (line, item) for line, item in created if line.get('unit_cost') is not None
+        ]
 
-            costs.save()
-            return
+        automatic = [
+            (line, item) for line, item in created if line.get('unit_cost') is None
+        ]
 
-        summary = StockItemCost.objects.filter(stock_item=self).first()
-
-        if not summary or (summary.min_cost is None and summary.max_cost is None):
-            return
-
-        allocation = self.disassembly_cost_weights(lines)
-
-        if allocation is None:
-            return
-
-        fractions, method = allocation
-        line_fractions = {
-            id(line): fraction for line, fraction in zip(lines, fractions, strict=True)
-        }
-
-        for line, item in created:
-            fraction = line_fractions[id(line)]
-            line_quantity = Decimal(line['quantity'])
-
-            # Convert the share of the total cost back into a cost per (component) unit
-            def unit_cost(total, fraction=fraction, line_quantity=line_quantity):
-                if total is None:
-                    return None
-                return total * quantity * fraction / line_quantity
-
+        for line, item in explicit:
             costs.add(
                 item,
-                CostType.PURCHASE,
-                min_cost=unit_cost(summary.min_cost),
-                max_cost=unit_cost(summary.max_cost),
-                currency=summary.currency,
-                source_data={
-                    'stock_item': self.pk,
-                    'quantity': str(quantity),
-                    'allocation': method,
-                    'fraction': str(fraction),
-                    'min_cost': str(summary.min_cost),
-                    'max_cost': str(summary.max_cost),
-                    'currency': summary.currency,
-                    'incomplete': summary.incomplete,
-                },
+                CostType.MATERIAL,
+                cost=line['unit_cost'],
+                source_data={'stock_item': self.pk, 'allocation': 'explicit'},
             )
+
+        pool = (
+            self.disassembly_cost_pool(quantity, installed, explicit)
+            if automatic
+            else None
+        )
+
+        fractions = (
+            self.disassembly_cost_weights([line for line, _item in automatic])
+            if pool
+            else None
+        )
+
+        if pool and fractions:
+            for (_line, item), fraction in zip(automatic, fractions, strict=True):
+                item_quantity = Decimal(item.quantity)
+
+                costs.add(
+                    item,
+                    CostType.MATERIAL,
+                    min_cost=pool['remaining_min'] * fraction / item_quantity,
+                    max_cost=pool['remaining_max'] * fraction / item_quantity,
+                    currency=pool['currency'],
+                    source_data={
+                        'stock_item': self.pk,
+                        'quantity': str(quantity),
+                        'allocation': 'pricing',
+                        'fraction': str(fraction),
+                        'currency': pool['currency'],
+                        'unit_cost': [str(pool['min_cost']), str(pool['max_cost'])],
+                        'installed_cost': [
+                            str(pool['installed_min']),
+                            str(pool['installed_max']),
+                        ],
+                        'explicit_cost': str(pool['explicit']),
+                        'allocated_cost': [
+                            str(pool['remaining_min']),
+                            str(pool['remaining_max']),
+                        ],
+                        'incomplete': pool['incomplete'],
+                    },
+                )
 
         costs.save()
 
@@ -2206,7 +2315,7 @@ class StockItem(
                 quantity: The total quantity of the component to create
                 location: Optional destination StockLocation for the component
                 status: Optional StockStatus code for the component (default: OK)
-                purchase_price: Optional unit cost (Money) for the component - recorded as a cost entry
+                unit_cost: Optional unit cost (Money) for the component - recorded as a cost entry
             user: The user performing the operation
             location: Default destination location for the generated components
             notes: Optional transaction notes
@@ -2305,9 +2414,6 @@ class StockItem(
 
             items.append(installed_item)
 
-        # Were explicit (per line) unit costs provided?
-        explicit_prices = any(line.get('purchase_price') is not None for line in lines)
-
         # (line, StockItem) pairs for the newly created components
         created = []
 
@@ -2356,9 +2462,7 @@ class StockItem(
         # Record the cost of each newly created component.
         # Note: Deliberately performed *after* the installed items are uninstalled,
         # so that the cost is only spread across newly created stock items
-        self.record_disassembly_costs(
-            quantity, lines, created, user, explicit=explicit_prices
-        )
+        self.record_disassembly_costs(quantity, lines, created, installed_items, user)
 
         # Consume this stock item.
         # Note: the item is deliberately retained (not deleted) at zero quantity,

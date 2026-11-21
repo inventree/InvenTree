@@ -1083,8 +1083,8 @@ class DisassemblyLineSerializer(serializers.Serializer):
             'quantity',
             'location',
             'status',
-            'purchase_price',
-            'purchase_price_currency',
+            'unit_cost',
+            'unit_cost_currency',
         ]
 
     bom_item = serializers.PrimaryKeyRelatedField(
@@ -1125,20 +1125,36 @@ class DisassemblyLineSerializer(serializers.Serializer):
         required=False, help_text=_('Status code for the component items')
     )
 
-    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
+    unit_cost = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Unit Cost'),
         required=False,
         allow_null=True,
         default=None,
         help_text=_(
-            'Unit cost of the component items (leave blank for automatic cost allocation)'
+            'Unit cost of the component items. If left blank, the remaining cost of the assembly is allocated using part pricing data - only if pricing is available for every component without a unit cost'
         ),
     )
 
     # Note: Defaults to the default currency
-    purchase_price_currency = InvenTreeCurrencySerializer(
+    unit_cost_currency = InvenTreeCurrencySerializer(
         help_text=_('Currency for the unit cost')
     )
+
+    def validate(self, data):
+        """Combine the unit cost and currency into a single Money value."""
+        from djmoney.money import Money
+
+        from common.currency import currency_code_default
+
+        data = super().validate(data)
+
+        unit_cost = data.get('unit_cost')
+
+        if unit_cost is not None and not isinstance(unit_cost, Money):
+            currency = data.get('unit_cost_currency') or currency_code_default()
+            data['unit_cost'] = Money(unit_cost, currency)
+
+        return data
 
 
 class DisassembleStockItemSerializer(serializers.Serializer):
