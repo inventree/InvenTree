@@ -52,7 +52,7 @@ The *source* of a cost entry identifies who (or what) created it:
 | `purchase_order` | Recorded when the item was [received against a purchase order](#receiving-purchase-orders) |
 | `merge` | Recorded when stock items were [merged](#merging-stock-items) |
 | `disassembly` | Recorded when the item was created by [disassembling](#disassembly) another stock item |
-| `build` | Recorded by a build order |
+| `build` | Reserved for costs recorded by build orders (not currently used - see [build orders](#build-orders)) |
 | `legacy` | Migrated from the *purchase price* of the stock item, from an earlier version of InvenTree (see [legacy purchase prices](#legacy-purchase-prices)) |
 | `plugin:<slug>` | Created by the [plugin](#plugin-support) with the specified slug |
 
@@ -148,10 +148,20 @@ Each cost entry is converted to the [default currency](../concepts/pricing.md#de
 The [unit cost](#unit-cost) is calculated from the stored converted values, so that the cost of a stock item does not change with subsequent changes in exchange rates.
 
 !!! warning "Missing Exchange Rates"
-    If no exchange rate is available for the currency of a cost entry, the cost entry is excluded from the unit cost, and the unit cost is marked as *Incomplete*.
+    If no exchange rate is available for the currency of a cost entry, the cost entry is excluded from the unit cost, and the unit cost is marked as *Incomplete*. Such cost entries are displayed as *Not converted* in the [Item Costs](#item-costs-panel) panel.
 
 !!! warning "Changing the Default Currency"
     If the default currency is changed, existing cost entries remain converted to the previous default currency, and are excluded from the unit cost (which is marked as *Incomplete*) until they are converted to the new default currency.
+
+### Re-Converting Costs
+
+Cost entries are *not* re-converted automatically when exchange rates become available (or when the default currency is changed). A cost entry which has not been converted to the current default currency is converted again when:
+
+- The cost entry is edited and saved (for example, via the [Item Costs](#item-costs-panel) panel)
+- The stock item is [merged](#merging-stock-items) with other stock items
+
+!!! info "Legacy Cost Entries"
+    [Legacy purchase prices](#legacy-purchase-prices) are converted when the database is upgraded, using the exchange rates available at that time. If no exchange rate was available for the currency of a legacy purchase price, the resulting cost entry remains *Not converted* until it is edited.
 
 ## How Stock Costs are Used
 
@@ -231,6 +241,16 @@ Additionally, the stock item API (`/api/stock/`) supports:
 - The `copy_costs` option, when [duplicating](#duplicating-stock-items) a stock item
 
 Refer to the [API schema](../api/schema.md) documentation for more information.
+
+## Limitations
+
+The following are not currently supported:
+
+- **Setting a cost when creating stock:** A cost cannot be entered when creating a new stock item (via the user interface or the API). Add the cost via the [Item Costs](#item-costs-panel) panel (or the `/api/pricing/stock-cost-entry/` API endpoint) once the stock item has been created
+- **Stock item import and export:** Costs are not included when [importing](../concepts/data_import.md) or [exporting](../concepts/data_export.md) stock item data. The cost entries of a single stock item can be exported from the [Item Costs](#item-costs-panel) panel
+
+!!! warning "Importing Older Database Backups"
+    Database backups created by an earlier version of InvenTree contain the (removed) `purchase_price` field of each stock item, and cannot be imported directly into this version. Instead, import the backup into the *same* version of InvenTree which created it, and then [update](../start/migrate.md#migrating-data-to-newer-version) to this version - the purchase prices are then migrated to [legacy](#legacy-purchase-prices) cost entries.
 
 ## Plugin Support
 
