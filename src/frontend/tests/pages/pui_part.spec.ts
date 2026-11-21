@@ -1363,6 +1363,44 @@ test('Parts - Bulk Edit', async ({ browser }) => {
   await page.getByText('Items Updated').waitFor();
 });
 
+test('Parts - Add to BOM', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts'
+  });
+
+  await clearTableFilters(page);
+  await tableSearch(page, 'R_100K_0');
+
+  // Select multiple component parts
+  await page.getByLabel('Select record 1', { exact: true }).click();
+  await page.getByLabel('Select record 2', { exact: true }).click();
+
+  await openDetailAction(page, 'part', 'add-to-bom');
+
+  await page
+    .getByText(
+      '2 selected parts will be added to the BOM of the selected assembly'
+    )
+    .waitFor();
+
+  await page
+    .getByRole('combobox', { name: 'related-field-part' })
+    .fill('Green Round Table');
+  await page
+    .getByRole('option', { name: 'Thumbnail Green Round Table A round' })
+    .click();
+  await page.getByRole('textbox', { name: 'text-field-raw_amount' }).fill('3');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Parts added to BOM').waitFor();
+
+  // The selected parts are now in the BOM of the assembly
+  await navigate(page, 'part/101/bom');
+  await page
+    .getByText(/^R_100K_0/)
+    .first()
+    .waitFor();
+});
+
 test('Parts - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'part/74/details'
