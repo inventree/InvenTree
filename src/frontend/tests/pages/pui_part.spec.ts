@@ -415,6 +415,32 @@ test('Parts - BOM Nesting', async ({ browser }) => {
 });
 
 /**
+ * Clicking a BOM row opens the sub-part (but not while editing the BOM)
+ */
+test('Parts - BOM Navigation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/104/bom' });
+
+  const cell = page.getByText('Blue Paint', { exact: true }).first();
+  const details = page.getByRole('link', { name: 'details-part-89' });
+
+  // While editing, clicking a row does not open the sub-part
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .waitFor();
+  await cell.click();
+  await page.waitForTimeout(500);
+  await expect(details).toHaveCount(0);
+  await expect(page).toHaveURL(/part\/104\/bom/);
+
+  // Otherwise, clicking a row opens the sub-part
+  // (either directly, or via the preview drawer, depending on user settings)
+  await navigate(page, 'part/104/bom');
+  await cell.click();
+  await page.getByText('Part: Blue Paint').or(details).first().waitFor();
+});
+
+/**
  * Perform BOM validation process
  * Note that this is a "background task" which is monitored by the "useBackgroundTask" hook
  */
