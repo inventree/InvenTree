@@ -23,8 +23,10 @@ v582 -> 2026-11-19 : https://github.com/inventree/InvenTree/pull/13329
     - The title tag of the part's override_min/max_currency had been moved by the API generator generating diff in the schema, no functional changes
 
 v581 -> 2026-11-17 : https://github.com/inventree/InvenTree/pull/13305
+    - Assign correct BOM permission role to part/copy-bom API endpoint
 
 v580 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13072
+    - Adds feature info to contenttype endpoint
 
 v579 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13271
     - The "consumed" field on the BuildLine API is now read-only - stock must be consumed via the build order endpoints
