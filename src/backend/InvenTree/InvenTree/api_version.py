@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 583
 
 INVENTREE_API_TEXT = """
 
-v583 -> 2026-11-16 : https://github.com/inventree/InvenTree/pull/13294
+v583 -> 2026-11-22 : https://github.com/inventree/InvenTree/pull/13294
     - Adds StockItemCostEntry and StockItemCost (summary) models to the "pricing" app
     - Access to these endpoints requires the "pricing" role, and the "stock" role (view to read, change to write)
     - Adds optional "pricing_detail" field to the StockItem API (requires the "pricing" view role)
