@@ -338,3 +338,32 @@ test('Tables - Sorting', async ({ browser }) => {
   await toggleColumnSorting(page, 'Order Status');
   await toggleColumnSorting(page, 'Line Items');
 });
+
+test('Tables - Search Fields', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts'
+  });
+
+  await clearTableFilters(page);
+
+  // Search across all fields (default): matches on the description too
+  await page.getByLabel('table-search-input').fill('paint');
+  await page.getByRole('cell', { name: 'Blue Square Table' }).waitFor();
+
+  // Limit the search to the part name
+  await page.getByLabel('table-select-search-fields').click();
+  await page.getByLabel('search-field-name', { exact: true }).click();
+  await page.keyboard.press('Escape');
+
+  await page.getByRole('cell', { name: 'Blue Paint' }).first().waitFor();
+  await expect(
+    page.getByRole('cell', { name: 'Blue Square Table' })
+  ).toHaveCount(0);
+
+  // Search all fields again
+  await page.getByLabel('table-select-search-fields').click();
+  await page.getByLabel('search-field-all').click();
+  await page.keyboard.press('Escape');
+
+  await page.getByRole('cell', { name: 'Blue Square Table' }).waitFor();
+});
