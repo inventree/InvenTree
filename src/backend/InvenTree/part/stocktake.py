@@ -2,6 +2,7 @@
 
 from typing import Optional
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
 
 import structlog
@@ -13,6 +14,26 @@ import common.models
 from InvenTree.helpers import current_date, escape_export_value
 
 logger = structlog.get_logger('inventree')
+
+
+def stock_item_unit_cost(item):
+    """Return the (min, max) unit cost of a stock item, from its cost summary.
+
+    Returns:
+        A tuple of Money values, or None if the stock item has no recorded cost
+    """
+    try:
+        summary = item.cost
+    except ObjectDoesNotExist:
+        return None
+
+    min_cost = summary.min_cost if summary.min_cost is not None else summary.max_cost
+    max_cost = summary.max_cost if summary.max_cost is not None else summary.min_cost
+
+    if min_cost is None or not summary.currency:
+        return None
+
+    return Money(min_cost, summary.currency), Money(max_cost, summary.currency)
 
 
 def perform_stocktake(
@@ -142,7 +163,7 @@ def perform_stocktake(
             in_stock=True,
             include_external=not exclude_external,
             include_variants=True,
-        )
+        ).select_related('cost')
 
         total_cost_min = Money(0, base_currency)
         total_cost_max = Money(0, base_currency)
@@ -165,9 +186,9 @@ def perform_stocktake(
                 (pricing.overall_max or pricing.overall_min) if pricing else None
             )
 
-            if item.purchase_price is not None:
-                entry_cost_min = item.purchase_price
-                entry_cost_max = item.purchase_price
+            # Use the recorded unit cost of the stock item (if available)
+            if cost := stock_item_unit_cost(item):
+                entry_cost_min, entry_cost_max = cost
 
             try:
                 entry_cost_min = entry_cost_min * item.quantity

@@ -123,6 +123,8 @@ export enum ApiEndpoints {
   part_scheduling = 'part/:id/scheduling/',
   part_pricing_internal = 'pricing/internal-price/',
   part_pricing_sale = 'pricing/sale-price/',
+  stock_cost_entry_list = 'pricing/stock-cost-entry/',
+  stock_cost_list = 'pricing/stock-cost/',
   part_stocktake_list = 'part/stocktake/',
   part_stocktake_generate = 'part/stocktake/generate/',
   category_list = 'part/category/',

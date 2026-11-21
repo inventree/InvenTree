@@ -11,8 +11,16 @@ import common.currency
 import InvenTree.serializers
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.serializers import OptionalField
+from users.serializers import UserSerializer
 
-from .models import PartInternalPriceBreak, PartPricing, PartSellPriceBreak
+from .models import (
+    PartInternalPriceBreak,
+    PartPricing,
+    PartSellPriceBreak,
+    StockItemCost,
+    StockItemCostEntry,
+)
 
 
 @register_importer()
@@ -242,3 +250,132 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             # Update part pricing
             pricing = self.instance
             pricing.update_pricing()
+
+
+class StockItemCostEntrySerializer(
+    InvenTree.serializers.FilterableSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
+):
+    """Serializer for the StockItemCostEntry model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemCostEntry
+        fields = [
+            'pk',
+            'stock_item',
+            'cost_type',
+            'cost_type_text',
+            'source',
+            'currency',
+            'min_cost',
+            'max_cost',
+            'converted_currency',
+            'converted_min_cost',
+            'converted_max_cost',
+            'date',
+            'user',
+            'user_detail',
+            'source_data',
+            'notes',
+        ]
+
+        read_only_fields = [
+            'converted_currency',
+            'converted_min_cost',
+            'converted_max_cost',
+            'date',
+            'user',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Prevent an existing cost entry from being moved to a different stock item."""
+        super().__init__(*args, **kwargs)
+
+        if self.instance is not None and 'stock_item' in self.fields:
+            self.fields['stock_item'].read_only = True
+
+    cost_type_text = serializers.CharField(
+        source='get_cost_type_display', read_only=True
+    )
+
+    currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        help_text=_('Currency for the minimum and maximum cost')
+    )
+
+    min_cost = InvenTree.serializers.InvenTreeDecimalField(
+        allow_null=True, required=False, help_text=_('Minimum unit cost')
+    )
+
+    max_cost = InvenTree.serializers.InvenTreeDecimalField(
+        allow_null=True, required=False, help_text=_('Maximum unit cost')
+    )
+
+    converted_min_cost = InvenTree.serializers.InvenTreeDecimalField(
+        read_only=True, allow_null=True
+    )
+
+    converted_max_cost = InvenTree.serializers.InvenTreeDecimalField(
+        read_only=True, allow_null=True
+    )
+
+    user_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={'source': 'user', 'read_only': True, 'allow_null': True},
+        prefetch_fields=['user'],
+    )
+
+
+class StockItemCostSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for the (read-only) StockItemCost summary model.
+
+    This model is calculated automatically from StockItemCostEntry records.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemCost
+        fields = [
+            'pk',
+            'stock_item',
+            'currency',
+            'min_cost',
+            'max_cost',
+            'incomplete',
+            'date',
+        ]
+
+        read_only_fields = fields
+
+    min_cost = InvenTree.serializers.InvenTreeDecimalField(
+        read_only=True, allow_null=True
+    )
+
+    max_cost = InvenTree.serializers.InvenTreeDecimalField(
+        read_only=True, allow_null=True
+    )
+
+
+class StockItemCostBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Brief (read-only) serializer for the StockItemCost summary model.
+
+    Used to embed the cost summary within a StockItem (see StockItemSerializer.pricing_detail).
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemCost
+        fields = ['currency', 'min_cost', 'max_cost', 'incomplete', 'date']
+
+        read_only_fields = fields
+
+    min_cost = InvenTree.serializers.InvenTreeDecimalField(
+        read_only=True, allow_null=True
+    )
+
+    max_cost = InvenTree.serializers.InvenTreeDecimalField(
+        read_only=True, allow_null=True
+    )

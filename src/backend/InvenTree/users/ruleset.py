@@ -13,7 +13,7 @@ class RuleSetEnum(StringEnum):
         ADMIN: Assigning user permissions, and other administrative tasks
         PART_CATEGORY: Accessing Part Category data
         PART: Accessing Part data
-        PRICING: Accessing Part pricing data (cached pricing, sale price breaks and internal price breaks)
+        PRICING: Accessing pricing data (cached part pricing, sale price breaks, internal price breaks and stock item costs)
         BOM: Accessing Bill of Materials data
         STOCK_LOCATION: Accessing Stock Location data
         STOCK: Accessing Stock Item data
@@ -146,6 +146,8 @@ def get_ruleset_models() -> dict:
             'pricing_partpricing',
             'pricing_partsellpricebreak',
             'pricing_partinternalpricebreak',
+            'pricing_stockitemcost',
+            'pricing_stockitemcostentry',
         ],
         RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
         RuleSetEnum.STOCK: ['stock_stockitem', 'stock_stockitemtestresult'],

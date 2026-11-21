@@ -52,7 +52,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'PRICING_USE_STOCK_PRICING': {
         'name': _('Use Stock Item Pricing'),
         'description': _(
-            'Use pricing from manually entered stock data for pricing calculations'
+            'Use the recorded purchase cost of stock items for pricing calculations'
         ),
         'default': True,
         'validator': bool,
@@ -60,7 +60,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'PRICING_STOCK_ITEM_AGE_DAYS': {
         'name': _('Stock Item Pricing Age'),
         'description': _(
-            'Exclude stock items older than this number of days from pricing calculations'
+            'Exclude stock item costs recorded more than this number of days ago from pricing calculations'
         ),
         'default': 0,
         'units': _('days'),

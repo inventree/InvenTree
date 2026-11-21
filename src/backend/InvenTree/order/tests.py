@@ -24,6 +24,8 @@ from InvenTree.unit_test import (
 from order.status_codes import PurchaseOrderStatus
 from part.models import Part
 from plugin import registry
+from pricing.models import CostSource, StockItemCost, StockItemCostEntry
+from pricing.status_codes import CostType
 from stock.models import StockItem, StockLocation
 from users.models import Owner
 
@@ -528,7 +530,6 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # Ensure that received quantity and unit purchase price data are correct
         si = si.first()
         self.assertEqual(si.quantity, 10)
-        self.assertEqual(si.purchase_price, Money(100, 'USD'))
 
         si = StockItem.objects.filter(supplier_part=sp_2)
         self.assertEqual(si.count(), 1)
@@ -536,7 +537,112 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # Ensure that received quantity and unit purchase price data are correct
         si = si.first()
         self.assertEqual(si.quantity, 0.5)
-        self.assertEqual(si.purchase_price, Money(100, 'USD'))
+
+        # Each received stock item has a PURCHASE cost entry, per base unit
+        # (i.e. the line price divided by the supplier pack quantity)
+        for sp, line, pack_quantity in [(sp_1, line_1, '10'), (sp_2, line_2, '0.1')]:
+            item = StockItem.objects.get(supplier_part=sp)
+
+            entry = item.cost_entries.get()
+            self.assertEqual(entry.cost_type, CostType.PURCHASE)
+            self.assertEqual(entry.source, CostSource.PURCHASE_ORDER)
+            self.assertIsNone(entry.user)
+            self.assertEqual(entry.currency, 'USD')
+            self.assertEqual(entry.min_cost, Decimal(100))
+            self.assertEqual(entry.max_cost, Decimal(100))
+
+            self.assertEqual(entry.source_data['purchase_order'], po.pk)
+            self.assertEqual(entry.source_data['line_item'], line.pk)
+            self.assertEqual(entry.source_data['supplier_part'], sp.pk)
+            self.assertEqual(
+                Decimal(entry.source_data['line_price']), line.purchase_price.amount
+            )
+            self.assertEqual(entry.source_data['line_currency'], 'USD')
+            self.assertEqual(
+                Decimal(entry.source_data['pack_quantity']), Decimal(pack_quantity)
+            )
+
+            # The cost summary is created for the new stock item
+            summary = StockItemCost.objects.get(stock_item=item)
+            self.assertEqual(summary.currency, 'USD')
+            self.assertEqual(summary.min_cost, Decimal(100))
+            self.assertEqual(summary.max_cost, Decimal(100))
+            self.assertFalse(summary.incomplete)
+
+    def test_receive_cost_entries(self):
+        """Test cost entries for serialized items, other currencies, and lines without a price."""
+        self.generate_exchange_rates()
+
+        set_global_setting('INVENTREE_DEFAULT_CURRENCY', 'USD')
+
+        user = get_user_model().objects.get(pk=1)
+        sup = Company.objects.get(pk=1)
+        loc = StockLocation.objects.get(id=1)
+
+        prt = Part.objects.create(
+            name='Tracked part', description='A trackable part', trackable=True
+        )
+
+        sp = SupplierPart.objects.create(
+            part=prt, supplier=sup, SKU='TRACKED-4', pack_quantity='4'
+        )
+
+        po = PurchaseOrder.objects.create(supplier=sup, reference='PO-COST-TEST')
+
+        # Price per pack of 4, in CAD (1.7 CAD = 1 USD)
+        priced = PurchaseOrderLineItem.objects.create(
+            order=po, part=sp, quantity=10, purchase_price=Money(34, 'CAD')
+        )
+
+        unpriced = PurchaseOrderLineItem.objects.create(
+            order=po, part=sp, quantity=10, purchase_price=None
+        )
+
+        po.place_order()
+
+        # 2 packs = 8 serialized items, plus 1 pack without a price
+        items = po.receive_line_items(
+            loc,
+            [
+                {
+                    'line_item': priced,
+                    'quantity': 2,
+                    'serials': [f'COST-{idx}' for idx in range(8)],
+                },
+                {'line_item': unpriced, 'quantity': 1},
+            ],
+            user,
+        )
+
+        self.assertEqual(items.count(), 9)
+
+        serialized = items.exclude(serial='')
+        self.assertEqual(serialized.count(), 8)
+
+        for item in serialized:
+            entry = item.cost_entries.get()
+
+            # Recorded in the line item currency, per base unit
+            self.assertEqual(entry.source, CostSource.PURCHASE_ORDER)
+            self.assertEqual(entry.user, user)
+            self.assertEqual(entry.currency, 'CAD')
+            self.assertEqual(entry.min_cost, Decimal('8.5'))
+            self.assertEqual(entry.max_cost, Decimal('8.5'))
+
+            # Converted to the default currency at receipt
+            self.assertEqual(entry.converted_currency, 'USD')
+            self.assertEqual(entry.converted_min_cost, Decimal(5))
+
+            summary = StockItemCost.objects.get(stock_item=item)
+            self.assertEqual(summary.currency, 'USD')
+            self.assertEqual(summary.min_cost, Decimal(5))
+            self.assertEqual(summary.max_cost, Decimal(5))
+
+        # No price - no cost entry (or summary)
+        item = items.get(serial='')
+        self.assertEqual(item.quantity, 4)
+        self.assertFalse(StockItemCostEntry.objects.filter(stock_item=item).exists())
+        self.assertFalse(StockItemCost.objects.filter(stock_item=item).exists())
 
     def test_receive_convert_currency(self):
         """Test receiving orders with different currencies."""
@@ -545,9 +651,6 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         set_global_setting('INVENTREE_DEFAULT_CURRENCY', 'USD')
         self.assertEqual(get_global_setting('INVENTREE_DEFAULT_CURRENCY'), 'USD')
-
-        # Enable auto conversion
-        set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', True)
 
         order = PurchaseOrder.objects.get(pk=7)
         sku = SupplierPart.objects.get(SKU='ZERGM312')
@@ -558,23 +661,25 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         order.place_order()
 
-        # Receive a line item, should be converted to GBP
+        # The cost entry stores both the original and the converted values
         order.receive_line_item(line, loc, 50, user=None)
-        item = order.stock_items.order_by('-pk').first()
-
-        self.assertEqual(item.quantity, 50)
-        self.assertEqual(item.purchase_price_currency, 'USD')
-        self.assertAlmostEqual(item.purchase_price.amount, Decimal(0.7353), 3)
-
-        # Disable auto conversion
-        set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', False)
-
         order.receive_line_item(line, loc, 30, user=None)
-        item = order.stock_items.order_by('-pk').first()
 
-        self.assertEqual(item.quantity, 30)
-        self.assertEqual(item.purchase_price_currency, 'CAD')
-        self.assertAlmostEqual(item.purchase_price.amount, Decimal(1.25), 3)
+        self.assertEqual(
+            [item.quantity for item in order.stock_items.order_by('-pk')[:2]], [30, 50]
+        )
+
+        # The cost entries always record the original (line item) currency,
+        # and the summaries the default currency
+        for item in order.stock_items.order_by('-pk')[:2]:
+            entry = item.cost_entries.get()
+            self.assertEqual(entry.currency, 'CAD')
+            self.assertEqual(entry.min_cost, Decimal('1.25'))
+            self.assertEqual(entry.converted_currency, 'USD')
+
+            summary = StockItemCost.objects.get(stock_item=item)
+            self.assertEqual(summary.currency, 'USD')
+            self.assertAlmostEqual(summary.min_cost, Decimal(0.7353), 3)
 
     def test_overdue_notification(self):
         """Test overdue purchase order notification.

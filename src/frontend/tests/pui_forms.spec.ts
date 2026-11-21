@@ -98,30 +98,26 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   // Edit the resulting stock item
   await openDetailAction(page, 'stock-item', 'edit');
 
-  await page.getByLabel('number-field-purchase_price').fill('-1');
+  await page.getByLabel('text-field-link', { exact: true }).fill('not-a-url');
 
   await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('Errors exist for one or more form fields').waitFor();
-  await page
-    .getByText('Ensure this value is greater than or equal to 0')
-    .waitFor();
+  await page.getByText('Enter a valid URL.').waitFor();
 
   // Check the error message still persists after editing a different field
   await page.getByLabel('text-field-packaging', { exact: true }).fill('a box');
   await page.waitForTimeout(250);
-  await page
-    .getByText('Ensure this value is greater than or equal to 0')
-    .waitFor();
+  await page.getByText('Enter a valid URL.').waitFor();
 
-  // Correct the price
-  await page.getByLabel('number-field-purchase_price').fill('1.2345');
+  // Correct the link
+  await page
+    .getByLabel('text-field-link', { exact: true })
+    .fill('https://inventree.org');
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();
 
   // Ensure the stock item has been updated correctly
-  await page.getByText('$151.8435').waitFor();
-  await page.getByText('$151.8435').waitFor();
   await page.getByText('a box').waitFor();
   await page.getByRole('cell', { name: 'Electronics Lab' }).waitFor();
 });

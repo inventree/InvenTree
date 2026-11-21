@@ -46,3 +46,55 @@ class PartInternalPriceBreakAdmin(admin.ModelAdmin):
     search_fields = ['part__name', 'part__IPN']
 
     autocomplete_fields = ('part',)
+
+
+@admin.register(models.StockItemCostEntry)
+class StockItemCostEntryAdmin(admin.ModelAdmin):
+    """Admin class for the StockItemCostEntry model."""
+
+    list_display = (
+        'stock_item',
+        'cost_type',
+        'source',
+        'min_cost',
+        'max_cost',
+        'currency',
+        'date',
+    )
+
+    list_filter = ('cost_type',)
+
+    search_fields = ('source', 'notes')
+
+    readonly_fields = ('converted_currency', 'converted_min_cost', 'converted_max_cost')
+
+    autocomplete_fields = ('stock_item', 'user')
+
+
+@admin.register(models.StockItemCost)
+class StockItemCostAdmin(admin.ModelAdmin):
+    """Admin class for the StockItemCost summary model.
+
+    This model is calculated automatically, and cannot be created or edited manually.
+    """
+
+    list_display = (
+        'stock_item',
+        'min_cost',
+        'max_cost',
+        'currency',
+        'incomplete',
+        'date',
+    )
+
+    list_filter = ('incomplete',)
+
+    autocomplete_fields = ('stock_item',)
+
+    def has_add_permission(self, request):
+        """This model is calculated automatically - do not allow manual creation."""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """This model is calculated automatically - do not allow manual editing."""
+        return False

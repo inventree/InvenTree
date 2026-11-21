@@ -1,9 +1,15 @@
 """Database model definitions for the 'pricing' app."""
 
+import collections
+import re
 from datetime import timedelta
+from decimal import Decimal, InvalidOperation
+from typing import Optional
 
 from django.conf import settings
-from django.db import models
+from django.core.exceptions import ValidationError
+from django.db import connections, models, transaction
+from django.db.models import Count, F, Q, Sum
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
@@ -30,6 +36,8 @@ from InvenTree.exceptions import log_error
 from order import models as OrderModels
 from order.status_codes import PurchaseOrderStatus, SalesOrderStatusGroups
 from part.models import Part
+
+from .status_codes import CostType
 
 logger = structlog.get_logger('inventree')
 
@@ -446,35 +454,79 @@ class PartPricing(InvenTree.models.InvenTreeAuditMixin, common.models.MetaMixin)
             if purchase_max is None or purchase_cost > purchase_max:
                 purchase_max = purchase_cost
 
-        # Also check if manual stock item pricing is included
+        # Also include the purchase cost recorded against individual stock items
         if get_global_setting('PRICING_USE_STOCK_PRICING', True):
-            items = self.part.stock_items.all()
-
-            # Limit to stock items updated within a certain window
-            days = int(get_global_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0))
-
-            if days > 0:
-                date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
-                items = items.filter(updated__gte=date_threshold)
-
-            for item in items:
-                cost = self.convert(item.purchase_price)
+            for cost_min, cost_max in self.get_stock_purchase_costs():
+                cost_min = self.convert(cost_min)
+                cost_max = self.convert(cost_max)
 
                 # Skip if the cost could not be converted (for some reason)
-                if cost is None:
+                if cost_min is None or cost_max is None:
                     continue
 
-                if purchase_min is None or cost < purchase_min:
-                    purchase_min = cost
+                if purchase_min is None or cost_min < purchase_min:
+                    purchase_min = cost_min
 
-                if purchase_max is None or cost > purchase_max:
-                    purchase_max = cost
+                if purchase_max is None or cost_max > purchase_max:
+                    purchase_max = cost_max
 
         self.purchase_cost_min = purchase_min
         self.purchase_cost_max = purchase_max
 
         if save:
             self.save()
+
+    def get_stock_purchase_costs(self) -> list[tuple[Money, Money]]:
+        """Return the (min, max) unit purchase cost of each stock item for this part.
+
+        The purchase cost of a stock item is the sum of its PURCHASE cost entries
+        (only - other cost types such as landed costs are excluded), using the stored
+        converted values (in the default currency).
+
+        - If PRICING_STOCK_ITEM_AGE_DAYS is set, only entries recorded (or updated)
+          within that window are included
+        - Stock items with any PURCHASE entry which has not been converted to the
+          default currency are skipped, rather than reporting a partial cost
+        """
+        if not (_part := self.get_part()):
+            return []
+
+        currency = currency_code_default()
+
+        entries = StockItemCostEntry.objects.filter(
+            stock_item__part=_part, cost_type=CostType.PURCHASE
+        )
+
+        # Limit to cost entries recorded within a certain window
+        days = int(get_global_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0))
+
+        if days > 0:
+            date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
+            entries = entries.filter(date__date__gte=date_threshold)
+
+        valid = Q(
+            converted_currency=currency,
+            converted_min_cost__isnull=False,
+            converted_max_cost__isnull=False,
+        )
+
+        totals = (
+            entries
+            .order_by()
+            .values('stock_item_id')
+            .annotate(
+                min_total=Sum('converted_min_cost', filter=valid),
+                max_total=Sum('converted_max_cost', filter=valid),
+                entry_count=Count('pk'),
+                valid_count=Count('pk', filter=valid),
+            )
+            .filter(entry_count=F('valid_count'))
+        )
+
+        return [
+            (Money(row['min_total'], currency), Money(row['max_total'], currency))
+            for row in totals
+        ]
 
     def update_internal_cost(self, save=True):
         """Recalculate internal cost for the referenced Part instance."""
@@ -951,3 +1003,1146 @@ def update_pricing_after_delete(sender, instance, **kwargs):
             # The part instance may have already been deleted,
             # in which case we cannot update pricing
             pass
+
+
+# Precision used for all stored stock item cost values (matches the default MoneyField precision)
+COST_MAX_DIGITS = 19
+COST_DECIMAL_PLACES = 6
+
+# Plugin slugs are lowercase, and may contain digits, hyphens and underscores
+PLUGIN_SLUG_REGEX = re.compile(r'[a-z0-9][a-z0-9_-]*')
+
+
+class CostSource:
+    """Values for the StockItemCostEntry.source field - i.e. *who or what* created a cost entry.
+
+    Naming convention:
+    - Core InvenTree sources use a bare name (one of the constants below)
+    - Plugins use the 'plugin:<slug>' form (see CostSource.plugin)
+
+    Attributes:
+        MANUAL: Entered manually by a user (the default for entries created via the API)
+        PURCHASE_ORDER: Created when receiving items against a purchase order
+        BUILD: Created when completing a build order
+        MERGE: Created when merging stock items
+        DISASSEMBLY: Created when disassembling a stock item
+        LEGACY: Migrated from the legacy StockItem.purchase_price field
+    """
+
+    MANUAL = 'manual'
+    PURCHASE_ORDER = 'purchase_order'
+    BUILD = 'build'
+    MERGE = 'merge'
+    DISASSEMBLY = 'disassembly'
+    LEGACY = 'legacy'
+
+    CORE_SOURCES = frozenset([
+        MANUAL,
+        PURCHASE_ORDER,
+        BUILD,
+        MERGE,
+        DISASSEMBLY,
+        LEGACY,
+    ])
+
+    PLUGIN_PREFIX = 'plugin:'
+
+    @classmethod
+    def plugin(cls, slug: str) -> str:
+        """Return the source value for cost entries created by the plugin with the given slug."""
+        return f'{cls.PLUGIN_PREFIX}{slug}'
+
+    @classmethod
+    def is_valid(cls, value: str) -> bool:
+        """Return True if the provided value follows the source naming convention."""
+        if value in cls.CORE_SOURCES:
+            return True
+
+        if value.startswith(cls.PLUGIN_PREFIX):
+            slug = value[len(cls.PLUGIN_PREFIX) :]
+            return bool(PLUGIN_SLUG_REGEX.fullmatch(slug))
+
+        return False
+
+
+def validate_cost_source(value: str):
+    """Validate that a cost entry source follows the naming convention (see CostSource)."""
+    if value and not CostSource.is_valid(value):
+        raise ValidationError(
+            _("Invalid source - must be one of {sources}, or 'plugin:<slug>'").format(
+                sources=', '.join(sorted(CostSource.CORE_SOURCES))
+            )
+        )
+
+
+def convert_cost(value, currency: str, target_currency: str):
+    """Convert a single cost value from one currency to another.
+
+    Arguments:
+        value: The (Decimal) value to convert
+        currency: The currency code of the provided value
+        target_currency: The currency code to convert to
+
+    Returns:
+        The converted value (rounded to the stored precision),
+        or None if no exchange rate is available.
+    """
+    if value is None:
+        return None
+
+    if currency == target_currency:
+        return value
+
+    try:
+        converted = convert_money(Money(value, currency), target_currency)
+    except MissingRate:
+        logger.warning(
+            'No currency conversion rate available for %s -> %s',
+            currency,
+            target_currency,
+        )
+        return None
+
+    return round(converted.amount, COST_DECIMAL_PLACES)
+
+
+class StockItemCostEntryManager(models.Manager):
+    """Manager providing helpers for assigning cost data to a StockItem.
+
+    This is the common entry point that other apps (order, stock, build, plugins, ...)
+    should use whenever a StockItem is assigned a cost. Every helper keeps the cached
+    StockItemCost summary of each affected stock item up to date (synchronously).
+
+    The `source` of a cost entry identifies who or what created it - see CostSource
+    for the naming convention ('manual', 'purchase_order', ..., or 'plugin:<slug>').
+    """
+
+    COST_KEYS = ('min_cost', 'max_cost')
+
+    def normalize_cost_data(self, data: dict, currency: Optional[str] = None) -> dict:
+        """Convert any Money values in the provided data into a (currency, amount) pair.
+
+        Arguments:
+            data: Dict of StockItemCostEntry field values. min_cost / max_cost may be Money instances.
+            currency: The existing currency of the entry (if any), checked against Money values
+                when the data does not provide its own currency or the other cost bound
+
+        Returns:
+            A copy of the provided data, with plain Decimal cost values and the matching currency
+
+        Raises:
+            ValidationError: If the provided values have conflicting currencies
+        """
+        data = dict(data)
+
+        currencies = {
+            data[key].currency.code
+            for key in self.COST_KEYS
+            if isinstance(data.get(key), Money)
+        }
+
+        if explicit_currency := data.get('currency'):
+            currencies.add(explicit_currency)
+
+        # A single Money bound would otherwise silently change the currency of the other bound
+        if (
+            currency
+            and 'currency' not in data
+            and not all(key in data for key in self.COST_KEYS)
+        ):
+            currencies.add(currency)
+
+        if len(currencies) > 1:
+            raise ValidationError({
+                'currency': _('Minimum and maximum cost must use the same currency')
+            })
+
+        for key in self.COST_KEYS:
+            if isinstance(data.get(key), Money):
+                data[key] = data[key].amount
+
+        if currencies:
+            data['currency'] = currencies.pop()
+
+        return data
+
+    def build_entry(self, **data):
+        """Construct (but do not save) a new StockItemCostEntry instance.
+
+        In addition to the model fields, min_cost and max_cost may be provided as
+        Money instances, in which case the currency is taken from the provided value(s).
+
+        Raises:
+            ValidationError: If the provided Money values have conflicting currencies
+        """
+        return self.model(**self.normalize_cost_data(data))
+
+    def create_cost(self, stock_item, cost_type, source: str, **kwargs):
+        """Create (and save) a new cost entry against the provided StockItem.
+
+        Arguments:
+            stock_item: The StockItem to which the cost applies
+            cost_type: The category of the cost (see CostType)
+            source: Who or what created the cost entry (see CostSource)
+            **kwargs: Any other StockItemCostEntry fields (see build_entry)
+
+        Returns:
+            The created StockItemCostEntry
+
+        Raises:
+            ValidationError: If the entry is not valid
+        """
+        entry = self.build_entry(
+            stock_item=stock_item, cost_type=cost_type, source=source, **kwargs
+        )
+        entry.save()
+
+        return entry
+
+    def update_cost(self, entry, **changes):
+        """Update (and save) an existing cost entry.
+
+        Arguments:
+            entry: The StockItemCostEntry to update
+            **changes: The fields to change. min_cost / max_cost may be Money instances,
+                in which case the entry currency is updated to match.
+                A single Money bound must match the existing currency, unless the
+                currency (or the other bound) is also provided.
+
+        Returns:
+            The updated StockItemCostEntry
+
+        Raises:
+            ValidationError: If the updated entry is not valid
+            ValueError: If an attempt is made to move the entry to a different stock item
+        """
+        if {'stock_item', 'stock_item_id'} & changes.keys():
+            raise ValueError('Cost entries cannot be moved to a different stock item')
+
+        changes = self.normalize_cost_data(changes, currency=entry.currency)
+
+        for field, value in changes.items():
+            setattr(entry, field, value)
+
+        entry.save()
+
+        return entry
+
+    def delete_costs(self, entries) -> int:
+        """Delete cost entries, and update the cached cost summary of each affected stock item.
+
+        Arguments:
+            entries: A queryset or iterable of StockItemCostEntry instances
+
+        Returns:
+            The number of deleted entries
+        """
+        if not isinstance(entries, models.QuerySet):
+            entries = self.filter(pk__in=[entry.pk for entry in entries])
+
+        with transaction.atomic():
+            stock_item_ids = set(
+                entries.order_by().values_list('stock_item_id', flat=True).distinct()
+            )
+
+            _count, deleted = entries.delete()
+
+            StockItemCost.objects.update_for_stock_items(stock_item_ids)
+
+        return deleted.get(self.model._meta.label, 0)
+
+    def bulk_create_costs(self, entries: list[dict]) -> list:
+        """Create cost entries for potentially many stock items at once.
+
+        Each dict in `entries` supports the same keys as `build_entry`
+        (stock_item or stock_item_id, cost_type and source are required).
+
+        Every entry is validated and converted before any are created (all or nothing),
+        and the cached StockItemCost summary of each affected stock item
+        is updated (synchronously) in the same transaction.
+
+        Raises:
+            ValidationError: If any of the entries is not valid
+        """
+        for data in entries:
+            if not data.get('source'):
+                raise ValidationError({
+                    'source': _('A source must be provided for each cost entry')
+                })
+
+        objs = self.prepare_entries(entries)
+
+        if not objs:
+            return []
+
+        with transaction.atomic():
+            created = self.save_prepared_entries(objs)
+            StockItemCost.objects.update_for_stock_items({
+                obj.stock_item_id for obj in objs
+            })
+
+        return created
+
+    def replace_costs(
+        self, stock_item, source: str, entries: list[dict], cost_type=None
+    ) -> list:
+        """Replace all cost entries from a given source against a StockItem.
+
+        This is intended for business logic (or plugins) which (re)calculate a cost,
+        and should replace any previous result rather than add to it.
+        Existing entries from other sources are left untouched.
+
+        Arguments:
+            stock_item: The StockItem to which the costs apply
+            source: Who or what created the cost entries (see CostSource)
+            entries: List of dicts of StockItemCostEntry fields (see build_entry).
+                The stock_item and source keys are set automatically.
+                An empty list removes the existing entries.
+            cost_type: If provided, only existing entries of this cost type are replaced
+
+        Returns:
+            The created StockItemCostEntry objects
+
+        Raises:
+            ValidationError: If any of the new entries is not valid (no changes are made)
+        """
+        objs = self.prepare_entries([
+            {**data, 'stock_item': stock_item, 'source': source} for data in entries
+        ])
+
+        existing = self.filter(stock_item=stock_item, source=source)
+
+        if cost_type is not None:
+            existing = existing.filter(cost_type=cost_type)
+
+            if any(obj.cost_type != cost_type for obj in objs):
+                raise ValidationError({
+                    'cost_type': _('New entries must match the replaced cost type')
+                })
+
+        with transaction.atomic():
+            existing.delete()
+            created = self.save_prepared_entries(objs)
+            StockItemCost.objects.update_for_stock_items([stock_item.pk])
+
+        return created
+
+    def prepare_entries(self, entries: list[dict]) -> list:
+        """Construct and validate (but do not save) new cost entries.
+
+        Raises:
+            ValidationError: If any of the entries is not valid
+        """
+        objs = []
+
+        for data in entries:
+            obj = self.build_entry(**data)
+            obj.prepare()
+            objs.append(obj)
+
+        return objs
+
+    def save_prepared_entries(self, objs: list) -> list:
+        """Save new (prepared) cost entries, recording an audit entry for each.
+
+        This does *not* update the cached cost summaries - the caller is responsible for that.
+        """
+        from audit.helpers import record_created
+
+        if not objs:
+            return []
+
+        if connections[self.db].features.can_return_rows_from_bulk_insert:
+            created = self.bulk_create(objs, batch_size=500)
+            record_created(self.model, created)
+            return created
+
+        # Primary keys are not returned from bulk inserts (e.g. MySQL),
+        # so the entries are saved individually (which also records the audit entries)
+        for obj in objs:
+            super(StockItemCostEntry, obj).save()
+
+        return objs
+
+    def copy_costs(self, pairs) -> list:
+        """Copy all cost entries from source stock items onto target stock items.
+
+        Used whenever a stock item is duplicated (split, serialized, partially consumed
+        or shipped), so that the new stock item carries the same unit cost as its source.
+        Valid because all costs are *per unit* (see StockItemCostEntry).
+
+        Every field is copied verbatim - including the source, user,
+        and the stored converted values (no reconversion takes place).
+        The cached StockItemCost summary of each target stock item is then (re)calculated.
+
+        Arguments:
+            pairs: Iterable of (source, target) pairs - each either a StockItem or a primary key.
+                A source may be copied onto any number of targets.
+
+        Returns:
+            The created StockItemCostEntry objects
+        """
+        targets = collections.defaultdict(list)
+
+        for source, target in pairs:
+            source_id = getattr(source, 'pk', source)
+            target_id = getattr(target, 'pk', target)
+
+            if source_id is None or target_id is None:
+                raise ValueError(
+                    'Cost entries can only be copied between saved stock items'
+                )
+
+            if source_id != target_id:
+                targets[source_id].append(target_id)
+
+        if not targets:
+            return []
+
+        fields = [
+            field.attname
+            for field in self.model._meta.concrete_fields
+            if not field.primary_key and field.attname != 'stock_item_id'
+        ]
+
+        objs = []
+
+        for entry in (
+            self
+            .filter(stock_item_id__in=targets.keys())
+            .order_by('pk')
+            .iterator(chunk_size=500)
+        ):
+            data = {field: getattr(entry, field) for field in fields}
+
+            for target_id in targets[entry.stock_item_id]:
+                objs.append(self.model(stock_item_id=target_id, **data))
+
+        with transaction.atomic():
+            created = self.save_prepared_entries(objs)
+
+            # Note: Targets without any copied entries are included,
+            # so that any (stale) summary is removed
+            StockItemCost.objects.update_for_stock_items({
+                target_id for ids in targets.values() for target_id in ids
+            })
+
+        return created
+
+    def build_merge_entries(self, target, items) -> Optional[list]:
+        """Calculate the cost entries for a stock item which is about to be merged.
+
+        Must be called *before* the merge takes place - i.e. while all of the merged stock items
+        (and their cost entries) still exist, and before any quantities change.
+
+        One entry is calculated per cost type, as the quantity-weighted average of the per-unit
+        costs of the merged stock items. The original entries are recorded in 'source_data'.
+
+        Rules:
+        - Stock items without *any* cost entries have an unknown cost, and are excluded entirely
+        - A stock item without an entry of a particular cost type contributes zero for that type
+        - If every entry of a cost type has the same (original) currency, the average is
+          calculated in that currency. Otherwise, the stored converted values are used, and any
+          entry without a converted value is excluded (and recorded in 'source_data')
+
+        Arguments:
+            target: The StockItem which the other items are being merged into
+            items: All StockItems being merged (including the target)
+
+        Returns:
+            A list of dicts (see StockItemCostRecorder.add) for the merged stock item,
+            or None if the cost data of the target stock item does not need to change
+        """
+        quantities = {item.pk: Decimal(item.quantity) for item in [target, *items]}
+
+        queryset = self.filter(stock_item_id__in=quantities.keys())
+
+        # Re-attempt conversion of any entries without a (current) converted value
+        self.reconvert_costs(queryset)
+
+        entries = list(queryset.order_by('pk'))
+
+        contributing = {entry.stock_item_id for entry in entries}
+
+        if not contributing or contributing == {target.pk}:
+            # No change required to the cost data of the target stock item
+            return None
+
+        total_quantity = sum(quantities[pk] for pk in contributing)
+
+        if total_quantity <= 0:
+            return None
+
+        default_currency = currency_code_default()
+
+        by_type = collections.defaultdict(list)
+
+        for entry in entries:
+            by_type[entry.cost_type].append(entry)
+
+        results = []
+
+        for cost_type, type_entries in sorted(by_type.items()):
+            currencies = {entry.currency for entry in type_entries}
+
+            if len(currencies) == 1:
+                # Average in the original currency (exact - no conversion required)
+                currency = currencies.pop()
+                values = [
+                    (entry, entry.min_cost, entry.max_cost) for entry in type_entries
+                ]
+            else:
+                # Use the stored converted values (if current)
+                currency = default_currency
+                values = [
+                    (entry, entry.converted_min_cost, entry.converted_max_cost)
+                    if entry.converted_currency == default_currency
+                    else (entry, None, None)
+                    for entry in type_entries
+                ]
+
+            min_total = Decimal(0)
+            max_total = Decimal(0)
+            excluded = []
+
+            for entry, min_cost, max_cost in values:
+                if min_cost is None or max_cost is None:
+                    excluded.append(entry.pk)
+                    continue
+
+                quantity = quantities[entry.stock_item_id]
+                min_total += min_cost * quantity
+                max_total += max_cost * quantity
+
+            if len(excluded) == len(type_entries):
+                # No usable values for this cost type
+                continue
+
+            results.append({
+                'cost_type': cost_type,
+                'min_cost': min_total / total_quantity,
+                'max_cost': max_total / total_quantity,
+                'currency': currency,
+                'notes': str(_('Weighted average of merged stock items')),
+                'source_data': {
+                    'merged_items': sorted(contributing),
+                    'quantities': {
+                        str(pk): str(quantities[pk]) for pk in sorted(contributing)
+                    },
+                    'excluded_entries': excluded,
+                    'entries': [entry.snapshot() for entry in type_entries],
+                },
+            })
+
+        return results
+
+    def apply_merged_costs(self, target, entries: list, user=None) -> list:
+        """Replace the cost entries of a merged stock item (see build_merge_entries).
+
+        Arguments:
+            target: The StockItem which the other items were merged into
+            entries: The entries returned by build_merge_entries
+            user: The user who performed the merge
+
+        Returns:
+            The created StockItemCostEntry objects
+        """
+        from pricing.helpers import StockItemCostRecorder
+
+        with transaction.atomic():
+            self.filter(stock_item=target).delete()
+
+            costs = StockItemCostRecorder(source=CostSource.MERGE, user=user)
+
+            for data in entries:
+                costs.add(target, **data)
+
+            created = costs.save()
+
+            # Ensure that the summary is updated, even if no entries were created
+            StockItemCost.objects.update_for_stock_items([target.pk])
+
+        return created
+
+    def reconvert_costs(self, queryset=None) -> int:
+        """Re-attempt currency conversion for entries which need it.
+
+        This covers entries which could not be converted (no exchange rate was available),
+        or which were converted to a currency which is no longer the default currency.
+
+        The cached StockItemCost summary for every affected stock item is recalculated,
+        including those whose entries still cannot be converted.
+
+        Arguments:
+            queryset: Optional queryset of entries to check (defaults to all entries)
+
+        Returns:
+            The number of entries which were successfully converted
+        """
+        currency = currency_code_default()
+
+        if queryset is None:
+            queryset = self.all()
+
+        queryset = queryset.filter(
+            Q(converted_min_cost__isnull=True)
+            | Q(converted_max_cost__isnull=True)
+            | ~Q(converted_currency=currency)
+        )
+
+        updated = []
+        stock_item_ids = set()
+
+        for entry in queryset.order_by('pk').iterator(chunk_size=500):
+            stock_item_ids.add(entry.stock_item_id)
+            entry.convert_costs()
+
+            if entry.converted_currency:
+                updated.append(entry)
+
+        with transaction.atomic():
+            self.bulk_update(
+                updated,
+                ['converted_currency', 'converted_min_cost', 'converted_max_cost'],
+                batch_size=500,
+            )
+
+            StockItemCost.objects.update_for_stock_items(stock_item_ids)
+
+        return len(updated)
+
+
+class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
+    """A single cost contribution towards the unit cost of a StockItem.
+
+    A StockItem may carry any number of cost entries, including several of the
+    same cost type (e.g. freight and duty both recorded as LANDED costs).
+    All cost entries for a StockItem are summed to produce the cached StockItemCost summary.
+
+    Rules:
+    - All costs are *per unit* of the stock item
+    - Each entry has a single currency, which applies to both the minimum and maximum cost
+    - If only one of min_cost / max_cost is provided, the other is set to the same value
+    - Negative costs are allowed (e.g. rebates or credits)
+    - Costs are converted to the default currency when the entry is created
+      (or its costs are changed), and the converted values are stored alongside the original values
+
+    Note: The cached StockItemCost summary is updated when an entry is saved or deleted
+    via the model instance (or the manager helpers). Queryset update() / delete() operations
+    bypass this, and must call StockItemCost.objects.update_for_stock_items() themselves.
+
+    Attributes:
+        stock_item: The StockItem that this cost entry applies to
+        cost_type: The category of this cost entry (see CostType)
+        source: Identifies who or what created this cost entry (e.g. a plugin slug)
+        currency: Currency code for the min_cost and max_cost values
+        min_cost: Minimum unit cost for this entry
+        max_cost: Maximum unit cost for this entry
+        converted_currency: Currency code for the converted values (empty if conversion failed)
+        converted_min_cost: min_cost converted to the default currency
+        converted_max_cost: max_cost converted to the default currency
+        date: Date at which this cost entry was last updated
+        user: The user associated with this cost entry (nullable, e.g. for automated calculations)
+        source_data: JSON data capturing the source data used to calculate this cost
+        notes: Optional notes associated with this cost entry
+    """
+
+    class Meta:
+        """Meta options for the StockItemCostEntry model."""
+
+        verbose_name = _('Stock Item Cost Entry')
+        verbose_name_plural = _('Stock Item Cost Entries')
+
+    # Cost entries are shown in the audit history of the stock item
+    AUDIT_PARENT_FIELD = 'stock_item'
+    AUDIT_EXCLUDE_FIELDS = ('date',)
+
+    objects = StockItemCostEntryManager()
+
+    def __str__(self):
+        """Return a string representation of this cost entry."""
+        return f'{self.get_cost_type_display()} cost ({self.source})'
+
+    @staticmethod
+    def get_api_url():
+        """Return the list API endpoint URL associated with the StockItemCostEntry model."""
+        return reverse('api-stock-cost-entry-list')
+
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        """Record the loaded cost values, so that changes can be detected on save."""
+        instance = super().from_db(db, field_names, values)
+        instance._loaded_costs = instance.cost_signature()
+        return instance
+
+    stock_item = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.CASCADE,
+        related_name='cost_entries',
+        verbose_name=_('Stock Item'),
+        help_text=_('Stock item to which this cost entry applies'),
+    )
+
+    cost_type = models.PositiveIntegerField(
+        default=CostType.PURCHASE.value,
+        choices=CostType.items(),
+        verbose_name=_('Cost Type'),
+        help_text=_('Category of this cost entry'),
+    )
+
+    source = models.CharField(
+        max_length=100,
+        default=CostSource.MANUAL,
+        db_index=True,
+        validators=[validate_cost_source],
+        verbose_name=_('Source'),
+        help_text=_(
+            "Identifies who or what created this cost entry (e.g. 'manual', or 'plugin:<slug>')"
+        ),
+    )
+
+    currency = models.CharField(
+        default=currency_code_default,
+        max_length=10,
+        verbose_name=_('Currency'),
+        help_text=_('Currency for the minimum and maximum cost'),
+        validators=[validators.validate_currency_code],
+    )
+
+    min_cost = models.DecimalField(
+        max_digits=COST_MAX_DIGITS,
+        decimal_places=COST_DECIMAL_PLACES,
+        null=True,
+        blank=True,
+        verbose_name=_('Minimum Cost'),
+        help_text=_('Minimum unit cost for this entry'),
+    )
+
+    max_cost = models.DecimalField(
+        max_digits=COST_MAX_DIGITS,
+        decimal_places=COST_DECIMAL_PLACES,
+        null=True,
+        blank=True,
+        verbose_name=_('Maximum Cost'),
+        help_text=_('Maximum unit cost for this entry'),
+    )
+
+    converted_currency = models.CharField(
+        max_length=10,
+        blank=True,
+        editable=False,
+        verbose_name=_('Converted Currency'),
+        help_text=_('Currency for the converted cost values'),
+    )
+
+    converted_min_cost = models.DecimalField(
+        max_digits=COST_MAX_DIGITS,
+        decimal_places=COST_DECIMAL_PLACES,
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name=_('Converted Minimum Cost'),
+        help_text=_('Minimum unit cost, converted to the default currency'),
+    )
+
+    converted_max_cost = models.DecimalField(
+        max_digits=COST_MAX_DIGITS,
+        decimal_places=COST_DECIMAL_PLACES,
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name=_('Converted Maximum Cost'),
+        help_text=_('Maximum unit cost, converted to the default currency'),
+    )
+
+    date = models.DateTimeField(
+        auto_now=True,
+        editable=False,
+        verbose_name=_('Date'),
+        help_text=_('Date at which this cost entry was last updated'),
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('User'),
+        help_text=_('User associated with this cost entry'),
+    )
+
+    source_data = models.JSONField(
+        null=True,
+        blank=True,
+        verbose_name=_('Source Data'),
+        help_text=_('Source data used to calculate this cost entry'),
+    )
+
+    notes = models.CharField(
+        max_length=512,
+        blank=True,
+        verbose_name=_('Notes'),
+        help_text=_('Notes associated with this cost entry'),
+    )
+
+    @property
+    def min_cost_money(self):
+        """Return the minimum cost as a Money instance (or None)."""
+        return to_money(self.min_cost, self.currency)
+
+    @property
+    def max_cost_money(self):
+        """Return the maximum cost as a Money instance (or None)."""
+        return to_money(self.max_cost, self.currency)
+
+    def cost_signature(self) -> tuple:
+        """Return the (currency, min_cost, max_cost) values which determine the converted costs.
+
+        Values are read directly from the instance dict, to avoid loading deferred fields.
+        """
+        return (
+            self.__dict__.get('currency'),
+            self.__dict__.get('min_cost'),
+            self.__dict__.get('max_cost'),
+        )
+
+    def snapshot(self) -> dict:
+        """Return a JSON serializable record of this entry (e.g. to retain after it is removed)."""
+
+        def value(val):
+            return None if val is None else str(val)
+
+        return {
+            'pk': self.pk,
+            'stock_item': self.stock_item_id,
+            'cost_type': self.cost_type,
+            'source': self.source,
+            'currency': self.currency,
+            'min_cost': value(self.min_cost),
+            'max_cost': value(self.max_cost),
+            'converted_currency': self.converted_currency,
+            'converted_min_cost': value(self.converted_min_cost),
+            'converted_max_cost': value(self.converted_max_cost),
+            'user': self.user_id,
+            'notes': self.notes,
+            'source_data': self.source_data,
+        }
+
+    def clean_fields(self, exclude=None):
+        """Round the cost values to the stored precision, before field validation."""
+        for name in ['min_cost', 'max_cost']:
+            value = getattr(self, name)
+
+            if value is None:
+                continue
+
+            if not isinstance(value, Decimal):
+                try:
+                    value = Decimal(str(value))
+                except InvalidOperation:
+                    # Invalid value - this is reported by the field validation
+                    continue
+
+            if value.is_finite():
+                setattr(self, name, round(value, COST_DECIMAL_PLACES))
+
+        super().clean_fields(exclude=exclude)
+
+    def clean(self):
+        """Validate the cost values for this entry.
+
+        - At least one of min_cost / max_cost must be provided
+        - A missing bound is set to the same value as the provided bound
+        - min_cost must not be greater than max_cost
+        """
+        super().clean()
+
+        if self.min_cost is None and self.max_cost is None:
+            raise ValidationError({
+                'min_cost': _('A minimum or maximum cost must be provided')
+            })
+
+        if self.min_cost is None:
+            self.min_cost = self.max_cost
+
+        if self.max_cost is None:
+            self.max_cost = self.min_cost
+
+        # Values may not yet be valid numbers, if field validation has failed
+        if (
+            isinstance(self.min_cost, Decimal)
+            and isinstance(self.max_cost, Decimal)
+            and self.min_cost > self.max_cost
+        ):
+            raise ValidationError({
+                'max_cost': _('Maximum cost must not be less than minimum cost')
+            })
+
+    def needs_conversion(self) -> bool:
+        """Return True if the converted cost values need to be (re)calculated.
+
+        This is the case if the entry is new, its cost values have changed,
+        or the existing converted values are missing or not in the default currency.
+        """
+        if self.cost_signature() != getattr(self, '_loaded_costs', None):
+            return True
+
+        if self.converted_min_cost is None or self.converted_max_cost is None:
+            return True
+
+        return self.converted_currency != currency_code_default()
+
+    def convert_costs(self):
+        """Convert the cost values into the default currency, at the current exchange rate.
+
+        If either value cannot be converted, both converted values are cleared.
+        """
+        target_currency = currency_code_default()
+
+        converted_min = convert_cost(self.min_cost, self.currency, target_currency)
+        converted_max = convert_cost(self.max_cost, self.currency, target_currency)
+
+        if converted_min is None or converted_max is None:
+            self.converted_currency = ''
+            self.converted_min_cost = None
+            self.converted_max_cost = None
+        else:
+            self.converted_currency = target_currency
+            self.converted_min_cost = converted_min
+            self.converted_max_cost = converted_max
+
+    def prepare(self):
+        """Validate this entry, and calculate the converted cost values (if required).
+
+        Raises:
+            ValidationError: If the entry is not valid
+        """
+        # Related fields are excluded, to avoid additional database queries
+        self.full_clean(
+            exclude=['stock_item', 'user'],
+            validate_unique=False,
+            validate_constraints=False,
+        )
+
+        if self.needs_conversion():
+            self.convert_costs()
+
+    def save(self, *args, **kwargs):
+        """Validate and save this entry, and update the cached cost summary for the stock item."""
+        self.prepare()
+
+        with transaction.atomic():
+            super().save(*args, **kwargs)
+            StockItemCost.objects.update_for_stock_items([self.stock_item_id])
+
+        self._loaded_costs = self.cost_signature()
+
+    def delete(self, *args, **kwargs):
+        """Delete this entry, and update the cached cost summary for the stock item."""
+        stock_item_id = self.stock_item_id
+
+        with transaction.atomic():
+            result = super().delete(*args, **kwargs)
+            StockItemCost.objects.update_for_stock_items([stock_item_id])
+
+        return result
+
+
+class StockItemCostManager(models.Manager):
+    """Manager for the StockItemCost model."""
+
+    def update_for_stock_items(self, stock_item_ids):
+        """(Re)calculate the cached cost summary for each of the provided stock items.
+
+        The summary is calculated from the stored converted values of each entry,
+        so it is not affected by later changes to exchange rates.
+
+        - Stock items with no cost entries have their summary removed
+        - Entries without a converted value in the default currency are excluded,
+          and the summary is marked as incomplete
+
+        Arguments:
+            stock_item_ids: Iterable of StockItem primary keys
+        """
+        stock_item_ids = {pk for pk in stock_item_ids if pk is not None}
+
+        if not stock_item_ids:
+            return
+
+        currency = currency_code_default()
+
+        valid = Q(
+            converted_currency=currency,
+            converted_min_cost__isnull=False,
+            converted_max_cost__isnull=False,
+        )
+
+        totals = (
+            StockItemCostEntry.objects
+            .filter(stock_item_id__in=stock_item_ids)
+            .order_by()
+            .values('stock_item_id')
+            .annotate(
+                min_total=Sum('converted_min_cost', filter=valid),
+                max_total=Sum('converted_max_cost', filter=valid),
+                entry_count=Count('pk'),
+                valid_count=Count('pk', filter=valid),
+            )
+        )
+
+        summaries = [
+            self.model(
+                stock_item_id=row['stock_item_id'],
+                currency=currency,
+                min_cost=row['min_total'] if row['valid_count'] else None,
+                max_cost=row['max_total'] if row['valid_count'] else None,
+                incomplete=row['valid_count'] < row['entry_count'],
+            )
+            for row in totals
+        ]
+
+        empty_ids = stock_item_ids - {summary.stock_item_id for summary in summaries}
+
+        with transaction.atomic():
+            if empty_ids:
+                self.filter(stock_item_id__in=empty_ids).delete()
+
+            if summaries:
+                upsert_kwargs = {
+                    'update_conflicts': True,
+                    'update_fields': [
+                        'currency',
+                        'min_cost',
+                        'max_cost',
+                        'incomplete',
+                        'date',
+                    ],
+                }
+
+                # Some database backends (e.g. MySQL) do not accept a conflict target
+                if connections[self.db].features.supports_update_conflicts_with_target:
+                    upsert_kwargs['unique_fields'] = ['stock_item']
+
+                self.bulk_create(summaries, batch_size=500, **upsert_kwargs)
+
+        self.schedule_part_pricing_updates(stock_item_ids)
+
+    def schedule_part_pricing_updates(self, stock_item_ids):
+        """Schedule a pricing update for the parts of the provided stock items.
+
+        The purchase cost of a part is (optionally) calculated from the
+        cost entries of its stock items (see PartPricing.update_purchase_cost).
+        """
+        if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+            return
+
+        if not InvenTree.ready.canAppAccessDatabase(
+            allow_test=settings.TESTING_PRICING
+        ):
+            return
+
+        from stock.models import StockItem
+
+        part_ids = (
+            StockItem.objects
+            .filter(pk__in=stock_item_ids)
+            .order_by()
+            .values_list('part_id', flat=True)
+            .distinct()
+        )
+
+        for part in Part.objects.filter(pk__in=list(part_ids)):
+            part.schedule_pricing_update(create=True, refresh=False)
+
+
+class StockItemCost(models.Model):
+    """Cached summary of the total unit cost of a StockItem.
+
+    This is the sum of all StockItemCostEntry records for the StockItem,
+    in the default currency. It is recalculated automatically whenever
+    an entry is created, updated or deleted, and should not be edited directly.
+
+    Attributes:
+        stock_item: The StockItem that this cost summary applies to (one-to-one)
+        currency: Currency code for the min_cost and max_cost values
+        min_cost: Sum of the (converted) minimum cost of all entries
+        max_cost: Sum of the (converted) maximum cost of all entries
+        incomplete: True if any of the entries could not be included (e.g. no exchange rate available)
+        date: Date at which this summary was last calculated
+    """
+
+    class Meta:
+        """Meta options for the StockItemCost model."""
+
+        verbose_name = _('Stock Item Cost')
+
+    objects = StockItemCostManager()
+
+    @staticmethod
+    def get_api_url():
+        """Return the list API endpoint URL associated with the StockItemCost model."""
+        return reverse('api-stock-cost-list')
+
+    stock_item = models.OneToOneField(
+        'stock.StockItem',
+        on_delete=models.CASCADE,
+        related_name='cost',
+        verbose_name=_('Stock Item'),
+        help_text=_('Stock item to which this cost summary applies'),
+    )
+
+    currency = models.CharField(
+        max_length=10,
+        blank=True,
+        verbose_name=_('Currency'),
+        help_text=_('Currency for the minimum and maximum cost'),
+    )
+
+    min_cost = models.DecimalField(
+        max_digits=COST_MAX_DIGITS,
+        decimal_places=COST_DECIMAL_PLACES,
+        null=True,
+        blank=True,
+        verbose_name=_('Minimum Cost'),
+        help_text=_('Minimum total unit cost, calculated from all cost entries'),
+    )
+
+    max_cost = models.DecimalField(
+        max_digits=COST_MAX_DIGITS,
+        decimal_places=COST_DECIMAL_PLACES,
+        null=True,
+        blank=True,
+        verbose_name=_('Maximum Cost'),
+        help_text=_('Maximum total unit cost, calculated from all cost entries'),
+    )
+
+    incomplete = models.BooleanField(
+        default=False,
+        verbose_name=_('Incomplete'),
+        help_text=_('One or more cost entries could not be included in this summary'),
+    )
+
+    date = models.DateTimeField(
+        auto_now=True,
+        editable=False,
+        verbose_name=_('Date'),
+        help_text=_('Date at which this cost summary was last calculated'),
+    )
+
+    @property
+    def min_cost_money(self):
+        """Return the minimum cost as a Money instance (or None)."""
+        return to_money(self.min_cost, self.currency)
+
+    @property
+    def max_cost_money(self):
+        """Return the maximum cost as a Money instance (or None)."""
+        return to_money(self.max_cost, self.currency)
+
+
+def to_money(value, currency: str):
+    """Return a Money instance for the provided value and currency, or None if either is missing."""
+    if value is None or not currency:
+        return None
+
+    return Money(value, currency)

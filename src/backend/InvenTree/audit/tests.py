@@ -148,12 +148,22 @@ class AuditRegistryTest(TestCase):
                 'pricing.partinternalpricebreak',
                 'pricing.partpricing',
                 'pricing.partsellpricebreak',
+                'pricing.stockitemcostentry',
                 'stock.stockitem',
             ],
         )
 
         for model in audited_models():
             self.assertTrue(auditlog.contains(model))
+
+    def test_reverse_one_to_one_excluded(self):
+        """Reverse one-to-one relations are not recorded (avoids one query per audited instance)."""
+        from part.models import Part
+        from stock.models import StockItem
+
+        for model, field in [(StockItem, 'cost'), (Part, 'pricing_data')]:
+            exclude = auditlog.get_model_fields(model)['exclude_fields']
+            self.assertIn(field, exclude)
 
     def test_register_model(self):
         """Registration applies the base excluded fields."""

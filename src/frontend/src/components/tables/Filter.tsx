@@ -83,7 +83,7 @@ export function getTableFilterOptions(
  * Construct a table filter which allows filtering by status code
  */
 export function StatusFilterOptions(
-  model: ModelType
+  model: ModelType | string
 ): () => TableFilterChoice[] {
   return () => {
     const statusCodeList: StatusLookup | undefined =

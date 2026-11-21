@@ -26,6 +26,7 @@ import order.models
 import part.filters as part_filters
 import part.models as part_models
 import part.serializers as part_serializers
+import pricing.serializers as pricing_serializers
 import stock.filters
 import stock.status_codes
 from audit.helpers import audit_event, write_batched
@@ -381,8 +382,6 @@ class StockItemSerializer(
             'creation_date',
             'stocktake_date',
             'updated',
-            'purchase_price',
-            'purchase_price_currency',
             'use_pack_size',
             'serial_numbers',
             'duplicate',
@@ -396,6 +395,7 @@ class StockItemSerializer(
             'location_detail',
             'location_path',
             'part_detail',
+            'pricing_detail',
             'supplier_part_detail',
             'tags',
             'tests',
@@ -486,7 +486,13 @@ class StockItemSerializer(
                 'label': _('Copy Test Results'),
                 'help_text': _('Copy test results from the original stock item'),
                 'default': False,
-            }
+            },
+            {
+                'name': 'copy_costs',
+                'label': _('Copy Costs'),
+                'help_text': _('Copy cost data from the original stock item'),
+                'default': True,
+            },
         ],
     )
 
@@ -670,6 +676,19 @@ class StockItemSerializer(
         prefetch_fields=['location'],
     )
 
+    pricing_detail = OptionalField(
+        serializer_class=pricing_serializers.StockItemCostBriefSerializer,
+        serializer_kwargs={
+            'label': _('Unit Cost'),
+            'source': 'cost',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
+        prefetch_fields=['cost'],
+    )
+
     tests = OptionalField(
         serializer_class=StockItemTestResultSerializer,
         serializer_kwargs={
@@ -702,16 +721,6 @@ class StockItemSerializer(
         read_only=True, allow_null=True, label=_('Child Items')
     )
     stale = serializers.BooleanField(read_only=True, allow_null=True, label=_('Stale'))
-
-    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
-        label=_('Purchase Price'),
-        allow_null=True,
-        help_text=_('Purchase price of this stock item, per unit or pack'),
-    )
-
-    purchase_price_currency = InvenTreeCurrencySerializer(
-        help_text=_('Purchase currency of this stock item')
-    )
 
     consumed_by_detail = OptionalField(
         serializer_class=BuildBriefSerializer,
@@ -1074,8 +1083,8 @@ class DisassemblyLineSerializer(serializers.Serializer):
             'quantity',
             'location',
             'status',
-            'purchase_price',
-            'purchase_price_currency',
+            'unit_cost',
+            'unit_cost_currency',
         ]
 
     bom_item = serializers.PrimaryKeyRelatedField(
@@ -1116,19 +1125,36 @@ class DisassemblyLineSerializer(serializers.Serializer):
         required=False, help_text=_('Status code for the component items')
     )
 
-    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
-        label=_('Purchase Price'),
+    unit_cost = InvenTree.serializers.InvenTreeMoneySerializer(
+        label=_('Unit Cost'),
         required=False,
         allow_null=True,
         default=None,
         help_text=_(
-            'Unit purchase price for the component items (leave blank for automatic cost allocation)'
+            'Unit cost of the component items. If left blank, the remaining cost of the assembly is allocated using part pricing data - only if pricing is available for every component without a unit cost'
         ),
     )
 
-    purchase_price_currency = InvenTreeCurrencySerializer(
-        required=False, help_text=_('Purchase price currency')
+    # Note: Defaults to the default currency
+    unit_cost_currency = InvenTreeCurrencySerializer(
+        help_text=_('Currency for the unit cost')
     )
+
+    def validate(self, data):
+        """Combine the unit cost and currency into a single Money value."""
+        from djmoney.money import Money
+
+        from common.currency import currency_code_default
+
+        data = super().validate(data)
+
+        unit_cost = data.get('unit_cost')
+
+        if unit_cost is not None and not isinstance(unit_cost, Money):
+            currency = data.get('unit_cost_currency') or currency_code_default()
+            data['unit_cost'] = Money(unit_cost, currency)
+
+        return data
 
 
 class DisassembleStockItemSerializer(serializers.Serializer):

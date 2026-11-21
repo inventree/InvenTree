@@ -133,11 +133,17 @@ If the part being received is [trackable](../part/trackable.md), serial numbers 
 
 Serial numbers are *not* required to receive a trackable part - if left blank, a single (non-serialized) stock item is created for the received quantity. This is useful, for example, when receiving a batch of units against an [external build order](../manufacturing/external.md) which will be [serialized later](../part/trackable.md#build-outputs-without-serial-numbers) in the manufacturing process.
 
-### Item Value Currency
+### Item Cost
 
-The unit cost of the purchase order line item is transferred across to the created stock item. By default, the same currency is used for the stock item as was used for the purchase order line item.
+When items are received against a purchase order line which has a price, a *purchase* [cost entry](../stock/costs.md) is recorded against each of the created stock items:
 
-However, if the [Convert Currency](#purchase-order-settings) setting is enabled, the currency of the stock item will be converted to the [default currency](../concepts/pricing.md#default-currency) of the system. This may be useful when ordering stock in a different currency, to ensure that the unit cost of the stock item is converted to the base currency at the time of receipt.
+- The line price is per supplier pack, so it is divided by the [pack quantity](./supplier.md#supplier-part-pack-size) of the supplier part to give a cost per (base) unit of the stock item
+- The cost is recorded in the currency of the purchase order line item
+- The cost is also converted to the [default currency](../concepts/pricing.md#default-currency) of the system, at the exchange rate at the time of receipt. Both the original and the converted values are stored, and the unit cost of the stock item is calculated from the converted values
+
+Recording these costs does not require the *pricing* role - users who can receive items against a purchase order can assign the incoming cost. Viewing stock item costs requires the *pricing* role.
+
+Additional costs (such as freight charges, once the invoice arrives) can be added to the received stock items afterwards. Refer to the [stock item costs](../stock/costs.md) documentation for more information.
 
 ## Bundled Items
 
@@ -148,9 +154,9 @@ Rather than receiving the bundle as a single opaque stock quantity, InvenTree al
 1. Create a part to represent the bundle itself, and mark it as an [assembly](../part/index.md#assembly)
 2. Link a [supplier part](./supplier.md#supplier-parts) to the bundle part, representing how it is purchased from the supplier
 3. Define a [Bill of Materials](../manufacturing/bom.md) for the bundle part, listing each of the individual components and the quantity contained within a single bundle
-4. Create and receive a purchase order against the bundle's supplier part, as normal - a single stock item is created for the bundle, retaining the purchase price and source purchase order of the order as a whole
+4. Create and receive a purchase order against the bundle's supplier part, as normal - a single stock item is created for the bundle, retaining the purchase cost and source purchase order of the order as a whole
 
-Once the individual components are actually required, the received bundle stock item can be [disassembled](../stock/disassemble.md) into its component parts. The purchase price and traceability data (batch code, source purchase order) of the original bundle are automatically apportioned across the newly generated component stock items.
+Once the individual components are actually required, the received bundle stock item can be [disassembled](../stock/disassemble.md) into its component parts. The cost and traceability data (batch code, source purchase order) of the original bundle are automatically apportioned across the newly generated component stock items.
 
 !!! tip "Pack Size vs Bundled Items"
     A supplier part with a [pack size](./supplier.md#supplier-part-pack-size) greater than one still represents multiple units of the *same* part - the pack size simply determines how many physical units are added to stock per unit ordered. A *bundled* item is different: a single supplier part represents an assortment of *different* components, which must be disassembled before the individual components can be used or sold separately.
@@ -217,7 +223,6 @@ The following [global settings](../settings/global.md) are available for purchas
 {{ globalsetting("PURCHASEORDER_ENABLED") }}
 {{ globalsetting("PURCHASEORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("PURCHASEORDER_REQUIRE_RESPONSIBLE") }}
-{{ globalsetting("PURCHASEORDER_CONVERT_CURRENCY") }}
 {{ globalsetting("PURCHASEORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("PURCHASEORDER_AUTO_COMPLETE") }}
 {{ globalsetting("PURCHASEORDER_MERGE_LINE_ITEMS") }}

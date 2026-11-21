@@ -1137,7 +1137,15 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
             note: Optional note for the item (optional) - recorded against the
                 item's RECEIVED_AGAINST_PURCHASE_ORDER tracking entry, not the
                 StockItem itself
+
+        Each new StockItem receives a PURCHASE cost entry (if the line item has a price),
+        with the line price divided down to a cost per base unit (by the supplier pack quantity).
         """
+        # Local import - pricing.models depends on this module
+        from pricing.helpers import StockItemCostRecorder
+        from pricing.models import CostSource
+        from pricing.status_codes import CostType
+
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
                 "Lines can only be received against an order marked as 'PLACED'"
@@ -1156,6 +1164,12 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
         # RECEIVED_AGAINST_PURCHASE_ORDER tracking event instead
         bulk_create_notes: list[str] = []
 
+        # Unit cost data for bulk_create_items, appended in lockstep (see bulk_create_notes)
+        bulk_create_costs: list[Optional[dict]] = []
+
+        # Records the purchase cost of each new stock item
+        costs = StockItemCostRecorder(source=CostSource.PURCHASE_ORDER, user=user)
+
         # List of line items to update
         line_items_to_update: list[PurchaseOrderLineItem] = []
 
@@ -1164,9 +1178,6 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
         # Cache of subscribers per part, to avoid repeated queries for the same part
         part_subscribers_cache: dict[int, list] = {}
-
-        convert_purchase_price = get_global_setting('PURCHASEORDER_CONVERT_CURRENCY')
-        default_currency = currency_code_default()
 
         # Prefetch line item objects for DB efficiency
         line_items_ids = [item['line_item'].pk for item in items]
@@ -1260,21 +1271,34 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
             # Calculate the received quantity in base part units
             stock_quantity = supplier_part.base_quantity(quantity)
 
-            # Calculate unit purchase price (in base units)
+            # Calculate the unit cost (per base unit) of the received items.
+            # Note: Line prices are per supplier pack, but costs are per (base) unit.
+            # The cost is recorded in the original (line item) currency - the cost entry
+            # also stores the value converted to the default currency
             if line.purchase_price:
-                purchase_price = line.purchase_price / supplier_part.base_quantity(1)
+                pack_quantity = supplier_part.base_quantity(1)
+                unit_cost = line.purchase_price / pack_quantity
 
-                if convert_purchase_price:
-                    purchase_price = convert_money(purchase_price, default_currency)
+                cost_data = {
+                    'cost_type': CostType.PURCHASE,
+                    'cost': unit_cost,
+                    'source_data': {
+                        'purchase_order': self.pk,
+                        'line_item': line.pk,
+                        'supplier_part': supplier_part.pk,
+                        'line_price': str(line.purchase_price.amount),
+                        'line_currency': str(line.purchase_price.currency),
+                        'pack_quantity': str(pack_quantity),
+                    },
+                }
             else:
-                purchase_price = None
+                cost_data = None
 
             # Construct dataset for creating a new StockItem instances
             stock_data = {
                 'part': supplier_part.part,
                 'supplier_part': supplier_part,
                 'purchase_order': self,
-                'purchase_price': purchase_price,
                 'location': stock_location,
                 'quantity': 1 if serialize else stock_quantity,
                 'batch': item.get('batch_code', ''),
@@ -1342,6 +1366,9 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                     **stock_data,
                 )
 
+                if cost_data:
+                    costs.add(new_items, **cost_data)
+
                 for new_item in new_items:
                     # run validation for serialized items plugin.validate_batch_code
                     new_item.validate_batch_code()
@@ -1361,6 +1388,7 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
                 bulk_create_items.append(new_item)
                 bulk_create_notes.append(note)
+                bulk_create_costs.append(cost_data)
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
@@ -1393,6 +1421,13 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
             )
 
             stock_items.extend(new_items)
+
+            for new_item, cost_data in zip(new_items, bulk_create_costs, strict=True):
+                if cost_data:
+                    costs.add(new_item, **cost_data)
+
+        # Create the cost entries (and the cost summary) for the new stock items
+        costs.save()
 
         # Update received quantity for each line item
         audited_bulk_update(PurchaseOrderLineItem, line_items_to_update, ['received'])
@@ -3114,6 +3149,13 @@ class SalesOrderShipment(
 
             split_item_map[id(placeholder)] = persisted
             split_items[i] = (source, persisted, quantity)
+
+        # Each split-off item carries the same (per unit) cost as its source item
+        from pricing.models import StockItemCostEntry
+
+        StockItemCostEntry.objects.copy_costs(
+            (source, new_item) for source, new_item, _quantity in split_items
+        )
 
         shipped_items = [
             (split_item_map.get(id(item), item), quantity)

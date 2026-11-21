@@ -23,6 +23,7 @@ import common.filters
 import common.models
 import InvenTree.helpers
 import InvenTree.permissions
+import InvenTree.ready
 import stock.serializers as StockSerializers
 from build.models import Build
 from company.models import Company, ManufacturerPart, SupplierPart
@@ -65,7 +66,8 @@ from stock.models import (
 )
 from stock.status_codes import StockHistoryCode, StockStatus
 from stock.system_settings import stock_expiry_enabled
-from users.permissions import check_user_permission
+from users.permissions import check_user_permission, check_user_role
+from users.ruleset import RuleSetEnum
 
 
 class GenerateBatchCode(GenericAPIView):
@@ -590,6 +592,14 @@ class StockLocationTypeDetail(RetrieveUpdateDestroyAPI):
         return queryset
 
 
+def user_can_view_costs(user) -> bool:
+    """Return True if the user may filter or order stock items by cost data."""
+    if user is None or not user.is_authenticated:
+        return False
+
+    return check_user_role(user, RuleSetEnum.PRICING, 'view')
+
+
 class StockFilter(FilterSet):
     """FilterSet for StockItem LIST API."""
 
@@ -930,15 +940,24 @@ class StockFilter(FilterSet):
             return queryset.filter(quantity__lte=0)
         return queryset.exclude(quantity__lte=0)
 
-    has_purchase_price = rest_filters.BooleanFilter(
-        label='Has purchase price', method='filter_has_purchase_price'
+    has_unit_cost = rest_filters.BooleanFilter(
+        label=_('Has unit cost'), method='filter_has_unit_cost'
     )
 
-    def filter_has_purchase_price(self, queryset, name, value):
-        """Filter by having a purchase price."""
+    def filter_has_unit_cost(self, queryset, name, value):
+        """Filter by whether the stock item has a (calculated) unit cost.
+
+        Cost data is only available to users with the 'pricing' view role -
+        for any other user, this filter is ignored.
+        """
+        if not user_can_view_costs(getattr(self.request, 'user', None)):
+            return queryset
+
+        has_cost = Q(cost__min_cost__isnull=False) | Q(cost__max_cost__isnull=False)
+
         if str2bool(value):
-            return queryset.exclude(purchase_price=None)
-        return queryset.filter(purchase_price=None)
+            return queryset.filter(has_cost)
+        return queryset.exclude(has_cost)
 
     category = rest_filters.ModelChoiceFilter(
         label=_('Category'),
@@ -1213,18 +1232,6 @@ class StockList(
                 elif bool(data.get('use_pack_size')):
                     quantity = data['quantity'] = supplier_part.base_quantity(quantity)
 
-                    # Divide purchase price by pack size, to save correct price per stock item
-                    if (
-                        data.get('purchase_price')
-                        and supplier_part.pack_quantity_native
-                    ):
-                        try:
-                            data['purchase_price'] = float(
-                                data['purchase_price']
-                            ) / float(supplier_part.pack_quantity_native)
-                        except ValueError:  # pragma: no cover
-                            pass
-
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
         data.pop('use_pack_size', None)
@@ -1289,20 +1296,31 @@ class StockList(
         # Extract location information
         location = serializer.validated_data.get('location', None)
 
-        def apply_duplicate_options(item):
-            """Apply any provided 'duplicate' options to a newly created StockItem."""
+        def apply_duplicate_options(items):
+            """Apply any provided 'duplicate' options to the newly created StockItem(s)."""
             if not duplicate:
                 return
 
             original = duplicate['original']
 
-            # copy_tests doesn't follow the copy_<x>_from() naming
-            # convention (copyTestResultsFrom), so still needs
-            # handling here - only copy_notes can go through the shared helper
-            apply_duplicate_copy_options(item, duplicate, original, copy_notes=True)
+            for item in items:
+                # copy_tests doesn't follow the copy_<x>_from() naming
+                # convention (copyTestResultsFrom), so still needs
+                # handling here - only copy_notes can go through the shared helper
+                apply_duplicate_copy_options(item, duplicate, original, copy_notes=True)
 
-            if duplicate.get('copy_tests', False):
-                item.copyTestResultsFrom(original)
+                if duplicate.get('copy_tests', False):
+                    item.copyTestResultsFrom(original)
+
+            # Copy the (per unit) cost entries of the original item to every new item.
+            # Note: No 'pricing' role is required - the costs are copied as part of creating
+            # the stock, and are not exposed to the user
+            if duplicate.get('copy_costs', True):
+                from pricing.models import StockItemCostEntry
+
+                StockItemCostEntry.objects.copy_costs(
+                    (original, item) for item in items
+                )
 
         with transaction.atomic():
             if serials:
@@ -1330,8 +1348,7 @@ class StockList(
                     **create_data,
                 )
 
-                for item in items:
-                    apply_duplicate_options(item)
+                apply_duplicate_options(items)
 
                 # Annotate the stock items with part information
                 queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
@@ -1353,7 +1370,7 @@ class StockList(
                 item.save(user=user)
                 item.refresh_from_db()
 
-                apply_duplicate_options(item)
+                apply_duplicate_options([item])
 
                 response_data = [
                     StockSerializers.StockItemSerializer(
@@ -1376,16 +1393,35 @@ class StockList(
         'SKU': 'supplier_part__SKU',
         'MPN': 'supplier_part__manufacturer_part__MPN',
         'stock': ['quantity', 'serial_int', 'serial'],
+        'unit_cost': 'cost__min_cost',
     }
 
-    ordering_fields = [
+    @property
+    def ordering_fields(self) -> list:
+        """Return the valid ordering fields for the requesting user.
+
+        Ordering by cost data ('unit_cost') is only available to users with the 'pricing'
+        view role - for any other user, it is ignored. If there is no request, or the API schema
+        is being generated, all ordering fields are returned.
+        """
+        request = getattr(self, 'request', None)
+
+        if (
+            request is None
+            or InvenTree.ready.isGeneratingSchema()
+            or user_can_view_costs(getattr(request, 'user', None))
+        ):
+            return [*self.BASE_ORDERING_FIELDS, 'unit_cost']
+
+        return list(self.BASE_ORDERING_FIELDS)
+
+    BASE_ORDERING_FIELDS = [
         'batch',
         'location',
         'part',
         'part__name',
         'part__IPN',
         'updated',
-        'purchase_price',
         'creation_date',
         'stocktake_date',
         'expiry_date',
