@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Stack } from '@mantine/core';
+import { Accordion, Group, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -25,6 +25,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { formatCurrency } from '../../defaults/formatters';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import {
   useCreateApiFormModal,
@@ -141,6 +142,21 @@ export default function PurchaseOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
+        controls: (
+          <Group gap='xs'>
+            <Text size='sm'>{t`Total Cost`}</Text>
+            <Text
+              component='output'
+              size='sm'
+              fw={500}
+              aria-label={t`Total Cost`}
+            >
+              {formatCurrency(order.total_price, {
+                currency: orderCurrency
+              }) ?? '-'}
+            </Text>
+          </Group>
+        ),
         content: (
           <Accordion
             multiple={true}
@@ -194,7 +210,7 @@ export default function PurchaseOrderDetail() {
         )
       }
     ];
-  }, [order, id, user]);
+  }, [order, id, orderCurrency, lineItemsEditable, refreshInstance]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),

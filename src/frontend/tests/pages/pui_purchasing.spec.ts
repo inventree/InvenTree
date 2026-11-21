@@ -229,6 +229,78 @@ test('Purchase Orders - General', async ({ browser }) => {
   await page.getByRole('tab', { name: 'Details' }).waitFor();
 });
 
+test('Purchase Orders - Line Items Total', async ({ browser }) => {
+  const api = await createApi({});
+  let orderId: number | undefined;
+
+  try {
+    const supplierParts = await api.get('company/part/', {
+      params: { SKU: 'FUT-43861-DDU' }
+    });
+    expect(supplierParts.ok()).toBeTruthy();
+    const [supplierPart] = await supplierParts.json();
+    expect(supplierPart).toBeDefined();
+
+    const order = await api.post('order/po/', {
+      data: {
+        supplier: supplierPart.supplier,
+        order_currency: 'USD',
+        description: 'Line items total test'
+      }
+    });
+    expect(order.status(), await order.text()).toBe(201);
+    orderId = (await order.json()).pk;
+
+    const line = await api.post('order/po-line/', {
+      data: {
+        order: orderId,
+        part: supplierPart.pk,
+        quantity: 2,
+        purchase_price: 10,
+        purchase_price_currency: 'USD',
+        auto_pricing: false
+      }
+    });
+    expect(line.status(), await line.text()).toBe(201);
+
+    const charge = await api.post('order/po-extra-line/', {
+      data: {
+        order: orderId,
+        description: 'Shipping charge',
+        quantity: 1,
+        price: 5,
+        price_currency: 'USD'
+      }
+    });
+    expect(charge.status(), await charge.text()).toBe(201);
+
+    const page = await doCachedLogin(browser, {
+      url: `purchasing/purchase-order/${orderId}/line-items`
+    });
+    const total = page.getByRole('status', { name: 'Total Cost' });
+    await expect(total).toHaveText(/^\$25(?:\.0+)?$/);
+
+    const extraItems = page.getByRole('region', { name: 'Extra Line Items' });
+    await clickOnRowMenu(
+      extraItems.getByRole('cell', { name: 'Shipping charge' })
+    );
+    await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
+    await page.getByLabel('number-field-price', { exact: true }).fill('8');
+    await page.getByRole('button', { name: 'Submit', exact: true }).click();
+
+    await expect(total).toHaveText(/^\$28(?:\.0+)?$/);
+  } finally {
+    try {
+      if (orderId !== undefined) {
+        const response = await api.delete(`order/po/${orderId}/`);
+        expect(response.status(), await response.text()).toBe(204);
+      }
+    } finally {
+      await api.dispose();
+    }
+  }
+});
+
 test('Purchase Orders - Table', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 

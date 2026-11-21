@@ -112,7 +112,10 @@ export function PurchaseOrderLineItemTable({
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
       openImporter(response.pk, {
-        onClose: table.refreshTable
+        onClose: () => {
+          table.refreshTable();
+          orderDetailRefresh();
+        }
       });
     }
   });
