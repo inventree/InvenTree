@@ -77,6 +77,9 @@ test('BOM - Optional Columns', async ({ browser }) => {
   for (const column of columns) {
     await page.locator('table thead th', { hasText: column }).first().waitFor();
   }
+  await expect(
+    page.locator('table thead th', { hasText: columns[0] })
+  ).toBeVisible();
 
   // Disable them again
   await page.getByLabel('table-select-columns').click();

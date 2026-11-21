@@ -175,20 +175,29 @@ export default function Scan() {
             missing: error?.response?.status == 404
           }))
       )
-    ).then((results) => {
-      historyHandlers.apply((item) => {
-        const result: any = results.find((r) => r.id == item.id);
+    )
+      .then((results) => {
+        historyHandlers.apply((item) => {
+          const result: any = results.find((r) => r.id == item.id);
 
-        if (result?.instance) {
-          return { ...item, instance: result.instance };
-        } else if (result?.missing) {
-          return { ...item, instance: undefined };
-        }
+          if (result?.instance) {
+            return { ...item, instance: result.instance };
+          } else if (result?.missing) {
+            return { ...item, instance: undefined };
+          }
 
-        // Retain existing data if the item could not be reloaded
-        return item;
+          // Retain existing data if the item could not be reloaded
+          return item;
+        });
+      })
+      .catch((error) => {
+        showApiErrorMessage({
+          error: error,
+          message: t`Failed to refresh selected items`,
+          title: t`Refresh Error`,
+          field: 'error'
+        });
       });
-    });
   }, [fetchInstanceData, selectedItems]);
 
   // Scan history may be stale, so reload instance data when the selection changes
