@@ -25,7 +25,6 @@ from mptt.models import TreeForeignKey
 
 import common.models as common_models
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -50,6 +49,16 @@ from company.models import (
     Contact,
     SupplierPart,
     default_internal_company,
+)
+from generic.models.base import InvenTreeMetadataModel
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeReferenceIndexingMixin,
+    InvenTreeTagsMixin,
 )
 from generic.states import (
     RETURN_VALUE,
@@ -96,7 +105,7 @@ from stock.status_codes import StockHistoryCode, StockStatus
 logger = structlog.get_logger('inventree')
 
 
-class AuditedOrderMixin(InvenTree.models.InvenTreeAuditMixin):
+class AuditedOrderMixin(InvenTreeAuditMixin):
     """Audit log configuration for order models."""
 
     AUDIT_EXCLUDE_FIELDS = (
@@ -108,7 +117,7 @@ class AuditedOrderMixin(InvenTree.models.InvenTreeAuditMixin):
     )
 
 
-class AuditedLineItemMixin(InvenTree.models.InvenTreeAuditMixin):
+class AuditedLineItemMixin(InvenTreeAuditMixin):
     """Audit log configuration for order line item models.
 
     Changes to line items are included in the history of the order.
@@ -357,15 +366,14 @@ class TransferOrderReportContext(BaseOrderReportContext, TypedDict):
 class Order(
     StatusCodeMixin,
     StateTransitionMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.ReferenceIndexingMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeReferenceIndexingMixin,
+    InvenTreeMetadataModel,
 ):
     """Abstract model for an order.
 
@@ -2185,7 +2193,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
             SalesOrderShipment.objects.create(order=instance, reference='1')
 
 
-class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
+class OrderLineItem(InvenTreeMetadataModel):
     """Abstract model for an order line item.
 
     Attributes:
@@ -2747,15 +2755,14 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict
 
 
 class SalesOrderShipment(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAuditMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 

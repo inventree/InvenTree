@@ -24,15 +24,14 @@ from pypdf import PdfWriter
 
 import InvenTree.exceptions
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import report.helpers
 import report.validators
 from common.models import DataOutput, RenderChoices, UpdatedUserMixin
 from common.settings import get_global_setting
 from company.models import Company
+from generic.models.base import InvenTreeMetadataModel
 from InvenTree.helpers_model import get_base_url
-from InvenTree.models import MetadataMixin
 from plugin import InvenTreePlugin, PluginMixinEnum, registry
 from report.security import restricted_db_access
 
@@ -203,9 +202,7 @@ class ReportContextExtension(TypedDict):
     merge: bool
 
 
-class ReportTemplateBase(
-    MetadataMixin, UpdatedUserMixin, InvenTree.models.InvenTreeModel
-):
+class ReportTemplateBase(UpdatedUserMixin, InvenTreeMetadataModel):
     """Base class for reports, labels."""
 
     class ModelChoices(RenderChoices):

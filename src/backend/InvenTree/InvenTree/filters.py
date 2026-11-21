@@ -37,7 +37,7 @@ class InvenTreeSearchFilter(filters.SearchFilter):
         - search_notes: If True, 'notes' is added to the search_fields if it isn't already present
         - search_regex: If True, search is performed on 'regex' comparison
         """
-        from InvenTree.models import InvenTreeNoteMixin
+        from generic.models.modelmixins import InvenTreeNoteMixin
 
         # Set (and read, in filter_queryset) on self rather than returned some other
         # way, since get_search_fields() only returns the field list, not the

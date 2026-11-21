@@ -59,7 +59,6 @@ import InvenTree.conversion
 import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -67,6 +66,14 @@ import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import get_global_setting, global_setting_overrides
 from generic.enums import StringEnum
+from generic.models.base import InvenTreeMetadataModel, InvenTreeModel
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
@@ -151,9 +158,7 @@ class UpdatedUserMixin(models.Model):
     )
 
 
-class ProjectCode(
-    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
-):
+class ProjectCode(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
     IMPORT_ID_FIELDS = ['code']
@@ -1279,7 +1284,7 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
         return self.__class__.is_required(self.key, **self.get_filters_for_instance())
 
 
-class InvenTreeSetting(InvenTree.models.InvenTreeAuditMixin, BaseInvenTreeSetting):
+class InvenTreeSetting(InvenTreeAuditMixin, BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     The class provides a way of retrieving the value for a particular key,
@@ -1871,7 +1876,7 @@ class NewsFeedEntry(models.Model):
     )
 
 
-class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
+class CustomUnit(InvenTreeAuditMixin, models.Model):
     """Model for storing custom physical unit definitions.
 
     Model Attributes:
@@ -2032,12 +2037,7 @@ def rename_attachment(instance, filename: str):
     )
 
 
-class Attachment(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeModel,
-):
+class Attachment(InvenTreeAuditMixin, InvenTreeTagsMixin, InvenTreeMetadataModel):
     """Class which represents an uploaded file attachment.
 
     An attachment can be either an uploaded file, or an external URL.
@@ -2322,8 +2322,6 @@ class Attachment(
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this attachment."""
-        from InvenTree.models import InvenTreeAttachmentMixin
-
         model_class = common.validators.attachment_model_class_from_label(
             self.model_type
         )
@@ -2544,7 +2542,7 @@ class InvenTreeCustomUserStateModel(models.Model):
                 return cls
 
 
-class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+class SelectionList(InvenTreeMetadataModel):
     """Class which represents a list of selectable items for parameters.
 
     A lists selection options can be either manually defined, or sourced from a plugin.
@@ -2743,11 +2741,7 @@ class SelectionListEntry(models.Model):
         return self.label
 
 
-class ParameterTemplate(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
-):
+class ParameterTemplate(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A ParameterTemplate provides a template for defining parameter values against various models.
 
     This allow for assigning arbitrary data fields against existing models,
@@ -2977,12 +2971,7 @@ def post_save_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class Parameter(
-    InvenTree.models.InvenTreeAuditMixin,
-    UpdatedUserMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
-):
+class Parameter(InvenTreeAuditMixin, UpdatedUserMixin, InvenTreeMetadataModel):
     """Class which represents a parameter value assigned to a particular model instance.
 
     Attributes:
@@ -3183,8 +3172,6 @@ class Parameter(
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this parameter."""
-        from InvenTree.models import InvenTreeParameterMixin
-
         model_class = self.model_type.model_class()
 
         if not issubclass(model_class, InvenTreeParameterMixin):
@@ -3198,8 +3185,6 @@ class Parameter(
         The linked content_object can implement custom checks by overriding
         the 'check_parameter_edit' method.
         """
-        from InvenTree.models import InvenTreeParameterMixin
-
         # content_object is None (rather than raising) if the target row is
         # missing - GenericForeignKey.__get__ catches ObjectDoesNotExist
         # internally, it never propagates it.
@@ -3210,8 +3195,6 @@ class Parameter(
 
     def check_delete(self):
         """Check if this parameter can be deleted."""
-        from InvenTree.models import InvenTreeParameterMixin
-
         instance = self.content_object
 
         if instance and isinstance(instance, InvenTreeParameterMixin):
@@ -3266,9 +3249,7 @@ class Parameter(
         return self.template.description
 
 
-class Note(
-    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
-):
+class Note(UpdatedUserMixin, InvenTreeMetadataModel):
     """Class which represents a note assigned to a particular model instance.
 
     Attributes:
@@ -3475,8 +3456,6 @@ class Note(
 
     def check_save(self):
         """Check if this note can be saved."""
-        from InvenTree.models import InvenTreeNoteMixin
-
         if self.template or not self.model_type:
             return
 
@@ -3490,8 +3469,6 @@ class Note(
 
     def check_delete(self):
         """Check if this note can be deleted."""
-        from InvenTree.models import InvenTreeNoteMixin
-
         if self.template or not self.model_type:
             return
 
@@ -3507,8 +3484,6 @@ class Note(
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this note."""
-        from InvenTree.models import InvenTreeNoteMixin
-
         if self.template:
             return user.is_staff
 
@@ -3615,7 +3590,7 @@ def after_notesimage_deleted(sender, instance, **kwargs):
         )
 
 
-class BarcodeScanResult(InvenTree.models.InvenTreeModel):
+class BarcodeScanResult(InvenTreeModel):
     """Model for storing barcode scans results."""
 
     BARCODE_SCAN_MAX_LEN = 250
@@ -3948,7 +3923,7 @@ class EmailMessage(models.Model):
         return super().delete(*args, **kwargs)
 
 
-class EmailThread(InvenTree.models.InvenTreeMetadataModel):
+class EmailThread(InvenTreeMetadataModel):
     """Model for storing email threads."""
 
     class Meta:
