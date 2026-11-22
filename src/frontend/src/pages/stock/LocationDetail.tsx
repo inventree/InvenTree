@@ -333,9 +333,6 @@ export default function Stock() {
   const featureActions = useModelFeatureActions({
     model: ModelType.stocklocation,
     instance: location,
-    permission: {
-      [ModelFeature.barcode]: user.hasChangeRole(UserRoles.stock_location)
-    },
     actions: {
       [ModelFeature.barcode]: [
         {

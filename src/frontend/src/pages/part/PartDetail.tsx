@@ -41,7 +41,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelFeature } from '@lib/enums/ModelFeature';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
@@ -717,10 +716,7 @@ export default function PartDetail() {
 
   const featureActions = useModelFeatureActions({
     model: ModelType.part,
-    instance: part,
-    permission: {
-      [ModelFeature.barcode]: user.hasChangeRole(UserRoles.part)
-    }
+    instance: part
   });
 
   const partActions = useMemo(() => {

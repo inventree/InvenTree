@@ -519,9 +519,6 @@ export default function StockDetail() {
   const featureActions = useModelFeatureActions({
     model: ModelType.stockitem,
     instance: stockitem,
-    permission: {
-      [ModelFeature.barcode]: user.hasChangeRole(UserRoles.stock)
-    },
     actions: {
       [ModelFeature.barcode]: [
         {
