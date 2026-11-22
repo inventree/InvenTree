@@ -85,9 +85,9 @@ class FilterableSerializerMixin:
     This introduces overhead during initialization, so only use this mixin when necessary.
     """
 
-    optional_filters: dict = None
-    fields_to_remove: set = None
-    optional_fields: set = None
+    optional_filters: Optional[dict] = None
+    fields_to_remove: Optional[set] = None
+    optional_fields: Optional[set] = None
     filter_on_query: bool = True
 
     # Keyword argument used to pass the requesting user to nested serializers
