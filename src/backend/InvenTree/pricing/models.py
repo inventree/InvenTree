@@ -2025,7 +2025,14 @@ class StockItemCostManager(models.Manager):
 
                 self.bulk_create(summaries, batch_size=500, **upsert_kwargs)
 
-        self.schedule_part_pricing_updates(stock_item_ids)
+        # Schedule part pricing updates once the changes are committed - otherwise a
+        # background worker could recalculate part pricing from uncommitted (or rolled back) data
+        transaction.on_commit(
+            lambda ids=frozenset(stock_item_ids): self.schedule_part_pricing_updates(
+                ids
+            ),
+            using=self.db,
+        )
 
     def schedule_part_pricing_updates(self, stock_item_ids):
         """Schedule a pricing update for the parts of the provided stock items.

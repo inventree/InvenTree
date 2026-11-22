@@ -281,12 +281,17 @@ class StockItemCostEntrySerializer(
             'notes',
         ]
 
+        # Note: Entries created via the API are always 'manual' entries.
+        # The source (and source data) identify entries recorded automatically,
+        # and cannot be set (or changed) via the API
         read_only_fields = [
             'converted_currency',
             'converted_min_cost',
             'converted_max_cost',
             'date',
             'user',
+            'source',
+            'source_data',
         ]
 
     def __init__(self, *args, **kwargs):

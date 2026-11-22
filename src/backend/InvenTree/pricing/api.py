@@ -228,10 +228,8 @@ class StockItemCostEntryList(
     ordering = '-date'
 
     def perform_create(self, serializer):
-        """Record the creating user, and mark the entry as manually entered (unless a source is provided)."""
-        source = serializer.validated_data.get('source') or CostSource.MANUAL
-
-        serializer.save(user=self.user_or_none(), source=source)
+        """Record the creating user - entries created via the API are always manual entries."""
+        serializer.save(user=self.user_or_none(), source=CostSource.MANUAL)
 
 
 class StockItemCostEntryDetail(
