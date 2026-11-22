@@ -144,11 +144,11 @@ export default function PurchaseOrderDetail() {
         icon: <IconList />,
         controls: (
           <Group gap='xs'>
-            <Text size='sm'>{t`Total Cost`}</Text>
+            <Text size='sm' c='dimmed'>{t`Total Cost`}</Text>
             <Text
               component='output'
-              size='sm'
-              fw={500}
+              size='lg'
+              fw={700}
               aria-label={t`Total Cost`}
             >
               {formatCurrency(order.total_price, {
