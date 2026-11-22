@@ -23,7 +23,22 @@ This configuration ensures that Django recognizes the plugin as a valid applicat
 
 ## Base classes
 
-A typical Django model class is based on `django.db.models.Model`, which provides the core functionality for defining database models in Django. Alternatively, `generic.models.base.InvenTreeModel` comes with a few additional core integrations (content type association, [plugin validation](./mixins/validation.md)) or `generic.models.base.InvenTreeMetadataModel` which also includes [model metadata](./metadata.md) support for the model instances.
+A typical Django model class is based on `django.db.models.Model`, which provides the core functionality for defining database models in Django.
+
+
+Alternatively, `generic.models.base`contains a few base classes that plugins can also use.
+
+### InvenTreeModel
+
+Add support for content type association and [plugin validation](./mixins/validation.md).
+
+### InvenTreeMetadataModel
+
+Adds everything in InvenTreeModel, and adds support for [model metadata](./metadata.md).
+
+### InvenTreeTree
+
+For Tree models using django-mptt for hierarchies, also include content type association.
 
 ## Generic Model Mixins
 
