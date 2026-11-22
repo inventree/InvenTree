@@ -169,7 +169,7 @@ class FilterableSerializerMixin:
         if InvenTree.ready.isGeneratingSchema():
             return True
 
-        if value is not None:
+        if value is not None and self.optional_filters is not None:
             # Cache the value for future reference
             self.optional_filters[field_ref] = value
 
