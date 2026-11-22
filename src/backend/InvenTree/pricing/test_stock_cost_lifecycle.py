@@ -172,6 +172,38 @@ class CopyCostTests(StockItemCostLifecycleBase):
         self.assertEqual(self.entry_values(shipped), self.entry_values(item))
         self.assertSummary(shipped, 2, 2)
 
+    def test_ship_multiple_sources(self):
+        """Each split-off item carries the cost of its *own* source item.
+
+        Regression test: the split-off items are bulk created, and matched back to their
+        source items by position - so a mismatch would copy the wrong cost data.
+        """
+        part = Part.objects.create(name='Salable', description='Salable', salable=True)
+        customer = Company.objects.create(name='Customer', is_customer=True)
+
+        items = [self.make_item(quantity=100, part=part) for _ in range(4)]
+
+        for idx, item in enumerate(items):
+            self.add_cost(item, min_cost=Money(idx + 1, 'USD'))
+
+        order = SalesOrder.objects.create(customer=customer, reference='SO-COST-2')
+        shipment = SalesOrderShipment.objects.create(order=order, reference='1')
+        line = SalesOrderLineItem.objects.create(order=order, part=part, quantity=40)
+
+        # Allocated in an order which does not match the stock item (primary key) order
+        for item in [items[2], items[0], items[3], items[1]]:
+            SalesOrderAllocation.objects.create(
+                line=line, shipment=shipment, item=item, quantity=10
+            )
+
+        shipment.complete_allocations(SalesOrderAllocation.objects.filter(line=line))
+
+        for idx, item in enumerate(items):
+            shipped = StockItem.objects.get(parent=item, sales_order=order)
+            self.assertEqual(shipped.quantity, 10)
+            self.assertEqual(self.entry_values(shipped), self.entry_values(item))
+            self.assertSummary(shipped, idx + 1, idx + 1)
+
 
 class MergeCostTests(StockItemCostLifecycleBase):
     """Merging stock items combines their cost data."""

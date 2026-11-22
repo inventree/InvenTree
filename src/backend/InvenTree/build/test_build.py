@@ -844,6 +844,47 @@ class BuildTest(BuildTestBase):
         # The source item retains its own cost entry
         self.assertEqual(self.stock_1_2.cost_entries.count(), 1)
 
+    def test_complete_allocations_copies_costs_multiple(self):
+        """Each split-off item carries the cost of its *own* source item.
+
+        Regression test: the split-off items are bulk created, and matched back to their
+        source items by position - so a mismatch would copy the wrong cost data.
+        """
+        from pricing.models import CostSource, StockItemCost, StockItemCostEntry
+        from pricing.status_codes import CostType
+
+        sources = {
+            self.stock_1_2: (5, 2),
+            self.stock_1_1: (2, 7),
+            self.stock_2_3: (1, 11),
+            self.stock_2_1: (3, 13),
+        }
+
+        # A different unit cost for each source item
+        for item, (_quantity, cost) in sources.items():
+            StockItemCostEntry.objects.create_cost(
+                item, CostType.PURCHASE, CostSource.MANUAL, min_cost=Money(cost, 'USD')
+            )
+
+        self.build.issue_build()
+
+        # Allocated in an order which does not match the stock item (primary key) order
+        self.allocate_stock(
+            None, {item: quantity for item, (quantity, _cost) in sources.items()}
+        )
+
+        self.build.complete_allocations(
+            BuildItem.objects.filter(build_line__build=self.build), user=self.user
+        )
+
+        for item, (quantity, cost) in sources.items():
+            consumed = StockItem.objects.get(parent=item, consumed_by=self.build)
+            self.assertEqual(consumed.quantity, quantity)
+            self.assertEqual(consumed.cost_entries.get().min_cost, cost)
+            self.assertEqual(
+                StockItemCost.objects.get(stock_item=consumed).min_cost, cost
+            )
+
     def test_complete_allocation_wrapper(self):
         """BuildItem.complete_allocation() is a thin wrapper around Build.complete_allocations().
 

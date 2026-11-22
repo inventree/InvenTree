@@ -490,7 +490,7 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
         summary = StockItemCost.objects.get(stock_item=self.other_item)
         self.assertEqual(summary.min_cost, Decimal('6.25'))
 
-        # An explicit source is retained, and converted values cannot be set
+        # The source, source data and converted values cannot be set via the API
         response = self.post(
             self.LIST_URL,
             {
@@ -498,12 +498,14 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
                 'cost_type': CostType.ADJUSTMENT.value,
                 'min_cost': -2,
                 'max_cost': -1,
-                'source': 'plugin:my-plugin',
+                'source': CostSource.PURCHASE_ORDER,
+                'source_data': {'purchase_order': 99},
                 'converted_min_cost': 999,
             },
         )
 
-        self.assertEqual(response.data['source'], 'plugin:my-plugin')
+        self.assertEqual(response.data['source'], 'manual')
+        self.assertIsNone(response.data['source_data'])
         self.assertEqual(response.data['converted_min_cost'], -2)
 
         summary.refresh_from_db()
@@ -545,20 +547,42 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
 
         self.assertEqual(count_queries(2), count_queries(8))
 
-    def test_invalid_source(self):
-        """The source must follow the naming convention."""
-        for source in ['my-plugin', 'plugin:', 'plugin:Bad Slug']:
+    def test_source_read_only(self):
+        """The source of an entry cannot be set (or changed) via the API."""
+        for source in [CostSource.LEGACY, 'plugin:my-plugin', 'not-a-source']:
             response = self.post(
                 self.LIST_URL,
                 {'stock_item': self.item.pk, 'min_cost': 1, 'source': source},
-                expected_code=400,
+                expected_code=201,
             )
-            self.assertIn('source', response.data)
+            self.assertEqual(response.data['source'], CostSource.MANUAL)
+
+        # An entry recorded automatically keeps its source (and source data) on update
+        entry = StockItemCostEntry.objects.create_cost(
+            self.item,
+            CostType.PURCHASE,
+            CostSource.PURCHASE_ORDER,
+            min_cost=1,
+            source_data={'purchase_order': 1},
+        )
 
         response = self.patch(
-            self.detail_url(self.entry.pk), {'source': 'nope'}, expected_code=400
+            self.detail_url(entry.pk),
+            {
+                'source': CostSource.MANUAL,
+                'source_data': {'purchase_order': 99},
+                'min_cost': 2,
+                'max_cost': 2,
+            },
         )
-        self.assertIn('source', response.data)
+
+        self.assertEqual(response.data['source'], CostSource.PURCHASE_ORDER)
+        self.assertEqual(response.data['source_data'], {'purchase_order': 1})
+        self.assertEqual(response.data['min_cost'], 2)
+
+        entry.refresh_from_db()
+        self.assertEqual(entry.source, CostSource.PURCHASE_ORDER)
+        self.assertEqual(entry.source_data, {'purchase_order': 1})
 
     def test_create_invalid(self):
         """Test that invalid cost entries are rejected."""

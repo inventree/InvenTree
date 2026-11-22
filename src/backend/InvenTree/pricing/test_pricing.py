@@ -353,14 +353,23 @@ class PartPricingTests(InvenTreeTestCase):
         item = stock.models.StockItem.objects.create(part=p, quantity=10)
 
         with mock.patch.object(part.models.Part, 'schedule_pricing_update') as schedule:
-            entry = StockItemCostEntry.objects.create_cost(
-                item, CostType.PURCHASE, CostSource.MANUAL, min_cost=Money(1, 'USD')
-            )
+            # The update is only scheduled once the transaction is committed
+            with self.captureOnCommitCallbacks(execute=False) as callbacks:
+                entry = StockItemCostEntry.objects.create_cost(
+                    item, CostType.PURCHASE, CostSource.MANUAL, min_cost=Money(1, 'USD')
+                )
+
+            schedule.assert_not_called()
+
+            for callback in callbacks:
+                callback()
 
             schedule.assert_called_with(create=True, refresh=False)
             schedule.reset_mock()
 
-            entry.delete()
+            with self.captureOnCommitCallbacks(execute=True):
+                entry.delete()
+
             schedule.assert_called_with(create=True, refresh=False)
 
     @override_settings(TESTING_PRICING=True)
