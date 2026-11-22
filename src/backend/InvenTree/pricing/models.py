@@ -1674,6 +1674,10 @@ class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
     AUDIT_PARENT_FIELD = 'stock_item'
     AUDIT_EXCLUDE_FIELDS = ('date',)
 
+    # Access to cost entries requires permission to view the stock item (see StockItemCostPermissionMixin),
+    # so the audit history of an entry is only visible to users who can view its stock item
+    AUDIT_REQUIRE_PARENT_PERMISSION = True
+
     objects = StockItemCostEntryManager()
 
     def __str__(self):
