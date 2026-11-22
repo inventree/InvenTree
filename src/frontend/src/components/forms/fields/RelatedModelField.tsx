@@ -1,3 +1,4 @@
+import { ModelFeature } from '@lib/enums/ModelFeature';
 import { t } from '@lingui/core/macro';
 import {
   Group,
@@ -36,6 +37,7 @@ import { IconPlus } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 import { useApi } from '../../../contexts/ApiContext';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
+import { useModelFeatures } from '../../../states/ModelFeatureState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -173,9 +175,11 @@ function RelatedModelFieldComponent({
     return false;
   }, [definition.addCreateFields, modelInfo]);
 
+  const modelFeatures = useModelFeatures(definition.model);
+
   // Determine whether a barcode field should be added
   const addBarcodeField: boolean = useMemo(() => {
-    if (!modelInfo || !modelInfo.supports_barcode) {
+    if (!modelInfo || !modelFeatures.includes(ModelFeature.barcode)) {
       return false;
     }
 
@@ -188,7 +192,7 @@ function RelatedModelFieldComponent({
     }
 
     return true;
-  }, [globalSettings, userSettings, modelInfo]);
+  }, [modelFeatures, globalSettings, userSettings, modelInfo]);
 
   // Callback function to handle barcode scan results
   const onBarcodeScan = useCallback(
