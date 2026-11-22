@@ -46,12 +46,12 @@ Most common mechanisms contained in InvenTree's own models are exposed in the `g
 
 ### InvenTreeAttachmentMixin
 
-TODO
+Adds support for use of [generic attachments](../concepts/attachments.md) with a models instances.
 
 
 ### InvenTreeAuditMixin
 
-TODO
+Adds support for [audit tracking](../concepts/audit.md) of model instances, including API and user interface generation.
 
 ### InvenTreeBarcodeMixin
 
@@ -78,15 +78,22 @@ Adds support for [parameters](../concepts/parameters.md), allowing your models t
 
 ### InvenTreePathStringMixin
 
-TODO
+Adds a number of fields to support having hierarchical path strings persisted on model instances automatically. Used by parts and stock item.
+
+!!! warning "Warning"
+    Use only after understanding the added computational and database load overhead.
+
 
 ### InvenTreePluginValidationMixin
 
-TODO
+Adds functions that extend save and delete operations of the model to call [plugins for validation](./mixins/validation.md) before committing changes to the database.
 
 ### InvenTreeReferenceIndexingMixin
 
-TODO
+
+Adds support for generating, validating and parsing [instance references](../settings/reference.md). Also adds a `reference_int` field that stores a converted value for the reference for use in ordering and indexing operations.
+
+An optional constant `REFERENCE_PATTERN_SETTING` on the model class can be pointed to a settings name that will be used to control the [reference pattern](../settings/reference.md).
 
 ### InvenTreeTagsMixin
 
