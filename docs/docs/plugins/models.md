@@ -42,10 +42,52 @@ For Tree models using django-mptt for hierarchies, also include content type ass
 
 ## Generic Model Mixins
 
-### MetadataMixin
+Most common mechanisms contained in InvenTree's own models are exposed in the `generic.models` module as a set of mixins that often also have detection for frontend components to provide functions automatically.
+
+### InvenTreeAttachmentMixin
+
+TODO
+
+
+### InvenTreeAuditMixin
+
+TODO
+
+### InvenTreeBarcodeMixin
+
+Adds fields and functions for linking a [barcode](../barcodes/index.md) against model instances including lookup, assignment, and validation of barcodes against the API.
+
+### InvenTreeImageMixin
+
+Adds a `image` field to the model and automatic thumbnail generation for the uploaded images. This image can also be referenced in [reports](../report/report.md).
+
+You must define a constant `IMAGE_RENAME` on the model class pointing to the function in your model that handles renaming uploaded images.
+
+### InvenTreeMetadataMixin
 
 Adds support for [model metadata](./metadata.md) support, allowing additional information to be attached to model instances. This metadata can be accessed and manipulated through the InvenTree API or by other plugins.
+
+### InvenTreeNoteMixin
+
+Adds support for defining and managing [notes](../concepts/notes.md) against model instances.
 
 ### InvenTreeParameterMixin
 
 Adds support for [parameters](../concepts/parameters.md), allowing your models to use the parameter mechanism including proper permission checks and integration with the InvenTree API.
+
+
+### InvenTreePathStringMixin
+
+TODO
+
+### InvenTreePluginValidationMixin
+
+TODO
+
+### InvenTreeReferenceIndexingMixin
+
+TODO
+
+### InvenTreeTagsMixin
+
+Adds the required mechanism for defining [tags](../concepts/tags.md) for model instances.
