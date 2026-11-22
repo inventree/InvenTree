@@ -22,13 +22,22 @@ import common.currency
 import common.models
 import InvenTree.conversion
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.validators
 import report.mixins
 from audit.helpers import audited_update
 from common.currency import currency_code_default
 from common.settings import get_global_setting
+from generic.models.base import InvenTreeMetadataModel, InvenTreeModel
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeImageMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeTagsMixin,
+)
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from order.status_codes import PurchaseOrderStatusGroups
 
@@ -87,14 +96,14 @@ def default_internal_company() -> Optional[int]:
 
 
 class Company(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAuditMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeParameterMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.InvenTreeImageMixin,
-    InvenTree.models.InvenTreeMetadataModel,
+    InvenTreeImageMixin,
+    InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
 
@@ -339,9 +348,7 @@ class Company(
         ).distinct()
 
 
-class Contact(
-    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
-):
+class Contact(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
     Attributes:
@@ -384,7 +391,7 @@ class Contact(
         return self.name
 
 
-class Address(InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeModel):
+class Address(InvenTreeAuditMixin, InvenTreeModel):
     """An address represents a physical location where the company is located. It is possible for a company to have multiple locations.
 
     Attributes:
@@ -561,13 +568,13 @@ class Address(InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMo
 
 
 class ManufacturerPart(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeMetadataModel,
+    InvenTreeAuditMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeParameterMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
+    InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
@@ -680,15 +687,14 @@ class ManufacturerPart(
 
 
 class SupplierPart(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAuditMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeParameterMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     common.models.MetaMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 
@@ -1093,9 +1099,7 @@ class SupplierPart(
         return s
 
 
-class SupplierPriceBreak(
-    InvenTree.models.InvenTreeAuditMixin, common.models.PriceBreak
-):
+class SupplierPriceBreak(InvenTreeAuditMixin, common.models.PriceBreak):
     """Represents a quantity price break for a SupplierPart.
 
     - Suppliers can offer discounts at larger quantities

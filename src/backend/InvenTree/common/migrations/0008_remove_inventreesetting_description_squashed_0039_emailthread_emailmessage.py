@@ -2,7 +2,6 @@
 
 import InvenTree.config
 import InvenTree.fields
-import InvenTree.models
 import common.models
 import common.validators
 import django.db.models.deletion
@@ -11,7 +10,7 @@ import uuid
 from django.conf import settings
 from django.db import migrations, models, transaction
 from moneyed import CURRENCIES
-
+import generic.models.modelmixins
 
 def set_default_currency(apps, schema_editor):
     """Migrate the currency setting from config.yml to db."""
@@ -235,7 +234,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Attachment',
             },
-            bases=(InvenTree.models.PluginValidationMixin, models.Model),
+            bases=(generic.models.modelmixins.InvenTreePluginValidationMixin, models.Model),
         ),
         migrations.AlterField(
             model_name='customunit',
@@ -280,7 +279,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Barcode Scan',
             },
-            bases=(InvenTree.models.PluginValidationMixin, models.Model),
+            bases=(generic.models.modelmixins.InvenTreePluginValidationMixin, models.Model),
         ),
         migrations.CreateModel(
             name='SelectionList',
@@ -299,7 +298,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Selection List',
                 'verbose_name_plural': 'Selection Lists',
             },
-            bases=(InvenTree.models.PluginValidationMixin, models.Model),
+            bases=(generic.models.modelmixins.InvenTreePluginValidationMixin, models.Model),
         ),
         migrations.CreateModel(
             name='SelectionListEntry',
@@ -372,7 +371,7 @@ class Migration(migrations.Migration):
                 'ordering': ['-updated'],
                 'unique_together': {('key', 'global_id')},
             },
-            bases=(InvenTree.models.PluginValidationMixin, models.Model),
+            bases=(generic.models.modelmixins.InvenTreePluginValidationMixin, models.Model),
         ),
         migrations.CreateModel(
             name='EmailMessage',
