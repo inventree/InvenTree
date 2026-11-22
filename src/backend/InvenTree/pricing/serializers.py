@@ -9,6 +9,7 @@ from rest_framework import serializers
 
 import common.currency
 import InvenTree.serializers
+from data_exporter.mixins import DataExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import OptionalField
@@ -254,6 +255,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 class StockItemCostEntrySerializer(
     InvenTree.serializers.FilterableSerializerMixin,
+    DataExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for the StockItemCostEntry model."""
@@ -302,7 +304,7 @@ class StockItemCostEntrySerializer(
             self.fields['stock_item'].read_only = True
 
     cost_type_text = serializers.CharField(
-        source='get_cost_type_display', read_only=True
+        source='get_cost_type_display', read_only=True, label=_('Cost Type Name')
     )
 
     currency = InvenTree.serializers.InvenTreeCurrencySerializer(
@@ -310,19 +312,25 @@ class StockItemCostEntrySerializer(
     )
 
     min_cost = InvenTree.serializers.InvenTreeDecimalField(
-        allow_null=True, required=False, help_text=_('Minimum unit cost')
+        allow_null=True,
+        required=False,
+        label=_('Minimum Cost'),
+        help_text=_('Minimum unit cost'),
     )
 
     max_cost = InvenTree.serializers.InvenTreeDecimalField(
-        allow_null=True, required=False, help_text=_('Maximum unit cost')
+        allow_null=True,
+        required=False,
+        label=_('Maximum Cost'),
+        help_text=_('Maximum unit cost'),
     )
 
     converted_min_cost = InvenTree.serializers.InvenTreeDecimalField(
-        read_only=True, allow_null=True
+        read_only=True, allow_null=True, label=_('Converted Minimum Cost')
     )
 
     converted_max_cost = InvenTree.serializers.InvenTreeDecimalField(
-        read_only=True, allow_null=True
+        read_only=True, allow_null=True, label=_('Converted Maximum Cost')
     )
 
     user_detail = OptionalField(

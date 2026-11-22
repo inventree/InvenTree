@@ -68,7 +68,7 @@ The *remaining cost* is calculated as follows:
 - Less the cost of any [installed items](#accounting-for-installed-items) which are broken out - these keep their own cost entries, so their cost is not allocated again
 - Less the total of any explicit *Unit Cost* values entered (unit cost &times; quantity)
 
-If nothing remains (for example, the explicit costs already account for the full cost of the disassembled units), no cost is allocated. If the cost of the original stock item is a range (an estimate), the range is carried through to the allocated costs.
+If nothing remains (for example, the explicit costs already account for the full cost of the disassembled units), no cost is allocated. If the cost of the original stock item is a range (an estimate), the range is carried through to the allocated costs. Where the cost of an installed item is also a range, the *minimum* remaining cost deducts its *maximum* cost (and vice versa) - for example, a $10 - $12 assembly with a $1 - $8 installed item leaves $2 - $11 to be allocated.
 
 Cost is only recorded against newly *created* stock items - matched installed items retain their own existing cost entries. The details of each automatic allocation are recorded in the source data of the cost entry.
 
@@ -77,7 +77,7 @@ Cost is only recorded against newly *created* stock items - matched installed it
 The disassembly form explains how component costs will be recorded, and updates as unit costs are entered:
 
 - **Automatic Cost Allocation:** The remaining cost (shown, where it can be calculated) will be allocated across the components without a *Unit Cost*
-- **No Cost Will Be Recorded:** No cost will be recorded for the components without a *Unit Cost*. The reason is shown - for example, the disassembled item has no recorded cost (or its cost could not be converted to the default currency), or the components without pricing data are listed
+- **No Cost Will Be Recorded:** No cost will be recorded for the components without a *Unit Cost*. The reason is shown - for example, the disassembled item has no recorded cost (or its cost could not be converted to the default currency), the cost of an installed item could not be converted, or the components without pricing data are listed
 
 The *Unit Cost* field of each line shows *Automatic* or *No cost recorded* (when left blank) accordingly. Users without the *Pricing* view role cannot view the cost and pricing data used for this calculation, and instead see a general explanation of these rules.
 

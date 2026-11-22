@@ -467,9 +467,16 @@ export function useStockItemSerializeFields({
  */
 export type DisassemblyCostStatus = {
   mode: 'explicit' | 'allocate' | 'none' | 'unknown';
-  reason?: 'no-cost' | 'unconverted' | 'missing-pricing' | 'no-remaining';
+  reason?:
+    | 'no-cost'
+    | 'unconverted'
+    | 'missing-pricing'
+    | 'installed-unconverted'
+    | 'no-remaining';
   // Components without pricing data (when reason = 'missing-pricing')
   missingParts: string[];
+  // Installed items whose cost could not be converted (when reason = 'installed-unconverted')
+  unconvertedItems?: string[];
   // Number of components without an explicit unit cost
   automaticCount: number;
   // Remaining cost to be allocated (if it can be calculated)
@@ -594,6 +601,28 @@ export function getDisassemblyCostStatus({
     };
   }
 
+  // An installed item with a cost summary but no values (its cost could not be converted)
+  // means the remaining cost cannot be determined - so no cost is allocated.
+  // Mirrors StockItem.disassembly_cost_pool (server side)
+  const unconverted = installedItems.filter(
+    (item: any) =>
+      !!item.pricing_detail &&
+      isBlankValue(item.pricing_detail.min_cost) &&
+      isBlankValue(item.pricing_detail.max_cost)
+  );
+
+  if (unconverted.length > 0) {
+    return {
+      ...status,
+      mode: 'none',
+      reason: 'installed-unconverted',
+      unconvertedItems: unconverted.map((item: any) => {
+        const name = item.part_detail?.full_name ?? '-';
+        return item.serial ? `${name} #${item.serial}` : name;
+      })
+    };
+  }
+
   // The remaining cost can only be calculated if all values are in the same currency
   // (explicit costs are entered in the default currency)
   const sameCurrency =
@@ -635,13 +664,15 @@ export function getDisassemblyCostStatus({
     0
   );
 
+  // Interval subtraction (mirrors StockItem.disassembly_cost_pool):
+  // the minimum remaining cost deducts the *maximum* installed cost, and vice versa
   const remainingMin = Math.max(
     0,
-    Number(minCost) * n - installedMin - explicitTotal
+    Number(minCost) * n - installedMax - explicitTotal
   );
   const remainingMax = Math.max(
     0,
-    Number(maxCost) * n - installedMax - explicitTotal
+    Number(maxCost) * n - installedMin - explicitTotal
   );
 
   if (remainingMax <= 0) {
@@ -717,6 +748,22 @@ function DisassemblyCostInfo({
                 {status.missingParts.map((name: string, idx: number) => (
                   <List.Item key={`${name}-${idx}`}>{name}</List.Item>
                 ))}
+              </List>
+            </Stack>
+          );
+          break;
+        case 'installed-unconverted':
+          reason = (
+            <Stack gap={2}>
+              <Text size='sm'>
+                {t`The cost of the following installed items could not be converted to the default currency (no exchange rate is available), so the remaining cost cannot be determined:`}
+              </Text>
+              <List size='sm'>
+                {(status.unconvertedItems ?? []).map(
+                  (name: string, idx: number) => (
+                    <List.Item key={`${name}-${idx}`}>{name}</List.Item>
+                  )
+                )}
               </List>
             </Stack>
           );

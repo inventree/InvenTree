@@ -70,6 +70,19 @@ class StockItemCostEntryAdmin(admin.ModelAdmin):
 
     autocomplete_fields = ('stock_item', 'user')
 
+    def get_readonly_fields(self, request, obj=None):
+        """An existing entry cannot be moved to a different stock item.
+
+        Saving an entry only updates the cost summary of its (new) stock item,
+        so moving it would leave a stale summary on the original stock item.
+        """
+        fields = super().get_readonly_fields(request, obj)
+
+        if obj is not None and obj.pk:
+            return (*fields, 'stock_item')
+
+        return fields
+
     def delete_queryset(self, request, queryset):
         """Delete the selected entries (bulk 'delete' action), and update the cost summaries.
 

@@ -1245,6 +1245,8 @@ class StockItemCostEntryManager(models.Manager):
                 entries.order_by().values_list('stock_item_id', flat=True).distinct()
             )
 
+            StockItemCost.objects.lock_stock_items(stock_item_ids)
+
             _count, deleted = entries.delete()
 
             StockItemCost.objects.update_for_stock_items(stock_item_ids)
@@ -1275,11 +1277,12 @@ class StockItemCostEntryManager(models.Manager):
         if not objs:
             return []
 
+        stock_item_ids = {obj.stock_item_id for obj in objs}
+
         with transaction.atomic():
+            StockItemCost.objects.lock_stock_items(stock_item_ids)
             created = self.save_prepared_entries(objs)
-            StockItemCost.objects.update_for_stock_items({
-                obj.stock_item_id for obj in objs
-            })
+            StockItemCost.objects.update_for_stock_items(stock_item_ids)
 
         return created
 
@@ -1321,6 +1324,7 @@ class StockItemCostEntryManager(models.Manager):
                 })
 
         with transaction.atomic():
+            StockItemCost.objects.lock_stock_items([stock_item.pk])
             existing.delete()
             created = self.save_prepared_entries(objs)
             StockItemCost.objects.update_for_stock_items([stock_item.pk])
@@ -1405,27 +1409,30 @@ class StockItemCostEntryManager(models.Manager):
             if not field.primary_key and field.attname != 'stock_item_id'
         ]
 
-        objs = []
-
-        for entry in (
-            self
-            .filter(stock_item_id__in=targets.keys())
-            .order_by('pk')
-            .iterator(chunk_size=500)
-        ):
-            data = {field: getattr(entry, field) for field in fields}
-
-            for target_id in targets[entry.stock_item_id]:
-                objs.append(self.model(stock_item_id=target_id, **data))
+        target_ids = {target_id for ids in targets.values() for target_id in ids}
 
         with transaction.atomic():
+            # Lock the source items too, so that the copied entries are consistent
+            StockItemCost.objects.lock_stock_items(target_ids | set(targets.keys()))
+
+            objs = []
+
+            for entry in (
+                self
+                .filter(stock_item_id__in=targets.keys())
+                .order_by('pk')
+                .iterator(chunk_size=500)
+            ):
+                data = {field: getattr(entry, field) for field in fields}
+
+                for target_id in targets[entry.stock_item_id]:
+                    objs.append(self.model(stock_item_id=target_id, **data))
+
             created = self.save_prepared_entries(objs)
 
             # Note: Targets without any copied entries are included,
             # so that any (stale) summary is removed
-            StockItemCost.objects.update_for_stock_items({
-                target_id for ids in targets.values() for target_id in ids
-            })
+            StockItemCost.objects.update_for_stock_items(target_ids)
 
         return created
 
@@ -1550,6 +1557,8 @@ class StockItemCostEntryManager(models.Manager):
         from pricing.helpers import StockItemCostRecorder
 
         with transaction.atomic():
+            StockItemCost.objects.lock_stock_items([target.pk])
+
             self.filter(stock_item=target).delete()
 
             costs = StockItemCostRecorder(source=CostSource.MERGE, user=user)
@@ -1591,16 +1600,24 @@ class StockItemCostEntryManager(models.Manager):
         )
 
         updated = []
-        stock_item_ids = set()
-
-        for entry in queryset.order_by('pk').iterator(chunk_size=500):
-            stock_item_ids.add(entry.stock_item_id)
-            entry.convert_costs()
-
-            if entry.converted_currency:
-                updated.append(entry)
 
         with transaction.atomic():
+            stock_item_ids = set(
+                queryset.order_by().values_list('stock_item_id', flat=True).distinct()
+            )
+
+            # Lock the affected stock items *before* reading the entries,
+            # so that a concurrent edit of an entry is not overwritten with stale values
+            StockItemCost.objects.lock_stock_items(stock_item_ids)
+
+            for entry in queryset.filter(stock_item_id__in=stock_item_ids).order_by(
+                'pk'
+            ):
+                entry.convert_costs()
+
+                if entry.converted_currency:
+                    updated.append(entry)
+
             self.bulk_update(
                 updated,
                 ['converted_currency', 'converted_min_cost', 'converted_max_cost'],
@@ -1932,6 +1949,7 @@ class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
         self.prepare()
 
         with transaction.atomic():
+            StockItemCost.objects.lock_stock_items([self.stock_item_id])
             super().save(*args, **kwargs)
             StockItemCost.objects.update_for_stock_items([self.stock_item_id])
 
@@ -1942,6 +1960,7 @@ class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
         stock_item_id = self.stock_item_id
 
         with transaction.atomic():
+            StockItemCost.objects.lock_stock_items([stock_item_id])
             result = super().delete(*args, **kwargs)
             StockItemCost.objects.update_for_stock_items([stock_item_id])
 
@@ -1950,6 +1969,46 @@ class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
 
 class StockItemCostManager(models.Manager):
     """Manager for the StockItemCost model."""
+
+    def lock_stock_items(self, stock_item_ids):
+        """Acquire a row-level lock on each of the provided stock items.
+
+        Every operation which writes cost entries holds this lock (from *before* the
+        entries are written, until the transaction completes). This serializes concurrent
+        cost writes against the same stock item - otherwise two transactions could each
+        calculate a summary which is missing the other's (uncommitted) entries,
+        and the last one to commit would overwrite the summary with an incorrect total.
+
+        - Rows are locked in primary key order, to avoid lock-ordering deadlocks
+        - Where supported (PostgreSQL), FOR NO KEY UPDATE is used. This does not conflict
+          with the KEY SHARE lock taken by inserting a row which references the stock item
+          (e.g. a cost entry or tracking entry), and is compatible with existing
+          FOR UPDATE locks held on the stock item by the same transaction
+        - Locking is a no-op on backends which do not support row locks (e.g. SQLite,
+          which serializes all writes)
+
+        Note: Must be called from within a database transaction.
+
+        Arguments:
+            stock_item_ids: Iterable of StockItem primary keys
+        """
+        from stock.models import StockItem
+
+        stock_item_ids = sorted({pk for pk in stock_item_ids if pk is not None})
+
+        if not stock_item_ids:
+            return
+
+        no_key = connections[self.db].features.has_select_for_no_key_update
+
+        list(
+            StockItem.objects
+            .using(self.db)
+            .select_for_update(no_key=no_key)
+            .filter(pk__in=stock_item_ids)
+            .order_by('pk')
+            .values_list('pk', flat=True)
+        )
 
     def update_for_stock_items(self, stock_item_ids):
         """(Re)calculate the cached cost summary for each of the provided stock items.
@@ -1961,6 +2020,11 @@ class StockItemCostManager(models.Manager):
         - Entries without a converted value in the default currency are excluded,
           and the summary is marked as incomplete
 
+        The stock items are locked (see lock_stock_items), and the cost entries are then
+        (re)fetched with a locking read, so that the summary is calculated from the
+        latest committed entries - even under REPEATABLE READ isolation (e.g. MySQL),
+        where a plain read could return a stale snapshot.
+
         Arguments:
             stock_item_ids: Iterable of StockItem primary keys
         """
@@ -1971,39 +2035,57 @@ class StockItemCostManager(models.Manager):
 
         currency = currency_code_default()
 
-        valid = Q(
-            converted_currency=currency,
-            converted_min_cost__isnull=False,
-            converted_max_cost__isnull=False,
-        )
+        with transaction.atomic(using=self.db):
+            self.lock_stock_items(stock_item_ids)
 
-        totals = (
-            StockItemCostEntry.objects
-            .filter(stock_item_id__in=stock_item_ids)
-            .order_by()
-            .values('stock_item_id')
-            .annotate(
-                min_total=Sum('converted_min_cost', filter=valid),
-                max_total=Sum('converted_max_cost', filter=valid),
-                entry_count=Count('pk'),
-                valid_count=Count('pk', filter=valid),
+            entries = (
+                StockItemCostEntry.objects
+                .using(self.db)
+                .select_for_update()
+                .filter(stock_item_id__in=stock_item_ids)
+                .order_by('pk')
+                .values_list(
+                    'stock_item_id',
+                    'converted_currency',
+                    'converted_min_cost',
+                    'converted_max_cost',
+                )
             )
-        )
 
-        summaries = [
-            self.model(
-                stock_item_id=row['stock_item_id'],
-                currency=currency,
-                min_cost=row['min_total'] if row['valid_count'] else None,
-                max_cost=row['max_total'] if row['valid_count'] else None,
-                incomplete=row['valid_count'] < row['entry_count'],
-            )
-            for row in totals
-        ]
+            # stock_item_id -> [min_total, max_total, entry_count, valid_count]
+            totals = {}
 
-        empty_ids = stock_item_ids - {summary.stock_item_id for summary in summaries}
+            for pk, converted_currency, min_cost, max_cost in entries:
+                row = totals.setdefault(pk, [Decimal(0), Decimal(0), 0, 0])
+                row[2] += 1
 
-        with transaction.atomic():
+                if (
+                    converted_currency == currency
+                    and min_cost is not None
+                    and max_cost is not None
+                ):
+                    row[0] += min_cost
+                    row[1] += max_cost
+                    row[3] += 1
+
+            summaries = [
+                self.model(
+                    stock_item_id=pk,
+                    currency=currency,
+                    min_cost=min_total if valid_count else None,
+                    max_cost=max_total if valid_count else None,
+                    incomplete=valid_count < entry_count,
+                )
+                for pk, (
+                    min_total,
+                    max_total,
+                    entry_count,
+                    valid_count,
+                ) in totals.items()
+            ]
+
+            empty_ids = stock_item_ids - totals.keys()
+
             if empty_ids:
                 self.filter(stock_item_id__in=empty_ids).delete()
 

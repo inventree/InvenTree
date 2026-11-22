@@ -603,6 +603,239 @@ class DisassemblyCostTests(StockItemCostLifecycleBase):
         self.assertEqual(len(created), 1)
         self.assertNoCost(created[0])
 
+    def install(self, item, part, quantity=1, min_cost=None, max_cost=None):
+        """Install a new stock item (with an optional cost range) into another item."""
+        installed = self.make_item(quantity=quantity, part=part)
+        installed.belongs_to = item
+        installed.save()
+
+        if min_cost is not None or max_cost is not None:
+            self.add_cost(
+                installed,
+                min_cost=None if min_cost is None else Money(min_cost, 'USD'),
+                max_cost=None if max_cost is None else Money(max_cost, 'USD'),
+            )
+
+        return installed
+
+    def disassemble_installed(self, item, quantity, lines, installed):
+        """Disassemble an item with installed items, and return the *created* components."""
+        components = item.disassemble(
+            quantity,
+            [{'bom_item': bom_item, **line} for bom_item, line in lines],
+            user=None,
+        )
+
+        return [c for c in components if c.pk not in {i.pk for i in installed}]
+
+    def test_installed_range_wider_than_assembly(self):
+        """An installed cost range wider than the assembly range (regression test).
+
+        Subtracting matching bounds - ($10 - $12) less ($1 - $8) - gives ($9 - $4),
+        a minimum above the maximum, which failed validation and rolled back the
+        entire disassembly. Interval subtraction gives ($2 - $11).
+        """
+        item = self.make_item(quantity=1, part=self.assembly)
+        self.add_cost(item, min_cost=Money(10, 'USD'), max_cost=Money(12, 'USD'))
+        self.set_pricing(self.components[1], 1)
+
+        installed = self.install(item, self.components[0], min_cost=1, max_cost=8)
+
+        created = self.disassemble_installed(
+            item,
+            1,
+            [
+                (self.bom_items[0], {'quantity': 1}),
+                (self.bom_items[1], {'quantity': 1}),
+            ],
+            [installed],
+        )
+
+        self.assertEqual(len(created), 1)
+
+        entry = self.assertEntry(created[0], 2, 11, 'pricing')
+        self.assertDecimals(entry.source_data['installed_cost'], [1, 8])
+        self.assertDecimals(entry.source_data['allocated_cost'], [2, 11])
+
+        # The disassembly completed - the installed item was removed from the assembly
+        installed.refresh_from_db()
+        self.assertIsNone(installed.belongs_to)
+        self.assertSummary(installed, 1, 8)
+
+    def test_installed_range_single_value_assembly(self):
+        """An installed cost range, deducted from an assembly with a single unit cost."""
+        item = self.make_item(quantity=2, part=self.assembly)
+        self.add_cost(item, min_cost=Money(10, 'USD'))
+        self.set_pricing(self.components[1], 1)
+
+        # 2 units at 1 - 3 USD = 2 - 6 USD
+        installed = self.install(
+            item, self.components[0], quantity=2, min_cost=1, max_cost=3
+        )
+
+        created = self.disassemble_installed(
+            item,
+            2,
+            [
+                (self.bom_items[0], {'quantity': 2}),
+                (self.bom_items[1], {'quantity': 4}),
+            ],
+            [installed],
+        )
+
+        # Remaining: (20 - 6) to (20 - 2) = 14 - 18 USD, across 4 units
+        entry = self.assertEntry(created[0], '3.5', '4.5', 'pricing')
+        self.assertDecimals(entry.source_data['installed_cost'], [2, 6])
+        self.assertDecimals(entry.source_data['allocated_cost'], [14, 18])
+
+    def test_installed_range_minimum_floored(self):
+        """The remaining minimum is floored at zero, while the maximum remains positive."""
+        item = self.make_item(quantity=1, part=self.assembly)
+        self.add_cost(item, min_cost=Money(5, 'USD'), max_cost=Money(20, 'USD'))
+        self.set_pricing(self.components[1], 1)
+
+        installed = self.install(item, self.components[0], min_cost=1, max_cost=8)
+
+        created = self.disassemble_installed(
+            item,
+            1,
+            [
+                (self.bom_items[0], {'quantity': 1}),
+                (self.bom_items[1], {'quantity': 1}),
+            ],
+            [installed],
+        )
+
+        # (5 - 8) floored at 0, to (20 - 1) = 19
+        self.assertEntry(created[0], 0, 19, 'pricing')
+
+    def test_installed_range_exceeds_cost(self):
+        """Nothing is allocated if even the minimum installed cost exceeds the maximum cost."""
+        item = self.make_item(quantity=1, part=self.assembly)
+        self.add_cost(item, min_cost=Money(5, 'USD'), max_cost=Money(6, 'USD'))
+        self.set_pricing(self.components[1], 1)
+
+        installed = self.install(item, self.components[0], min_cost=7, max_cost=9)
+
+        created = self.disassemble_installed(
+            item,
+            1,
+            [
+                (self.bom_items[0], {'quantity': 1}),
+                (self.bom_items[1], {'quantity': 1}),
+            ],
+            [installed],
+        )
+
+        self.assertNoCost(created[0])
+
+    def test_installed_range_and_explicit(self):
+        """Installed cost ranges and explicit costs are both deducted."""
+        third = Part.objects.create(name='Component 2', description='A component')
+        bom_item = BomItem.objects.create(
+            part=self.assembly, sub_part=third, quantity=1
+        )
+
+        item = self.make_item(quantity=2, part=self.assembly)
+        self.add_cost(item, min_cost=Money(10, 'USD'), max_cost=Money(15, 'USD'))
+        self.set_pricing(third, 1)
+
+        # Installed: 2 units at 1 - 2 USD = 2 - 4 USD
+        installed = self.install(
+            item, self.components[0], quantity=2, min_cost=1, max_cost=2
+        )
+
+        created = self.disassemble_installed(
+            item,
+            2,
+            [
+                (self.bom_items[0], {'quantity': 2}),
+                # Explicit: 2 x 3 USD = 6 USD
+                (self.bom_items[1], {'quantity': 2, 'unit_cost': Money(3, 'USD')}),
+                (bom_item, {'quantity': 4}),
+            ],
+            [installed],
+        )
+
+        self.assertEqual(len(created), 2)
+        explicit, automatic = sorted(
+            created, key=lambda c: c.part_id != self.components[1].pk
+        )
+
+        self.assertEntry(explicit, 3, 3, 'explicit')
+
+        # Remaining: (20 - 4 - 6) to (30 - 2 - 6) = 10 - 22 USD, across 4 units
+        entry = self.assertEntry(automatic, '2.5', '5.5', 'pricing')
+        self.assertDecimals(entry.source_data['installed_cost'], [2, 4])
+        self.assertDecimals([entry.source_data['explicit_cost']], [6])
+        self.assertDecimals(entry.source_data['allocated_cost'], [10, 22])
+
+    def test_cost_pool_bounds(self):
+        """The remaining cost range is valid (min <= max) for any combination of ranges."""
+        from types import SimpleNamespace
+
+        # (assembly min, max, quantity), [(installed min, max, qty)], explicit total,
+        # expected (remaining min, max) - or None if nothing remains
+        cases = [
+            ((10, 12, 1), [(1, 8, 1)], 0, (2, 11)),
+            ((10, 12, 1), [(1, 1, 1)], 0, (9, 11)),
+            ((10, 10, 1), [(1, 8, 1)], 0, (2, 9)),
+            ((10, 12, 2), [(1, 8, 1)], 0, (12, 23)),
+            ((10, 12, 2), [(1, 3, 2)], 0, (14, 22)),
+            ((10, 12, 2), [(1, 2, 1), (2, 5, 1)], 0, (13, 21)),
+            ((10, 12, 1), [(1, 8, 1)], 1, (1, 10)),
+            ((10, 12, 1), [(3, 5, 1)], 4, (1, 5)),
+            ((5, 20, 1), [(1, 8, 1)], 0, (0, 19)),
+            ((5, 6, 1), [(7, 9, 1)], 0, None),
+            ((5, 6, 1), [(1, 2, 1)], 5, None),
+            ((10, 12, 1), [], 0, (10, 12)),
+            ((10, 12, 1), [], 11, (0, 1)),
+        ]
+
+        for (
+            min_cost,
+            max_cost,
+            quantity,
+        ), installed_costs, explicit, expected in cases:
+            with self.subTest(
+                assembly=(min_cost, max_cost, quantity),
+                installed=installed_costs,
+                explicit=explicit,
+            ):
+                item = self.make_item(quantity=quantity, part=self.assembly)
+                self.add_cost(
+                    item,
+                    min_cost=Money(min_cost, 'USD'),
+                    max_cost=Money(max_cost, 'USD'),
+                )
+
+                installed = [
+                    self.install(item, self.components[0], qty, low, high)
+                    for low, high, qty in installed_costs
+                ]
+
+                lines = (
+                    [
+                        (
+                            {'unit_cost': Money(explicit, 'USD')},
+                            SimpleNamespace(quantity=1),
+                        )
+                    ]
+                    if explicit
+                    else []
+                )
+
+                pool = item.disassembly_cost_pool(quantity, installed, lines)
+
+                if expected is None:
+                    self.assertIsNone(pool)
+                    continue
+
+                self.assertIsNotNone(pool)
+                self.assertLessEqual(pool['remaining_min'], pool['remaining_max'])
+                self.assertEqual(pool['remaining_min'], Decimal(expected[0]))
+                self.assertEqual(pool['remaining_max'], Decimal(expected[1]))
+
 
 class StocktakeCostTests(StockItemCostLifecycleBase):
     """Stocktake values stock items using their recorded unit cost."""

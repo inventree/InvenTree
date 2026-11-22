@@ -653,6 +653,46 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
         self.assertEqual(summary.min_cost, Decimal('1'))
         self.assertEqual(summary.max_cost, Decimal('1'))
 
+    def test_export(self):
+        """Cost entries can be exported (with the same filtering as the list endpoint)."""
+        with self.export_data(
+            self.LIST_URL, params={'stock_item': self.item.pk}
+        ) as data_file:
+            data = self.process_csv(
+                data_file,
+                required_cols=[
+                    'Stock Item',
+                    'Cost Type',
+                    'Source',
+                    'Minimum Cost',
+                    'Maximum Cost',
+                    'Currency',
+                ],
+                required_rows=self.item.cost_entries.count(),
+            )
+
+        self.assertEqual(
+            sorted(Decimal(row['Minimum Cost']) for row in data),
+            [Decimal(1), Decimal(10)],
+        )
+
+        for row in data:
+            self.assertEqual(int(row['Stock Item']), self.item.pk)
+
+    def test_export_permissions(self):
+        """Exporting cost entries requires the same roles as viewing them."""
+        for roles in [[], ['stock.view'], ['pricing.view']]:
+            with self.subTest(roles=roles):
+                self.set_roles(*roles)
+                self.export_data(self.LIST_URL, expected_code=403)
+
+        self.set_roles('pricing.view', 'stock.view')
+
+        with self.export_data(self.LIST_URL) as data_file:
+            self.process_csv(
+                data_file, required_rows=StockItemCostEntry.objects.count()
+            )
+
     def test_status_codes(self):
         """Test the cost type status code endpoint."""
         response = self.get(reverse('api-stock-cost-entry-status-codes'))

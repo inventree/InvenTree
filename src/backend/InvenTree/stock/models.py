@@ -2103,7 +2103,9 @@ class StockItem(
         The remaining cost is the cost of the disassembled units (unit cost x quantity),
         less the cost of any installed items which are broken out (these keep their own
         cost entries), and less any explicit costs provided for the disassembly lines.
-        The minimum and maximum costs are calculated separately, and floored at zero.
+        The remaining minimum cost is the minimum unit cost less the *maximum* installed
+        cost, and the remaining maximum is the maximum unit cost less the *minimum*
+        installed cost (interval subtraction), each floored at zero.
 
         Args:
             quantity: The number of units of this stock item being disassembled
@@ -2183,11 +2185,15 @@ class StockItem(
 
             explicit_total += value * Decimal(item.quantity)
 
+        # Interval subtraction: the lowest possible remaining cost is the minimum cost
+        # less the *maximum* installed cost (and vice versa). Subtracting matching bounds
+        # could otherwise produce a minimum which is greater than the maximum,
+        # e.g. ($10 - $12) less ($1 - $8) is ($2 - $11), not ($9 - $4)
         remaining_min = max(
-            Decimal(0), min_cost * quantity - installed_min - explicit_total
+            Decimal(0), min_cost * quantity - installed_max - explicit_total
         )
         remaining_max = max(
-            Decimal(0), max_cost * quantity - installed_max - explicit_total
+            Decimal(0), max_cost * quantity - installed_min - explicit_total
         )
 
         if remaining_max <= 0:

@@ -205,7 +205,7 @@ class StockItemCostEntryMixin(StockItemCostPermissionMixin):
 
 
 class StockItemCostEntryList(
-    StockItemCostEntryMixin, OutputOptionsMixin, ListCreateAPI
+    DataExportViewMixin, StockItemCostEntryMixin, OutputOptionsMixin, ListCreateAPI
 ):
     """API endpoint for listing (and creating) StockItemCostEntry objects.
 
