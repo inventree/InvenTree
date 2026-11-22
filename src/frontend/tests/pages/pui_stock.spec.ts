@@ -1,12 +1,14 @@
+import { createApi } from '../api';
 import { expect, test } from '../baseFixtures.js';
-import { adminuser, stevenuser } from '../defaults.js';
+import { adminuser, readeruser, stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
   loadTab,
   navigate,
   openFilterDrawer,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  tableSearch
 } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
@@ -87,6 +89,171 @@ test('Stock - Location Tree', async ({ browser }) => {
   await page.getByRole('textbox', { name: 'nav-tree-search' }).fill('room');
   await page.getByText('Storage Room A').first().waitFor();
   await page.getByText('Storage Room B').first().waitFor();
+});
+
+test('Stock - Location Type Parameters', async ({ browser }) => {
+  const api = await createApi({});
+  const suffix = Date.now();
+  const typePrefix = `Small Drawer - ${suffix}`;
+  const typeName = `${typePrefix} for electronics assembly workbench storage, 120 mm wide and 200 mm deep`;
+  const typeDescription = `Drawer for electronics storage ${suffix}`;
+  const updatedDescription = `Drawer for sensitive electronics ${suffix}`;
+  const templateName = `Internal Width ${suffix}`;
+  const typeActions = 'action-menu-location-type-actions';
+  const adminAction = 'action-button-open-in-admin-interface';
+  const locationTypesPage = 'settings/admin/location-types';
+  let typeId: number | undefined;
+  let locationId: number | undefined;
+  let templateId: number | undefined;
+
+  try {
+    const typeResponse = await api.post('stock/location-type/', {
+      data: { name: typeName, description: typeDescription }
+    });
+    await expect(typeResponse).toBeOK();
+    typeId = (await typeResponse.json()).pk;
+
+    const locationResponse = await api.post('stock/location/', {
+      data: { name: `Drawer ${suffix}`, location_type: typeId }
+    });
+    await expect(locationResponse).toBeOK();
+    locationId = (await locationResponse.json()).pk;
+
+    const templateResponse = await api.post('parameter/template/', {
+      data: {
+        name: templateName,
+        model_type: 'stock.stocklocationtype',
+        units: 'mm'
+      }
+    });
+    await expect(templateResponse).toBeOK();
+    templateId = (await templateResponse.json()).pk;
+
+    const page = await doCachedLogin(browser, { user: adminuser });
+    let previewEnabled = true;
+    await page.route('**/api/settings/user/', async (route) => {
+      const response = await route.fetch();
+      const settings: { key: string; value: unknown }[] = await response.json();
+      const overrides: Record<string, boolean> = {
+        ENABLE_PREVIEW_PANEL: previewEnabled,
+        ENABLE_LAST_BREADCRUMB: true
+      };
+
+      await route.fulfill({
+        response,
+        json: settings.map((setting) =>
+          setting.key in overrides
+            ? { ...setting, value: overrides[setting.key] }
+            : setting
+        )
+      });
+    });
+    await navigate(page, locationTypesPage);
+    await tableSearch(page, typePrefix);
+    const typeCell = page.getByRole('cell', {
+      name: typeDescription,
+      exact: true
+    });
+    await typeCell.click();
+    const preview = page.getByRole('dialog', {
+      name: `details-stocklocationtype-${typeId}`
+    });
+    await expect(
+      preview.getByText(typeDescription, { exact: true })
+    ).toBeVisible();
+    await preview
+      .getByRole('link', { name: `details-stocklocationtype-${typeId}` })
+      .click();
+    const detailUrl = new RegExp(`/stock/location-type/${typeId}/`);
+    await expect(page).toHaveURL(detailUrl);
+
+    previewEnabled = false;
+    await navigate(page, locationTypesPage);
+    await tableSearch(page, typePrefix);
+    await typeCell.click();
+    await expect(page).toHaveURL(detailUrl);
+    await loadTab(page, 'Details');
+    await expect(
+      page.getByTestId('breadcrumb-list').getByText(typeName, { exact: true })
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: adminAction })).toBeVisible();
+
+    const actionsMenu = page.getByRole('button', { name: typeActions });
+    await actionsMenu.click();
+    await page.getByRole('menuitem', { name: `${typeActions}-edit` }).click();
+    const description = page.getByRole('textbox', {
+      name: 'text-field-description'
+    });
+    await expect(description).toHaveValue(typeDescription);
+    await description.fill(updatedDescription);
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await expect(
+      page.getByText(updatedDescription, { exact: true })
+    ).toBeVisible();
+
+    await loadTab(page, 'Parameters');
+
+    await page
+      .getByRole('button', { name: 'action-menu-add-parameters' })
+      .click();
+    await page
+      .getByRole('menuitem', {
+        name: 'action-menu-add-parameters-create-parameter'
+      })
+      .click();
+    await page
+      .getByRole('combobox', { name: 'related-field-template' })
+      .fill(templateName);
+    await page.getByRole('option', { name: templateName }).click();
+    await page.getByRole('textbox', { name: 'text-field-data' }).fill('120 mm');
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await expect(
+      page.getByRole('cell', { name: '120 mm', exact: true })
+    ).toBeVisible();
+    const bulkDeleteButton = 'action-button-delete-selected-records';
+    await expect(
+      page.getByRole('button', { name: bulkDeleteButton })
+    ).toBeVisible();
+
+    const reader = await doCachedLogin(browser, {
+      user: readeruser,
+      url: `stock/location/${locationId}/details`
+    });
+    await reader.getByRole('link', { name: typeName, exact: true }).click();
+    await loadTab(reader, 'Parameters');
+    await expect(reader.getByRole('button', { name: adminAction })).toHaveCount(
+      0
+    );
+    await expect(reader.getByRole('button', { name: typeActions })).toHaveCount(
+      0
+    );
+    await expect(
+      reader.getByRole('cell', { name: '120 mm', exact: true })
+    ).toBeVisible();
+    await expect(
+      reader.getByRole('button', { name: bulkDeleteButton })
+    ).toHaveCount(0);
+    await expect(reader.getByLabel('Select all records')).toHaveCount(0);
+
+    await actionsMenu.click();
+    await page.getByRole('menuitem', { name: `${typeActions}-delete` }).click();
+    await page.getByRole('button', { name: 'Delete', exact: true }).click();
+    await expect(page).toHaveURL(/\/settings\/admin\/location-types\/?$/);
+    const remainingLocation = await api.get(`stock/location/${locationId}/`);
+    await expect(remainingLocation).toBeOK();
+    expect((await remainingLocation.json()).location_type).toBeNull();
+    typeId = undefined;
+  } finally {
+    if (locationId) {
+      const response = await api.delete(`stock/location/${locationId}/`, {
+        data: { delete_stock_items: false, delete_sub_locations: false }
+      });
+      await expect.soft(response).toBeOK();
+    }
+    if (typeId) await api.delete(`stock/location-type/${typeId}/`);
+    if (templateId) await api.delete(`parameter/template/${templateId}/`);
+    await api.dispose();
+  }
 });
 
 test('Stock - Location Delete', async ({ browser }) => {
@@ -311,8 +478,19 @@ test('Stock - Serialize', async ({ browser }) => {
 
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  // Initially - quantity too high for available stock
   await page
-    .getByText('Number of unique serial numbers (51) must match quantity (100)')
+    .getByText(
+      'Stock item is allocated: quantity must not exceed the unallocated quantity'
+    )
+    .waitFor();
+
+  // Reduce quantity and re-submit
+  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('90');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page
+    .getByText('Number of unique serial numbers (51) must match quantity (90)')
     .waitFor();
 
   await page
@@ -322,7 +500,7 @@ test('Stock - Serialize', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 
   await page
-    .getByText('Number of unique serial numbers (3) must match quantity (100)')
+    .getByText('Number of unique serial numbers (3) must match quantity (90)')
     .waitFor();
 
   await page.getByRole('button', { name: 'Cancel' }).click();

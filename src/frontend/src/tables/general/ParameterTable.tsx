@@ -46,6 +46,7 @@ export function ParameterTable({
 }) {
   const table = useTable('parameters');
   const user = useUserState();
+  const canDelete = allowEdit && user.hasDeletePermission(modelType);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -248,8 +249,8 @@ export function ParameterTable({
         columns={tableColumns}
         props={{
           enableDownload: true,
-          enableBulkDelete: allowEdit != false,
-          enableSelection: allowEdit != false,
+          enableBulkDelete: canDelete,
+          enableSelection: canDelete,
           rowActions: allowEdit == false ? undefined : rowActions,
           tableActions: allowEdit == false ? undefined : tableActions,
           tableFilters: tableFilters,

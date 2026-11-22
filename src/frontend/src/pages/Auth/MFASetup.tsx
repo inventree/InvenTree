@@ -23,7 +23,7 @@ export default function MFASetup() {
 
   const fetchSecret = useCallback(() => {
     setUnverifiedEmail(false);
-    getTotpSecret(setTotpQr, () => setUnverifiedEmail(true));
+    getTotpSecret(setTotpQr, () => setUnverifiedEmail(true)).catch();
   }, []);
 
   useEffect(() => {
@@ -32,7 +32,9 @@ export default function MFASetup() {
 
   const sendVerification = useCallback(() => {
     setSending(true);
-    resendEmailVerification().finally(() => setSending(false));
+    resendEmailVerification()
+      .finally(() => setSending(false))
+      .catch();
   }, []);
 
   if (unverifiedEmail) {

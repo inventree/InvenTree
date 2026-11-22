@@ -30,6 +30,14 @@
 }
 
 /*
+ * Prevent cell content from overflowing into adjacent columns
+ * (e.g. when the user has resized a column to a fixed width)
+ */
+.mantine-datatable-table td {
+  overflow: hidden;
+}
+
+/*
  * Force mantine table to 100% so columns stretch to fill.
  */
 .mantine-datatable-resize-locked {

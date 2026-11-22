@@ -304,13 +304,25 @@ test('Plugins - Creator', async ({ browser }) => {
   });
 
   // Allow time for installation of plugin static files, etc
-  await page.waitForTimeout(2500);
+  await expect
+    .poll(
+      async () =>
+        (
+          await page.request.get('/static/plugins/my-custom-plugin/Panel.js')
+        ).status(),
+      { timeout: 2500 }
+    )
+    .toBe(200);
 
-  await navigate(page, 'part/106/details/');
-  await loadTab(page, 'My Custom Plugin');
+  await expect(async () => {
+    await navigate(page, 'part/106/details/');
+    await loadTab(page, 'My Custom Plugin');
 
-  // Check for correctly translated code
-  await page.getByText('Translated text, provided by custom code!').waitFor();
+    // Check for correctly translated code
+    await page
+      .getByText('Translated text, provided by custom code!')
+      .waitFor({ timeout: 2500 });
+  }).toPass({ timeout: 60000 });
 
   // Check for incrementing counter value
   for (let i = 0; i < 5; i++) {

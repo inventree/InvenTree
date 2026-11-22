@@ -12,7 +12,7 @@ from django_q.models import OrmQ
 from rest_framework import status
 
 from audit.models import AuditLogEntry
-from build.models import Build, BuildItem, BuildLine
+from build.models import Build, BuildItem, BuildLine, generate_next_build_reference
 from build.status_codes import BuildStatus
 from common.models import Note
 from common.settings import set_global_setting
@@ -1315,6 +1315,11 @@ class BuildListTest(BuildAPITest):
             for key in ['model', 'api_url', 'pk_field']:
                 self.assertIn(key, field)
 
+        # Default values are provided for the (writable) top-level serializer
+        post = data['actions']['POST']
+        self.assertEqual(post['reference']['default'], generate_next_build_reference())
+        self.assertEqual(post['issued_by']['default'], self.user.pk)
+
     def test_detail_fields(self):
         """Test inclusion of detail fields."""
         # Test without extra detail fields
@@ -1873,6 +1878,36 @@ class BuildOutputCancelTest(BuildAPITest):
 
 class BuildLineTests(BuildAPITest):
     """Unit tests for the BuildLine API endpoints."""
+
+    def test_options_nested_defaults(self):
+        """Nested read-only serializers do not report (expensive) default values.
+
+        Computing the default 'reference' for each nested Build serializer
+        previously required multiple database queries per nested instance.
+        """
+        url = reverse('api-build-line-list')
+
+        data = self.options(
+            url,
+            data={'allocations': True, 'part_detail': True, 'bom_item_detail': True},
+            expected_code=200,
+            max_query_count=40,
+        ).data
+
+        build_detail = data['actions']['GET']['build_detail']
+        self.assertEqual(build_detail['type'], 'nested object')
+
+        # Model-derived defaults (Build.api_defaults / model field defaults) are skipped
+        for name in ['reference', 'issued_by', 'status', 'priority']:
+            self.assertIn(name, build_detail['children'])
+            self.assertNotIn('default', build_detail['children'][name])
+
+        # Nested serializers within a read-only list serializer are also excluded
+        allocation = data['actions']['GET']['allocations']['child']['children']
+
+        for name in ['quantity']:
+            self.assertIn(name, allocation)
+            self.assertNotIn('default', allocation[name])
 
     def test_consumed_read_only(self):
         """The 'consumed' quantity cannot be changed via the BuildLine API.

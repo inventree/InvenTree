@@ -95,15 +95,15 @@ blessed==1.52.0 \
     --hash=sha256:1936f421f3feb130035a4629e6477d1432e33b2674ab2b9841292c74d479eac2 \
     --hash=sha256:a6f42b2875c7afee78420ac9919699d5c3dce35bfa9ad45bc158b1713fc33d0d
     # via -r src/backend/requirements.in
-boto3==1.43.125 \
-    --hash=sha256:101fe3ee99664e671efb9af65c8e98ec0bceddf6de922ea89685da4adc8c6907 \
-    --hash=sha256:5a635a0fbbd51f319e465b809cf043668705defbb9dddaf26ae66747f70b2a49
+boto3==1.44.2 \
+    --hash=sha256:70c02826640da17c15067033af01667059dde5e86057c2d1227cd8523c2f24dd \
+    --hash=sha256:d62ff8a9eb06cab9f0b4242d7a2907a8fff9cca630e27ef736660f9d53e5b18e
     # via
     #   django-anymail
     #   django-storages
-botocore==1.43.125 \
-    --hash=sha256:e3969c8191d3435440037310187d324f37c00da53987ea31df2eceff19a2795a \
-    --hash=sha256:e3ae5ebbfa8033015958a9cb16cef67a0592902ca8afb46ef06e8ae77475183f
+botocore==1.44.2 \
+    --hash=sha256:39da314d7bab66e9da9af5531445d237beaeeab1fce0ed034bb6315d480b85ce \
+    --hash=sha256:f255849e8adc413812162e100cf53c4d096d07d9fd6f1773d90fa6034f7d8980
     # via
     #   boto3
     #   s3transfer
@@ -659,9 +659,9 @@ django-anymail[amazon-ses, postal]==15.1 \
     --hash=sha256:299fb12a21ac4101e9706c2ade461d18deacbb6bc3750cfa6ca08aeea1fc9442 \
     --hash=sha256:cb482b0e2b0aea665c83d49e3f13bb0673210aa0de285b1748a3b5e6277fc826
     # via -r src/backend/requirements.in
-django-auditlog==3.4.1 \
-    --hash=sha256:29958ecacfee00144127214f3ccef3f0c203c3659bcb6dd404a0f3d5551a10a5 \
-    --hash=sha256:ad07b9db452d5fa8303822cccd78cd3fcb2c2863aeb6abe039ec45739b4d7e33
+django-auditlog==3.4.2 \
+    --hash=sha256:7fa9db632da82d617dd51060736c436aa607c5a7f8cf180fec08a17ebbefa01d \
+    --hash=sha256:c4682982f2a7e18867a0893b4242fcc1608ed8256a1ddf885b5f80120addc2a3
     # via -r src/backend/requirements.in
 django-cleanup==9.0.0 \
     --hash=sha256:19f8b0e830233f9f0f683b17181f414672a0f48afe3ea3cc80ba47ae40ad880c \
@@ -1038,9 +1038,9 @@ grpcio==1.85.1 \
     # via
     #   -r src/backend/requirements.in
     #   opentelemetry-exporter-otlp-proto-grpc
-gunicorn==26.2.0 \
-    --hash=sha256:62b864895d9ebff0b2f9867ba04fe811c93121596540830c9c916d0769668447 \
-    --hash=sha256:bd249d0b3f7972f7432f0a6b6ff3b3ee2d129f70cd1ff6c09a9dd9e29a2b88e3
+gunicorn==27.0.1 \
+    --hash=sha256:378b26b9a38adcf4592f28828233c1716acc55e833ea06bf48719782efaa0d10 \
+    --hash=sha256:b1514965361c8b7e8107a80aa2a92636878df1ccfac6dd204a676426e04d9e3e
     # via -r src/backend/requirements.in
 icalendar==7.3.0 \
     --hash=sha256:7bd001c8e648205e1bde5c6a5b77096598e8d0893dcf57755c6c597635620132 \
@@ -1956,9 +1956,9 @@ pynacl==1.6.2 \
     --hash=sha256:d29bfe37e20e015a7d8b23cfc8bd6aa7909c92a1b8f41ee416bbb3e79ef182b2 \
     --hash=sha256:fe9847ca47d287af41e82be1dd5e23023d3c31a951da134121ab02e42ac218c9
     # via paramiko
-pypdf==7.0.0 \
-    --hash=sha256:061aa78dec270854c912dde80c6bc060486fa955399d643da27ea30afeb6571b \
-    --hash=sha256:112a2c7cbabefd8dfe498f7a13977e575e762d58cdb0d832acb8886922602c6f
+pypdf==7.1.0 \
+    --hash=sha256:47cca6b24bdcf4c4d65b5f7b8b972535c61710a061261e737688777cfd9a7bfb \
+    --hash=sha256:ca3fa902369e98a6d2cb7b56396de902b72ef9bb3c1e8706c1bfc7d8bd0cf0d7
     # via -r src/backend/requirements.in
 pyphen==0.18.1 \
     --hash=sha256:0aa9051e15928cecadd4c632cea0258ba57215b2a197a39baa46abcdb0f47e84 \
@@ -2341,13 +2341,13 @@ s3transfer==0.19.3 \
     --hash=sha256:24eb7535804306355e31c952a90022bf5b2f9d760f9a11062c7493a217c08553 \
     --hash=sha256:8326acc3d056d7f7b8a37110c7d2aea41f67e83f6ae79cd3b5fbcca34c726406
     # via boto3
-scim2-models==0.12.2 \
-    --hash=sha256:721b627f9ae50d24956103ba9fc2e852a1badbada8d25c0939bc8656881af62a \
-    --hash=sha256:c8b1f7ae25af4874dba53edd2855ce126f7594d0dbe694a6e9bb32c369082234
+scim2-models==0.12.4 \
+    --hash=sha256:d219558358557a674e0a5b85f6d11cb2cd8cdf3182c4942df0956891be052e8e \
+    --hash=sha256:d3cfaafbe49d6daa61b63afe0f0536774e7543218eaa222164ccb95ecb8871aa
     # via -r src/backend/requirements.in
-sentry-sdk==2.74.0 \
-    --hash=sha256:40b205af015649df3ec9986e057ce24ce85956bee3fb75efa72c93aa7036bdff \
-    --hash=sha256:dd91d75aacaef636006b579ac3ddb2fdbc9dce35f00f4b353b6b1b110c6b256a
+sentry-sdk==2.75.0 \
+    --hash=sha256:9a10e97de2cbd42ad7e4a6e02a0d5af19de9811eb02445077d41ba14c08e170c \
+    --hash=sha256:c38ac2d4b2435c11da821e173bb9d9088c98f41ae92f559ce0e424170a8e1a29
     # via
     #   -r src/backend/requirements.in
     #   django-q-sentry

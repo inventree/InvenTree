@@ -109,7 +109,9 @@ test('Parametric - Filters and Editing', async ({ browser }) => {
   // Edit an existing parameter value
   await clickParameterCell(page, 'Resistance');
   await page.getByRole('button', { name: 'Submit' }).waitFor();
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  const button = page.getByRole('button', { name: 'Cancel' });
+  await test.expect(button).toBeVisible();
+  await button.click();
 
   // Add a parameter value which does not yet exist (find an empty cell)
   if (await clickEmptyParameterCell(page, ['Power', 'Tolerance', 'Package'])) {

@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12121](https://github.com/inventree/InvenTree/issues/12121) adds support for custom parameters on stock location types.
+
 - [#13266](https://github.com/inventree/InvenTree/pull/13266) Adds a "Manufacturer Barcode" plugin, which provides fallback barcode matching against manufacturer part numbers, and a `BARCODE_PRIORITY` attribute which controls the order in which barcode plugins are queried.
 
 - [#13208](https://github.com/inventree/InvenTree/pull/13208) Shows the consuming build order in the stock item Child Items table, which includes consumed children by default for users without saved filters.

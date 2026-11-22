@@ -1,18 +1,26 @@
 import { t } from '@lingui/core/macro';
-import { Group, Skeleton } from '@mantine/core';
+import { Anchor, Group, Skeleton } from '@mantine/core';
 
 import { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import { Link } from 'react-router-dom';
 
 import type { DetailsField } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
 import { ApiIcon } from '../../components/items/ApiIcon';
+import { useUserState } from '../../states/UserState';
 
 export function StockLocationDetailsPanel({
   instance
 }: Readonly<{
   instance: any;
 }>) {
+  const locationTypeName = instance?.location_type_detail?.name;
+  const canViewLocationType = useUserState((state) =>
+    state.hasViewPermission(ModelType.stocklocationtype)
+  );
+
   const left: DetailsField[] = [
     {
       type: 'text',
@@ -48,6 +56,10 @@ export function StockLocationDetailsPanel({
       icon: 'location',
       label: t`Parent Location`,
       model: ModelType.stocklocation,
+      model_formatter: (location: any) =>
+        location?.description
+          ? `${location.name} - ${location.description}`
+          : location?.name,
       hidden: !instance?.parent
     }
   ];
@@ -88,7 +100,22 @@ export function StockLocationDetailsPanel({
       name: 'location_type_detail.name',
       label: t`Location Type`,
       hidden: !instance?.location_type,
-      icon: 'packages'
+      icon: 'packages',
+      value_formatter:
+        canViewLocationType && locationTypeName
+          ? () => (
+              <Anchor
+                component={Link}
+                to={getDetailUrl(
+                  ModelType.stocklocationtype,
+                  instance.location_type
+                )}
+                size='sm'
+              >
+                {locationTypeName}
+              </Anchor>
+            )
+          : undefined
     }
   ];
 
