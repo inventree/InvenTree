@@ -41,6 +41,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelFeature } from '@lib/enums/ModelFeature';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
@@ -48,13 +49,11 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
-  BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -77,6 +76,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import {
   useGlobalSettingsState,
@@ -715,6 +715,14 @@ export default function PartDetail() {
 
   const findBySerialNumber = useFindSerialNumberForm({ partId: part.pk });
 
+  const featureActions = useModelFeatureActions({
+    model: ModelType.part,
+    instance: part,
+    permission: {
+      [ModelFeature.barcode]: user.hasChangeRole(UserRoles.part)
+    }
+  });
+
   const partActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.part} id={part.pk} />,
@@ -726,19 +734,7 @@ export default function PartDetail() {
           refreshInstance();
         }}
       />,
-      <BarcodeActionDropdown
-        model={ModelType.part}
-        pk={part.pk}
-        hash={part?.barcode_hash}
-        perm={user.hasChangeRole(UserRoles.part)}
-        key='action_dropdown'
-      />,
-      <PrintingActions
-        modelType={ModelType.part}
-        items={[part.pk]}
-        enableReports
-        enableLabels
-      />,
+      ...featureActions,
       <ActionDropdown
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
@@ -785,7 +781,7 @@ export default function PartDetail() {
         ]}
       />
     ];
-  }, [id, part, user, stockAdjustActions.menuActions]);
+  }, [featureActions, id, part, user, stockAdjustActions.menuActions]);
 
   return (
     <>

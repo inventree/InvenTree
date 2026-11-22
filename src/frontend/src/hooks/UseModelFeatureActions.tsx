@@ -42,13 +42,8 @@ const modelFeatureActionLookup: Partial<
     />
   ),
   [ModelFeature.report]: ({ model, pk, enabled }) => {
-    const [labels, reports] = useMemo(
-      () => [
-        enabled?.[ModelFeature.label] ?? true,
-        enabled?.[ModelFeature.report] ?? true
-      ],
-      [enabled]
-    );
+    const labels = enabled?.[ModelFeature.label] ?? true;
+    const reports = enabled?.[ModelFeature.report] ?? true;
 
     return labels || reports ? (
       <PrintingActions
