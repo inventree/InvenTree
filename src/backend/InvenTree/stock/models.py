@@ -583,11 +583,12 @@ class StockItem(
         Arguments:
             ignore_serial_check: If True, allow deletion of serialized stock items regardless of global setting
         """
-        if not ignore_serial_check and not get_global_setting(
-            'STOCK_ALLOW_DELETE_SERIALIZED', cache=False
+        if (
+            not ignore_serial_check
+            and not get_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', cache=False)
+            and self.serialized
         ):
-            if self.serialized:
-                raise ValidationError(_('Serialized stock items cannot be deleted'))
+            raise ValidationError(_('Serialized stock items cannot be deleted'))
 
         with transaction.atomic():
             # Re-link any child items to the parent of this item,

@@ -1822,13 +1822,12 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 serials_not_exist.add(serial)
                 continue
 
-            if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
-                if (
-                    stock_item.hasRequiredTests()
-                    and not stock_item.passedAllRequiredTests()
-                ):
-                    serials_unavailable.add(serial)
-                    continue
+            if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS') and (
+                stock_item.hasRequiredTests()
+                and not stock_item.passedAllRequiredTests()
+            ):
+                serials_unavailable.add(serial)
+                continue
 
             if not stock_item.in_stock:
                 serials_unavailable.add(serial)
@@ -2620,11 +2619,10 @@ class SalesOrderLineItem(AuditedLineItemMixin, OrderLineItem):
         """
         super().clean()
 
-        if self.part:
-            if not self.part.salable:
-                raise ValidationError({
-                    'part': _('Only salable parts can be assigned to a sales order')
-                })
+        if self.part and not self.part.salable:
+            raise ValidationError({
+                'part': _('Only salable parts can be assigned to a sales order')
+            })
 
     def __str__(self):
         """Render a string representation of a SalesOrderLineItem instance."""

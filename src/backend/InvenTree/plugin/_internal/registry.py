@@ -951,10 +951,9 @@ class PluginsRegistry:
             package_name = getattr(plugin, 'package_name', None)
 
         # Auto-enable default builtin plugins
-        if plg_db and plg_db.is_mandatory():
-            if not plg_db.active:
-                plg_db.active = True
-                plg_db.save()
+        if plg_db and plg_db.is_mandatory() and not plg_db.active:
+            plg_db.active = True
+            plg_db.save()
 
         # Save the package_name attribute to the plugin
         if plg_db and plg_db.package_name != package_name:
