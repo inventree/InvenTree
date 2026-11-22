@@ -85,9 +85,9 @@ class FilterableSerializerMixin:
     This introduces overhead during initialization, so only use this mixin when necessary.
     """
 
-    optional_filters: Optional[dict] = None
-    fields_to_remove: Optional[set] = None
-    optional_fields: Optional[set] = None
+    optional_filters: Optional[dict[str, bool]] = None
+    fields_to_remove: Optional[set[str]] = None
+    optional_fields: Optional[set[str]] = None
     filter_on_query: bool = True
 
     # Keyword argument used to pass the requesting user to nested serializers
@@ -113,8 +113,9 @@ class FilterableSerializerMixin:
         super().__init__(*args, **kwargs)
 
         # Ensure any fields we are *not* using are removed
-        for field_name in self.fields_to_remove:
-            self.fields.pop(field_name, None)
+        if _fields := self.fields_to_remove:
+            for field_name in _fields:
+                self.fields.pop(field_name, None)
 
     def is_exporting(self) -> bool:
         """Determine if we are exporting data."""
@@ -319,14 +320,16 @@ class FilterableSerializerMixin:
         field_names = list(super().get_field_names(declared_fields, info))
 
         # Add any optional fields which are included
-        for field_name in self.optional_fields:
-            if field_name not in field_names:
-                field_names.append(field_name)
+        if _fields := self.optional_fields:
+            for field_name in _fields:
+                if field_name not in field_names:
+                    field_names.append(field_name)
 
         # Remove any fields which are marked for removal
-        for field_name in self.fields_to_remove:
-            if field_name in field_names:
-                field_names.remove(field_name)
+        if _fields := self.fields_to_remove:
+            for field_name in _fields:
+                if field_name in field_names:
+                    field_names.remove(field_name)
 
         return field_names
 
@@ -361,17 +364,19 @@ class FilterableSerializerMixin:
 
     def build_relational_field(self, field_name, relation_info):
         """Handle a special case where an OptionalField shadows a model relation."""
-        if field_name in self.optional_fields:
-            if field := self.build_optional_field(field_name):
-                return field
+        if _fields := self.optional_fields:
+            if field_name in _fields:
+                if field := self.build_optional_field(field_name):
+                    return field
 
         return super().build_relational_field(field_name, relation_info)
 
     def build_property_field(self, field_name, model_class):
         """Handle a special case where an OptionalField shadows a model property."""
-        if field_name in self.optional_fields:
-            if field := self.build_optional_field(field_name):
-                return field
+        if _fields := self.optional_fields:
+            if field_name in _fields:
+                if field := self.build_optional_field(field_name):
+                    return field
 
         return super().build_property_field(field_name, model_class)
 
