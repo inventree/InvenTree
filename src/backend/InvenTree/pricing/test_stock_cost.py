@@ -345,6 +345,66 @@ class StockItemCostConversionTests(StockItemCostTestBase):
         self.assertIsNone(summary.min_cost)
         self.assertTrue(summary.incomplete)
 
+    def test_exchange_rate_update_reconverts(self):
+        """Updating the exchange rates converts any entries which could not be converted."""
+        from unittest import mock
+
+        import InvenTree.tasks
+
+        # No exchange rate is available - the summary is incomplete
+        entry = StockItemCostEntry.objects.create_cost(
+            self.item, CostType.PURCHASE, CostSource.MANUAL, min_cost=15, currency='AUD'
+        )
+        other = StockItemCostEntry.objects.create_cost(
+            self.other_item, CostType.PURCHASE, CostSource.MANUAL, min_cost=5
+        )
+
+        self.assertIsNone(entry.converted_min_cost)
+        self.assertTrue(self.summary().incomplete)
+        self.assertIsNone(self.summary().min_cost)
+
+        # The rates "fetched" by the (mocked) exchange backend
+        with mock.patch(
+            'InvenTree.exchange.InvenTreeExchange.update_rates',
+            side_effect=lambda **kwargs: self.generate_exchange_rates(),
+        ) as update_rates:
+            InvenTree.tasks.update_exchange_rates(force=True)
+
+        update_rates.assert_called_once()
+
+        # 15 AUD = 10 USD
+        entry.refresh_from_db()
+        self.assertEqual(entry.converted_currency, 'USD')
+        self.assertEqual(entry.converted_min_cost, Decimal(10))
+
+        summary = self.summary()
+        self.assertFalse(summary.incomplete)
+        self.assertEqual(summary.min_cost, Decimal(10))
+
+        # Entries which were already converted are not changed
+        other.refresh_from_db()
+        self.assertEqual(other.converted_min_cost, Decimal(5))
+        self.assertEqual(self.summary(self.other_item).min_cost, Decimal(5))
+
+    def test_exchange_rate_update_failed(self):
+        """Costs are not re-converted if the exchange rates could not be updated."""
+        from unittest import mock
+
+        from django.db.utils import OperationalError
+
+        import InvenTree.tasks
+
+        with (
+            mock.patch(
+                'InvenTree.exchange.InvenTreeExchange.update_rates',
+                side_effect=OperationalError,
+            ),
+            mock.patch('InvenTree.tasks.offload_task') as offload,
+        ):
+            InvenTree.tasks.update_exchange_rates(force=True)
+
+        offload.assert_not_called()
+
 
 class StockItemCostSummaryTests(StockItemCostTestBase):
     """Tests for the StockItemCost summary model."""

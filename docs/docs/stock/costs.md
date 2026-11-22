@@ -48,11 +48,11 @@ The *source* of a cost entry identifies who (or what) created it:
 
 | Source | Description |
 | --- | --- |
-| `manual` | Entered manually by a user (via the user interface or the API) |
+| `manual` | Entered manually by a user (via the user interface or the API). All cost entries created via the API are recorded as `manual` entries |
 | `purchase_order` | Recorded when the item was [received against a purchase order](#receiving-purchase-orders) |
 | `merge` | Recorded when stock items were [merged](#merging-stock-items) |
 | `disassembly` | Recorded when the item was created by [disassembling](#disassembly) another stock item |
-| `build` | Reserved for costs recorded by build orders (not currently used - see [build orders](#build-orders)) |
+| `build` | Reserved for costs recorded by build orders |
 | `legacy` | Migrated from the *purchase price* of the stock item, from an earlier version of InvenTree (see [legacy purchase prices](#legacy-purchase-prices)) |
 | `plugin:<slug>` | Created by the [plugin](#plugin-support) with the specified slug |
 
@@ -155,13 +155,14 @@ The [unit cost](#unit-cost) is calculated from the stored converted values, so t
 
 ### Re-Converting Costs
 
-Cost entries are *not* re-converted automatically when exchange rates become available (or when the default currency is changed). A cost entry which has not been converted to the current default currency is converted again when:
+Whenever the [exchange rates](../concepts/pricing.md#exchange-rate-data) are updated (including when the default currency is changed), any cost entries which have not been converted to the current default currency are converted again, using the new exchange rates. The unit cost of each affected stock item is then recalculated.
 
-- The cost entry is edited and saved (for example, via the [Item Costs](#item-costs-panel) panel)
-- The stock item is [merged](#merging-stock-items) with other stock items
+This means that a cost entry which could not be converted when it was recorded (for example, because no exchange rate was available for its currency) is included in the unit cost of the stock item once an exchange rate becomes available.
 
-!!! info "Legacy Cost Entries"
-    [Legacy purchase prices](#legacy-purchase-prices) are converted when the database is upgraded, using the exchange rates available at that time. If no exchange rate was available for the currency of a legacy purchase price, the resulting cost entry remains *Not converted* until it is edited.
+A cost entry is also converted again if it is edited, or if the stock item is [merged](#merging-stock-items) with other stock items.
+
+!!! info "Existing Conversions"
+    Cost entries which have already been converted to the default currency are *not* converted again when the exchange rates change - the cost of a stock item reflects the exchange rate at the time the cost was recorded.
 
 ## How Stock Costs are Used
 
@@ -239,6 +240,9 @@ Additionally, the stock item API (`/api/stock/`) supports:
 - The optional `pricing_detail` field, which includes the unit cost of each stock item
 - The `has_unit_cost` filter, and the `unit_cost` ordering option
 - The `copy_costs` option, when [duplicating](#duplicating-stock-items) a stock item
+
+!!! info "Read Only Fields"
+    The `source` and `source_data` fields of a cost entry are read-only via the API. Cost entries created via the API are always recorded with the `manual` source, and the source of an existing cost entry cannot be changed.
 
 Refer to the [API schema](../api/schema.md) documentation for more information.
 
