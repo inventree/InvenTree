@@ -152,8 +152,11 @@ class FilterableSerializerMixin:
         # This allows multiple optional fields to share the same filter value
         # Note: fields sharing a filter_ref may still embed different models, so the
         # permission gate is re-applied per-field even when the raw value is cached
-        cached_value = self.optional_filters.get(field_ref, None)
-
+        cached_value = (
+            self.optional_filters.get(field_ref, None)
+            if self.optional_filters is not None
+            else None
+        )
         if cached_value is not None:
             return self.check_field_permission(field, cached_value)
 
