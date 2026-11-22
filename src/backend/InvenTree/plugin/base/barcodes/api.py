@@ -66,7 +66,11 @@ class BarcodeView(CreateAPIView):
         from common.models import BarcodeScanResult
 
         # Extract context data from the request
-        context = {**request.GET.dict(), **request.POST.dict(), **request.data}
+        context: dict[str, str] = {
+            **request.GET.dict(),
+            **request.POST.dict(),
+            **request.data,
+        }
 
         barcode = context.pop('barcode', '')
 
@@ -83,12 +87,7 @@ class BarcodeView(CreateAPIView):
             response = str(response)
 
         # Ensure that the context data is stringified first, otherwise cannot be JSON encoded
-        if isinstance(context, dict):
-            context = {key: str(value) for key, value in context.items()}
-        elif context is None:
-            pass
-        else:
-            context = str(context)
+        context = {key: str(value) for key, value in context.items()}
 
         # Ensure data is not too long
         if len(barcode) > BarcodeScanResult.BARCODE_SCAN_MAX_LEN:
