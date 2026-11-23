@@ -1285,7 +1285,17 @@ class InvenTreeBarcodeMixin(ModelFeatureMixin, models.Model):
                 match = resolve(api_url)
                 view_class = match.func.view_class
                 serializer_class = view_class.serializer_class
-                serializer = serializer_class(self)
+
+                kwargs = {}
+
+                # Pass the requesting user through, so that field-level permission
+                # checks (e.g. role-gated or nested OptionalFields) are applied
+                from InvenTree.serializers import FilterableSerializerMixin
+
+                if issubclass(serializer_class, FilterableSerializerMixin):
+                    kwargs[serializer_class.PERMISSION_USER_KWARG] = user
+
+                serializer = serializer_class(self, **kwargs)
                 data['instance'] = serializer.data
             except Exception:
                 pass
