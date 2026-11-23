@@ -2089,8 +2089,11 @@ class StockItemTest(StockAPITestCase):
         )
 
         new_item = StockItem.objects.get(pk=response.data[0]['pk'])
+        assert new_item is not None
         self.assertEqual(new_item.notes.count(), 1)
-        self.assertEqual(new_item.notes.first().content, '<p>Some stock item notes</p>')
+        note = new_item.notes.first()
+        assert note is not None
+        self.assertEqual(note.content, '<p>Some stock item notes</p>')
 
         # Explicitly disabling copy_notes must not copy any notes
         response = self.post(
