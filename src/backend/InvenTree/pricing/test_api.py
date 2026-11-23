@@ -801,12 +801,14 @@ class StockItemCostImportTests(StockItemCostApiTestBase):
         """
         for mapping in session['column_mappings']:
             if mapping['field'] == 'stock_item':
-                self.patch(
+                response = self.patch(
                     reverse(
                         'api-importer-mapping-detail', kwargs={'pk': mapping['pk']}
                     ),
                     {'lookup_field': 'pk'},
+                    expected_code=None,
                 )
+                self.assertEqual(response.status_code, 200, response.data)
 
     def accept_fields(self, session, expected_code=200):
         """Accept the (automatic) column mapping of a session."""
