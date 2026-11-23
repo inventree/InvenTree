@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 585
 
 INVENTREE_API_TEXT = """
 
-v585 -> 2026-11-26 : https://github.com/inventree/InvenTree/pull/XXXXX
+v585 -> 2026-11-26 : https://github.com/inventree/InvenTree/pull/13347
     - Adds bulk create support to the BomItem API endpoint (POST a list of items)
 
 v584 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/13346
