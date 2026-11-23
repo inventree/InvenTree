@@ -43,7 +43,7 @@ class ParameterExporter(DataExportMixin, InvenTreePlugin):
         **kwargs,
     ) -> bool:
         """Supported if the base model implements the InvenTreeParameterMixin."""
-        from InvenTree.models import InvenTreeParameterMixin
+        from generic.models.modelmixins import InvenTreeParameterMixin
 
         return issubclass(model_class, InvenTreeParameterMixin)
 
@@ -57,7 +57,7 @@ class ParameterExporter(DataExportMixin, InvenTreePlugin):
 
     def prefetch_queryset(self, queryset):
         """Ensure that the associated parameters are prefetched."""
-        from InvenTree.models import InvenTreeParameterMixin
+        from generic.models.modelmixins import InvenTreeParameterMixin
 
         queryset = InvenTreeParameterMixin.annotate_parameters(queryset)
         return queryset

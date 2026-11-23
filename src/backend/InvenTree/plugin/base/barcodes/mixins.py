@@ -9,8 +9,8 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 
 from company.models import Company, ManufacturerPart, SupplierPart
+from generic.models.modelmixins import InvenTreeBarcodeMixin
 from InvenTree.exceptions import log_error
-from InvenTree.models import InvenTreeBarcodeMixin
 from order.models import PurchaseOrder
 from part.models import Part
 from plugin import PluginMixinEnum

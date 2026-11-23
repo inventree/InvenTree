@@ -45,7 +45,7 @@ def audited_models() -> list:
 
     Uses the app registry rather than ContentTypes, so that no database access is required.
     """
-    from InvenTree.models import InvenTreeAuditMixin
+    from generic.models.modelmixins import InvenTreeAuditMixin
 
     return sorted(
         (

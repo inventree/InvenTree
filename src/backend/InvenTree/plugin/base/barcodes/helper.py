@@ -5,7 +5,7 @@ from typing import cast
 import structlog
 
 import InvenTree.helpers_model
-from InvenTree.models import InvenTreeBarcodeMixin
+from generic.models.modelmixins import InvenTreeBarcodeMixin
 
 logger = structlog.get_logger('inventree')
 

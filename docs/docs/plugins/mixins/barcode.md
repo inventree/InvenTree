@@ -86,7 +86,7 @@ To try it just copy the file to src/InvenTree/plugins and restart the server. Op
 To implement a custom internal barcode format, the `generate(...)` method from the Barcode Mixin needs to be overridden. Then the plugin can be selected at `System Settings > Barcodes > Barcode Generation Plugin`.
 
 ```python
-from InvenTree.models import InvenTreeBarcodeMixin
+from generic.models.modelmixins import InvenTreeBarcodeMixin
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
 

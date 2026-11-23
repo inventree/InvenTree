@@ -1422,8 +1422,8 @@ class StockChangeStatusSerializer(serializers.Serializer):
                     item.save(add_note=False)
 
 
-class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for StockLocationType model."""
+class StockLocationTypeBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for location type writes and embedded stock location details."""
 
     class Meta:
         """Serializer metaclass."""
@@ -1434,6 +1434,19 @@ class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer
         read_only_fields = ['location_count']
 
     location_count = serializers.IntegerField(read_only=True, allow_null=True)
+
+
+class StockLocationTypeSerializer(
+    InvenTree.serializers.FilterableSerializerMixin, StockLocationTypeBriefSerializer
+):
+    """Serializer for the location type endpoints, with optional parameter data."""
+
+    class Meta(StockLocationTypeBriefSerializer.Meta):
+        """Metaclass options."""
+
+        fields = [*StockLocationTypeBriefSerializer.Meta.fields, 'parameters']
+
+    parameters = common.filters.enable_parameters_filter()
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1582,7 +1595,7 @@ class LocationSerializer(
     icon = serializers.CharField(read_only=True)
 
     # Detail for location type
-    location_type_detail = StockLocationTypeSerializer(
+    location_type_detail = StockLocationTypeBriefSerializer(
         source='location_type', read_only=True, allow_null=True, many=False
     )
 

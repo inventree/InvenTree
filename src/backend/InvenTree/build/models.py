@@ -25,7 +25,6 @@ import generic.states
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.helpers_model
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import part.models
@@ -49,6 +48,18 @@ from build.validators import (
 from common.models import ProjectCode
 from common.settings import get_global_setting
 from generic.enums import StringEnum
+from generic.models.base import InvenTreeMetadataModel, InvenTreeModel, InvenTreeTree
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeReferenceIndexingMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import (
     DEFERRABLE,
     Deprecations,
@@ -92,19 +103,19 @@ class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
 
 
 class Build(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.PluginValidationMixin,
+    InvenTreeAuditMixin,
+    InvenTreePluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.ReferenceIndexingMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
+    InvenTreeReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTreeMetadataMixin,
+    InvenTreeTree,
 ):
     """A Build object organizes the creation of new StockItem objects from other existing StockItem objects.
 
@@ -2197,7 +2208,7 @@ class BuildLineReportContext(report.mixins.BaseReportContext, TypedDict):
     quantity: decimal.Decimal
 
 
-class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
+class BuildLine(report.mixins.InvenTreeReportMixin, InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
     When a new Build is created, the BuildLine objects are created automatically.
@@ -2317,7 +2328,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         return self.consumed >= self.quantity
 
 
-class BuildItem(InvenTree.models.InvenTreeMetadataModel):
+class BuildItem(InvenTreeMetadataModel):
     """A BuildItem links multiple StockItem objects to a Build.
 
     These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.

@@ -771,7 +771,8 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
     """
     from django.apps import apps
 
-    import InvenTree.models
+    from generic.models.base import InvenTreeTree
+    from generic.models.modelmixins import InvenTreePathStringMixin
 
     try:
         model_class = apps.get_model(model)
@@ -779,7 +780,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
         logger.warning("rebuild_model_tree: Model '%s' does not exist", model)
         return
 
-    if not issubclass(model_class, InvenTree.models.InvenTreeTree):
+    if not issubclass(model_class, InvenTreeTree):
         logger.warning("rebuild_model_tree: Model '%s' is not a tree model", model)
         return
 
@@ -787,7 +788,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
     model_class.rebuild_trees([tree_id])
 
     # Rebuild the 'pathstring' values for the entire tree (if applicable)
-    if issubclass(model_class, InvenTree.models.PathStringMixin):
+    if issubclass(model_class, InvenTreePathStringMixin):
         model_class.rebuild_tree_pathstring_values([tree_id])  # ty: ignore[invalid-attribute-access]
 
 

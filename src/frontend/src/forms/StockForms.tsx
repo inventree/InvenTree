@@ -2614,6 +2614,16 @@ export function useStockLocationFields(): ApiFormFieldSet {
   return fields;
 }
 
+export function getStockLocationTypeFields(): ApiFormFieldSet {
+  return {
+    name: {},
+    description: {},
+    icon: {
+      field_type: 'icon'
+    }
+  };
+}
+
 // Construct a set of fields for
 export function useTestResultFields({
   partId,

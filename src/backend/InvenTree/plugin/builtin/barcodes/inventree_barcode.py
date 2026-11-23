@@ -13,8 +13,8 @@ from typing import cast
 
 from django.utils.translation import gettext_lazy as _
 
+from generic.models.modelmixins import InvenTreeBarcodeMixin
 from InvenTree.helpers import hash_barcode
-from InvenTree.models import InvenTreeBarcodeMixin
 from plugin import InvenTreePlugin
 from plugin.mixins import (
     BarcodeMixin,

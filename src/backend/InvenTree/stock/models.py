@@ -30,7 +30,6 @@ import build.models
 import common.models
 import InvenTree.exceptions
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import order.models
@@ -40,6 +39,18 @@ from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from generic.enums import StringEnum
+from generic.models.base import InvenTreeMetadataModel, InvenTreeTree
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreePathStringMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeURLField
@@ -55,7 +66,7 @@ from users.models import Owner
 logger = structlog.get_logger('inventree')
 
 
-class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
+class StockLocationType(InvenTreeParameterMixin, InvenTreeMetadataMixin, models.Model):
     """A type of stock location like Warehouse, room, shelf, drawer.
 
     Attributes:
@@ -80,6 +91,11 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
     def __str__(self):
         """String representation of a StockLocationType."""
         return self.name
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        """Delete this type and its parameters in a single transaction."""
+        super().delete(*args, **kwargs)
 
     name = models.CharField(
         blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Name')
@@ -120,14 +136,14 @@ class StockLocationReportContext(report.mixins.BaseReportContext):
 
 
 class StockLocation(
-    InvenTree.models.PluginValidationMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeParameterMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.PathStringMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTreePathStringMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeTree,
 ):
     """Organization tree for StockItem objects.
 
@@ -445,16 +461,15 @@ class StockItemPurchasePriceRemovedError(Exception):
 
 
 class StockItem(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAuditMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """A StockItem object represents a quantity of physical instances of a part.
 
@@ -3896,7 +3911,7 @@ def rename_stock_item_test_result_attachment(instance, filename):
     )
 
 
-class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
+class StockItemTestResult(InvenTreeMetadataModel):
     """A StockItemTestResult records results of custom tests against individual StockItem objects.
 
     This is useful for tracking unit acceptance tests, and particularly useful when integrated

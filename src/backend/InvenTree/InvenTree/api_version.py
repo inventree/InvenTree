@@ -1,13 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 583
+INVENTREE_API_VERSION = 584
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v583 -> 2026-11-22 : https://github.com/inventree/InvenTree/pull/13294
+v584 -> 2026-11-22 : https://github.com/inventree/InvenTree/pull/13294
     - Adds StockItemCostEntry and StockItemCost (summary) models to the "pricing" app
     - Access to these endpoints requires the "pricing" role, and the "stock" role (view to read, change to write)
     - Adds optional "pricing_detail" field to the StockItem API (requires the "pricing" view role)
@@ -20,6 +20,9 @@ v583 -> 2026-11-22 : https://github.com/inventree/InvenTree/pull/13294
     - Breaking: Removes the "PURCHASEORDER_CONVERT_CURRENCY" global setting
     - The "source" and "source_data" fields of /api/pricing/stock-cost-entry/ are read-only - entries created via the API are always "manual" entries
     - Adds data export support to the /api/pricing/stock-cost-entry/ list endpoint
+
+v583 -> 2026-11-20 : https://github.com/inventree/InvenTree/issues/12121
+    - Adds parameter support to the StockLocationType model and API endpoints
 
 v582 -> 2026-11-19 : https://github.com/inventree/InvenTree/pull/13329
     - The title tag of the part's override_min/max_currency had been moved by the API generator generating diff in the schema, no functional changes
