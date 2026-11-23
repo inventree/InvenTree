@@ -213,6 +213,22 @@ div:nth-of-type(1) p:not(.admonition-title) {
 	padding-right: 0;
 }
 
+/* Header colours match the inventree.org website (brown header, light text),
+ * rather than the documentation blue. The same colours are used in both light and dark mode */
+:root {
+	--iv-header-bg: #9e7d47;
+	--iv-header-text: #f9fafb;
+	--iv-header-muted: #e5e7eb;
+}
+
+.md-header,
+.md-tabs,
+.md-nav--primary .md-nav__title[for="__drawer"] {
+	--md-primary-fg-color: var(--iv-header-bg);
+	--md-primary-bg-color: var(--iv-header-text);
+	--md-primary-bg-color--light: var(--iv-header-muted);
+}
+
 /* Solid primary-colour header and navigation tabs, as in the classic theme.
  * (The Zensical "modern" variant uses a translucent neutral header.) */
 .md-header,
@@ -225,7 +241,7 @@ div:nth-of-type(1) p:not(.admonition-title) {
 	backdrop-filter: none;
 }
 
-/* Search button on the coloured header (darker blue box, white text) */
+/* Search button on the coloured header (darker box, light text) */
 .md-header .md-search__button {
 	background-color: rgba(0, 0, 0, 0.26);
 	color: var(--md-primary-bg-color);
