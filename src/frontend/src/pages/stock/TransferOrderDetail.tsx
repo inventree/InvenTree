@@ -15,9 +15,7 @@ import {
 } from '@tabler/icons-react';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
-  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -34,6 +32,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -253,6 +252,11 @@ export default function TransferOrderDetail() {
     }
   });
 
+  const featureActions = useModelFeatureActions({
+    model: ModelType.transferorder,
+    instance: order
+  });
+
   const orderActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.transfer_order);
 
@@ -286,17 +290,7 @@ export default function TransferOrderDetail() {
         onClick={() => completeOrder.open()}
       />,
       <AdminButton model={ModelType.transferorder} id={order.pk} />,
-      <BarcodeActionDropdown
-        model={ModelType.transferorder}
-        pk={order.pk}
-        hash={order?.barcode_hash}
-      />,
-      <PrintingActions
-        modelType={ModelType.transferorder}
-        items={[order.pk]}
-        enableReports
-        enableLabels
-      />,
+      ...featureActions,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}
         actions={[
@@ -325,7 +319,7 @@ export default function TransferOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, orderOpen, toStatus]);
+  }, [featureActions, user, order, orderOpen, toStatus]);
 
   const subtitle: string = useMemo(() => {
     const t = order.take_from_detail?.pathstring || '';

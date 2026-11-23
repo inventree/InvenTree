@@ -18,9 +18,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
-  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -37,6 +35,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -266,6 +265,11 @@ export default function SalesOrderDetail() {
     }
   });
 
+  const featureActions = useModelFeatureActions({
+    model: ModelType.salesorder,
+    instance: order
+  });
+
   const soActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.sales_order);
 
@@ -316,17 +320,7 @@ export default function SalesOrderDetail() {
         onClick={completeOrder.open}
       />,
       <AdminButton model={ModelType.salesorder} id={order.pk} />,
-      <BarcodeActionDropdown
-        model={ModelType.salesorder}
-        pk={order.pk}
-        hash={order?.barcode_hash}
-      />,
-      <PrintingActions
-        modelType={ModelType.salesorder}
-        items={[order.pk]}
-        enableReports
-        enableLabels
-      />,
+      ...featureActions,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}
         actions={[
@@ -353,7 +347,7 @@ export default function SalesOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, soStatus, globalSettings]);
+  }, [featureActions, user, order, soStatus, globalSettings]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

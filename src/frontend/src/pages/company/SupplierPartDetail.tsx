@@ -10,6 +10,7 @@ import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelFeature } from '@lib/enums/ModelFeature';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { formatDecimal } from '@lib/functions/Formatting';
@@ -18,7 +19,6 @@ import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import {
-  BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -34,6 +34,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPriceBreakTable from '../../tables/purchasing/SupplierPriceBreakTable';
@@ -117,15 +118,18 @@ export default function SupplierPartDetail() {
     ];
   }, [supplierPart]);
 
+  const featureActions = useModelFeatureActions({
+    model: ModelType.supplierpart,
+    instance: supplierPart,
+    permission: {
+      [ModelFeature.barcode]: user.hasChangeRole(UserRoles.purchase_order)
+    }
+  });
+
   const supplierPartActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.supplierpart} id={supplierPart.pk} />,
-      <BarcodeActionDropdown
-        model={ModelType.supplierpart}
-        pk={supplierPart.pk}
-        hash={supplierPart.barcode_hash}
-        perm={user.hasChangeRole(UserRoles.purchase_order)}
-      />,
+      ...featureActions,
       <OptionsActionDropdown
         tooltip={t`Supplier Part Actions`}
         actions={[
@@ -144,7 +148,7 @@ export default function SupplierPartDetail() {
         ]}
       />
     ];
-  }, [user, supplierPart]);
+  }, [featureActions, user, supplierPart]);
 
   const supplierPartFields = useSupplierPartFields({});
 
