@@ -1910,7 +1910,7 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 raise ValidationError(_('Order is already cancelled'))
 
             # Only an open order can be marked as shipped
-            if self.is_open and not self.is_completed:
+            if self.is_open and not self.is_completed():
                 raise ValidationError(_('Only an open order can be marked as complete'))
 
             if self.pending_shipment_count > 0:
