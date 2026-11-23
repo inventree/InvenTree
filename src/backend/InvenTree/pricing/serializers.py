@@ -9,7 +9,6 @@ from rest_framework import serializers
 
 import common.currency
 import InvenTree.serializers
-from data_exporter.mixins import DataExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import OptionalField
@@ -253,12 +252,18 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             pricing.update_pricing()
 
 
+@register_importer()
 class StockItemCostEntrySerializer(
     InvenTree.serializers.FilterableSerializerMixin,
-    DataExportSerializerMixin,
+    DataImportExportSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
-    """Serializer for the StockItemCostEntry model."""
+    """Serializer for the StockItemCostEntry model.
+
+    Also used for importing cost entries from a file (see the 'importer' app).
+    Imported entries are always 'manual' entries (the source is read-only),
+    and are attributed to the importing user.
+    """
 
     class Meta:
         """Metaclass options."""
@@ -302,6 +307,31 @@ class StockItemCostEntrySerializer(
 
         if self.instance is not None and 'stock_item' in self.fields:
             self.fields['stock_item'].read_only = True
+
+    def request_user(self):
+        """Return the user making the request (if available and authenticated)."""
+        request = self.context.get('request', None)
+        user = getattr(request, 'user', None)
+
+        return user if user and user.is_authenticated else None
+
+    def create(self, validated_data):
+        """Create a new cost entry, recording the user who created it.
+
+        The API views pass the user explicitly - this also covers entries
+        created via the data importer, which saves the serializer directly.
+        """
+        if 'user' not in validated_data:
+            validated_data['user'] = self.request_user()
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        """Update an existing cost entry, recording the user who last updated it."""
+        if 'user' not in validated_data:
+            validated_data['user'] = self.request_user()
+
+        return super().update(instance, validated_data)
 
     cost_type_text = serializers.CharField(
         source='get_cost_type_display', read_only=True, label=_('Cost Type Name')

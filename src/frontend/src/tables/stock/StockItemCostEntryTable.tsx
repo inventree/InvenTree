@@ -1,7 +1,9 @@
 import { t } from '@lingui/core/macro';
 import { Badge, Tooltip } from '@mantine/core';
+import { IconFileUpload } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -23,6 +25,7 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { StatusFilterOptions } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   isCostRange,
   useStockItemCostEntryFields
@@ -32,10 +35,15 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useImporterState } from '../../states/ImporterState';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
 // Name of the backend status class which defines the available cost types
 const COST_TYPE_STATUS = 'CostType';
+
+// Model type used for importing cost entries from a file
+const COST_ENTRY_MODEL_TYPE = 'stockitemcostentry';
 
 /**
  * Table displaying the cost entries for a single stock item.
@@ -88,6 +96,41 @@ export default function StockItemCostEntryTable({
     fields: costEntryForm.fields,
     processFormData: costEntryForm.processFormData,
     onFormSuccess: onFormSuccess
+  });
+
+  const globalSettings = useGlobalSettingsState();
+  const openImporter = useImporterState((state) => state.openImporter);
+
+  // Import cost entries from a file - always against *this* stock item
+  const importSessionFields = useMemo(() => {
+    const fields = dataImporterSessionFields({
+      modelType: COST_ENTRY_MODEL_TYPE
+    });
+
+    fields.field_overrides.value = {
+      stock_item: stockItem.pk
+    };
+
+    fields.field_defaults.value = {
+      currency:
+        globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY') || undefined
+    };
+
+    return fields;
+  }, [stockItem.pk, globalSettings]);
+
+  const importCostEntries = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Item Costs`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      openImporter(response.pk, {
+        onClose: () => {
+          table.refreshTable();
+          onCostsChanged?.();
+        }
+      });
+    }
   });
 
   const deleteCostEntry = useDeleteApiFormModal({
@@ -179,6 +222,18 @@ export default function StockItemCostEntryTable({
 
   const tableActions = useMemo(() => {
     return [
+      <ActionButton
+        key='import-cost-entries'
+        icon={<IconFileUpload />}
+        tooltip={t`Import Costs`}
+        onClick={() => importCostEntries.open()}
+        // The importer requires 'change' permission for the pricing role
+        hidden={
+          !user.hasAddRole(UserRoles.pricing) ||
+          !user.hasChangeRole(UserRoles.pricing) ||
+          !canChangeStock
+        }
+      />,
       <AddItemButton
         key='add-cost-entry'
         tooltip={t`Add Cost`}
@@ -217,6 +272,7 @@ export default function StockItemCostEntryTable({
 
   return (
     <>
+      {importCostEntries.modal}
       {newCostEntry.modal}
       {editCostEntry.modal}
       {deleteCostEntry.modal}

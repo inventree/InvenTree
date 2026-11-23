@@ -1625,7 +1625,7 @@ class StockItemCostEntryManager(models.Manager):
         return len(updated)
 
 
-class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
+class StockItemCostEntry(InvenTreeAuditMixin, models.Model):
     """A single cost contribution towards the unit cost of a StockItem.
 
     A StockItem may carry any number of cost entries, including several of the
@@ -1673,6 +1673,11 @@ class StockItemCostEntry(InvenTree.models.InvenTreeAuditMixin, models.Model):
     # Access to cost entries requires permission to view the stock item (see StockItemCostPermissionMixin),
     # so the audit history of an entry is only visible to users who can view its stock item
     AUDIT_REQUIRE_PARENT_PERMISSION = True
+
+    # Importing cost entries from a file requires the same permissions as the API:
+    # 'change' permission for the pricing role (checked by the importer for every model),
+    # plus 'change' permission for the stock role
+    IMPORT_REQUIRED_ROLES = [('stock', 'change')]
 
     objects = StockItemCostEntryManager()
 

@@ -19,7 +19,7 @@ v584 -> 2026-11-22 : https://github.com/inventree/InvenTree/pull/13294
     - Breaking: Stock disassembly only allocates the remaining cost of the assembly (less explicit unit costs and installed item costs) to lines without a unit cost if part pricing is available for every such line - otherwise no cost is recorded (no "even" split)
     - Breaking: Removes the "PURCHASEORDER_CONVERT_CURRENCY" global setting
     - The "source" and "source_data" fields of /api/pricing/stock-cost-entry/ are read-only - entries created via the API are always "manual" entries
-    - Adds data export support to the /api/pricing/stock-cost-entry/ list endpoint
+    - Adds data export and import support for stock item cost entries ("stockitemcostentry" import model type, which requires the "pricing" change and "stock" change permissions)
 
 v583 -> 2026-11-20 : https://github.com/inventree/InvenTree/issues/12121
     - Adds parameter support to the StockLocationType model and API endpoints

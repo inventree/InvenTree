@@ -1,7 +1,9 @@
 """API unit tests for the 'pricing' app."""
 
+import json
 from decimal import Decimal
 
+from django.core.files.base import ContentFile
 from django.urls import reverse
 
 from rest_framework.test import APIClient
@@ -769,6 +771,359 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
         self.assertEqual(scopes['PATCH'], [['r:change:pricing', 'r:change:stock']])
         self.assertEqual(scopes['DELETE'], [['r:delete:pricing', 'r:change:stock']])
         self.assertEqual(scopes['OPTIONS'], [['g:read']])
+
+
+class StockItemCostImportTests(StockItemCostApiTestBase):
+    """Importing stock item cost entries from a file, via the data importer API."""
+
+    SESSION_URL = reverse('api-importer-session-list')
+
+    def create_session(self, csv: str, expected_code=201, **kwargs):
+        """Create an import session for cost entries, from the provided CSV data."""
+        data = {
+            'model_type': 'stockitemcostentry',
+            'data_file': ContentFile(csv.encode(), 'costs.csv'),
+        }
+
+        for key, value in kwargs.items():
+            data[key] = json.dumps(value) if isinstance(value, dict) else value
+
+        return self.post(
+            self.SESSION_URL, data, format='multipart', expected_code=expected_code
+        ).data
+
+    def lookup_by_id(self, session):
+        """Match the 'Stock Item' column of a session against stock item IDs only.
+
+        By default, values are also matched against stock item serial numbers
+        (StockItem.IMPORT_ID_FIELDS) - so a value which is both a valid ID and a
+        serial number is ambiguous, and the row is rejected.
+        """
+        for mapping in session['column_mappings']:
+            if mapping['field'] == 'stock_item':
+                self.patch(
+                    reverse(
+                        'api-importer-mapping-detail', kwargs={'pk': mapping['pk']}
+                    ),
+                    {'lookup_field': 'pk'},
+                )
+
+    def accept_fields(self, session, expected_code=200):
+        """Accept the (automatic) column mapping of a session."""
+        return self.post(
+            reverse('api-import-session-accept-fields', kwargs={'pk': session['pk']}),
+            expected_code=expected_code,
+        )
+
+    def rows(self, session) -> list:
+        """Return the rows of an import session."""
+        return self.get(
+            reverse('api-importer-row-list'), {'session': session['pk']}
+        ).data
+
+    def accept_rows(self, session, rows, expected_code=201):
+        """Import the provided rows of a session."""
+        return self.post(
+            reverse('api-import-session-accept-rows', kwargs={'pk': session['pk']}),
+            {'rows': [row['pk'] for row in rows]},
+            expected_code=expected_code,
+        )
+
+    def import_all(self, csv: str, **kwargs) -> list:
+        """Run an import from start to finish, and return the rows."""
+        session = self.create_session(csv, **kwargs)
+        self.lookup_by_id(session)
+        self.accept_fields(session)
+
+        rows = self.rows(session)
+
+        for row in rows:
+            self.assertTrue(row['valid'], row['errors'])
+
+        self.accept_rows(session, rows)
+
+        return rows
+
+    def test_importable_fields(self):
+        """Only the user-editable fields of a cost entry can be imported."""
+        session = self.create_session('Notes\nx\n')
+
+        fields = set(session['available_fields'].keys())
+
+        for field in ['stock_item', 'cost_type', 'currency', 'min_cost', 'max_cost']:
+            self.assertIn(field, fields)
+
+        # Recorded automatically - cannot be imported
+        for field in [
+            'source',
+            'source_data',
+            'user',
+            'date',
+            'converted_currency',
+            'converted_min_cost',
+            'converted_max_cost',
+            'cost_type_text',
+        ]:
+            self.assertNotIn(field, fields)
+
+    def test_import_for_stock_item(self):
+        """Import costs against a single stock item (as from the stock item costs table)."""
+        item = self.other_item
+        existing = set(item.cost_entries.values_list('pk', flat=True))
+
+        csv = (
+            'Cost Type,Minimum Cost,Maximum Cost,Currency,Notes\n'
+            'Landed,2.5,,USD,Freight\n'
+            'Purchase,10,12,USD,Supplier estimate\n'
+            '60,-1,,USD,Rebate\n'
+        )
+
+        # The stock item is provided as an override (not in the file)
+        self.import_all(csv, field_overrides={'stock_item': item.pk})
+
+        entries = item.cost_entries.exclude(pk__in=existing).order_by('pk')
+        self.assertEqual(entries.count(), 3)
+
+        landed, purchase, rebate = entries
+
+        self.assertEqual(landed.cost_type, CostType.LANDED)
+        self.assertEqual(landed.min_cost, Decimal('2.5'))
+        self.assertEqual(landed.max_cost, Decimal('2.5'))
+        self.assertEqual(landed.notes, 'Freight')
+
+        self.assertEqual(purchase.cost_type, CostType.PURCHASE)
+        self.assertEqual(purchase.min_cost, Decimal(10))
+        self.assertEqual(purchase.max_cost, Decimal(12))
+
+        self.assertEqual(rebate.cost_type, CostType.ADJUSTMENT)
+        self.assertEqual(rebate.min_cost, Decimal(-1))
+
+        for entry in entries:
+            # Imported entries are manual entries, attributed to the importing user
+            self.assertEqual(entry.source, CostSource.MANUAL)
+            self.assertIsNone(entry.source_data)
+            self.assertEqual(entry.user, self.user)
+            self.assertEqual(entry.currency, 'USD')
+            self.assertEqual(entry.converted_currency, 'USD')
+
+        # The cost summary includes the imported entries (existing entry = 5 USD)
+        summary = StockItemCost.objects.get(stock_item=item)
+        self.assertEqual(summary.min_cost, Decimal('16.5'))
+        self.assertEqual(summary.max_cost, Decimal('18.5'))
+        self.assertFalse(summary.incomplete)
+
+        # Other stock items are unaffected
+        self.assertEqual(self.item.cost_entries.count(), 2)
+
+    def test_import_override_ignores_file_column(self):
+        """A stock item override takes precedence over a 'Stock Item' column in the file."""
+        csv = f'Stock Item,Cost Type,Minimum Cost,Currency\n{self.item.pk},Fees,3,USD\n'
+
+        self.import_all(csv, field_overrides={'stock_item': self.other_item.pk})
+
+        self.assertTrue(
+            self.other_item.cost_entries.filter(cost_type=CostType.FEES).exists()
+        )
+        self.assertFalse(
+            self.item.cost_entries.filter(cost_type=CostType.FEES).exists()
+        )
+
+    def test_import_multiple_stock_items(self):
+        """Import costs for multiple stock items (as from the admin center)."""
+        csv = (
+            'Stock Item,Cost Type,Minimum Cost,Maximum Cost,Currency\n'
+            f'{self.item.pk},Landed,1,2,USD\n'
+            f'{self.other_item.pk},Landed,3,,USD\n'
+        )
+
+        self.import_all(csv)
+
+        self.assertEqual(
+            self.item.cost_entries.filter(cost_type=CostType.LANDED).count(), 2
+        )
+        self.assertEqual(
+            self.other_item.cost_entries.filter(cost_type=CostType.LANDED).count(), 1
+        )
+
+        # 10-12 (purchase) + 1 (existing landed) + 1-2 (imported)
+        summary = StockItemCost.objects.get(stock_item=self.item)
+        self.assertEqual(summary.min_cost, Decimal(12))
+        self.assertEqual(summary.max_cost, Decimal(15))
+
+        summary = StockItemCost.objects.get(stock_item=self.other_item)
+        self.assertEqual(summary.min_cost, Decimal(8))
+        self.assertEqual(summary.max_cost, Decimal(8))
+
+    def test_ambiguous_stock_item(self):
+        """A stock item value which matches both an ID and a serial number is rejected."""
+        serial = StockItem.objects.exclude(serial=None).exclude(serial='').first()
+        self.assertIsNotNone(serial)
+
+        # An ID which is also another item's serial number
+        item = StockItem.objects.filter(pk=int(serial.serial)).first()
+        self.assertIsNotNone(item)
+        self.assertNotEqual(item.pk, serial.pk)
+
+        csv = f'Stock Item,Cost Type,Minimum Cost,Currency\n{item.pk},Landed,1,USD\n'
+
+        session = self.create_session(csv)
+        self.accept_fields(session)
+
+        row = self.rows(session)[0]
+        self.assertFalse(row['valid'])
+        self.assertIn('Multiple matches', str(row['errors']['stock_item']))
+
+        # Selecting the 'ID' lookup field resolves the ambiguity
+        self.import_all(csv)
+        self.assertTrue(item.cost_entries.filter(cost_type=CostType.LANDED).exists())
+
+    def test_import_unconverted(self):
+        """An imported cost without an exchange rate is stored, and the summary is incomplete."""
+        from django.core.cache import cache
+
+        from djmoney.contrib.exchange.models import Rate
+
+        # Ensure that no exchange rates are available
+        Rate.objects.all().delete()
+        cache.clear()
+
+        csv = 'Cost Type,Minimum Cost,Currency\nLanded,4,NZD\n'
+
+        self.import_all(csv, field_overrides={'stock_item': self.other_item.pk})
+
+        entry = self.other_item.cost_entries.get(currency='NZD')
+        self.assertEqual(entry.min_cost, Decimal(4))
+        self.assertIsNone(entry.converted_min_cost)
+
+        summary = StockItemCost.objects.get(stock_item=self.other_item)
+        self.assertTrue(summary.incomplete)
+        self.assertEqual(summary.min_cost, Decimal(5))
+
+    def test_import_source_column_ignored(self):
+        """Source columns in the file cannot be mapped - imported entries are always manual."""
+        csv = (
+            'Cost Type,Minimum Cost,Currency,Source,User\n'
+            f'Purchase,1,USD,purchase_order,{self.user.pk}\n'
+        )
+
+        session = self.create_session(
+            csv, field_overrides={'stock_item': self.other_item.pk}
+        )
+
+        mapped = {
+            mapping['field']
+            for mapping in session['column_mappings']
+            if mapping['column']
+        }
+        self.assertNotIn('source', mapped)
+        self.assertNotIn('user', mapped)
+
+        self.accept_fields(session)
+        self.accept_rows(session, self.rows(session))
+
+        entry = self.other_item.cost_entries.order_by('-pk').first()
+        self.assertEqual(entry.source, CostSource.MANUAL)
+
+    def test_import_invalid_rows(self):
+        """Invalid rows are reported, and cannot be imported."""
+        csv = (
+            'Stock Item,Cost Type,Minimum Cost,Maximum Cost,Currency\n'
+            f'{self.item.pk},Landed,5,2,USD\n'
+            f'{self.item.pk},Not a cost type,1,,USD\n'
+            ',Landed,1,,USD\n'
+            '999999,Landed,1,,USD\n'
+            f'{self.item.pk},Landed,,,USD\n'
+            f'{self.item.pk},Landed,1,,USD\n'
+        )
+
+        session = self.create_session(csv)
+        self.lookup_by_id(session)
+        self.accept_fields(session)
+
+        rows = self.rows(session)
+        self.assertEqual(len(rows), 6)
+
+        # Only the last row is valid
+        self.assertEqual([row['valid'] for row in rows], [False] * 5 + [True])
+
+        self.assertIn('max_cost', rows[0]['errors'])
+        self.assertIn('cost_type', rows[1]['errors'])
+        self.assertIn('stock_item', rows[2]['errors'])
+        self.assertIn('stock_item', rows[3]['errors'])
+        self.assertIn('min_cost', rows[4]['errors'])
+
+        N = StockItemCostEntry.objects.count()
+
+        # Invalid rows are not imported
+        self.accept_rows(session, rows[:1], expected_code=400)
+        self.assertEqual(StockItemCostEntry.objects.count(), N)
+
+        self.accept_rows(session, rows[5:])
+        self.assertEqual(StockItemCostEntry.objects.count(), N + 1)
+
+    def test_update_existing(self):
+        """Existing entries can be updated by ID - the source is retained, and the item cannot change."""
+        entry = StockItemCostEntry.objects.create_cost(
+            self.item,
+            CostType.PURCHASE,
+            CostSource.PURCHASE_ORDER,
+            min_cost=4,
+            currency='USD',
+            source_data={'purchase_order': 1},
+        )
+
+        # Note: Both bounds are provided (a minimum above the existing maximum is invalid)
+        csv = (
+            'ID,Stock Item,Minimum Cost,Maximum Cost,Notes\n'
+            f'{entry.pk},{self.other_item.pk},6,7,Corrected\n'
+        )
+
+        self.import_all(csv, update_records=True)
+
+        entry.refresh_from_db()
+
+        self.assertEqual(entry.min_cost, Decimal(6))
+        self.assertEqual(entry.max_cost, Decimal(7))
+        self.assertEqual(entry.notes, 'Corrected')
+        self.assertEqual(entry.stock_item, self.item)
+        self.assertEqual(entry.source, CostSource.PURCHASE_ORDER)
+        self.assertEqual(entry.source_data, {'purchase_order': 1})
+        self.assertEqual(entry.user, self.user)
+
+    def test_permissions(self):
+        """Importing requires the 'pricing' change and 'stock' change permissions."""
+        csv = 'Cost Type,Minimum Cost,Currency\nLanded,1,USD\n'
+        overrides = {'stock_item': self.other_item.pk}
+
+        cases = [
+            ([], 403),
+            # The 'pricing' role alone is not sufficient
+            ([f'pricing.{perm}' for perm in self.ALL_PERMISSIONS], 403),
+            (['pricing.change', 'pricing.add', 'stock.view'], 403),
+            # The 'stock' role alone is not sufficient
+            ([f'stock.{perm}' for perm in self.ALL_PERMISSIONS], 403),
+            (['pricing.view', 'stock.change'], 403),
+            # Both are required
+            (['pricing.change', 'stock.change'], 200),
+        ]
+
+        for roles, expected_code in cases:
+            with self.subTest(roles=roles):
+                self.set_roles(*roles)
+                session = self.create_session(csv, field_overrides=overrides)
+                self.accept_fields(session, expected_code=expected_code)
+
+        # Losing the 'stock' role before the rows are imported also prevents the import
+        rows = self.rows(session)
+        self.set_roles('pricing.change')
+        self.accept_rows(session, rows, expected_code=403)
+
+        N = StockItemCostEntry.objects.count()
+
+        self.set_roles('pricing.change', 'stock.change')
+        self.accept_rows(session, rows)
+
+        self.assertEqual(StockItemCostEntry.objects.count(), N + 1)
 
 
 class StockItemPricingDetailTests(StockItemCostApiTestBase):

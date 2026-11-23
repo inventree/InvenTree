@@ -26,6 +26,9 @@ import { doCachedLogin } from '../login.js';
  *   manufacturing cost of $65 - $130
  * - Stock item 750 (C_10uF_0805, quantity 91) has a legacy purchase cost in AUD, which has
  *   not been converted (no exchange rate), and a "Rework to current revision" cost of $5
+ * - Stock items 222 (Wood Screw, quantity 1300), 223 (Wood Screw) and 225 (Blue Paint)
+ *   have no cost entries - used for importing costs from a file. Their IDs do not match
+ *   any stock item serial number, so the "Stock Item" import column is not ambiguous
  */
 
 // Stock item used to create / edit / delete cost entries
@@ -40,6 +43,12 @@ const RANGE_SINGLE_ITEM = 331;
 
 // Stock item with a cost entry which could not be converted to the default currency
 const UNCONVERTED_ITEM = 750;
+
+// Stock item used to import costs via the "Item Costs" table (tests/fixtures/stock_costs.csv)
+const IMPORT_ITEM = 222;
+
+// Stock items listed in tests/fixtures/stock_costs_admin.csv (imported via the admin center)
+const ADMIN_IMPORT_ITEMS = [223, 225];
 
 const LEGACY_NOTES = 'Migrated from stock item purchase price';
 const REWORK_NOTES = 'Rework to current revision';
@@ -655,4 +664,149 @@ test('Stock Costs - Disassembly', async ({ browser }) => {
   }
 
   await api.dispose();
+});
+
+/**
+ * Select all rows in the importer, import them, and close the importer
+ */
+const importAllRows = async (page: Page, count: number) => {
+  await page.getByText(`0 / ${count}`).waitFor();
+
+  await page
+    .getByRole('row', { name: 'Select all records Row Not' })
+    .getByLabel('Select all records')
+    .click();
+  await page
+    .getByRole('button', { name: 'action-button-import-selected' })
+    .click();
+
+  await page.getByText('Data has been imported successfully').waitFor();
+  await page.getByRole('button', { name: 'Close' }).click();
+};
+
+test('Stock Costs - Import', async ({ browser }) => {
+  await removeManualCosts(IMPORT_ITEM);
+
+  try {
+    const page = await doCachedLogin(browser, {
+      user: stevenuser,
+      url: `stock/item/${IMPORT_ITEM}/details`
+    });
+
+    await checkCostSummary(page, null, null);
+
+    await loadTab(page, 'Item Costs');
+
+    await page
+      .getByRole('button', { name: 'action-button-import-costs' })
+      .click();
+
+    // The stock item is set automatically - only the file is required
+    await page
+      .getByRole('dialog', { name: 'Import Item Costs' })
+      .locator('input[type="file"]')
+      .setInputFiles('./tests/fixtures/stock_costs.csv');
+    await page.getByRole('button', { name: 'Submit' }).click();
+
+    await page.getByText('Mapping data columns to database fields').waitFor();
+
+    // The "Stock Item" field is fixed (not mapped from the file)
+    await expect(
+      page.getByRole('combobox', { name: 'import-column-map-stock_item' })
+    ).toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
+
+    // Each row is imported against this stock item
+    await page.getByText('Imported freight').first().waitFor();
+    await page.getByText('Imported handling fee').first().waitFor();
+    await page.getByText('Imported rebate').first().waitFor();
+
+    await importAllRows(page, 3);
+
+    // The table is refreshed with the imported entries
+    const freight = await costRow(page, 'Imported freight');
+    await expect(freight).toContainText('Landed');
+    await expect(freight).toContainText('$2.5');
+    await expect(freight).toContainText('manual');
+    await expect(freight).toContainText('steven');
+
+    await expect(await costRow(page, 'Imported handling fee')).toContainText(
+      '$1 - $1.5'
+    );
+    await expect(await costRow(page, 'Imported rebate')).toContainText(
+      'Adjustment'
+    );
+
+    // The unit cost of the stock item includes all the imported entries
+    // (2.5 + 1 - 0.5) to (2.5 + 1.5 - 0.5), x 1300 units
+    await navigate(page, `stock/item/${IMPORT_ITEM}/details`);
+    await checkCostSummary(page, '$3 - $3.5', '$3,900 - $4,550');
+  } finally {
+    await removeManualCosts(IMPORT_ITEM);
+  }
+});
+
+test('Stock Costs - Import via Admin Center', async ({ browser }) => {
+  for (const item of ADMIN_IMPORT_ITEMS) {
+    await removeManualCosts(item);
+  }
+
+  try {
+    const page = await doCachedLogin(browser, {
+      user: stevenuser,
+      url: 'settings/admin/import'
+    });
+
+    await page
+      .getByRole('button', { name: 'action-button-create-import-' })
+      .click();
+
+    await page
+      .locator('input[type="file"]')
+      .setInputFiles('./tests/fixtures/stock_costs_admin.csv');
+
+    await page
+      .getByRole('combobox', { name: 'choice-field-model_type' })
+      .fill('cost');
+    await page
+      .getByRole('option', { name: 'Stock Item Cost Entry', exact: true })
+      .click();
+    await page.getByRole('button', { name: 'Submit' }).click();
+
+    await page.getByText('Mapping data columns to database fields').waitFor();
+
+    // The stock item is read from the file
+    await page
+      .getByRole('combobox', { name: 'import-column-map-stock_item' })
+      .waitFor();
+
+    await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
+
+    await page.getByText('Admin import freight').first().waitFor();
+    await page.getByText('Admin import purchase').first().waitFor();
+
+    await importAllRows(page, 2);
+
+    // Confirmation of full import success
+    await page.getByRole('cell', { name: '2 / 2' }).first().waitFor();
+
+    // Each cost was imported against the stock item specified in the file
+    await navigate(page, `stock/item/${ADMIN_IMPORT_ITEMS[0]}/details`);
+    // 0.25 x 1084 units
+    await checkCostSummary(page, '$0.25', '$271');
+
+    await navigate(page, `stock/item/${ADMIN_IMPORT_ITEMS[1]}/details`);
+    // 12 x 11 units
+    await checkCostSummary(page, '$12', '$132');
+
+    await loadTab(page, 'Item Costs');
+    const purchase = await costRow(page, 'Admin import purchase');
+    await expect(purchase).toContainText('Purchase');
+    await expect(purchase).toContainText('manual');
+  } finally {
+    for (const item of ADMIN_IMPORT_ITEMS) {
+      await removeManualCosts(item);
+    }
+  }
 });

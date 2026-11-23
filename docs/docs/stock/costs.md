@@ -96,6 +96,31 @@ To record an [estimated cost](#estimated-costs), enable the *Estimate* option, a
 
 When editing an existing cost entry, the *Estimate* option is automatically enabled if the cost is specified as a range.
 
+### Importing Costs
+
+Multiple cost entries can be [imported](../concepts/data_import.md) from a file (e.g. a CSV or Excel spreadsheet):
+
+- **From the Item Costs panel:** Click on the {{ icon("file-upload") }} button in the *Item Costs* panel. Every imported cost is recorded against *this* stock item, so the file does not need a stock item column
+- **From the Admin Center:** Create a new import session and select the *Stock Item Cost Entry* type. The file must include a *Stock Item* column, so costs can be imported for many stock items at once
+
+The following columns can be imported:
+
+| Column | Description |
+| --- | --- |
+| Stock Item | The ID of the stock item (Admin Center only) |
+| Cost Type | The [cost type](#cost-types) - either the name (e.g. *Landed*) or the numeric value |
+| Minimum Cost | The unit cost (or the minimum unit cost, for an [estimate](#estimated-costs)) |
+| Maximum Cost | The maximum unit cost, for an estimate (optional) |
+| Currency | The currency of the cost (defaults to the [default currency](../concepts/pricing.md#default-currency) when importing from the *Item Costs* panel) |
+| Notes | Optional notes |
+
+Imported costs are recorded with the `manual` [source](#cost-sources), and are attributed to the user who imported them. Each cost is [converted](#currency-conversion) to the default currency when it is imported. As with any data import, importing cost entries is not recorded in the [history](#history) of the stock item.
+
+!!! tip "Serial Numbers"
+    A value in the *Stock Item* column is matched against both the ID and the serial number of each stock item. If a value matches both (e.g. the ID of one stock item is the serial number of another), the row is rejected as ambiguous. To avoid this, select the *ID* lookup field for the *Stock Item* column when mapping the data columns.
+
+Importing cost entries requires the same [permissions](#permissions) as adding them, plus *change* permission for the *Pricing* role.
+
 ## How Costs are Recorded
 
 In addition to costs entered manually, InvenTree records stock item costs automatically as stock is received, created and modified.
@@ -232,7 +257,7 @@ Stock item costs are available via the following API endpoints:
 
 | Endpoint | Description |
 | --- | --- |
-| `/api/pricing/stock-cost-entry/` | List, create, edit and delete cost entries |
+| `/api/pricing/stock-cost-entry/` | List, create, edit, delete and export cost entries |
 | `/api/pricing/stock-cost/` | The (read-only) unit cost of each stock item |
 
 Additionally, the stock item API (`/api/stock/`) supports:
@@ -251,7 +276,7 @@ Refer to the [API schema](../api/schema.md) documentation for more information.
 The following are not currently supported:
 
 - **Setting a cost when creating stock:** A cost cannot be entered when creating a new stock item (via the user interface or the API). Add the cost via the [Item Costs](#item-costs-panel) panel (or the `/api/pricing/stock-cost-entry/` API endpoint) once the stock item has been created
-- **Stock item import and export:** Costs are not included when [importing](../concepts/data_import.md) or [exporting](../concepts/data_export.md) stock item data. The cost entries of a single stock item can be exported from the [Item Costs](#item-costs-panel) panel
+- **Stock item import and export:** Costs are not included when [importing](../concepts/data_import.md) or [exporting](../concepts/data_export.md) stock item *data* - import the [cost entries](#importing-costs) separately, once the stock items have been created. The cost entries of a single stock item can be exported from the [Item Costs](#item-costs-panel) panel
 
 !!! warning "Importing Older Database Backups"
     Database backups created by an earlier version of InvenTree contain the (removed) `purchase_price` field of each stock item, and cannot be imported directly into this version. Instead, import the backup into the *same* version of InvenTree which created it, and then [update](../start/migrate.md#migrating-data-to-newer-version) to this version - the purchase prices are then migrated to [legacy](#legacy-purchase-prices) cost entries.
