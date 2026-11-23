@@ -546,7 +546,10 @@ class NotesImageList(ListCreateAPI):
         note = serializer.validated_data['note']
 
         common.serializers.check_note_change_permission(
-            self.request.user, template=note.template, model_type=note.model_type
+            self.request.user,
+            template=note.template,
+            model_type=note.model_type,
+            model_id=note.model_id,
         )
 
         serializer.save(user=self.request.user)
@@ -1106,6 +1109,7 @@ class NoteDetail(NoteMixin, RetrieveUpdateDestroyAPI):
             self.request.user,
             template=instance.template,
             model_type=instance.model_type,
+            model_id=instance.model_id,
         )
         super().perform_destroy(instance)
 
