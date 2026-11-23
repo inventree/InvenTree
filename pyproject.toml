@@ -112,6 +112,9 @@ incompatible-method-override="ignore" # 110
 invalid-explicit-return="ignore"  # 58 ##
 invalid-argument-type="ignore"  # 414
 no-matching-overload="ignore"  # 16  # need to wait for betterdjango field stubs
+lost-keyword-for-regular-parameter = "ignore"  # 52
+missing-union-attribute = "ignore"  # 40
+incompatible-attribute-override = "ignore"  # 36
 
 # warn about unused ignore comments
 unused-ignore-comment = "error"
