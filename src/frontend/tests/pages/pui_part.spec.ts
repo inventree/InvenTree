@@ -438,6 +438,36 @@ test('Parts - BOM Navigation', async ({ browser }) => {
   await navigate(page, 'part/104/bom');
   await cell.click();
   await page.getByText('Part: Blue Paint').or(details).first().waitFor();
+
+  // Sub-assembly rows can still be expanded and collapsed,
+  // without opening the sub-assembly part
+  await navigate(page, 'part/87/bom');
+
+  const assemblyRow = page
+    .getByRole('row')
+    .filter({ hasText: 'Widget Board (assembled)' });
+  const assemblyDetails = page.getByRole('link', { name: 'details-part-88' });
+
+  await assemblyRow.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('MAX232IDR').waitFor();
+  await expect(assemblyDetails).toHaveCount(0);
+  await expect(page).toHaveURL(/part\/87\/bom/);
+
+  await assemblyRow
+    .getByRole('button', { name: 'nested-row-collapse' })
+    .click();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+  await expect(assemblyDetails).toHaveCount(0);
+  await expect(page).toHaveURL(/part\/87\/bom/);
+
+  // Clicking a nested row opens the part for that row
+  await assemblyRow.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('MAX232IDR').click();
+  await page
+    .getByText('Part: MAX232IDR')
+    .or(page.getByRole('link', { name: 'details-part-61' }))
+    .first()
+    .waitFor();
 });
 
 /**
