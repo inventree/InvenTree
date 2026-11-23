@@ -737,7 +737,7 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> PurchaseOrderReportContext:
         """Return report context data for this PurchaseOrder."""
-        return_ctx = super().report_context()
+        return_ctx: PurchaseOrderReportContext = super().report_context()
 
         return_ctx.update({'supplier': self.supplier})
         return return_ctx
@@ -1521,7 +1521,7 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> SalesOrderReportContext:
         """Generate report context data for this SalesOrder."""
-        return_ctx = super().report_context()
+        return_ctx: SalesOrderReportContext = super().report_context()
 
         return_ctx.update({'customer': self.customer})
         return return_ctx
@@ -3448,7 +3448,7 @@ class ReturnOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> ReturnOrderReportContext:
         """Generate report context data for this ReturnOrder."""
-        return_ctx = super().report_context()
+        return_ctx: ReturnOrderReportContext = super().report_context()
 
         return_ctx.update({'customer': self.customer})
         return return_ctx

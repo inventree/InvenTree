@@ -1943,7 +1943,7 @@ class ClassValidationMixinTest(TestCase):
     def test_valid_class(self):
         """Test that a valid class passes the validation."""
 
-        class TestClass(self.BaseTestClass):
+        class TestClass(self.BaseTestClass):  # ty: ignore[unsupported-base]
             """A valid class that inherits from BaseTestClass."""
 
             NAME = 'Test'
@@ -1959,7 +1959,7 @@ class ClassValidationMixinTest(TestCase):
     def test_invalid_class(self):
         """Test that an invalid class fails the validation."""
 
-        class TestClass1(self.BaseTestClass):
+        class TestClass1(self.BaseTestClass):  # ty: ignore[unsupported-base]
             """A bad class that inherits from BaseTestClass."""
 
         with self.assertRaisesRegex(
@@ -1968,7 +1968,7 @@ class ClassValidationMixinTest(TestCase):
         ):
             TestClass1.validate()
 
-        class TestClass2(self.BaseTestClass):
+        class TestClass2(self.BaseTestClass):  # ty: ignore[unsupported-base]
             """A bad class that inherits from BaseTestClass."""
 
             NAME = 'Test'

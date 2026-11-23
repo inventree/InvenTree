@@ -210,7 +210,7 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
 
     def process_bom_row(
         self, bom_item, level: int = 1, multiplier: Optional[Decimal] = None, **kwargs
-    ) -> list:
+    ) -> Optional[list]:
         """Process a single BOM row.
 
         Arguments:
