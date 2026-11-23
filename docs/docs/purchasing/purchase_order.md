@@ -141,6 +141,8 @@ When items are received against a purchase order line which has a price, a *purc
 - The cost is recorded in the currency of the purchase order line item
 - The cost is also converted to the [default currency](../concepts/pricing.md#default-currency) of the system, at the exchange rate at the time of receipt. Both the original and the converted values are stored, and the unit cost of the stock item is calculated from the converted values
 
+If the line has no price (or a price of zero), no cost is recorded against the received stock items - refer to the [stock item costs](../stock/costs.md#receiving-purchase-orders) documentation.
+
 Recording these costs does not require the *pricing* role - users who can receive items against a purchase order can assign the incoming cost. Viewing stock item costs requires the *pricing* role.
 
 Additional costs (such as freight charges, once the invoice arrives) can be added to the received stock items afterwards. Refer to the [stock item costs](../stock/costs.md) documentation for more information.

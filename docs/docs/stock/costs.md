@@ -72,7 +72,10 @@ Stock tables display the *Unit Cost* of each stock item (this column is hidden b
 
 {{ image("stock/stock_table_unit_cost.png", "Stock table unit cost") }}
 
-The *Stock Value* is calculated from the unit cost of the stock item. If the stock item does not have any recorded costs, the stock value is instead estimated from the [pricing data](../part/pricing.md) of the part.
+The *Stock Value* is calculated from the unit cost of the stock item (in the [default currency](../concepts/pricing.md#default-currency)), multiplied by the stock quantity. If the stock item does not have any recorded costs, the stock value is instead estimated from the [pricing data](../part/pricing.md) of the part.
+
+!!! warning "Unconverted Costs"
+    If a stock item has cost entries, but none of them could be [converted](#currency-conversion) to the default currency (for example, no exchange rate is available), its *Stock Value* is shown as blank. It does *not* fall back to the part pricing data, as the stock item does have a recorded cost. The value is shown once the costs are [re-converted](#re-converting-costs), which happens automatically when the exchange rates are next updated.
 
 Stock tables can also be filtered by the *Has Unit Cost* filter, and sorted by *Unit Cost*.
 
@@ -131,6 +134,9 @@ When items are received against a [purchase order](../purchasing/purchase_order.
 
 - The line item price is per supplier pack, so it is divided by the [pack quantity](../purchasing/supplier.md#supplier-part-pack-size) of the supplier part, to give a cost per unit of the stock item
 - The cost is recorded in the currency of the purchase order line item
+
+!!! info "Line Items Without a Price"
+    If the purchase order line item has no price, or a price of zero, no cost is recorded against the received stock items. These items have no unit cost (rather than a zero cost) - so they are not included in the stock-based purchase cost of the part, and they are valued using the part [pricing data](../part/pricing.md) (for example, in the *Stock Value* column). If the items were genuinely free of charge, [add a cost](#adding-a-cost) of zero to them manually.
 
 ### Duplicating Stock Items
 
@@ -217,7 +223,7 @@ If a user does not have *view* permission for the *Pricing* role, the *Item Cost
 
 ### History
 
-Changes to stock item costs are recorded in the [history](../concepts/audit.md) of the stock item. These entries are only visible to users with *view* permission for the *Pricing* role.
+Changes to stock item costs are recorded in the [history](../concepts/audit.md) of the stock item. These entries are only visible to users with *view* permission for both the *Pricing* role and the *Stock Items* role - the same permissions required to [view the costs](#permissions) themselves.
 
 ## Report Templates
 
