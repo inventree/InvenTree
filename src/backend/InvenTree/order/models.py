@@ -739,7 +739,7 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
         """Return report context data for this PurchaseOrder."""
         return_ctx = super().report_context()
 
-        return_ctx.update({'supplier': self.supplier})  # ty:ignore[invalid-key]
+        return_ctx.update({'supplier': self.supplier})  # ty:ignore[invalid-typed-dict-key]
         return return_ctx
 
     def get_absolute_url(self) -> str:
@@ -1523,7 +1523,7 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
         """Generate report context data for this SalesOrder."""
         return_ctx = super().report_context()
 
-        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
+        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-typed-dict-key]
         return return_ctx
 
     def get_absolute_url(self) -> str:
@@ -3450,7 +3450,7 @@ class ReturnOrder(AuditedOrderMixin, TotalPriceMixin, Order):
         """Generate report context data for this ReturnOrder."""
         return_ctx = super().report_context()
 
-        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
+        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-typed-dict-key]
         return return_ctx
 
     def get_absolute_url(self):

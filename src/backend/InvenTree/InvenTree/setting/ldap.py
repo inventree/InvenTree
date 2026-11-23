@@ -9,8 +9,8 @@ def get_ldap_config(debug: bool = False) -> dict:
     The returned settings will be updated into the globals() object,
     and will be used to configure the LDAP authentication backend.
     """
-    import django_auth_ldap.config  # ty: ignore[unresolved-import]
-    import ldap  # ty: ignore[unresolved-import]
+    import django_auth_ldap.config  # ty: ignore[import-not-found]
+    import ldap  # ty: ignore[import-not-found]
 
     # get global options from dict and use ldap.OPT_* as keys and values
     global_options_dict = get_setting(
