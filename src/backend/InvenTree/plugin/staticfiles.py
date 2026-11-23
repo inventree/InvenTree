@@ -20,8 +20,8 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 
 import structlog
 
-from plugin.lease import acquire_lease_blocking, release_lease
-from plugin.registry import registry
+from plugin import registry
+from plugin._internal.lease import acquire_lease_blocking, release_lease
 
 logger = structlog.get_logger('inventree')
 
@@ -145,7 +145,13 @@ def _copy_plugin_static_files(slug: str):
                 continue
 
             relative_path = item.relative_to(source_path).as_posix()
-            target = staging_path / relative_path
+            target = staging_path.joinpath(relative_path)
+            try:
+                target.relative_to(staging_path, walk_up=False)
+            except ValueError:
+                raise ValueError(
+                    f"Target path '{target}' is not within staging path '{staging_path}'"
+                )
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(item.read_bytes())
 

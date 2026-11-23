@@ -24,6 +24,19 @@ POST {
 }
 ```
 
+### Barcode Priority
+
+When a barcode is scanned, the active barcode plugins are queried in order of their `BARCODE_PRIORITY` attribute (highest first), and the first plugin to return a successful match is used. Plugins with equal priority are queried in the order they are loaded.
+
+The default priority is `0`. A plugin which should only be used as a *fallback* (when no other plugin can match the barcode) should set a negative priority:
+
+```python
+class MyFallbackBarcodePlugin(BarcodeMixin, InvenTreePlugin):
+    BARCODE_PRIORITY = -10
+```
+
+A plugin which should take precedence over the builtin plugins can set a positive priority. Note that a higher priority plugin may prevent other plugins (including the builtin InvenTree barcode plugin) from matching a barcode.
+
 ### Builtin Plugin
 
 The InvenTree server includes a builtin barcode plugin which can generate and decode the QR codes. This plugin is enabled by default.
@@ -73,7 +86,7 @@ To try it just copy the file to src/InvenTree/plugins and restart the server. Op
 To implement a custom internal barcode format, the `generate(...)` method from the Barcode Mixin needs to be overridden. Then the plugin can be selected at `System Settings > Barcodes > Barcode Generation Plugin`.
 
 ```python
-from InvenTree.models import InvenTreeBarcodeMixin
+from generic.models.modelmixins import InvenTreeBarcodeMixin
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
 

@@ -16,18 +16,19 @@ from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 import common.filters
 import common.models
-import common.settings
 import InvenTree.helpers
 import InvenTree.permissions
 import stock.serializers as StockSerializers
 from build.models import Build
 from company.models import Company, ManufacturerPart, SupplierPart
 from data_exporter.mixins import DataExportViewMixin
+from generic.search import search_provider
 from generic.states.api import StatusView
 from InvenTree.api import (
     BulkCreateMixin,
@@ -44,6 +45,7 @@ from InvenTree.filters import (
 )
 from InvenTree.helpers import extract_serial_numbers, generateTestKey, str2bool
 from InvenTree.mixins import (
+    ActionLockMixin,
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
     ListAPI,
@@ -63,6 +65,7 @@ from stock.models import (
     StockLocationType,
 )
 from stock.status_codes import StockHistoryCode, StockStatus
+from stock.system_settings import stock_expiry_enabled
 from users.permissions import check_user_permission
 
 
@@ -109,10 +112,15 @@ class GenerateSerialNumber(GenericAPIView):
         return Response(data, status=status.HTTP_201_CREATED)
 
 
-class StockItemContextMixin:
-    """Mixin class for adding StockItem object to serializer context."""
+class StockItemContextMixin(ActionLockMixin):
+    """Mixin class for adding StockItem object to serializer context.
+
+    The stock item row is locked for the duration of the action (see ActionLockMixin).
+    """
 
     role_required = 'stock.change'
+
+    lock_model = StockItem
 
     queryset = StockItem.objects.none()
 
@@ -310,7 +318,7 @@ class StockLocationFilter(FilterSet):
         """Meta class options for this filterset."""
 
         model = StockLocation
-        fields = ['name', 'structural', 'external']
+        fields = ['name', 'structural', 'external', 'exclude_from_stock']
 
     location_type = rest_filters.ModelChoiceFilter(
         queryset=StockLocationType.objects.all(), field_name='location_type'
@@ -442,6 +450,7 @@ class StockLocationOutputOptions(OutputConfiguration):
     ]
 
 
+@search_provider(ref_names=['stocklocation'])
 class StockLocationList(
     DataExportViewMixin,
     BulkUpdateMixin,
@@ -532,17 +541,43 @@ class StockLocationTree(TreeMixin, ListAPI):
         return queryset
 
 
-class StockLocationTypeList(ListCreateAPI):
+class StockLocationTypeOutputOptions(OutputConfiguration):
+    """Output options for the stock location type endpoints."""
+
+    OPTIONS = [
+        InvenTreeOutputOption(
+            flag='parameters', description='Include parameters for each location type'
+        )
+    ]
+
+
+class StockLocationTypeMixin:
+    """Shared configuration for the stock location type endpoints."""
+
+    queryset = StockLocationType.objects.all()
+    serializer_class = StockSerializers.StockLocationTypeSerializer
+
+    def get_serializer_class(self):
+        """Include optional parameter data only on read requests."""
+        request = getattr(self, 'request', None)
+        if request is not None and request.method not in SAFE_METHODS:
+            return StockSerializers.StockLocationTypeBriefSerializer
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        """Include the number of locations assigned to each type."""
+        return self.serializer_class.annotate_queryset(super().get_queryset())
+
+
+class StockLocationTypeList(StockLocationTypeMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for a list of StockLocationType objects.
 
     - GET: Return a list of all StockLocationType objects
     - POST: Create a StockLocationType
     """
 
-    queryset = StockLocationType.objects.all()
-    serializer_class = StockSerializers.StockLocationTypeSerializer
-
     filter_backends = SEARCH_ORDER_FILTER
+    output_options = StockLocationTypeOutputOptions
 
     ordering_fields = ['name', 'location_count', 'icon']
 
@@ -550,17 +585,10 @@ class StockLocationTypeList(ListCreateAPI):
 
     search_fields = ['name', 'description']
 
-    def get_queryset(self):
-        """Override the queryset method to include location count."""
-        queryset = super().get_queryset()
-        queryset = StockSerializers.StockLocationTypeSerializer.annotate_queryset(
-            queryset
-        )
 
-        return queryset
-
-
-class StockLocationTypeDetail(RetrieveUpdateDestroyAPI):
+class StockLocationTypeDetail(
+    StockLocationTypeMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
     """API detail endpoint for a StockLocationType object.
 
     - GET: return a single StockLocationType
@@ -569,17 +597,7 @@ class StockLocationTypeDetail(RetrieveUpdateDestroyAPI):
     - DELETE: delete a StockLocationType
     """
 
-    queryset = StockLocationType.objects.all()
-    serializer_class = StockSerializers.StockLocationTypeSerializer
-
-    def get_queryset(self):
-        """Override the queryset method to include location count."""
-        queryset = super().get_queryset()
-        queryset = StockSerializers.StockLocationTypeSerializer.annotate_queryset(
-            queryset
-        )
-
-        return queryset
+    output_options = StockLocationTypeOutputOptions
 
 
 class StockFilter(FilterSet):
@@ -748,7 +766,7 @@ class StockFilter(FilterSet):
 
     def filter_expired(self, queryset, name, value):
         """Filter by whether or not the stock item has expired."""
-        if not common.settings.stock_expiry_enabled():
+        if not stock_expiry_enabled():
             return queryset
 
         if str2bool(value):
@@ -764,6 +782,16 @@ class StockFilter(FilterSet):
         if str2bool(value):
             return queryset.filter(location__external=True)
         return queryset.exclude(location__external=True)
+
+    exclude_from_stock = rest_filters.BooleanFilter(
+        label=_('Exclude from Stock'), method='filter_exclude_from_stock'
+    )
+
+    def filter_exclude_from_stock(self, queryset, name, value):
+        """Filter by whether or not the stock item is located in an exclude_from_stock location."""
+        if str2bool(value):
+            return queryset.filter(location__exclude_from_stock=True)
+        return queryset.exclude(location__exclude_from_stock=True)
 
     in_stock = rest_filters.BooleanFilter(label='In Stock', method='filter_in_stock')
 
@@ -1103,9 +1131,11 @@ class StockOutputOptions(OutputConfiguration):
         InvenTreeOutputOption('supplier_part_detail'),
         InvenTreeOutputOption('location_detail'),
         InvenTreeOutputOption('tests'),
+        InvenTreeOutputOption('consumed_by_detail'),
     ]
 
 
+@search_provider(ref_names=['stockitem'])
 class StockList(
     DataExportViewMixin,
     BulkUpdateMixin,

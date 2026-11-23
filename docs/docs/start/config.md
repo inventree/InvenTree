@@ -102,6 +102,8 @@ The following debugging / logging options are available:
 {{ configsetting("INVENTREE_DEBUG_QUERYCOUNT") }} Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. |
 {{ configsetting("INVENTREE_DEBUG_SILK") }} Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. |
 | `INVENTREE_DEBUG_SILK_PROFILING` | `debug_silk_profiling` | False | Enable detailed profiling in django-silk |
+| `INVENTREE_GUNICORN_ACCESS_LOG` | - | True | Enable gunicorn access logging |
+| `INVENTREE_GUNICORN_ERROR_LOG` | - | True | Enable gunicorn error logging |
 
 ### Debug Mode
 
@@ -281,7 +283,7 @@ If running with a PostgreSQL database backend, the following additional options 
 | `INVENTREE_DB_TCP_KEEPALIVES_INTERVAL` | database.tcp_keepalives_interval | 5 | TCP keepalive interval |
 | `INVENTREE_DB_TCP_KEEPALIVES_COUNT` | database.tcp_keepalives_count | 5 | TCP keepalive count |
 | `INVENTREE_DB_TCP_USER_TIMEOUT` | database.tcp_user_timeout | 2000 | TCP user timeout (ms) |
-| `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
+| `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" (see [concurrency](../concepts/concurrency.md#where-failures-can-still-occur)) |
 | `INVENTREE_DB_JIT_ENABLED` | database.jit_enabled | False | Enable JIT compilation for PostgreSQL queries |
 
 !!! info "JIT Compilation"
@@ -295,7 +297,7 @@ If running with a MySQL database backend, the following additional options are a
 
 {{ configtable() }}
 {{ configsetting("INVENTREE_DB_TIMEOUT", default="10") }} Database connection timeout (s) |
-| `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
+| `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" (see [concurrency](../concepts/concurrency.md#where-failures-can-still-occur)) |
 
 ### SQLite Settings
 
@@ -309,6 +311,10 @@ If running with a SQLite database backend, the following additional options are 
 {{ configtable() }}
 {{ configsetting("INVENTREE_DB_TIMEOUT", default="10") }} Database connection timeout (s) |
 | `INVENTREE_DB_WAL_MODE` | database.wal_mode | True | Enable Write-Ahead Logging (WAL) mode for SQLite databases |
+
+### Concurrent Updates
+
+InvenTree uses row-level database locking to prevent concurrent changes (from multiple users, or from [background tasks](./processes.md#background-worker)) from overwriting each other. Refer to the [database concurrency](../concepts/concurrency.md) documentation for details on how this works, the limitations which apply, and how the choice of database backend (and the `INVENTREE_DB_ISOLATION_SERIALIZABLE` option) affects this behavior.
 
 ## Caching
 
@@ -451,6 +457,7 @@ InvenTree provides allowance for additional sign-in options. The following optio
 {{ configsetting("INVENTREE_MFA_ENABLED") }} Enable multi-factor authentication support for the InvenTree server |
 {{ configsetting("INVENTREE_MFA_SUPPORTED_TYPES") }} List of supported multi-factor authentication types |
 {{ configsetting("INVENTREE_USE_JWT") }} Enable support for JSON Web Tokens (JWT) for authentication |
+{{ configsetting("INVENTREE_BASIC_AUTH_ENABLED") }} Enable/Disable basic (username:password) authentication against the API. See [Basic Auth](../api/index.md#basic-auth) |
 
 ### Single Sign On
 

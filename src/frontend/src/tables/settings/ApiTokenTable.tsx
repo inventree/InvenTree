@@ -21,9 +21,11 @@ import {
   Textarea
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import { IconAlertTriangle, IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../App';
+import { useReauthenticate } from '../../components/modals/ReauthenticateModal';
 import {
   BooleanColumn,
   UserColumn
@@ -42,12 +44,18 @@ export function ApiTokenTable({
   const [revokeTokenId, setRevokeTokenId] = useState<string | null>(null);
   const [revocationReason, setRevocationReason] = useState<string>('');
 
+  const { handleReauthError, modals: reauthModals } = useReauthenticate();
+
   const generateToken = useCreateApiFormModal({
     url: ApiEndpoints.user_me_token,
     method: 'GET',
     title: t`Generate Token`,
     fields: { name: {} },
     successMessage: t`Token generated`,
+    onFormError: (error: any) => {
+      // MFA users must have recently authenticated to generate a token
+      handleReauthError(error);
+    },
     onFormSuccess: (data: any) => {
       setToken(data.token);
       setTokenWarning(data.warning ?? '');
@@ -205,6 +213,10 @@ export function ApiTokenTable({
         table.refreshTable();
         setRevokeTokenId(null);
         setRevocationReason('');
+        notifications.show({
+          title: t`Token revoked`,
+          message: t`The token has been successfully revoked`
+        });
       })
       .catch((error) => {
         showApiErrorMessage({
@@ -224,6 +236,7 @@ export function ApiTokenTable({
       {only_myself && (
         <>
           {generateToken.modal}
+          {reauthModals}
           <Modal
             opened={opened}
             onClose={close}
@@ -262,7 +275,7 @@ export function ApiTokenTable({
           setRevokeTokenId(null);
           setRevocationReason('');
         }}
-        title={t`Revoke Token`}
+        title={<StylishText size='lg'>{t`Revoke Token`}</StylishText>}
         centered
       >
         <Textarea

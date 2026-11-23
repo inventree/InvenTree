@@ -18,7 +18,10 @@ def get_spectacular_settings():
         },
         'VERSION': str(inventreeApiVersion()),
         'SERVE_INCLUDE_SCHEMA': False,
+        'SERVE_PERMISSIONS': ['InvenTree.permissions.AllowAnyOrReadScope'],
         'SCHEMA_PATH_PREFIX': '/api/',
+        # Temp Fix for Redoc
+        'REDOC_DIST': 'https://cdn.jsdelivr.net/npm/redoc@2.5.4',
         'POSTPROCESSING_HOOKS': [
             'InvenTree.schema.postprocess_schema_enums',
             'InvenTree.schema.postprocess_required_nullable',

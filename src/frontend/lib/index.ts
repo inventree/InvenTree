@@ -10,7 +10,12 @@ export {
 export { ApiEndpoints } from './enums/ApiEndpoints';
 export { ModelType } from './enums/ModelType';
 export type { ModelDict } from './enums/ModelInformation';
-export { UserRoles, UserPermissions } from './enums/Roles';
+export {
+  UserRoles,
+  UserPermissions,
+  roleToViewSettingMap
+} from './enums/Roles';
+export { SettingFlag } from './types/Settings';
 
 export type {
   InvenTreePluginContext,
@@ -34,8 +39,11 @@ export type {
   TableColumnProps,
   TableState,
   InvenTreeTableProps,
+  InvenTreeTableNestedRowProps,
   InvenTreeTableRenderProps
 } from './types/Tables';
+
+export type { UserTips } from './types/User';
 
 export type {
   TableFilterChoice,
@@ -68,7 +76,12 @@ export {
 } from './functions/Navigation';
 
 export {
-  notYetImplemented,
+  renderLink,
+  sanitizeLinkUrl,
+  type RenderLinkOptions
+} from './functions/Links';
+
+export {
   permissionDenied,
   invalidResponse,
   showTimeoutNotification

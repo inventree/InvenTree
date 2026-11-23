@@ -17,9 +17,8 @@ from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
 from InvenTree.unit_test import PluginRegistryMixin, TestQueryMixin
-from plugin import InvenTreePlugin, PluginMixinEnum
-from plugin.installer import install_plugin, update_plugins_file
-from plugin.registry import registry
+from plugin import InvenTreePlugin, PluginMixinEnum, registry
+from plugin._internal.installer import install_plugin, update_plugins_file
 from plugin.samples.integration.another_sample import (
     NoIntegrationPlugin,
     WrongIntegrationPlugin,
@@ -736,6 +735,58 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             self.assertIsNone(registry.mismatch_hash)
             self.assertEqual(registry.mismatch_count, 0)
 
+    def test_reload_requested_during_reload(self):
+        """Test that a reload requested by another thread while loading is not lost.
+
+        Previously, a reload requested while another thread held the loading lock
+        was silently dropped. If a plugin was activated in that window, the registry
+        (and its hash) would not reflect the new state until the server restarted.
+        """
+        import threading
+
+        from plugin.models import PluginConfig
+
+        slug = 'sample-printer-machine-plugin'
+
+        PluginConfig.objects.filter(key=slug).update(active=False)
+        registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
+        self.assertNotIn(slug, [p.slug for p in registry.with_mixin('machine')])
+
+        original_load = registry._load_plugins
+        calls = []
+
+        def load_plugins(*args, **kwargs):
+            """Activate the plugin from 'another thread' during the first reload."""
+            calls.append(1)
+
+            if len(calls) == 1:
+                PluginConfig.objects.filter(key=slug).update(active=True)
+
+                # The reload request from the other thread cannot acquire the lock
+                results = []
+                thread = threading.Thread(
+                    target=lambda: results.append(
+                        registry.reload_plugins(full_reload=True, collect=True)
+                    )
+                )
+                thread.start()
+                thread.join()
+                self.assertEqual(results, [False])
+
+            return original_load(*args, **kwargs)
+
+        with patch.object(registry, '_load_plugins', side_effect=load_plugins):
+            self.assertTrue(
+                registry.reload_plugins(
+                    full_reload=True, collect=True, force_reload=True
+                )
+            )
+
+        # The deferred request caused a second reload pass
+        self.assertEqual(len(calls), 2)
+        self.assertFalse(registry._reload_pending)
+        self.assertIn(slug, [p.slug for p in registry.with_mixin('machine')])
+
     def test_registry_hash_order_independence(self):
         """Test that the registry hash does not depend on plugin iteration order.
 
@@ -765,7 +816,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         from django.db.utils import ProgrammingError
 
         from common.models import InvenTreeSetting
-        from plugin.lease import release_lease, try_acquire_lease
+        from plugin._internal.lease import release_lease, try_acquire_lease
 
         with mock.patch.object(
             InvenTreeSetting.objects,
@@ -784,7 +835,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_lease_acquire_release(self):
         """Test that try_acquire_lease / release_lease provide mutual exclusion."""
-        from plugin.lease import release_lease, try_acquire_lease
+        from plugin._internal.lease import release_lease, try_acquire_lease
 
         key = '_test_lease_acquire_release'
 
@@ -807,7 +858,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         from django.utils import timezone
 
         from common.settings import set_global_setting
-        from plugin.lease import CLAIM_LEASE, release_lease, try_acquire_lease
+        from plugin._internal.lease import CLAIM_LEASE, release_lease, try_acquire_lease
 
         key = '_test_lease_expiry'
 
@@ -829,7 +880,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         """Test that acquire_lease_blocking gives up after its timeout, rather than hanging."""
         import time
 
-        from plugin.lease import (
+        from plugin._internal.lease import (
             acquire_lease_blocking,
             release_lease,
             try_acquire_lease,
@@ -864,7 +915,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         installed, and no future check would ever retry it.
         """
         from common.settings import get_global_setting
-        from plugin.registry import registry
+        from plugin import registry
 
         hash_during_install = 'unset'
 
@@ -881,16 +932,17 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
         with (
             tempfile.TemporaryDirectory() as tmpdir,
-            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch('plugin._internal.installer._env_plugin_hash_cache', None),
             mock.patch(
-                'plugin.installer.plugin_env_marker_path',
+                'plugin._internal.installer.plugin_env_marker_path',
                 return_value=Path(tmpdir) / '.inventree_plugins_hash',
             ),
             mock.patch(
-                'plugin.installer.plugins_file_hash', return_value='test-hash-1'
+                'plugin._internal.installer.plugins_file_hash',
+                return_value='test-hash-1',
             ),
             mock.patch(
-                'plugin.installer.install_plugins_file',
+                'plugin._internal.installer.install_plugins_file',
                 side_effect=fake_install_plugins_file,
             ),
         ):
@@ -908,21 +960,24 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
     def test_install_plugin_file_failure_does_not_persist_hash(self):
         """Test that a failed install leaves the hash unset, so it is retried next time."""
         from common.settings import get_global_setting, set_global_setting
-        from plugin.registry import registry
+        from plugin import registry
 
         set_global_setting('_PLUGIN_FILE_HASH', '')
 
         with (
             tempfile.TemporaryDirectory() as tmpdir,
-            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch('plugin._internal.installer._env_plugin_hash_cache', None),
             mock.patch(
-                'plugin.installer.plugin_env_marker_path',
+                'plugin._internal.installer.plugin_env_marker_path',
                 return_value=Path(tmpdir) / '.inventree_plugins_hash',
             ),
             mock.patch(
-                'plugin.installer.plugins_file_hash', return_value='test-hash-2'
+                'plugin._internal.installer.plugins_file_hash',
+                return_value='test-hash-2',
             ),
-            mock.patch('plugin.installer.install_plugins_file', return_value=False),
+            mock.patch(
+                'plugin._internal.installer.install_plugins_file', return_value=False
+            ),
         ):
             registry.install_plugin_file()
 
@@ -930,20 +985,21 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_install_plugin_file_skips_if_already_current(self):
         """Test that install_plugin_file() is a no-op once the hash already matches."""
-        from plugin.registry import registry
+        from plugin import registry
 
         with (
             tempfile.TemporaryDirectory() as tmpdir,
-            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch('plugin._internal.installer._env_plugin_hash_cache', None),
             mock.patch(
-                'plugin.installer.plugin_env_marker_path',
+                'plugin._internal.installer.plugin_env_marker_path',
                 return_value=Path(tmpdir) / '.inventree_plugins_hash',
             ),
             mock.patch(
-                'plugin.installer.plugins_file_hash', return_value='test-hash-3'
+                'plugin._internal.installer.plugins_file_hash',
+                return_value='test-hash-3',
             ),
             mock.patch(
-                'plugin.installer.install_plugins_file', return_value=True
+                'plugin._internal.installer.install_plugins_file', return_value=True
             ) as mock_install,
         ):
             registry.install_plugin_file()
@@ -963,7 +1019,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         previous environment's successful install of the exact same file.
         """
         from common.settings import set_global_setting
-        from plugin.registry import registry
+        from plugin import registry
 
         # Simulate a database that already believes this hash is installed -
         # as if a *previous* (now-replaced) environment installed it
@@ -971,17 +1027,18 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
         with (
             tempfile.TemporaryDirectory() as tmpdir,
-            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch('plugin._internal.installer._env_plugin_hash_cache', None),
             mock.patch(
-                'plugin.installer.plugin_env_marker_path',
+                'plugin._internal.installer.plugin_env_marker_path',
                 # A fresh environment has no marker file at all
                 return_value=Path(tmpdir) / '.inventree_plugins_hash',
             ),
             mock.patch(
-                'plugin.installer.plugins_file_hash', return_value='test-hash-4'
+                'plugin._internal.installer.plugins_file_hash',
+                return_value='test-hash-4',
             ),
             mock.patch(
-                'plugin.installer.install_plugins_file', return_value=True
+                'plugin._internal.installer.install_plugins_file', return_value=True
             ) as mock_install,
         ):
             registry.install_plugin_file()
@@ -1005,7 +1062,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         process start.
         """
         from common.settings import set_global_setting
-        from plugin.registry import registry
+        from plugin import registry
 
         set_global_setting('_PLUGIN_FILE_HASH', '')
 
@@ -1014,13 +1071,16 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         marker.write_text.side_effect = OSError('Read-only file system')
 
         with (
-            mock.patch('plugin.installer._env_plugin_hash_cache', None),
-            mock.patch('plugin.installer.plugin_env_marker_path', return_value=marker),
+            mock.patch('plugin._internal.installer._env_plugin_hash_cache', None),
             mock.patch(
-                'plugin.installer.plugins_file_hash', return_value='test-hash-5'
+                'plugin._internal.installer.plugin_env_marker_path', return_value=marker
             ),
             mock.patch(
-                'plugin.installer.install_plugins_file', return_value=True
+                'plugin._internal.installer.plugins_file_hash',
+                return_value='test-hash-5',
+            ),
+            mock.patch(
+                'plugin._internal.installer.install_plugins_file', return_value=True
             ) as mock_install,
         ):
             registry.install_plugin_file()
@@ -1033,8 +1093,8 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_builtin_mandatory_plugins(self):
         """Test that mandatory builtin plugins are always loaded."""
+        from plugin import registry
         from plugin.models import PluginConfig
-        from plugin.registry import registry
 
         # Start with a 'clean slate'
         PluginConfig.objects.all().delete()
@@ -1079,8 +1139,8 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_mandatory_plugins(self):
         """Test that plugins marked as 'mandatory' are always active."""
+        from plugin import registry
         from plugin.models import PluginConfig
-        from plugin.registry import registry
 
         # Start with a 'clean slate'
         PluginConfig.objects.all().delete()
@@ -1135,8 +1195,8 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
     def test_with_mixin(self):
         """Tests for the 'with_mixin' registry method."""
+        from plugin import registry
         from plugin.models import PluginConfig
-        from plugin.registry import registry
 
         self.ensurePluginsLoaded()
 

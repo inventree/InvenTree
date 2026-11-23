@@ -59,7 +59,6 @@ import InvenTree.conversion
 import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -67,6 +66,14 @@ import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import get_global_setting, global_setting_overrides
 from generic.enums import StringEnum
+from generic.models.base import InvenTreeMetadataModel, InvenTreeModel
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.cache import get_session_cache, set_session_cache
@@ -151,12 +158,13 @@ class UpdatedUserMixin(models.Model):
     )
 
 
-class ProjectCode(
-    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
-):
+class ProjectCode(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
     IMPORT_ID_FIELDS = ['code']
+
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
 
     class Meta:
         """Class options for the ProjectCode model."""
@@ -292,6 +300,8 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
                         if not key.startswith('_')
                     ],
                     batch_size=250,
+                    # Concurrent requests may race to create the same keys
+                    ignore_conflicts=True,
                 )
         except Exception as exc:
             logger.exception(
@@ -1274,7 +1284,7 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
         return self.__class__.is_required(self.key, **self.get_filters_for_instance())
 
 
-class InvenTreeSetting(InvenTree.models.InvenTreeAuditMixin, BaseInvenTreeSetting):
+class InvenTreeSetting(InvenTreeAuditMixin, BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     The class provides a way of retrieving the value for a particular key,
@@ -1866,7 +1876,7 @@ class NewsFeedEntry(models.Model):
     )
 
 
-class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
+class CustomUnit(InvenTreeAuditMixin, models.Model):
     """Model for storing custom physical unit definitions.
 
     Model Attributes:
@@ -1877,6 +1887,9 @@ class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
     Refer to the pint documentation for further information on unit definitions.
     https://pint.readthedocs.io/en/stable/advanced/defining.html
     """
+
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
 
     class Meta:
         """Class meta options."""
@@ -1912,6 +1925,7 @@ class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
         from InvenTree.conversion import (
             build_candidate_unit_registry,
             get_unit_registry,
+            is_base_unit_name,
         )
 
         registry = get_unit_registry()
@@ -1922,6 +1936,19 @@ class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
         # Cannot be zero length
         if not self.name.isidentifier():
             raise ValidationError({'name': _('Unit name must be a valid identifier')})
+
+        # Custom units cannot override built-in unit definitions
+        if is_base_unit_name(self.name):
+            raise ValidationError({
+                'name': _('Unit name conflicts with an existing built-in unit')
+            })
+
+        self.symbol = self.symbol.strip()
+
+        if is_base_unit_name(self.symbol):
+            raise ValidationError({
+                'symbol': _('Unit symbol conflicts with an existing built-in unit')
+            })
 
         self.definition = self.definition.strip()
 
@@ -2010,12 +2037,7 @@ def rename_attachment(instance, filename: str):
     )
 
 
-class Attachment(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeModel,
-):
+class Attachment(InvenTreeAuditMixin, InvenTreeTagsMixin, InvenTreeMetadataModel):
     """Class which represents an uploaded file attachment.
 
     An attachment can be either an uploaded file, or an external URL.
@@ -2300,8 +2322,6 @@ class Attachment(
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this attachment."""
-        from InvenTree.models import InvenTreeAttachmentMixin
-
         model_class = common.validators.attachment_model_class_from_label(
             self.model_type
         )
@@ -2391,6 +2411,9 @@ class InvenTreeCustomUserStateModel(models.Model):
         color: Color that will be displayed in the frontend
 
     """
+
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
 
     class Meta:
         """Metaclass options for this mixin."""
@@ -2519,7 +2542,7 @@ class InvenTreeCustomUserStateModel(models.Model):
                 return cls
 
 
-class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+class SelectionList(InvenTreeMetadataModel):
     """Class which represents a list of selectable items for parameters.
 
     A lists selection options can be either manually defined, or sourced from a plugin.
@@ -2541,6 +2564,14 @@ class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeMo
 
         verbose_name = _('Selection List')
         verbose_name_plural = _('Selection Lists')
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this selection list.
+
+        SelectionList has no RuleSet permissions of its own (it is ignore-listed),
+        so mirror the IsStaffOrReadOnlyScope restriction of its own API endpoint.
+        """
+        return permission == 'view' or user.is_staff
 
     name = models.CharField(
         max_length=100,
@@ -2710,11 +2741,7 @@ class SelectionListEntry(models.Model):
         return self.label
 
 
-class ParameterTemplate(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
-):
+class ParameterTemplate(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A ParameterTemplate provides a template for defining parameter values against various models.
 
     This allow for assigning arbitrary data fields against existing models,
@@ -2730,6 +2757,9 @@ class ParameterTemplate(
         selectionlist: Optional link to a SelectionList for this template
         enabled: Is this template enabled?
     """
+
+    # API write access is restricted to staff users
+    IMPORT_REQUIRES_STAFF = True
 
     IMPORT_ID_FIELDS = ['name']
 
@@ -2761,6 +2791,14 @@ class ParameterTemplate(
         NONE = 0, _('No uniqueness required')
         MODEL_TYPE = 1, _('Unique for model type')
         GLOBAL = 2, _('Globally unique')
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this parameter template.
+
+        ParameterTemplate has no RuleSet permissions of its own (it is ignore-listed),
+        so mirror the IsStaffOrReadOnlyScope restriction of its own API endpoint.
+        """
+        return permission == 'view' or user.is_staff
 
     @staticmethod
     def get_api_url() -> str:
@@ -2933,12 +2971,7 @@ def post_save_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class Parameter(
-    InvenTree.models.InvenTreeAuditMixin,
-    UpdatedUserMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
-):
+class Parameter(InvenTreeAuditMixin, UpdatedUserMixin, InvenTreeMetadataModel):
     """Class which represents a parameter value assigned to a particular model instance.
 
     Attributes:
@@ -3139,8 +3172,6 @@ class Parameter(
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this parameter."""
-        from InvenTree.models import InvenTreeParameterMixin
-
         model_class = self.model_type.model_class()
 
         if not issubclass(model_class, InvenTreeParameterMixin):
@@ -3154,8 +3185,6 @@ class Parameter(
         The linked content_object can implement custom checks by overriding
         the 'check_parameter_edit' method.
         """
-        from InvenTree.models import InvenTreeParameterMixin
-
         # content_object is None (rather than raising) if the target row is
         # missing - GenericForeignKey.__get__ catches ObjectDoesNotExist
         # internally, it never propagates it.
@@ -3166,8 +3195,6 @@ class Parameter(
 
     def check_delete(self):
         """Check if this parameter can be deleted."""
-        from InvenTree.models import InvenTreeParameterMixin
-
         instance = self.content_object
 
         if instance and isinstance(instance, InvenTreeParameterMixin):
@@ -3222,9 +3249,7 @@ class Parameter(
         return self.template.description
 
 
-class Note(
-    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
-):
+class Note(UpdatedUserMixin, InvenTreeMetadataModel):
     """Class which represents a note assigned to a particular model instance.
 
     Attributes:
@@ -3431,8 +3456,6 @@ class Note(
 
     def check_save(self):
         """Check if this note can be saved."""
-        from InvenTree.models import InvenTreeNoteMixin
-
         if self.template or not self.model_type:
             return
 
@@ -3446,8 +3469,6 @@ class Note(
 
     def check_delete(self):
         """Check if this note can be deleted."""
-        from InvenTree.models import InvenTreeNoteMixin
-
         if self.template or not self.model_type:
             return
 
@@ -3463,8 +3484,6 @@ class Note(
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this note."""
-        from InvenTree.models import InvenTreeNoteMixin
-
         if self.template:
             return user.is_staff
 
@@ -3571,7 +3590,7 @@ def after_notesimage_deleted(sender, instance, **kwargs):
         )
 
 
-class BarcodeScanResult(InvenTree.models.InvenTreeModel):
+class BarcodeScanResult(InvenTreeModel):
     """Model for storing barcode scans results."""
 
     BARCODE_SCAN_MAX_LEN = 250
@@ -3904,7 +3923,7 @@ class EmailMessage(models.Model):
         return super().delete(*args, **kwargs)
 
 
-class EmailThread(InvenTree.models.InvenTreeMetadataModel):
+class EmailThread(InvenTreeMetadataModel):
     """Model for storing email threads."""
 
     class Meta:

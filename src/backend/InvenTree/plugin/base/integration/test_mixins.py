@@ -10,8 +10,7 @@ from django.urls import include, path, re_path
 import requests_mock
 
 from InvenTree.unit_test import InvenTreeTestCase
-from plugin import InvenTreePlugin
-from plugin.helpers import MixinNotImplementedError
+from plugin import InvenTreePlugin, MixinNotImplementedError
 from plugin.mixins import (
     AllocateMixin,
     APICallMixin,

@@ -9,6 +9,7 @@ from rest_framework import serializers
 
 import importer.models
 import importer.registry
+import importer.validators
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
@@ -99,6 +100,19 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
                 )
             )
 
+        # Prevent creation of an import session for a staff-only model by a non-staff user
+        if self.instance is None and (request := self.context.get('request', None)):
+            model_class = importer.models.DataImportSession(
+                model_type=value
+            ).model_class
+
+            if getattr(model_class, 'IMPORT_REQUIRES_STAFF', False) and not getattr(
+                request.user, 'is_staff', False
+            ):
+                raise ValidationError(
+                    _('Only staff users can import data for this model')
+                )
+
         return value
 
     def validate_field_defaults(self, defaults):
@@ -146,6 +160,8 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
 
             if type(filters) is not dict:
                 raise ValidationError(_('Invalid field filters'))
+
+        importer.validators.validate_field_filters(filters)
 
         return filters
 

@@ -181,6 +181,52 @@ test('Forms - Supplier Validation', async ({ browser }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
+test('Forms - Server Error', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'purchasing/index/suppliers'
+  });
+  await page.waitForURL('**/purchasing/index/**');
+
+  // Simulate an internal server error when submitting the form
+  await page.route('**/api/company/', async (route) => {
+    if (route.request().method() !== 'POST') {
+      return route.fallback();
+    }
+
+    // Mock a 500 server response
+    await route.fulfill({
+      status: 500,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        error: 'ValueError',
+        detail: 'Something went wrong on the server',
+        status_code: 500
+      })
+    });
+  });
+
+  await page.getByLabel('action-button-add-company').click();
+  await page
+    .getByLabel('text-field-name', { exact: true })
+    .fill(`Supplier ${new Date().getTime()}`);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // The error is displayed within the form, which remains open
+  await page.getByText('Form Error').waitFor();
+  await page.getByText('Internal server error').waitFor();
+  await page.getByText('ValueError').waitFor();
+  await page.getByText('Something went wrong on the server').waitFor();
+  await expect(page.getByRole('dialog')).toBeVisible();
+
+  // The "invalid response" notification also fires
+  await page.getByText('Invalid Return Code').waitFor();
+  await page.getByText('Server returned status 500').waitFor();
+
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await page.unroute('**/api/company/');
+});
+
 test('Forms - Keep form open option', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     user: stevenuser,
@@ -331,41 +377,48 @@ test('Forms - Nested Object Field', async ({ browser }) => {
 test('Forms - Initial Stock Field', async ({ browser }) => {
   await setSettingState({ setting: 'PART_CREATE_INITIAL', value: true });
 
-  const partName = `Initial Stock Part ${Date.now()}`;
-  await deletePart(partName);
+  try {
+    const partName = `Initial Stock Part ${Date.now()}`;
+    await deletePart(partName);
 
-  const page = await doCachedLogin(browser, {
-    user: stevenuser,
-    url: 'part/category/index/parts'
-  });
-  await page.waitForURL('**/part/category/index/**');
+    const page = await doCachedLogin(browser, {
+      user: stevenuser,
+      url: 'part/category/index/parts'
+    });
+    await page.waitForURL('**/part/category/index/**');
 
-  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
-  await page
-    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
-    .click();
+    await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+    await page
+      .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+      .click();
 
-  await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+    await page.getByLabel('text-field-name', { exact: true }).fill(partName);
 
-  const quantityField = page.getByLabel('number-field-initial_stock.quantity');
-  await expect(quantityField).toBeVisible();
+    const quantityField = page.getByLabel(
+      'number-field-initial_stock.quantity'
+    );
+    await expect(quantityField).toBeVisible();
 
-  await quantityField.fill('25');
-  await page.getByLabel('tree-field-initial_stock.location').fill('production');
-  await page.getByText('Electronics production facility').click();
+    await quantityField.fill('25');
+    await page
+      .getByLabel('tree-field-initial_stock.location')
+      .fill('production');
+    await page.getByText('Electronics production facility').click();
 
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('Item Created').waitFor();
+    await page.getByRole('button', { name: 'Submit' }).click();
+    await page.getByText('Item Created').waitFor();
 
-  await page.getByText(partName).first().click();
-  await page
-    .getByLabel('panel-tabs-part')
-    .getByRole('tab', { name: 'Stock', exact: true })
-    .click();
-  await page.getByText('25').first().waitFor();
+    await page.getByText(partName).first().click();
+    await page
+      .getByLabel('panel-tabs-part')
+      .getByRole('tab', { name: 'Stock', exact: true })
+      .click();
+    await page.getByText('25').first().waitFor();
 
-  await deletePart(partName);
-  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+    await deletePart(partName);
+  } finally {
+    await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+  }
 });
 
 test('Forms - Default Part Location', async ({ browser }) => {

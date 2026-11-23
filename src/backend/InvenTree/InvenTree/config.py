@@ -93,6 +93,21 @@ def ensure_middleware(
     return middleware
 
 
+def ensure_removed(values: list[str], forbidden: str, setting: str) -> list[str]:
+    """Ensure that a forbidden class is not present in a list setting."""
+    values = list(values)
+
+    if forbidden not in values:
+        return values
+
+    logger.warning(
+        'INVE-W21: %s is not supported in %s configuration - removing automatically',
+        forbidden,
+        setting,
+    )
+    return [value for value in values if value != forbidden]
+
+
 def is_true(x):
     """Shortcut function to determine if a value "looks" like a boolean."""
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']

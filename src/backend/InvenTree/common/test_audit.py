@@ -652,14 +652,14 @@ class ConfigurationAuditTest(InvenTreeAPITestCase):
             CustomUnit,
             'api-custom-unit-list',
             'api-custom-unit-detail',
-            {'name': 'furlong', 'definition': '220 yard', 'symbol': 'fur'},
+            {'name': 'widget_length', 'definition': '220 yard', 'symbol': 'wl'},
             {'definition': '201.168 meter'},
         )
 
         self.assertEqual(
             update.changes_dict['definition'], ['220 yard', '201.168 meter']
         )
-        self.assertEqual(update.object_repr, 'furlong')
+        self.assertEqual(update.object_repr, 'widget_length')
 
         # Registry reload (post_save receiver) is unaffected by auditing
         CustomUnit.objects.create(name='smoot', definition='1.7018 meter')

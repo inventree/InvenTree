@@ -136,20 +136,10 @@ class InvenTreeMetadata(SimpleMetadata):
                     role_required and check_user_role(user, role_required, permission)
                 )
 
-                # check if simple IsAuthenticated permission class is used
+                # Views guarded only by an "any authenticated user" permission class
+                # do not require model permissions (e.g. users managing their own API tokens)
                 if not result:
-                    result = (
-                        view.permission_classes
-                        and len(view.permission_classes) == 1
-                        and any(
-                            perm
-                            in [
-                                permissions.IsAuthenticated,
-                                InvenTree.permissions.IsAuthenticatedOrReadScope,
-                            ]
-                            for perm in view.permission_classes
-                        )
-                    )
+                    result = self.allows_any_authenticated_user(view)
 
                 if method in actions and not result:
                     del actions[method]
@@ -172,6 +162,24 @@ class InvenTreeMetadata(SimpleMetadata):
             metadata['filters'] = filters
 
         return metadata
+
+    @staticmethod
+    def allows_any_authenticated_user(view) -> bool:
+        """Return True if the view is guarded by a single permission class which grants access to any authenticated user.
+
+        Such views do not require model / role permissions,
+        so the available actions should not be filtered by them.
+        """
+        permission_classes = getattr(view, 'permission_classes', None) or []
+
+        if len(permission_classes) != 1:
+            return False
+
+        perm = permission_classes[0]
+
+        return perm is permissions.IsAuthenticated or bool(
+            getattr(perm, 'allows_any_authenticated_user', False)
+        )
 
     def get_filter_metadata(self, request, view) -> dict:
         """Return information on the choice filters available for an API endpoint.
@@ -277,6 +285,23 @@ class InvenTreeMetadata(SimpleMetadata):
 
         return field_value
 
+    @staticmethod
+    def is_read_only_serializer(serializer) -> bool:
+        """Return True if the serializer (or any of its parents) is read-only.
+
+        A nested serializer declared with read_only=True (including the child of a
+        read-only ListSerializer) cannot accept input data.
+        """
+        node = serializer
+
+        while node is not None:
+            if getattr(node, 'read_only', False):
+                return True
+
+            node = getattr(node, 'parent', None)
+
+        return False
+
     def get_serializer_info(self, serializer):
         """Override get_serializer_info so that we can add 'default' values to any fields whose Meta.model specifies a default value."""
         self.serializer = serializer
@@ -320,12 +345,19 @@ class InvenTreeMetadata(SimpleMetadata):
             'label': 'verbose_name',
         }
 
+        # Default values are only meaningful for writable serializers.
+        # Nested read-only serializers (e.g. 'build_detail') cannot accept input,
+        # and computing their defaults can be expensive (e.g. generating the next reference).
+        include_defaults = not self.is_read_only_serializer(serializer)
+
         try:
             model_class = serializer.Meta.model
 
             model_fields = model_meta.get_field_info(model_class)
 
-            if model_default_func := getattr(model_class, 'api_defaults', None):
+            model_default_func = getattr(model_class, 'api_defaults', None)
+
+            if include_defaults and model_default_func:
                 model_default_values = model_default_func(request=request) or {}
             else:
                 model_default_values = {}
@@ -339,7 +371,7 @@ class InvenTreeMetadata(SimpleMetadata):
                     if name in write_only_fields:
                         serializer_info[name]['write_only'] = True
 
-                    if field.has_default():
+                    if include_defaults and field.has_default():
                         default = field.default
 
                         if callable(default):

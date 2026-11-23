@@ -73,6 +73,8 @@ export default function GroupDetail() {
     <InstanceDetail query={instanceQuery}>
       <Stack gap='xs'>
         <PageDetail
+          model={ModelType.group}
+          id={instance.pk}
           title={`${t`Group`}: ${instance.name}`}
           imageUrl={instance?.image}
           breadcrumbs={[

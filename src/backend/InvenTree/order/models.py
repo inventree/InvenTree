@@ -25,7 +25,6 @@ from mptt.models import TreeForeignKey
 
 import common.models as common_models
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -50,6 +49,16 @@ from company.models import (
     Contact,
     SupplierPart,
     default_internal_company,
+)
+from generic.models.base import InvenTreeMetadataModel
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeReferenceIndexingMixin,
+    InvenTreeTagsMixin,
 )
 from generic.states import (
     RETURN_VALUE,
@@ -96,7 +105,7 @@ from stock.status_codes import StockHistoryCode, StockStatus
 logger = structlog.get_logger('inventree')
 
 
-class AuditedOrderMixin(InvenTree.models.InvenTreeAuditMixin):
+class AuditedOrderMixin(InvenTreeAuditMixin):
     """Audit log configuration for order models."""
 
     AUDIT_EXCLUDE_FIELDS = (
@@ -108,7 +117,7 @@ class AuditedOrderMixin(InvenTree.models.InvenTreeAuditMixin):
     )
 
 
-class AuditedLineItemMixin(InvenTree.models.InvenTreeAuditMixin):
+class AuditedLineItemMixin(InvenTreeAuditMixin):
     """Audit log configuration for order line item models.
 
     Changes to line items are included in the history of the order.
@@ -357,15 +366,14 @@ class TransferOrderReportContext(BaseOrderReportContext, TypedDict):
 class Order(
     StatusCodeMixin,
     StateTransitionMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.ReferenceIndexingMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeReferenceIndexingMixin,
+    InvenTreeMetadataModel,
 ):
     """Abstract model for an order.
 
@@ -2185,7 +2193,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
             SalesOrderShipment.objects.create(order=instance, reference='1')
 
 
-class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
+class OrderLineItem(InvenTreeMetadataModel):
     """Abstract model for an order line item.
 
     Attributes:
@@ -2747,15 +2755,14 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict
 
 
 class SalesOrderShipment(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAuditMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 
@@ -2998,7 +3005,30 @@ class SalesOrderShipment(
         customer = order.customer
 
         # Preselect related fields to avoid per-row database queries below
-        allocations = allocations.select_related('line', 'item', 'item__part')
+        allocations = list(allocations.select_related('line', 'item', 'item__part'))
+
+        # Lock the distinct StockItem rows (in pk order, to avoid deadlocks) and
+        # re-read their quantities, so the arithmetic below operates on the
+        # current committed values. Stock adjustments elsewhere lock these
+        # same rows, so concurrent adjustments cannot be silently overwritten.
+        locked_quantities = dict(
+            stock.models.StockItem.objects
+            .select_for_update()
+            .filter(pk__in={allocation.item_id for allocation in allocations})
+            .order_by('pk')
+            .values_list('pk', 'quantity')
+        )
+
+        # Likewise, lock the distinct SalesOrderLineItem rows and re-read their
+        # 'shipped' quantities: another shipment against the same line may be
+        # completed concurrently, and each must add to the latest value
+        locked_shipped = dict(
+            SalesOrderLineItem.objects
+            .select_for_update()
+            .filter(pk__in={allocation.line_id for allocation in allocations})
+            .order_by('pk')
+            .values_list('pk', 'shipped')
+        )
 
         split_items = []  # (source_item, new_item, quantity) - stock to split off
         shipped_items = []  # (target_item, quantity) - stock to mark as shipped
@@ -3016,6 +3046,13 @@ class SalesOrderShipment(
         for allocation in allocations:
             stock_item = seen_stock_items.get(allocation.item_id) or allocation.item
             quantity = allocation.quantity
+
+            if (locked_qty := locked_quantities.pop(stock_item.pk, None)) is not None:
+                # First encounter: refresh the quantity from the locked database row
+                stock_item.quantity = locked_qty
+            elif stock_item.pk not in seen_stock_items:
+                # The stock item no longer exists in the database - skip
+                continue
 
             seen_stock_items[stock_item.pk] = stock_item
 
@@ -3046,7 +3083,13 @@ class SalesOrderShipment(
             shipped_items.append((target_item, quantity))
 
             # Increase the "shipped" quantity for the associated line
-            line = seen_lines.get(allocation.line_id) or allocation.line
+            line = seen_lines.get(allocation.line_id)
+
+            if line is None:
+                # First encounter: refresh the quantity from the locked database row
+                line = allocation.line
+                line.shipped = locked_shipped.get(line.pk, line.shipped)
+
             line.shipped += quantity
             seen_lines[line.pk] = line
 

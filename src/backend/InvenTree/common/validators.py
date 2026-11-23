@@ -28,16 +28,16 @@ def model_options_for_mixin(mixin_class) -> list:
 
 def note_model_types():
     """Return a list of valid note model choices."""
-    import InvenTree.models
+    from generic.models.modelmixins import InvenTreeNoteMixin
 
-    return models_with_mixin(InvenTree.models.InvenTreeNoteMixin)
+    return models_with_mixin(InvenTreeNoteMixin)
 
 
 def note_model_options():
     """Return a list of options for models which support notes."""
-    import InvenTree.models
+    from generic.models.modelmixins import InvenTreeNoteMixin
 
-    return model_options_for_mixin(InvenTree.models.InvenTreeNoteMixin)
+    return model_options_for_mixin(InvenTreeNoteMixin)
 
 
 def validate_note_model_type(value):
@@ -65,16 +65,16 @@ def validate_note_model_type(value):
 
 def parameter_model_types():
     """Return a list of valid parameter model choices."""
-    import InvenTree.models
+    from generic.models.modelmixins import InvenTreeParameterMixin
 
-    return models_with_mixin(InvenTree.models.InvenTreeParameterMixin)
+    return models_with_mixin(InvenTreeParameterMixin)
 
 
 def parameter_model_options():
     """Return a list of options for models which support parameters."""
-    import InvenTree.models
+    from generic.models.modelmixins import InvenTreeParameterMixin
 
-    return model_options_for_mixin(InvenTree.models.InvenTreeParameterMixin)
+    return model_options_for_mixin(InvenTreeParameterMixin)
 
 
 def parameter_template_model_options():
@@ -84,16 +84,16 @@ def parameter_template_model_options():
 
 def attachment_model_types():
     """Return a list of valid attachment model choices."""
-    import InvenTree.models
+    from generic.models.modelmixins import InvenTreeAttachmentMixin
 
-    return models_with_mixin(InvenTree.models.InvenTreeAttachmentMixin)
+    return models_with_mixin(InvenTreeAttachmentMixin)
 
 
 def attachment_model_options():
     """Return a list of options for models which support attachments."""
-    import InvenTree.models
+    from generic.models.modelmixins import InvenTreeAttachmentMixin
 
-    return model_options_for_mixin(InvenTree.models.InvenTreeAttachmentMixin)
+    return model_options_for_mixin(InvenTreeAttachmentMixin)
 
 
 def attachment_model_class_from_label(label: str):
@@ -128,30 +128,6 @@ def validate_attachment_file(attachment):
         default_storage.generate_filename(attachment.name)
     except SuspiciousFileOperation:  # pragma: no cover
         raise ValidationError(_('Invalid file name'))
-
-
-def validate_decimal_places_min(value):
-    """Validator for PRICING_DECIMAL_PLACES_MIN setting."""
-    try:
-        value = int(value)
-        places_max = int(get_global_setting('PRICING_DECIMAL_PLACES', create=False))
-    except Exception:
-        return
-
-    if value > places_max:
-        raise ValidationError(_('Minimum places cannot be greater than maximum places'))
-
-
-def validate_decimal_places_max(value):
-    """Validator for PRICING_DECIMAL_PLACES_MAX setting."""
-    try:
-        value = int(value)
-        places_min = int(get_global_setting('PRICING_DECIMAL_PLACES_MIN', create=False))
-    except Exception:
-        return
-
-    if value < places_min:
-        raise ValidationError(_('Maximum places cannot be less than minimum places'))
 
 
 def validate_email_domains(setting):

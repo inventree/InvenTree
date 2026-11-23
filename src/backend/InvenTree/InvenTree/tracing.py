@@ -173,6 +173,14 @@ def setup_tracing(
     TRACE_PID = os.getpid()
 
 
+def ensure_otel_middleware(middleware):
+    """Ensure the OTELmiddleware is the first entry in MIDDLEWARE."""
+    if not DjangoInstrumentor().is_instrumented_by_opentelemetry:
+        return list(middleware)
+    otel = DjangoInstrumentor._opentelemetry_middleware
+    return [otel, *(m for m in middleware if m != otel)]
+
+
 def setup_instruments(db_engine: str):  # pragma: no cover
     """Run auto-instrumentation for OpenTelemetry tracing."""
     if not DjangoInstrumentor()._is_instrumented_by_opentelemetry:

@@ -35,7 +35,9 @@ export function TagsField({
     field_type: 'tags',
     label: label ?? t`Tags`,
     description: description ?? t`Tags for this item`,
-    placeholder: placeholder ?? t`Select tags`
+    placeholder: placeholder ?? t`Select tags`,
+    // 'tags' is an optional serializer field, which must be explicitly requested
+    fetchParams: { tags: 'true' }
   };
 }
 

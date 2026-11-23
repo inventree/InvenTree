@@ -44,6 +44,9 @@ MY_PASSWORD = 'not_my_real_password'
 api = InvenTreeAPI(SERVER_ADDRESS, username=MY_USERNAME, password=MY_PASSWORD)
 ```
 
+!!! warning "Multi factor authentication"
+    Username/password authentication is refused for users with [MFA](../../settings/MFA.md) configured, and for all users while MFA is enforced. Generate a token in the `Security` section of the user settings and use [token auth](#token-auth) instead.
+
 #### Token Auth
 
 Alternatively, if you already have an access token:

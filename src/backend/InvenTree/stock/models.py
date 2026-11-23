@@ -31,7 +31,6 @@ import build.models
 import common.models
 import InvenTree.exceptions
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import order.models
@@ -41,27 +40,34 @@ from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from generic.enums import StringEnum
+from generic.models.base import InvenTreeMetadataModel, InvenTreeTree
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreePathStringMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from InvenTree.helpers_db import bulk_create_and_fetch
-from InvenTree.status_codes import (
-    SalesOrderStatusGroups,
-    StockHistoryCode,
-    StockStatus,
-    StockStatusGroups,
-)
-from order.status_codes import TransferOrderStatusGroups
+from order.status_codes import SalesOrderStatusGroups, TransferOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.events import StockEvents
 from stock.generators import generate_batch_code
+from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
 
 logger = structlog.get_logger('inventree')
 
 
-class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
+class StockLocationType(InvenTreeParameterMixin, InvenTreeMetadataMixin, models.Model):
     """A type of stock location like Warehouse, room, shelf, drawer.
 
     Attributes:
@@ -86,6 +92,11 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
     def __str__(self):
         """String representation of a StockLocationType."""
         return self.name
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        """Delete this type and its parameters in a single transaction."""
+        super().delete(*args, **kwargs)
 
     name = models.CharField(
         blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Name')
@@ -126,14 +137,14 @@ class StockLocationReportContext(report.mixins.BaseReportContext):
 
 
 class StockLocation(
-    InvenTree.models.PluginValidationMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeParameterMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.PathStringMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTreePathStringMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeTree,
 ):
     """Organization tree for StockItem objects.
 
@@ -216,6 +227,14 @@ class StockLocation(
         default=False,
         verbose_name=_('External'),
         help_text=_('This is an external stock location'),
+    )
+
+    exclude_from_stock = models.BooleanField(
+        default=False,
+        verbose_name=_('Exclude from Stock'),
+        help_text=_(
+            'If checked, stock items in this location will not be counted in available stock'
+        ),
     )
 
     location_type = models.ForeignKey(
@@ -426,16 +445,15 @@ STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 
 class StockItem(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAuditMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """A StockItem object represents a quantity of physical instances of a part.
 
@@ -663,7 +681,7 @@ class StockItem(
         consumed_by=None,
         is_building=False,
         status__in=StockStatusGroups.AVAILABLE_CODES,
-    )
+    ) & (Q(location=None) | Q(location__exclude_from_stock=False))
 
     @classmethod
     def get_expired_filter(cls):
@@ -2323,6 +2341,9 @@ class StockItem(
         if check_status and self.status not in StockStatusGroups.AVAILABLE_CODES:
             return False
 
+        if check_status and self.location and self.location.exclude_from_stock:
+            return False
+
         if check_quantity and self.quantity <= 0:
             return False
 
@@ -3177,6 +3198,10 @@ class StockItem(
 
             return new_stock is not None
 
+        # Requesting more than the available quantity moves the entire item,
+        # so record the quantity which is actually moved
+        quantity = min(quantity, Decimal(self.quantity))
+
         # Moving into the same location triggers a different history code
         same_location = location == self.location
 
@@ -3701,7 +3726,7 @@ def rename_stock_item_test_result_attachment(instance, filename):
     )
 
 
-class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
+class StockItemTestResult(InvenTreeMetadataModel):
     """A StockItemTestResult records results of custom tests against individual StockItem objects.
 
     This is useful for tracking unit acceptance tests, and particularly useful when integrated

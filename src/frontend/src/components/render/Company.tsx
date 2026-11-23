@@ -1,6 +1,7 @@
+import { t } from '@lingui/core/macro';
 import type { ReactNode } from 'react';
 
-import { Text } from '@mantine/core';
+import { Badge, Group, Text } from '@mantine/core';
 
 import { ModelType } from '@lib/enums/ModelType';
 import { getDetailUrl } from '@lib/functions/Navigation';
@@ -87,6 +88,17 @@ export function RenderSupplierPart(
     suffix += ` (${instance.pack_quantity})`;
   }
 
+  const suffixNode: ReactNode = (
+    <Group gap='xs' wrap='nowrap'>
+      {instance.primary && (
+        <Badge size='xs' color='green'>
+          {t`Primary`}
+        </Badge>
+      )}
+      {suffix && <Text size='xs'>{suffix}</Text>}
+    </Group>
+  );
+
   return (
     <RenderInlineModel
       {...props}
@@ -95,7 +107,7 @@ export function RenderSupplierPart(
       image={
         part?.thumbnail ?? part?.image ?? supplier?.thumbnail ?? supplier?.image
       }
-      suffix={suffix}
+      suffix={suffixNode}
       url={
         props.link
           ? getDetailUrl(ModelType.supplierpart, instance.pk)

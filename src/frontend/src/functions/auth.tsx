@@ -346,28 +346,37 @@ export async function ensureCsrf() {
   }
 }
 
-export function handleReset(
+export async function handleReset(
   navigate: NavigateFunction,
   values: { email: string }
 ) {
-  ensureCsrf();
-  api.post(apiUrl(ApiEndpoints.user_reset), values).then((val) => {
-    if (val.status === 200) {
-      notifications.show({
-        title: t`Mail delivery successful`,
-        message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
-        color: 'green',
-        autoClose: false
-      });
-      navigate('/login');
-    } else {
-      notifications.show({
-        title: t`Reset failed`,
-        message: t`Check your input and try again.`,
-        color: 'red'
-      });
-    }
-  });
+  // Ensure the CSRF cookie is set *before* making the POST request
+  await ensureCsrf();
+
+  const showResetFailed = () => {
+    notifications.show({
+      title: t`Reset failed`,
+      message: t`Check your input and try again.`,
+      color: 'red'
+    });
+  };
+
+  api
+    .post(apiUrl(ApiEndpoints.user_reset), values)
+    .then((val) => {
+      if (val.status === 200) {
+        notifications.show({
+          title: t`Mail delivery successful`,
+          message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
+          color: 'green',
+          autoClose: false
+        });
+        navigate('/login');
+      } else {
+        showResetFailed();
+      }
+    })
+    .catch(showResetFailed);
 }
 
 export async function handleMfaLogin(
@@ -549,9 +558,23 @@ export function clearCsrfCookie() {
 
 export async function ProviderLogin(
   provider: AuthProvider,
-  process: 'login' | 'connect' = 'login'
+  process: 'login' | 'connect' = 'login',
+  redirect?: any
 ) {
   await ensureCsrf();
+
+  // The round-trip through the identity provider is a full page navigation,
+  // so the router state carrying the originally requested URL is lost on
+  // the way back. Forward it through the flow instead, appended to the
+  // callback URL allauth redirects the browser back to - LoggedIn.tsx
+  // picks the 'next' parameter back up once the login completes.
+  const next = `${redirect?.redirectUrl ?? ''}${redirect?.queryParams ?? ''}`;
+  const callback_url =
+    generateUrl(`/${getBaseUrl()}/logged-in`, window.location.origin) +
+    (process === 'login' && next.startsWith('/') && !next.startsWith('//')
+      ? `?next=${encodeURIComponent(next)}`
+      : '');
+
   post(generateUrl(apiUrl(ApiEndpoints.auth_provider_redirect)), {
     provider: provider.id,
     // Return to wherever this page is actually being served from, not the
@@ -561,10 +584,7 @@ export async function ProviderLogin(
     // back in server-side by Django's compatibility redirect for bare
     // (non-API-host) paths, which only exists on the Django side - so add
     // it explicitly rather than relying on that.
-    callback_url: generateUrl(
-      `/${getBaseUrl()}/logged-in`,
-      window.location.origin
-    ),
+    callback_url,
     process: process,
     csrfmiddlewaretoken: getCsrfCookie()
   });
@@ -599,22 +619,64 @@ export function authApi(
   return api(url, requestConfig);
 }
 
-export const getTotpSecret = async (setTotpQr: any) => {
+export const getTotpSecret = async (
+  setTotpQr: any,
+  onUnverifiedEmail?: () => void
+) => {
   await authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'get').catch(
     (err) => {
-      if (err.status == 404 && err.response.data.meta.secret) {
+      if (err.status == 404 && err.response?.data?.meta?.secret) {
         setTotpQr(err.response.data.meta);
-      } else {
-        const msg = err.response.data.errors[0].message;
-        showNotification({
-          title: t`Failed to set up MFA`,
-          message: msg,
-          color: 'red'
-        });
+        return;
       }
+
+      const error = err.response?.data?.errors?.[0];
+
+      // MFA cannot be registered until all email addresses are verified
+      if (error?.code == 'unverified_email' && onUnverifiedEmail) {
+        onUnverifiedEmail();
+        return;
+      }
+
+      showNotification({
+        title: t`Failed to set up MFA`,
+        message: error?.message ?? t`An unknown error occurred`,
+        color: 'red'
+      });
     }
   );
 };
+
+/**
+ * Request a new verification email for each unverified email address of the current user.
+ */
+export async function resendEmailVerification() {
+  try {
+    const response = await authApi(apiUrl(ApiEndpoints.auth_email));
+    const addresses: { email: string; verified: boolean }[] =
+      response.data?.data ?? [];
+
+    const unverified = addresses.filter((address) => !address.verified);
+
+    for (const address of unverified) {
+      await authApi(apiUrl(ApiEndpoints.auth_email), undefined, 'put', {
+        email: address.email
+      });
+    }
+
+    showNotification({
+      title: t`Verification email sent`,
+      message: t`Check your inbox for a link to verify your email address`,
+      color: 'green'
+    });
+  } catch {
+    showNotification({
+      title: t`Error`,
+      message: t`Verification email could not be sent`,
+      color: 'red'
+    });
+  }
+}
 
 export function handleVerifyTotp(
   value: string,
@@ -793,8 +855,10 @@ export async function handleWebauthnLogin(
   }
 
   try {
-    const publicKey =
-      PublicKeyCredential.parseRequestOptionsFromJSON(webauthn_challenge);
+    // The server returns the options wrapped as { publicKey: {...}, mediation: ... }
+    const publicKey = PublicKeyCredential.parseRequestOptionsFromJSON(
+      webauthn_challenge.publicKey ?? webauthn_challenge
+    );
     const credential = await navigator.credentials.get({ publicKey });
     await api
       .post(apiUrl(ApiEndpoints.auth_webauthn_login), {

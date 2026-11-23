@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from common.models import InvenTreeSetting
 from plugin import registry
-from plugin.base.event.events import trigger_event
+from plugin.mixins import trigger_event
 
 
 class FilteredEventPluginSampleTests(TestCase):

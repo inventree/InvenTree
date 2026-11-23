@@ -112,8 +112,16 @@ export default function BarcodeCameraInput({
       legacyScannerRef.current = new Html5Qrcode('reader');
     }
 
-    Html5Qrcode.getCameras().then((devices) => {
-      if (devices?.length) {
+    Html5Qrcode.getCameras().then((cameraList) => {
+      // Some browsers (e.g. Firefox on Linux) can report the same physical
+      // camera more than once with an identical deviceId. Mantine's Select
+      // throws on duplicate option values, so de-duplicate by id here.
+      const devices = (cameraList ?? []).filter(
+        (device, index, list) =>
+          list.findIndex((other) => other.id === device.id) === index
+      );
+
+      if (devices.length) {
         setCameras(devices);
 
         // Auto-select a camera so the play button is immediately usable,

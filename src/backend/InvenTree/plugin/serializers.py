@@ -156,7 +156,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
     def save(self):
         """Install a plugin from a package registry and set operational results as instance data."""
-        from plugin.installer import install_plugin
+        from plugin._internal.installer import install_plugin
 
         data = self.validated_data
 
@@ -210,7 +210,7 @@ class PluginReloadSerializer(serializers.Serializer):
 
     def save(self):
         """Reload the plugin registry."""
-        from plugin.registry import registry
+        from plugin import registry
 
         registry.reload_plugins(
             full_reload=self.validated_data.get('full_reload', False),
@@ -267,7 +267,7 @@ class PluginUninstallSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         """Uninstall the specified plugin."""
-        from plugin.installer import uninstall_plugin
+        from plugin._internal.installer import uninstall_plugin
 
         user = self.context['request'].user
 

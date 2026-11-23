@@ -19,6 +19,7 @@ from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections, transaction
 from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -32,6 +33,7 @@ from maintenance_mode.core import (
 from opentelemetry import trace
 
 from common.settings import get_global_setting, set_global_setting
+from common.signals import post_currency_change
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -769,7 +771,8 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
     """
     from django.apps import apps
 
-    import InvenTree.models
+    from generic.models.base import InvenTreeTree
+    from generic.models.modelmixins import InvenTreePathStringMixin
 
     try:
         model_class = apps.get_model(model)
@@ -777,7 +780,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
         logger.warning("rebuild_model_tree: Model '%s' does not exist", model)
         return
 
-    if not issubclass(model_class, InvenTree.models.InvenTreeTree):
+    if not issubclass(model_class, InvenTreeTree):
         logger.warning("rebuild_model_tree: Model '%s' is not a tree model", model)
         return
 
@@ -785,7 +788,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
     model_class.rebuild_trees([tree_id])
 
     # Rebuild the 'pathstring' values for the entire tree (if applicable)
-    if issubclass(model_class, InvenTree.models.PathStringMixin):
+    if issubclass(model_class, InvenTreePathStringMixin):
         model_class.rebuild_tree_pathstring_values([tree_id])  # ty: ignore[invalid-attribute-access]
 
 
@@ -1093,6 +1096,12 @@ def update_exchange_rates(force: bool = False):
         logger.warning('Could not update exchange rates - database not ready')
     except Exception as e:  # pragma: no cover
         logger.exception('Error updating exchange rates: %s', type(e))
+
+
+@receiver(post_currency_change, dispatch_uid='receive_update_exchange_rates')
+def receive_update_exchange_rates(*args, **kwargs):
+    """Trigger exchange rate update."""
+    update_exchange_rates(True)
 
 
 @tracer.start_as_current_span('run_backup')

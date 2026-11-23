@@ -54,3 +54,54 @@ def validate_field_defaults(value):
 
         if type(value) is not dict:
             raise ValidationError(_('Value must be a valid dictionary object'))
+
+
+def validate_field_filters(value):
+    """Validate the provided field filters.
+
+    Field filters are applied as ORM filters against the related model for each field,
+    so they are restricted to simple equality lookups against fields on that model:
+
+    - Must be a dict of {field_name: {filter_key: filter_value}}
+    - Filter keys cannot contain '__' (prevents traversal of related models and lookup expressions)
+    - Filter keys cannot start with '_' (prevents injection of Q object arguments e.g. '_negated')
+    - Filter values must be simple scalar values
+    """
+    if value is None:
+        return
+
+    if type(value) is not dict:
+        raise ValidationError(_('Value must be a valid dictionary object'))
+
+    for field_name, filters in value.items():
+        if type(filters) is not dict:
+            raise ValidationError(
+                _('Filters for field {field} must be a valid dictionary object').format(
+                    field=field_name
+                )
+            )
+
+        for key, filter_value in filters.items():
+            if (
+                type(key) is not str
+                or not key.isidentifier()
+                or key.startswith('_')
+                or '__' in key
+            ):
+                raise ValidationError(
+                    _('Invalid filter key for field {field}: {key}').format(
+                        field=field_name, key=key
+                    )
+                )
+
+            if filter_value is not None and type(filter_value) not in [
+                str,
+                int,
+                float,
+                bool,
+            ]:
+                raise ValidationError(
+                    _('Invalid filter value for field {field}: {key}').format(
+                        field=field_name, key=key
+                    )
+                )

@@ -1,10 +1,63 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 568
+INVENTREE_API_VERSION = 583
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v583 -> 2026-11-20 : https://github.com/inventree/InvenTree/issues/12121
+    - Adds parameter support to the StockLocationType model and API endpoints
+
+v582 -> 2026-11-19 : https://github.com/inventree/InvenTree/pull/13329
+    - The title tag of the part's override_min/max_currency had been moved by the API generator generating diff in the schema, no functional changes
+
+v581 -> 2026-11-17 : https://github.com/inventree/InvenTree/pull/13305
+    - Assign correct BOM permission role to part/copy-bom API endpoint
+
+v580 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13072
+    - Adds feature info to contenttype endpoint
+
+v579 -> 2026-11-14 : https://github.com/inventree/InvenTree/pull/13271
+    - The "consumed" field on the BuildLine API is now read-only - stock must be consumed via the build order endpoints
+    - The "received_date" field on the ReturnOrderLineItem API is now read-only - line items must be received via the return order "receive" endpoint
+    - The "barcode_hash" field on the ManufacturerPart and SalesOrderShipment APIs is now read-only - barcodes must be assigned via the barcode endpoints
+    - The "issue_date" field on the SalesOrder, ReturnOrder and TransferOrder APIs is now read-only (as per the PurchaseOrder API) - it is set when the order is issued
+    - The "complete_date" field on the ReturnOrder and TransferOrder APIs is now read-only (as per the PurchaseOrder API) - it is set when the order is completed
+
+v578 -> 2026-11-13 : https://github.com/inventree/InvenTree/pull/13265
+    - The "is_building" and "build" fields on the StockItem API are now read-only - build outputs must be created, completed or scrapped via the build order endpoints
+
+v577 -> 2026-11-12 : https://github.com/inventree/InvenTree/pull/13236
+    - non-function doc changes from allauth
+
+v576 -> 2026-11-11 : https://github.com/inventree/InvenTree/pull/13247
+    - Adds /api/system/messages/ endpoint: staff-only, read-only; classified system messages are provided in the "messages" array
+
+v575 -> 2026-11-10 : https://github.com/inventree/InvenTree/pull/13208
+    - Adds optional read-only "consumed_by_detail" to the StockItem API
+
+v574 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13169
+    - breaking: Basic authentication can now be disabled - controlled with INVENTREE_BASIC_AUTH_ENABLED
+
+v573 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13221
+    - Mark audit log changes_detail field as nullable
+    - Add warning field to ApiToken
+
+v572 -> 2026-11-07 : https://github.com/inventree/InvenTree/pull/13212
+    - Username and email fields on the /api/user/me endpoint are now read-only
+
+v571 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13166
+    - Adds "exclude_from_stock" field and filter to the StockLocation API endpoint
+    - Adds "exclude_from_stock" filter to the StockItem API endpoint
+
+v570 -> 2026-11-03 : https://github.com/inventree/InvenTree/pull/13175
+    - Token API (/api/user/tokens/): "revoked", "revoked_by", "issued_by", "token_version", "revocation_reason" and "last_seen" fields are read-only
+    - Token API (/api/user/tokens/): "expiry" must be between today and 365 days in the future
+
+v569 -> 2026-10-30 : https://github.com/inventree/InvenTree/security/advisories
+    - Hardens OAuth2 token usage in the API
+    - OAuth2 tokens can not be used to issue or manage API tokens (/api/user/me/token/, /api/user/tokens/)
 
 v568 -> 2026-10-30 : https://github.com/inventree/InvenTree/pull/13141
     - token endpoints now have a warning if notifications cannot be sent
