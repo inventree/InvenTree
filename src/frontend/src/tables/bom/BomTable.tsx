@@ -878,7 +878,8 @@ export function BomTable({
             tableFilters: tableFilters,
             modelType: ModelType.part,
             modelField: 'sub_part',
-            onCellClick: () => {},
+            // Navigate to the sub-part when a row is clicked (except while editing)
+            onCellClick: isEditing ? () => {} : undefined,
             rowActions: isEditing ? rowActions : undefined,
             enableSelection: isEditing && !isLocked,
             enableBulkDelete:

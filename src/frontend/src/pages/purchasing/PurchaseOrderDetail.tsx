@@ -12,9 +12,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
-  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -31,6 +29,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -232,6 +231,11 @@ export default function PurchaseOrderDetail() {
     preFormWarning: t`Mark this order as complete`
   });
 
+  const featureActions = useModelFeatureActions({
+    model: ModelType.purchaseorder,
+    instance: order
+  });
+
   const poActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.purchase_order);
 
@@ -266,17 +270,7 @@ export default function PurchaseOrderDetail() {
         onClick={completeOrder.open}
       />,
       <AdminButton model={ModelType.purchaseorder} id={order.pk} />,
-      <BarcodeActionDropdown
-        model={ModelType.purchaseorder}
-        pk={order.pk}
-        hash={order?.barcode_hash}
-      />,
-      <PrintingActions
-        modelType={ModelType.purchaseorder}
-        items={[order.pk]}
-        enableLabels
-        enableReports
-      />,
+      ...featureActions,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}
         actions={[
@@ -305,7 +299,7 @@ export default function PurchaseOrderDetail() {
         ]}
       />
     ];
-  }, [id, order, user, poStatus]);
+  }, [featureActions, id, order, user, poStatus]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

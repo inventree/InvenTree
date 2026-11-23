@@ -1,4 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelFeature } from '@lib/enums/ModelFeature';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
@@ -22,10 +23,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../App';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
 import {
-  BarcodeActionDropdown,
   DeleteItemAction,
   EditItemAction,
   OptionsActionDropdown
@@ -44,6 +43,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
@@ -330,39 +330,37 @@ export default function Stock() {
     }
   });
 
+  const featureActionOverrides = useMemo(
+    () => ({
+      [ModelFeature.barcode]: [
+        {
+          name: t`Scan in stock items`,
+          icon: <InvenTreeIcon icon='stock' />,
+          tooltip: t`Scan item into this location`,
+          onClick: scanInStockItem.open
+        },
+        {
+          name: t`Scan in container`,
+          icon: <InvenTreeIcon icon='unallocated_stock' />,
+          tooltip: t`Scan container into this location`,
+          onClick: scanInStockLocation.open
+        }
+      ]
+    }),
+    [scanInStockItem.open, scanInStockLocation.open]
+  );
+
+  const featureActions = useModelFeatureActions({
+    model: ModelType.stocklocation,
+    instance: location,
+    actions: featureActionOverrides
+  });
+
   const locationActions = useMemo(
     () => [
       <AdminButton model={ModelType.stocklocation} id={location.pk} />,
       <LocateItemButton locationId={location.pk} />,
-      location.pk ? (
-        <BarcodeActionDropdown
-          model={ModelType.stocklocation}
-          pk={location.pk}
-          hash={location?.barcode_hash}
-          perm={user.hasChangeRole(UserRoles.stock_location)}
-          actions={[
-            {
-              name: t`Scan in stock items`,
-              icon: <InvenTreeIcon icon='stock' />,
-              tooltip: t`Scan item into this location`,
-              onClick: scanInStockItem.open
-            },
-            {
-              name: t`Scan in container`,
-              icon: <InvenTreeIcon icon='unallocated_stock' />,
-              tooltip: t`Scan container into this location`,
-              onClick: scanInStockLocation.open
-            }
-          ]}
-        />
-      ) : null,
-      <PrintingActions
-        modelType={ModelType.stocklocation}
-        items={[location.pk ?? 0]}
-        hidden={!location?.pk}
-        enableLabels
-        enableReports
-      />,
+      ...featureActions,
       stockAdjustActions.dropdown,
       <OptionsActionDropdown
         tooltip={t`Location Actions`}
@@ -380,7 +378,7 @@ export default function Stock() {
         ]}
       />
     ],
-    [location, id, user, stockAdjustActions.dropdown]
+    [featureActions, location, id, user, stockAdjustActions.dropdown]
   );
 
   const breadcrumbs = useMemo(

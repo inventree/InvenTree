@@ -34,15 +34,13 @@ class Command(BaseCommand):
                     self.stdout.write('Database connection failed, retrying ...')
                     self.stdout.flush()
             else:
-                if not connection.is_usable():
-                    if verbose:
-                        self.stdout.write('Database configuration is not usable')
-                        self.stdout.flush()
-
-            if connected:
-                if verbose:
-                    self.stdout.write('Database connection successful!')
+                if not connection.is_usable() and verbose:
+                    self.stdout.write('Database configuration is not usable')
                     self.stdout.flush()
+
+            if connected and verbose:
+                self.stdout.write('Database connection successful!')
+                self.stdout.flush()
             else:
                 time.sleep(1)
 
