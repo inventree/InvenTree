@@ -332,7 +332,7 @@ export function PartListTable({
             name: t`Add to BOM`,
             icon: <IconListTree color='green' />,
             tooltip: t`Add selected parts to the BOM of another part`,
-            hidden: !user.hasChangeRole(UserRoles.part),
+            hidden: !user.hasAddRole(UserRoles.bom),
             disabled: bomComponents.length == 0,
             onClick: () => {
               addToBom.open();
