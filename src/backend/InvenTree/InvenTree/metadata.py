@@ -145,11 +145,11 @@ class InvenTreeMetadata(SimpleMetadata):
                     del actions[method]
 
             # Add a 'DELETE' action if we are allowed to delete
-            if 'DELETE' in view.allowed_methods:
-                if check_user_permission(user, self.model, 'delete') or (
-                    role_required and check_user_role(user, role_required, 'delete')
-                ):
-                    actions['DELETE'] = {}
+            if 'DELETE' in view.allowed_methods and (
+                check_user_permission(user, self.model, 'delete')
+                or (role_required and check_user_role(user, role_required, 'delete'))
+            ):
+                actions['DELETE'] = {}
 
             metadata['actions'] = actions
 

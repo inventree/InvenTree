@@ -563,9 +563,8 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
 
     image_filename = InvenTree.helpers.image2name(part.image, preview, thumbnail)
 
-    if kwargs.get('check_exists'):
-        if not media_file_exists(image_filename):
-            raise FileNotFoundError(_('Image file not found') + f": '{image_filename}'")
+    if kwargs.get('check_exists') and not media_file_exists(image_filename):
+        raise FileNotFoundError(_('Image file not found') + f": '{image_filename}'")
 
     return uploaded_image(
         InvenTree.helpers.image2name(part.image, preview, thumbnail), **kwargs

@@ -685,11 +685,8 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         full_path = str(Path(*self.get_static_path(), *file_path, file_name))
 
-        if check_exists:
-            if not storage.exists(full_path):
-                logger.error(
-                    f"Static file not found for plugin '{self.SLUG}': {full_path}"
-                )
+        if check_exists and not storage.exists(full_path):
+            logger.error(f"Static file not found for plugin '{self.SLUG}': {full_path}")
 
         # Resolve the URL to the static file
         url = storage.url(full_path)
