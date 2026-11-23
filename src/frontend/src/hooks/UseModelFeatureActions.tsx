@@ -81,7 +81,10 @@ export function useModelFeatureActions({
 }): ReactNode[] {
   const user = useUserState();
   const features = useModelFeatures(model);
+  const permissionKey = JSON.stringify(permission ?? {});
+  const enabledKey = JSON.stringify(enabled ?? {});
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => {
     const pk: number | undefined = instance?.pk;
 
@@ -112,5 +115,13 @@ export function useModelFeatureActions({
 
       return action === null ? [] : [action];
     });
-  }, [model, instance, features, user, extraActions, permission, enabled]);
+  }, [
+    model,
+    instance,
+    features,
+    user,
+    extraActions,
+    permissionKey,
+    enabledKey
+  ]);
 }

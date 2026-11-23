@@ -516,10 +516,8 @@ export default function StockDetail() {
     }
   });
 
-  const featureActions = useModelFeatureActions({
-    model: ModelType.stockitem,
-    instance: stockitem,
-    actions: {
+  const featureActionOverrides = useMemo(
+    () => ({
       [ModelFeature.barcode]: [
         {
           name: t`Scan into location`,
@@ -528,7 +526,14 @@ export default function StockDetail() {
           onClick: scanIntoLocation.open
         }
       ]
-    }
+    }),
+    [scanIntoLocation.open]
+  );
+
+  const featureActions = useModelFeatureActions({
+    model: ModelType.stockitem,
+    instance: stockitem,
+    actions: featureActionOverrides
   });
 
   const stockActions = useMemo(() => {
