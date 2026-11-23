@@ -18,7 +18,6 @@ type ModelFeatureActionFactory = (context: {
   user: UserStateProps;
   permission?: boolean;
   actions?: ActionDropdownItem[];
-  enabled?: FeatureOverrides<boolean>;
 }) => ReactNode | null;
 
 const modelFeatureActionLookup: Partial<
@@ -41,19 +40,16 @@ const modelFeatureActionLookup: Partial<
       actions={actions}
     />
   ),
-  [ModelFeature.report]: ({ model, pk, enabled }) => {
-    const labels = enabled?.[ModelFeature.label] ?? true;
-    const reports = enabled?.[ModelFeature.report] ?? true;
-
-    return labels || reports ? (
+  [ModelFeature.report]: ({ model, pk }) => {
+    return (
       <PrintingActions
         key='printing-actions'
         modelType={model}
         items={[pk]}
-        enableLabels={labels}
-        enableReports={reports}
+        enableLabels={true}
+        enableReports={true}
       />
-    ) : null;
+    );
   }
 };
 
@@ -64,25 +60,21 @@ const modelFeatureActionLookup: Partial<
  * @param instance - The model instance
  * @param actions - Additional actions keyed by model feature
  * @param permission - Permission overrides keyed by model feature
- * @param enabled - Disable individual model features
  */
 export function useModelFeatureActions({
   model,
   instance,
   actions: extraActions,
-  permission,
-  enabled
+  permission
 }: {
   model: ModelType;
   instance: any;
   actions?: FeatureOverrides<ActionDropdownItem[]>;
   permission?: FeatureOverrides<boolean>;
-  enabled?: FeatureOverrides<boolean>;
 }): ReactNode[] {
   const user = useUserState();
   const features = useModelFeatures(model);
   const permissionKey = JSON.stringify(permission ?? {});
-  const enabledKey = JSON.stringify(enabled ?? {});
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => {
@@ -93,8 +85,7 @@ export function useModelFeatureActions({
     }
 
     return Object.values(ModelFeature).flatMap((feature) => {
-      const featureEnabled = enabled?.[feature];
-      if (!features.includes(feature) || featureEnabled === false) {
+      if (!features.includes(feature)) {
         return [];
       }
 
@@ -109,19 +100,10 @@ export function useModelFeatureActions({
         instance,
         user,
         permission: permission?.[feature],
-        actions: extraActions?.[feature],
-        enabled: enabled
+        actions: extraActions?.[feature]
       });
 
       return action === null ? [] : [action];
     });
-  }, [
-    model,
-    instance,
-    features,
-    user,
-    extraActions,
-    permissionKey,
-    enabledKey
-  ]);
+  }, [model, instance, features, user, extraActions, permissionKey]);
 }

@@ -15,7 +15,6 @@ import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelFeature } from '@lib/enums/ModelFeature';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import type { PanelType } from '@lib/types/Panel';
@@ -223,8 +222,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
   const featureActions = useModelFeatureActions({
     model: ModelType.company,
-    instance: company,
-    enabled: { [ModelFeature.label]: false }
+    instance: company
   });
 
   const companyActions = useMemo(() => {
