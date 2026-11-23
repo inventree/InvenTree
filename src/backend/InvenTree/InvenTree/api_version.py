@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 583
+INVENTREE_API_VERSION = 584
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v584 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/XXXX
+    - Adds "locked" field to the instance-info API endpoint as a new generic model mixin is added for lockable models
 
 v583 -> 2026-11-20 : https://github.com/inventree/InvenTree/issues/12121
     - Adds parameter support to the StockLocationType model and API endpoints

@@ -1523,9 +1523,11 @@ class InstanceInfoView(APIView):
         """Return counts of attachments, notes and parameters for the given instance."""
         from generic.models.modelmixins import (
             InvenTreeAttachmentMixin,
+            InvenTreeLockableMixin,
             InvenTreeNoteMixin,
             InvenTreeParameterMixin,
         )
+        from users.permissions import check_user_permission
 
         model_type = request.query_params.get('model_type')
         model_id = request.query_params.get('model_id')
@@ -1544,11 +1546,16 @@ class InstanceInfoView(APIView):
         content_type = common.filters.determine_content_type(model_type)
         model_class = content_type.model_class() if content_type else None
 
-        counts = {'attachment_count': 0, 'note_count': 0, 'parameter_count': 0}
+        data = {
+            'attachment_count': 0,
+            'note_count': 0,
+            'parameter_count': 0,
+            'locked': None,
+        }
 
         if model_class:
             if issubclass(model_class, InvenTreeAttachmentMixin):
-                counts['attachment_count'] = common.models.Attachment.objects.filter(
+                data['attachment_count'] = common.models.Attachment.objects.filter(
                     model_type=model_class.__name__.lower(), model_id=model_id
                 ).count()
 
@@ -1557,7 +1564,7 @@ class InstanceInfoView(APIView):
                 # re-deriving the view-permission check here) so this count can
                 # never drift from what the Notes list endpoint actually shows.
                 note_list_view = NoteList(request=request, format_kwarg=None)
-                counts['note_count'] = (
+                data['note_count'] = (
                     note_list_view
                     .get_queryset()
                     .filter(model_type=content_type, model_id=model_id, template=False)
@@ -1565,11 +1572,16 @@ class InstanceInfoView(APIView):
                 )
 
             if issubclass(model_class, InvenTreeParameterMixin):
-                counts['parameter_count'] = common.models.Parameter.objects.filter(
+                data['parameter_count'] = common.models.Parameter.objects.filter(
                     model_type=content_type, model_id=model_id
                 ).count()
 
-        serializer = common.serializers.InstanceInfoSerializer(counts)
+            if issubclass(
+                model_class, InvenTreeLockableMixin
+            ) and check_user_permission(request.user, model_class, 'view'):
+                data['locked'] = model_class.check_pk_locked(model_id)
+
+        serializer = common.serializers.InstanceInfoSerializer(data)
         return Response(serializer.data)
 
 

@@ -1364,6 +1364,10 @@ class InstanceInfoSerializer(serializers.Serializer):
         read_only=True,
     )
 
+    locked = serializers.BooleanField(
+        label=_('Locked'), read_only=True, allow_null=True
+    )
+
 
 class OAuth2ApplicationSerializer(serializers.ModelSerializer):
     """Serializer for OAuth2 application records."""
