@@ -45,6 +45,7 @@ jobs:
         with:
           fail-on-detection: false
       - uses: actions/github-script@v7
+        if: steps.ai-check.outputs.ai-commits-found == 'true'
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -52,11 +53,11 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Found $COUNT AI commit(s); review your commits and ensure you follow the contribution guidelines.'
+              body: 'Found ${process.env.COUNT} AI commit(s); review your commits and ensure you follow the contribution guidelines.'
             })
+        env:
           COUNT: ${{ steps.ai-check.outputs.count }}
       - name: AI commit warning
-        if: steps.ai-check.outputs.ai-commits-found == 'true'
         run: |
           echo "::warning::Found $COUNT AI commit(s); review your commits and ensure you follow the contribution guidelines."
           exit 1
