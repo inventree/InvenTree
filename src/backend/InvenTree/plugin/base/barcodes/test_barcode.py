@@ -89,6 +89,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
     def test_find_stock_item(self):
         """Test that we can lookup a stock item based on ID."""
         item = StockItem.objects.first()
+        assert item is not None
 
         # Save barcode scan results to database
         set_global_setting('BARCODE_STORE_RESULTS', True)
@@ -106,6 +107,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(BarcodeScanResult.objects.count(), n + 1)
 
         result = BarcodeScanResult.objects.last()
+        assert result is not None
 
         self.assertTrue(result.result)
         self.assertEqual(result.data, item.format_barcode())
@@ -116,6 +118,54 @@ class BarcodeAPITest(InvenTreeAPITestCase):
 
         for k in ['barcode_data', 'stockitem', 'success']:
             self.assertIn(k, response)
+
+    def test_field_permissions(self):
+        """Field-level permissions are applied to the serialized barcode instance.
+
+        A user must not be able to read role-gated or nested fields via a barcode
+        scan which they cannot read via the standard API endpoints.
+        """
+        item = StockItem.objects.first()
+        part = item.part
+
+        # Without the 'pricing' role, pricing fields are hidden
+        self.assertFalse(self.user.has_perm('pricing.view_partpricing'))
+
+        part_url = reverse('api-part-detail', kwargs={'pk': part.pk})
+        data = self.get(part_url, expected_code=200).data
+        self.assertNotIn('pricing_min', data)
+
+        data = self.postBarcode(self.scan_url, part.format_barcode(), 200).data
+        instance = data['part']['instance']
+        self.assertEqual(instance['pk'], part.pk)
+
+        for key in ['pricing_min', 'pricing_max', 'pricing_updated']:
+            self.assertNotIn(key, instance)
+
+        # With the 'pricing' role, pricing fields are returned
+        self.assignRole('pricing.view')
+
+        data = self.postBarcode(self.scan_url, part.format_barcode(), 200).data
+        instance = data['part']['instance']
+
+        for key in ['pricing_min', 'pricing_max', 'pricing_updated']:
+            self.assertIn(key, instance)
+
+        # Without the 'part' role, nested part data is hidden for a stock item
+        self.clearRoles()
+        self.assignRole('stock.view')
+        self.assignRole('stock_location.view')
+
+        self.get(part_url, expected_code=403)
+
+        stock_url = reverse('api-stock-detail', kwargs={'pk': item.pk})
+        data = self.get(stock_url, {'part_detail': True}, expected_code=200).data
+        self.assertIsNone(data.get('part_detail'))
+
+        data = self.postBarcode(self.scan_url, item.format_barcode(), 200).data
+        instance = data['stockitem']['instance']
+        self.assertEqual(instance['pk'], item.pk)
+        self.assertIsNone(instance.get('part_detail'))
 
     def test_invalid_item(self):
         """Test response for invalid stock item."""
@@ -538,6 +588,7 @@ class SOAllocateTest(InvenTreeAPITestCase):
 
         # Test with a barcode that matches a *different* stock item
         item = StockItem.objects.exclude(pk=self.stock_item.pk).first()
+        assert item is not None
         item.assign_barcode(barcode_data='123456789')
 
         result = self.postBarcode(

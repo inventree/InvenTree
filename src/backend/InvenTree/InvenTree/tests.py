@@ -701,7 +701,7 @@ class TestHelpers(TestCase):
         # Correct usage
         part = Part().image
         self.assertEqual(
-            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),  # ty:ignore[too-many-positional-arguments]
+            helpers.getMediaUrl(StdImageFieldFile(part, part, 'xx/yy.png')),
             '/media/xx/yy.png',
         )
 
@@ -861,7 +861,7 @@ class TestHelpers(TestCase):
 
     def test_model_mixin(self):
         """Test the getModelsWithMixin function."""
-        from InvenTree.models import InvenTreeBarcodeMixin
+        from generic.models.modelmixins import InvenTreeBarcodeMixin
 
         models = InvenTree.helpers_model.getModelsWithMixin(InvenTreeBarcodeMixin)
 
@@ -1593,6 +1593,7 @@ class TestInstanceName(InvenTreeTestCase):
 
         # The site should also be changed
         site_obj = Site.objects.all().order_by('id').first()
+        assert site_obj is not None
         self.assertEqual(site_obj.name, 'Testing title')
 
     @override_settings(SITE_URL=None)
@@ -1612,6 +1613,7 @@ class TestInstanceName(InvenTreeTestCase):
             from django.contrib.sites.models import Site
 
             site_obj = Site.objects.all().order_by('id').first()
+            assert site_obj is not None
             self.assertEqual(site_obj.domain, 'http://127.1.2.3')
         except Exception:
             pass
@@ -1941,7 +1943,7 @@ class ClassValidationMixinTest(TestCase):
     def test_valid_class(self):
         """Test that a valid class passes the validation."""
 
-        class TestClass(self.BaseTestClass):
+        class TestClass(self.BaseTestClass):  # ty: ignore[unsupported-base]
             """A valid class that inherits from BaseTestClass."""
 
             NAME = 'Test'
@@ -1957,7 +1959,7 @@ class ClassValidationMixinTest(TestCase):
     def test_invalid_class(self):
         """Test that an invalid class fails the validation."""
 
-        class TestClass1(self.BaseTestClass):
+        class TestClass1(self.BaseTestClass):  # ty: ignore[unsupported-base]
             """A bad class that inherits from BaseTestClass."""
 
         with self.assertRaisesRegex(
@@ -1966,7 +1968,7 @@ class ClassValidationMixinTest(TestCase):
         ):
             TestClass1.validate()
 
-        class TestClass2(self.BaseTestClass):
+        class TestClass2(self.BaseTestClass):  # ty: ignore[unsupported-base]
             """A bad class that inherits from BaseTestClass."""
 
             NAME = 'Test'

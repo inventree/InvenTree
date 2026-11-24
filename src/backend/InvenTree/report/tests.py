@@ -73,6 +73,7 @@ class ReportTest(InvenTreeAPITestCase):
         from company.models import Company
 
         template = ReportTemplate.objects.first()
+        assert template is not None
         self.assertIsNone(template.base_context()['internal_company'])
 
         company = Company.objects.create(
@@ -247,6 +248,7 @@ class ReportTest(InvenTreeAPITestCase):
     def test_metadata(self):
         """Unit tests for the metadata field."""
         p = ReportTemplate.objects.first()
+        assert p is not None
 
         self.assertEqual(p.metadata, {})
 
@@ -324,16 +326,21 @@ class ReportTest(InvenTreeAPITestCase):
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='stockitem'
         ).first()
+        assert template is not None
 
         # Gather some items
         items = StockItem.objects.all()[0:5]
 
         output = template.print(items)
+        assert output is not None
 
         self.assertTrue(output.complete)
         self.assertEqual(output.total, 5)
         self.assertIsNotNone(output.output)
-        self.assertTrue(output.output.name.endswith('.pdf'))
+        assert output.output is not None
+        output_name = output.output.name
+        assert output_name is not None
+        self.assertTrue(output_name.endswith('.pdf'))
 
     def test_print_build_order(self):
         """Test that the built-in Build Order report renders correctly.
@@ -358,10 +365,14 @@ class ReportTest(InvenTreeAPITestCase):
         )
 
         output = template.print([build])
+        assert output is not None
 
         self.assertTrue(output.complete)
         self.assertIsNotNone(output.output)
-        self.assertTrue(output.output.name.endswith('.pdf'))
+        assert output.output is not None
+        output_name = output.output.name
+        assert output_name is not None
+        self.assertTrue(output_name.endswith('.pdf'))
 
     def test_print_stock_location(self):
         """Test that the built-in Stock Location report renders each item's note.
@@ -435,6 +446,7 @@ class ReportTest(InvenTreeAPITestCase):
         )
 
         item = StockItem.objects.first()
+        assert item is not None
 
         test_strings = [
             f'Hello {self.user.username}',
@@ -523,6 +535,7 @@ class LabelTest(InvenTreeAPITestCase):
         """Test manual printing of label templates."""
         # Find a suitable label template
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template is not None
 
         # Gather some items
         parts = Part.objects.all()[0:10]
@@ -534,20 +547,29 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIsNotNone(plugin)
 
         output = template.print(items=parts, plugin=plugin)
+        assert output is not None
 
         self.assertTrue(output.complete)
         self.assertEqual(output.total, 10)
         self.assertIsNotNone(output.output)
+        assert output.output is not None
         self.assertEqual(output.plugin, 'inventreelabel')
-        self.assertTrue(output.output.name.endswith('.pdf'))
+        output_name = output.output.name
+        assert output_name is not None
+        self.assertTrue(output_name.endswith('.pdf'))
 
         # Filename patterns without an extension must still produce PDF filenames.
         template.filename_pattern = 'unit_test_label'
+        assert template is not None
         template.save()
 
         output = template.print(items=parts[:1], plugin=plugin)
+        assert output is not None
 
-        self.assertTrue(output.output.name.endswith('.pdf'))
+        assert output.output is not None
+        output_name = output.output.name
+        assert output_name is not None
+        self.assertTrue(output_name.endswith('.pdf'))
 
     def test_generated_file_filename(self):
         """PDF filenames retain existing suffixes and default when empty."""
@@ -577,7 +599,9 @@ class LabelTest(InvenTreeAPITestCase):
         OrmQ.objects.all().delete()
 
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template is not None
         part = Part.objects.first()
+        assert part is not None
 
         with patch('InvenTree.status.is_worker_running', return_value=True):
             response = self.post(
@@ -605,6 +629,7 @@ class LabelTest(InvenTreeAPITestCase):
     def test_print_failure(self):
         """Printing failures retain their details and propagate to the caller."""
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template is not None
         parts = list(Part.objects.all()[:1])
 
         for worker in [False, True]:
@@ -660,11 +685,13 @@ class LabelTest(InvenTreeAPITestCase):
     def test_print_unavailable_plugin(self):
         """An unavailable worker plugin records a failure instead of hanging."""
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template is not None
         output = report_models.DataOutput.objects.create(
             output_type=report_models.DataOutput.DataOutputTypes.LABEL,
             template_name=template.name,
             plugin='unavailable-label',
         )
+        assert output is not None
 
         with (
             patch.object(registry, 'get_plugin', return_value=None) as get_plugin,
@@ -687,6 +714,7 @@ class LabelTest(InvenTreeAPITestCase):
     def test_print_task_duplicate(self):
         """Duplicate tasks skip completed or deleted outputs before plugin lookup."""
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template is not None
 
         for deleted in [False, True]:
             with self.subTest(deleted=deleted):
@@ -750,7 +778,9 @@ class LabelTest(InvenTreeAPITestCase):
             filename_pattern='unit_test_label.pdf',
         )
 
-        location = StockItem.objects.exclude(location=None).first().location
+        stock_item = StockItem.objects.exclude(location=None).first()
+        assert stock_item is not None
+        location = stock_item.location
 
         url = reverse('api-label-print')
         post_data = {'template': template.pk, 'items': [location.pk]}
@@ -818,10 +848,12 @@ class LabelTest(InvenTreeAPITestCase):
         for f in invalid:
             with self.assertRaises(ValidationError):
                 template.filters = f
+                assert template is not None
                 template.clean()
 
         for f in valid:
             template.filters = f
+            assert template is not None
             template.clean()
 
         # Test a specific example
@@ -1040,6 +1072,7 @@ class TestReportTest(PrintTestMixins, ReportTest):
 
         # Now print with a valid StockItem
         item = StockItem.objects.first()
+        assert item is not None
 
         n = item.attachments.count()
 
@@ -1059,6 +1092,7 @@ class TestReportTest(PrintTestMixins, ReportTest):
 
         # Now try again, but attach the generated PDF to the StockItem
         template.attach_to_model = True
+        assert template is not None
         template.save()
 
         response = self.post(
@@ -1079,6 +1113,7 @@ class TestReportTest(PrintTestMixins, ReportTest):
         template_merge = ReportTemplate.objects.filter(
             enabled=True, model_type='stockitem', merge=True
         ).first()
+        assert template_merge is not None
 
         # Grab the first 3 stock items
         items = StockItem.objects.all()[:3]
@@ -1159,6 +1194,7 @@ class ReportPrintPermissionTest(InvenTreeAPITestCase):
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='purchaseorder'
         ).first()
+        assert template is not None
         self.assertIsNotNone(template)
 
         items = PurchaseOrder.objects.all()[:2]
@@ -1185,6 +1221,7 @@ class ReportPrintPermissionTest(InvenTreeAPITestCase):
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='purchaseorder'
         ).first()
+        assert template is not None
         self.assertIsNotNone(template)
 
         items = PurchaseOrder.objects.all()[:2]
@@ -1198,6 +1235,7 @@ class ReportPrintPermissionTest(InvenTreeAPITestCase):
 
         # Disable the template and retry: should be rejected
         template.enabled = False
+        assert template is not None
         template.save()
 
         self.post(url, data=post_data, expected_code=400)
@@ -1220,6 +1258,7 @@ class LabelPrintPermissionTest(InvenTreeAPITestCase):
     def test_label_print_model_permission(self):
         """A user without VIEW permission on the model type must receive 403; granting the role allows printing."""
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template is not None
         self.assertIsNotNone(template)
         self.assertGreater(template.width, 0)
         self.assertGreater(template.height, 0)
@@ -1246,6 +1285,7 @@ class LabelPrintPermissionTest(InvenTreeAPITestCase):
         cache.clear()
 
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template is not None
         self.assertIsNotNone(template)
         self.assertGreater(template.width, 0)
         self.assertGreater(template.height, 0)
@@ -1261,6 +1301,7 @@ class LabelPrintPermissionTest(InvenTreeAPITestCase):
 
         # Disable the template and retry: should be rejected
         template.enabled = False
+        assert template is not None
         template.save()
 
         self.post(url, data=post_data, expected_code=400)
@@ -1310,6 +1351,7 @@ class URLFetcherE2ETest(ReportTest):
         template_pk = response.data['pk']
 
         item = StockItem.objects.first()
+        assert item is not None
         self.assertIsNotNone(item)
 
         # Render the template.  WeasyPrint catches the ValueError from our fetcher and
@@ -1362,6 +1404,7 @@ class URLFetcherE2ETest(ReportTest):
         template_pk = response.data['pk']
 
         item = StockItem.objects.first()
+        assert item is not None
         self.assertIsNotNone(item)
 
         # Render the template.  WeasyPrint catches the ValueError from our fetcher and
@@ -1418,6 +1461,7 @@ class URLFetcherE2ETest(ReportTest):
         template_pk = response.data['pk']
 
         item = StockItem.objects.first()
+        assert item is not None
         self.assertIsNotNone(item)
 
         set_global_setting('REPORT_FETCH_URLS', False, change_user=None)

@@ -9,6 +9,7 @@ import { ReturnOrderPreviewComponent } from './models/ReturnOrderPreview';
 import { SalesOrderPreviewComponent } from './models/SalesOrderPreview';
 import { SalesOrderShipmentPreviewComponent } from './models/SalesOrderShipmentPreview';
 import { StockLocationPreviewComponent } from './models/StockLocationPreview';
+import { StockLocationTypePreviewComponent } from './models/StockLocationTypePreview';
 import { StockPreviewComponent } from './models/StockPreview';
 import { SupplierPartPreviewComponent } from './models/SupplierPartPreview';
 import { TransferOrderPreviewComponent } from './models/TransferOrderPreview';
@@ -20,6 +21,7 @@ registerModelPreviews({
   partcategory: PartCategoryPreviewComponent,
   stockitem: StockPreviewComponent,
   stocklocation: StockLocationPreviewComponent,
+  stocklocationtype: StockLocationTypePreviewComponent,
   build: BuildOrderPreviewComponent,
   company: CompanyPreviewComponent,
   purchaseorder: PurchaseOrderPreviewComponent,

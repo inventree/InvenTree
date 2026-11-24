@@ -47,12 +47,12 @@ import common.filters
 import common.models
 import common.serializers
 import InvenTree.conversion
-import InvenTree.models
 import InvenTree.ready
 from common.icons import get_icon_packs
 from common.serializers import OAuth2ApplicationSerializer
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
+from generic.models.base import InvenTreeTree
 from generic.states.api import urlpattern as generic_states_api_urls
 from InvenTree.api import (
     BulkCreateMixin,
@@ -1226,7 +1226,7 @@ class ParameterTemplateFilter(FilterSet):
             })
 
         # If the provided model is a "tree" structure, then we should also include any child objects in the filter
-        if isinstance(instance, InvenTree.models.InvenTreeTree):
+        if isinstance(instance, InvenTreeTree):
             id_values = list(
                 instance.get_descendants(include_self=True).values_list('pk', flat=True)
             )
@@ -1315,7 +1315,7 @@ class ParameterTemplateFilter(FilterSet):
             return queryset.none()
 
         # Account for potential tree structure in the related model
-        if isinstance(related_instance, InvenTree.models.InvenTreeTree):
+        if isinstance(related_instance, InvenTreeTree):
             related_instances = list(
                 related_instance.get_descendants(include_self=True).values_list(
                     'pk', flat=True
@@ -1517,7 +1517,7 @@ class InstanceInfoView(APIView):
     )
     def get(self, request, *args, **kwargs):
         """Return counts of attachments, notes and parameters for the given instance."""
-        from InvenTree.models import (
+        from generic.models.modelmixins import (
             InvenTreeAttachmentMixin,
             InvenTreeNoteMixin,
             InvenTreeParameterMixin,

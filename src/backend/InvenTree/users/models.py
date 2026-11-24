@@ -27,8 +27,8 @@ from allauth.account.signals import password_reset
 from rest_framework.authtoken.models import Token as AuthToken
 
 import InvenTree.helpers
-import InvenTree.models
 from common.settings import get_global_setting
+from generic.models.modelmixins import InvenTreeMetadataMixin
 from InvenTree.ready import isImportingData, isReadOnlyCommand
 from web.tips import KNOWN_IDS
 
@@ -53,7 +53,7 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 
 
 if settings.LDAP_AUTH:  # pragma: no cover
-    from django_auth_ldap.backend import populate_user  # ty: ignore[unresolved-import]
+    from django_auth_ldap.backend import populate_user  # ty: ignore[import-not-found]
 
     @receiver(populate_user)
     def create_email_address(user, **kwargs):
@@ -90,7 +90,7 @@ def default_token_expiry():
     return InvenTree.helpers.current_date() + datetime.timedelta(days=365)
 
 
-class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
+class ApiToken(AuthToken, InvenTreeMetadataMixin):
     """Extends the default token model provided by djangorestframework.authtoken.
 
     Extensions:
@@ -731,7 +731,7 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     update_group_roles(instance)
 
 
-class UserProfile(InvenTree.models.MetadataMixin):
+class UserProfile(InvenTreeMetadataMixin):
     """Model to store additional user profile information."""
 
     class UserType(models.TextChoices):
@@ -863,7 +863,7 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     instance.profile.save()
 
 
-class TipResult(InvenTree.models.MetadataMixin):
+class TipResult(InvenTreeMetadataMixin):
     """Model representing a tip result."""
 
     class Meta:

@@ -16,10 +16,8 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import {
-  BarcodeActionDropdown,
   CancelItemAction,
   EditItemAction,
   OptionsActionDropdown
@@ -38,6 +36,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { SalesOrderShipmentDetailsPanel } from './SalesOrderShipmentDetailsPanel';
@@ -178,6 +177,11 @@ export default function SalesOrderShipmentDetail() {
     ];
   }, [isPending, isChecked, shipment.deliveryDate, shipmentQuery.isFetching]);
 
+  const featureActions = useModelFeatureActions({
+    model: ModelType.salesordershipment,
+    instance: shipment
+  });
+
   const shipmentActions = useMemo(() => {
     const canEdit: boolean = user.hasChangePermission(
       ModelType.salesordershipment
@@ -195,19 +199,7 @@ export default function SalesOrderShipmentDetail() {
         }}
       />,
       <AdminButton model={ModelType.salesordershipment} id={shipment.pk} />,
-      <BarcodeActionDropdown
-        key='barcode'
-        model={ModelType.salesordershipment}
-        pk={shipment.pk}
-        hash={shipment?.barcode_hash}
-      />,
-      <PrintingActions
-        key='print'
-        modelType={ModelType.salesordershipment}
-        items={[shipment.pk]}
-        enableLabels
-        enableReports
-      />,
+      ...featureActions,
       <OptionsActionDropdown
         key='actions'
         tooltip={t`Shipment Actions`}
@@ -239,7 +231,7 @@ export default function SalesOrderShipmentDetail() {
         ]}
       />
     ];
-  }, [isChecked, isPending, user, shipment]);
+  }, [featureActions, isChecked, isPending, user, shipment]);
 
   return (
     <>

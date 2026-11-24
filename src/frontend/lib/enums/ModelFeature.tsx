@@ -9,5 +9,6 @@ export enum ModelFeature {
   tags = 'org.inventree.i.modelfeatures.tags',
   image = 'org.inventree.i.modelfeatures.image',
   report = 'org.inventree.i.modelfeatures.report',
+  label = 'org.inventree.i.modelfeatures.label', // for now this is frontend only for overrides
   history = 'org.inventree.i.modelfeatures.history'
 }

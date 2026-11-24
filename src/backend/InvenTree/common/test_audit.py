@@ -778,10 +778,9 @@ class GlobalSettingAuditTest(InvenTreeAPITestCase):
 
         # ...except for changes to the audit log settings themselves
         self.assertEqual(AuditLogEntry.objects.count(), n + 1)
-        self.assertEqual(
-            AuditLogEntry.objects.order_by('pk').last().object_repr,
-            'AUDIT_LOG_DELETE_DAYS',
-        )
+        entry = AuditLogEntry.objects.order_by('pk').last()
+        assert entry is not None
+        self.assertEqual(entry.object_repr, 'AUDIT_LOG_DELETE_DAYS')
 
         self.set_value('AUDIT_LOG_ENABLED', True)
 

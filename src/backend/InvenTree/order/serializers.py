@@ -1813,14 +1813,12 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
         stock_item = data['stock_item']
         quantity = data['quantity']
 
-        if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
-            if (
-                stock_item.hasRequiredTests()
-                and not stock_item.passedAllRequiredTests()
-            ):
-                raise ValidationError({
-                    'stock_item': _('Stock item has not passed all required tests')
-                })
+        if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS') and (
+            stock_item.hasRequiredTests() and not stock_item.passedAllRequiredTests()
+        ):
+            raise ValidationError({
+                'stock_item': _('Stock item has not passed all required tests')
+            })
 
         if stock_item.serialized and quantity != 1:
             raise ValidationError({

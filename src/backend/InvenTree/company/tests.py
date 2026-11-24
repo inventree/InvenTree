@@ -120,6 +120,7 @@ class CompanySimpleTest(TestCase):
     def test_metadata(self):
         """Unit tests for the metadata field."""
         p = Company.objects.first()
+        assert p is not None
         self.assertIn(p.metadata, [None, {}])
 
         self.assertIsNone(p.get_metadata('test'))
@@ -240,14 +241,20 @@ class AddressTest(TestCase):
 
         self.assertEqual(Address.objects.count(), 2)
 
-        self.assertTrue(Address.objects.first().primary)
+        address = Address.objects.first()
+        assert address is not None
+        self.assertTrue(address.primary)
 
         # Create another address, specify *this* as primary
         Address.objects.create(company=self.c, primary=True)
 
         self.assertEqual(Address.objects.count(), 3)
-        self.assertFalse(Address.objects.first().primary)
-        self.assertTrue(Address.objects.last().primary)
+        address = Address.objects.first()
+        assert address is not None
+        self.assertFalse(address.primary)
+        address = Address.objects.last()
+        assert address is not None
+        self.assertTrue(address.primary)
 
     def test_first_address_is_primary(self):
         """Test that first address related to company is always set to primary."""
@@ -330,6 +337,7 @@ class ManufacturerPartSimpleTest(TestCase):
         """Unit tests for the metadata field."""
         for model in [ManufacturerPart, SupplierPart]:
             p = model.objects.first()
+            assert p is not None
             self.assertIn(p.metadata, [None, {}])
 
             self.assertIsNone(p.get_metadata('test'))

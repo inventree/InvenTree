@@ -10,8 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - [#13271](https://github.com/inventree/InvenTree/pull/13271) makes a number of API fields read-only, as they are managed by dedicated endpoints and must not be edited directly: `consumed` (BuildLine), `received_date` (ReturnOrderLineItem), `barcode_hash` (ManufacturerPart, SalesOrderShipment), `issue_date` (SalesOrder, ReturnOrder, TransferOrder) and `complete_date` (ReturnOrder, TransferOrder). Values provided for these fields are now ignored.
+- [#13293](https://github.com/inventree/InvenTree/pull/13293) moves various (internal) model base classes, if your plugin uses InvenTree base classes update your imports from InvenTree.models to generic.models before the next major release.
 
 ### Added
+
+- [#12121](https://github.com/inventree/InvenTree/issues/12121) adds support for custom parameters on stock location types.
 
 - [#13266](https://github.com/inventree/InvenTree/pull/13266) Adds a "Manufacturer Barcode" plugin, which provides fallback barcode matching against manufacturer part numbers, and a `BARCODE_PRIORITY` attribute which controls the order in which barcode plugins are queried.
 

@@ -350,6 +350,7 @@ class OwnerModelTest(InvenTreeTestCase):
         raw_token = response['token']
         self.assertTrue(raw_token.startswith('inv-2-'))
         token = ApiToken.get_from_string(raw_token)
+        assert token is not None
         self.assertTrue(token.validate(raw_token))
 
         # test user is associated with token

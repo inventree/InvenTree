@@ -25,7 +25,6 @@ import generic.states
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.helpers_model
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import part.models
@@ -57,6 +56,18 @@ from common.models import ProjectCode
 from common.settings import get_global_setting
 from company.models import Company
 from generic.enums import StringEnum
+from generic.models.base import InvenTreeMetadataModel, InvenTreeModel, InvenTreeTree
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeReferenceIndexingMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import (
     DEFERRABLE,
     Deprecations,
@@ -100,19 +111,19 @@ class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
 
 
 class Build(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.PluginValidationMixin,
+    InvenTreeAuditMixin,
+    InvenTreePluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.ReferenceIndexingMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
+    InvenTreeReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTreeMetadataMixin,
+    InvenTreeTree,
 ):
     """A Build object organizes the creation of new StockItem objects from other existing StockItem objects.
 
@@ -1417,7 +1428,7 @@ class Build(
         output: stock.models.StockItem,
         quantity: Optional[decimal.Decimal] = None,
         required_tests=None,
-    ) -> bool:
+    ) -> None:
         """Determine if the given build output can be completed.
 
         Arguments:
@@ -2198,7 +2209,7 @@ class BuildLineReportContext(report.mixins.BaseReportContext, TypedDict):
     quantity: decimal.Decimal
 
 
-class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
+class BuildLine(report.mixins.InvenTreeReportMixin, InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
     When a new Build is created, the BuildLine objects are created automatically.
@@ -2318,7 +2329,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         return self.consumed >= self.quantity
 
 
-class BuildItem(InvenTree.models.InvenTreeMetadataModel):
+class BuildItem(InvenTreeMetadataModel):
     """A BuildItem links multiple StockItem objects to a Build.
 
     These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.
@@ -2397,14 +2408,12 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                 iii) The Part referenced by the StockItem is a valid substitute for the BomItem
             """
 
-            if self.build.part == self.bom_item.part:
+            if self.build.part == self.bom_item.part or (
+                self.bom_item.inherited
+                and self.build.part
+                in self.bom_item.part.get_descendants(include_self=False)
+            ):
                 valid = self.bom_item.is_stock_item_valid(self.stock_item)
-
-            elif self.bom_item.inherited:
-                if self.build.part in self.bom_item.part.get_descendants(
-                    include_self=False
-                ):
-                    valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
         # If the existing BomItem is *not* valid, try to find a match
         if not valid and self.build and self.stock_item:
