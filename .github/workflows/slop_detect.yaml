@@ -34,6 +34,7 @@ jobs:
           failure-pr-message: |
             Automation thinks this PR was made largely with AI, if you think this is an error comment on this PR and someone from the team will review.
             Repeated drive-by slop will get you banned.
+
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
