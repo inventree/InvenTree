@@ -44,8 +44,21 @@ jobs:
         id: ai-check
         with:
           fail-on-detection: false
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Found $COUNT AI commit(s); review your commits and ensure you follow the contribution guidelines.'
+            })
+          COUNT: ${{ steps.ai-check.outputs.count }}
       - name: AI commit warning
         if: steps.ai-check.outputs.ai-commits-found == 'true'
-        run: echo "::warning::Found $COUNT AI commit(s); review your commits and ensure you follow the contribution guidelines."
+        run: |
+          echo "::warning::Found $COUNT AI commit(s); review your commits and ensure you follow the contribution guidelines."
+          exit 1
         env:
           COUNT: ${{ steps.ai-check.outputs.count }}
