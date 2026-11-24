@@ -5,6 +5,7 @@ import {
   CompletedBeforeFilter,
   CreatedAfterFilter,
   CreatedBeforeFilter,
+  HasProjectCodeFilter,
   HasStartDateFilter,
   HasTargetDateFilter,
   IncludeVariantsFilter,
@@ -13,6 +14,7 @@ import {
   OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
+  ProjectCodeFilter,
   StartDateAfterFilter,
   StartDateBeforeFilter,
   TargetDateAfterFilter,
@@ -29,7 +31,9 @@ export default function RepairOrderFilters({
   const filters: TableFilter[] = [
     OrderStatusFilter({ model: ModelType.repairorder }),
     OutstandingFilter(),
-    OverdueFilter()
+    OverdueFilter(),
+    ProjectCodeFilter(),
+    HasProjectCodeFilter()
   ];
 
   if (!!partId) {

@@ -51,7 +51,12 @@ The following parameters are available for each Repair Order, and can be edited 
 | Start Date | The scheduled start date for the repair |
 | Target Date | Target date for repair completion |
 | Responsible | User (or group of users) who is responsible for the repair |
+| Source Location | Stock location to take stock from when allocating against this repair order (optional) |
+| Priority | Priority of this repair order |
+| Project Code | [Project code](../concepts/project_codes.md) associated with this repair order (optional) |
 | External Link | Link to external webpage |
+
+The user who issued the order, and the user who completed it, are recorded automatically.
 
 ### Repair Order Status
 
@@ -120,6 +125,8 @@ Each Repair Order can contain one or more *Line Items*, which specify the parts 
 
 !!! info "Multiple Allocations"
     Multiple stock items can be allocated against a single line item, if a single stock item does not have sufficient quantity for the repair.
+
+If the repair order has a *Source Location*, stock is allocated from that location (or its sub-locations) by default.
 
 Only stock which is *available* can be allocated to a repair order. Stock items which are not in stock (for example, quarantined or damaged stock, stock which is installed in another item, or stock which has been sent to a customer) cannot be allocated.
 

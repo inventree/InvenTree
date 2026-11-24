@@ -69,7 +69,14 @@ class RepairOrderAdmin(admin.ModelAdmin):
 
     search_fields = ['reference', 'customer__name', 'part__name', 'description']
 
-    autocomplete_fields = ['customer', 'part']
+    autocomplete_fields = [
+        'completed_by',
+        'customer',
+        'part',
+        'project_code',
+        'responsible',
+        'take_from',
+    ]
 
 
 @admin.register(RepairOrderLineItem)

@@ -5,13 +5,16 @@ import { useMemo } from 'react';
 
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { TagsField } from './CommonFields';
+import { useGlobalSettingsState } from '../states/SettingsStates';
+import { ProjectCodeField, TagsField } from './CommonFields';
 
 export function useRepairOrderFields({
   duplicateOrderId
 }: {
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       reference: {},
@@ -23,6 +26,8 @@ export function useRepairOrderFields({
         }
       },
       symptoms: {},
+      project_code: ProjectCodeField(),
+      priority: {},
       customer: {
         disabled: duplicateOrderId != undefined,
         filters: {
@@ -36,6 +41,7 @@ export function useRepairOrderFields({
       target_date: {
         icon: <IconCalendar />
       },
+      take_from: {},
       responsible: {
         filters: {
           is_active: true
@@ -47,6 +53,10 @@ export function useRepairOrderFields({
       },
       tags: TagsField({})
     };
+
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
+    }
 
     // Order duplication fields
     if (!!duplicateOrderId) {
@@ -64,7 +74,7 @@ export function useRepairOrderFields({
     }
 
     return fields;
-  }, [duplicateOrderId]);
+  }, [duplicateOrderId, globalSettings]);
 }
 
 export function useRepairOrderLineItemFields({
@@ -93,21 +103,29 @@ export function useRepairOrderLineItemFields({
   }, [create, orderId, assemblyPartId]);
 }
 
-export function useRepairOrderAutoAllocateFields(): ApiFormFieldSet {
+export function useRepairOrderAutoAllocateFields({
+  sourceLocation
+}: {
+  sourceLocation?: number | null;
+}): ApiFormFieldSet {
   return useMemo(() => {
     return {
-      location: {},
+      location: {
+        value: sourceLocation ?? undefined
+      },
       exclude_location: {},
       stock_sort_by: {}
     };
-  }, []);
+  }, [sourceLocation]);
 }
 
 export function useAllocateStockToRepairOrderForm({
   lineItem,
+  sourceLocation,
   onFormSuccess
 }: {
   lineItem: any;
+  sourceLocation?: number | null;
   onFormSuccess: () => void;
 }) {
   const fields: ApiFormFieldSet = useMemo(() => {
@@ -128,14 +146,16 @@ export function useAllocateStockToRepairOrderForm({
           part: lineItem?.part,
           available: true,
           part_detail: true,
-          location_detail: true
+          location_detail: true,
+          location: sourceLocation ?? undefined,
+          cascade: sourceLocation ? true : undefined
         }
       },
       quantity: {
         value: outstanding
       }
     };
-  }, [lineItem]);
+  }, [lineItem, sourceLocation]);
 
   return useCreateApiFormModal({
     url: ApiEndpoints.repair_order_allocation_list,

@@ -97,12 +97,14 @@ export default function RepairOrderLineItemTable({
   orderId,
   assemblyPartId,
   orderDetailRefresh,
-  editable
+  editable,
+  sourceLocation
 }: Readonly<{
   orderId: number;
   assemblyPartId?: number;
   orderDetailRefresh: () => void;
   editable: boolean;
+  sourceLocation?: number | null;
 }>) {
   const table = useTable('repair-order-line-item');
   const user = useUserState();
@@ -151,6 +153,7 @@ export default function RepairOrderLineItemTable({
 
   const allocateStock = useAllocateStockToRepairOrderForm({
     lineItem: selectedLineItem,
+    sourceLocation: sourceLocation,
     onFormSuccess: () => table.refreshTable()
   });
 
@@ -163,7 +166,9 @@ export default function RepairOrderLineItemTable({
     onFormSuccess: () => table.refreshTable()
   });
 
-  const autoAllocateFields = useRepairOrderAutoAllocateFields();
+  const autoAllocateFields = useRepairOrderAutoAllocateFields({
+    sourceLocation: sourceLocation
+  });
 
   const autoAllocateStock = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.repair_order_auto_allocate, orderId),

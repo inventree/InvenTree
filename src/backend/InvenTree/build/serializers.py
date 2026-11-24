@@ -1890,6 +1890,13 @@ class RepairOrderSerializer(
             'responsible_detail',
             'issued_by',
             'issued_by_detail',
+            'completed_by',
+            'completed_by_detail',
+            'take_from',
+            'priority',
+            'project_code',
+            'project_code_label',
+            'project_code_detail',
             'link',
             'line_items',
             'parameters',
@@ -1898,6 +1905,7 @@ class RepairOrderSerializer(
         read_only_fields = [
             'creation_date',
             'completion_date',
+            'completed_by',
             'issued_by',
             'status',
             'status_text',
@@ -1939,6 +1947,22 @@ class RepairOrderSerializer(
         filter_name='user_detail',
         prefetch_fields=['issued_by'],
     )
+
+    completed_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'completed_by',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        filter_name='user_detail',
+        prefetch_fields=['completed_by'],
+    )
+
+    project_code_label = common.filters.enable_project_label_filter()
+
+    project_code_detail = common.filters.enable_project_code_filter()
 
     responsible_detail = OptionalField(
         serializer_class=OwnerSerializer,

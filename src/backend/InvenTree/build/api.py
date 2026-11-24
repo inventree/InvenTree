@@ -1362,6 +1362,32 @@ class RepairOrderFilter(FilterSet):
         queryset=User.objects.all(), field_name='issued_by', label=_('Issued By')
     )
 
+    completed_by = rest_filters.ModelChoiceFilter(
+        queryset=User.objects.all(), field_name='completed_by', label=_('Completed By')
+    )
+
+    take_from = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        field_name='take_from',
+        label=_('Source Location'),
+    )
+
+    project_code = rest_filters.ModelChoiceFilter(
+        queryset=common.models.ProjectCode.objects.all(),
+        field_name='project_code',
+        label=_('Project Code'),
+    )
+
+    has_project_code = rest_filters.BooleanFilter(
+        label=_('Has Project Code'), method='filter_has_project_code'
+    )
+
+    def filter_has_project_code(self, queryset, name, value):
+        """Filter by whether or not the repair order has a project code."""
+        if str2bool(value):
+            return queryset.exclude(project_code=None)
+        return queryset.filter(project_code=None)
+
     created_before = InvenTreeDateFilter(
         label=_('Created Before'), field_name='creation_date', lookup_expr='lt'
     )
@@ -1482,7 +1508,12 @@ class RepairOrderViewSet(
         'completion_date',
         'responsible',
         'issued_by',
+        'completed_by',
+        'project_code',
+        'priority',
     ]
+
+    ordering_field_aliases = {'project_code': ['project_code__code']}
 
     ordering = '-reference'
 
@@ -1492,6 +1523,7 @@ class RepairOrderViewSet(
         'symptoms',
         'customer__name',
         'part__name',
+        'project_code__code',
     ]
 
     def create(self, request, *args, **kwargs):

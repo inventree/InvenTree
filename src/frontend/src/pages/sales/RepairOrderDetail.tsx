@@ -143,10 +143,38 @@ export default function RepairOrderDetail() {
       },
       {
         type: 'text',
+        name: 'completed_by',
+        label: t`Completed By`,
+        icon: 'user',
+        badge: 'user',
+        hidden: !order.completed_by
+      },
+      {
+        type: 'text',
         name: 'responsible',
         label: t`Responsible`,
         badge: 'owner',
         hidden: !order.responsible
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !order.project_code
+      },
+      {
+        type: 'link',
+        name: 'take_from',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        model_formatter: (location: any) =>
+          location?.description
+            ? `${location.name} - ${location.description}`
+            : location?.name,
+        label: t`Source Location`,
+        hidden: !order.take_from
       }
     ];
 
@@ -231,6 +259,7 @@ export default function RepairOrderDetail() {
                   assemblyPartId={order.part}
                   orderDetailRefresh={refreshInstance}
                   editable={lineItemsEditable}
+                  sourceLocation={order.take_from}
                 />
               </Accordion.Panel>
             </Accordion.Item>

@@ -597,6 +597,107 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         self.assertEqual(self.ro.status, RepairOrderStatus.COMPLETE.value)
         self.assertIsNotNone(self.ro.completion_date)
 
+    def test_completed_by_set_on_completion(self):
+        """Completing via the API records the requesting user, which cannot be spoofed."""
+        from django.contrib.auth.models import User
+
+        other = User.objects.create_user(username='other-user', password='abc')
+
+        detail_url = reverse('api-repair-order-detail', kwargs={'pk': self.ro.pk})
+
+        # Read-only: cannot be set directly
+        self.patch(detail_url, {'completed_by': other.pk}, expected_code=200)
+        self.ro.refresh_from_db()
+        self.assertIsNone(self.ro.completed_by)
+
+        url = reverse('api-repair-order-complete', kwargs={'pk': self.ro.pk})
+        self.post(url, expected_code=201)
+
+        self.ro.refresh_from_db()
+        self.assertEqual(self.ro.completed_by, self.user)
+
+        data = self.get(detail_url).data
+        self.assertEqual(data['completed_by'], self.user.pk)
+        self.assertEqual(data['completed_by_detail']['pk'], self.user.pk)
+
+        # Filter by completing user
+        list_url = reverse('api-repair-order-list')
+        pks = {
+            item['pk']
+            for item in self.get(list_url, {'completed_by': self.user.pk}).data
+        }
+        self.assertEqual(pks, {self.ro.pk})
+
+        pks = {
+            item['pk'] for item in self.get(list_url, {'completed_by': other.pk}).data
+        }
+        self.assertEqual(pks, set())
+
+    def test_take_from_priority_fields(self):
+        """The 'take_from' and 'priority' fields are writable, filterable and sortable."""
+        from stock.models import StockLocation
+
+        location = StockLocation.objects.first()
+
+        url = reverse('api-repair-order-list')
+        data = self.post(
+            url,
+            {
+                'description': 'With source',
+                'part': self.part.pk,
+                'take_from': location.pk,
+                'priority': 5,
+            },
+            expected_code=201,
+        ).data
+
+        self.assertEqual(data['take_from'], location.pk)
+        self.assertEqual(data['priority'], 5)
+
+        # Negative priority is rejected
+        detail_url = reverse('api-repair-order-detail', kwargs={'pk': data['pk']})
+        self.patch(detail_url, {'priority': -1}, expected_code=400)
+
+        pks = {item['pk'] for item in self.get(url, {'take_from': location.pk}).data}
+        self.assertEqual(pks, {data['pk']})
+
+        pks = [item['pk'] for item in self.get(url, {'ordering': '-priority'}).data]
+        self.assertEqual(pks[0], data['pk'])
+
+    def test_project_code(self):
+        """Project code can be assigned, and filtered / sorted / searched by."""
+        from common.models import ProjectCode
+
+        code = ProjectCode.objects.create(code='PRJ-REPAIR', description='Repairs')
+
+        detail_url = reverse('api-repair-order-detail', kwargs={'pk': self.ro.pk})
+        data = self.patch(detail_url, {'project_code': code.pk}, expected_code=200).data
+
+        self.assertEqual(data['project_code'], code.pk)
+        self.assertEqual(data['project_code_label'], 'PRJ-REPAIR')
+        self.assertEqual(data['project_code_detail']['code'], 'PRJ-REPAIR')
+
+        other = RepairOrder.objects.create(
+            reference='RO-0099', description='No project', part=self.part
+        )
+
+        url = reverse('api-repair-order-list')
+
+        pks = {item['pk'] for item in self.get(url, {'project_code': code.pk}).data}
+        self.assertEqual(pks, {self.ro.pk})
+
+        pks = {item['pk'] for item in self.get(url, {'has_project_code': True}).data}
+        self.assertEqual(pks, {self.ro.pk})
+
+        pks = {item['pk'] for item in self.get(url, {'has_project_code': False}).data}
+        self.assertIn(other.pk, pks)
+        self.assertNotIn(self.ro.pk, pks)
+
+        pks = {item['pk'] for item in self.get(url, {'search': 'PRJ-REPAIR'}).data}
+        self.assertEqual(pks, {self.ro.pk})
+
+        self.get(url, {'ordering': 'project_code'}, expected_code=200)
+
     def test_cancel_transition(self):
         """POST cancel/ moves PENDING → CANCELLED."""
         url = reverse('api-repair-order-cancel', kwargs={'pk': self.ro.pk})

@@ -7,13 +7,14 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { RenderPart } from '../../components/render/Part';
 import {
   CompanyColumn,
   CompletionDateColumn,
   CreationDateColumn,
   DescriptionColumn,
   LinkColumn,
+  PartColumn,
+  ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
   StartDateColumn,
@@ -63,15 +64,9 @@ export function RepairOrderTable({
           <CompanyColumn company={record.customer_detail} />
         )
       },
-      {
-        accessor: 'part',
-        title: t`Part`,
-        sortable: true,
-        render: (record: any) =>
-          record.part_detail ? (
-            <RenderPart instance={record.part_detail} />
-          ) : null
-      },
+      PartColumn({
+        switchable: false
+      }),
       DescriptionColumn({}),
       {
         accessor: 'line_items',
@@ -80,6 +75,14 @@ export function RepairOrderTable({
         render: (record: any) => record.line_items?.length ?? 0
       },
       StatusColumn({ model: ModelType.repairorder }),
+      ProjectCodeColumn({
+        defaultVisible: false
+      }),
+      {
+        accessor: 'priority',
+        sortable: true,
+        defaultVisible: false
+      },
       CreationDateColumn({
         defaultVisible: false
       }),

@@ -2619,6 +2619,10 @@ class RepairOrder(
         completion_date: Date the order was completed
         responsible: User (or group) responsible for the repair
         issued_by: User who issued this repair order
+        completed_by: User who completed this repair order
+        take_from: Location to take stock from for this repair order (optional)
+        priority: Priority of this repair order
+        project_code: Project code associated with this repair order (optional)
     """
 
     STATUS_CLASS = RepairOrderStatus
@@ -2821,6 +2825,45 @@ class RepairOrder(
         related_name='repairorders_responsible',
     )
 
+    completed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Completed by'),
+        help_text=_('User who completed this repair order'),
+        related_name='repairorders_completed',
+    )
+
+    take_from = models.ForeignKey(
+        'stock.StockLocation',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Source Location'),
+        help_text=_(
+            'Select location to take stock from for this repair order (leave blank to take from any stock location)'
+        ),
+        related_name='sourcing_repairorders',
+    )
+
+    priority = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Priority'),
+        help_text=_('Priority of this repair order'),
+    )
+
+    project_code = models.ForeignKey(
+        ProjectCode,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Project Code'),
+        help_text=_('Project code for this repair order'),
+        related_name='repair_orders',
+    )
+
     link = InvenTree.fields.InvenTreeURLField(
         verbose_name=_('External Link'),
         blank=True,
@@ -2872,6 +2915,9 @@ class RepairOrder(
         self.consume_allocated_stock(user=user)
 
         self.completion_date = InvenTree.helpers.current_date()
+
+        if user is not None and user.is_authenticated:
+            self.completed_by = user
 
     @inventree_transition(
         field=status,
