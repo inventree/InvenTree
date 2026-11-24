@@ -1,10 +1,9 @@
 # Detect suspicious patterns and flag PRs
-
 name: Slop Detect
 
 on:
   pull_request_target:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
     branches: [master]
 
 permissions:
@@ -42,6 +41,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha }}
+          allow-unsafe-pr-checkout: true
       - uses: Jondolf/ai-commit-check@7069d4254c6310cdb0395a6ab0ca1f29af897f83 # v1.0.1
         id: ai-check
         with:
