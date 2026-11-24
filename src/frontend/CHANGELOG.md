@@ -8,6 +8,7 @@ This file contains historical changelog information for the InvenTree UI compone
 
 - Adds `renderLink` helper function, which renders a validated external URL (`http` / `https` only) as an `<Anchor>` element with a link icon
 - Adds `sanitizeLinkUrl` helper function, which validates a URL for use as an external link
+- Adds `TableSearchField` type, and caches the searchable fields for each table in `useStoredTableState` ([#13346](https://github.com/inventree/InvenTree/pull/13346))
 
 ### 1.7.0 - November 2026
 

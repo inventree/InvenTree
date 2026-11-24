@@ -3045,7 +3045,6 @@ class SalesOrderShipment(
 
         for allocation in allocations:
             stock_item = seen_stock_items.get(allocation.item_id) or allocation.item
-            quantity = allocation.quantity
 
             if (locked_qty := locked_quantities.pop(stock_item.pk, None)) is not None:
                 # First encounter: refresh the quantity from the locked database row
@@ -3055,6 +3054,10 @@ class SalesOrderShipment(
                 continue
 
             seen_stock_items[stock_item.pk] = stock_item
+            quantity = min(allocation.quantity, stock_item.quantity)
+
+            if quantity <= 0:
+                continue
 
             if quantity < stock_item.quantity:
                 # Split off exactly the shipped quantity into a new StockItem,
