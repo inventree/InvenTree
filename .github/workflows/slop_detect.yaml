@@ -41,4 +41,4 @@ jobs:
           persist-credentials: false
       - uses: Jondolf/ai-commit-check@7069d4254c6310cdb0395a6ab0ca1f29af897f83 # v1.0.1
         with:
-          fail-on-ai-commit: true
+          fail-on-detection: true
