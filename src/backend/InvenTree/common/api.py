@@ -1579,7 +1579,8 @@ class InstanceInfoView(APIView):
             if issubclass(
                 model_class, InvenTreeLockableMixin
             ) and check_user_permission(request.user, model_class, 'view'):
-                data['locked'] = model_class.check_pk_locked(model_id)
+                mdl_cls_instance = model_class()
+                data['locked'] = mdl_cls_instance.check_pk_locked(model_id)
 
         serializer = common.serializers.InstanceInfoSerializer(data)
         return Response(serializer.data)

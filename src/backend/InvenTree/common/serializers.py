@@ -24,6 +24,7 @@ import generic.states.custom
 from generic.modelfeatures import get_model_features
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
+    InvenTreeLockableMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
 )
@@ -972,6 +973,13 @@ def check_note_change_permission(user, *, template, model_type, model_id=None):
         _('Invalid model type specified for note'),
         _('User does not have permission to create or edit notes for this model'),
     )
+
+    if issubclass(target_model_class, InvenTreeLockableMixin) and (
+        target_model_class.check_pk_locked(model_id)
+    ):
+        raise PermissionDenied(
+            _('Notes cannot be changed, as the linked item is locked')
+        )
 
 
 class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
