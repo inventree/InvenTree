@@ -2593,18 +2593,18 @@ class RepairOrderReportContext(report.mixins.BaseReportContext, TypedDict):
 
 
 class RepairOrder(
-    InvenTree.models.InvenTreeAuditMixin,
+    InvenTreeAuditMixin,
     StatusCodeMixin,
     StateTransitionMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.ReferenceIndexingMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeMetadataMixin,
+    InvenTreeReferenceIndexingMixin,
+    InvenTreeModel,
 ):
     """A RepairOrder represents a repair request from a customer.
 
@@ -3073,9 +3073,7 @@ class RepairOrder(
         return 'RP'
 
 
-class RepairOrderLineItem(
-    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
-):
+class RepairOrderLineItem(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """Model for a repair order line item."""
 
     # Changes to line items are included in the history of the repair order
