@@ -135,7 +135,14 @@ Only stock which is *available* can be allocated to a repair order. Stock items 
 
 ### Stock Consumption on Completion
 
-When a Repair Order is **completed**, all allocated stock is physically consumed (removed from inventory). The allocated quantity is subtracted from each stock item and the allocation records are deleted. Serialized stock items are instead marked as consumed by the repair order, as described above.
+When a Repair Order is **completed**, all allocated stock is consumed (removed from inventory), and the allocation records are deleted.
+
+As for a [Build Order](./build.md), consumed stock is not deleted. Instead, it is marked as *consumed* by the repair order, so that a record is kept of exactly which stock was used for the repair:
+
+- If the entire quantity of a stock item is consumed (or the item is serialized), that stock item is marked as consumed
+- If only part of a stock item is consumed, the consumed quantity is split off into a new stock item (which is marked as consumed), and the remainder stays in stock
+
+Consumed stock is listed in the *Consumed Stock* panel of the repair order. A consumed stock item can be returned to stock from this panel, if required.
 
 If any allocated stock item is no longer available when the order is completed (e.g. it has since been quarantined), the order cannot be completed and no stock is consumed. Remove or replace the affected allocation, and then complete the order.
 

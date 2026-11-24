@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Accordion, Skeleton, Stack } from '@mantine/core';
-import { IconInfoCircle, IconList } from '@tabler/icons-react';
+import { IconInfoCircle, IconList, IconListCheck } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -34,6 +34,7 @@ import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
 import RepairOrderLineItemTable from '../../tables/repair/RepairOrderLineItemTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { RepairOrderDetailsPanel } from './RepairOrderDetailsPanel';
 
 export default function RepairOrderDetail() {
@@ -99,6 +100,26 @@ export default function RepairOrderDetail() {
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>
+        )
+      },
+      {
+        name: 'consumed-stock',
+        label: t`Consumed Stock`,
+        icon: <IconListCheck />,
+        hidden: (order.line_items?.length ?? 0) <= 0,
+        content: order.pk ? (
+          <StockItemTable
+            allowAdd={false}
+            tableName='repair-order-consumed'
+            showLocation={false}
+            allowReturn
+            defaultInStock={null}
+            params={{
+              consumed_by_repair: order.pk
+            }}
+          />
+        ) : (
+          <Skeleton />
         )
       }
     ];

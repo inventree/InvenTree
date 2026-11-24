@@ -2944,9 +2944,10 @@ class RepairOrder(
     def consume_allocated_stock(self, user=None):
         """Consume all stock which is allocated against this RepairOrder.
 
-        - The allocated quantity is removed from each stock item (recorded as a REPAIR_CONSUMED event)
-        - Serialized stock items cannot be reduced in quantity, so (as for a build order)
-          the whole item is instead marked as consumed by this RepairOrder
+        - As for a build order, consumed stock is retained and marked as consumed by this RepairOrder
+          (recorded as a REPAIR_CONSUMED event), so it can be tracked against the order
+        - If only part of a stock item is consumed, the consumed quantity is first split off
+          into a new stock item, and the remainder is left in stock
         - The consumed quantity is added to the 'consumed' field of each line item
         - Each allocation is deleted once its stock has been consumed
 
@@ -2984,30 +2985,37 @@ class RepairOrder(
 
                 allocation.full_clean()
 
-                if item.serialized:
-                    # A serialized item is retained (with its history), and marked as consumed.
-                    # Its allocated quantity is always 1 (see RepairOrderAllocation.clean)
-                    with item.tracking_event(
-                        StockHistoryCode.REPAIR_CONSUMED,
-                        user,
-                        deltas={
-                            'repairorder': self,
-                            'quantity': float(allocation.quantity),
-                        },
-                    ):
-                        item.consumed_by_repair = self
-                        item.location = None
-                        item.save(add_note=False)
+                if item.serialized or allocation.quantity >= item.quantity:
+                    # The entire stock item is consumed.
+                    # (A serialized item always has an allocated quantity of 1 - see RepairOrderAllocation.clean)
+                    target = item
+                else:
+                    # Split off the consumed quantity into a new stock item,
+                    # leaving the remainder in place as available stock
+                    target = item.splitStock(
+                        allocation.quantity,
+                        user=user,
+                        notes=_('Consumed by repair order'),
+                    )
 
-                elif not item.take_stock(
-                    quantity=allocation.quantity,
-                    user=user,
-                    code=StockHistoryCode.REPAIR_CONSUMED,
-                    repairorder=self,
+                    if target is None:
+                        raise ValidationError({
+                            'allocations': _('Failed to consume repair order stock')
+                        })
+
+                # The consumed item is retained (with its history), and marked as consumed,
+                # so that it can be tracked against this repair order
+                with target.tracking_event(
+                    StockHistoryCode.REPAIR_CONSUMED,
+                    user,
+                    deltas={
+                        'repairorder': self,
+                        'quantity': float(allocation.quantity),
+                    },
                 ):
-                    raise ValidationError({
-                        'allocations': _('Failed to consume repair order stock')
-                    })
+                    target.consumed_by_repair = self
+                    target.location = None
+                    target.save(add_note=False)
 
                 line = lines.setdefault(allocation.line_id, allocation.line)
                 line.consumed += allocation.quantity

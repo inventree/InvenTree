@@ -517,18 +517,38 @@ class RepairOrderAuditTest(InvenTreeAPITestCase):
         )
         RepairOrderAllocation.objects.create(line=line, item=item, quantity=2)
 
+        original_quantity = item.quantity
         n = self.entries(StockItem, item.pk).count()
 
         self.order.complete_repair(user=self.user)
 
+        # The consumed quantity is split off from the original item,
+        # which retains the remaining stock
         [entry] = self.entries(StockItem, item.pk).order_by('pk')[n:]
+        self.assertEqual(entry.event_type, StockHistoryCode.SPLIT_CHILD_ITEM)
 
-        self.assertEqual(entry.event_type, StockHistoryCode.REPAIR_CONSUMED)
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, original_quantity - 2)
+        self.assertIsNone(item.consumed_by_repair)
+
+        # The split-off item is marked as consumed by the repair order
+        consumed = StockItem.objects.get(consumed_by_repair=self.order)
+        self.assertEqual(consumed.parent, item)
+        self.assertEqual(consumed.quantity, 2)
+        self.assertIsNone(consumed.location)
+
+        entry = (
+            self
+            .entries(StockItem, consumed.pk)
+            .filter(event_type=StockHistoryCode.REPAIR_CONSUMED)
+            .get()
+        )
         self.assertEqual(entry.actor, self.user)
         self.assertEqual(
             entry.additional_data['deltas']['repairorder']['pk'], self.order.pk
         )
-        self.assertEqual(entry.additional_data['deltas']['removed'], 2)
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 2)
+        self.assertIn('consumed_by_repair', entry.changes_dict)
 
         # The consumed quantity is recorded against the line (and its history)
         line.refresh_from_db()

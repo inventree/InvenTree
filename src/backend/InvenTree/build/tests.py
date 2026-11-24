@@ -800,11 +800,55 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
 
         si.refresh_from_db()
         self.assertEqual(float(si.quantity), original_qty - 2)
+        self.assertIsNone(si.consumed_by_repair)
 
         # Allocation should be deleted after completion
         self.assertEqual(
             RepairOrderAllocation.objects.filter(line__order=self.ro).count(), 0
         )
+
+        # The consumed quantity is split off into a new item, tracked against the order
+        consumed = StockItem.objects.get(consumed_by_repair=self.ro)
+        self.assertEqual(consumed.parent, si)
+        self.assertEqual(float(consumed.quantity), 2)
+        self.assertIsNone(consumed.location)
+        self.assertFalse(consumed.is_in_stock())
+
+        # Consumed stock is available via the API (as used by the "Consumed Stock" panel)
+        self.assignRole('stock.view')
+        data = self.get(
+            reverse('api-stock-list'), {'consumed_by_repair': self.ro.pk}
+        ).data
+        self.assertEqual([item['pk'] for item in data], [consumed.pk])
+
+    def test_complete_consumes_entire_stock_item(self):
+        """Consuming the full quantity of a stock item marks that item as consumed (no split)."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem, StockLocation
+
+        p = Part.objects.filter(component=True).first()
+        si = StockItem.objects.create(
+            part=p, quantity=3, location=StockLocation.objects.first()
+        )
+
+        line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=3)
+        RepairOrderAllocation.objects.create(line=line, item=si, quantity=3)
+
+        n_items = StockItem.objects.count()
+
+        self.ro.issue_repair()
+        self.ro.complete_repair(user=self.user)
+
+        self.assertEqual(StockItem.objects.count(), n_items)
+
+        si.refresh_from_db()
+        self.assertEqual(si.consumed_by_repair, self.ro)
+        self.assertEqual(float(si.quantity), 3)
+        self.assertIsNone(si.location)
+        self.assertFalse(si.is_in_stock())
+
+        line.refresh_from_db()
+        self.assertEqual(float(line.consumed), 3)
 
     def test_cancel_releases_allocations(self):
         """Cancelling an order deletes all allocations without consuming stock."""
