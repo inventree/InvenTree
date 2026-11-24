@@ -132,10 +132,9 @@ export default function RepairOrderDetail() {
       <ItemDetailsGrid>
         <Grid grow>
           <DetailsImage
-            appRole={UserRoles.repair_order}
-            apiPath={ApiEndpoints.company_list}
-            src={order.customer_detail?.image}
-            pk={order.customer}
+            apiPath={apiUrl(ApiEndpoints.part_list, order.part)}
+            src={order.part_detail?.image ?? order.part_detail?.thumbnail}
+            pk={order.part}
           />
           <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={order} />
