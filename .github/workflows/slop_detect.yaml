@@ -3,14 +3,15 @@
 name: Slop Detect
 
 on:
-  # pull_request_target:
-  #   types: [opened, reopened]
+  pull_request_target:
+    types: [opened, reopened]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
 
 permissions:
   contents: read
-  issues: read
+  issues: write
   pull-requests: write
 
 jobs:
@@ -39,6 +40,15 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: Jondolf/ai-commit-check@7069d4254c6310cdb0395a6ab0ca1f29af897f83 # v1.0.1
+        id: ai-check
         with:
-          fail-on-ai-commit: true
+          fail-on-detection: false
+      - name: AI commit warning
+        if: steps.ai-check.outputs.ai-commits-found == 'true'
+        run: |
+          echo "::warning::Found $COUNT AI commit(s); review your commits and ensure you follow the contribution guidelines."
+          exit 1
+        env:
+          COUNT: ${{ steps.ai-check.outputs.count }}
