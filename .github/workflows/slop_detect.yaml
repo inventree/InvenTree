@@ -6,18 +6,19 @@ on:
   pull_request_target:
     types: [opened, reopened]
     branches: [master]
-  pull_request:
-    branches: [master]
 
 permissions:
   contents: read
-  issues: write
-  pull-requests: write
+  issues: read
+  pull-requests: read
 
 jobs:
-  backport:
-    name: PR analysis
+  detect:
+    name: detect
     runs-on: ubuntu-latest
+    outputs:
+      ai-commits-found: ${{ steps.ai-check.outputs.ai-commits-found }}
+      count: ${{ steps.ai-check.outputs.count }}
     steps:
       - uses: peakoss/anti-slop@57858eead489d08b255fab2af45a506c2ca6eab2 # v0.3.0
         with:
@@ -45,24 +46,33 @@ jobs:
         id: ai-check
         with:
           fail-on-detection: false
+
+  comment:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    needs: detect
+
+    steps:
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        if: steps.ai-check.outputs.ai-commits-found == 'true'
+        if: needs.detect.outputs.ai-commits-found == 'true'
         with:
-          fail-on-ai-commit: true
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `Found ${process.env.COUNT} AI commit(s); review your commits and ensure you follow the contribution guidelines.`
             })
         env:
-          COUNT: ${{ steps.ai-check.outputs.count }}
+          COUNT: ${{ needs.detect.outputs.count }}
       - name: AI commit warning
-        if: steps.ai-check.outputs.ai-commits-found == 'true'
+        if: needs.detect.outputs.ai-commits-found == 'true'
         run: |
           echo "::warning::Found $COUNT AI commit(s); review your commits and ensure you follow the contribution guidelines."
           exit 1
         env:
-          COUNT: ${{ steps.ai-check.outputs.count }}
+          COUNT: ${{ needs.detect.outputs.count }}
