@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -117,6 +118,7 @@ def get_release_data():
         url = f'https://api.github.com/repos/inventree/inventree/releases?page={page}&per_page=150'
 
         attempts = 5
+        holdoff = 5
 
         while attempts > 0:
             attempts -= 1
@@ -124,6 +126,12 @@ def get_release_data():
             response = requests.get(url, timeout=30)
             if response.status_code == 200:
                 break
+            else:
+                print(
+                    f'Failed to fetch {url}, status code {response.status_code}. Retrying in {holdoff} seconds...'
+                )
+                time.sleep(holdoff)
+                holdoff += 5
 
         assert response.status_code == 200, (
             f'Failed to fetch release data: {response.status_code} - {url}'
