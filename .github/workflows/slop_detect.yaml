@@ -46,4 +46,6 @@ jobs:
           fail-on-detection: false
       - name: AI commit warning
         if: steps.ai-check.outputs.ai-commits-found == 'true'
-        run: echo "::warning::Found ${{ steps.ai-check.outputs.count }} AI commit(s)"
+        run: echo "::warning::Found $COUNT AI commit(s); review your commits and ensure you follow the contribution guidelines."
+        env:
+          COUNT: ${{ steps.ai-check.outputs.count }}
