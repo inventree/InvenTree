@@ -4,6 +4,9 @@ name: Slop Detect
 
 on:
   pull_request_target:
+    types: [opened, reopened]
+    branches: [master]
+  pull_request:
     branches: [master]
 
 permissions:
