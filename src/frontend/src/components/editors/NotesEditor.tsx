@@ -68,6 +68,7 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../items/ActionDropdown';
+import { LockedItemMessage } from '../items/LockedItemMessage';
 import { RenderUser } from '../render/User';
 
 function NoteInfoHover({ note }: { note: any }) {
@@ -108,11 +109,13 @@ export default function NotesEditor({
   modelType,
   modelId,
   templateMode = false,
+  locked = false,
   setDirtyCallback
 }: Readonly<{
   modelType?: ModelType;
   modelId?: number;
   templateMode?: boolean;
+  locked?: boolean;
   setDirtyCallback?: (dirty: boolean) => void;
 }>) {
   const api = useApi();
@@ -267,14 +270,14 @@ export default function NotesEditor({
       if (templateMode) {
         return user.isStaff();
       }
-      if (!modelType) {
+      if (!modelType || locked) {
         return false;
       }
       return action === 'change'
         ? user.hasChangePermission(modelType)
         : user.hasDeletePermission(modelType);
     },
-    [user, modelType, templateMode]
+    [user, modelType, templateMode, locked]
   );
 
   const canEdit: boolean = useMemo(
@@ -447,6 +450,7 @@ export default function NotesEditor({
       <Flex align='left' gap={5}>
         <Box style={{ flex: 1 }}>
           <Stack gap={5}>
+            {locked && !templateMode && <LockedItemMessage />}
             {selectedNote && (
               <Paper p='xs' shadow='sm' withBorder>
                 <Group justify='space-between'>

@@ -10,5 +10,6 @@ export enum ModelFeature {
   image = 'org.inventree.i.modelfeatures.image',
   report = 'org.inventree.i.modelfeatures.report',
   label = 'org.inventree.i.modelfeatures.label', // for now this is frontend only for overrides
-  history = 'org.inventree.i.modelfeatures.history'
+  history = 'org.inventree.i.modelfeatures.history',
+  lockable = 'org.inventree.i.modelfeatures.lockable'
 }
