@@ -1427,7 +1427,7 @@ class Build(
         output: stock.models.StockItem,
         quantity: Optional[decimal.Decimal] = None,
         required_tests=None,
-    ) -> bool:
+    ) -> None:
         """Determine if the given build output can be completed.
 
         Arguments:
@@ -2407,14 +2407,12 @@ class BuildItem(InvenTreeMetadataModel):
                 iii) The Part referenced by the StockItem is a valid substitute for the BomItem
             """
 
-            if self.build.part == self.bom_item.part:
+            if self.build.part == self.bom_item.part or (
+                self.bom_item.inherited
+                and self.build.part
+                in self.bom_item.part.get_descendants(include_self=False)
+            ):
                 valid = self.bom_item.is_stock_item_valid(self.stock_item)
-
-            elif self.bom_item.inherited:
-                if self.build.part in self.bom_item.part.get_descendants(
-                    include_self=False
-                ):
-                    valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
         # If the existing BomItem is *not* valid, try to find a match
         if not valid and self.build and self.stock_item:

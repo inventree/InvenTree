@@ -1997,9 +1997,8 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
                 check_status=False, check_quantity=False, check_in_production=False
             ):
                 raise ValidationError(_('Stock item is not in stock'))
-        elif self.require_in_stock == False:
-            if stock_item.is_in_stock():
-                raise ValidationError(_('Stock item is already in stock'))
+        elif self.require_in_stock == False and stock_item.is_in_stock():
+            raise ValidationError(_('Stock item is already in stock'))
 
         return stock_item
 

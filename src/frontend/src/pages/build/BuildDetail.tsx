@@ -25,10 +25,8 @@ import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import {
-  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -46,6 +44,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -461,6 +460,11 @@ export default function BuildDetail() {
     fields: completeOrderFields
   });
 
+  const featureActions = useModelFeatureActions({
+    model: ModelType.build,
+    instance: build
+  });
+
   const buildActions = useMemo(() => {
     const canEdit = user.hasChangeRole(UserRoles.build);
 
@@ -498,17 +502,7 @@ export default function BuildDetail() {
         onClick={completeOrder.open}
       />,
       <AdminButton model={ModelType.build} id={build.pk} />,
-      <BarcodeActionDropdown
-        model={ModelType.build}
-        pk={build.pk}
-        hash={build?.barcode_hash}
-      />,
-      <PrintingActions
-        modelType={ModelType.build}
-        items={[build.pk]}
-        enableLabels
-        enableReports
-      />,
+      ...featureActions,
       <OptionsActionDropdown
         tooltip={t`Build Order Actions`}
         actions={[
@@ -535,7 +529,7 @@ export default function BuildDetail() {
         ]}
       />
     ];
-  }, [id, build, user, buildStatus]);
+  }, [featureActions, id, build, user, buildStatus]);
 
   const buildBadges = useMemo(() => {
     return instanceQuery.isFetching

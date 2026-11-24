@@ -760,6 +760,7 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         self.assertEqual(NotificationMessage.objects.count(), n_messages + 1)
 
         msg = NotificationMessage.objects.last()
+        assert msg is not None
 
         self.assertEqual(msg.name, 'Server Error')
         self.assertEqual(msg.message, 'An error has been logged by the server.')

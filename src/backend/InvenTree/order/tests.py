@@ -76,6 +76,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         order.start_date = current_date()
         order.target_date = current_date() - timedelta(days=5)
+        assert order is not None
 
         with self.assertRaises(django_exceptions.ValidationError) as err:
             order.clean()
@@ -84,6 +85,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         self.assertIn('Start date must be before target date', err.exception.messages)
 
         order.target_date = current_date() + timedelta(days=5)
+        assert order is not None
 
         # This should now pass
         order.clean()
@@ -92,6 +94,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
     def test_validate_contact(self):
         """Test for validation of linked Contact."""
         order = PurchaseOrder.objects.first()
+        assert order is not None
 
         # Create a contact which does does not match the company
         company = Company.objects.exclude(pk=order.supplier.pk).first()
@@ -99,6 +102,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         contact = Contact.objects.create(company=company, name='Harold Henderson')
 
         order.contact = contact
+        assert order is not None
 
         with self.assertRaises(django_exceptions.ValidationError) as err:
             order.clean()
@@ -110,6 +114,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         contact.save()
 
         order.contact = contact
+        assert order is not None
         order.clean()  # Should not raise
         order.save()
 
@@ -149,6 +154,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
     def test_validate_delivery_address(self):
         """Regression test for validation of the delivery address against the receiving company."""
         order = PurchaseOrder.objects.first()
+        assert order is not None
 
         alpha = Company.objects.create(name='Alpha Internal', is_internal=True)
         beta = Company.objects.create(name='Beta Internal', is_internal=True)
@@ -164,6 +170,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         for address in [beta_address, supplier_address]:
             order.delivery_address = address
+            assert order is not None
 
             with self.assertRaises(django_exceptions.ValidationError) as err:
                 order.clean()
@@ -176,6 +183,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # Delivery address without a receiving company
         order.receiving_company = None
         order.delivery_address = alpha_address
+        assert order is not None
 
         with self.assertRaises(django_exceptions.ValidationError) as err:
             order.clean()
@@ -188,6 +196,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # Receiving company which is not an internal company
         order.receiving_company = order.supplier
         order.delivery_address = None
+        assert order is not None
 
         with self.assertRaises(django_exceptions.ValidationError) as err:
             order.clean()
@@ -197,15 +206,18 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # Valid combinations
         order.receiving_company = alpha
         order.delivery_address = alpha_address
+        assert order is not None
         order.clean()
         order.save()
 
         order.receiving_company = alpha
         order.delivery_address = None
+        assert order is not None
         order.clean()
 
         order.receiving_company = None
         order.delivery_address = None
+        assert order is not None
         order.clean()
 
     def test_rebuild_reference(self):
@@ -529,6 +541,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         # Ensure that received quantity and unit purchase price data are correct
         si = si.first()
+        assert si is not None
         self.assertEqual(si.quantity, 10)
 
         si = StockItem.objects.filter(supplier_part=sp_2)
@@ -536,6 +549,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         # Ensure that received quantity and unit purchase price data are correct
         si = si.first()
+        assert si is not None
         self.assertEqual(si.quantity, 0.5)
 
         # Each received stock item has a PURCHASE cost entry, per base unit
@@ -724,6 +738,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
                 self.assertTrue(messages.exists())
 
             msg = messages.first()
+            assert msg is not None
 
             self.assertEqual(msg.target_object_id, str(1))
             self.assertEqual(msg.name, 'Overdue Purchase Order')
@@ -828,10 +843,12 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
             # Setting metadata to something *other* than a dict will fail
             with self.assertRaises(django_exceptions.ValidationError):
                 p.metadata = 'test'
+                assert p is not None
                 p.save()
 
             # Reset metadata to known state
             p.metadata = {}
+            assert p is not None
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

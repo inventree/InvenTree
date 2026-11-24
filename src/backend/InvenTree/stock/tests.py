@@ -299,6 +299,7 @@ class StockTest(StockTestBase):
 
         # Check that a tracking item was added
         track = stock_events(it).last()
+        assert track
 
         self.assertEqual(track.event_type, StockHistoryCode.STOCK_MOVE)
         self.assertEqual(track.notes, 'Moved to the bathroom')
@@ -369,6 +370,7 @@ class StockTest(StockTestBase):
         parent_entry = stock_events(
             parent, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
         ).first()
+        assert parent_entry
 
         self.assertIsNotNone(parent_entry)
         self.assertEqual(
@@ -380,8 +382,11 @@ class StockTest(StockTestBase):
         grandparent = StockItem.objects.get(id=1234)
 
         parent = grandparent.splitStock(200, None, self.user)
+        assert parent
         child_a = parent.splitStock(50, None, self.user)
+        assert child_a
         child_b = parent.splitStock(50, None, self.user)
+        assert child_b
 
         self.assertEqual(parent.parent, grandparent)
         self.assertEqual(child_a.parent, parent)
@@ -411,7 +416,9 @@ class StockTest(StockTestBase):
 
         # An item depleted to zero with delete_on_deplete set is deleted
         parent = grandparent.splitStock(200, None, self.user)
+        assert parent
         child = parent.splitStock(50, None, self.user)
+        assert child
 
         parent.delete_on_deplete = True
         parent.save()
@@ -424,7 +431,9 @@ class StockTest(StockTestBase):
 
         # An item absorbed by a merge is also deleted
         source = grandparent.splitStock(100, None, self.user)
+        assert source
         kid = source.splitStock(25, None, self.user)
+        assert kid
 
         target = StockItem.objects.create(
             part=grandparent.part,
@@ -464,6 +473,7 @@ class StockTest(StockTestBase):
 
         # History records the quantity which was *actually* removed
         entry = stock_events(item).last()
+        assert entry
         self.assertEqual(entry.additional_data['deltas']['removed'], 10.0)
         self.assertEqual(
             [Decimal(value) for value in entry.changes_dict['quantity']], [10, 0]
@@ -480,6 +490,7 @@ class StockTest(StockTestBase):
         item = StockItem.objects.create(part=part, quantity=10)
 
         allocated = item.allocateToCustomer(customer, quantity=25, user=self.user)
+        assert allocated
 
         # The whole item is allocated (no split occurs)
         self.assertEqual(allocated.pk, item.pk)
@@ -487,6 +498,7 @@ class StockTest(StockTestBase):
 
         # History records the quantity which was *actually* allocated
         entry = stock_events(allocated).last()
+        assert entry
         self.assertEqual(entry.additional_data['deltas']['quantity'], 10.0)
 
         # A zero quantity is rejected outright
@@ -515,11 +527,13 @@ class StockTest(StockTestBase):
         entry = stock_events(
             component, event_type=StockHistoryCode.INSTALLED_INTO_ASSEMBLY
         ).last()
+        assert entry
         self.assertEqual(entry.additional_data['deltas']['quantity'], 10.0)
 
         entry = stock_events(
             parent_item, event_type=StockHistoryCode.INSTALLED_CHILD_ITEM
         ).last()
+        assert entry
         self.assertEqual(entry.additional_data['deltas']['quantity'], 10.0)
 
         # A zero quantity is rejected outright
@@ -573,6 +587,7 @@ class StockTest(StockTestBase):
         )
 
         parent = StockItem.objects.create(part=part, quantity=100)
+        assert parent
 
         self.assertEqual(parent.children.count(), 0)
         self.assertEqual(parent.child_count, 0)
@@ -580,6 +595,7 @@ class StockTest(StockTestBase):
 
         # Split off two child items
         child_1 = parent.splitStock(10, None, self.user)
+        assert child_1
         child_2 = parent.splitStock(20, None, self.user)
 
         parent.refresh_from_db()
@@ -638,6 +654,7 @@ class StockTest(StockTestBase):
         item.take_stock(500, self.user)
 
         child = item_d.splitStock(300, None, self.user)
+        assert child
 
         item.refresh_from_db()
         self.assertEqual(item.quantity, 200)
@@ -681,6 +698,7 @@ class StockTest(StockTestBase):
 
         # Check that a tracking item was added
         track = stock_events(it).last()
+        assert track
 
         self.assertEqual(track.event_type, StockHistoryCode.STOCK_COUNT)
         self.assertIn('Counted items', track.notes)
@@ -766,6 +784,7 @@ class StockTest(StockTestBase):
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
         item = StockItem.objects.get(pk=2)
+        assert item
 
         OrmQ.objects.all().delete()
 
@@ -790,6 +809,7 @@ class StockTest(StockTestBase):
 
         # Check that a tracking item was added
         track = stock_events(it).last()
+        assert track
 
         self.assertEqual(track.event_type, StockHistoryCode.STOCK_ADD)
         self.assertIn('Added some items', track.notes)
@@ -806,6 +826,7 @@ class StockTest(StockTestBase):
         ait = it.allocateToCustomer(
             customer, quantity=an, order=order, user=None, notes='Allocated some stock'
         )
+        assert ait
 
         # Check if new stockitem is created
         self.assertTrue(ait)
@@ -820,6 +841,7 @@ class StockTest(StockTestBase):
 
         # Check that a tracking item was added
         track = stock_events(ait).last()
+        assert track
 
         self.assertEqual(track.event_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER)
         self.assertIn('Allocated some stock', track.notes)
@@ -841,6 +863,7 @@ class StockTest(StockTestBase):
         ait = it.allocateToCustomer(
             customer, quantity=an, order=order, user=None, notes='Allocated some stock'
         )
+        assert ait
 
         self.assertEqual(ait.quantity, an)
         self.assertTrue(ait.parent, it)
@@ -860,6 +883,7 @@ class StockTest(StockTestBase):
         ait = it.allocateToCustomer(
             customer, quantity=an, order=order, user=None, notes='Allocated some stock'
         )
+        assert ait
         ait.return_from_customer(
             self.drawer3, None, notes='Stock removed from customer'
         )
@@ -877,6 +901,7 @@ class StockTest(StockTestBase):
 
         # Check that a tracking item was added
         track = stock_events(ait).last()
+        assert track
 
         self.assertEqual(track.event_type, StockHistoryCode.RETURNED_FROM_CUSTOMER)
         self.assertIn('Stock removed from customer', track.notes)
@@ -897,6 +922,7 @@ class StockTest(StockTestBase):
 
         # Check that a tracking item was added
         track = stock_events(it).last()
+        assert track
 
         self.assertEqual(track.event_type, StockHistoryCode.STOCK_REMOVE)
         self.assertIn('Removed some items', track.notes)
@@ -1012,6 +1038,8 @@ class StockTest(StockTestBase):
 
         item_next = item.get_next_serialized_item()
         item_prev = item.get_next_serialized_item(reverse=True)
+        assert item_next
+        assert item_prev
 
         self.assertEqual(item_next.serial_int, 101)
         self.assertEqual(item_prev.serial_int, 99)
@@ -1087,6 +1115,7 @@ class StockTest(StockTestBase):
         """Unit tests for the metadata field."""
         for model in [StockItem, StockLocation]:
             p = model.objects.first()
+            assert p
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)
@@ -1103,6 +1132,7 @@ class StockTest(StockTestBase):
     def test_merge(self):
         """Test merging of multiple stock items."""
         part = Part.objects.first()
+        assert part
         part.stock_items.all().delete()
 
         # Test simple merge without any pricing information
@@ -1119,6 +1149,7 @@ class StockTest(StockTestBase):
         merge_entry = stock_events(
             s1, event_type=StockHistoryCode.MERGED_STOCK_ITEMS
         ).first()
+        assert merge_entry
         self.assertIsNotNone(merge_entry)
         self.assertEqual(merge_entry.additional_data['deltas']['added'], 50.0)
         self.assertEqual(
@@ -1185,6 +1216,7 @@ class StockTest(StockTestBase):
         allowing e.g. a build output to be merged away and deleted.
         """
         part = Part.objects.first()
+        assert part
         part.stock_items.all().delete()
 
         target = StockItem.objects.create(part=part, quantity=10)
@@ -1379,6 +1411,7 @@ class TrackingEventBatchTests(StockTestBase):
 
         for item in items:
             entry = self.history(item).last()
+            assert entry
             self.assertEqual(entry.event_type, StockHistoryCode.STOCK_COUNT)
             self.assertEqual(entry.notes, 'Batch stocktake')
 
@@ -1821,6 +1854,7 @@ class TestResultTest(StockTestBase):
 
         # Split some items out
         item2 = item.splitStock(20, None, None)
+        assert item2
 
         self.assertEqual(item.quantity, 30)
 

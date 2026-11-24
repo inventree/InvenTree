@@ -18,6 +18,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelFeature } from '@lib/enums/ModelFeature';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
@@ -27,11 +28,9 @@ import type { PanelType } from '@lib/types/Panel';
 import { notifications } from '@mantine/notifications';
 import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialog';
 import AdminButton from '../../components/buttons/AdminButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import {
   ActionDropdown,
-  BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -58,6 +57,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -534,6 +534,26 @@ export default function StockDetail() {
     }
   });
 
+  const featureActionOverrides = useMemo(
+    () => ({
+      [ModelFeature.barcode]: [
+        {
+          name: t`Scan into location`,
+          icon: <InvenTreeIcon icon='location' />,
+          tooltip: t`Scan this item into a location`,
+          onClick: scanIntoLocation.open
+        }
+      ]
+    }),
+    [scanIntoLocation.open]
+  );
+
+  const featureActions = useModelFeatureActions({
+    model: ModelType.stockitem,
+    instance: stockitem,
+    actions: featureActionOverrides
+  });
+
   const stockActions = useMemo(() => {
     const serial = stockitem.serial;
     const serialized =
@@ -548,26 +568,7 @@ export default function StockDetail() {
     return [
       <AdminButton model={ModelType.stockitem} id={stockitem.pk} />,
       <LocateItemButton stockId={stockitem.pk} />,
-      <BarcodeActionDropdown
-        model={ModelType.stockitem}
-        pk={stockitem.pk}
-        hash={stockitem?.barcode_hash}
-        perm={user.hasChangeRole(UserRoles.stock)}
-        actions={[
-          {
-            name: t`Scan into location`,
-            icon: <InvenTreeIcon icon='location' />,
-            tooltip: t`Scan this item into a location`,
-            onClick: scanIntoLocation.open
-          }
-        ]}
-      />,
-      <PrintingActions
-        modelType={ModelType.stockitem}
-        items={[stockitem.pk]}
-        enableReports
-        enableLabels
-      />,
+      ...featureActions,
       <ActionDropdown
         tooltip={t`Stock Operations`}
         icon={<IconPackages />}
@@ -636,7 +637,14 @@ export default function StockDetail() {
         ]}
       />
     ];
-  }, [id, stockitem, part, user, stockAdjustActions.menuActions]);
+  }, [
+    featureActions,
+    id,
+    stockitem,
+    part,
+    user,
+    stockAdjustActions.menuActions
+  ]);
 
   const stockBadges: ReactNode[] = useMemo(() => {
     const quantity: number = stockitem?.quantity ?? 0;

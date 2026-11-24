@@ -51,57 +51,76 @@ class TestSsoGroupSync(TransactionTestCase):
     def test_group_added_to_user(self):
         """Check that a new SSO group is added to the user."""
         user: User = self.sociallogin.account.user
+        assert user is not None
         self.assertEqual(user.groups.count(), 0)
         sso.ensure_sso_groups(None, self.sociallogin)
         self.assertEqual(user.groups.count(), 1)
-        self.assertEqual(user.groups.first().name, 'inventree_group')
+        group = user.groups.first()
+        assert group is not None
+        self.assertEqual(group.name, 'inventree_group')
 
     def test_group_already_exists(self):
         """Check that existing SSO group is not modified."""
         user: User = self.sociallogin.account.user
+        assert user is not None
         user.groups.add(self.group)
         self.assertEqual(user.groups.count(), 1)
-        self.assertEqual(user.groups.first().name, 'inventree_group')
+        group = user.groups.first()
+        assert group is not None
+        self.assertEqual(group.name, 'inventree_group')
         sso.ensure_sso_groups(None, self.sociallogin)
         self.assertEqual(user.groups.count(), 1)
-        self.assertEqual(user.groups.first().name, 'inventree_group')
+        group = user.groups.first()
+        assert group is not None
+        self.assertEqual(group.name, 'inventree_group')
 
     @override_settings(SSO_REMOVE_GROUPS=True)
     def test_remove_non_sso_group(self):
         """Check that any group not provided by IDP is removed."""
         user: User = self.sociallogin.account.user
+        assert user is not None
         # group must be saved to database first
         group = Group(name='local_group')
         group.save()
         user.groups.add(group)
         self.assertEqual(user.groups.count(), 1)
-        self.assertEqual(user.groups.first().name, 'local_group')
+        user_group = user.groups.first()
+        assert user_group is not None
+        self.assertEqual(user_group.name, 'local_group')
         sso.ensure_sso_groups(None, self.sociallogin)
         self.assertEqual(user.groups.count(), 1)
-        self.assertEqual(user.groups.first().name, 'inventree_group')
+        user_group = user.groups.first()
+        assert user_group is not None
+        self.assertEqual(user_group.name, 'inventree_group')
 
     def test_override_default_group_with_sso_group(self):
         """The default group should be overridden if SSO groups are available."""
         user: User = self.sociallogin.account.user
+        assert user is not None
         self.assertEqual(user.groups.count(), 0)
         Group(id=42, name='default_group').save()
         InvenTreeSetting.set_setting('SIGNUP_GROUP', 42)
         sso.ensure_sso_groups(None, self.sociallogin)
         MockRegistrationMixin().save_user(None, user, None)
         self.assertEqual(user.groups.count(), 1)
-        self.assertEqual(user.groups.first().name, 'inventree_group')
+        group = user.groups.first()
+        assert group is not None
+        self.assertEqual(group.name, 'inventree_group')
 
     def test_default_group_without_sso_group(self):
         """If no SSO group is specified, the default group should be applied."""
         self.sociallogin.account.extra_data = {}
         user: User = self.sociallogin.account.user
+        assert user is not None
         self.assertEqual(user.groups.count(), 0)
         Group(id=42, name='default_group').save()
         InvenTreeSetting.set_setting('SIGNUP_GROUP', 42)
         sso.ensure_sso_groups(None, self.sociallogin)
         MockRegistrationMixin().save_user(None, user, None)
         self.assertEqual(user.groups.count(), 1)
-        self.assertEqual(user.groups.first().name, 'default_group')
+        group = user.groups.first()
+        assert group is not None
+        self.assertEqual(group.name, 'default_group')
 
     @override_settings(SSO_REMOVE_GROUPS=True)
     def test_remove_groups_overrides_default_group(self):

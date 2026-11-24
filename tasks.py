@@ -35,7 +35,7 @@ def safe_value(fnc):
     try:
         return fnc()
     except (ModuleNotFoundError, ImportError):
-        return wrap_color('N/A', 93)  # Yellow color for "Not Available"
+        return wrap_color('N/A', '93')  # Yellow color for "Not Available"
 
 
 def is_true(x):

@@ -707,6 +707,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
             set_global_setting('_PLUGIN_REGISTRY_HASH', 'other-process-hash')
             errors = Error.objects.filter(kind='Plugin Registry Mismatch')
+            assert errors is not None
             self.assertEqual(errors.count(), 0)
 
             # First reload does not reproduce the hash - retried, not yet reported
@@ -722,7 +723,9 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             # Second reload still does not match - the error is reported
             self.assertTrue(registry.check_reload())
             self.assertEqual(errors.count(), 1)
-            self.assertIn(local_hash, errors.first().data)
+            error = errors.first()
+            assert error is not None
+            self.assertIn(local_hash, error.data)
 
             # No further reloads (or errors) for the same hash
             self.assertFalse(registry.check_reload())
@@ -1244,6 +1247,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
             for slug in loaded_but_unmatched:
                 plugin = registry.plugins.get(slug)
+                assert plugin is not None
                 cfg = registry.get_plugin_config(slug)
                 try:
                     mixin_result = f'mixin_enabled(base)={plugin.mixin_enabled("base")}'

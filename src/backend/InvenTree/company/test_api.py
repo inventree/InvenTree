@@ -149,8 +149,11 @@ class CompanyTest(InvenTreeAPITestCase):
         )
 
         duplicate = Company.objects.get(pk=response.data['pk'])
+        assert duplicate is not None
         self.assertEqual(duplicate.notes.count(), 1)
-        self.assertEqual(duplicate.notes.first().content, '<p>Some notes</p>')
+        note = duplicate.notes.first()
+        assert note is not None
+        self.assertEqual(note.content, '<p>Some notes</p>')
 
         # Explicitly disabling copy_notes must not copy any notes
         response = self.post(
@@ -230,6 +233,7 @@ class CompanyTest(InvenTreeAPITestCase):
         # Set one company to inactive
         c = Company.objects.first()
         c.active = False
+        assert c is not None
         c.save()
 
         self.assertEqual(
@@ -358,6 +362,7 @@ class ContactTest(InvenTreeAPITestCase):
 
         # Get the contact again
         contact = Contact.objects.first()
+        assert contact is not None
         self.assertEqual(contact.role, 'x')
 
     def test_delete(self):
@@ -552,6 +557,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
     def test_barcode_hash_read_only(self):
         """The 'barcode_hash' field cannot be changed via the ManufacturerPart API."""
         part = ManufacturerPart.objects.first()
+        assert part is not None
         self.assertEqual(part.barcode_hash, '')
 
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': part.pk})
@@ -593,6 +599,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
     def test_manufacturer_part_detail(self):
         """Tests for the ManufacturerPart detail endpoint."""
         mp = ManufacturerPart.objects.first()
+        assert mp is not None
 
         self.assertIsNotNone(mp)
 
@@ -623,6 +630,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         url = reverse('api-manufacturer-part-list')
 
         original = ManufacturerPart.objects.first()
+        assert original is not None
         self.assertIsNotNone(original)
 
         create_note(original)
@@ -639,8 +647,11 @@ class ManufacturerTest(InvenTreeAPITestCase):
         )
 
         duplicate = ManufacturerPart.objects.get(pk=response.data['pk'])
+        assert duplicate is not None
         self.assertEqual(duplicate.notes.count(), 1)
-        self.assertEqual(duplicate.notes.first().content, '<p>Some notes</p>')
+        note = duplicate.notes.first()
+        assert note is not None
+        self.assertEqual(note.content, '<p>Some notes</p>')
 
         # Explicitly disabling copy_notes must not copy any notes
         response = self.post(
@@ -750,6 +761,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
         url = reverse('api-supplier-part-list')
 
         original = SupplierPart.objects.first()
+        assert original is not None
         self.assertIsNotNone(original)
 
         create_note(original)
@@ -766,8 +778,11 @@ class SupplierPartTest(InvenTreeAPITestCase):
         )
 
         duplicate = SupplierPart.objects.get(pk=response.data['pk'])
+        assert duplicate is not None
         self.assertEqual(duplicate.notes.count(), 1)
-        self.assertEqual(duplicate.notes.first().content, '<p>Some notes</p>')
+        note = duplicate.notes.first()
+        assert note is not None
+        self.assertEqual(note.content, '<p>Some notes</p>')
 
         # Explicitly disabling copy_notes must not copy any notes
         response = self.post(
@@ -786,6 +801,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
     def test_output_options(self):
         """Test the output options for SupplierPart detail."""
         sp = SupplierPart.objects.all().first()
+        assert sp is not None
         self.run_output_test(
             reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
             [

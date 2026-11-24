@@ -189,6 +189,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
         self.debug_mode(False)
         asset = report_tags.asset('test.txt')
+        assert asset is not None
         # Non-debug mode returns a base64 data: URI (no file:// URLs)
         self.assertIsNotNone(asset)
         self.assertTrue(asset.startswith('data:text/plain;base64,'))
@@ -1247,7 +1248,9 @@ class BarcodeTagTest(TestCase):
         self.assertEqual(root.attrib['shape-rendering'], 'crispEdges')
 
         background = root.find(f'{namespace}rect')
+        assert background is not None
         path = root.find(f'{namespace}path')
+        assert path is not None
         self.assertIsNotNone(background)
         self.assertIsNotNone(path)
         self.assertEqual(background.attrib['fill'], '#0000ff')
@@ -1275,7 +1278,9 @@ class BarcodeTagTest(TestCase):
         self.assertNotEqual(width, height)
 
         background = root.find(f'{namespace}rect')
+        assert background is not None
         path = root.find(f'{namespace}path')
+        assert path is not None
         self.assertIsNotNone(background)
         self.assertIsNotNone(path)
         self.assertEqual(background.attrib['fill'], '#ffffff')
@@ -1304,14 +1309,18 @@ class BarcodeTagTest(TestCase):
                     fmt='SVG',
                 )
                 root = ElementTree.fromstring(base64.b64decode(data.split(',', 1)[1]))
+                assert root is not None
                 self.assertEqual(root.attrib['viewBox'], f'0 0 {width} {height}')
                 self.assertEqual(root.attrib['width'], str(int(width * scale)))
                 self.assertEqual(root.attrib['height'], str(int(height * scale)))
                 background = root.find(f'{namespace}rect')
+                assert background is not None
                 self.assertEqual(background.attrib['width'], str(width))
                 self.assertEqual(background.attrib['height'], str(height))
 
-                path = root.find(f'{namespace}path').attrib['d']
+                path_element = root.find(f'{namespace}path')
+                assert path_element is not None
+                path = path_element.attrib['d']
                 modules = re.findall(r'M(\d+) (\d+)h1v1h-1z', path)
                 self.assertEqual(len(modules), sum(map(sum, matrix)))
                 self.assertEqual(
@@ -1356,6 +1365,7 @@ class BarcodeTagTest(TestCase):
         reader = PdfReader(io.BytesIO(pdf))
         self.assertEqual(len(reader.pages), 1)
         page = reader.pages[0]
+        assert page is not None
         self.assertEqual(len(page.images), 0)
 
         # Count closed module outlines painted in the selected foreground color.
@@ -1363,7 +1373,9 @@ class BarcodeTagTest(TestCase):
         color = None
         closed_paths = 0
         painted_modules = 0
-        for operands, operator in page.get_contents().operations:
+        content_stream = page.get_contents()
+        assert content_stream is not None
+        for operands, operator in content_stream.operations:
             if operator == b'rg':
                 color = tuple(operands)
             elif operator == b'h':

@@ -737,9 +737,9 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> PurchaseOrderReportContext:
         """Return report context data for this PurchaseOrder."""
-        return_ctx = super().report_context()
+        return_ctx: PurchaseOrderReportContext = super().report_context()
 
-        return_ctx.update({'supplier': self.supplier})  # ty:ignore[invalid-key]
+        return_ctx.update({'supplier': self.supplier})
         return return_ctx
 
     def get_absolute_url(self) -> str:
@@ -1556,9 +1556,9 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> SalesOrderReportContext:
         """Generate report context data for this SalesOrder."""
-        return_ctx = super().report_context()
+        return_ctx: SalesOrderReportContext = super().report_context()
 
-        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
+        return_ctx.update({'customer': self.customer})
         return return_ctx
 
     def get_absolute_url(self) -> str:
@@ -1865,13 +1865,12 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 serials_not_exist.add(serial)
                 continue
 
-            if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
-                if (
-                    stock_item.hasRequiredTests()
-                    and not stock_item.passedAllRequiredTests()
-                ):
-                    serials_unavailable.add(serial)
-                    continue
+            if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS') and (
+                stock_item.hasRequiredTests()
+                and not stock_item.passedAllRequiredTests()
+            ):
+                serials_unavailable.add(serial)
+                continue
 
             if not stock_item.in_stock:
                 serials_unavailable.add(serial)
@@ -1945,7 +1944,7 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 raise ValidationError(_('Order is already cancelled'))
 
             # Only an open order can be marked as shipped
-            if self.is_open and not self.is_completed:
+            if self.is_open and not self.is_completed():
                 raise ValidationError(_('Only an open order can be marked as complete'))
 
             if self.pending_shipment_count > 0:
@@ -2663,11 +2662,10 @@ class SalesOrderLineItem(AuditedLineItemMixin, OrderLineItem):
         """
         super().clean()
 
-        if self.part:
-            if not self.part.salable:
-                raise ValidationError({
-                    'part': _('Only salable parts can be assigned to a sales order')
-                })
+        if self.part and not self.part.salable:
+            raise ValidationError({
+                'part': _('Only salable parts can be assigned to a sales order')
+            })
 
     def __str__(self):
         """Render a string representation of a SalesOrderLineItem instance."""
@@ -3490,9 +3488,9 @@ class ReturnOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> ReturnOrderReportContext:
         """Generate report context data for this ReturnOrder."""
-        return_ctx = super().report_context()
+        return_ctx: ReturnOrderReportContext = super().report_context()
 
-        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
+        return_ctx.update({'customer': self.customer})
         return return_ctx
 
     def get_absolute_url(self):

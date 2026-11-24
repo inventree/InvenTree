@@ -2162,6 +2162,7 @@ class ProjectCodesTest(InvenTreeAPITestCase):
         """Test that the 'active' field can be filtered via the API."""
         # Mark one code as inactive
         code = ProjectCode.objects.first()
+        assert code is not None
         code.active = False
         code.save()
 

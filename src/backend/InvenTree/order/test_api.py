@@ -748,10 +748,11 @@ class PurchaseOrderTest(OrderTest):
         )
 
         po_dup = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        assert po_dup is not None
         self.assertEqual(po_dup.notes.count(), 1)
-        self.assertEqual(
-            po_dup.notes.first().content, '<p>Some purchase order notes</p>'
-        )
+        note = po_dup.notes.first()
+        assert note is not None
+        self.assertEqual(note.content, '<p>Some purchase order notes</p>')
 
         # Explicitly disabling copy_notes must not copy any notes
         response = self.post(
@@ -1973,23 +1974,29 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(line_2.received, 250)
 
         stock_1 = StockItem.objects.filter(supplier_part=line_1.part)
+        assert stock_1 is not None
         stock_2 = StockItem.objects.filter(supplier_part=line_2.part)
+        assert stock_2 is not None
 
         # 1 new stock item created for each supplier part
         self.assertEqual(stock_1.count(), 1)
         self.assertEqual(stock_2.count(), 1)
 
         # Check received locations
-        self.assertEqual(stock_1.last().location.pk, 1)
-        self.assertEqual(stock_2.last().location.pk, 2)
+        received_1 = stock_1.last()
+        received_2 = stock_2.last()
+        assert received_1 is not None
+        assert received_2 is not None
+        self.assertEqual(received_1.location.pk, 1)
+        self.assertEqual(received_2.location.pk, 2)
 
         # Expiry dates should be set
-        self.assertEqual(stock_1.last().expiry_date, one_week_from_today)
-        self.assertEqual(stock_2.last().expiry_date, one_week_from_today)
+        self.assertEqual(received_1.expiry_date, one_week_from_today)
+        self.assertEqual(received_2.expiry_date, one_week_from_today)
 
         # creation_date must be populated on both received items
-        self.assertIsNotNone(stock_1.last().creation_date)
-        self.assertIsNotNone(stock_2.last().creation_date)
+        self.assertIsNotNone(received_1.creation_date)
+        self.assertIsNotNone(received_2.creation_date)
 
         # Barcodes should have been assigned to the stock items
         self.assertTrue(
@@ -2023,7 +2030,9 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(n + 2, StockItem.objects.count())
 
         item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
+        assert item_1 is not None
         item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
+        assert item_2 is not None
 
         self.assertEqual(item_1.batch, 'B-abc-123')
         self.assertEqual(item_2.batch, 'B-xyz-789')
@@ -2095,7 +2104,9 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(n + 2, StockItem.objects.count())
 
         item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
+        assert item_1 is not None
         item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
+        assert item_2 is not None
 
         # Line item 1 did not specify its own batch code - falls back to top-level value
         self.assertEqual(item_1.batch, 'B-top-level')
@@ -2149,6 +2160,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(items.count(), 1)
 
         item = items.first()
+        assert item is not None
 
         self.assertEqual(item.quantity, 10)
         self.assertEqual(item.batch, 'B-xyz-789')
@@ -2195,6 +2207,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         from stock.status_codes import StockStatus
 
         sp = SupplierPart.objects.first()
+        assert sp is not None
 
         # Create a new order
         po = models.PurchaseOrder.objects.create(
@@ -2408,6 +2421,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
 
         sp = SupplierPart.objects.first()
+        assert sp is not None
 
         po = models.PurchaseOrder.objects.create(
             reference='PO-BENCHMARK-100', supplier=sp.supplier
@@ -2470,9 +2484,11 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.post(self.url, data, expected_code=201)
 
         item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
+        assert item_1 is not None
         self.assertEqual(item_1.packaging, 'Reel')
 
         item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
+        assert item_2 is not None
         self.assertEqual(item_2.packaging, 'Tube')
 
         # Receive items and override packaging data
@@ -2487,9 +2503,11 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.post(self.url, data, expected_code=201)
 
         item_1 = StockItem.objects.filter(supplier_part=line_1.part).last()
+        assert item_1 is not None
         self.assertEqual(item_1.packaging, 'Bag')
 
         item_2 = StockItem.objects.filter(supplier_part=line_2.part).last()
+        assert item_2 is not None
         self.assertEqual(item_2.packaging, 'Box')
 
         # Check that the expected number of stock items has been created
@@ -2868,10 +2886,11 @@ class SalesOrderTest(OrderTest):
         )
 
         duplicate_so = models.SalesOrder.objects.get(pk=response.data['pk'])
+        assert duplicate_so is not None
         self.assertEqual(duplicate_so.notes.count(), 1)
-        self.assertEqual(
-            duplicate_so.notes.first().content, '<p>Some sales order notes</p>'
-        )
+        note = duplicate_so.notes.first()
+        assert note is not None
+        self.assertEqual(note.content, '<p>Some sales order notes</p>')
 
         # Explicitly disabling copy_notes must not copy any notes
         response = self.post(
@@ -3880,8 +3899,11 @@ class SalesOrderAllocateTest(OrderTest):
         )
 
         duplicate = models.SalesOrderShipment.objects.get(pk=response.data['pk'])
+        assert duplicate is not None
         self.assertEqual(duplicate.notes.count(), 1)
-        self.assertEqual(duplicate.notes.first().content, '<p>Some shipment notes</p>')
+        note = duplicate.notes.first()
+        assert note is not None
+        self.assertEqual(note.content, '<p>Some shipment notes</p>')
 
         # Explicitly disabling copy_notes must not copy any notes
         response = self.post(
@@ -4178,6 +4200,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assignRole('return_order.add')
 
         rma = models.ReturnOrder.objects.first()
+        assert rma is not None
         url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
 
         max_length = StockItem.TRACKING_NOTES_MAX_LENGTH
@@ -4719,6 +4742,7 @@ class OrderDateReadOnlyTests(InvenTreeAPITestCase):
             with self.subTest(model=model.__name__):
                 # Select a "pending" order, which can be freely edited
                 order = model.objects.filter(status=10).first()
+                assert order is not None
                 self.assertIsNotNone(order)
 
                 # Start from a known state, without going via the API
@@ -4757,6 +4781,7 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         self.assignRole('return_order.change')
 
         line = models.ReturnOrderLineItem.objects.filter(received_date=None).first()
+        assert line is not None
         self.assertIsNotNone(line)
 
         url = reverse('api-return-order-line-detail', kwargs={'pk': line.pk})
@@ -6419,9 +6444,12 @@ class SalesOrderAutoAllocateAPITest(InvenTreeAPITestCase):
         self.post(self._url(order.pk), {}, expected_code=200)
 
         allocs = SalesOrderAllocation.objects.filter(line=line)
+        assert allocs is not None
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().item, item)
-        self.assertEqual(allocs.first().quantity, 30)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.item, item)
+        self.assertEqual(allocation.quantity, 30)
 
     def test_line_items_subset_only_allocates_selected_lines(self):
         """When line_items is specified only those lines are allocated."""
@@ -6460,8 +6488,11 @@ class SalesOrderAutoAllocateAPITest(InvenTreeAPITestCase):
         )
 
         allocs = SalesOrderAllocation.objects.filter(line=line)
+        assert allocs is not None
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().item, serial_item)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.item, serial_item)
 
     def test_unserialized_stock_only(self):
         """serialized_stock='unserialized' skips serialized items."""
@@ -6511,8 +6542,11 @@ class SalesOrderAutoAllocateAPITest(InvenTreeAPITestCase):
         )
 
         allocs = SalesOrderAllocation.objects.filter(line=line)
+        assert allocs is not None
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().quantity, 15)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.quantity, 15)
 
     def test_location_filter(self):
         """Only stock within the specified location is used."""
@@ -6523,8 +6557,11 @@ class SalesOrderAutoAllocateAPITest(InvenTreeAPITestCase):
         self.post(self._url(order.pk), {'location': self.loc_a.pk}, expected_code=200)
 
         allocs = SalesOrderAllocation.objects.filter(line=line)
+        assert allocs is not None
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().item.location, self.loc_a)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.item.location, self.loc_a)
 
     def test_exclude_location_filter(self):
         """Stock in the excluded location is not used."""
@@ -6537,8 +6574,11 @@ class SalesOrderAutoAllocateAPITest(InvenTreeAPITestCase):
         )
 
         allocs = SalesOrderAllocation.objects.filter(line=line)
+        assert allocs is not None
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().item.location, self.loc_b)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.item.location, self.loc_b)
 
     def test_shipment_assigned_to_allocations(self):
         """When a shipment is specified, all allocations are assigned to it."""
