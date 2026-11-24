@@ -46,15 +46,17 @@ A cost range is carried through to the [unit cost](#unit-cost) of the stock item
 
 The *source* of a cost entry identifies who (or what) created it:
 
-| Source | Description |
-| --- | --- |
-| `manual` | Entered manually by a user (via the user interface or the API). All cost entries created via the API are recorded as `manual` entries |
-| `purchase_order` | Recorded when the item was [received against a purchase order](#receiving-purchase-orders) |
-| `merge` | Recorded when stock items were [merged](#merging-stock-items) |
-| `disassembly` | Recorded when the item was created by [disassembling](#disassembly) another stock item |
-| `build` | Reserved for costs recorded by build orders |
-| `legacy` | Migrated from the *purchase price* of the stock item, from an earlier version of InvenTree (see [legacy purchase prices](#legacy-purchase-prices)) |
-| `plugin:<slug>` | Created by the [plugin](#plugin-support) with the specified slug |
+| Source | Displayed As | Description |
+| --- | --- | --- |
+| `manual` | Manual | Entered manually by a user (via the user interface or the API). All cost entries created via the API are recorded as `manual` entries |
+| `purchase_order` | Purchase Order | Recorded when the item was [received against a purchase order](#receiving-purchase-orders) |
+| `merge` | Merge | Recorded when stock items were [merged](#merging-stock-items) |
+| `disassembly` | Disassembly | Recorded when the item was created by [disassembling](#disassembly) another stock item |
+| `build` | Build Order | Reserved for costs recorded by build orders |
+| `legacy` | Legacy Purchase Price | Migrated from the *purchase price* of the stock item, from an earlier version of InvenTree (see [legacy purchase prices](#legacy-purchase-prices)) |
+| `plugin:<slug>` | Plugin: *name* | Created by the [plugin](#plugin-support) with the specified slug. The name of the plugin is displayed (or the slug, if the plugin is not installed) |
+
+The *Item Costs* panel displays the human readable name of each source. The stored value (as listed above) is used when filtering cost entries via the API, and is available as the `source` field - the displayed name is available as the `source_text` field.
 
 ## Unit Cost
 

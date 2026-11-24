@@ -579,6 +579,44 @@ class StockItemCostSourceTests(StockItemCostTestBase):
         ]:
             self.assertFalse(CostSource.is_valid(source), source)
 
+    def test_labels(self):
+        """Each source has a human readable label."""
+        expected = {
+            CostSource.MANUAL: 'Manual',
+            CostSource.PURCHASE_ORDER: 'Purchase Order',
+            CostSource.BUILD: 'Build Order',
+            CostSource.MERGE: 'Merge',
+            CostSource.DISASSEMBLY: 'Disassembly',
+            CostSource.LEGACY: 'Legacy Purchase Price',
+        }
+
+        # Every core source has a label
+        self.assertEqual(set(expected.keys()), set(CostSource.CORE_SOURCES))
+
+        for source, label in expected.items():
+            self.assertEqual(CostSource.label(source), label)
+
+        # An installed plugin is shown by name
+        self.assertEqual(
+            CostSource.label(CostSource.plugin('inventreebarcode')),
+            'Plugin: InvenTree Barcodes',
+        )
+
+        # A plugin which is not installed is shown by slug
+        self.assertEqual(
+            CostSource.label(CostSource.plugin('not-installed')),
+            'Plugin: not-installed',
+        )
+
+        # Any other value is displayed as-is
+        self.assertEqual(CostSource.label('something-else'), 'something-else')
+        self.assertEqual(CostSource.label(''), '')
+
+        entry = StockItemCostEntry.objects.create_cost(
+            self.item, CostType.PURCHASE, CostSource.PURCHASE_ORDER, min_cost=1
+        )
+        self.assertEqual(entry.get_source_display(), 'Purchase Order')
+
     def test_validation(self):
         """Entries with an invalid source are rejected."""
         with self.assertRaises(ValidationError) as err:

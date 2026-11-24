@@ -20,6 +20,7 @@ v584 -> 2026-11-22 : https://github.com/inventree/InvenTree/pull/13294
     - Breaking: Removes the "PURCHASEORDER_CONVERT_CURRENCY" global setting
     - The "source" and "source_data" fields of /api/pricing/stock-cost-entry/ are read-only - entries created via the API are always "manual" entries
     - Adds data export and import support for stock item cost entries ("stockitemcostentry" import model type, which requires the "pricing" change and "stock" change permissions)
+    - Adds the read-only "source_text" field (human readable label for the "source" field) to /api/pricing/stock-cost-entry/
 
 v583 -> 2026-11-20 : https://github.com/inventree/InvenTree/issues/12121
     - Adds parameter support to the StockLocationType model and API endpoints

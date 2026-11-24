@@ -167,7 +167,7 @@ test('Stock Costs - Create, Edit, Delete', async ({ browser }) => {
   let fixedRow = await costRow(page, 'Playwright fixed cost');
   await expect(fixedRow).toContainText('Fees');
   await expect(fixedRow).toContainText('$2.5');
-  await expect(fixedRow).toContainText('manual');
+  await expect(fixedRow).toContainText('Manual');
   await expect(fixedRow).toContainText('steven');
 
   // Create an estimated cost (a range of costs)
@@ -278,7 +278,7 @@ test('Stock Costs - View', async ({ browser }) => {
   // Legacy cost entry (migrated from the 'purchase_price' field)
   await loadTab(page, 'Item Costs');
   const row = await getRowFromCell(
-    page.getByRole('cell', { name: 'legacy', exact: true })
+    page.getByRole('cell', { name: 'Legacy Purchase Price', exact: true })
   );
   await expect(row).toContainText('Purchase');
   await expect(row).toContainText('$7.5');
@@ -728,7 +728,7 @@ test('Stock Costs - Import', async ({ browser }) => {
     const freight = await costRow(page, 'Imported freight');
     await expect(freight).toContainText('Landed');
     await expect(freight).toContainText('$2.5');
-    await expect(freight).toContainText('manual');
+    await expect(freight).toContainText('Manual');
     await expect(freight).toContainText('steven');
 
     await expect(await costRow(page, 'Imported handling fee')).toContainText(
@@ -803,7 +803,7 @@ test('Stock Costs - Import via Admin Center', async ({ browser }) => {
     await loadTab(page, 'Item Costs');
     const purchase = await costRow(page, 'Admin import purchase');
     await expect(purchase).toContainText('Purchase');
-    await expect(purchase).toContainText('manual');
+    await expect(purchase).toContainText('Manual');
   } finally {
     for (const item of ADMIN_IMPORT_ITEMS) {
       await removeManualCosts(item);

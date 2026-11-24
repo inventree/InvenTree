@@ -197,7 +197,13 @@ export default function StockItemCostEntryTable({
       {
         accessor: 'source',
         title: t`Source`,
-        sortable: true
+        sortable: true,
+        // Display the human readable label, with the stored value as a tooltip
+        render: (record: any) => (
+          <Tooltip label={record.source} openDelay={500}>
+            <span>{record.source_text || record.source}</span>
+          </Tooltip>
+        )
       },
       NoteColumn({}),
       UserColumn({}),

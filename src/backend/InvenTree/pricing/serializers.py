@@ -275,6 +275,7 @@ class StockItemCostEntrySerializer(
             'cost_type',
             'cost_type_text',
             'source',
+            'source_text',
             'currency',
             'min_cost',
             'max_cost',
@@ -335,6 +336,10 @@ class StockItemCostEntrySerializer(
 
     cost_type_text = serializers.CharField(
         source='get_cost_type_display', read_only=True, label=_('Cost Type Name')
+    )
+
+    source_text = serializers.CharField(
+        source='get_source_display', read_only=True, label=_('Source Name')
     )
 
     currency = InvenTree.serializers.InvenTreeCurrencySerializer(

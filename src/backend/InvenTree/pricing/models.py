@@ -1049,6 +1049,47 @@ class CostSource:
         return f'{cls.PLUGIN_PREFIX}{slug}'
 
     @classmethod
+    def labels(cls) -> dict:
+        """Return the human readable labels for the core sources."""
+        return {
+            cls.MANUAL: _('Manual'),
+            cls.PURCHASE_ORDER: _('Purchase Order'),
+            cls.BUILD: _('Build Order'),
+            cls.MERGE: _('Merge'),
+            cls.DISASSEMBLY: _('Disassembly'),
+            cls.LEGACY: _('Legacy Purchase Price'),
+        }
+
+    @classmethod
+    def label(cls, value: str) -> str:
+        """Return a human readable label for the provided source value.
+
+        - Core sources have a fixed (translatable) label
+        - Plugin sources are labelled with the name of the plugin (or its slug,
+          if the plugin is not installed)
+        - Any other value is returned as-is
+        """
+        if not value:
+            return ''
+
+        if label := cls.labels().get(value):
+            return str(label)
+
+        if value.startswith(cls.PLUGIN_PREFIX):
+            from plugin import registry
+
+            slug = value[len(cls.PLUGIN_PREFIX) :]
+
+            # Note: Read the loaded plugins directly - registry.get_plugin() logs a
+            # warning for unknown plugins, and queries the plugin configuration
+            plugin = registry.plugins.get(slug)
+            name = plugin.human_name if plugin else slug
+
+            return _('Plugin: {name}').format(name=name)
+
+        return value
+
+    @classmethod
     def is_valid(cls, value: str) -> bool:
         """Return True if the provided value follows the source naming convention."""
         if value in cls.CORE_SOURCES:
@@ -1680,6 +1721,10 @@ class StockItemCostEntry(InvenTreeAuditMixin, models.Model):
     IMPORT_REQUIRED_ROLES = [('stock', 'change')]
 
     objects = StockItemCostEntryManager()
+
+    def get_source_display(self) -> str:
+        """Return a human readable label for the source of this cost entry."""
+        return CostSource.label(self.source)
 
     def __str__(self):
         """Return a string representation of this cost entry."""

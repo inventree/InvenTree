@@ -436,6 +436,7 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
             'cost_type',
             'cost_type_text',
             'source',
+            'source_text',
             'currency',
             'min_cost',
             'max_cost',
@@ -459,6 +460,16 @@ class StockItemCostEntryApiTests(StockItemCostApiTestBase):
         response = self.get(self.LIST_URL, {'source': 'plugin:test'})
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], self.entry.pk)
+
+        # Human readable source labels
+        # Note: No plugin with the 'test' slug is installed - the slug is displayed
+        self.assertEqual(response.data[0]['source_text'], 'Plugin: test')
+
+        response = self.get(self.LIST_URL, {'source': CostSource.MANUAL})
+        self.assertEqual(len(response.data), 2)
+
+        for entry in response.data:
+            self.assertEqual(entry['source_text'], 'Manual')
 
         response = self.get(self.LIST_URL, {'user_detail': True})
         self.assertIn('user_detail', response.data[0])
@@ -865,6 +876,7 @@ class StockItemCostImportTests(StockItemCostApiTestBase):
             'converted_min_cost',
             'converted_max_cost',
             'cost_type_text',
+            'source_text',
         ]:
             self.assertNotIn(field, fields)
 
