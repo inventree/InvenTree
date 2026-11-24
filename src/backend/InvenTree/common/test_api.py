@@ -1592,6 +1592,31 @@ class NoteAPITests(InvenTreeAPITestCase):
         self.assertTrue(Note.objects.filter(pk=note.pk).exists())
         self.assertEqual(len(attempts), 1)
 
+    def test_locked_instance(self):
+        """Notes cannot be changed while the linked instance is locked."""
+        self.assignRole('part.view')
+        self.assignRole('part.change')
+
+        info = {'model_type': 'part', 'model_id': self.part.pk}
+        note = self._create_note('Note').data
+        url = self._note_url(note['pk'])
+
+        self.part.locked = True
+        self.part.save()
+
+        # Part locking is disabled - part is not locked
+        set_global_setting('PART_ENABLE_LOCKING', False)
+        self.assertFalse(self.get(reverse('api-instance-info'), info).data['locked'])
+        self.patch(url, {'title': 'Edited'}, expected_code=200)
+
+        # Part locking is enabled - part is locked
+        set_global_setting('PART_ENABLE_LOCKING', True)
+        self.assertTrue(self.get(reverse('api-instance-info'), info).data['locked'])
+        self._create_note('Another', expected_code=403)
+        self.patch(url, {'title': 'Edited again'}, expected_code=403)
+        self.delete(url, expected_code=403)
+        self.get(url, expected_code=200)
+
 
 class NoteModelTypeValidationTests(InvenTreeAPITestCase):
     """Tests that Note.model_type is restricted to models which support notes.
