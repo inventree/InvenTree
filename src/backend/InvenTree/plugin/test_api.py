@@ -368,6 +368,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         # Activate the 'sample' plugin via the API
         cfg = PluginConfig.objects.filter(key='sample').first()
+        assert cfg is not None
         self.assertIsNotNone(cfg)
 
         url = reverse('api-plugin-detail-activate', kwargs={'plugin': cfg.key})
@@ -492,6 +493,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.user.save()
 
         cfg = PluginConfig.objects.filter(key='sample').first()
+        assert cfg is not None
         self.assertIsNotNone(cfg)
 
         self.get(f'/api/plugins/{cfg.key}/metadata/', expected_code=200, follow=True)

@@ -89,6 +89,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
     def test_find_stock_item(self):
         """Test that we can lookup a stock item based on ID."""
         item = StockItem.objects.first()
+        assert item is not None
 
         # Save barcode scan results to database
         set_global_setting('BARCODE_STORE_RESULTS', True)
@@ -106,6 +107,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(BarcodeScanResult.objects.count(), n + 1)
 
         result = BarcodeScanResult.objects.last()
+        assert result is not None
 
         self.assertTrue(result.result)
         self.assertEqual(result.data, item.format_barcode())
@@ -586,6 +588,7 @@ class SOAllocateTest(InvenTreeAPITestCase):
 
         # Test with a barcode that matches a *different* stock item
         item = StockItem.objects.exclude(pk=self.stock_item.pk).first()
+        assert item is not None
         item.assign_barcode(barcode_data='123456789')
 
         result = self.postBarcode(

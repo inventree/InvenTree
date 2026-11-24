@@ -259,7 +259,7 @@ class LabelPrinterMachine(BaseMachineType):
         }
     }
 
-    MACHINE_STATUS: type[LabelPrinterStatus] = LabelPrinterStatus
+    MACHINE_STATUS: type[LabelPrinterStatus] = LabelPrinterStatus  # ty: ignore[incompatible-mutable-override]
 
     default_machine_status = LabelPrinterStatus.UNKNOWN
 

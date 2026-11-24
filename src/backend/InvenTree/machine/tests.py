@@ -135,6 +135,8 @@ class TestDriverMachineInterface(TestMachineRegistryMixin, TestCase):
 
         # test get_machine
         machine = machines[0]
+        assert machine is not None
+        assert machine.machine is not None
         self.assertEqual(registry.get_machine(machine.pk), machine.machine)
 
         # Test machine restart hook
