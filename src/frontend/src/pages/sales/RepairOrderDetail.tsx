@@ -85,13 +85,6 @@ export default function RepairOrderDetail() {
       },
       {
         type: 'link',
-        name: 'customer',
-        icon: 'customers',
-        label: t`Customer`,
-        model: ModelType.company
-      },
-      {
-        type: 'link',
         name: 'part',
         icon: 'part',
         label: t`Part`,
@@ -128,8 +121,78 @@ export default function RepairOrderDetail() {
       }
     ];
 
+    const tr: DetailsField[] = [
+      {
+        type: 'link',
+        name: 'customer',
+        icon: 'customers',
+        label: t`Customer`,
+        model: ModelType.company,
+        hidden: !order.customer
+      }
+    ];
+
+    const bl: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'issued_by',
+        label: t`Issued By`,
+        icon: 'user',
+        badge: 'user',
+        hidden: !order.issued_by
+      },
+      {
+        type: 'text',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !order.responsible
+      }
+    ];
+
+    const br: DetailsField[] = [
+      {
+        type: 'date',
+        name: 'creation_date',
+        label: t`Created`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.creation_date
+      },
+      {
+        type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.start_date
+      },
+      {
+        type: 'date',
+        name: 'target_date',
+        label: t`Target Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.target_date
+      },
+      {
+        type: 'date',
+        name: 'completion_date',
+        label: t`Completed`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.completion_date
+      }
+    ];
+
     return (
-      <ItemDetailsGrid>
+      <ItemDetailsGrid
+        tables={[
+          { fields: tr, item: order },
+          { fields: bl, item: order },
+          { fields: br, item: order }
+        ]}
+      >
         <Grid grow>
           <DetailsImage
             apiPath={apiUrl(ApiEndpoints.part_list, order.part)}
