@@ -26,9 +26,9 @@ import { useUserState } from '../../states/UserState';
 import BuildOrderFilters from '../../tables/build/BuildOrderFilters';
 import BuildOrderParametricTable from '../../tables/build/BuildOrderParametricTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import RepairOrderFilters from '../../tables/sales/RepairOrderFilters';
-import RepairOrderParametricTable from '../../tables/sales/RepairOrderParametricTable';
-import { RepairOrderTable } from '../../tables/sales/RepairOrderTable';
+import RepairOrderFilters from '../../tables/repair/RepairOrderFilters';
+import RepairOrderParametricTable from '../../tables/repair/RepairOrderParametricTable';
+import { RepairOrderTable } from '../../tables/repair/RepairOrderTable';
 
 function BuildOrderCalendar() {
   const globalSettings = useGlobalSettingsState();

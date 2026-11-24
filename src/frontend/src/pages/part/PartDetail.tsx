@@ -93,7 +93,7 @@ import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
-import { RepairOrderTable } from '../../tables/sales/RepairOrderTable';
+import { RepairOrderTable } from '../../tables/repair/RepairOrderTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';

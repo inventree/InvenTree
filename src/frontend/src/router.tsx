@@ -94,7 +94,7 @@ export const ReturnOrderDetail = Loadable(
 );
 
 export const RepairOrderDetail = Loadable(
-  lazy(() => import('./pages/sales/RepairOrderDetail'))
+  lazy(() => import('./pages/repair/RepairOrderDetail'))
 );
 
 export const TransferOrderDetail = Loadable(

@@ -33,7 +33,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
-import RepairOrderLineItemTable from '../../tables/sales/RepairOrderLineItemTable';
+import RepairOrderLineItemTable from '../../tables/repair/RepairOrderLineItemTable';
 import { RepairOrderDetailsPanel } from './RepairOrderDetailsPanel';
 
 export default function RepairOrderDetail() {
