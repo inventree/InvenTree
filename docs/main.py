@@ -5,6 +5,7 @@ import logging
 import os
 import subprocess
 import textwrap
+import time
 from pathlib import Path
 from typing import Literal, Optional
 
@@ -113,9 +114,18 @@ def get_repo_url(raw=False):
 def check_link(url) -> bool:
     """Check that a provided URL is valid.
 
-    We allow a number attempts and a lengthy timeout,
-    as we do not want false negatives.
+    Only a definitive "not found" response from the server is treated as a failure.
+    Transient errors (rate limiting, 5xx responses, network errors) are retried with
+    backoff, and if they persist the link is assumed valid (with a warning), as we do
+    not want flaky upstream servers to break the documentation build.
+
+    The remote check is skipped entirely on ReadTheDocs, where requests to GitHub
+    are frequently throttled. Callers are expected to have already validated the
+    target against the local checkout.
     """
+    if os.environ.get('READTHEDOCS') == 'True':
+        return True
+
     CACHE_FILE = gen_base.joinpath('url_cache.txt')
 
     # Keep a local cache file of URLs we have already checked
@@ -126,24 +136,41 @@ def check_link(url) -> bool:
         if url in cache:
             return True
 
+    def add_to_cache():
+        with open(CACHE_FILE, 'a', encoding='utf-8') as f:
+            f.write(f'{url}\n')
+
     attempts = 5
+    delay = 2
 
-    while attempts > 0:
-        response = requests.head(url, timeout=5000)
+    for attempt in range(1, attempts + 1):
+        try:
+            response = requests.head(url, timeout=10, allow_redirects=True)
+            status = response.status_code
+        except requests.exceptions.RequestException as exc:
+            status = None
+            print(f'URL check error for {url}: {exc}')
 
-        # Ensure GH is not causing issues
-        if response.status_code in (200, 429):
-            # Update the cache file
-            with open(CACHE_FILE, 'a', encoding='utf-8') as f:
-                f.write(f'{url}\n')
-
+        if status is not None and status < 400:
+            add_to_cache()
             return True
 
-        attempts -= 1
+        if status in (404, 410):
+            print(f'URL check failed for {url}: status code {status}')
+            return False
 
-        print(f'URL check failed with status code {response.status_code}')
+        if status is not None:
+            print(f'URL check for {url} returned status code {status}')
 
-    return False
+        if attempt < attempts:
+            time.sleep(delay)
+            delay *= 2
+
+    # Persistent transient failure - do not fail the build on upstream issues
+    print(
+        f'WARNING: Could not verify URL {url} after {attempts} attempts - assuming valid'
+    )
+    return True
 
 
 def get_build_environment() -> Optional[str]:
