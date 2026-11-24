@@ -30,7 +30,7 @@ jobs:
             🤖
           blocked-source-branches: |
             claude/*
-          failure-add-pr-labels: warn-slop
+          failure-add-pr-labels: warn:slop
           close-pr: true
           failure-pr-message: |
             Automation thinks this PR was made largely with AI, if you think this is an error comment on this PR and someone from the team will review.
