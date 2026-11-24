@@ -41,5 +41,9 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: Jondolf/ai-commit-check@7069d4254c6310cdb0395a6ab0ca1f29af897f83 # v1.0.1
+        id: ai-check
         with:
           fail-on-detection: true
+      - name: AI commit warning
+        if: steps.ai-check.outputs.ai-commits-found == 'true'
+        run: echo "::warning::Found ${{ steps.ai-check.outputs.count }} AI commit(s)"
