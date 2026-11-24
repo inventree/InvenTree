@@ -106,6 +106,32 @@ test('Admin - Users and Groups', async ({ browser }) => {
   await page.keyboard.press('Escape');
   await page.waitForTimeout(250);
 
+  // Manage the group membership from the "Edit Group" drawer
+  await page.getByRole('cell', { name: groupName, exact: true }).click();
+  await page.getByText('Edit Group').first().waitFor();
+  await openAccordion(page, 'Group Users');
+
+  const groupUsers = page.getByRole('region', { name: 'Group Users' });
+  const memberRow = groupUsers.getByRole('row', {
+    name: new RegExp(userName)
+  });
+  await memberRow.waitFor();
+
+  // Remove the user from the group
+  await memberRow.getByLabel('action-button-remove-user-from-group').click();
+  await page.getByText('User removed from group').first().waitFor();
+  await expect(memberRow).toHaveCount(0);
+  await groupUsers.getByText('No users in this group').waitFor();
+
+  // Add the user back into the group
+  await groupUsers.getByLabel('related-field-user').fill(userName);
+  await page.getByRole('option', { name: new RegExp(userName) }).click();
+  await page.getByText('User added to group').first().waitFor();
+  await memberRow.waitFor();
+
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(250);
+
   // Lock and unlock the user via the row actions
   const userCell = page.getByRole('cell', { name: userName, exact: true });
   await clickOnRowMenu(userCell);
