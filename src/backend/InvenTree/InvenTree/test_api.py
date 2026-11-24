@@ -729,6 +729,67 @@ class SearchTests(InvenTreeAPITestCase):
             search(search_fields='description', search_regex=True), {by_desc.pk}
         )
 
+    def test_search_fields_restricted(self):
+        """Test that 'search_fields' cannot be used to search fields which are not exposed for searching.
+
+        The parameter can only narrow the set of searchable fields, never expand it.
+        """
+        from part.api import PartList
+        from part.models import Part, PartCategory
+
+        TERM = 'zzqxrestrictedzz'
+
+        searchable = {name.lstrip('^=@$') for name in PartList.search_fields}
+
+        # Fields which hold the search term below, none of which are searchable
+        hidden_fields = [
+            'link',
+            'units',
+            'category__description',
+            'creation_user__username',
+            'creation_user__email',
+        ]
+
+        for field in hidden_fields:
+            self.assertNotIn(field, searchable)
+
+        user = get_user_model().objects.create_user(
+            username=f'{TERM}user', email=f'{TERM}@example.com', password='abc123'
+        )
+
+        category = PartCategory.objects.create(
+            name='Hidden category', description=f'{TERM} category'
+        )
+
+        hidden = Part.objects.create(
+            name='Hidden part',
+            description='Nothing to see',
+            link=f'https://example.com/{TERM}',
+            units='m',
+            category=category,
+            creation_user=user,
+        )
+
+        url = reverse('api-part-list')
+
+        def search(term=TERM, **kwargs):
+            response = self.get(url, {'search': term, **kwargs}, expected_code=200)
+            return {part['pk'] for part in response.data}
+
+        # The term is not found via the default search fields
+        self.assertNotIn(hidden.pk, search())
+
+        # Explicitly requesting a non-searchable field does not search it
+        for field in hidden_fields:
+            self.assertNotIn(hidden.pk, search(search_fields=field))
+
+        # Combined with a valid field: the non-searchable field is ignored
+        self.assertNotIn(hidden.pk, search(search_fields='name,link'))
+
+        # Lookup prefixes cannot be used to alter the type of lookup performed
+        for field in ['^name', '=name', '$name', '@name']:
+            self.assertNotIn(hidden.pk, search(search_fields=f'{field},link'))
+
     def test_search_fields_metadata(self):
         """Test that the searchable fields are exposed via the OPTIONS endpoint."""
         from part.api import PartList
@@ -746,7 +807,49 @@ class SearchTests(InvenTreeAPITestCase):
         labels = {field['name']: field['label'] for field in fields}
 
         self.assertEqual(labels['name'], 'Name')
+        self.assertEqual(labels['description'], 'Description')
         self.assertEqual(labels['category__name'], 'Category / Name')
+
+        # Labels are translated based on the language of the request
+        response = self.options(
+            reverse('api-part-list'),
+            headers={'Accept-Language': 'de'},
+            expected_code=200,
+        )
+
+        labels = {
+            field['name']: field['label'] for field in response.data['search_fields']
+        }
+
+        self.assertEqual(labels['description'], 'Beschreibung')
+        self.assertEqual(labels['category__name'], 'Kategorie / Name')
+
+        # A distant related field, spanning multiple models
+        labels = {
+            field['name']: field['label']
+            for field in self.options(reverse('api-bom-list'), expected_code=200).data[
+                'search_fields'
+            ]
+        }
+
+        self.assertEqual(
+            labels['sub_part__category__name'], 'Sub part / Category / Name'
+        )
+
+        response = self.options(
+            reverse('api-bom-list'),
+            headers={'Accept-Language': 'de'},
+            expected_code=200,
+        )
+
+        labels = {
+            field['name']: field['label'] for field in response.data['search_fields']
+        }
+
+        self.assertEqual(
+            labels['sub_part__category__name'],
+            'Untergeordnetes Teil / Kategorie / Name',
+        )
 
         # A detail endpoint does not provide search information
         response = self.options(

@@ -352,6 +352,20 @@ test('Tables - Search Fields', async ({ browser }) => {
 
   // Limit the search to the part name
   await page.getByLabel('table-select-search-fields').click();
+
+  // Fields are displayed with human readable labels
+  for (const [name, label] of [
+    ['name', 'Name'],
+    ['description', 'Description'],
+    ['category__name', 'Category / Name']
+  ]) {
+    await expect(
+      page.getByRole('menuitem').filter({
+        has: page.getByLabel(`search-field-${name}`, { exact: true })
+      })
+    ).toHaveText(label);
+  }
+
   await page.getByLabel('search-field-name', { exact: true }).click();
   await page.keyboard.press('Escape');
 
@@ -366,4 +380,16 @@ test('Tables - Search Fields', async ({ browser }) => {
   await page.keyboard.press('Escape');
 
   await page.getByRole('cell', { name: 'Blue Square Table' }).waitFor();
+
+  // A distant related field (spanning multiple models) in the BOM table
+  await navigate(page, 'part/87/bom');
+  await page.getByLabel('table-select-search-fields').click();
+
+  await expect(
+    page.getByRole('menuitem').filter({
+      has: page.getByLabel('search-field-sub_part__category__name', {
+        exact: true
+      })
+    })
+  ).toHaveText('Sub part / Category / Name');
 });
