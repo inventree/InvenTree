@@ -9,7 +9,6 @@ import {
   ApiEndpoints,
   type ApiFormFieldSet,
   type ModelType,
-  UserRoles,
   YesNoButton,
   apiUrl,
   formatDecimal
@@ -352,7 +351,8 @@ export default function ParametricDataTable({
       }
     },
     initialData: {
-      part: selectedInstance,
+      model_type: modelType,
+      model_id: selectedInstance,
       template: selectedTemplate
     }
   });
@@ -419,7 +419,7 @@ export default function ParametricDataTable({
           <ParameterCell
             record={record}
             template={template}
-            canEdit={user.hasChangeRole(UserRoles.part)}
+            canEdit={user.hasChangePermission(modelType)}
           />
         ),
         filtering: Object.keys(filters).length > 0,
@@ -436,7 +436,7 @@ export default function ParametricDataTable({
         }
       };
     });
-  }, [user, parameterTemplates.data, parameterFilters]);
+  }, [user, modelType, parameterTemplates.data, parameterFilters]);
 
   // Callback function when a parameter cell is clicked
   const onParameterClick = useCallback((template: number, instance: any) => {

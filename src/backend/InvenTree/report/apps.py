@@ -74,7 +74,7 @@ class ReportConfig(AppConfig):
         """Cleanup old label and report outputs."""
         try:
             from report.tasks import (
-                cleanup_old_report_outputs,  # type: ignore[import]  # ty: ignore[unresolved-import]
+                cleanup_old_report_outputs,  # ty: ignore[missing-module-member]
             )
 
             cleanup_old_report_outputs()

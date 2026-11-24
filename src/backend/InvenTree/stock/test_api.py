@@ -2089,8 +2089,11 @@ class StockItemTest(StockAPITestCase):
         )
 
         new_item = StockItem.objects.get(pk=response.data[0]['pk'])
+        assert new_item is not None
         self.assertEqual(new_item.notes.count(), 1)
-        self.assertEqual(new_item.notes.first().content, '<p>Some stock item notes</p>')
+        note = new_item.notes.first()
+        assert note is not None
+        self.assertEqual(note.content, '<p>Some stock item notes</p>')
 
         # Explicitly disabling copy_notes must not copy any notes
         response = self.post(
@@ -4242,6 +4245,41 @@ class StockAdjustmentCustomStatusTest(StockAPITestCase):
 
                 item.refresh_from_db()
                 self.assertEqual(item.status_custom_key, self.custom_status.key)
+
+    def test_remove_allocated_stock_rejected(self):
+        """Stock removal must not reduce quantity below active allocations."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+
+        customer = company.models.Company.objects.create(
+            name='Allocation test customer', is_customer=True
+        )
+        sales_order = order.models.SalesOrder.objects.create(
+            customer=customer, reference='SO-ALLOCATION-TEST'
+        )
+        shipment = order.models.SalesOrderShipment.objects.create(
+            order=sales_order, reference='SHIP-ALLOCATION-TEST'
+        )
+        line = order.models.SalesOrderLineItem.objects.create(
+            order=sales_order, part=self.part, quantity=10
+        )
+
+        order.models.SalesOrderAllocation.objects.create(
+            line=line, shipment=shipment, item=item, quantity=10
+        )
+
+        self.post(
+            reverse('api-stock-remove'),
+            {
+                'items': [{'pk': item.pk, 'quantity': 2}],
+                'notes': 'Remove allocated stock',
+            },
+            expected_code=400,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 10)
 
 
 class StockTransferMergeTest(StockAPITestCase):

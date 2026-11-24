@@ -737,9 +737,9 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> PurchaseOrderReportContext:
         """Return report context data for this PurchaseOrder."""
-        return_ctx = super().report_context()
+        return_ctx: PurchaseOrderReportContext = super().report_context()
 
-        return_ctx.update({'supplier': self.supplier})  # ty:ignore[invalid-key]
+        return_ctx.update({'supplier': self.supplier})
         return return_ctx
 
     def get_absolute_url(self) -> str:
@@ -1521,9 +1521,9 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> SalesOrderReportContext:
         """Generate report context data for this SalesOrder."""
-        return_ctx = super().report_context()
+        return_ctx: SalesOrderReportContext = super().report_context()
 
-        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
+        return_ctx.update({'customer': self.customer})
         return return_ctx
 
     def get_absolute_url(self) -> str:
@@ -1909,7 +1909,7 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 raise ValidationError(_('Order is already cancelled'))
 
             # Only an open order can be marked as shipped
-            if self.is_open and not self.is_completed:
+            if self.is_open and not self.is_completed():
                 raise ValidationError(_('Only an open order can be marked as complete'))
 
             if self.pending_shipment_count > 0:
@@ -3043,7 +3043,6 @@ class SalesOrderShipment(
 
         for allocation in allocations:
             stock_item = seen_stock_items.get(allocation.item_id) or allocation.item
-            quantity = allocation.quantity
 
             if (locked_qty := locked_quantities.pop(stock_item.pk, None)) is not None:
                 # First encounter: refresh the quantity from the locked database row
@@ -3053,6 +3052,10 @@ class SalesOrderShipment(
                 continue
 
             seen_stock_items[stock_item.pk] = stock_item
+            quantity = min(allocation.quantity, stock_item.quantity)
+
+            if quantity <= 0:
+                continue
 
             if quantity < stock_item.quantity:
                 # Split off exactly the shipped quantity into a new StockItem,
@@ -3446,9 +3449,9 @@ class ReturnOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> ReturnOrderReportContext:
         """Generate report context data for this ReturnOrder."""
-        return_ctx = super().report_context()
+        return_ctx: ReturnOrderReportContext = super().report_context()
 
-        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
+        return_ctx.update({'customer': self.customer})
         return return_ctx
 
     def get_absolute_url(self):

@@ -101,6 +101,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
     def test_validate_address(self):
         """Test validation of the linked Address."""
         order = SalesOrder.objects.first()
+        assert order is not None
 
         # Create an address for a different company
         company = Company.objects.exclude(pk=order.customer.pk).first()
@@ -115,6 +116,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
         )
 
         order.address = address
+        assert order is not None
 
         with self.assertRaises(ValidationError) as err:
             order.clean()
@@ -127,6 +129,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
 
         # Now validation should pass
         order.address = address
+        assert order is not None
         order.clean()
         order.save()
 
@@ -803,6 +806,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
     def test_shipment_address(self):
         """Unit tests for SalesOrderShipment address field."""
         shipment = SalesOrderShipment.objects.first()
+        assert shipment is not None
         self.assertIsNotNone(shipment)
 
         # Set an address for the order
@@ -812,6 +816,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
 
         # Save the address against the order
         shipment.order.address = address_1
+        assert shipment is not None
         shipment.order.clean()
         shipment.order.save()
 
@@ -830,6 +835,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
         )
 
         shipment.shipment_address = address_2
+        assert shipment is not None
         shipment.clean()
         shipment.save()
 
@@ -855,6 +861,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
     def test_shipment_contact(self):
         """Unit tests for SalesOrderShipment contact field."""
         shipment = SalesOrderShipment.objects.first()
+        assert shipment is not None
         self.assertIsNotNone(shipment)
         self.assertIsNone(shipment.contact)
 
@@ -863,6 +870,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
         )
 
         shipment.contact = contact
+        assert shipment is not None
         shipment.clean()
         shipment.save()
 
@@ -876,6 +884,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
         shipment.contact = Contact.objects.create(
             company=other_company, name='Other Contact'
         )
+        assert shipment is not None
 
         with self.assertRaises(ValidationError) as err:
             shipment.clean()
@@ -938,6 +947,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
             SalesOrderShipment,
         ]:
             p = model.objects.first()
+            assert p is not None
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)
@@ -992,6 +1002,42 @@ class SalesOrderTest(InvenTreeAPITestCase):
         # Ensure that virtual line item quantity values have been updated
         for line in so.lines.all():
             self.assertEqual(line.shipped, line.quantity)
+
+    def test_complete_shipment_with_reduced_allocated_stock(self):
+        """Shipment must not count more stock than actually exists."""
+        stock_item = StockItem.objects.create(part=self.part, quantity=10)
+
+        SalesOrderAllocation.objects.create(
+            line=self.line, shipment=self.shipment, item=stock_item, quantity=10
+        )
+
+        # Simulate stock being reduced while the allocation remains unchanged
+        StockItem.objects.filter(pk=stock_item.pk).update(quantity=2)
+
+        self.shipment.complete_allocations(
+            self.shipment.allocations.all(), user=self.user
+        )
+
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 2)
+
+    def test_complete_shipment_with_zero_allocated_stock(self):
+        """Shipment must skip allocations when no stock remains."""
+        stock_item = StockItem.objects.create(part=self.part, quantity=10)
+
+        SalesOrderAllocation.objects.create(
+            line=self.line, shipment=self.shipment, item=stock_item, quantity=10
+        )
+
+        # Simulate stock being reduced to zero while the allocation remains
+        StockItem.objects.filter(pk=stock_item.pk).update(quantity=0)
+
+        self.shipment.complete_allocations(
+            self.shipment.allocations.all(), user=self.user
+        )
+
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 0)
 
 
 class SalesOrderAutoAllocateTest(InvenTreeTestCase):
@@ -1143,8 +1189,11 @@ class SalesOrderAutoAllocateTest(InvenTreeTestCase):
         order.auto_allocate_stock()
 
         allocs = SalesOrderAllocation.objects.filter(line=line)
+        assert allocs is not None
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().item, serialized)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.item, serialized)
         self.assertTrue(line.is_fully_allocated())
 
     def test_shipment_assigned(self):
@@ -1181,10 +1230,13 @@ class SalesOrderAutoAllocateTest(InvenTreeTestCase):
         order.auto_allocate_stock(stock_sort_by='-quantity', interchangeable=True)
 
         allocs = SalesOrderAllocation.objects.filter(line=line)
+        assert allocs is not None
         self.assertTrue(allocs.exists())
         # Large lot should be the first consumed (fully covers 15)
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().item, large)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.item, large)
 
     def test_task_resolves_pk_params(self):
         """auto_allocate_sales_order task resolves location/shipment pks to instances."""

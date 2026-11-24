@@ -338,3 +338,64 @@ test('Tables - Sorting', async ({ browser }) => {
   await toggleColumnSorting(page, 'Order Status');
   await toggleColumnSorting(page, 'Line Items');
 });
+
+test('Tables - Search Fields', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts'
+  });
+
+  await clearTableFilters(page);
+
+  // Search across all fields (default): matches on the description too
+  await page.getByLabel('table-search-input').fill('paint');
+  await page.getByRole('cell', { name: 'Blue Square Table' }).waitFor();
+
+  // Limit the search to the part name
+  await page.getByLabel('table-select-search-fields').click();
+
+  // Fields are displayed with human readable labels
+  for (const [name, label] of [
+    ['name', 'Name'],
+    ['description', 'Description'],
+    ['category__name', 'Category / Name']
+  ]) {
+    await expect(
+      page.getByRole('menuitem').filter({
+        has: page.getByLabel(`search-field-${name}`, { exact: true })
+      })
+    ).toHaveText(label);
+  }
+
+  await page.getByLabel('search-field-name', { exact: true }).click();
+  await page.keyboard.press('Escape');
+
+  await page.getByRole('cell', { name: 'Blue Paint' }).first().waitFor();
+  await expect(
+    page.getByRole('cell', { name: 'Blue Square Table' })
+  ).toHaveCount(0);
+
+  // Search all fields again
+  await page.getByLabel('table-select-search-fields').click();
+  await page.getByLabel('search-field-all').click();
+  await page.keyboard.press('Escape');
+
+  await page.getByRole('cell', { name: 'Blue Square Table' }).waitFor();
+
+  // A distant related field (spanning multiple models) in the BOM table
+  await navigate(page, 'part/87/bom');
+  await page.getByLabel('table-select-search-fields').click();
+
+  await expect(
+    page.getByRole('menuitem').filter({
+      has: page.getByLabel('search-field-sub_part__category__name', {
+        exact: true
+      })
+    })
+  ).toHaveText('Sub part / Category / Name');
+
+  // The menu is hidden for a table with only a single searchable field
+  await navigate(page, 'core/index/groups');
+  await page.getByRole('cell', { name: 'all access' }).waitFor();
+  await page.getByLabel('table-search-input').waitFor();
+  await expect(page.getByLabel('table-select-search-fields')).toHaveCount(0);
+});

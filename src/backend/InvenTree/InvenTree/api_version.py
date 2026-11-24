@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 583
+INVENTREE_API_VERSION = 584
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v584 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/13346
+    - Adds "search_fields" query parameter to list endpoints, to limit a search to a subset of the searchable fields
+    - Adds "search_fields" information to the OPTIONS response for list endpoints
 
 v583 -> 2026-11-20 : https://github.com/inventree/InvenTree/issues/12121
     - Adds parameter support to the StockLocationType model and API endpoints

@@ -2208,6 +2208,13 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
                     if field_value := item.get(field_name, None):
                         extra[field_name] = field_value
 
+                if not stock_item.lock_quantity():
+                    continue
+
+                validate_allocation_boundary(
+                    quantity, stock_item.quantity, stock_item.allocation_count()
+                )
+
                 stock_item.take_stock(quantity, request.user, notes=notes, **extra)
 
 
