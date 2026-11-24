@@ -161,6 +161,9 @@ class InvenTreeMetadata(SimpleMetadata):
         if filters := self.get_filter_metadata(request, view):
             metadata['filters'] = filters
 
+        if search_fields := self.get_search_field_metadata(view):
+            metadata['search_fields'] = search_fields
+
         return metadata
 
     @staticmethod
@@ -180,6 +183,69 @@ class InvenTreeMetadata(SimpleMetadata):
         return perm is permissions.IsAuthenticated or bool(
             getattr(perm, 'allows_any_authenticated_user', False)
         )
+
+    def get_search_field_metadata(self, view) -> list[dict]:
+        """Return information on the fields which can be searched for an API endpoint.
+
+        A client can use this to let the user choose which fields a search applies to,
+        by passing a subset of the field names in the 'search_fields' query parameter.
+
+        Returns:
+            list: A list of {'name', 'label'} entries, one for each searchable field
+        """
+        from InvenTree.filters import InvenTreeSearchFilter
+
+        backends = getattr(view, 'filter_backends', None) or []
+
+        if not any(
+            isinstance(backend, type) and issubclass(backend, InvenTreeSearchFilter)
+            for backend in backends
+        ):
+            return []
+
+        try:
+            model = view.get_serializer_class().Meta.model
+        except Exception:
+            model = None
+
+        fields = []
+
+        for field in getattr(view, 'search_fields', None) or []:
+            name = InvenTreeSearchFilter.field_name(field)
+
+            fields.append({
+                'name': name,
+                'label': self.get_search_field_label(model, name),
+            })
+
+        return fields
+
+    def get_search_field_label(self, model, name: str) -> str:
+        """Construct a human readable label for a (possibly related) search field.
+
+        e.g. 'part__name' -> 'Part / Name' (using the translated field names)
+        """
+        labels = []
+
+        for part in name.split('__'):
+            label = None
+
+            if model is not None:
+                try:
+                    field = model._meta.get_field(part)
+                    label = getattr(field, 'verbose_name', None)
+                    model = getattr(field, 'related_model', None)
+                except Exception:
+                    # Not a model field (e.g. an annotation) - fall back to the raw name
+                    model = None
+
+            if not label:
+                label = part.replace('_', ' ')
+
+            label = str(label)
+            labels.append(label[:1].upper() + label[1:])
+
+        return ' / '.join(labels)
 
     def get_filter_metadata(self, request, view) -> dict:
         """Return information on the choice filters available for an API endpoint.
