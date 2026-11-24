@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 585
 
 INVENTREE_API_TEXT = """
 
-v585 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/XXXX
+v585 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/13356
     - Adds "locked" field to the instance-info API endpoint as a new generic model mixin is added for lockable models
 
 v584 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/13346
