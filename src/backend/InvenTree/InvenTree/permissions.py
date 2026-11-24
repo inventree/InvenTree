@@ -570,6 +570,6 @@ class ContentTypePermission(OASTokenMixin, permissions.BasePermission):
                 )
 
             return users.permissions.check_user_permission(
-                request.user, model_class, 'change'
+                request.user, model_class, permission
             )
         return False

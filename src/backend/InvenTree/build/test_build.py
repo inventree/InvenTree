@@ -1111,6 +1111,7 @@ class BuildTest(BuildTestBase):
 
         for model in [Build, BuildItem]:
             p = model.objects.first()
+            assert p is not None
             self.assertEqual(len(p.metadata.keys()), 0)
 
             self.assertIsNone(p.get_metadata('test'))

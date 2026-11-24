@@ -1420,7 +1420,7 @@ class Build(
         output: stock.models.StockItem,
         quantity: Optional[decimal.Decimal] = None,
         required_tests=None,
-    ) -> bool:
+    ) -> None:
         """Determine if the given build output can be completed.
 
         Arguments:

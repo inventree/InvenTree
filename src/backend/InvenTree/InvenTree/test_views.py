@@ -45,6 +45,7 @@ class ViewTests(InvenTreeTestCase):
 
         # The Redoc version must be pinned - '@latest' can (and did) change under us
         match = re.search(r'redoc@(\d+)(?:\.\d+)*/', src)
+        assert match is not None
         self.assertIsNotNone(
             match, f'Redoc distribution must be pinned to a version: {src}'
         )

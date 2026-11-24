@@ -8,7 +8,7 @@ If you are interested in trying out InvenTree, you can access the InvenTree demo
 
 This page is populated with a sample dataset, which is reset every 24 hours.
 
-You can read more about the InvenTree demo here: [https://inventree.org/demo.html](https://inventree.org/demo.html)
+You can read more about the InvenTree demo here: [https://inventree.org/demo](https://inventree.org/demo)
 
 ### User Accounts
 

@@ -79,6 +79,7 @@ class TestParams(TestCase):
         """Unit tests for the metadata field."""
         for model in [ParameterTemplate]:
             p = model.objects.first()
+            assert p is not None
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)

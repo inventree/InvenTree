@@ -183,7 +183,9 @@ def hook_config(site_url: Optional[str] = None) -> dict:
             spec = importlib.util.spec_from_file_location(
                 'inventree_docs_hooks', HERE.joinpath('docs', 'hooks.py')
             )
+            assert spec is not None
             hooks = importlib.util.module_from_spec(spec)
+            assert spec.loader is not None
             spec.loader.exec_module(hooks)
             _hook_config = hooks.on_config({'site_url': site_url})
 

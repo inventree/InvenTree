@@ -675,8 +675,11 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertTrue(any('INVE-W7' in msg for msg in logs.output))
 
         msgs = NotificationMessage.objects.filter(category=category, user=self.user)
+        assert msgs is not None
         self.assertEqual(msgs.count(), 1)
-        self.assertIn("'notify'", msgs.first().message)
+        message = msgs.first()
+        assert message is not None
+        self.assertIn("'notify'", message.message)
 
         # Re-issuing a token with the same name sends another notification
         self.get(url, data={'name': 'notify'}, expected_code=200)
@@ -691,6 +694,7 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.user.is_superuser = True
         self.user.save()
         other = User.objects.exclude(pk=self.user.pk).first()
+        assert other is not None
 
         data = self.post(
             reverse('api-token-list'),

@@ -3485,6 +3485,25 @@ class GenericMetadataAuthorizationTests(InvenTreeAPITestCase):
         self.assignRole('part.change')
         self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
 
+    def test_part_metadata_requires_view_to_read_and_change_to_write(self):
+        """Part metadata is scoped by 'view'/'change' on Part itself.
+
+        Part has RuleSet permissions of its own and no check_permission(), so
+        reads must require 'view' only, like the Part detail endpoint.
+        """
+        url = self._metadata_url('part', self.part.pk)
+
+        self.get(url, expected_code=403)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.assignRole('part.view')
+        self.get(url, expected_code=200)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+        self.put(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.assignRole('part.change')
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
     def test_project_code_metadata_requires_staff_for_write(self):
         """ProjectCode metadata mirrors the staff-only write restriction of its own endpoint."""
         url = self._metadata_url('projectcode', self.project_code.pk)
