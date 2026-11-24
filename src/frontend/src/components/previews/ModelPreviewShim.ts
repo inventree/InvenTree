@@ -5,6 +5,7 @@ import { ManufacturerPartPreviewComponent } from './models/ManufacturerPartPrevi
 import { PartCategoryPreviewComponent } from './models/PartCategoryPreview';
 import { PartPreviewComponent } from './models/PartPreview';
 import { PurchaseOrderPreviewComponent } from './models/PurchaseOrderPreview';
+import { RepairOrderPreviewComponent } from './models/RepairOrderPreview';
 import { ReturnOrderPreviewComponent } from './models/ReturnOrderPreview';
 import { SalesOrderPreviewComponent } from './models/SalesOrderPreview';
 import { SalesOrderShipmentPreviewComponent } from './models/SalesOrderShipmentPreview';
@@ -28,5 +29,6 @@ registerModelPreviews({
   salesorder: SalesOrderPreviewComponent,
   salesordershipment: SalesOrderShipmentPreviewComponent,
   returnorder: ReturnOrderPreviewComponent,
+  repairorder: RepairOrderPreviewComponent,
   transferorder: TransferOrderPreviewComponent
 });

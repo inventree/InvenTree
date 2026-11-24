@@ -246,7 +246,12 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/manufacturing/repair-order/:pk/',
     api_endpoint: ApiEndpoints.repair_order_list,
     admin_url: '/build/repairorder/',
-    icon: 'repair_orders'
+    icon: 'repair_orders',
+    default_query_params: {
+      customer_detail: true,
+      part_detail: true,
+      tags: true
+    }
   },
   repairorderlineitem: {
     label: () => t`Repair Order Line Item`,

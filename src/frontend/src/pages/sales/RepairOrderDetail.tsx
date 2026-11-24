@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle, IconList } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -13,12 +13,6 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   CancelItemAction,
   DuplicateItemAction,
@@ -40,6 +34,7 @@ import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
 import RepairOrderLineItemTable from '../../tables/sales/RepairOrderLineItemTable';
+import { RepairOrderDetailsPanel } from './RepairOrderDetailsPanel';
 
 export default function RepairOrderDetail() {
   const { id } = useParams();
@@ -71,177 +66,17 @@ export default function RepairOrderDetail() {
 
   const lineItemsEditable: boolean = orderOpen;
 
-  const detailsPanel = useMemo(() => {
-    if (instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const tl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'reference',
-        label: t`Reference`,
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'part',
-        icon: 'part',
-        label: t`Part`,
-        model: ModelType.part,
-        hidden: !order.part
-      },
-      {
-        type: 'text',
-        name: 'description',
-        label: t`Description`,
-        copy: true
-      },
-      {
-        type: 'text',
-        name: 'symptoms',
-        label: t`Symptoms`,
-        copy: true,
-        hidden: !order.symptoms
-      },
-      {
-        type: 'status',
-        name: 'status',
-        label: t`Status`,
-        model: ModelType.repairorder
-      },
-      {
-        type: 'status',
-        name: 'status_custom_key',
-        label: t`Custom Status`,
-        model: ModelType.repairorder,
-        icon: 'status',
-        hidden:
-          !order.status_custom_key || order.status_custom_key == order.status
-      }
-    ];
-
-    const tr: DetailsField[] = [
-      {
-        type: 'link',
-        name: 'customer',
-        icon: 'customers',
-        label: t`Customer`,
-        model: ModelType.company,
-        hidden: !order.customer
-      }
-    ];
-
-    const bl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'issued_by',
-        label: t`Issued By`,
-        icon: 'user',
-        badge: 'user',
-        hidden: !order.issued_by
-      },
-      {
-        type: 'text',
-        name: 'completed_by',
-        label: t`Completed By`,
-        icon: 'user',
-        badge: 'user',
-        hidden: !order.completed_by
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !order.responsible
-      },
-      {
-        type: 'text',
-        name: 'project_code_label',
-        label: t`Project Code`,
-        icon: 'reference',
-        copy: true,
-        hidden: !order.project_code
-      },
-      {
-        type: 'link',
-        name: 'take_from',
-        icon: 'location',
-        model: ModelType.stocklocation,
-        model_formatter: (location: any) =>
-          location?.description
-            ? `${location.name} - ${location.description}`
-            : location?.name,
-        label: t`Source Location`,
-        hidden: !order.take_from
-      }
-    ];
-
-    const br: DetailsField[] = [
-      {
-        type: 'date',
-        name: 'creation_date',
-        label: t`Created`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.creation_date
-      },
-      {
-        type: 'date',
-        name: 'start_date',
-        label: t`Start Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.start_date
-      },
-      {
-        type: 'date',
-        name: 'target_date',
-        label: t`Target Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.target_date
-      },
-      {
-        type: 'date',
-        name: 'completion_date',
-        label: t`Completed`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !order.completion_date
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid
-        tables={[
-          { fields: tr, item: order },
-          { fields: bl, item: order },
-          { fields: br, item: order }
-        ]}
-      >
-        <Grid grow>
-          <DetailsImage
-            apiPath={apiUrl(ApiEndpoints.part_list, order.part)}
-            src={order.part_detail?.image ?? order.part_detail?.thumbnail}
-            pk={order.part}
-          />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={order} />
-          </Grid.Col>
-        </Grid>
-      </ItemDetailsGrid>
-    );
-  }, [order, instanceQuery]);
-
   const orderPanels: PanelType[] = useMemo(() => {
     return [
       {
         name: 'detail',
         label: t`Order Details`,
         icon: <IconInfoCircle />,
-        content: detailsPanel
+        content: instanceQuery.isFetching ? (
+          <Skeleton />
+        ) : (
+          <RepairOrderDetailsPanel instance={order} />
+        )
       },
       {
         name: 'line-items',
@@ -267,7 +102,7 @@ export default function RepairOrderDetail() {
         )
       }
     ];
-  }, [order, id, user, lineItemsEditable, detailsPanel, refreshInstance]);
+  }, [order, id, user, lineItemsEditable, instanceQuery, refreshInstance]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
