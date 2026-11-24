@@ -86,7 +86,7 @@ test('Purchasing - Index', async ({ browser }) => {
 
 test('Purchasing - Parameters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    url: 'purchasing/purchase-order/11/parameters',
+    url: 'purchasing/purchase-order/10/parameters',
     user: stevenuser
   });
 
