@@ -31,10 +31,9 @@ import { StylishText } from '@lib/components/StylishText';
 import { TableColumnSelect } from '@lib/components/TableColumnSelect';
 import { resolveItem } from '@lib/functions/Conversion';
 import type { TableFilter } from '@lib/types/Filters';
-import type { TableState } from '@lib/types/Tables';
+import type { TableSearchField, TableState } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
-import type { AxiosInstance } from 'axios';
 import useDataExport from '../../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { PrintingActions } from '../buttons/PrintingActions';
@@ -45,7 +44,6 @@ import { TableSearchFieldSelect } from './TableSearchFieldSelect';
  * Render a composite header for an InvenTree table
  */
 export default function InvenTreeTableHeader({
-  api,
   tableUrl,
   tableState,
   tableProps,
@@ -55,10 +53,10 @@ export default function InvenTreeTableHeader({
   queryFilters,
   clearQueryFilters,
   toggleColumn,
+  searchFieldOptions,
   searchFields,
   setSearchFields
 }: Readonly<{
-  api: AxiosInstance;
   tableUrl?: string;
   tableState: TableState;
   tableProps: InvenTreeTableProps<any>;
@@ -68,6 +66,7 @@ export default function InvenTreeTableHeader({
   queryFilters?: URLSearchParams;
   clearQueryFilters: () => void;
   toggleColumn: (column: string) => void;
+  searchFieldOptions: TableSearchField[];
   searchFields: string[];
   setSearchFields: (fields: string[]) => void;
 }>) {
@@ -290,10 +289,9 @@ export default function InvenTreeTableHeader({
               searchCallback={(term: string) => tableState.setSearchTerm(term)}
             />
           )}
-          {tableProps.enableSearch && tableUrl && (
+          {tableProps.enableSearch && (
             <TableSearchFieldSelect
-              api={api}
-              url={tableUrl}
+              fields={searchFieldOptions}
               disabled={hasCustomSearch}
               selectedFields={searchFields}
               onChange={setSearchFields}

@@ -392,4 +392,10 @@ test('Tables - Search Fields', async ({ browser }) => {
       })
     })
   ).toHaveText('Sub part / Category / Name');
+
+  // The menu is hidden for a table with only a single searchable field
+  await navigate(page, 'core/index/groups');
+  await page.getByRole('cell', { name: 'all access' }).waitFor();
+  await page.getByLabel('table-search-input').waitFor();
+  await expect(page.getByLabel('table-select-search-fields')).toHaveCount(0);
 });

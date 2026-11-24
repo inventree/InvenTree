@@ -70,6 +70,15 @@ export type TableState = {
   idAccessor?: string;
 };
 
+/*
+ * A field which can be selected to limit a table search
+ * (as provided by the server via an OPTIONS request)
+ */
+export type TableSearchField = {
+  name: string;
+  label: string;
+};
+
 export type TableColumnFilterType =
   | string
   | string[]
