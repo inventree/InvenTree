@@ -13,7 +13,6 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   type DetailsField,
   DetailsTable
@@ -21,7 +20,6 @@ import {
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
-  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -38,6 +36,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
 import RepairOrderLineItemTable from '../../tables/sales/RepairOrderLineItemTable';
@@ -255,6 +254,11 @@ export default function RepairOrderDetail() {
     successMessage: t`Order completed`
   });
 
+  const featureActions = useModelFeatureActions({
+    model: ModelType.repairorder,
+    instance: order
+  });
+
   const orderActions = useMemo(() => {
     const canEdit: boolean =
       orderOpen && user.hasChangeRole(UserRoles.repair_order);
@@ -293,17 +297,7 @@ export default function RepairOrderDetail() {
         onClick={() => completeOrder.open()}
       />,
       <AdminButton model={ModelType.repairorder} id={order.pk} />,
-      <BarcodeActionDropdown
-        model={ModelType.repairorder}
-        pk={order.pk}
-        hash={order?.barcode_hash}
-      />,
-      <PrintingActions
-        modelType={ModelType.repairorder}
-        items={[order.pk]}
-        enableReports
-        enableLabels
-      />,
+      ...featureActions,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}
         actions={[
@@ -332,7 +326,7 @@ export default function RepairOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, roStatus, orderOpen]);
+  }, [featureActions, user, order, roStatus, orderOpen]);
 
   const subtitle: string = useMemo(() => {
     return order.customer_detail?.name || '';
