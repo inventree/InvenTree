@@ -44,7 +44,7 @@ jobs:
         id: ai-check
         with:
           fail-on-detection: false
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         if: steps.ai-check.outputs.ai-commits-found == 'true'
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -53,7 +53,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Found ${process.env.COUNT} AI commit(s); review your commits and ensure you follow the contribution guidelines.'
+              body: `Found ${process.env.COUNT} AI commit(s); review your commits and ensure you follow the contribution guidelines.`
             })
         env:
           COUNT: ${{ steps.ai-check.outputs.count }}
