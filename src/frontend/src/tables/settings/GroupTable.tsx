@@ -1,8 +1,17 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Accordion, LoadingOverlay, Stack, Text } from '@mantine/core';
+import {
+  Accordion,
+  Group,
+  LoadingOverlay,
+  Stack,
+  Table,
+  Text
+} from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -19,11 +28,14 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { ApiFormModalProps } from '@lib/index';
 import type { TableColumn, TableState } from '@lib/types/Tables';
-import { IconUsersGroup } from '@tabler/icons-react';
+import { IconUserMinus, IconUsersGroup } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../../App';
 import { EditApiForm } from '../../components/forms/ApiForm';
+import { StandaloneField } from '../../components/forms/StandaloneField';
 import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { showApiErrorMessage } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
@@ -34,6 +46,176 @@ import { useUserState } from '../../states/UserState';
 export interface GroupDetailI {
   pk: number;
   name: string;
+}
+
+interface GroupMemberI {
+  pk: number;
+  username: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+}
+
+/**
+ * Display (and optionally edit) the users which belong to a group.
+ *
+ * Membership changes are made via the existing user detail endpoint
+ * (PATCH /api/user/<pk>/ with 'group_ids'), so the same permission checks
+ * apply as when editing a user's groups from the "Edit User" drawer.
+ */
+function GroupUsers({
+  groupId,
+  users,
+  onChange
+}: Readonly<{
+  groupId: number;
+  users: GroupMemberI[];
+  onChange: () => void;
+}>) {
+  const user = useUserState();
+
+  // Membership is edited via the user endpoint, which requires staff + user change permission
+  const canEdit: boolean = useMemo(
+    () => user.isStaff() && user.hasChangePermission(ModelType.user),
+    [user]
+  );
+
+  const [busy, setBusy] = useState<boolean>(false);
+
+  // Used to reset the "add user" field after a selection is made
+  const [fieldKey, setFieldKey] = useState<number>(0);
+
+  const sortedUsers = useMemo(
+    () =>
+      [...(users ?? [])].sort((a, b) => a.username.localeCompare(b.username)),
+    [users]
+  );
+
+  // Fetch the user's current groups, apply the modification, and save
+  const updateMembership = useCallback(
+    async (userId: number, add: boolean) => {
+      if (!canEdit || busy) return;
+
+      setBusy(true);
+
+      try {
+        const response = await api.get(apiUrl(ApiEndpoints.user_list, userId));
+        const current: number[] = (response.data?.groups ?? []).map(
+          (g: any) => g.pk
+        );
+
+        if (add === current.includes(groupId)) {
+          // Nothing to do (already a member / already removed)
+          return;
+        }
+
+        const group_ids = add
+          ? [...current, groupId]
+          : current.filter((pk) => pk !== groupId);
+
+        await api.patch(apiUrl(ApiEndpoints.user_list, userId), {
+          group_ids
+        });
+
+        showNotification({
+          title: add ? t`User added` : t`User removed`,
+          message: add ? t`User added to group` : t`User removed from group`,
+          color: 'green'
+        });
+      } catch (error) {
+        showApiErrorMessage({
+          error: error,
+          title: t`Error updating group membership`
+        });
+      } finally {
+        setBusy(false);
+        onChange();
+      }
+    },
+    [canEdit, busy, groupId, onChange]
+  );
+
+  const memberIds: number[] = useMemo(
+    () => sortedUsers.map((u) => u.pk),
+    [sortedUsers]
+  );
+
+  return (
+    <Stack gap='xs'>
+      <LoadingOverlay visible={busy} />
+      {canEdit && (
+        <StandaloneField
+          key={`group-add-user-${fieldKey}`}
+          fieldName='user'
+          fieldDefinition={{
+            field_type: 'related field',
+            label: t`Add User`,
+            description: t`Select a user to add to this group`,
+            api_url: apiUrl(ApiEndpoints.user_list),
+            model: ModelType.user,
+            required: false,
+            adjustFilters: (value) => ({ ...value.filters, is_active: true }),
+            onValueChange: (value: any) => {
+              if (!value) return;
+              const pk = Number(value);
+              setFieldKey((k) => k + 1);
+              if (!memberIds.includes(pk)) {
+                updateMembership(pk, true);
+              }
+            }
+          }}
+        />
+      )}
+      {sortedUsers.length === 0 ? (
+        <Text c='dimmed' fs='italic'>
+          <Trans>No users in this group</Trans>
+        </Text>
+      ) : (
+        <Table striped>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>
+                <Trans>Username</Trans>
+              </Table.Th>
+              <Table.Th>
+                <Trans>Name</Trans>
+              </Table.Th>
+              <Table.Th>
+                <Trans>Email</Trans>
+              </Table.Th>
+              {canEdit && <Table.Th />}
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {sortedUsers.map((member) => (
+              <Table.Tr key={`group-user-${member.pk}`}>
+                <Table.Td>{member.username}</Table.Td>
+                <Table.Td>
+                  {[member.first_name, member.last_name]
+                    .filter(Boolean)
+                    .join(' ')}
+                </Table.Td>
+                <Table.Td>{member.email}</Table.Td>
+                {canEdit && (
+                  <Table.Td>
+                    <Group justify='right'>
+                      <ActionButton
+                        icon={<IconUserMinus />}
+                        color='red'
+                        tooltip={t`Remove user from group`}
+                        disabled={busy}
+                        onClick={() => updateMembership(member.pk, false)}
+                      />
+                    </Group>
+                  </Table.Td>
+                )}
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
+        </Table>
+      )}
+    </Stack>
+  );
 }
 
 export function GroupDrawer({
@@ -61,7 +243,9 @@ export function GroupDrawer({
     return instance?.roles ?? [];
   }, [instance]);
 
-  if (isFetching) {
+  // Only block the drawer on the initial load, so that refreshing the group
+  // (e.g. after a membership change) does not collapse the open panel
+  if (isFetching && !instance?.pk) {
     return <LoadingOverlay visible={true} />;
   }
 
@@ -115,6 +299,24 @@ export function GroupDrawer({
           </Accordion.Control>
           <Accordion.Panel>
             <RoleTable roles={groupRoles} editable />
+          </Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item key='users' value='users'>
+          <Accordion.Control>
+            <StylishText size='lg'>
+              <Trans>Group Users</Trans>
+            </StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <GroupUsers
+              groupId={Number(id)}
+              users={instance?.users ?? []}
+              onChange={() => {
+                refreshInstance();
+                refreshTable();
+              }}
+            />
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>

@@ -31,13 +31,14 @@ import { StylishText } from '@lib/components/StylishText';
 import { TableColumnSelect } from '@lib/components/TableColumnSelect';
 import { resolveItem } from '@lib/functions/Conversion';
 import type { TableFilter } from '@lib/types/Filters';
-import type { TableState } from '@lib/types/Tables';
+import type { TableSearchField, TableState } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
 import useDataExport from '../../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { PrintingActions } from '../buttons/PrintingActions';
 import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
+import { TableSearchFieldSelect } from './TableSearchFieldSelect';
 
 /**
  * Render a composite header for an InvenTree table
@@ -51,7 +52,10 @@ export default function InvenTreeTableHeader({
   filters,
   queryFilters,
   clearQueryFilters,
-  toggleColumn
+  toggleColumn,
+  searchFieldOptions,
+  searchFields,
+  setSearchFields
 }: Readonly<{
   tableUrl?: string;
   tableState: TableState;
@@ -62,6 +66,9 @@ export default function InvenTreeTableHeader({
   queryFilters?: URLSearchParams;
   clearQueryFilters: () => void;
   toggleColumn: (column: string) => void;
+  searchFieldOptions: TableSearchField[];
+  searchFields: string[];
+  setSearchFields: (fields: string[]) => void;
 }>) {
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
@@ -93,8 +100,19 @@ export default function InvenTreeTableHeader({
       }
     }
 
+    // Limit the search to the selected fields (if any)
+    if (tableState.searchTerm && searchFields.length > 0) {
+      filters.search_fields = searchFields.join(',');
+    }
+
     return filters;
-  }, [tableProps.params, tableState.filterSet, queryFilters]);
+  }, [
+    tableProps.params,
+    tableState.filterSet,
+    tableState.searchTerm,
+    queryFilters,
+    searchFields
+  ]);
 
   const exportModal = useDataExport({
     url: tableUrl ?? '',
@@ -269,6 +287,14 @@ export default function InvenTreeTableHeader({
             <SearchInput
               disabled={hasCustomSearch}
               searchCallback={(term: string) => tableState.setSearchTerm(term)}
+            />
+          )}
+          {tableProps.enableSearch && (
+            <TableSearchFieldSelect
+              fields={searchFieldOptions}
+              disabled={hasCustomSearch}
+              selectedFields={searchFields}
+              onChange={setSearchFields}
             />
           )}
           {tableProps.enableRefresh && (
