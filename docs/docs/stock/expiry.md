@@ -38,6 +38,17 @@ The various stock display tables can be filtered by *expired* status, and also d
 
 If the stock expiry feature is enabled, expired stock are listed on the InvenTree home page, to provide visibility of expired stock to the users.
 
+### Using Expired Stock
+
+If the stock expiry feature is enabled, expired stock cannot be allocated to [build orders](../manufacturing/allocate.md) or [sales orders](../sales/sales_order.md) - whether manually, by serial number, or by auto-allocation. This can be changed with the following settings:
+
+| Setting | Description |
+| --- | --- |
+| {{ globalsetting("STOCK_ALLOW_EXPIRED_BUILD", short=True) }} | Allow expired stock to be allocated to build orders |
+| {{ globalsetting("STOCK_ALLOW_EXPIRED_SALE", short=True) }} | Allow expired stock to be allocated to sales orders |
+
+Existing allocations are not affected if the allocated stock expires (or if these settings are changed).
+
 ## Part Expiry Time
 
 In addition to allowing manual configuration of expiry dates on a per-item basis, InvenTree also provides the ability to set a "default expiry time" for a particular Part. This expiry time (specified in *days*) is then used to automatically calculate the expiry date when creating a new Stock Item as an instance of the given Part.

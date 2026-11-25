@@ -60,6 +60,7 @@ test('Parts - Settings - Create Part Form', async ({ browser }) => {
       value: false
     });
     await setSettingState({ setting: 'PART_CREATE_SUPPLIER', value: false });
+    await setSettingState({ setting: 'PART_ALLOW_EDIT_IPN', value: false });
 
     const page = await doCachedLogin(browser, {
       url: 'part/category/index/parts'
@@ -70,6 +71,10 @@ test('Parts - Settings - Create Part Form', async ({ browser }) => {
     await expect(copyParameters(page)).not.toBeChecked();
     await expect(supplierField(page)).toHaveCount(0);
 
+    // The IPN can always be set when creating a new part
+    await expect(
+      page.getByRole('textbox', { name: 'text-field-IPN' })
+    ).toBeEnabled();
     await page.getByRole('button', { name: 'Cancel' }).click();
 
     await setSettingState({ setting: 'PART_CATEGORY_PARAMETERS', value: true });
@@ -84,6 +89,7 @@ test('Parts - Settings - Create Part Form', async ({ browser }) => {
   } finally {
     await setSettingState({ setting: 'PART_CATEGORY_PARAMETERS', value: true });
     await setSettingState({ setting: 'PART_CREATE_SUPPLIER', value: true });
+    await setSettingState({ setting: 'PART_ALLOW_EDIT_IPN', value: true });
   }
 });
 
@@ -114,6 +120,38 @@ test('Parts - Settings - Duplicate Part Tests', async ({ browser }) => {
     await page.getByRole('button', { name: 'Cancel' }).click();
   } finally {
     await setSettingState({ setting: 'PART_COPY_TESTS', value: true });
+    await deletePartById(part.pk);
+  }
+});
+
+test('Parts - Settings - Edit IPN', async ({ browser }) => {
+  const part = await createPart({ IPN: `IPN-${generateUUID().slice(0, 8)}` });
+
+  const ipnField = (page) =>
+    page.getByRole('textbox', { name: 'text-field-IPN' });
+
+  try {
+    await setSettingState({ setting: 'PART_ALLOW_EDIT_IPN', value: false });
+
+    const page = await doCachedLogin(browser, {
+      url: `part/${part.pk}/details`
+    });
+
+    // Disabled: the IPN of an existing part cannot be edited
+    await openDetailAction(page, 'part', 'edit');
+    await expect(ipnField(page)).toHaveValue(part.IPN);
+    await expect(ipnField(page)).toBeDisabled();
+    await page.getByRole('button', { name: 'Cancel' }).click();
+
+    await setSettingState({ setting: 'PART_ALLOW_EDIT_IPN', value: true });
+
+    // Enabled: the IPN can be edited
+    await page.reload();
+    await openDetailAction(page, 'part', 'edit');
+    await expect(ipnField(page)).toBeEnabled();
+    await page.getByRole('button', { name: 'Cancel' }).click();
+  } finally {
+    await setSettingState({ setting: 'PART_ALLOW_EDIT_IPN', value: true });
     await deletePartById(part.pk);
   }
 });

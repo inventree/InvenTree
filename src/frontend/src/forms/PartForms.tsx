@@ -56,7 +56,10 @@ export function usePartFields({
         }
       },
       name: {},
-      IPN: {},
+      IPN: {
+        // The IPN of an existing part can only be changed if permitted
+        disabled: !create && !globalSettings.isSet('PART_ALLOW_EDIT_IPN', true)
+      },
       description: {},
       revision: {},
       revision_of: {

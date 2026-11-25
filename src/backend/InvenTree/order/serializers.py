@@ -1825,6 +1825,9 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
                 'quantity': _('Quantity must be 1 for serialized stock item')
             })
 
+        # Expired stock may only be allocated if permitted
+        stock_item.check_expired_allowed('STOCK_ALLOW_EXPIRED_SALE', field='stock_item')
+
         q = normalize(stock_item.unallocated_quantity())
 
         if quantity > q:

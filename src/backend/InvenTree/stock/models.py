@@ -694,6 +694,51 @@ class StockItem(
         )
 
     @staticmethod
+    def allow_expired_stock(setting: str) -> bool:
+        """Return True if expired stock may be used for a particular purpose.
+
+        Arguments:
+            setting: The global setting which controls whether expired stock may be used
+                (e.g. 'STOCK_ALLOW_EXPIRED_BUILD' or 'STOCK_ALLOW_EXPIRED_SALE')
+
+        Expired stock is always allowed if the stock expiry feature is disabled.
+        """
+        if not get_global_setting('STOCK_ENABLE_EXPIRY', False):
+            return True
+
+        return bool(get_global_setting(setting, False))
+
+    @classmethod
+    def allowed_expiry_filter(cls, setting: str) -> Q:
+        """Return a filter which excludes expired stock, if it may not be used for a particular purpose.
+
+        Arguments:
+            setting: The global setting which controls whether expired stock may be used
+        """
+        if cls.allow_expired_stock(setting):
+            return Q()
+
+        return Q(expiry_date=None) | Q(
+            expiry_date__gte=InvenTree.helpers.current_date()
+        )
+
+    def check_expired_allowed(self, setting: str, field: str | None = None) -> None:
+        """Raise a ValidationError if this item has expired, and expired stock may not be used.
+
+        Arguments:
+            setting: The global setting which controls whether expired stock may be used
+            field: Optional field name to associate the error with
+        """
+        expired = (
+            self.expiry_date is not None
+            and self.expiry_date < InvenTree.helpers.current_date()
+        )
+
+        if expired and not StockItem.allow_expired_stock(setting):
+            msg = _('Expired stock cannot be used')
+            raise ValidationError({field: msg} if field else msg)
+
+    @staticmethod
     def _lock_serial_numbers(part: PartModels.Part, serials: list) -> None:
         """Serialize concurrent serial number creation, and re-validate under the lock.
 
