@@ -240,7 +240,7 @@ test('Settings - Admin', async ({ browser }) => {
   await page.getByText('Regex Search').waitFor();
   await loadTab(page, 'Notifications');
   await loadTab(page, 'Reporting');
-  await page.getByText('Inline report display').waitFor();
+  await page.getByText('Default label printer').waitFor();
 
   // System Settings
   await page.locator('label').filter({ hasText: 'System Settings' }).click();
