@@ -10,6 +10,14 @@ from django.core.management.base import BaseCommand
 class Command(BaseCommand):
     """List all installed apps."""
 
+    def add_arguments(self, parser):
+        """Add command arguments."""
+        parser.add_argument(
+            '--labels',
+            action='store_true',
+            help='Output app labels (e.g. "auth") instead of full app names (e.g. "django.contrib.auth")',
+        )
+
     def handle(self, *args, **kwargs):
         """List all installed apps.
 
@@ -18,10 +26,12 @@ class Command(BaseCommand):
         """
         from django.apps import apps
 
+        labels = kwargs.get('labels', False)
+
         app_list = []
 
         for app in apps.get_app_configs():
-            app_list.append(app.name)
+            app_list.append(app.label if labels else app.name)
 
         app_list.sort()
 

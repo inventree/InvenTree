@@ -555,9 +555,16 @@ def manage_interactive(cmd: str, env=None, verbose: bool = False):
         raise Exit(code=result.returncode)
 
 
-def installed_apps(c) -> list[str]:
-    """Returns a list of all installed apps, including plugins."""
-    result = manage(c, 'list_apps', pty=False, hide=True)
+def installed_apps(c, labels: bool = False) -> list[str]:
+    """Returns a list of all installed apps, including plugins.
+
+    Arguments:
+        c: Command line context.
+        labels: If True, return app labels (e.g. 'auth') rather than full app names (e.g. 'django.contrib.auth').
+    """
+    result = manage(
+        c, f'list_apps{" --labels" if labels else ""}', pty=False, hide=True
+    )
     output = result.stdout.strip()
 
     # Look for the expected pattern
@@ -1502,6 +1509,16 @@ def import_records(
     # A dict containing metadata associated with the data file
     metadata = {}
 
+    # When excluding plugins, records belonging to plugin-provided apps (AppMixin)
+    # must also be skipped - those apps will not be installed in the target
+    # environment (as the plugin configs are not imported), and so the records
+    # would otherwise fail with "Invalid model identifier"
+    local_app_labels: Optional[set[str]] = None
+    skipped_records: dict[str, int] = {}
+
+    if exclude_plugins:
+        local_app_labels = set(installed_apps(c, labels=True))
+
     def load_data(
         title: str,
         data: list[dict],
@@ -1553,6 +1570,18 @@ def import_records(
             continue
 
         if model := entry.get('model', None):
+            if exclude_plugins:
+                app_label = model.split('.')[0]
+
+                # Skip records for apps which are not installed (i.e. plugin apps)
+                if app_label not in local_app_labels:
+                    skipped_records[model] = skipped_records.get(model, 0) + 1
+                    continue
+
+                # Remove references to plugin configs which are not being imported
+                if model == 'common.selectionlist':
+                    entry['fields']['source_plugin'] = None
+
             # Clear out any permissions specified for a group
             # (these are regenerated after import)
             if model == 'auth.group':
@@ -1579,6 +1608,11 @@ def import_records(
             print(entry)
             if strict:
                 sys.exit(1)
+
+    for model, count in sorted(skipped_records.items()):
+        warning(
+            f"Skipping {count} '{model}' records - app is not installed (--exclude-plugins)"
+        )
 
     # Check the metadata associated with the imported data
     # Do not validate the 'apps' list yet - as the plugins have not yet been loaded
