@@ -1003,6 +1003,42 @@ class SalesOrderTest(InvenTreeAPITestCase):
         for line in so.lines.all():
             self.assertEqual(line.shipped, line.quantity)
 
+    def test_complete_shipment_with_reduced_allocated_stock(self):
+        """Shipment must not count more stock than actually exists."""
+        stock_item = StockItem.objects.create(part=self.part, quantity=10)
+
+        SalesOrderAllocation.objects.create(
+            line=self.line, shipment=self.shipment, item=stock_item, quantity=10
+        )
+
+        # Simulate stock being reduced while the allocation remains unchanged
+        StockItem.objects.filter(pk=stock_item.pk).update(quantity=2)
+
+        self.shipment.complete_allocations(
+            self.shipment.allocations.all(), user=self.user
+        )
+
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 2)
+
+    def test_complete_shipment_with_zero_allocated_stock(self):
+        """Shipment must skip allocations when no stock remains."""
+        stock_item = StockItem.objects.create(part=self.part, quantity=10)
+
+        SalesOrderAllocation.objects.create(
+            line=self.line, shipment=self.shipment, item=stock_item, quantity=10
+        )
+
+        # Simulate stock being reduced to zero while the allocation remains
+        StockItem.objects.filter(pk=stock_item.pk).update(quantity=0)
+
+        self.shipment.complete_allocations(
+            self.shipment.allocations.all(), user=self.user
+        )
+
+        self.line.refresh_from_db()
+        self.assertEqual(self.line.shipped, 0)
+
 
 class SalesOrderAutoAllocateTest(InvenTreeTestCase):
     """Tests for SalesOrder.auto_allocate_stock()."""

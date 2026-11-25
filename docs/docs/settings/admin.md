@@ -26,7 +26,7 @@ InvenTree provides multiple administration interfaces with different safety leve
 
 The Admin Center is the main interface for managing InvenTree. It provides a user-friendly interface for managing all aspects of the system, including:
 
-- Users / Groups
+- [Users / Groups](./permissions.md#managing-users-and-groups)
 - Data import / export
 - Customisation (e.g. project codes, custom states, parameters and units)
 - Operational controls (e.g. background tasks, errors, currencies, identity federation controls)

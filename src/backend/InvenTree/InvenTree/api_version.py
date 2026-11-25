@@ -1,13 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 584
+INVENTREE_API_VERSION = 585
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v584 -> 2026-11-22 : https://github.com/inventree/InvenTree/pull/13294
+v585 -> 2026-11-25 : https://github.com/inventree/InvenTree/pull/13294
     - Adds StockItemCostEntry and StockItemCost (summary) models to the "pricing" app
     - Access to these endpoints requires the "pricing" role, and the "stock" role (view to read, change to write)
     - Adds optional "pricing_detail" field to the StockItem API (requires the "pricing" view role)
@@ -21,6 +21,10 @@ v584 -> 2026-11-22 : https://github.com/inventree/InvenTree/pull/13294
     - The "source" and "source_data" fields of /api/pricing/stock-cost-entry/ are read-only - entries created via the API are always "manual" entries
     - Adds data export and import support for stock item cost entries ("stockitemcostentry" import model type, which requires the "pricing" change and "stock" change permissions)
     - Adds the read-only "source_text" field (human readable label for the "source" field) to /api/pricing/stock-cost-entry/
+
+v584 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/13346
+    - Adds "search_fields" query parameter to list endpoints, to limit a search to a subset of the searchable fields
+    - Adds "search_fields" information to the OPTIONS response for list endpoints
 
 v583 -> 2026-11-20 : https://github.com/inventree/InvenTree/issues/12121
     - Adds parameter support to the StockLocationType model and API endpoints
