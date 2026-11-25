@@ -148,7 +148,9 @@ export function usePartFields({
 
     // Additional fields for creation
     if (create && !virtual) {
-      fields.copy_category_parameters = {};
+      fields.copy_category_parameters = {
+        value: globalSettings.isSet('PART_CATEGORY_PARAMETERS', true)
+      };
 
       if (globalSettings.isSet('PART_CREATE_INITIAL')) {
         fields.initial_stock = {
@@ -168,7 +170,7 @@ export function usePartFields({
         };
       }
 
-      if (purchaseable) {
+      if (purchaseable && globalSettings.isSet('PART_CREATE_SUPPLIER', true)) {
         fields.initial_supplier = {
           icon: <IconBuildingStore />,
           children: {
@@ -212,7 +214,7 @@ export function usePartFields({
             value: globalSettings.isSet('PART_COPY_PARAMETERS')
           },
           copy_tests: {
-            value: true,
+            value: globalSettings.isSet('PART_COPY_TESTS', true),
             hidden: !duplicatePartInstance?.testable
           }
         }
