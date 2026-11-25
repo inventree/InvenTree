@@ -11,7 +11,7 @@ import {
   Tooltip
 } from '@mantine/core';
 import { IconCamera, IconScan } from '@tabler/icons-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Boundary } from '@lib/components/Boundary';
 import { useLocalStorage } from '@mantine/hooks';
@@ -25,6 +25,7 @@ export type BarcodeInputProps = {
   error?: string;
   label?: string;
   actionText?: string;
+  resetKey?: number;
 };
 
 export function BarcodeInput({
@@ -32,11 +33,18 @@ export function BarcodeInput({
   error,
   processing,
   label = t`Barcode`,
-  actionText = t`Scan`
+  actionText = t`Scan`,
+  resetKey
 }: Readonly<BarcodeInputProps>) {
   const globalSettings = useGlobalSettingsState();
 
   const [barcode, setBarcode] = useState<string>('');
+
+  useEffect(() => {
+    if (resetKey) {
+      setBarcode('');
+    }
+  }, [resetKey]);
 
   const [inputType, setInputType] = useLocalStorage<string | null>({
     key: 'barcodeInputType',
