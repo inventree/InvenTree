@@ -248,6 +248,7 @@ function deltaLabel(key: string): string {
     purchaseorder: t`Purchase Order`,
     quantity: t`Quantity`,
     removed: t`Removed`,
+    repairorder: t`Repair Order`,
     returnorder: t`Return Order`,
     salesorder: t`Sales Order`,
     stockitem: t`Stock Item`,

@@ -65,6 +65,7 @@ Customize settings for search results:
 {{ usersetting("SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS") }}
 {{ usersetting("SEARCH_PREVIEW_SHOW_RETURN_ORDERS") }}
 {{ usersetting("SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_REPAIR_ORDERS") }}
 
 ### Notifications
 

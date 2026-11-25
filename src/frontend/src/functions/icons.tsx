@@ -163,6 +163,7 @@ const icons: InvenTreeIconType = {
   internal_company: IconBuildingSkyscraper,
   purchase_orders: IconShoppingCart,
   return_orders: IconTruckReturn,
+  repair_orders: IconTool,
   transfer_orders: IconTransfer,
   sales_orders: IconTruckDelivery,
   scheduling: IconCalendarStats,

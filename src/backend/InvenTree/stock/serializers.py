@@ -358,6 +358,7 @@ class StockItemSerializer(
             'build',
             'consumed_by',
             'consumed_by_detail',
+            'consumed_by_repair',
             'customer',
             'delete_on_deplete',
             'expiry_date',
@@ -547,6 +548,7 @@ class StockItemSerializer(
             'customer',
             'belongs_to',
             'consumed_by',
+            'consumed_by_repair',
         )
 
         # Annotate the queryset with the total allocated quantity
@@ -570,6 +572,7 @@ class StockItemSerializer(
                 Decimal(0),
             )
             + Coalesce(SubquerySum('allocations__quantity'), Decimal(0))
+            + Coalesce(SubquerySum('repair_order_allocations__quantity'), Decimal(0))
         )
 
         # Annotate the queryset with the number of tracking items
@@ -2185,6 +2188,7 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
         request = self.context['request']
 
         data = self.validated_data
+        items = data['items']
         notes = data.get('notes', '')
 
         with (
@@ -2193,8 +2197,24 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
             write_batched(),
             batch_offload_tasks(),
         ):
-            for item in data['items']:
+            stock_items = {item['pk'].pk: item['pk'] for item in items}
+            pks = stock_items.keys()
+
+            # Lock in primary key order before fetching allocation totals.
+            locked_quantities = dict(
+                StockItem.objects
+                .select_for_update()
+                .filter(pk__in=pks)
+                .order_by('pk')
+                .values_list('pk', 'quantity')
+            )
+            allocated_quantities = StockItem.bulk_allocation_count([
+                stock_items[pk] for pk in locked_quantities
+            ])
+
+            for item in items:
                 stock_item = item['pk']
+                stock_pk = stock_item.pk
                 quantity = item['quantity']
 
                 # Ignore in this case - no stock to remove
@@ -2208,14 +2228,24 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
                     if field_value := item.get(field_name, None):
                         extra[field_name] = field_value
 
-                if not stock_item.lock_quantity():
+                if stock_pk not in locked_quantities:
                     continue
 
+                stock_item.quantity = locked_quantities[stock_pk]
+
                 validate_allocation_boundary(
-                    quantity, stock_item.quantity, stock_item.allocation_count()
+                    quantity,
+                    stock_item.quantity,
+                    allocated_quantities.get(stock_pk, Decimal(0)),
                 )
 
                 stock_item.take_stock(quantity, request.user, notes=notes, **extra)
+
+                # Repeated rows must see the updated quantity or deletion.
+                if stock_item.pk is None:
+                    locked_quantities.pop(stock_pk)
+                else:
+                    locked_quantities[stock_pk] = stock_item.quantity
 
 
 class StockTransferSerializer(StockAdjustmentSerializer):

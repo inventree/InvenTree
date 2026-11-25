@@ -29,3 +29,9 @@ Read more about stock allocation in the [Stock Allocation documentation](./alloc
 The reverse process is also supported - an assembled stock item can be broken back down into its component parts, based on its BOM. This is useful for reworking or scrapping an assembly, or for splitting a bundled "kit" product purchased from a supplier into its individual components.
 
 Read more about this process in the [Stock Disassembly documentation](../stock/disassemble.md).
+
+### Repair Orders
+
+InvenTree supports the creation of Repair Orders, which are used to manage the process of repairing or reworking existing stock items. Repair Orders track the parts consumed during a repair and can optionally be linked to a customer.
+
+Read more about repair orders in the [Repair Order documentation](./repair.md).

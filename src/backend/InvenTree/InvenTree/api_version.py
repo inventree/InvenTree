@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 584
+INVENTREE_API_VERSION = 585
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v585 -> 2026-11-25 : https://github.com/inventree/InvenTree/pull/12072
+    - Adds API endpoints for RepairOrder, RepairOrderLineItem, and RepairOrderAllocation models
+    - RepairOrder status transitions use the generic transition API (adds /api/build/repair/<id>/_transitions/)
+    - Adds "consumed_by_repair" field (and filter) to the StockItem API
 
 v584 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/13346
     - Adds "search_fields" query parameter to list endpoints, to limit a search to a subset of the searchable fields

@@ -73,4 +73,19 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'flags': [SettingFlag.TOGGLE],
     },
+    'REPAIRORDER_ENABLED': {
+        'name': _('Enable Repair Orders'),
+        'description': _('Enable repair order functionality in the user interface'),
+        'validator': bool,
+        'default': False,
+        'flags': [SettingFlag.TOGGLE],
+    },
+    'REPAIRORDER_REFERENCE_PATTERN': {
+        'name': _('Repair Order Reference Pattern'),
+        'description': _(
+            'Required pattern for generating Repair Order reference field'
+        ),
+        'default': 'RO-{ref:04d}',
+        'validator': build.validators.validate_repair_order_reference_pattern,
+    },
 }
