@@ -10,6 +10,12 @@ In reads the exported data file, to ensure that:
 - The file contains the expected plugin configuration
 - The file contains the expected plugin database records
 
+When '--exclude-plugins' is passed, the inverse is checked instead:
+
+- The plugin app is *not* listed in the metadata installed_apps
+- No plugin configuration / settings records (plugin.*) are present
+- No plugin app database records are present
+
 It can also optionally check the presence / absence of several categories of
 data which 'export-records' can include or exclude via --include-x /
 --exclude-x flags (email logs, API tokens, SSO app/token data, user sessions,
@@ -151,7 +157,11 @@ if __name__ == '__main__':
     found_metadata = False
     found_installed_apps = False
     found_plugin_config = False
+    found_plugin_app = False
     plugin_data_records = {}
+
+    # Count of all records belonging to the 'plugin' app, or to the plugin's own app
+    plugin_model_counts: dict[str, int] = {}
 
     # Inspect the data and check that it has the expected structure and content.
     for entry in data:
@@ -160,7 +170,7 @@ if __name__ == '__main__':
             print('Found metadata entry')
             found_metadata = True
 
-            expected_apps = ['InvenTree', 'allauth', 'dbbackup', PLUGIN_KEY]
+            expected_apps = ['InvenTree', 'allauth', 'dbbackup', 'plugin']
 
             apps = entry.get('installed_apps', [])
 
@@ -170,8 +180,15 @@ if __name__ == '__main__':
                     exit(1)
 
             found_installed_apps = True
+            found_plugin_app = PLUGIN_KEY in apps
+            continue
 
-        elif entry.get('model', None) == 'plugin.pluginconfig':
+        model = entry.get('model', None) or ''
+
+        if model.startswith(('plugin.', f'{PLUGIN_KEY}.')):
+            plugin_model_counts[model] = plugin_model_counts.get(model, 0) + 1
+
+        if entry.get('model', None) == 'plugin.pluginconfig':
             key = entry['fields']['key']
 
             if key == PLUGIN_SLUG:
@@ -189,14 +206,18 @@ if __name__ == '__main__':
         exit(1)
 
     if not found_installed_apps:
-        print(
-            f'Error: Plugin "{PLUGIN_KEY}" not found in installed apps list in metadata'
-        )
+        print('Error: No installed apps list found in metadata')
         exit(1)
 
     # Plugin data is included by default (export-records only excludes it when
     # given --exclude-plugins), so preserve that as the default expectation here
     if not args.exclude_plugins:
+        if not found_plugin_app:
+            print(
+                f'Error: Plugin app "{PLUGIN_KEY}" not found in installed apps list in metadata'
+            )
+            exit(1)
+
         if not found_plugin_config:
             print(f'Error: No plugin configuration found for plugin "{PLUGIN_KEY}"')
             exit(1)
@@ -210,10 +231,19 @@ if __name__ == '__main__':
                     f'Error: Expected plugin record with key "{key}" not found in exported data'
                 )
                 exit(1)
-    elif found_plugin_config:
-        print('Error: Plugin data was found, but should have been excluded')
-        exit(1)
     else:
+        if found_plugin_app:
+            print(
+                f'Error: Plugin app "{PLUGIN_KEY}" found in installed apps list in metadata, but should have been excluded'
+            )
+            exit(1)
+
+        if plugin_model_counts:
+            print(
+                f'Error: Plugin data was found, but should have been excluded: {plugin_model_counts}'
+            )
+            exit(1)
+
         print('Confirmed plugin data was correctly excluded')
 
     # Content-excludes checks - only run for '--check-x' flags that were actually passed

@@ -555,9 +555,27 @@ def manage_interactive(cmd: str, env=None, verbose: bool = False):
         raise Exit(code=result.returncode)
 
 
-def installed_apps(c) -> list[str]:
-    """Returns a list of all installed apps, including plugins."""
-    result = manage(c, 'list_apps', pty=False, hide=True)
+def installed_apps(
+    c, labels: bool = False, plugins_only: bool = False, exclude_plugins: bool = False
+) -> list[str]:
+    """Returns a list of all installed apps, including plugins.
+
+    Arguments:
+        c: Command line context.
+        labels: If True, return app labels (e.g. 'auth') rather than full app names (e.g. 'django.contrib.auth').
+        plugins_only: If True, only return apps which are provided by plugins.
+        exclude_plugins: If True, do not return apps which are provided by plugins.
+    """
+    cmd = 'list_apps'
+
+    if labels:
+        cmd += ' --labels'
+    if plugins_only:
+        cmd += ' --plugins-only'
+    if exclude_plugins:
+        cmd += ' --exclude-plugins'
+
+    result = manage(c, cmd, pty=False, hide=True)
     output = result.stdout.strip()
 
     # Look for the expected pattern
@@ -566,7 +584,8 @@ def installed_apps(c) -> list[str]:
     if not match:
         raise ValueError(f"Unexpected output from 'list_apps' command: {output}")
 
-    return match[0].split(',')
+    # An empty list is output as '>>>  <<<' - filter out the empty string
+    return [app for app in match[0].split(',') if app]
 
 
 def run_install(
@@ -1278,6 +1297,12 @@ def export_records(
         allow_sso=include_sso,
     )
 
+    if exclude_plugins:
+        # Also exclude any data from apps provided by plugins (AppMixin)
+        if plugin_labels := installed_apps(c, labels=True, plugins_only=True):
+            info(f'Excluding plugin apps: {", ".join(plugin_labels)}')
+            excludes += ' ' + ' '.join(f'--exclude {label}' for label in plugin_labels)
+
     with tempfile.NamedTemporaryFile(
         suffix='.json', encoding='utf-8', mode='w+t', delete=True
     ) as tmpfile:
@@ -1304,7 +1329,7 @@ def export_records(
         'django_version': get_django_version(),
         'python_version': python_version(),
         'source_commit': get_commit_hash(),
-        'installed_apps': installed_apps(c),
+        'installed_apps': installed_apps(c, exclude_plugins=exclude_plugins),
     }
 
     def entries_out():
@@ -1502,6 +1527,16 @@ def import_records(
     # A dict containing metadata associated with the data file
     metadata = {}
 
+    # When excluding plugins, records belonging to plugin-provided apps (AppMixin)
+    # must also be skipped - those apps will not be installed in the target
+    # environment (as the plugin configs are not imported), and so the records
+    # would otherwise fail with "Invalid model identifier"
+    local_app_labels: Optional[set[str]] = None
+    skipped_records: dict[str, int] = {}
+
+    if exclude_plugins:
+        local_app_labels = set(installed_apps(c, labels=True))
+
     def load_data(
         title: str,
         data: list[dict],
@@ -1553,6 +1588,18 @@ def import_records(
             continue
 
         if model := entry.get('model', None):
+            if exclude_plugins:
+                app_label = model.split('.')[0]
+
+                # Skip records for apps which are not installed (i.e. plugin apps)
+                if app_label not in local_app_labels:
+                    skipped_records[model] = skipped_records.get(model, 0) + 1
+                    continue
+
+                # Remove references to plugin configs which are not being imported
+                if model == 'common.selectionlist':
+                    entry['fields']['source_plugin'] = None
+
             # Clear out any permissions specified for a group
             # (these are regenerated after import)
             if model == 'auth.group':
@@ -1579,6 +1626,11 @@ def import_records(
             print(entry)
             if strict:
                 sys.exit(1)
+
+    for model, count in sorted(skipped_records.items()):
+        warning(
+            f"Skipping {count} '{model}' records - app is not installed (--exclude-plugins)"
+        )
 
     # Check the metadata associated with the imported data
     # Do not validate the 'apps' list yet - as the plugins have not yet been loaded
