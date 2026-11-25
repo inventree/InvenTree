@@ -1209,6 +1209,7 @@ function StockOperationsRow({
   merge = false,
   transferMerge = false,
   returnStock = false,
+  focusQuantity = false,
   record
 }: {
   props: TableFieldRowProps;
@@ -1219,6 +1220,7 @@ function StockOperationsRow({
   merge?: boolean;
   transferMerge?: boolean;
   returnStock?: boolean;
+  focusQuantity?: boolean;
   record?: any;
 }) {
   const rowId = props.rowId;
@@ -1346,6 +1348,7 @@ function StockOperationsRow({
           <Table.Td>
             <TableFieldQuantityInput
               min={0}
+              autoFocus={focusQuantity}
               value={quantity ?? ''}
               onChange={(value) => {
                 setQuantity(value);
@@ -1620,6 +1623,7 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
             setMax
             changeStatus
             add
+            focusQuantity={row.rowId === initialValue[0]?.pk}
             key={row.rowId}
             record={record}
           />
@@ -1669,6 +1673,7 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
             changeStatus
             props={row}
             add
+            focusQuantity={row.rowId === initialValue[0]?.pk}
             key={row.rowId}
             record={record}
           />
@@ -1708,6 +1713,7 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
           <StockOperationsRow
             props={row}
             changeStatus
+            focusQuantity={row.rowId === initialValue[0]?.pk}
             key={row.rowId}
             record={records[row.item?.pk]}
           />

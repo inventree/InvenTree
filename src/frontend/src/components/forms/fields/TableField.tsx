@@ -458,15 +458,30 @@ export function TableFieldQuantityInput({
   value,
   onChange,
   error,
-  min
+  min,
+  autoFocus = false
 }: {
   value: number | '';
   onChange: (value: number | '') => void;
   error?: string;
   min?: number;
+  autoFocus?: boolean;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Focus the input and select its contents when first rendered,
+  // allowing the user to immediately type a new value
+  useEffect(() => {
+    if (autoFocus) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+  }, [autoFocus]);
+
   return (
     <NumberInput
+      ref={inputRef}
+      data-autofocus={autoFocus || undefined}
       radius='sm'
       aria-label='number-field-quantity'
       min={min}
