@@ -124,12 +124,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'PART_SHOW_RELATED': {
-        'name': _('Show related parts'),
-        'description': _('Display related parts for a part'),
-        'default': True,
-        'validator': bool,
-    },
     'PART_CREATE_INITIAL': {
         'name': _('Initial Stock Data'),
         'description': _('Allow creation of initial stock when adding a new part'),

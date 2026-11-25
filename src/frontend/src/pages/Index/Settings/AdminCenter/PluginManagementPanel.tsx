@@ -27,8 +27,7 @@ export const PLUGIN_SETTINGS_KEYS = [
   'ENABLE_PLUGINS_NAVIGATION',
   'ENABLE_PLUGINS_APP',
   'ENABLE_PLUGINS_MAILS',
-  'PLUGIN_ON_STARTUP',
-  'PLUGIN_UPDATE_CHECK'
+  'PLUGIN_ON_STARTUP'
 ];
 
 export default function PluginManagementPanel() {

@@ -70,12 +70,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': '',
         'validator': common.validators.validate_icon,
     },
-    'STOCK_SHOW_INSTALLED_ITEMS': {
-        'name': _('Show Installed Stock Items'),
-        'description': _('Display installed stock items in stock tables'),
-        'default': False,
-        'validator': bool,
-    },
     'STOCK_ENFORCE_BOM_INSTALLATION': {
         'name': _('Check BOM when installing items'),
         'description': _(

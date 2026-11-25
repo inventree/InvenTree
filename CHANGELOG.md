@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Removes settings which have had no effect since the legacy user interface was removed (or were never implemented): `STOCK_SHOW_INSTALLED_ITEMS`, `PART_SHOW_RELATED`, `BARCODE_INPUT_DELAY` and `PLUGIN_UPDATE_CHECK` (global), and `REPORT_INLINE` and `LABEL_INLINE` (user).
+
 ## 1.7.0 - 2026-11.03
 
 ### Breaking Changes
