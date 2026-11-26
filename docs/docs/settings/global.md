@@ -63,7 +63,7 @@ Each InvenTree server has an *instance ID*, which uniquely identifies that insta
 
 If `INVENTREE_ANNOUNCE_ID` is enabled, the instance ID is included (as the `id` field) in the response of the `/api/` endpoint. This endpoint does not require authentication, so the ID becomes visible to anyone who can reach the server. If the setting is disabled (the default), the `id` field is `null`.
 
-This setting can also be set with the `INVENTREE_ANNOUNCE_ID` environment variable, which takes precedence over the database value. Boolean values such as `true` / `false`, `1` / `0` and `yes` / `no` are accepted.
+This setting can also be set with the `INVENTREE_ANNOUNCE_ID` environment variable.
 
 !!! tip "Prefer Link Proofs"
     Announcing the ID also allows anyone to calculate link proofs for this server. If another system only needs to confirm that it is talking to a known server, leave this setting disabled and use a link proof instead.
