@@ -1,3 +1,16 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import { Boundary } from '@lib/components/Boundary';
+import { ButtonMenu } from '@lib/components/ButtonMenu';
+import { SearchInput } from '@lib/components/SearchInput';
+import { StylishText } from '@lib/components/StylishText';
+import { TableColumnSelect } from '@lib/components/TableColumnSelect';
+import { resolveItem } from '@lib/functions/Conversion';
+import type { TableFilter } from '@lib/types/Filters';
+import type {
+  InvenTreeTableProps,
+  TableSearchField,
+  TableState
+} from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -12,8 +25,10 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import {
   IconBarcode,
+  IconBolt,
   IconDownload,
   IconExclamationCircle,
   IconFilter,
@@ -21,22 +36,14 @@ import {
   IconTrash
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Fragment } from 'react/jsx-runtime';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import { Boundary } from '@lib/components/Boundary';
-import { ButtonMenu } from '@lib/components/ButtonMenu';
-import { SearchInput } from '@lib/components/SearchInput';
-import { StylishText } from '@lib/components/StylishText';
-import { TableColumnSelect } from '@lib/components/TableColumnSelect';
-import { resolveItem } from '@lib/functions/Conversion';
-import type { TableFilter } from '@lib/types/Filters';
-import type { TableSearchField, TableState } from '@lib/types/Tables';
-import type { InvenTreeTableProps } from '@lib/types/Tables';
-import { showNotification } from '@mantine/notifications';
 import useDataExport from '../../hooks/UseDataExport';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
+import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { PrintingActions } from '../buttons/PrintingActions';
+import { ApiIcon } from '../items/ApiIcon';
+import type { TableActionUIFeature } from '../plugins/PluginUIFeatureTypes';
 import { FilterPreview, FilterSelectDrawer } from './FilterSelectDrawer';
 import { TableSearchFieldSelect } from './TableSearchFieldSelect';
 
@@ -70,6 +77,20 @@ export default function InvenTreeTableHeader({
   searchFields: string[];
   setSearchFields: (fields: string[]) => void;
 }>) {
+  const location = useLocation();
+  const pluginActions = usePluginUIFeature<TableActionUIFeature>({
+    featureType: 'table_action',
+    enabled:
+      !!(tableProps.enableSelection || tableProps.enableBulkDelete) &&
+      !!(tableProps.modelType || tableProps.pluginTableId),
+    context: {
+      location: location.pathname,
+      model_type: tableProps.modelType,
+      table_url: tableUrl,
+      table_id: tableProps.pluginTableId
+    }
+  });
+
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
@@ -277,6 +298,45 @@ export default function InvenTreeTableHeader({
               }}
             />
           )}
+          {pluginActions
+            .filter(({ options: action }) => !!action.source)
+            .map(({ options: action, func }) => (
+              <ActionButton
+                key={`${action.plugin_name}-${action.key}`}
+                tooltip={action.title}
+                tooltipAlignment='bottom'
+                icon={
+                  action.icon ? <ApiIcon name={action.icon} /> : <IconBolt />
+                }
+                color={action.options?.color}
+                disabled={
+                  (action.options?.requires_selection ?? true) &&
+                  !tableState.hasSelectedRecords
+                }
+                onClick={() => {
+                  const selectedIds = [...tableState.selectedIds];
+                  void Promise.resolve()
+                    .then(() =>
+                      func({
+                        selectedIds,
+                        modelType: tableProps.modelType,
+                        tableId: tableProps.pluginTableId,
+                        tableUrl,
+                        refreshTable: tableState.refreshTable,
+                        clearSelectedRecords: tableState.clearSelectedRecords
+                      })
+                    )
+                    .catch((error) => {
+                      console.error('Plugin table action failed:', error);
+                      showNotification({
+                        title: t`Plugin action failed`,
+                        message: action.title,
+                        color: 'red'
+                      });
+                    });
+                }}
+              />
+            ))}
           {tableProps.tableActions?.map((group, idx) => (
             <Fragment key={idx}>{group}</Fragment>
           ))}
