@@ -216,12 +216,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'default': False,
     },
-    'INVENTREE_RESTRICT_ABOUT': {
-        'name': _('Restrict showing `about`'),
-        'description': _('Show the `about` modal only to superusers'),
-        'validator': bool,
-        'default': False,
-    },
     'INVENTREE_SHOW_SUPERUSER_BANNER': {
         'name': _('Show superuser banner'),
         'description': _('Show a warning banner in the UI when logged in as superuser'),
