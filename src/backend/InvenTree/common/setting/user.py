@@ -299,7 +299,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'NOTIFICATION_ERROR_REPORT': {
         'name': _('Receive error reports'),
-        'description': _('Receive notifications for system errors'),
+        'description': _('Receive notifications for system errors (staff users only)'),
         'default': True,
         'validator': bool,
     },
