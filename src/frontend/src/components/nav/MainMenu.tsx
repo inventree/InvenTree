@@ -120,13 +120,15 @@ export function MainMenu() {
           >
             <Trans>Change Color Mode</Trans>
           </Menu.Item>
-          <Menu.Item
-            onClick={() => aboutInvenTree()}
-            leftSection={<IconInfoCircle />}
-            id='tip-ftu-about'
-          >
-            <Trans>About InvenTree</Trans>
-          </Menu.Item>
+          {user?.is_staff && (
+            <Menu.Item
+              onClick={() => aboutInvenTree()}
+              leftSection={<IconInfoCircle />}
+              id='tip-ftu-about'
+            >
+              <Trans>About InvenTree</Trans>
+            </Menu.Item>
+          )}
           <Menu.Divider />
           <Menu.Item
             leftSection={<IconLogout />}

@@ -55,7 +55,6 @@ export default function SystemSettings() {
                 'INVENTREE_LINK_PROOF',
                 'INVENTREE_SHOW_SUPERUSER_BANNER',
                 'INVENTREE_SHOW_ADMIN_BANNER',
-                'INVENTREE_RESTRICT_ABOUT',
                 'INVENTREE_UPLOAD_MAX_SIZE',
                 'INVENTREE_STRICT_URLS'
               ]}

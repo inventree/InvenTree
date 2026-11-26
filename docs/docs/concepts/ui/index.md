@@ -63,7 +63,7 @@ The user menu provides access to the following items:
 - **Admin Center:** Access to the [admin center](../../settings/admin.md#admin-center) for operational administration
 - **Database Admin Interface:** Low level administration via the [Database Admin Interface](../../settings/db_admin.md). *Note: Access may be restricted based on user permissions.*
 - **Change Color Mode:** Toggle between light and dark color modes.
-- **About InvenTree:** View version and license information about InvenTree.
+- **About InvenTree:** View version and license information about InvenTree. *Note: Only available to staff users.*
 - **Logout:** Log out of the InvenTree system.
 
 ### Page Panels
