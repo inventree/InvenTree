@@ -72,52 +72,6 @@ This setting can also be set with the `INVENTREE_ANNOUNCE_ID` environment variab
 
 A link proof allows another system to verify the identity of this server, *without* the instance ID being sent over the network. It is intended for a system which already knows the instance ID (for example, because it was shared out-of-band when the two systems were first linked), and wants to confirm that it is still talking to the same server.
 
-If `INVENTREE_LINK_PROOF` is enabled (the default), a request to the `/api/` endpoint with a `link_nonce` query parameter returns a `link` value in the response:
-
-```
-GET /api/?link_nonce=<nonce>
-```
-
-- The nonce must be 1 to 64 characters long, and may contain only letters, digits, `-` and `_`.
-- The verifying system should choose a new random nonce for each request.
-- If link proofs are disabled, the nonce is invalid, or no instance ID exists yet, the `link` value is `null`.
-
-The proof is calculated as follows:
-
-1. A key is derived from the instance ID using HKDF-SHA256 (no salt, `info` = `inventree-link-v1`, 32 byte output).
-2. An HMAC-SHA256 is calculated with this key, over the current month in UTC (formatted as `YYYY-MM`) followed by the nonce.
-3. The proof is the first 32 characters of the hexadecimal digest.
-
-The verifying system performs the same calculation with its copy of the instance ID, and checks that the result matches the returned `link` value. An example implementation in Python:
-
-```python
-import hashlib
-import hmac
-from datetime import datetime, timezone
-
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-
-
-def expected_proof(instance_id: str, nonce: str, epoch: str | None = None) -> str:
-    """Calculate the expected link proof for a given instance ID and nonce."""
-    if epoch is None:
-        epoch = datetime.now(timezone.utc).strftime('%Y-%m')
-
-    key = HKDF(
-        algorithm=hashes.SHA256(), length=32, salt=None, info=b'inventree-link-v1'
-    ).derive(instance_id.encode('utf-8'))
-
-    message = (epoch + nonce).encode('utf-8')
-    return hmac.new(key, message, hashlib.sha256).hexdigest()[:32]
-```
-
-!!! info "Month Boundaries"
-    Because the proof includes the current month, a request made at the very end of a month may be answered with the next month's value (or the other way around). A verifier may also accept the proof for the adjacent month to allow for this.
-
-This setting can also be set with the `INVENTREE_LINK_PROOF` environment variable, which takes precedence over the database value.
-
-
 ### Login Settings
 
 Change how logins, password-forgot, user registrations are handled:
