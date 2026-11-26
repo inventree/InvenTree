@@ -1,0 +1,78 @@
+# Detect suspicious patterns and flag PRs
+name: Slop Detect
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+    branches: [master]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  detect:
+    name: detect
+    runs-on: ubuntu-latest
+    outputs:
+      ai-commits-found: ${{ steps.ai-check.outputs.ai-commits-found }}
+      count: ${{ steps.ai-check.outputs.count }}
+    steps:
+      - uses: peakoss/anti-slop@57858eead489d08b255fab2af45a506c2ca6eab2 # v0.3.0
+        with:
+          max-failures: 4
+          blocked-terms: |
+            Generated with [Claude Code]
+            claude.ai/code
+            claude.com/claude-code
+            Co-Authored-By: Claude
+            🤖
+          blocked-source-branches: |
+            claude/*
+          failure-add-pr-labels: warn:slop
+          close-pr: true
+          failure-pr-message: |
+            Automation thinks this PR was made largely with AI, if you think this is an error comment on this PR and someone from the team will review.
+            Repeated drive-by slop will get you banned.
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }}
+          allow-unsafe-pr-checkout: true
+      - uses: Jondolf/ai-commit-check@7069d4254c6310cdb0395a6ab0ca1f29af897f83 # v1.0.1
+        id: ai-check
+        with:
+          fail-on-detection: false
+
+  comment:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    needs: detect
+
+    steps:
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        if: needs.detect.outputs.ai-commits-found == 'true'
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Found ${process.env.COUNT} AI commit(s); review your commits and ensure you follow the contribution guidelines.`
+            })
+        env:
+          COUNT: ${{ needs.detect.outputs.count }}
+      - name: AI commit warning
+        if: needs.detect.outputs.ai-commits-found == 'true'
+        run: |
+          echo "::warning::Found $COUNT AI commit(s); review your commits and ensure you follow the contribution guidelines."
+          exit 1
+        env:
+          COUNT: ${{ needs.detect.outputs.count }}
