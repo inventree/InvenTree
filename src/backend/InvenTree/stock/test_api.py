@@ -1232,21 +1232,51 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 28)
 
     def test_filter_stale(self):
-        """Filter StockItem by stale."""
-        response = self.get_stock(stale=True)
-        self.assertEqual(len(response), 29)
+        """Filter StockItem by stale, and check the 'stale' annotation."""
 
-        response = self.get_stock(stale=False)
-        self.assertEqual(len(response), 29)
+        def check_disabled():
+            """When stale detection is disabled, no items are stale."""
+            self.assertEqual(len(self.get_stock(stale=True)), 0)
+
+            response = self.get_stock(stale=False)
+            self.assertEqual(len(response), 29)
+            self.assertFalse(any(item['stale'] for item in response))
+
+        # Disabled by default (STOCK_STALE_DAYS = 0, STOCK_ENABLE_EXPIRY = False)
+        check_disabled()
+
+        # Stale days set, but stock expiry is disabled
+        set_global_setting('STOCK_STALE_DAYS', 10)
+        check_disabled()
+
+        # Stock expiry enabled, but stale days is zero
+        # Expired items must not be reported as stale (previously they were)
+        set_global_setting('STOCK_ENABLE_EXPIRY', True)
+        set_global_setting('STOCK_STALE_DAYS', 0)
+        self.assertGreater(len(self.get_stock(expired=True)), 0)
+        check_disabled()
+
+        # Negative values are not allowed
+        with self.assertRaises(ValidationError):
+            set_global_setting('STOCK_STALE_DAYS', -1)
 
         # Enable the 'stale' feature
-        set_global_setting('STOCK_STALE_DAYS', '10')
-        response = self.get_stock(stale=True)
-        self.assertEqual(len(response), 1)
+        set_global_setting('STOCK_STALE_DAYS', 10)
 
-        response = self.get_stock(stale=False)
-        self.assertEqual(len(response), 28)
-        set_global_setting('STOCK_STALE_DAYS', '0')
+        stale = self.get_stock(stale=True)
+        self.assertEqual(len(stale), 1)
+        self.assertTrue(all(item['stale'] for item in stale))
+
+        not_stale = self.get_stock(stale=False)
+        self.assertEqual(len(not_stale), 28)
+        self.assertFalse(any(item['stale'] for item in not_stale))
+
+        # The model method agrees with the API
+        for item in stale:
+            self.assertTrue(StockItem.objects.get(pk=item['pk']).is_stale())
+
+        set_global_setting('STOCK_STALE_DAYS', 0)
+        set_global_setting('STOCK_ENABLE_EXPIRY', False)
 
     def test_paginate(self):
         """Test that we can paginate results correctly."""
