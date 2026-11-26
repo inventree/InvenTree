@@ -22,7 +22,11 @@ Multiple stock items may share the same batch code without restriction, even acr
 
 #### Generating Batch Codes
 
-Batch codes can be generated automatically based on a provided pattern. The default pattern simply uses the current date-code as the batch number, however this can be customized within a certain scope.
+Batch codes can be generated automatically based on a provided pattern, using the `STOCK_BATCH_CODE_TEMPLATE` setting. By default this pattern is empty, and no batch code is generated. The pattern uses the Django template language, and can make use of the context variables listed below.
+
+For example, the pattern `{% raw %}B{{ year }}-{{ week }}{% endraw %}` would generate a batch code such as `B2024-51`.
+
+If the pattern is invalid, it cannot be saved. If an error occurs while a batch code is being generated, the error is logged and no batch code is assigned. Generated batch codes are truncated to a maximum of 100 characters.
 
 {{ image("stock/batch_code_template.png", title="Batch code pattern") }}
 

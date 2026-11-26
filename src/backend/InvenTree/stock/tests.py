@@ -6,6 +6,7 @@ from decimal import Decimal
 from unittest import mock
 
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db import connection, transaction
 from django.db.models import Sum
@@ -16,10 +17,12 @@ from django_q.models import OrmQ
 from djmoney.money import Money
 from rest_framework.test import APIClient
 
+import InvenTree.helpers
 from audit.helpers import write_batched
 from audit.models import AuditLogEntry
 from build.models import Build
 from common.models import InvenTreeSetting
+from common.settings import set_global_setting
 from company.models import Company
 from InvenTree.unit_test import (
     AdminTestCase,
@@ -31,6 +34,7 @@ from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from plugin.base.event.events import batch_events
 from stock.events import StockEvents
+from stock.generators import generate_batch_code
 from stock.status_codes import StockHistoryCode, StockStatus
 
 from .models import StockItem, StockItemTestResult, StockLocation, StockLocationType
@@ -1419,6 +1423,60 @@ class StockBarcodeTest(StockTestBase):
 
         # Revert the barcode format to the default
         plugin.set_setting('INTERNAL_BARCODE_FORMAT', 'short')
+
+
+class StockBatchCodeTest(StockTestBase):
+    """Tests for the STOCK_BATCH_CODE_TEMPLATE setting and batch code generation."""
+
+    def create_item(self):
+        """Create a new StockItem, using the default batch code."""
+        return StockItem.objects.create(
+            part=Part.objects.get(pk=1), location=StockLocation.objects.get(pk=1)
+        )
+
+    def test_invalid_template_rejected(self):
+        """Templates which cannot be compiled cannot be saved."""
+        for template in ['{% if year %}', '{{ year|notafilter }}', '{% notatag %}']:
+            with self.assertRaises(ValidationError):
+                set_global_setting('STOCK_BATCH_CODE_TEMPLATE', template)
+
+        # Valid (and empty) templates can be saved
+        set_global_setting('STOCK_BATCH_CODE_TEMPLATE', 'B{{ year }}')
+        set_global_setting('STOCK_BATCH_CODE_TEMPLATE', '')
+
+    def test_default_batch_code(self):
+        """Test batch code generation from the template."""
+        # Default: no batch code
+        self.assertEqual(generate_batch_code(), '')
+        self.assertEqual(self.create_item().batch, '')
+
+        set_global_setting('STOCK_BATCH_CODE_TEMPLATE', 'B{{ year }}-{{ week }}')
+        now = InvenTree.helpers.current_time()
+        item = self.create_item()
+        self.assertEqual(item.batch, f'B{now.year}-{now.isocalendar()[1]}')
+
+        # Generated values are truncated to fit the batch field
+        set_global_setting('STOCK_BATCH_CODE_TEMPLATE', 'X' * 150)
+        item = self.create_item()
+        self.assertEqual(item.batch, 'X' * 100)
+
+    def test_template_errors(self):
+        """Errors in the batch code template must not prevent stock creation."""
+        # A template which compiles, but fails when rendered
+        set_global_setting(
+            'STOCK_BATCH_CODE_TEMPLATE', '{% include "missing_template.html" %}'
+        )
+        self.assertEqual(generate_batch_code(), '')
+        self.assertEqual(self.create_item().batch, '')
+
+        # A malformed template stored in the database (bypassing validation)
+        InvenTreeSetting.objects.filter(key='STOCK_BATCH_CODE_TEMPLATE').update(
+            value='{% if year %}'
+        )
+        cache.clear()
+
+        self.assertEqual(generate_batch_code(), '')
+        self.assertEqual(self.create_item().batch, '')
 
 
 class VariantTest(StockTestBase):

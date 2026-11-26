@@ -60,7 +60,7 @@ from order.status_codes import SalesOrderStatusGroups, TransferOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.events import StockEvents
-from stock.generators import generate_batch_code
+from stock.generators import BATCH_CODE_MAX_LENGTH, generate_batch_code
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
 
@@ -1342,7 +1342,7 @@ class StockItem(
 
     batch = models.CharField(
         verbose_name=_('Batch Code'),
-        max_length=100,
+        max_length=BATCH_CODE_MAX_LENGTH,
         blank=True,
         null=True,
         help_text=_('Batch code for this stock item'),
