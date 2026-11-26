@@ -44,7 +44,11 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'PART_IPN_REGEX': {
         'name': _('IPN Regex'),
-        'description': _('Regular expression pattern for matching Part IPN'),
+        'description': _(
+            'Regular expression pattern for matching Part IPN. The pattern may match any part of the IPN: use ^ and $ to match the whole value. Parts without an IPN are not checked.'
+        ),
+        'default': '',
+        'validator': part.validators.validate_ipn_regex,
     },
     'PART_ALLOW_DUPLICATE_IPN': {
         'name': _('Allow Duplicate IPN'),
