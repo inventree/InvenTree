@@ -120,6 +120,7 @@ class InvenTreeConfig(AppConfig):
     def remove_obsolete_tasks(self):
         """Delete any obsolete scheduled tasks in the database."""
         obsolete = [
+            'common.tasks.delete_old_notifications',
             'data_exporter.tasks.cleanup_old_export_outputs',
             'InvenTree.tasks.delete_expired_sessions',
             'label.tasks.cleanup_old_label_outputs',
