@@ -297,9 +297,14 @@ def inventreeDatabase():
 def inventree_identifier(override_announce: bool = False):
     """Return the InvenTree instance ID."""
     from common.settings import get_global_setting
+    from InvenTree.helpers import str2bool
 
-    if override_announce or get_global_setting(
-        'INVENTREE_ANNOUNCE_ID', environment_key='INVENTREE_ANNOUNCE_ID'
+    # Note: Values provided via the environment are strings, and must be parsed
+    # (e.g. INVENTREE_ANNOUNCE_ID=False must *not* announce the instance ID)
+    if override_announce or str2bool(
+        get_global_setting(
+            'INVENTREE_ANNOUNCE_ID', environment_key='INVENTREE_ANNOUNCE_ID'
+        )
     ):
-        return get_global_setting('INVENTREE_INSTANCE_ID', default='')
+        return get_global_setting('INVENTREE_INSTANCE_ID', backup_value='')
     return None

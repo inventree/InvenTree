@@ -21,7 +21,6 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 import common.filters
-import common.models
 import InvenTree.helpers
 import InvenTree.permissions
 import InvenTree.ready
@@ -1059,18 +1058,11 @@ class StockFilter(FilterSet):
 
     def filter_stale(self, queryset, name, value):
         """Filter by stale stock items."""
-        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+        stale_filter = StockItem.get_stale_filter()
 
-        if stale_days <= 0:
-            # No filtering, does not make sense
-            return queryset
-
-        stale_date = InvenTree.helpers.current_date() + timedelta(days=stale_days)
-        stale_filter = (
-            StockItem.IN_STOCK_FILTER
-            & ~Q(expiry_date=None)
-            & Q(expiry_date__lt=stale_date)
-        )
+        if stale_filter is None:
+            # Stale stock detection is disabled: no items are stale
+            return queryset.none() if str2bool(value) else queryset
 
         if str2bool(value):
             return queryset.filter(stale_filter)

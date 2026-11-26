@@ -112,7 +112,7 @@ jobs:
           python-version: ${{ env.python_version }}
           cache: "pip"
       - name: Run pre commit hook Checks
-        uses: j178/prek-action@44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d # v3.1.0
+        uses: j178/prek-action@7b101f8338a08d2bd6fdb3625e4e7692428763a3 # v3.1.1
       - name: Check Version
         run: |
           pip install --require-hashes --only-binary :all: -r contrib/dev_reqs/requirements.txt
@@ -217,7 +217,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@8a211b41745fcecdfa4a86531ffbf08934fb14f6 # v0.1.23
+        uses: oasdiff/oasdiff-action/diff@14ca7009a63c417dfe27b7c44359c4bcccaf8eee # v0.2.1
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"

@@ -1,8 +1,10 @@
 """System settings for the stock app."""
 
+from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 import common.validators
+import stock.validators
 from common.setting.type import InvenTreeSettingsKeyType, SettingFlag
 
 SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
@@ -26,8 +28,11 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'STOCK_BATCH_CODE_TEMPLATE': {
         'name': _('Batch Code Template'),
-        'description': _('Template for generating default batch codes for stock items'),
+        'description': _(
+            'Template for generating default batch codes for stock items (leave blank to disable)'
+        ),
         'default': '',
+        'validator': stock.validators.validate_batch_code_template,
     },
     'STOCK_ENABLE_EXPIRY': {
         'name': _('Stock Expiry'),
@@ -45,11 +50,11 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STOCK_STALE_DAYS': {
         'name': _('Stock Stale Time'),
         'description': _(
-            'Number of days stock items are considered stale before expiring'
+            'Number of days stock items are considered stale before expiring (set to zero to disable). Requires stock expiry to be enabled'
         ),
         'default': 0,
         'units': _('days'),
-        'validator': [int],
+        'validator': [int, MinValueValidator(0)],
     },
     'STOCK_ALLOW_EXPIRED_BUILD': {
         'name': _('Build Expired Stock'),
@@ -69,12 +74,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Stock location default icon (empty means no icon)'),
         'default': '',
         'validator': common.validators.validate_icon,
-    },
-    'STOCK_SHOW_INSTALLED_ITEMS': {
-        'name': _('Show Installed Stock Items'),
-        'description': _('Display installed stock items in stock tables'),
-        'default': False,
-        'validator': bool,
     },
     'STOCK_ENFORCE_BOM_INSTALLATION': {
         'name': _('Check BOM when installing items'),

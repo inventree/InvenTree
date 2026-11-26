@@ -1,13 +1,16 @@
 """Tests for tasks in app common."""
 
+from datetime import timedelta
 from unittest.mock import patch
 
 from django.conf import settings
 from django.test import TestCase
+from django.utils import timezone
 
 import requests
 
 from common.models import NewsFeedEntry, NotificationEntry
+from common.settings import set_global_setting
 from InvenTree.tasks import offload_task
 
 from . import tasks as common_tasks
@@ -16,11 +19,45 @@ from . import tasks as common_tasks
 class TaskTest(TestCase):
     """Tests for common tasks."""
 
-    def test_delete(self):
-        """Test that the task `delete_old_notifications` runs through without errors."""
-        # check empty run
+    def test_delete_old_notifications(self):
+        """Test that old notification entries are deleted according to the setting.
+
+        Previously, a second task in common.tasks deleted entries after a
+        hard-coded 90 days, silently capping INVENTREE_DELETE_NOTIFICATIONS_DAYS.
+        """
+        from InvenTree.tasks import delete_old_notifications
+
+        # The duplicate task has been removed
+        self.assertFalse(hasattr(common_tasks, 'delete_old_notifications'))
+
+        # Empty run
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
-        offload_task(common_tasks.delete_old_notifications)
+        offload_task(delete_old_notifications)
+
+        now = timezone.now()
+
+        for key, age in [('recent', 10), ('medium', 100), ('old', 200)]:
+            NotificationEntry.objects.create(key=key, uid=1)
+            NotificationEntry.objects.filter(key=key).update(
+                updated=now - timedelta(days=age)
+            )
+
+        # Retention period longer than 90 days is respected
+        set_global_setting('INVENTREE_DELETE_NOTIFICATIONS_DAYS', 150)
+        offload_task(delete_old_notifications)
+
+        self.assertEqual(
+            set(NotificationEntry.objects.values_list('key', flat=True)),
+            {'recent', 'medium'},
+        )
+
+        # Shorter retention period
+        set_global_setting('INVENTREE_DELETE_NOTIFICATIONS_DAYS', 30)
+        offload_task(delete_old_notifications)
+
+        self.assertEqual(
+            list(NotificationEntry.objects.values_list('key', flat=True)), ['recent']
+        )
 
 
 class NewsFeedTests(TestCase):

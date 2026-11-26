@@ -1700,6 +1700,11 @@ class Build(
         """
         location = kwargs.get('location')
         exclude_location = kwargs.get('exclude_location')
+
+        # Exclude expired stock (unless it may be used for building)
+        expiry_filter = stock.models.StockItem.allowed_expiry_filter(
+            'STOCK_ALLOW_EXPIRED_BUILD'
+        )
         substitutes = kwargs.get('substitutes', True)
         optional_items = kwargs.get('optional_items', False)
 
@@ -1748,6 +1753,8 @@ class Build(
                 part__virtual=False,
                 serial=output.serial,
             ).exclude(Q(serial=None) | Q(serial=''))
+
+            available_stock = available_stock.filter(expiry_filter)
 
             if location:
                 # Filter only stock items located "below" the specified location
@@ -1831,6 +1838,11 @@ class Build(
         stock_sort_by = kwargs.get('stock_sort_by', stock.models.STOCK_SORT_DEFAULT)
         line_ids = kwargs.get('line_ids')
 
+        # Exclude expired stock (unless it may be used for building)
+        expiry_filter = stock.models.StockItem.allowed_expiry_filter(
+            'STOCK_ALLOW_EXPIRED_BUILD'
+        )
+
         def stock_sort(item, bom_item, variant_parts):
             if item.part == bom_item.sub_part:
                 return 1
@@ -1899,7 +1911,7 @@ class Build(
             # function below, which inspects item.part for every candidate.
             available_stock = stock.models.StockItem.objects.select_related(
                 'part'
-            ).filter(stock.models.StockItem.IN_STOCK_FILTER)
+            ).filter(stock.models.StockItem.IN_STOCK_FILTER, expiry_filter)
 
             # Filter by list of available parts
             available_stock = available_stock.filter(part__in=list(available_parts))
@@ -2378,6 +2390,13 @@ class BuildItem(InvenTreeMetadataModel):
                     _(
                         'Build item must specify a build output, as master part is marked as trackable'
                     )
+                )
+
+            # Expired stock may only be newly allocated if permitted
+            # (existing allocations of since-expired stock remain editable)
+            if self._state.adding:
+                self.stock_item.check_expired_allowed(
+                    'STOCK_ALLOW_EXPIRED_BUILD', field='stock_item'
                 )
 
             self.check_allocated_quantity(raise_error=raise_error)

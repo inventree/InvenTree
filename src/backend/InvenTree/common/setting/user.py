@@ -19,27 +19,11 @@ def label_printer_options():
 
 
 USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
-    'LABEL_INLINE': {
-        'name': _('Inline label display'),
-        'description': _(
-            'Display PDF labels in the browser, instead of downloading as a file'
-        ),
-        'default': True,
-        'validator': bool,
-    },
     'LABEL_DEFAULT_PRINTER': {
         'name': _('Default label printer'),
         'description': _('Configure which label printer should be selected by default'),
         'default': '',
         'choices': label_printer_options,
-    },
-    'REPORT_INLINE': {
-        'name': _('Inline report display'),
-        'description': _(
-            'Display PDF reports in the browser, instead of downloading as a file'
-        ),
-        'default': False,
-        'validator': bool,
     },
     'BARCODE_IN_FORM_FIELDS': {
         'name': _('Barcode Scanner in Form Fields'),
@@ -299,7 +283,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'NOTIFICATION_ERROR_REPORT': {
         'name': _('Receive error reports'),
-        'description': _('Receive notifications for system errors'),
+        'description': _('Receive notifications for system errors (staff users only)'),
         'default': True,
         'validator': bool,
     },

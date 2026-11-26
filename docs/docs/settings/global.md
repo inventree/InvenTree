@@ -98,7 +98,6 @@ Configuration of barcode functionality:
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("BARCODE_ENABLE") }}
-{{ globalsetting("BARCODE_INPUT_DELAY") }}
 {{ globalsetting("BARCODE_WEBCAM_SUPPORT") }}
 {{ globalsetting("BARCODE_SHOW_TEXT") }}
 {{ globalsetting("BARCODE_GENERATION_PLUGIN") }}
@@ -170,7 +169,6 @@ Configuration of label printing:
 {{ globalsetting("PART_ENABLE_REVISION") }}
 {{ globalsetting("PART_REVISION_ASSEMBLY_ONLY") }}
 {{ globalsetting("PART_NAME_FORMAT") }}
-{{ globalsetting("PART_SHOW_RELATED") }}
 {{ globalsetting("PART_CREATE_INITIAL") }}
 {{ globalsetting("PART_CREATE_SUPPLIER") }}
 {{ globalsetting("PART_TEMPLATE") }}
@@ -225,7 +223,6 @@ Configuration of stock item options
 {{ globalsetting("STOCK_ALLOW_EXPIRED_BUILD") }}
 {{ globalsetting("STOCK_OWNERSHIP_CONTROL") }}
 {{ globalsetting("STOCK_LOCATION_DEFAULT_ICON") }}
-{{ globalsetting("STOCK_SHOW_INSTALLED_ITEMS") }}
 {{ globalsetting("STOCK_ENFORCE_BOM_INSTALLATION") }}
 {{ globalsetting("STOCK_ALLOW_OUT_OF_STOCK_TRANSFER") }}
 {{ globalsetting("STOCK_MERGE_ON_TRANSFER") }}
@@ -256,7 +253,6 @@ Refer to the [transfer order settings](../stock/transfer_order.md#transfer-order
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("PLUGIN_ON_STARTUP") }}
-{{ globalsetting("PLUGIN_UPDATE_CHECK") }}
 {{ globalsetting("ENABLE_PLUGINS_URL") }}
 {{ globalsetting("ENABLE_PLUGINS_NAVIGATION") }}
 {{ globalsetting("ENABLE_PLUGINS_APP") }}

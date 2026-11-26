@@ -72,7 +72,7 @@ There are two ways that a stock item can become installed inside another:
 
 Any stock items installed within a particular stock item are displayed on the *Installed Items* tab of the *Stock Item Detail* page.
 
-By default, installed stock items are hidden from general stock item tables (as they are not directly available for use) - this can be changed using the {{ globalsetting("STOCK_SHOW_INSTALLED_ITEMS", short=True) }} setting.
+Installed stock items are not *in stock*, so they are hidden from stock item tables which only display in-stock items (the default). To display installed items in a stock table, remove the *In Stock* filter, or use the *Installed* filter.
 
 ### Removing Installed Items
 
