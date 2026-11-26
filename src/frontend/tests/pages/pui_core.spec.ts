@@ -63,7 +63,30 @@ test('Core - User Profile', async ({ browser }) => {
   await page.getByText(position, { exact: true }).waitFor();
   await page.getByText(location, { exact: true }).waitFor();
 
+  // The user (and profile) is also shown in the preview drawer
+  let response = await api.patch('settings/user/ENABLE_PREVIEW_PANEL/', {
+    data: { value: true }
+  });
+  expect(response.status()).toBe(200);
+
+  // Reload the page (to fetch the updated user setting)
+  await navigate(page, '/core');
+  await loadTab(page, 'Users');
+  await page
+    .getByRole('cell', { name: stevenuser.username, exact: true })
+    .click();
+  await page.getByText(`User - ${stevenuser.username}`).waitFor();
+  await expect(page.getByText('No preview available')).toHaveCount(0);
+  await page.getByText(position, { exact: true }).waitFor();
+  await page.keyboard.press('Escape');
+
+  response = await api.patch('settings/user/ENABLE_PREVIEW_PANEL/', {
+    data: { value: false }
+  });
+  expect(response.status()).toBe(200);
+
   // Disable the display of profile information
+  await navigate(page, `core/user/${me.pk}/`);
   await setSettingState({ setting: 'DISPLAY_PROFILE_INFO', value: false });
 
   await page.reload();
@@ -77,7 +100,7 @@ test('Core - User Profile', async ({ browser }) => {
   // Restore the original state
   await setSettingState({ setting: 'DISPLAY_PROFILE_INFO', value: true });
 
-  const response = await api.patch('user/me/profile/', {
+  response = await api.patch('user/me/profile/', {
     data: { position: '', location: '' }
   });
   expect(response.status()).toBe(200);
