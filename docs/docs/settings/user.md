@@ -80,6 +80,4 @@ Settings for label printing and report generation:
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
-{{ usersetting("REPORT_INLINE") }}
-{{ usersetting("LABEL_INLINE") }}
 {{ usersetting("LABEL_DEFAULT_PRINTER") }}

@@ -124,11 +124,7 @@ export default function UserSettings() {
         name: 'reporting',
         label: t`Reporting`,
         icon: <IconFileAnalytics />,
-        content: (
-          <UserSettingList
-            keys={['REPORT_INLINE', 'LABEL_INLINE', 'LABEL_DEFAULT_PRINTER']}
-          />
-        )
+        content: <UserSettingList keys={['LABEL_DEFAULT_PRINTER']} />
       },
       {
         name: 'plugins',

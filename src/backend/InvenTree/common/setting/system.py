@@ -377,13 +377,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': 100,
         'validator': [int, MinValueValidator(1)],
     },
-    'BARCODE_INPUT_DELAY': {
-        'name': _('Barcode Input Delay'),
-        'description': _('Barcode input processing delay time'),
-        'default': 50,
-        'validator': [int, MinValueValidator(1)],
-        'units': 'ms',
-    },
     'BARCODE_WEBCAM_SUPPORT': {
         'name': _('Barcode Webcam Support'),
         'description': _('Allow barcode scanning via webcam in browser'),
@@ -549,12 +542,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': str(os.getenv('INVENTREE_DOCKER', 'False')).lower() in ['1', 'true'],
         'validator': bool,
         'requires_restart': True,
-    },
-    'PLUGIN_UPDATE_CHECK': {
-        'name': _('Check for plugin updates'),
-        'description': _('Enable periodic checks for updates to installed plugins'),
-        'default': True,
-        'validator': bool,
     },
     # Settings for plugin mixin features
     'ENABLE_PLUGINS_URL': {

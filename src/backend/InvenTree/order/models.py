@@ -1698,7 +1698,11 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 continue
 
             available_stock = stock.models.StockItem.objects.filter(
-                stock.models.StockItem.IN_STOCK_FILTER, part=line_item.part
+                stock.models.StockItem.IN_STOCK_FILTER,
+                stock.models.StockItem.allowed_expiry_filter(
+                    'STOCK_ALLOW_EXPIRED_SALE'
+                ),
+                part=line_item.part,
             )
 
             if location:
@@ -1838,6 +1842,13 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 continue
 
             if not stock_item.in_stock:
+                serials_unavailable.add(serial)
+                continue
+
+            # Expired stock may only be allocated if permitted
+            try:
+                stock_item.check_expired_allowed('STOCK_ALLOW_EXPIRED_SALE')
+            except ValidationError:
                 serials_unavailable.add(serial)
                 continue
 
@@ -3329,6 +3340,14 @@ class SalesOrderAllocation(models.Model):
 
         if self.quantity > self.item.quantity:
             errors['quantity'] = _('Allocation quantity cannot exceed stock quantity')
+
+        # Expired stock may only be newly allocated if permitted
+        # (existing allocations of since-expired stock remain editable)
+        if self._state.adding:
+            try:
+                self.item.check_expired_allowed('STOCK_ALLOW_EXPIRED_SALE')
+            except ValidationError as exc:
+                errors['item'] = exc.messages
 
         # Ensure that we do not 'over allocate' a stock item
         build_allocation_count = self.item.build_allocation_count()

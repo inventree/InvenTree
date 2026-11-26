@@ -186,7 +186,9 @@ export function PartListTable({
             value: globalSettings.isSet('PART_COPY_PARAMETERS')
           },
           copy_tests: {
-            value: selectedPart.testable,
+            value:
+              selectedPart.testable &&
+              globalSettings.isSet('PART_COPY_TESTS', true),
             hidden: !selectedPart.testable
           }
         }

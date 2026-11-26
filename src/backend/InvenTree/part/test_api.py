@@ -3879,3 +3879,45 @@ class PartApiPerformanceTest(PartAPITestBase, InvenTreeAPIPerformanceTestCase):
         url = reverse('api-part-list')
         response = self.get(url, expected_code=200)
         self.assertGreater(len(response.data), 13)
+
+
+class PartIPNEditTest(InvenTreeAPITestCase):
+    """Tests for the PART_ALLOW_EDIT_IPN setting."""
+
+    roles = ['part.add', 'part.change', 'part.view', 'part_category.view']
+
+    def setUp(self):
+        """Create a part with an IPN."""
+        super().setUp()
+        self.part = Part.objects.create(name='IPN Widget', IPN='IPN-001')
+        self.url = reverse('api-part-detail', kwargs={'pk': self.part.pk})
+
+    def test_edit_allowed(self):
+        """The IPN can be changed when permitted (the default)."""
+        set_global_setting('PART_ALLOW_EDIT_IPN', True)
+
+        self.patch(self.url, {'IPN': 'IPN-002'}, expected_code=200)
+        self.part.refresh_from_db()
+        self.assertEqual(self.part.IPN, 'IPN-002')
+
+    def test_edit_blocked(self):
+        """The IPN of an existing part cannot be changed when not permitted."""
+        set_global_setting('PART_ALLOW_EDIT_IPN', False)
+
+        response = self.patch(self.url, {'IPN': 'IPN-002'}, expected_code=400)
+        self.assertIn('cannot be changed', str(response.data['IPN']))
+
+        self.part.refresh_from_db()
+        self.assertEqual(self.part.IPN, 'IPN-001')
+
+        # Other fields can still be edited, and re-submitting the same IPN is fine
+        self.patch(
+            self.url, {'IPN': 'IPN-001', 'description': 'Updated'}, expected_code=200
+        )
+
+        # A new part can still be created with an IPN
+        self.post(
+            reverse('api-part-list'),
+            {'name': 'IPN Widget 2', 'IPN': 'IPN-003', 'description': 'New part'},
+            expected_code=201,
+        )

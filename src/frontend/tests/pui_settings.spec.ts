@@ -125,20 +125,22 @@ test('Settings - User', async ({ browser }) => {
   await page.getByText('Whole Word Search').waitFor();
   await page.getByText('Hide Unavailable Stock Items').waitFor();
 
+  // Toggle boolean setting (twice, to restore the original value)
+  for (let ii = 0; ii < 2; ii++) {
+    await page
+      .getByLabel('setting-SEARCH_WHOLE-wrapper')
+      .locator('span')
+      .nth(1)
+      .click();
+  }
+
   await loadTab(page, 'Notifications');
   await page
     .getByRole('button', { name: 'InvenTree Email Notifications' })
     .waitFor();
 
   await loadTab(page, 'Reporting');
-  await page.getByText('Inline report display').waitFor();
-
-  // Toggle boolean setting
-  await page
-    .getByLabel('setting-LABEL_INLINE-wrapper')
-    .locator('span')
-    .nth(1)
-    .click();
+  await page.getByText('Default label printer').waitFor();
 
   await loadTab(page, 'Plugin Settings');
   await page
@@ -238,7 +240,7 @@ test('Settings - Admin', async ({ browser }) => {
   await page.getByText('Regex Search').waitFor();
   await loadTab(page, 'Notifications');
   await loadTab(page, 'Reporting');
-  await page.getByText('Inline report display').waitFor();
+  await page.getByText('Default label printer').waitFor();
 
   // System Settings
   await page.locator('label').filter({ hasText: 'System Settings' }).click();
