@@ -10,6 +10,9 @@ import common.models
 import InvenTree.exceptions
 import InvenTree.helpers
 
+# Maximum length of the StockItem.batch field
+BATCH_CODE_MAX_LENGTH = 100
+
 
 def generate_batch_code(**kwargs):
     """Generate a default 'batch code' for a new StockItem.
@@ -71,11 +74,23 @@ def generate_batch_code(**kwargs):
             return batch
 
     # If we get to this point, no plugin was able to generate a new batch code
-    batch_template = common.models.InvenTreeSetting.get_setting(
-        'STOCK_BATCH_CODE_TEMPLATE', ''
+    batch_template = str(
+        common.models.InvenTreeSetting.get_setting('STOCK_BATCH_CODE_TEMPLATE', '')
+        or ''
     )
 
-    return Template(batch_template).render(Context(context))
+    if not batch_template.strip():
+        return ''
+
+    try:
+        batch = Template(batch_template).render(Context(context))
+    except Exception:
+        # An invalid template must not prevent stock items from being created
+        InvenTree.exceptions.log_error('generate_batch_code')
+        return ''
+
+    # Ensure the generated value fits within the StockItem.batch field
+    return batch.strip()[:BATCH_CODE_MAX_LENGTH]
 
 
 def generate_serial_number(part=None, quantity=1, **kwargs) -> Optional[str]:

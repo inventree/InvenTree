@@ -3,6 +3,7 @@
 from django.utils.translation import gettext_lazy as _
 
 import common.validators
+import stock.validators
 from common.setting.type import InvenTreeSettingsKeyType, SettingFlag
 
 SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
@@ -26,8 +27,11 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'STOCK_BATCH_CODE_TEMPLATE': {
         'name': _('Batch Code Template'),
-        'description': _('Template for generating default batch codes for stock items'),
+        'description': _(
+            'Template for generating default batch codes for stock items (leave blank to disable)'
+        ),
         'default': '',
+        'validator': stock.validators.validate_batch_code_template,
     },
     'STOCK_ENABLE_EXPIRY': {
         'name': _('Stock Expiry'),
