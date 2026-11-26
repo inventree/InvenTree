@@ -564,6 +564,7 @@ test('Stock - Stock Actions', async ({ browser }) => {
 
   // Add "zero" stock - ensure the quantity stays the same
   await launchStockAction('add');
+  await expect(page.getByLabel('number-field-quantity')).toBeFocused();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Quantity: 123').first().waitFor();
 
@@ -579,6 +580,7 @@ test('Stock - Stock Actions', async ({ browser }) => {
 
   // Remove "zero" stock - ensure the quantity stays the same
   await launchStockAction('remove');
+  await expect(page.getByLabel('number-field-quantity')).toBeFocused();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Quantity: 135').first().waitFor();
 
@@ -592,8 +594,11 @@ test('Stock - Stock Actions', async ({ browser }) => {
   await page.getByText('Damaged').first().waitFor();
 
   // Count stock and change status (reverting to original value)
+  // The quantity field is focused and selected, so typing replaces the value
   await launchStockAction('count');
-  await page.getByLabel('number-field-quantity').fill('123');
+  await expect(page.getByLabel('number-field-quantity')).toBeFocused();
+  await page.keyboard.type('123');
+  await expect(page.getByLabel('number-field-quantity')).toHaveValue('123');
   await setStockStatus('Incoming goods inspection');
   await page.getByRole('button', { name: 'Submit' }).click();
 
