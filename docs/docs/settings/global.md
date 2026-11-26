@@ -52,6 +52,71 @@ Configuration of various scheduled tasks:
 {{ globalsetting("INVENTREE_DELETE_EMAIL_DAYS") }}
 {{ globalsetting("INVENTREE_PROTECT_EMAIL_LOG") }}
 
+#### Instance Identity
+
+Each InvenTree server has an *instance ID*, which uniquely identifies that installation. It is a random UUID, generated automatically the first time it is needed and stored in the database. The following settings control how this identity is shared with other systems.
+
+!!! warning "Keep the Instance ID Private"
+    The instance ID is the shared secret behind [link proofs](#link-proof). Anyone who knows it can produce valid proofs for this server. Do not publish it unless you intend the server identity to be public.
+
+##### Announce ID
+
+If `INVENTREE_ANNOUNCE_ID` is enabled, the instance ID is included (as the `id` field) in the response of the `/api/` endpoint. This endpoint does not require authentication, so the ID becomes visible to anyone who can reach the server. If the setting is disabled (the default), the `id` field is `null`.
+
+This setting can also be set with the `INVENTREE_ANNOUNCE_ID` environment variable, which takes precedence over the database value. Boolean values such as `true` / `false`, `1` / `0` and `yes` / `no` are accepted.
+
+!!! tip "Prefer Link Proofs"
+    Announcing the ID also allows anyone to calculate link proofs for this server. If another system only needs to confirm that it is talking to a known server, leave this setting disabled and use a link proof instead.
+
+##### Link Proof
+
+A link proof allows another system to verify the identity of this server, *without* the instance ID being sent over the network. It is intended for a system which already knows the instance ID (for example, because it was shared out-of-band when the two systems were first linked), and wants to confirm that it is still talking to the same server.
+
+If `INVENTREE_LINK_PROOF` is enabled (the default), a request to the `/api/` endpoint with a `link_nonce` query parameter returns a `link` value in the response:
+
+```
+GET /api/?link_nonce=<nonce>
+```
+
+- The nonce must be 1 to 64 characters long, and may contain only letters, digits, `-` and `_`.
+- The verifying system should choose a new random nonce for each request.
+- If link proofs are disabled, the nonce is invalid, or no instance ID exists yet, the `link` value is `null`.
+
+The proof is calculated as follows:
+
+1. A key is derived from the instance ID using HKDF-SHA256 (no salt, `info` = `inventree-link-v1`, 32 byte output).
+2. An HMAC-SHA256 is calculated with this key, over the current month in UTC (formatted as `YYYY-MM`) followed by the nonce.
+3. The proof is the first 32 characters of the hexadecimal digest.
+
+The verifying system performs the same calculation with its copy of the instance ID, and checks that the result matches the returned `link` value. An example implementation in Python:
+
+```python
+import hashlib
+import hmac
+from datetime import datetime, timezone
+
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+
+
+def expected_proof(instance_id: str, nonce: str, epoch: str | None = None) -> str:
+    """Calculate the expected link proof for a given instance ID and nonce."""
+    if epoch is None:
+        epoch = datetime.now(timezone.utc).strftime('%Y-%m')
+
+    key = HKDF(
+        algorithm=hashes.SHA256(), length=32, salt=None, info=b'inventree-link-v1'
+    ).derive(instance_id.encode('utf-8'))
+
+    message = (epoch + nonce).encode('utf-8')
+    return hmac.new(key, message, hashlib.sha256).hexdigest()[:32]
+```
+
+!!! info "Month Boundaries"
+    Because the proof includes the current month, a request made at the very end of a month may be answered with the next month's value (or the other way around). A verifier may also accept the proof for the adjacent month to allow for this.
+
+This setting can also be set with the `INVENTREE_LINK_PROOF` environment variable, which takes precedence over the database value.
+
 
 ### Login Settings
 
