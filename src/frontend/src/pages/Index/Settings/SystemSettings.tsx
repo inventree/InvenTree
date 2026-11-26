@@ -117,7 +117,6 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'BARCODE_ENABLE',
-              'BARCODE_INPUT_DELAY',
               'BARCODE_WEBCAM_SUPPORT',
               'BARCODE_SHOW_TEXT',
               'BARCODE_GENERATION_PLUGIN',
@@ -230,7 +229,6 @@ export default function SystemSettings() {
                 'PART_ENABLE_LOCKING',
                 'PART_ENABLE_REVISION',
                 'PART_REVISION_ASSEMBLY_ONLY',
-                'PART_SHOW_RELATED',
                 'PART_BOM_ALLOW_ZERO_QUANTITY',
                 'PART_CATEGORY_DEFAULT_ICON'
               ]}
@@ -271,7 +269,6 @@ export default function SystemSettings() {
                 'STOCK_BATCH_CODE_TEMPLATE',
                 'STOCK_OWNERSHIP_CONTROL',
                 'STOCK_LOCATION_DEFAULT_ICON',
-                'STOCK_SHOW_INSTALLED_ITEMS',
                 'STOCK_ENFORCE_BOM_INSTALLATION',
                 'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
                 'STOCK_MERGE_ON_TRANSFER',
@@ -352,6 +349,7 @@ export default function SystemSettings() {
               'PURCHASEORDER_CONVERT_CURRENCY',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
               'PURCHASEORDER_AUTO_COMPLETE',
+              'PURCHASEORDER_MERGE_LINE_ITEMS',
               'PURCHASEORDER_DEFAULT_RECEIVE_LOCATION'
             ]}
           />

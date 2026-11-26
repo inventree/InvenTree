@@ -1,6 +1,5 @@
 """JSON serializers for Stock app."""
 
-from datetime import timedelta
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -586,20 +585,16 @@ class StockItemSerializer(
         )
 
         # Add flag to indicate if the StockItem is stale
-        stale_days = get_global_setting('STOCK_STALE_DAYS')
-        stale_date = InvenTree.helpers.current_date() + timedelta(days=stale_days)
-        stale_filter = (
-            StockItem.IN_STOCK_FILTER
-            & ~Q(expiry_date=None)
-            & Q(expiry_date__lt=stale_date)
-        )
-
-        queryset = queryset.annotate(
-            stale=Case(
+        # (always False if stale stock detection is disabled)
+        if (stale_filter := StockItem.get_stale_filter()) is not None:
+            stale_value = Case(
                 When(stale_filter, then=Value(True, output_field=BooleanField())),
                 default=Value(False, output_field=BooleanField()),
             )
-        )
+        else:
+            stale_value = Value(False, output_field=BooleanField())
+
+        queryset = queryset.annotate(stale=stale_value)
 
         # Annotate with the total number of "installed items"
         queryset = queryset.annotate(installed_items=SubqueryCount('installed_parts'))
@@ -1396,8 +1391,8 @@ class StockChangeStatusSerializer(serializers.Serializer):
                     item.save(add_note=False)
 
 
-class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for StockLocationType model."""
+class StockLocationTypeBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for location type writes and embedded stock location details."""
 
     class Meta:
         """Serializer metaclass."""
@@ -1408,6 +1403,19 @@ class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer
         read_only_fields = ['location_count']
 
     location_count = serializers.IntegerField(read_only=True, allow_null=True)
+
+
+class StockLocationTypeSerializer(
+    InvenTree.serializers.FilterableSerializerMixin, StockLocationTypeBriefSerializer
+):
+    """Serializer for the location type endpoints, with optional parameter data."""
+
+    class Meta(StockLocationTypeBriefSerializer.Meta):
+        """Metaclass options."""
+
+        fields = [*StockLocationTypeBriefSerializer.Meta.fields, 'parameters']
+
+    parameters = common.filters.enable_parameters_filter()
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1556,7 +1564,7 @@ class LocationSerializer(
     icon = serializers.CharField(read_only=True)
 
     # Detail for location type
-    location_type_detail = StockLocationTypeSerializer(
+    location_type_detail = StockLocationTypeBriefSerializer(
         source='location_type', read_only=True, allow_null=True, many=False
     )
 
@@ -1958,9 +1966,8 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
                 check_status=False, check_quantity=False, check_in_production=False
             ):
                 raise ValidationError(_('Stock item is not in stock'))
-        elif self.require_in_stock == False:
-            if stock_item.is_in_stock():
-                raise ValidationError(_('Stock item is already in stock'))
+        elif self.require_in_stock == False and stock_item.is_in_stock():
+            raise ValidationError(_('Stock item is already in stock'))
 
         return stock_item
 
@@ -2181,13 +2188,28 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
             write_batched(),
             batch_offload_tasks(),
         ):
-            for item in data['items']:
+            # Ignore items with no stock to remove
+            items = [
+                item
+                for item in data['items']
+                if item['quantity'] is not None and item['quantity'] > 0
+            ]
+
+            # Lock each row first (items are already sorted by pk - deadlock avoidance),
+            # so that the allocation check below sees the current committed quantity
+            items = [item for item in items if item['pk'].lock_quantity()]
+
+            # Fetch allocated quantities for all items at once (3 queries in total),
+            # rather than calling allocation_count() for each item (3 queries per item)
+            allocated = StockItem.bulk_allocation_count([item['pk'] for item in items])
+
+            for item in items:
                 stock_item = item['pk']
                 quantity = item['quantity']
 
-                # Ignore in this case - no stock to remove
-                if quantity is None or quantity <= 0:
-                    continue
+                validate_allocation_boundary(
+                    quantity, stock_item.quantity, allocated.get(stock_item.pk, 0)
+                )
 
                 # Optional fields
                 extra = {}

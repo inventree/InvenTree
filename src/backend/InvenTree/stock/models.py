@@ -31,7 +31,6 @@ import build.models
 import common.models
 import InvenTree.exceptions
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import order.models
@@ -41,6 +40,18 @@ from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from generic.enums import StringEnum
+from generic.models.base import InvenTreeMetadataModel, InvenTreeTree
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreePathStringMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -49,14 +60,14 @@ from order.status_codes import SalesOrderStatusGroups, TransferOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.events import StockEvents
-from stock.generators import generate_batch_code
+from stock.generators import BATCH_CODE_MAX_LENGTH, generate_batch_code
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
 
 logger = structlog.get_logger('inventree')
 
 
-class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
+class StockLocationType(InvenTreeParameterMixin, InvenTreeMetadataMixin, models.Model):
     """A type of stock location like Warehouse, room, shelf, drawer.
 
     Attributes:
@@ -81,6 +92,11 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
     def __str__(self):
         """String representation of a StockLocationType."""
         return self.name
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        """Delete this type and its parameters in a single transaction."""
+        super().delete(*args, **kwargs)
 
     name = models.CharField(
         blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Name')
@@ -121,14 +137,14 @@ class StockLocationReportContext(report.mixins.BaseReportContext):
 
 
 class StockLocation(
-    InvenTree.models.PluginValidationMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeParameterMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.PathStringMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTreePathStringMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeTree,
 ):
     """Organization tree for StockItem objects.
 
@@ -429,16 +445,15 @@ STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 
 class StockItem(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAuditMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """A StockItem object represents a quantity of physical instances of a part.
 
@@ -574,11 +589,12 @@ class StockItem(
         Arguments:
             ignore_serial_check: If True, allow deletion of serialized stock items regardless of global setting
         """
-        if not ignore_serial_check and not get_global_setting(
-            'STOCK_ALLOW_DELETE_SERIALIZED', cache=False
+        if (
+            not ignore_serial_check
+            and not get_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', cache=False)
+            and self.serialized
         ):
-            if self.serialized:
-                raise ValidationError(_('Serialized stock items cannot be deleted'))
+            raise ValidationError(_('Serialized stock items cannot be deleted'))
 
         with transaction.atomic():
             # Re-link any child items to the parent of this item,
@@ -676,6 +692,86 @@ class StockItem(
             & ~Q(expiry_date=None)
             & Q(expiry_date__lt=InvenTree.helpers.current_date())
         )
+
+    @staticmethod
+    def stale_days() -> int:
+        """Return the number of days before expiry at which stock is considered "stale".
+
+        Returns 0 if stale stock detection is disabled, i.e. if either:
+        - The stock expiry feature is disabled (STOCK_ENABLE_EXPIRY)
+        - The STOCK_STALE_DAYS setting is zero (or negative)
+        """
+        if not get_global_setting('STOCK_ENABLE_EXPIRY', False):
+            return 0
+
+        try:
+            days = int(get_global_setting('STOCK_STALE_DAYS', 0))
+        except (TypeError, ValueError):
+            return 0
+
+        return max(days, 0)
+
+    @classmethod
+    def get_stale_filter(cls) -> Q | None:
+        """A query filter which can be used to filter StockItem objects which are stale.
+
+        Returns None if stale stock detection is disabled (see stale_days).
+        """
+        days = cls.stale_days()
+
+        if days <= 0:
+            return None
+
+        stale_date = InvenTree.helpers.current_date() + timedelta(days=days)
+
+        return (
+            cls.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
+        )
+
+    @staticmethod
+    def allow_expired_stock(setting: str) -> bool:
+        """Return True if expired stock may be used for a particular purpose.
+
+        Arguments:
+            setting: The global setting which controls whether expired stock may be used
+                (e.g. 'STOCK_ALLOW_EXPIRED_BUILD' or 'STOCK_ALLOW_EXPIRED_SALE')
+
+        Expired stock is always allowed if the stock expiry feature is disabled.
+        """
+        if not get_global_setting('STOCK_ENABLE_EXPIRY', False):
+            return True
+
+        return bool(get_global_setting(setting, False))
+
+    @classmethod
+    def allowed_expiry_filter(cls, setting: str) -> Q:
+        """Return a filter which excludes expired stock, if it may not be used for a particular purpose.
+
+        Arguments:
+            setting: The global setting which controls whether expired stock may be used
+        """
+        if cls.allow_expired_stock(setting):
+            return Q()
+
+        return Q(expiry_date=None) | Q(
+            expiry_date__gte=InvenTree.helpers.current_date()
+        )
+
+    def check_expired_allowed(self, setting: str, field: str | None = None) -> None:
+        """Raise a ValidationError if this item has expired, and expired stock may not be used.
+
+        Arguments:
+            setting: The global setting which controls whether expired stock may be used
+            field: Optional field name to associate the error with
+        """
+        expired = (
+            self.expiry_date is not None
+            and self.expiry_date < InvenTree.helpers.current_date()
+        )
+
+        if expired and not StockItem.allow_expired_stock(setting):
+            msg = _('Expired stock cannot be used')
+            raise ValidationError({field: msg} if field else msg)
 
     @staticmethod
     def _lock_serial_numbers(part: PartModels.Part, serials: list) -> None:
@@ -1281,7 +1377,7 @@ class StockItem(
 
     batch = models.CharField(
         verbose_name=_('Batch Code'),
-        max_length=100,
+        max_length=BATCH_CODE_MAX_LENGTH,
         blank=True,
         null=True,
         help_text=_('Batch code for this stock item'),
@@ -1476,7 +1572,7 @@ class StockItem(
 
         today = InvenTree.helpers.current_date()
 
-        stale_days = get_global_setting('STOCK_STALE_DAYS')
+        stale_days = self.stale_days()
 
         if stale_days <= 0:
             return False
@@ -3711,7 +3807,7 @@ def rename_stock_item_test_result_attachment(instance, filename):
     )
 
 
-class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
+class StockItemTestResult(InvenTreeMetadataModel):
     """A StockItemTestResult records results of custom tests against individual StockItem objects.
 
     This is useful for tracking unit acceptance tests, and particularly useful when integrated

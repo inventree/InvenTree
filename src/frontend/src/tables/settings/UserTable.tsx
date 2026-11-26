@@ -333,8 +333,8 @@ export function UserTable({
           icon: <IconLock />,
           title: t`Lock user`,
           color: 'blue',
-          onClick: () => {
-            setUserActiveState(record.pk, false);
+          onClick: async () => {
+            await setUserActiveState(record.pk, false);
             table.refreshTable();
           },
           hidden: !record.is_active
@@ -343,8 +343,8 @@ export function UserTable({
           icon: <IconLockOpen />,
           title: t`Unlock user`,
           color: 'blue',
-          onClick: () => {
-            setUserActiveState(record.pk, true);
+          onClick: async () => {
+            await setUserActiveState(record.pk, true);
             table.refreshTable();
           },
           hidden: record.is_active

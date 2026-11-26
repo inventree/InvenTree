@@ -144,7 +144,7 @@ class LabelPrintSerializer(serializers.Serializer):
         # object shared by every instance of this serializer - mutating its 'fields'
         # list in place would let concurrent requests selecting different plugins
         # corrupt each other's field list.
-        class Meta(self.Meta):
+        class Meta(self.Meta):  # ty: ignore[unsupported-base]
             """Per-instance metaclass options."""
 
             fields = ['template', 'items', 'plugin']

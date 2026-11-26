@@ -113,22 +113,24 @@ export default function UserSettings() {
         label: t`Notifications`,
         icon: <IconBellCog />,
         content: (
-          <PluginSettingsGroup
-            mixin='notification'
-            global={false}
-            message={t`The settings below are specific to each available notification method`}
-          />
+          <Stack gap='xs'>
+            {/* Error reports are only sent to staff users */}
+            {user?.is_staff && (
+              <UserSettingList keys={['NOTIFICATION_ERROR_REPORT']} />
+            )}
+            <PluginSettingsGroup
+              mixin='notification'
+              global={false}
+              message={t`The settings below are specific to each available notification method`}
+            />
+          </Stack>
         )
       },
       {
         name: 'reporting',
         label: t`Reporting`,
         icon: <IconFileAnalytics />,
-        content: (
-          <UserSettingList
-            keys={['REPORT_INLINE', 'LABEL_INLINE', 'LABEL_DEFAULT_PRINTER']}
-          />
-        )
+        content: <UserSettingList keys={['LABEL_DEFAULT_PRINTER']} />
       },
       {
         name: 'plugins',
@@ -139,7 +141,7 @@ export default function UserSettings() {
         )
       }
     ];
-  }, []);
+  }, [user]);
 
   if (!isLoggedIn()) {
     return <Skeleton />;

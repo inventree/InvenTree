@@ -857,7 +857,9 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         )
 
         # Check the detail API endpoint
-        url = reverse('api-user-setting-detail', kwargs={'key': 'LABEL_INLINE'})
+        url = reverse(
+            'api-user-setting-detail', kwargs={'key': 'SEARCH_PREVIEW_SHOW_PARTS'}
+        )
         self.get(url, expected_code=401)
 
     def test_user_settings_api_list(self):
@@ -900,7 +902,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
     def test_user_setting_init(self):
         """Test we can retrieve a setting which has not yet been initialized."""
-        key = 'LABEL_INLINE'
+        key = 'SEARCH_PREVIEW_SHOW_PARTS'
 
         # Ensure it does not actually exist in the database
         self.assertFalse(InvenTreeUserSetting.objects.filter(key=key).exists())
@@ -2162,6 +2164,7 @@ class ProjectCodesTest(InvenTreeAPITestCase):
         """Test that the 'active' field can be filtered via the API."""
         # Mark one code as inactive
         code = ProjectCode.objects.first()
+        assert code is not None
         code.active = False
         code.save()
 

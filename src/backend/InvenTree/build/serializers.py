@@ -920,6 +920,9 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         if not stock_item.in_stock:
             raise ValidationError(_('Item must be in stock'))
 
+        # Expired stock may only be allocated if permitted
+        stock_item.check_expired_allowed('STOCK_ALLOW_EXPIRED_BUILD')
+
         return stock_item
 
     quantity = serializers.DecimalField(

@@ -44,7 +44,11 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'PART_IPN_REGEX': {
         'name': _('IPN Regex'),
-        'description': _('Regular expression pattern for matching Part IPN'),
+        'description': _(
+            'Regular expression pattern for matching Part IPN. The pattern may match any part of the IPN: use ^ and $ to match the whole value. Parts without an IPN are not checked.'
+        ),
+        'default': '',
+        'validator': part.validators.validate_ipn_regex,
     },
     'PART_ALLOW_DUPLICATE_IPN': {
         'name': _('Allow Duplicate IPN'),
@@ -124,12 +128,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
-    'PART_SHOW_RELATED': {
-        'name': _('Show related parts'),
-        'description': _('Display related parts for a part'),
-        'default': True,
-        'validator': bool,
-    },
     'PART_CREATE_INITIAL': {
         'name': _('Initial Stock Data'),
         'description': _('Allow creation of initial stock when adding a new part'),
@@ -199,8 +197,10 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'STOCKTAKE_AUTO_DAYS': {
         'name': _('Automatic Stocktake Period'),
-        'description': _('Number of days between automatic stocktake recording'),
-        'validator': [int, MinValueValidator(1)],
+        'description': _(
+            'Number of days between automatic stocktake recording (set to zero to disable)'
+        ),
+        'validator': [int, MinValueValidator(0)],
         'default': 7,
         'units': _('days'),
     },

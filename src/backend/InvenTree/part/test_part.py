@@ -792,6 +792,42 @@ class PartSettingsTest(InvenTreeTestCase):
 
             Part.objects.filter(pk=part.pk).delete()
 
+    def test_ipn_regex(self):
+        """Test the PART_IPN_REGEX setting."""
+        from common.models import InvenTreeSetting
+
+        # An invalid regular expression cannot be saved
+        for pattern in ['[abc', '(unclosed', '*start']:
+            with self.assertRaises(ValidationError):
+                set_global_setting('PART_IPN_REGEX', pattern, self.user)
+
+        # Valid pattern: matching is a search (substring), unless anchored
+        set_global_setting('PART_IPN_REGEX', r'^PN-\d+$', self.user)
+
+        Part.objects.create(name='Valid', description='Matches', IPN='PN-123')
+
+        for ipn in ['PN-ABC', 'XPN-123', 'PN-123X']:
+            with self.assertRaises(ValidationError) as err:
+                Part.objects.create(name='Invalid', description='No match', IPN=ipn)
+            self.assertIn('IPN', err.exception.message_dict)
+
+        # Blank IPN values are not checked against the pattern
+        for ipn in [None, '', '   ']:
+            Part.objects.create(name='Blank', description='No IPN', IPN=ipn)
+
+        # A malformed pattern already stored in the database (bypassing validation)
+        # results in a validation error, rather than an unhandled exception
+        InvenTreeSetting.objects.filter(key='PART_IPN_REGEX').update(value='[abc')
+        cache.clear()
+
+        with self.assertRaises(ValidationError) as err:
+            Part.objects.create(name='Broken', description='Bad regex', IPN='PN-1')
+        self.assertIn('IPN', err.exception.message_dict)
+
+        # Clearing the pattern disables the check
+        set_global_setting('PART_IPN_REGEX', '', self.user)
+        Part.objects.create(name='Any', description='Any IPN', IPN='anything')
+
     def test_duplicate_ipn(self):
         """Test the setting which controls duplicate IPN values."""
         # Create a part
@@ -1029,3 +1065,27 @@ class PartStockHistoryTest(InvenTreeTestCase):
         N_STOCKTAKE = PartStocktake.objects.count()
         perform_stocktake()
         self.assertEqual(PartStocktake.objects.count(), N_STOCKTAKE)
+
+    def test_auto_stocktake_period(self):
+        """Test that STOCKTAKE_AUTO_DAYS can be set to zero to disable automatic stocktake."""
+        from part.models import PartStocktake
+        from part.tasks import scheduled_stocktake_reports
+
+        set_global_setting('STOCKTAKE_ENABLE', True)
+
+        # Negative values are not allowed
+        with self.assertRaises(ValidationError):
+            set_global_setting('STOCKTAKE_AUTO_DAYS', -1)
+
+        # Zero is allowed, and disables automatic stocktake
+        set_global_setting('STOCKTAKE_AUTO_DAYS', 0)
+        self.assertEqual(get_global_setting('STOCKTAKE_AUTO_DAYS'), 0)
+
+        N = PartStocktake.objects.count()
+        scheduled_stocktake_reports()
+        self.assertEqual(PartStocktake.objects.count(), N)
+
+        # A positive value enables automatic stocktake
+        set_global_setting('STOCKTAKE_AUTO_DAYS', 1)
+        scheduled_stocktake_reports()
+        self.assertGreater(PartStocktake.objects.count(), N)

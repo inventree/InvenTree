@@ -12,7 +12,7 @@ from django_q.models import OrmQ
 from rest_framework import status
 
 from audit.models import AuditLogEntry
-from build.models import Build, BuildItem, BuildLine
+from build.models import Build, BuildItem, BuildLine, generate_next_build_reference
 from build.status_codes import BuildStatus
 from common.models import Note
 from common.settings import set_global_setting
@@ -878,6 +878,7 @@ class BuildAllocationTest(BuildAPITest):
         self.assertEqual(self.n + 1, BuildItem.objects.count())
 
         allocation = BuildItem.objects.last()
+        assert allocation is not None
 
         self.assertEqual(allocation.quantity, 5000)
         self.assertEqual(allocation.bom_item.pk, 1)
@@ -915,6 +916,7 @@ class BuildAllocationTest(BuildAPITest):
         self.assertEqual(self.n + 1, BuildItem.objects.count())
 
         allocation = BuildItem.objects.last()
+        assert allocation is not None
 
         self.assertEqual(allocation.quantity, 3000)
         self.assertEqual(allocation.bom_item.pk, 1)
@@ -1054,6 +1056,7 @@ class BuildAllocationTest(BuildAPITest):
             bi = BuildItem.objects.filter(
                 stock_item=c, quantity=1, install_into=output
             ).first()
+            assert bi is not None
 
             self.assertIsNotNone(bi)
             self.assertEqual(bi.build, build)
@@ -1209,6 +1212,7 @@ class BuildOverallocationTest(BuildAPITest):
             required = build_line.quantity + idx + 1
             sub_part = build_line.bom_item.sub_part
             si = StockItem.objects.filter(part=sub_part, quantity__gte=required).first()
+            assert si is not None
 
             cls.state[sub_part] = (si, si.quantity, required)
 
@@ -1285,6 +1289,7 @@ class BuildOverallocationTest(BuildAPITest):
         # Check stock items have reduced only by bom requirement (overallocation trimmed)
         for line in self.build.build_lines.all():
             si, oq, _ = self.state[line.bom_item.sub_part]
+            assert si is not None
             rq = line.quantity
             si.refresh_from_db()
             self.assertEqual(si.quantity, oq - rq)
@@ -1314,6 +1319,11 @@ class BuildListTest(BuildAPITest):
 
             for key in ['model', 'api_url', 'pk_field']:
                 self.assertIn(key, field)
+
+        # Default values are provided for the (writable) top-level serializer
+        post = data['actions']['POST']
+        self.assertEqual(post['reference']['default'], generate_next_build_reference())
+        self.assertEqual(post['issued_by']['default'], self.user.pk)
 
     def test_detail_fields(self):
         """Test inclusion of detail fields."""
@@ -1874,6 +1884,36 @@ class BuildOutputCancelTest(BuildAPITest):
 class BuildLineTests(BuildAPITest):
     """Unit tests for the BuildLine API endpoints."""
 
+    def test_options_nested_defaults(self):
+        """Nested read-only serializers do not report (expensive) default values.
+
+        Computing the default 'reference' for each nested Build serializer
+        previously required multiple database queries per nested instance.
+        """
+        url = reverse('api-build-line-list')
+
+        data = self.options(
+            url,
+            data={'allocations': True, 'part_detail': True, 'bom_item_detail': True},
+            expected_code=200,
+            max_query_count=40,
+        ).data
+
+        build_detail = data['actions']['GET']['build_detail']
+        self.assertEqual(build_detail['type'], 'nested object')
+
+        # Model-derived defaults (Build.api_defaults / model field defaults) are skipped
+        for name in ['reference', 'issued_by', 'status', 'priority']:
+            self.assertIn(name, build_detail['children'])
+            self.assertNotIn('default', build_detail['children'][name])
+
+        # Nested serializers within a read-only list serializer are also excluded
+        allocation = data['actions']['GET']['allocations']['child']['children']
+
+        for name in ['quantity']:
+            self.assertIn(name, allocation)
+            self.assertNotIn('default', allocation[name])
+
     def test_consumed_read_only(self):
         """The 'consumed' quantity cannot be changed via the BuildLine API.
 
@@ -1881,6 +1921,7 @@ class BuildLineTests(BuildAPITest):
         the consumed quantity does not match the stock which was actually consumed.
         """
         line = BuildLine.objects.first()
+        assert line is not None
         self.assertEqual(line.consumed, 0)
 
         url = reverse('api-build-line-detail', kwargs={'pk': line.pk})
@@ -2810,6 +2851,7 @@ class BuildConsumeTest(BuildAPITest):
                 )
                 self.assertEqual(consumed_items.count(), 1)
                 consumed_item = consumed_items.first()
+                assert consumed_item is not None
                 self.assertEqual(consumed_item.quantity, required_quantity)
                 self.assertNotEqual(consumed_item.pk, stock_item.pk)
 
@@ -3186,9 +3228,12 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
         )
 
         allocs = BuildItem.objects.filter(build_line__build=build)
+        assert allocs is not None
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().stock_item, large)
-        self.assertEqual(allocs.first().quantity, 15)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.stock_item, large)
+        self.assertEqual(allocation.quantity, 15)
 
     # ------------------------------------------------------------------
     # build_lines filtering
@@ -3266,8 +3311,11 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
         self.post(self._url(build.pk), {'interchangeable': True}, expected_code=200)
 
         allocs = BuildItem.objects.filter(build_line__build=build)
+        assert allocs is not None
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().stock_item, direct_stock)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.stock_item, direct_stock)
 
     # ------------------------------------------------------------------
     # Location filtering
@@ -3289,8 +3337,11 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
         )
 
         allocs = BuildItem.objects.filter(build_line__build=build)
+        assert allocs is not None
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().stock_item, in_location)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.stock_item, in_location)
 
     def test_exclude_location_filters_allocation(self):
         """The 'exclude_location' filter excludes stock within that location."""
@@ -3308,8 +3359,11 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
         )
 
         allocs = BuildItem.objects.filter(build_line__build=build)
+        assert allocs is not None
         self.assertEqual(allocs.count(), 1)
-        self.assertEqual(allocs.first().stock_item, allowed)
+        allocation = allocs.first()
+        assert allocation is not None
+        self.assertEqual(allocation.stock_item, allowed)
 
     # ------------------------------------------------------------------
     # Large number of build lines (performance / bulk allocation)

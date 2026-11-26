@@ -10,8 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - [#13271](https://github.com/inventree/InvenTree/pull/13271) makes a number of API fields read-only, as they are managed by dedicated endpoints and must not be edited directly: `consumed` (BuildLine), `received_date` (ReturnOrderLineItem), `barcode_hash` (ManufacturerPart, SalesOrderShipment), `issue_date` (SalesOrder, ReturnOrder, TransferOrder) and `complete_date` (ReturnOrder, TransferOrder). Values provided for these fields are now ignored.
+- [#13293](https://github.com/inventree/InvenTree/pull/13293) moves various (internal) model base classes, if your plugin uses InvenTree base classes update your imports from InvenTree.models to generic.models before the next major release.
 
 ### Added
+
+- [#12121](https://github.com/inventree/InvenTree/issues/12121) adds support for custom parameters on stock location types.
 
 - [#13266](https://github.com/inventree/InvenTree/pull/13266) Adds a "Manufacturer Barcode" plugin, which provides fallback barcode matching against manufacturer part numbers, and a `BARCODE_PRIORITY` attribute which controls the order in which barcode plugins are queried.
 
@@ -23,8 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#13274](https://github.com/inventree/InvenTree/pull/13274) API requests which modify an existing object (updates, and "action" endpoints such as issuing or completing an order) now lock the database row before reading it, and run within a single database transaction. This prevents a concurrent edit from silently overwriting changes made by a background task (e.g. the "completed" quantity of a build order being reset while its outputs were being completed). If the object is locked by another long-running process, the request now returns a `409 Conflict` response and can be retried. A failed action no longer leaves partial changes behind.
 - [#13241](https://github.com/inventree/InvenTree/pull/13241)  completing a password reset now verifies the user's email address (when the account has a single address matching the account email), allowing users created by an administrator to set up MFA while it is enforced.
+- [#13369](https://github.com/inventree/InvenTree/pull/13369) The `STOCK_ALLOW_EXPIRED_BUILD` and `STOCK_ALLOW_EXPIRED_SALE` settings are enforced again (they had no effect since the legacy user interface was removed). When stock expiry is enabled, expired stock can no longer be allocated to build orders or sales orders (manually, by serial number, or by auto-allocation) unless the corresponding setting is enabled. Existing allocations are not affected.
+- [#13369](https://github.com/inventree/InvenTree/pull/13369) The `PART_ALLOW_EDIT_IPN` setting is enforced again: when disabled, the IPN of an existing part cannot be changed.
+- [#13369](https://github.com/inventree/InvenTree/pull/13369) The `PART_COPY_TESTS`, `PART_CATEGORY_PARAMETERS` and `PART_CREATE_SUPPLIER` settings control the defaults of the part creation and duplication forms again.
 
 ### Removed
+
+- [#13369](https://github.com/inventree/InvenTree/pull/13369) Removes settings which have had no effect since the legacy user interface was removed (or were never implemented): `STOCK_SHOW_INSTALLED_ITEMS`, `PART_SHOW_RELATED`, `BARCODE_INPUT_DELAY` and `PLUGIN_UPDATE_CHECK` (global), and `REPORT_INLINE` and `LABEL_INLINE` (user).
 
 ## 1.7.0 - 2026-11.03
 

@@ -12,7 +12,6 @@ export interface ModelInformationInterface {
   api_endpoint: ApiEndpoints;
   admin_url?: string;
   pk_field?: string;
-  supports_barcode?: boolean;
   icon: keyof InvenTreeIconType;
   preview?: (props: { instance: any; modelId: number }) => any;
   render?: (props: Readonly<InstanceRenderInterface>) => any;
@@ -64,7 +63,6 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/part/:pk/',
     api_endpoint: ApiEndpoints.part_list,
     admin_url: '/part/part/',
-    supports_barcode: true,
     icon: 'part'
   },
   parameter: {
@@ -93,7 +91,6 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/purchasing/supplier-part/:pk/',
     api_endpoint: ApiEndpoints.supplier_part_list,
     admin_url: '/company/supplierpart/',
-    supports_barcode: true,
     icon: 'supplier_part',
     default_query_params: {
       part_detail: true,
@@ -108,7 +105,6 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/purchasing/manufacturer-part/:pk/',
     api_endpoint: ApiEndpoints.manufacturer_part_list,
     admin_url: '/company/manufacturerpart/',
-    supports_barcode: true,
     icon: 'manufacturers',
     default_query_params: { part_detail: true, manufacturer_detail: true }
   },
@@ -128,7 +124,6 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/stock/item/:pk/',
     api_endpoint: ApiEndpoints.stock_item_list,
     admin_url: '/stock/stockitem/',
-    supports_barcode: true,
     icon: 'stock',
     default_query_params: { part_detail: true }
   },
@@ -139,13 +134,14 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/stock/location/:pk/',
     api_endpoint: ApiEndpoints.stock_location_list,
     admin_url: '/stock/stocklocation/',
-    supports_barcode: true,
     icon: 'location'
   },
   stocklocationtype: {
     label: () => t`Stock Location Type`,
     label_multiple: () => t`Stock Location Types`,
+    url_detail: '/stock/location-type/:pk/',
     api_endpoint: ApiEndpoints.stock_location_type_list,
+    admin_url: '/stock/stocklocationtype/',
     icon: 'location'
   },
   stockhistory: {
@@ -161,7 +157,6 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/manufacturing/build-order/:pk/',
     api_endpoint: ApiEndpoints.build_order_list,
     admin_url: '/build/build/',
-    supports_barcode: true,
     icon: 'build_order',
     default_query_params: { part_detail: true }
   },
@@ -199,7 +194,6 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/purchasing/purchase-order/:pk/',
     api_endpoint: ApiEndpoints.purchase_order_list,
     admin_url: '/order/purchaseorder/',
-    supports_barcode: true,
     icon: 'purchase_orders',
     default_query_params: { supplier_detail: true }
   },
@@ -216,7 +210,6 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/sales/sales-order/:pk/',
     api_endpoint: ApiEndpoints.sales_order_list,
     admin_url: '/order/salesorder/',
-    supports_barcode: true,
     icon: 'sales_orders',
     default_query_params: { customer_detail: true }
   },
@@ -227,7 +220,6 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/sales/shipment/:pk/',
     admin_url: '/order/salesordershipment/',
     api_endpoint: ApiEndpoints.sales_order_shipment_list,
-    supports_barcode: true,
     icon: 'shipment',
     default_query_params: { order_detail: true }
   },
@@ -238,7 +230,6 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/sales/return-order/:pk/',
     api_endpoint: ApiEndpoints.return_order_list,
     admin_url: '/order/returnorder/',
-    supports_barcode: true,
     icon: 'return_orders',
     default_query_params: { customer_detail: true }
   },
@@ -255,7 +246,6 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/stock/transfer-order/:pk/',
     api_endpoint: ApiEndpoints.transfer_order_list,
     admin_url: '/order/transferorder/',
-    supports_barcode: true,
     icon: 'transfer_orders'
   },
   transferorderlineitem: {

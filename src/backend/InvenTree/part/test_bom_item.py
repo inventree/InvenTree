@@ -333,6 +333,7 @@ class BomItemTest(TestCase):
         """Unit tests for the metadata field."""
         for model in [BomItem]:
             p = model.objects.first()
+            assert p is not None
 
             self.assertIsNone(p.get_metadata('test'))
             self.assertEqual(p.get_metadata('test', backup_value=123), 123)
@@ -836,6 +837,7 @@ class BomItemTest(TestCase):
         item = part.filters.annotate_bom_item_can_build(
             BomItem.objects.filter(pk=bom_item.pk)
         ).first()
+        assert item is not None
 
         self.assertAlmostEqual(item.can_build, 2)
 

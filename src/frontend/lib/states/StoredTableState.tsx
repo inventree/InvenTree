@@ -1,6 +1,7 @@
 import type { DataTableSortStatus } from 'mantine-datatable';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { TableSearchField } from '../types/Tables';
 
 const DEFAULT_PAGE_SIZE: number = 25;
 
@@ -11,6 +12,7 @@ const DEFAULT_PAGE_SIZE: number = 25;
  * - pageSize: The number of rows to display per page in the table.
  * - hiddenColumns: An array of column names that are hidden in a given table.
  * - columnNames: An object mapping table keys to arrays of column names.
+ * - searchFields: An object mapping table keys to the fields which can be searched.
  * - sorting: An object mapping table keys to sorting configurations.
  */
 export interface StoredTableStateProps {
@@ -27,6 +29,11 @@ export interface StoredTableStateProps {
     tableKey: string
   ) => (names: Record<string, string>) => void;
   clearTableColumnNames: () => void;
+  tableSearchFields: Record<string, TableSearchField[]>;
+  getTableSearchFields: (tableKey: string) => TableSearchField[] | null;
+  setTableSearchFields: (
+    tableKey: string
+  ) => (fields: TableSearchField[]) => void;
   hiddenColumns: Record<string, string[]>;
   getHiddenColumns: (tableKey: string) => string[] | null;
   setHiddenColumns: (tableKey: string) => (columns: string[]) => void;
@@ -68,7 +75,21 @@ export const useStoredTableState = create<StoredTableStateProps>()(
         });
       },
       clearTableColumnNames: () => {
-        set({ tableColumnNames: {} });
+        // Search field labels are translated too, so are cleared alongside
+        set({ tableColumnNames: {}, tableSearchFields: {} });
+      },
+      tableSearchFields: {},
+      getTableSearchFields: (tableKey) => {
+        return get().tableSearchFields?.[tableKey] ?? null;
+      },
+      setTableSearchFields: (tableKey) => (fields) => {
+        // Update the searchable fields for the given table
+        set({
+          tableSearchFields: {
+            ...get().tableSearchFields,
+            [tableKey]: fields
+          }
+        });
       },
       hiddenColumns: {},
       getHiddenColumns: (tableKey) => {

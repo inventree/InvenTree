@@ -20,6 +20,7 @@ import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import type { NavigateFunction } from 'react-router-dom';
 
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelFeature } from '@lib/enums/ModelFeature';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
@@ -27,6 +28,7 @@ import { cancelEvent } from '@lib/functions/Events';
 import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { useApi } from '../../../contexts/ApiContext';
+import { useModelFeatures } from '../../../states/ModelFeatureState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -341,12 +343,15 @@ function TreeFieldComponent({
     [model]
   );
 
+  const modelFeatures = useModelFeatures(model);
+
   const addBarcodeField = useMemo(() => {
-    if (!modelInfo?.supports_barcode) return false;
+    if (!modelInfo || !modelFeatures.includes(ModelFeature.barcode))
+      return false;
     if (!globalSettings.isSet('BARCODE_ENABLE')) return false;
     if (!userSettings.isSet('BARCODE_IN_FORM_FIELDS')) return false;
     return true;
-  }, [modelInfo, globalSettings, userSettings]);
+  }, [modelInfo, modelFeatures, globalSettings, userSettings]);
 
   const onBarcodeScan = useCallback(
     (_barcode: string, response: any) => {

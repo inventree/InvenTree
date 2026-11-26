@@ -3,9 +3,11 @@
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.db.models import Model
 from django.test.utils import override_settings
 from django.urls import reverse
 
@@ -17,7 +19,13 @@ import build.models
 import company.models
 import order.models
 import part.models
-from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting, Note
+from common.models import (
+    InvenTreeCustomUserStateModel,
+    InvenTreeSetting,
+    Note,
+    Parameter,
+    ParameterTemplate,
+)
 from common.settings import set_global_setting
 from InvenTree.unit_test import (
     InvenTreeAPIPerformanceTestCase,
@@ -575,6 +583,30 @@ class StockLocationTypeTest(StockAPITestCase):
         )
         self.assertEqual(StockLocationType.objects.count(), 0)
 
+    def test_delete_rolls_back_parameters(self):
+        """A failed location type deletion preserves its parameters and assignments."""
+        location_type = StockLocationType.objects.create(name='Drawer')
+        location = StockLocation.objects.create(
+            name='Drawer A3', location_type=location_type
+        )
+        template = ParameterTemplate.objects.create(name='Internal width')
+        parameter = Parameter.objects.create(
+            model_type=ContentType.objects.get_for_model(StockLocationType),
+            model_id=location_type.pk,
+            template=template,
+            data='120',
+        )
+
+        with (
+            patch.object(Model, 'delete', side_effect=RuntimeError('Delete failed')),
+            self.assertRaisesMessage(RuntimeError, 'Delete failed'),
+        ):
+            location_type.delete()
+
+        location.refresh_from_db()
+        self.assertEqual(location.location_type_id, location_type.pk)
+        self.assertTrue(Parameter.objects.filter(pk=parameter.pk).exists())
+
     def test_create(self):
         """Test that we can create a location type via API."""
         self.post(
@@ -614,6 +646,151 @@ class StockLocationTypeTest(StockAPITestCase):
             expected_code=200,
         ).json()
         self.assertEqual(res['icon'], 'ti:tag:outline')
+
+    def test_update_does_not_load_parameters(self):
+        """Editing a location type does not query or return its parameters."""
+        location_type = StockLocationType.objects.create(name='Drawer')
+        url = reverse('api-location-type-detail', kwargs={'pk': location_type.pk})
+        self.patch(url, {'description': 'Initial description'})
+        with self.assertNumQueriesLessThan(self.MAX_QUERY_COUNT) as queries:
+            self.patch(url, {'description': 'Empty drawer type'})
+
+        model_type = ContentType.objects.get_for_model(StockLocationType)
+        for index in range(10):
+            template = ParameterTemplate.objects.create(
+                name=f'Width {index}', model_type=model_type
+            )
+            Parameter.objects.create(
+                model_type=model_type,
+                model_id=location_type.pk,
+                template=template,
+                data='120',
+                updated_by=self.user,
+            )
+
+        for suffix in ['', '?parameters=true']:
+            response = self.patch(
+                url + suffix,
+                {'description': 'Updated drawer type'},
+                max_query_count=len(queries.captured_queries) + 1,
+            )
+            self.assertEqual(response.data['description'], 'Updated drawer type')
+            self.assertNotIn('parameters', response.data)
+
+    def test_parameters(self):
+        """Type parameters are opt-in and independent of location parameters."""
+        location_type = StockLocationType.objects.create(name='Drawer')
+        location = StockLocation.objects.create(
+            name='Drawer A3', location_type=location_type
+        )
+        template = ParameterTemplate.objects.create(name='Internal width', units='mm')
+        location_parameter = Parameter.objects.create(
+            model_type=ContentType.objects.get_for_model(StockLocation),
+            model_id=location.pk,
+            template=template,
+            data='125 mm',
+        )
+        parameter = self.post(
+            reverse('api-parameter-list'),
+            {
+                'model_type': 'stock.stocklocationtype',
+                'model_id': location_type.pk,
+                'template': template.pk,
+                'data': '120 mm',
+            },
+        ).data
+
+        detail_url = reverse(
+            'api-location-type-detail', kwargs={'pk': location_type.pk}
+        )
+        for options in [{}, {'parameters': False}]:
+            self.assertNotIn('parameters', self.get(self.list_url, options).data[0])
+            self.assertNotIn('parameters', self.get(detail_url, options).data)
+
+        options = {'parameters': True}
+        for record in [
+            self.get(self.list_url, options).data[0],
+            self.get(detail_url, options).data,
+        ]:
+            self.assertEqual(record['location_count'], 1)
+            self.assertEqual([p['pk'] for p in record['parameters']], [parameter['pk']])
+
+        stock_location = self.get(
+            reverse('api-location-detail', kwargs={'pk': location.pk}), options
+        ).data
+        self.assertEqual(
+            [p['pk'] for p in stock_location['parameters']], [location_parameter.pk]
+        )
+        self.assertNotIn('parameters', stock_location['location_type_detail'])
+
+        self.delete(detail_url, expected_code=204)
+        location.refresh_from_db()
+        self.assertIsNone(location.location_type_id)
+        self.assertFalse(Parameter.objects.filter(pk=parameter['pk']).exists())
+        self.assertTrue(Parameter.objects.filter(pk=location_parameter.pk).exists())
+
+    def test_parameter_permissions(self):
+        """Reading and changing a type's parameters uses stock location permissions."""
+        location_type = StockLocationType.objects.create(name='Drawer')
+        model_type = ContentType.objects.get_for_model(StockLocationType)
+        template = ParameterTemplate.objects.create(
+            name='Internal width', model_type=model_type
+        )
+        parameter = Parameter.objects.create(
+            model_type=model_type,
+            model_id=location_type.pk,
+            template=template,
+            data='120',
+        )
+        params = {'model_type': model_type.model, 'model_id': location_type.pk}
+        parameter_list = reverse('api-parameter-list')
+        type_detail = reverse(
+            'api-location-type-detail', kwargs={'pk': location_type.pk}
+        )
+
+        self.clearRoles()
+        self.assertEqual(self.get(parameter_list, params).data, [])
+        self.get(type_detail, {'parameters': True}, expected_code=403)
+
+        self.assignRole('stock_location.view')
+        self.assertEqual(self.get(parameter_list, params).data[0]['pk'], parameter.pk)
+        self.assertEqual(
+            self.get(type_detail, {'parameters': True}).data['parameters'][0]['pk'],
+            parameter.pk,
+        )
+        self.patch(
+            reverse('api-parameter-detail', kwargs={'pk': parameter.pk}),
+            {'data': '150'},
+            expected_code=403,
+        )
+
+    def test_parameters_prefetch(self):
+        """Including parameters does not add per-type or per-template queries."""
+        model_type = ContentType.objects.get_for_model(StockLocationType)
+        for index in range(5):
+            location_type = StockLocationType.objects.create(name=f'Drawer {index}')
+            template = ParameterTemplate.objects.create(
+                name=f'Width {index}', model_type=model_type
+            )
+            Parameter.objects.create(
+                model_type=model_type,
+                model_id=location_type.pk,
+                template=template,
+                data='120',
+            )
+
+        options = {'parameters': True, 'search': 'Drawer 0'}
+        self.get(self.list_url, options)
+        with self.assertNumQueriesLessThan(self.MAX_QUERY_COUNT) as queries:
+            self.assertEqual(len(self.get(self.list_url, options).data), 1)
+
+        records = self.get(
+            self.list_url,
+            {'parameters': True, 'search': 'Drawer'},
+            max_query_count=len(queries.captured_queries) + 1,
+        ).data
+        self.assertEqual(len(records), 5)
+        self.assertTrue(all(len(record['parameters']) == 1 for record in records))
 
 
 class StockItemListTest(StockAPITestCase):
@@ -1055,21 +1232,51 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 28)
 
     def test_filter_stale(self):
-        """Filter StockItem by stale."""
-        response = self.get_stock(stale=True)
-        self.assertEqual(len(response), 29)
+        """Filter StockItem by stale, and check the 'stale' annotation."""
 
-        response = self.get_stock(stale=False)
-        self.assertEqual(len(response), 29)
+        def check_disabled():
+            """When stale detection is disabled, no items are stale."""
+            self.assertEqual(len(self.get_stock(stale=True)), 0)
+
+            response = self.get_stock(stale=False)
+            self.assertEqual(len(response), 29)
+            self.assertFalse(any(item['stale'] for item in response))
+
+        # Disabled by default (STOCK_STALE_DAYS = 0, STOCK_ENABLE_EXPIRY = False)
+        check_disabled()
+
+        # Stale days set, but stock expiry is disabled
+        set_global_setting('STOCK_STALE_DAYS', 10)
+        check_disabled()
+
+        # Stock expiry enabled, but stale days is zero
+        # Expired items must not be reported as stale (previously they were)
+        set_global_setting('STOCK_ENABLE_EXPIRY', True)
+        set_global_setting('STOCK_STALE_DAYS', 0)
+        self.assertGreater(len(self.get_stock(expired=True)), 0)
+        check_disabled()
+
+        # Negative values are not allowed
+        with self.assertRaises(ValidationError):
+            set_global_setting('STOCK_STALE_DAYS', -1)
 
         # Enable the 'stale' feature
-        set_global_setting('STOCK_STALE_DAYS', '10')
-        response = self.get_stock(stale=True)
-        self.assertEqual(len(response), 1)
+        set_global_setting('STOCK_STALE_DAYS', 10)
 
-        response = self.get_stock(stale=False)
-        self.assertEqual(len(response), 28)
-        set_global_setting('STOCK_STALE_DAYS', '0')
+        stale = self.get_stock(stale=True)
+        self.assertEqual(len(stale), 1)
+        self.assertTrue(all(item['stale'] for item in stale))
+
+        not_stale = self.get_stock(stale=False)
+        self.assertEqual(len(not_stale), 28)
+        self.assertFalse(any(item['stale'] for item in not_stale))
+
+        # The model method agrees with the API
+        for item in stale:
+            self.assertTrue(StockItem.objects.get(pk=item['pk']).is_stale())
+
+        set_global_setting('STOCK_STALE_DAYS', 0)
+        set_global_setting('STOCK_ENABLE_EXPIRY', False)
 
     def test_paginate(self):
         """Test that we can paginate results correctly."""
@@ -1912,8 +2119,11 @@ class StockItemTest(StockAPITestCase):
         )
 
         new_item = StockItem.objects.get(pk=response.data[0]['pk'])
+        assert new_item is not None
         self.assertEqual(new_item.notes.count(), 1)
-        self.assertEqual(new_item.notes.first().content, '<p>Some stock item notes</p>')
+        note = new_item.notes.first()
+        assert note is not None
+        self.assertEqual(note.content, '<p>Some stock item notes</p>')
 
         # Explicitly disabling copy_notes must not copy any notes
         response = self.post(
@@ -4065,6 +4275,41 @@ class StockAdjustmentCustomStatusTest(StockAPITestCase):
 
                 item.refresh_from_db()
                 self.assertEqual(item.status_custom_key, self.custom_status.key)
+
+    def test_remove_allocated_stock_rejected(self):
+        """Stock removal must not reduce quantity below active allocations."""
+        item = StockItem.objects.create(
+            part=self.part, location=self.source, quantity=10
+        )
+
+        customer = company.models.Company.objects.create(
+            name='Allocation test customer', is_customer=True
+        )
+        sales_order = order.models.SalesOrder.objects.create(
+            customer=customer, reference='SO-ALLOCATION-TEST'
+        )
+        shipment = order.models.SalesOrderShipment.objects.create(
+            order=sales_order, reference='SHIP-ALLOCATION-TEST'
+        )
+        line = order.models.SalesOrderLineItem.objects.create(
+            order=sales_order, part=self.part, quantity=10
+        )
+
+        order.models.SalesOrderAllocation.objects.create(
+            line=line, shipment=shipment, item=item, quantity=10
+        )
+
+        self.post(
+            reverse('api-stock-remove'),
+            {
+                'items': [{'pk': item.pk, 'quantity': 2}],
+                'notes': 'Remove allocated stock',
+            },
+            expected_code=400,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 10)
 
 
 class StockTransferMergeTest(StockAPITestCase):

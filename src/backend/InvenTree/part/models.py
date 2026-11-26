@@ -34,7 +34,6 @@ import company.models
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import part.helpers as part_helpers
@@ -46,6 +45,19 @@ from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.icons import validate_icon
 from common.settings import get_global_setting
+from generic.models.base import InvenTreeMetadataModel, InvenTreeTree
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeImageMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreePathStringMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeTagsMixin,
+)
 from InvenTree import helpers, validators
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
@@ -62,12 +74,12 @@ logger = structlog.get_logger('inventree')
 
 
 class PartCategory(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.PluginValidationMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.PathStringMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTreeAuditMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeParameterMixin,
+    InvenTreeMetadataMixin,
+    InvenTreePathStringMixin,
+    InvenTreeTree,
 ):
     """PartCategory provides hierarchical organization of Part objects.
 
@@ -348,7 +360,7 @@ def rename_part_image(instance, filename):
     return os.path.join(base, fname)
 
 
-class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
+class PartCategoryParameterTemplate(InvenTreeMetadataModel):
     """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a ParameterTemplate.
 
     Multiple ParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
@@ -462,17 +474,17 @@ class PartReportContext(report.mixins.BaseReportContext, TypedDict):
 
 @cleanup.ignore
 class Part(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.PluginValidationMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAuditMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.InvenTreeImageMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTreeImageMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeTree,
 ):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
@@ -788,13 +800,31 @@ class Part(
                     log_error('validate_part_ipn', plugin=plugin.slug)
 
         # If we get to here, none of the plugins have raised an error
-        pattern = get_global_setting('PART_IPN_REGEX', '', create=False).strip()
+        pattern = str(
+            get_global_setting('PART_IPN_REGEX', '', create=False) or ''
+        ).strip()
 
-        if pattern:
-            match = re.search(pattern, self.IPN)
+        # Blank IPN values are permitted, and are not checked against the pattern
+        if not pattern or not self.IPN:
+            return
 
-            if match is None:
-                raise ValidationError(_(f'IPN must match regex pattern {pattern}'))
+        try:
+            match = re.search(pattern, str(self.IPN))
+        except re.error:
+            # A malformed pattern may already be stored (e.g. from before validation was added)
+            log_error('validate_ipn')
+            raise ValidationError({
+                'IPN': _(
+                    'The IPN regex pattern configured in system settings is invalid'
+                )
+            })
+
+        if match is None:
+            raise ValidationError({
+                'IPN': _('IPN must match regex pattern {pattern}').format(
+                    pattern=pattern
+                )
+            })
 
     def validate_revision(self):
         """Check the 'revision' and 'revision_of' fields."""
@@ -2737,7 +2767,7 @@ class PartCategoryStar(models.Model):
     )
 
 
-class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
+class PartTestTemplate(InvenTreeMetadataModel):
     """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
 
     The test template applies "recursively" to part variants, allowing tests to be
@@ -2902,11 +2932,7 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         return [x.strip() for x in self.choices.split(',') if x.strip()]
 
 
-class BomItem(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
-):
+class BomItem(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -3595,9 +3621,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
             pass
 
 
-class BomItemSubstitute(
-    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
-):
+class BomItemSubstitute(InvenTreeAuditMixin, InvenTreeMetadataModel):
     """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:
@@ -3684,7 +3708,7 @@ class BomItemSubstitute(
     )
 
 
-class PartRelated(InvenTree.models.InvenTreeMetadataModel):
+class PartRelated(InvenTreeMetadataModel):
     """Store and handle related parts (eg. mating connector, crimps, etc.)."""
 
     class Meta:

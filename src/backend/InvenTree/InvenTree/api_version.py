@@ -1,10 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 581
+INVENTREE_API_VERSION = 584
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v584 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/13346
+    - Adds "search_fields" query parameter to list endpoints, to limit a search to a subset of the searchable fields
+    - Adds "search_fields" information to the OPTIONS response for list endpoints
+
+v583 -> 2026-11-20 : https://github.com/inventree/InvenTree/issues/12121
+    - Adds parameter support to the StockLocationType model and API endpoints
+
+v582 -> 2026-11-19 : https://github.com/inventree/InvenTree/pull/13329
+    - The title tag of the part's override_min/max_currency had been moved by the API generator generating diff in the schema, no functional changes
 
 v581 -> 2026-11-17 : https://github.com/inventree/InvenTree/pull/13305
     - Assign correct BOM permission role to part/copy-bom API endpoint

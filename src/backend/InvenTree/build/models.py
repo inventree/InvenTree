@@ -25,7 +25,6 @@ import generic.states
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.helpers_model
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import part.models
@@ -49,6 +48,18 @@ from build.validators import (
 from common.models import ProjectCode
 from common.settings import get_global_setting
 from generic.enums import StringEnum
+from generic.models.base import InvenTreeMetadataModel, InvenTreeModel, InvenTreeTree
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeMetadataMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreePluginValidationMixin,
+    InvenTreeReferenceIndexingMixin,
+    InvenTreeTagsMixin,
+)
 from generic.states import (
     DEFERRABLE,
     Deprecations,
@@ -92,19 +103,19 @@ class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
 
 
 class Build(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.PluginValidationMixin,
+    InvenTreeAuditMixin,
+    InvenTreePluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.ReferenceIndexingMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
+    InvenTreeReferenceIndexingMixin,
     StateTransitionMixin,
     StatusCodeMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTreeMetadataMixin,
+    InvenTreeTree,
 ):
     """A Build object organizes the creation of new StockItem objects from other existing StockItem objects.
 
@@ -1409,7 +1420,7 @@ class Build(
         output: stock.models.StockItem,
         quantity: Optional[decimal.Decimal] = None,
         required_tests=None,
-    ) -> bool:
+    ) -> None:
         """Determine if the given build output can be completed.
 
         Arguments:
@@ -1682,6 +1693,11 @@ class Build(
         """
         location = kwargs.get('location')
         exclude_location = kwargs.get('exclude_location')
+
+        # Exclude expired stock (unless it may be used for building)
+        expiry_filter = stock.models.StockItem.allowed_expiry_filter(
+            'STOCK_ALLOW_EXPIRED_BUILD'
+        )
         substitutes = kwargs.get('substitutes', True)
         optional_items = kwargs.get('optional_items', False)
 
@@ -1730,6 +1746,8 @@ class Build(
                 part__virtual=False,
                 serial=output.serial,
             ).exclude(Q(serial=None) | Q(serial=''))
+
+            available_stock = available_stock.filter(expiry_filter)
 
             if location:
                 # Filter only stock items located "below" the specified location
@@ -1813,6 +1831,11 @@ class Build(
         stock_sort_by = kwargs.get('stock_sort_by', stock.models.STOCK_SORT_DEFAULT)
         line_ids = kwargs.get('line_ids')
 
+        # Exclude expired stock (unless it may be used for building)
+        expiry_filter = stock.models.StockItem.allowed_expiry_filter(
+            'STOCK_ALLOW_EXPIRED_BUILD'
+        )
+
         def stock_sort(item, bom_item, variant_parts):
             if item.part == bom_item.sub_part:
                 return 1
@@ -1881,7 +1904,7 @@ class Build(
             # function below, which inspects item.part for every candidate.
             available_stock = stock.models.StockItem.objects.select_related(
                 'part'
-            ).filter(stock.models.StockItem.IN_STOCK_FILTER)
+            ).filter(stock.models.StockItem.IN_STOCK_FILTER, expiry_filter)
 
             # Filter by list of available parts
             available_stock = available_stock.filter(part__in=list(available_parts))
@@ -2190,7 +2213,7 @@ class BuildLineReportContext(report.mixins.BaseReportContext, TypedDict):
     quantity: decimal.Decimal
 
 
-class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
+class BuildLine(report.mixins.InvenTreeReportMixin, InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
     When a new Build is created, the BuildLine objects are created automatically.
@@ -2310,7 +2333,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         return self.consumed >= self.quantity
 
 
-class BuildItem(InvenTree.models.InvenTreeMetadataModel):
+class BuildItem(InvenTreeMetadataModel):
     """A BuildItem links multiple StockItem objects to a Build.
 
     These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.
@@ -2362,6 +2385,13 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                     )
                 )
 
+            # Expired stock may only be newly allocated if permitted
+            # (existing allocations of since-expired stock remain editable)
+            if self._state.adding:
+                self.stock_item.check_expired_allowed(
+                    'STOCK_ALLOW_EXPIRED_BUILD', field='stock_item'
+                )
+
             self.check_allocated_quantity(raise_error=raise_error)
 
         except stock.models.StockItem.DoesNotExist:
@@ -2389,14 +2419,12 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                 iii) The Part referenced by the StockItem is a valid substitute for the BomItem
             """
 
-            if self.build.part == self.bom_item.part:
+            if self.build.part == self.bom_item.part or (
+                self.bom_item.inherited
+                and self.build.part
+                in self.bom_item.part.get_descendants(include_self=False)
+            ):
                 valid = self.bom_item.is_stock_item_valid(self.stock_item)
-
-            elif self.bom_item.inherited:
-                if self.build.part in self.bom_item.part.get_descendants(
-                    include_self=False
-                ):
-                    valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
         # If the existing BomItem is *not* valid, try to find a match
         if not valid and self.build and self.stock_item:

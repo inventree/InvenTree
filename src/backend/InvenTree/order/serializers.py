@@ -1813,19 +1813,20 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
         stock_item = data['stock_item']
         quantity = data['quantity']
 
-        if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
-            if (
-                stock_item.hasRequiredTests()
-                and not stock_item.passedAllRequiredTests()
-            ):
-                raise ValidationError({
-                    'stock_item': _('Stock item has not passed all required tests')
-                })
+        if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS') and (
+            stock_item.hasRequiredTests() and not stock_item.passedAllRequiredTests()
+        ):
+            raise ValidationError({
+                'stock_item': _('Stock item has not passed all required tests')
+            })
 
         if stock_item.serialized and quantity != 1:
             raise ValidationError({
                 'quantity': _('Quantity must be 1 for serialized stock item')
             })
+
+        # Expired stock may only be allocated if permitted
+        stock_item.check_expired_allowed('STOCK_ALLOW_EXPIRED_SALE', field='stock_item')
 
         q = normalize(stock_item.unallocated_quantity())
 

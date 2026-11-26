@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from taggit.models import Tag
 
-import InvenTree.models
+from generic.models.modelmixins import InvenTreeNoteMixin
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 
@@ -60,7 +60,7 @@ class ContentTypeFeatureAPITests(InvenTreeAPITestCase):
         class CustomFeatureMixin(ModelFeatureMixin):
             MODEL_FEATURE = 'custom'
 
-        class CustomModel(CustomFeatureMixin, InvenTree.models.InvenTreeNoteMixin):
+        class CustomModel(CustomFeatureMixin, InvenTreeNoteMixin):
             class Meta:
                 abstract = True
 

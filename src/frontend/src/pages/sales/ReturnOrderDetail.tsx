@@ -12,9 +12,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
-import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
-  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -31,6 +29,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -226,6 +225,11 @@ export default function ReturnOrderDetail() {
     successMessage: t`Order completed`
   });
 
+  const featureActions = useModelFeatureActions({
+    model: ModelType.returnorder,
+    instance: order
+  });
+
   const orderActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.return_order);
 
@@ -264,17 +268,7 @@ export default function ReturnOrderDetail() {
         onClick={() => completeOrder.open()}
       />,
       <AdminButton model={ModelType.returnorder} id={order.pk} />,
-      <BarcodeActionDropdown
-        model={ModelType.returnorder}
-        pk={order.pk}
-        hash={order?.barcode_hash}
-      />,
-      <PrintingActions
-        modelType={ModelType.returnorder}
-        items={[order.pk]}
-        enableReports
-        enableLabels
-      />,
+      ...featureActions,
       <OptionsActionDropdown
         tooltip={t`Order Actions`}
         actions={[
@@ -303,7 +297,7 @@ export default function ReturnOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, orderOpen, roStatus]);
+  }, [featureActions, user, order, orderOpen, roStatus]);
 
   const subtitle: string = useMemo(() => {
     let t = order.customer_detail?.name || '';

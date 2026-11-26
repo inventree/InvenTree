@@ -35,9 +35,10 @@ class InvenTreeSearchFilter(filters.SearchFilter):
 
         The following query params are available to 'augment' the search (in decreasing order of priority)
         - search_notes: If True, 'notes' is added to the search_fields if it isn't already present
+        - search_fields: Comma-separated list of field names, limits the search to a subset of the available search_fields
         - search_regex: If True, search is performed on 'regex' comparison
         """
-        from InvenTree.models import InvenTreeNoteMixin
+        from generic.models.modelmixins import InvenTreeNoteMixin
 
         # Set (and read, in filter_queryset) on self rather than returned some other
         # way, since get_search_fields() only returns the field list, not the
@@ -71,6 +72,8 @@ class InvenTreeSearchFilter(filters.SearchFilter):
                 # is returned once per matching note instead of once overall.
                 self._search_notes_fans_out = notes_field == 'notes_list__content'
 
+        search_fields = self.limit_search_fields(search_fields, request)
+
         regex = InvenTree.helpers.str2bool(
             request.query_params.get('search_regex', False)
         )
@@ -85,6 +88,30 @@ class InvenTreeSearchFilter(filters.SearchFilter):
                 fields.append(field)
 
         return fields
+
+    @staticmethod
+    def field_name(field: str) -> str:
+        """Return the 'plain' name of a search field, without any DRF lookup prefix."""
+        return field.lstrip(''.join(filters.SearchFilter.lookup_prefixes.keys()))
+
+    def limit_search_fields(self, search_fields, request):
+        """Limit the search fields to the subset requested by the 'search_fields' query param.
+
+        - Only fields which the view has marked as searchable can be selected
+        - If no (valid) fields are requested, all search fields are used (default behavior)
+        """
+        requested = request.query_params.get('search_fields', '')
+
+        requested = {name.strip() for name in str(requested).split(',') if name.strip()}
+
+        if not requested or not search_fields:
+            return search_fields
+
+        limited = [
+            field for field in search_fields if self.field_name(field) in requested
+        ]
+
+        return limited or search_fields
 
     def filter_queryset(self, request, queryset, view):
         """Apply the search filter, then deduplicate if notes search fanned out the join."""

@@ -27,6 +27,7 @@ import part.helpers as part_helpers
 import stock.models
 import users.models
 import users.permissions
+from common.settings import get_global_setting
 from data_exporter.mixins import DataExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
@@ -971,6 +972,20 @@ class PartSerializer(
         required=False,
         allow_blank=False,
     )
+
+    def validate_IPN(self, value):
+        """Ensure that the IPN of an existing part can only be changed if permitted."""
+        part = self.instance
+
+        if isinstance(part, Part) and part.pk:
+            if (value or '') != (part.IPN or '') and not get_global_setting(
+                'PART_ALLOW_EDIT_IPN', True, cache=False
+            ):
+                raise serializers.ValidationError(
+                    _('The IPN of an existing part cannot be changed')
+                )
+
+        return value
 
     def validate_existing_image(self, img):
         """Validate the selected image file."""

@@ -145,11 +145,11 @@ class InvenTreeMetadata(SimpleMetadata):
                     del actions[method]
 
             # Add a 'DELETE' action if we are allowed to delete
-            if 'DELETE' in view.allowed_methods:
-                if check_user_permission(user, self.model, 'delete') or (
-                    role_required and check_user_role(user, role_required, 'delete')
-                ):
-                    actions['DELETE'] = {}
+            if 'DELETE' in view.allowed_methods and (
+                check_user_permission(user, self.model, 'delete')
+                or (role_required and check_user_role(user, role_required, 'delete'))
+            ):
+                actions['DELETE'] = {}
 
             metadata['actions'] = actions
 
@@ -160,6 +160,9 @@ class InvenTreeMetadata(SimpleMetadata):
 
         if filters := self.get_filter_metadata(request, view):
             metadata['filters'] = filters
+
+        if search_fields := self.get_search_field_metadata(view):
+            metadata['search_fields'] = search_fields
 
         return metadata
 
@@ -180,6 +183,69 @@ class InvenTreeMetadata(SimpleMetadata):
         return perm is permissions.IsAuthenticated or bool(
             getattr(perm, 'allows_any_authenticated_user', False)
         )
+
+    def get_search_field_metadata(self, view) -> list[dict]:
+        """Return information on the fields which can be searched for an API endpoint.
+
+        A client can use this to let the user choose which fields a search applies to,
+        by passing a subset of the field names in the 'search_fields' query parameter.
+
+        Returns:
+            list: A list of {'name', 'label'} entries, one for each searchable field
+        """
+        from InvenTree.filters import InvenTreeSearchFilter
+
+        backends = getattr(view, 'filter_backends', None) or []
+
+        if not any(
+            isinstance(backend, type) and issubclass(backend, InvenTreeSearchFilter)
+            for backend in backends
+        ):
+            return []
+
+        try:
+            model = view.get_serializer_class().Meta.model
+        except Exception:
+            model = None
+
+        fields = []
+
+        for field in getattr(view, 'search_fields', None) or []:
+            name = InvenTreeSearchFilter.field_name(field)
+
+            fields.append({
+                'name': name,
+                'label': self.get_search_field_label(model, name),
+            })
+
+        return fields
+
+    def get_search_field_label(self, model, name: str) -> str:
+        """Construct a human readable label for a (possibly related) search field.
+
+        e.g. 'part__name' -> 'Part / Name' (using the translated field names)
+        """
+        labels = []
+
+        for part in name.split('__'):
+            label = None
+
+            if model is not None:
+                try:
+                    field = model._meta.get_field(part)
+                    label = getattr(field, 'verbose_name', None)
+                    model = getattr(field, 'related_model', None)
+                except Exception:
+                    # Not a model field (e.g. an annotation) - fall back to the raw name
+                    model = None
+
+            if not label:
+                label = part.replace('_', ' ')
+
+            label = str(label)
+            labels.append(label[:1].upper() + label[1:])
+
+        return ' / '.join(labels)
 
     def get_filter_metadata(self, request, view) -> dict:
         """Return information on the choice filters available for an API endpoint.
@@ -285,6 +351,23 @@ class InvenTreeMetadata(SimpleMetadata):
 
         return field_value
 
+    @staticmethod
+    def is_read_only_serializer(serializer) -> bool:
+        """Return True if the serializer (or any of its parents) is read-only.
+
+        A nested serializer declared with read_only=True (including the child of a
+        read-only ListSerializer) cannot accept input data.
+        """
+        node = serializer
+
+        while node is not None:
+            if getattr(node, 'read_only', False):
+                return True
+
+            node = getattr(node, 'parent', None)
+
+        return False
+
     def get_serializer_info(self, serializer):
         """Override get_serializer_info so that we can add 'default' values to any fields whose Meta.model specifies a default value."""
         self.serializer = serializer
@@ -328,12 +411,19 @@ class InvenTreeMetadata(SimpleMetadata):
             'label': 'verbose_name',
         }
 
+        # Default values are only meaningful for writable serializers.
+        # Nested read-only serializers (e.g. 'build_detail') cannot accept input,
+        # and computing their defaults can be expensive (e.g. generating the next reference).
+        include_defaults = not self.is_read_only_serializer(serializer)
+
         try:
             model_class = serializer.Meta.model
 
             model_fields = model_meta.get_field_info(model_class)
 
-            if model_default_func := getattr(model_class, 'api_defaults', None):
+            model_default_func = getattr(model_class, 'api_defaults', None)
+
+            if include_defaults and model_default_func:
                 model_default_values = model_default_func(request=request) or {}
             else:
                 model_default_values = {}
@@ -347,7 +437,7 @@ class InvenTreeMetadata(SimpleMetadata):
                     if name in write_only_fields:
                         serializer_info[name]['write_only'] = True
 
-                    if field.has_default():
+                    if include_defaults and field.has_default():
                         default = field.default
 
                         if callable(default):

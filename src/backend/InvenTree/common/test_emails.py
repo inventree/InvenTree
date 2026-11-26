@@ -129,6 +129,7 @@ class EmailTests(InvenTreeAPITestCase):
 
         # There should be an error logged on the message
         msg = EmailMessage.objects.first()
+        assert msg is not None
         self.assertEqual(msg.status, EmailMessage.EmailStatus.FAILED)
         self.assertEqual(msg.error_message, 'Test error sending email')
 
@@ -249,6 +250,7 @@ class EmailEventsTests(TestCase):
 
         # Check that the email was saved
         msg = EmailMessage.objects.filter(to=['comments@example.net']).first()
+        assert msg is not None
         self.assertEqual(EmailMessage.objects.count(), 1)
         self.assertEqual(msg.status, EmailMessage.EmailStatus.READ)
         self.assertEqual(msg.direction, EmailMessage.EmailDirection.INBOUND)

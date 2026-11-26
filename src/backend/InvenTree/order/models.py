@@ -25,7 +25,6 @@ from mptt.models import TreeForeignKey
 
 import common.models as common_models
 import InvenTree.helpers
-import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -50,6 +49,16 @@ from company.models import (
     Contact,
     SupplierPart,
     default_internal_company,
+)
+from generic.models.base import InvenTreeMetadataModel
+from generic.models.modelmixins import (
+    InvenTreeAttachmentMixin,
+    InvenTreeAuditMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeParameterMixin,
+    InvenTreeReferenceIndexingMixin,
+    InvenTreeTagsMixin,
 )
 from generic.states import (
     RETURN_VALUE,
@@ -96,7 +105,7 @@ from stock.status_codes import StockHistoryCode, StockStatus
 logger = structlog.get_logger('inventree')
 
 
-class AuditedOrderMixin(InvenTree.models.InvenTreeAuditMixin):
+class AuditedOrderMixin(InvenTreeAuditMixin):
     """Audit log configuration for order models."""
 
     AUDIT_EXCLUDE_FIELDS = (
@@ -108,7 +117,7 @@ class AuditedOrderMixin(InvenTree.models.InvenTreeAuditMixin):
     )
 
 
-class AuditedLineItemMixin(InvenTree.models.InvenTreeAuditMixin):
+class AuditedLineItemMixin(InvenTreeAuditMixin):
     """Audit log configuration for order line item models.
 
     Changes to line items are included in the history of the order.
@@ -357,15 +366,14 @@ class TransferOrderReportContext(BaseOrderReportContext, TypedDict):
 class Order(
     StatusCodeMixin,
     StateTransitionMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.ReferenceIndexingMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeReferenceIndexingMixin,
+    InvenTreeMetadataModel,
 ):
     """Abstract model for an order.
 
@@ -729,9 +737,9 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> PurchaseOrderReportContext:
         """Return report context data for this PurchaseOrder."""
-        return_ctx = super().report_context()
+        return_ctx: PurchaseOrderReportContext = super().report_context()
 
-        return_ctx.update({'supplier': self.supplier})  # ty:ignore[invalid-key]
+        return_ctx.update({'supplier': self.supplier})
         return return_ctx
 
     def get_absolute_url(self) -> str:
@@ -1513,9 +1521,9 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> SalesOrderReportContext:
         """Generate report context data for this SalesOrder."""
-        return_ctx = super().report_context()
+        return_ctx: SalesOrderReportContext = super().report_context()
 
-        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
+        return_ctx.update({'customer': self.customer})
         return return_ctx
 
     def get_absolute_url(self) -> str:
@@ -1690,7 +1698,11 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 continue
 
             available_stock = stock.models.StockItem.objects.filter(
-                stock.models.StockItem.IN_STOCK_FILTER, part=line_item.part
+                stock.models.StockItem.IN_STOCK_FILTER,
+                stock.models.StockItem.allowed_expiry_filter(
+                    'STOCK_ALLOW_EXPIRED_SALE'
+                ),
+                part=line_item.part,
             )
 
             if location:
@@ -1822,15 +1834,21 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 serials_not_exist.add(serial)
                 continue
 
-            if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
-                if (
-                    stock_item.hasRequiredTests()
-                    and not stock_item.passedAllRequiredTests()
-                ):
-                    serials_unavailable.add(serial)
-                    continue
+            if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS') and (
+                stock_item.hasRequiredTests()
+                and not stock_item.passedAllRequiredTests()
+            ):
+                serials_unavailable.add(serial)
+                continue
 
             if not stock_item.in_stock:
+                serials_unavailable.add(serial)
+                continue
+
+            # Expired stock may only be allocated if permitted
+            try:
+                stock_item.check_expired_allowed('STOCK_ALLOW_EXPIRED_SALE')
+            except ValidationError:
                 serials_unavailable.add(serial)
                 continue
 
@@ -1902,7 +1920,7 @@ class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 raise ValidationError(_('Order is already cancelled'))
 
             # Only an open order can be marked as shipped
-            if self.is_open and not self.is_completed:
+            if self.is_open and not self.is_completed():
                 raise ValidationError(_('Only an open order can be marked as complete'))
 
             if self.pending_shipment_count > 0:
@@ -2185,7 +2203,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
             SalesOrderShipment.objects.create(order=instance, reference='1')
 
 
-class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
+class OrderLineItem(InvenTreeMetadataModel):
     """Abstract model for an order line item.
 
     Attributes:
@@ -2620,11 +2638,10 @@ class SalesOrderLineItem(AuditedLineItemMixin, OrderLineItem):
         """
         super().clean()
 
-        if self.part:
-            if not self.part.salable:
-                raise ValidationError({
-                    'part': _('Only salable parts can be assigned to a sales order')
-                })
+        if self.part and not self.part.salable:
+            raise ValidationError({
+                'part': _('Only salable parts can be assigned to a sales order')
+            })
 
     def __str__(self):
         """Render a string representation of a SalesOrderLineItem instance."""
@@ -2747,15 +2764,14 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict
 
 
 class SalesOrderShipment(
-    InvenTree.models.InvenTreeAuditMixin,
-    InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNoteMixin,
-    InvenTree.models.InvenTreeTagsMixin,
+    InvenTreeAuditMixin,
+    InvenTreeParameterMixin,
+    InvenTreeAttachmentMixin,
+    InvenTreeBarcodeMixin,
+    InvenTreeNoteMixin,
+    InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
+    InvenTreeMetadataModel,
 ):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 
@@ -3038,7 +3054,6 @@ class SalesOrderShipment(
 
         for allocation in allocations:
             stock_item = seen_stock_items.get(allocation.item_id) or allocation.item
-            quantity = allocation.quantity
 
             if (locked_qty := locked_quantities.pop(stock_item.pk, None)) is not None:
                 # First encounter: refresh the quantity from the locked database row
@@ -3048,6 +3063,10 @@ class SalesOrderShipment(
                 continue
 
             seen_stock_items[stock_item.pk] = stock_item
+            quantity = min(allocation.quantity, stock_item.quantity)
+
+            if quantity <= 0:
+                continue
 
             if quantity < stock_item.quantity:
                 # Split off exactly the shipped quantity into a new StockItem,
@@ -3322,6 +3341,14 @@ class SalesOrderAllocation(models.Model):
         if self.quantity > self.item.quantity:
             errors['quantity'] = _('Allocation quantity cannot exceed stock quantity')
 
+        # Expired stock may only be newly allocated if permitted
+        # (existing allocations of since-expired stock remain editable)
+        if self._state.adding:
+            try:
+                self.item.check_expired_allowed('STOCK_ALLOW_EXPIRED_SALE')
+            except ValidationError as exc:
+                errors['item'] = exc.messages
+
         # Ensure that we do not 'over allocate' a stock item
         build_allocation_count = self.item.build_allocation_count()
         sales_allocation_count = self.item.sales_order_allocation_count(
@@ -3441,9 +3468,9 @@ class ReturnOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
     def report_context(self) -> ReturnOrderReportContext:
         """Generate report context data for this ReturnOrder."""
-        return_ctx = super().report_context()
+        return_ctx: ReturnOrderReportContext = super().report_context()
 
-        return_ctx.update({'customer': self.customer})  # ty:ignore[invalid-key]
+        return_ctx.update({'customer': self.customer})
         return return_ctx
 
     def get_absolute_url(self):

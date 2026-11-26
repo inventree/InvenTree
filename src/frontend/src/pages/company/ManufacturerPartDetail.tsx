@@ -9,6 +9,7 @@ import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelFeature } from '@lib/enums/ModelFeature';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { getDetailUrl } from '@lib/functions/Navigation';
@@ -30,6 +31,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useModelFeatureActions } from '../../hooks/UseModelFeatureActions';
 import { useUserState } from '../../states/UserState';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -134,6 +136,14 @@ export default function ManufacturerPartDetail() {
     }
   });
 
+  const featureActions = useModelFeatureActions({
+    model: ModelType.manufacturerpart,
+    instance: manufacturerPart,
+    permission: {
+      [ModelFeature.barcode]: user.hasChangeRole(UserRoles.purchase_order)
+    }
+  });
+
   const manufacturerPartActions = useMemo(() => {
     return [
       <AdminButton
@@ -141,6 +151,7 @@ export default function ManufacturerPartDetail() {
         model={ModelType.manufacturerpart}
         id={manufacturerPart.pk}
       />,
+      ...featureActions,
       <OptionsActionDropdown
         key='options'
         tooltip={t`Manufacturer Part Actions`}
@@ -160,7 +171,7 @@ export default function ManufacturerPartDetail() {
         ]}
       />
     ];
-  }, [user, manufacturerPart]);
+  }, [featureActions, user, manufacturerPart]);
 
   const breadcrumbs = useMemo(() => {
     return [
