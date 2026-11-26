@@ -197,8 +197,10 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'STOCKTAKE_AUTO_DAYS': {
         'name': _('Automatic Stocktake Period'),
-        'description': _('Number of days between automatic stocktake recording'),
-        'validator': [int, MinValueValidator(1)],
+        'description': _(
+            'Number of days between automatic stocktake recording (set to zero to disable)'
+        ),
+        'validator': [int, MinValueValidator(0)],
         'default': 7,
         'units': _('days'),
     },

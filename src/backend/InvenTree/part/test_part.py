@@ -1065,3 +1065,27 @@ class PartStockHistoryTest(InvenTreeTestCase):
         N_STOCKTAKE = PartStocktake.objects.count()
         perform_stocktake()
         self.assertEqual(PartStocktake.objects.count(), N_STOCKTAKE)
+
+    def test_auto_stocktake_period(self):
+        """Test that STOCKTAKE_AUTO_DAYS can be set to zero to disable automatic stocktake."""
+        from part.models import PartStocktake
+        from part.tasks import scheduled_stocktake_reports
+
+        set_global_setting('STOCKTAKE_ENABLE', True)
+
+        # Negative values are not allowed
+        with self.assertRaises(ValidationError):
+            set_global_setting('STOCKTAKE_AUTO_DAYS', -1)
+
+        # Zero is allowed, and disables automatic stocktake
+        set_global_setting('STOCKTAKE_AUTO_DAYS', 0)
+        self.assertEqual(get_global_setting('STOCKTAKE_AUTO_DAYS'), 0)
+
+        N = PartStocktake.objects.count()
+        scheduled_stocktake_reports()
+        self.assertEqual(PartStocktake.objects.count(), N)
+
+        # A positive value enables automatic stocktake
+        set_global_setting('STOCKTAKE_AUTO_DAYS', 1)
+        scheduled_stocktake_reports()
+        self.assertGreater(PartStocktake.objects.count(), N)
