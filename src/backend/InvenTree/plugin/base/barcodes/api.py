@@ -75,7 +75,9 @@ class BarcodeView(CreateAPIView):
         barcode = context.pop('barcode', '')
 
         # Exit if storing barcode scans is disabled
-        if not get_global_setting('BARCODE_STORE_RESULTS', backup=False, create=False):
+        if not get_global_setting(
+            'BARCODE_STORE_RESULTS', backup_value=False, create=False
+        ):
             return
 
         # Ensure that the response data is stringified first, otherwise cannot be JSON encoded
