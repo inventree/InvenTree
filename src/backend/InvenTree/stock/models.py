@@ -694,6 +694,41 @@ class StockItem(
         )
 
     @staticmethod
+    def stale_days() -> int:
+        """Return the number of days before expiry at which stock is considered "stale".
+
+        Returns 0 if stale stock detection is disabled, i.e. if either:
+        - The stock expiry feature is disabled (STOCK_ENABLE_EXPIRY)
+        - The STOCK_STALE_DAYS setting is zero (or negative)
+        """
+        if not get_global_setting('STOCK_ENABLE_EXPIRY', False):
+            return 0
+
+        try:
+            days = int(get_global_setting('STOCK_STALE_DAYS', 0))
+        except (TypeError, ValueError):
+            return 0
+
+        return max(days, 0)
+
+    @classmethod
+    def get_stale_filter(cls) -> Q | None:
+        """A query filter which can be used to filter StockItem objects which are stale.
+
+        Returns None if stale stock detection is disabled (see stale_days).
+        """
+        days = cls.stale_days()
+
+        if days <= 0:
+            return None
+
+        stale_date = InvenTree.helpers.current_date() + timedelta(days=days)
+
+        return (
+            cls.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
+        )
+
+    @staticmethod
     def allow_expired_stock(setting: str) -> bool:
         """Return True if expired stock may be used for a particular purpose.
 
@@ -1537,7 +1572,7 @@ class StockItem(
 
         today = InvenTree.helpers.current_date()
 
-        stale_days = get_global_setting('STOCK_STALE_DAYS')
+        stale_days = self.stale_days()
 
         if stale_days <= 0:
             return False

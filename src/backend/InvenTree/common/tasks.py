@@ -6,7 +6,6 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError
-from django.utils import timezone
 
 import feedparser
 import requests
@@ -31,27 +30,6 @@ def cleanup_old_data_outputs():
 
     for output in common.models.DataOutput.objects.filter(created__lte=threshold):
         output.delete()
-
-
-@tracer.start_as_current_span('delete_old_notifications')
-@scheduled_task(ScheduledTask.DAILY)
-def delete_old_notifications():
-    """Remove old notifications from the database.
-
-    Anything older than ~3 months is removed
-    """
-    try:
-        from common.models import NotificationEntry
-    except AppRegistryNotReady:  # pragma: no cover
-        logger.info(
-            "Could not perform 'delete_old_notifications' - App registry not ready"
-        )
-        return
-
-    before = timezone.now() - timedelta(days=90)
-
-    # Delete notification records before the specified date
-    NotificationEntry.objects.filter(updated__lte=before).delete()
 
 
 @tracer.start_as_current_span('update_news_feed')
