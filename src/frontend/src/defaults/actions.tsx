@@ -74,6 +74,13 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconLink size='1.2rem' />
       },
       {
+        id: 'about',
+        label: t`About InvenTree`,
+        description: t`About the InvenTree org`,
+        onClick: () => aboutInvenTree(),
+        leftSection: <IconLink size='1.2rem' />
+      },
+      {
         id: 'server-info',
         label: t`Server Information`,
         description: t`About this InvenTree instance`,
@@ -109,16 +116,6 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconSettings size='1.2rem' />
       }
     ];
-
-    // The 'about' modal requires staff access to the version API endpoint
-    staff &&
-      _actions.push({
-        id: 'about',
-        label: t`About InvenTree`,
-        description: t`About the InvenTree org`,
-        onClick: () => aboutInvenTree(),
-        leftSection: <IconLink size='1.2rem' />
-      });
 
     staff &&
       _actions.push({

@@ -4,6 +4,7 @@ import { openContextModal } from '@mantine/modals';
 
 import { StylishText } from '@lib/components/StylishText';
 import { UserRoles } from '@lib/enums/Roles';
+import type { SettingsStateProps } from '@lib/types/Settings';
 import type { UserStateProps } from '@lib/types/User';
 import {
   IconBox,
@@ -169,7 +170,10 @@ export function licenseInfo() {
   });
 }
 
-export function AboutLinks(user: UserStateProps): MenuLinkItem[] {
+export function AboutLinks(
+  settings: SettingsStateProps,
+  user: UserStateProps
+): MenuLinkItem[] {
   const base_items: MenuLinkItem[] = [
     {
       id: 'documentation',
@@ -203,8 +207,8 @@ export function AboutLinks(user: UserStateProps): MenuLinkItem[] {
     }
   ];
 
-  // The 'about' modal requires staff access to the version API endpoint
-  if (user.isStaff()) {
+  // Restrict the about link if that setting is set
+  if (user.isSuperuser() || !settings.isSet('INVENTREE_RESTRICT_ABOUT')) {
     base_items.push({
       id: 'about',
       title: t`About InvenTree`,

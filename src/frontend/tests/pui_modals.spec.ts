@@ -1,4 +1,4 @@
-import { expect, systemKey, test } from './baseFixtures.js';
+import { systemKey, test } from './baseFixtures.js';
 import { adminuser } from './defaults.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
@@ -139,19 +139,14 @@ test('Spotlight - No Keys', async ({ browser }) => {
 
   await page.keyboard.press('Escape');
 
-  // The 'about' action is only available to staff users
+  // use about
   await page.getByLabel('open-spotlight').click();
   await page
-    .getByRole('button', {
-      name: 'Documentation Visit the documentation to learn more about InvenTree'
-    })
-    .waitFor();
-  await expect(
-    page.getByRole('button', {
-      name: 'About InvenTree About the InvenTree org'
-    })
-  ).toHaveCount(0);
-  await page.keyboard.press('Escape');
+    .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
+    .click();
+  await page.getByText('This information is only').waitFor();
+
+  await page.getByLabel('About InvenTree').getByRole('button').click();
 
   // use documentation
   await page.getByLabel('open-spotlight').click();
