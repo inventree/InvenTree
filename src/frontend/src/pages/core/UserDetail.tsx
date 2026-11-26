@@ -109,6 +109,9 @@ export default function UserDetail() {
       }
     ];
 
+    // Profile information is provided as a nested object
+    const profile = instance?.profile ?? {};
+
     const br: DetailsField[] = [
       {
         type: 'text',
@@ -116,14 +119,14 @@ export default function UserDetail() {
         label: t`Display Name`,
         icon: 'user',
         copy: true,
-        hidden: !instance.displayname
+        hidden: !profile.displayname
       },
       {
         type: 'text',
         name: 'position',
         label: t`Position`,
         icon: 'info',
-        hidden: !instance.position
+        hidden: !profile.position
       },
 
       {
@@ -132,7 +135,7 @@ export default function UserDetail() {
         label: t`Contact`,
         icon: 'email',
         copy: true,
-        hidden: !instance.contact
+        hidden: !profile.contact
       },
       {
         type: 'text',
@@ -140,14 +143,14 @@ export default function UserDetail() {
         label: t`Organisation`,
         icon: 'info',
         copy: true,
-        hidden: !instance.organisation
+        hidden: !profile.organisation
       },
       {
         type: 'text',
         name: 'status',
         label: t`Status`,
         icon: 'note',
-        hidden: !instance.status
+        hidden: !profile.status
       },
       {
         type: 'text',
@@ -155,17 +158,17 @@ export default function UserDetail() {
         label: t`Location`,
         icon: 'location',
         copy: true,
-        hidden: !instance.location
+        hidden: !profile.location
       }
     ];
 
     const hasProfile =
-      instance.displayname ||
-      instance.position ||
-      instance.contact ||
-      instance.organisation ||
-      instance.status ||
-      instance.location;
+      profile.displayname ||
+      profile.position ||
+      profile.contact ||
+      profile.organisation ||
+      profile.status ||
+      profile.location;
 
     return (
       <ItemDetailsGrid
@@ -173,12 +176,12 @@ export default function UserDetail() {
           { fields: tl, item: instance, title: t`User Information` },
           { fields: tr, item: instance, title: t`User Permissions` },
           ...(hasProfile && settings.isSet('DISPLAY_PROFILE_INFO')
-            ? [{ fields: br, item: instance, title: t`User Profile` }]
+            ? [{ fields: br, item: profile, title: t`User Profile` }]
             : [])
         ]}
       />
     );
-  }, [instance, userGroups, instanceQuery]);
+  }, [instance, userGroups, instanceQuery, settings]);
 
   const userPanels: PanelType[] = useMemo(() => {
     return [
