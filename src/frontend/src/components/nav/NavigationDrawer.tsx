@@ -159,8 +159,8 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
   }, [user]);
 
   const menuItemsAbout: MenuLinkItem[] = useMemo(
-    () => AboutLinks(user),
-    [user]
+    () => AboutLinks(globalSettings, user),
+    []
   );
 
   return (

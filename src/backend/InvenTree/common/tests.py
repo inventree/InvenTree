@@ -816,7 +816,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
     def test_cast(self):
         """Test that values are cast to the correct type."""
-        key = 'INVENTREE_SHOW_ADMIN_BANNER'
+        key = 'INVENTREE_RESTRICT_ABOUT'
 
         # Delete the associated setting object
         InvenTreeSetting.objects.filter(key=key).delete()

@@ -242,7 +242,7 @@ ldap:
 # Override global settings
 #global_settings:
 #  INVENTREE_DEFAULT_CURRENCY: 'CNY'
-#  INVENTREE_SHOW_ADMIN_BANNER: true
+#  INVENTREE_RESTRICT_ABOUT: true
 
 # Override plugin settings (by plugin slug)
 # Settings specified here will be locked and cannot be changed via the UI
