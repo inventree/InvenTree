@@ -106,15 +106,17 @@ export function FirstUseTour() {
         title: t`Admin Center`,
         description: t`The admin center provides access to administrative functions and can be used to manage various functions required for operation of the instance like user management, templates, parameters, plugins.`
       });
+
+      // The 'about' menu item is only shown to staff users
+      _steps.push({
+        target: 'tip-ftu-about',
+        title: t`About InvenTree`,
+        description: t`Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports.`
+      });
     }
 
-    _steps.push({
-      target: 'tip-ftu-about',
-      title: t`About InvenTree`,
-      description: t`Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports.`
-    });
     return _steps;
-  }, [userSettings, globalSettings]);
+  }, [userSettings, globalSettings, user]);
 
   const completeTour = () => {
     setActive(false);
