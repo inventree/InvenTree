@@ -2308,7 +2308,18 @@ class PartListTests(PartAPITestBase):
 
     def test_query_count(self):
         """Test that the query count is unchanged, independent of query results."""
-        queries = [{'limit': 1}, {'limit': 10}, {'limit': 50}, {'category': 1}, {}]
+        queries = [
+            {'limit': 1},
+            {'limit': 10},
+            {'limit': 50},
+            {'category': 1},
+            {},
+            # Parametric queries (template 1 is defined in the 'params' fixture)
+            {'parameters': True},
+            {'parameters': True, 'ordering': '-parameter_1'},
+            {'parameters': True, 'parameter_1_gt': '1', 'limit': 10},
+            {'parameters': True, 'parameter_1_ne': '4', 'category': 1},
+        ]
 
         url = reverse('api-part-list')
 

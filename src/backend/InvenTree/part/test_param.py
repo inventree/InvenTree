@@ -2,12 +2,16 @@
 
 import django.core.exceptions as django_exceptions
 from django.contrib.auth.models import User
+from django.db import connection
 from django.test import TestCase, TransactionTestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
+
+import pytest
 
 from common.models import InvenTreeSetting, Parameter, ParameterTemplate
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPIPerformanceTestCase, InvenTreeAPITestCase
 
 from .models import Part, PartCategory, PartCategoryParameterTemplate
 
@@ -535,14 +539,17 @@ class ParameterTest(InvenTreeAPITestCase):
             self.assertEqual(actual, expected)
 
 
-class ParameterFilterTest(InvenTreeAPITestCase):
-    """Unit tests for filtering parts by parameter values."""
+class ParametricDataMixin:
+    """Mixin which creates a set of parts with parametric data for testing.
 
-    superuser = True
+    Provides a 'create_parts' helper, so that tests can increase the size
+    of the dataset (e.g. to check that query counts do not scale with the
+    number of results).
+    """
 
     @classmethod
     def setUpTestData(cls):
-        """Setup test data for the filtering tests."""
+        """Setup test data for the parametric tests."""
         super().setUpTestData()
 
         cls.url = reverse('api-part-list')
@@ -568,8 +575,20 @@ class ParameterFilterTest(InvenTreeAPITestCase):
             name='Test Category', description='A category for testing part parameters'
         )
 
-        # Create a number of parts
-        parts = [
+        cls.create_parts(50)
+
+    @classmethod
+    def create_parts(cls, count: int, offset: int = 0) -> list[Part]:
+        """Bulk-create a number of parts, with associated parameter data.
+
+        Arguments:
+            count: The number of parts to create
+            offset: Index offset (used to generate unique names and values)
+
+        Returns:
+            The list of created parts
+        """
+        parts = Part.objects.bulk_create([
             Part(
                 name=f'Part {i}',
                 description=f'Description for part {i}',
@@ -580,15 +599,15 @@ class ParameterFilterTest(InvenTreeAPITestCase):
                 lft=0,
                 rght=0,
             )
-            for i in range(1, 51)
-        ]
-
-        Part.objects.bulk_create(parts)
+            for i in range(offset + 1, offset + count + 1)
+        ])
 
         # Create parameters for each part
         parameters = []
 
-        for ii, part in enumerate(Part.objects.all()):
+        for jj, part in enumerate(parts):
+            ii = jj + offset
+
             parameters.append(
                 Parameter(
                     content_object=part,
@@ -607,21 +626,20 @@ class ParameterFilterTest(InvenTreeAPITestCase):
                 )
             )
 
-            if ii < 25:
+            # Only some parts have 'ionized' and 'color' parameters (repeats every 50 parts)
+            if ii % 50 < 25:
                 parameters.append(
                     Parameter(
                         content_object=part,
                         template=cls.template_ionized,
                         data='true'
                         if ii % 5 == 0
-                        else 'false',  # Ionized every second part
-                        data_numeric=1
-                        if ii % 5 == 0
-                        else 0,  # Ionized every second part
+                        else 'false',  # Ionized every fifth part
+                        data_numeric=1 if ii % 5 == 0 else 0,
                     )
                 )
 
-            if ii < 15:
+            if ii % 50 < 15:
                 parameters.append(
                     Parameter(
                         content_object=part,
@@ -633,6 +651,14 @@ class ParameterFilterTest(InvenTreeAPITestCase):
 
         # Bulk create all parameters
         Parameter.objects.bulk_create(parameters)
+
+        return parts
+
+
+class ParameterFilterTest(ParametricDataMixin, InvenTreeAPITestCase):
+    """Unit tests for filtering parts by parameter values."""
+
+    superuser = True
 
     def test_filter_by_length(self):
         """Test basic filtering by length parameter."""
@@ -732,6 +758,32 @@ class ParameterFilterTest(InvenTreeAPITestCase):
 
             self.assertEqual(len(response), expected_count, f'{filter_name}={value}')
 
+    def test_filter_ne_same_template(self):
+        """The '_ne' filter must only consider parameters for the specified template.
+
+        A value of 7mm exists for the 'width' template (one part),
+        but no part has a 'length' of 7mm - so no parts should be excluded.
+        """
+        response = self.get(
+            self.url, {f'parameter_{self.template_width.pk}': '7'}, expected_code=200
+        )
+        self.assertEqual(len(response.data), 1)
+
+        response = self.get(
+            self.url,
+            {f'parameter_{self.template_length.pk}_ne': '7'},
+            expected_code=200,
+        )
+        self.assertEqual(len(response.data), 50)
+
+        # Excludes only the single part which has a 'length' of 15mm
+        response = self.get(
+            self.url,
+            {f'parameter_{self.template_length.pk}_ne': '15'},
+            expected_code=200,
+        )
+        self.assertEqual(len(response.data), 49)
+
     def test_filter_multiple(self):
         """Test filtering by multiple parameters."""
         data = {f'parameter_{self.template_length.pk}_lt': '225'}
@@ -750,3 +802,203 @@ class ParameterFilterTest(InvenTreeAPITestCase):
             data[f'parameter_{self.template_color.pk}'] = color
             response = self.get(self.url, data)
             self.assertEqual(len(response.data), 1)
+
+
+class ParametricQueryTest(ParametricDataMixin, InvenTreeAPITestCase):
+    """Regression tests for the database cost of parametric part queries.
+
+    These tests guard against:
+    - "N + 1" query regressions (query count must not scale with results)
+    - Re-introduction of DISTINCT queries for parameter filtering, which force
+      the database to evaluate every annotation for every matching row
+    """
+
+    superuser = True
+
+    # Upper bound on the number of queries for any single parametric request
+    MAX_PARAMETRIC_QUERIES = 25
+
+    def parametric_queries(self) -> dict[str, dict]:
+        """Return a set of representative parametric queries."""
+        length = self.template_length.pk
+        width = self.template_width.pk
+        ionized = self.template_ionized.pk
+        color = self.template_color.pk
+
+        complex_query = {
+            'category': self.category.pk,
+            'cascade': True,
+            'category_detail': True,
+            'parameters': True,
+            'ordering': f'-parameter_{length}',
+            f'parameter_{length}_gt': '20',
+            f'parameter_{width}_lte': '1000mm',
+            f'parameter_{color}_ne': 'red',
+        }
+
+        return {
+            'parameters': {'parameters': True},
+            'order': {'ordering': f'parameter_{length}', 'parameters': True},
+            'order_desc': {'ordering': f'-parameter_{width}', 'parameters': True},
+            'filter_gt': {f'parameter_{length}_gt': '20', 'parameters': True},
+            'filter_units': {f'parameter_{width}_lt': '1 m', 'parameters': True},
+            'filter_ne': {f'parameter_{length}_ne': '15', 'parameters': True},
+            'filter_text': {f'parameter_{color}_icontains': 'e', 'parameters': True},
+            'filter_bool': {f'parameter_{ionized}': 'false', 'parameters': True},
+            'complex': complex_query,
+            'complex_paginated': {**complex_query, 'limit': 10, 'offset': 5},
+        }
+
+    def capture(self, params: dict):
+        """Perform a part list query, and capture the executed queries."""
+        with CaptureQueriesContext(connection) as ctx:
+            response = self.get(self.url, params, expected_code=200)
+
+        return response, ctx
+
+    @staticmethod
+    def result_count(response) -> int:
+        """Return the total number of results for a (possibly paginated) response."""
+        data = response.data
+        return data['count'] if isinstance(data, dict) else len(data)
+
+    def test_query_count_constant(self):
+        """The number of queries must not scale with the number of results ("N + 1")."""
+        queries = self.parametric_queries()
+
+        # Warm up any caches (content types, settings, etc)
+        for params in queries.values():
+            self.get(self.url, params, expected_code=200)
+
+        baseline = {}
+
+        for name, params in queries.items():
+            response, ctx = self.capture(params)
+            baseline[name] = (len(ctx), self.result_count(response))
+
+            self.assertLess(
+                len(ctx),
+                self.MAX_PARAMETRIC_QUERIES,
+                f"Too many queries for '{name}': {len(ctx)}",
+            )
+
+        # Triple the size of the dataset
+        self.create_parts(100, offset=50)
+
+        for name, params in queries.items():
+            response, ctx = self.capture(params)
+            n_queries, n_results = baseline[name]
+
+            # Ensure that the larger dataset is actually reflected in the results
+            self.assertGreater(
+                self.result_count(response),
+                n_results,
+                f"Expected more results for '{name}'",
+            )
+
+            self.assertEqual(
+                len(ctx),
+                n_queries,
+                f"Query count for '{name}' changed with dataset size: "
+                f'{n_queries} -> {len(ctx)}',
+            )
+
+    def test_parameters_prefetched(self):
+        """Serializing parameters must not trigger per-part or per-parameter queries."""
+        without = self.capture({'limit': 100})[1]
+        response, with_params = self.capture({'limit': 100, 'parameters': True})
+
+        # Every part has at least two parameters, each with nested template data
+        n_params = sum(len(part['parameters']) for part in response.data['results'])
+        self.assertGreaterEqual(n_params, 100)
+
+        for part in response.data['results']:
+            for param in part['parameters']:
+                self.assertIsNotNone(param['template_detail'])
+
+        # Parameter data should be loaded via a small, fixed number of prefetch queries
+        self.assertLessEqual(len(with_params) - len(without), 5)
+
+    def test_filter_no_distinct(self):
+        """Parameter filtering must not produce SELECT DISTINCT queries.
+
+        Joining against the parameter table and de-duplicating with DISTINCT
+        forces the database to evaluate all queryset annotations for every
+        matching row (both for the results and the pagination count query).
+        """
+        for name, params in self.parametric_queries().items():
+            _response, ctx = self.capture({**params, 'limit': 10})
+
+            for query in ctx.captured_queries:
+                sql = query['sql'].upper()
+
+                self.assertFalse(
+                    'SELECT DISTINCT' in sql and 'PART_PART' in sql,
+                    f"Unexpected DISTINCT query for '{name}': {query['sql'][:200]}",
+                )
+
+    def test_filter_no_duplicates(self):
+        """Filtering against multiple parameters must not return duplicate rows."""
+        length = self.template_length.pk
+        width = self.template_width.pk
+
+        response, _ctx = self.capture({
+            f'parameter_{length}_gt': '20',
+            f'parameter_{width}_gt': '20',
+            'limit': 100,
+        })
+
+        pks = [part['pk'] for part in response.data['results']]
+
+        # No duplicate rows are returned
+        self.assertEqual(len(pks), len(set(pks)))
+        self.assertEqual(response.data['count'], len(pks))
+
+
+class ParametricApiPerformanceTest(
+    ParametricDataMixin, InvenTreeAPIPerformanceTestCase
+):
+    """Performance benchmarks for parametric part queries."""
+
+    superuser = True
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create a larger dataset for benchmarking."""
+        super().setUpTestData()
+        cls.create_parts(450, offset=50)
+
+    @pytest.mark.django_db
+    @pytest.mark.benchmark
+    def test_api_part_list_parameters(self):
+        """Benchmark the part list with parameter data and ordering."""
+        response = self.get(
+            self.url,
+            {
+                'parameters': True,
+                'ordering': f'-parameter_{self.template_length.pk}',
+                'limit': 25,
+            },
+            expected_code=200,
+        )
+        self.assertEqual(response.data['count'], 500)
+
+    @pytest.mark.django_db
+    @pytest.mark.benchmark
+    def test_api_part_list_parametric_filter(self):
+        """Benchmark the part list filtered against multiple parameters."""
+        response = self.get(
+            self.url,
+            {
+                'category': self.category.pk,
+                'cascade': True,
+                'category_detail': True,
+                'parameters': True,
+                'ordering': f'-parameter_{self.template_length.pk}',
+                f'parameter_{self.template_length.pk}_gt': '100',
+                f'parameter_{self.template_width.pk}_lt': '1 m',
+                'limit': 25,
+            },
+            expected_code=200,
+        )
+        self.assertGreater(response.data['count'], 0)
