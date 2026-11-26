@@ -1,4 +1,4 @@
-import { test } from './baseFixtures';
+import { expect, test } from './baseFixtures';
 import { stevenuser } from './defaults';
 import { doCachedLogin } from './login';
 
@@ -226,5 +226,12 @@ test('Importing - Natural Keys', async ({ browser }) => {
     .click();
 
   await page.getByText('Data has been imported successfully').waitFor();
+
+  const orderRefresh = page.waitForResponse(
+    (response) =>
+      response.request().method() === 'GET' &&
+      new URL(response.url()).pathname === '/api/order/po/15/'
+  );
   await page.getByRole('button', { name: 'Close' }).click();
+  expect((await orderRefresh).ok()).toBeTruthy();
 });
