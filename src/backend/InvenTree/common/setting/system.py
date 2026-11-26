@@ -187,6 +187,8 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Unique identifier for this InvenTree instance'),
         'default': default_uuid4,
         'hidden': True,
+        # The instance ID is the secret behind link proofs - restrict access to admin users
+        'admin_only': True,
     },
     'INVENTREE_ANNOUNCE_ID': {
         'name': _('Announce ID'),

@@ -501,6 +501,7 @@ class SettingsTest(InvenTreeTestCase):
             'default',
             'validator',
             'hidden',
+            'admin_only',
             'choices',
             'units',
             'model',
@@ -692,6 +693,47 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
         # Number of results should match the number of settings
         self.assertEqual(len(response.data), n_public_settings)
+
+    def test_admin_only_setting(self):
+        """Settings marked as admin-only can only be read or written by admin users."""
+        key = 'INVENTREE_INSTANCE_ID'
+        url = reverse('api-global-setting-detail', kwargs={'key': key})
+        list_url = reverse('api-global-setting-list')
+
+        instance_id = get_global_setting(key)
+        self.assertTrue(InvenTreeSetting.is_admin_only(key))
+        self.assertIn(key, InvenTreeSetting.admin_only_keys())
+
+        # Admin (staff) users can read and write the setting
+        self.assertTrue(self.user.is_staff)
+        response = self.get(url, expected_code=200)
+        self.assertEqual(response.data['value'], instance_id)
+
+        keys = [s['key'] for s in self.get(list_url, expected_code=200).data]
+        self.assertIn(key, keys)
+
+        self.patch(url, {'value': 'admin-value'}, expected_code=200)
+        self.assertEqual(get_global_setting(key, cache=False), 'admin-value')
+
+        # Non-admin users cannot read or write the setting
+        self.user.is_staff = False
+        self.user.save()
+
+        self.get(url, expected_code=403)
+        self.patch(url, {'value': 'user-value'}, expected_code=403)
+
+        keys = [s['key'] for s in self.get(list_url, expected_code=200).data]
+        self.assertNotIn(key, keys)
+        self.assertGreater(len(keys), 0)
+
+        # Other settings are still readable by non-admin users
+        other_url = reverse(
+            'api-global-setting-detail', kwargs={'key': 'INVENTREE_INSTANCE'}
+        )
+        self.get(other_url, expected_code=200)
+
+        cache.clear()
+        self.assertEqual(get_global_setting(key, cache=False), 'admin-value')
 
     def test_currency_settings(self):
         """Run tests for currency specific settings."""

@@ -263,6 +263,17 @@ class GlobalSettingsList(SettingsList):
     serializer_class = common.serializers.GlobalSettingsSerializer
     permission_classes = [IsAuthenticated, GlobalSettingsPermissions]
 
+    def get_queryset(self):
+        """Exclude settings which are restricted to admin users."""
+        queryset = super().get_queryset()
+
+        if not self.request.user.is_staff:
+            queryset = queryset.exclude(
+                key__in=common.models.InvenTreeSetting.admin_only_keys()
+            )
+
+        return queryset
+
     def list(self, request, *args, **kwargs):
         """Ensure all global settings are created."""
         common.models.InvenTreeSetting.build_default_values()
@@ -295,6 +306,13 @@ class GlobalSettingsDetail(TouchMixin, RetrieveUpdateAPI):
 
         if key.startswith('_') or key not in common.models.InvenTreeSetting.SETTINGS:
             raise NotFound()
+
+        # Some settings can only be read or written by admin users
+        if (
+            common.models.InvenTreeSetting.is_admin_only(key)
+            and not self.request.user.is_staff
+        ):
+            raise PermissionDenied()
 
         return common.models.InvenTreeSetting.get_setting_object(
             key, cache=False, create=True

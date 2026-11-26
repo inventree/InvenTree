@@ -1272,6 +1272,22 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
         return self.__class__.is_protected(self.key, **self.get_filters_for_instance())
 
     @classmethod
+    def is_admin_only(cls, key, **kwargs):
+        """Check if the setting can only be accessed (read or written) by admin users."""
+        setting = cls.get_setting_definition(key, **cls.get_filters(**kwargs))
+
+        return setting.get('admin_only', False)
+
+    @classmethod
+    def admin_only_keys(cls) -> list[str]:
+        """Return the keys of all settings which can only be accessed by admin users."""
+        return [
+            key
+            for key, setting in (cls.SETTINGS or {}).items()
+            if setting.get('admin_only', False)
+        ]
+
+    @classmethod
     def is_required(cls, key, **kwargs):
         """Check if this setting value is required."""
         setting = cls.get_setting_definition(key, **cls.get_filters(**kwargs))

@@ -40,6 +40,7 @@ class SettingsKeyType(TypedDict, total=False):
         before_save: Function that gets called after save with *args, **kwargs (optional)
         after_save: Function that gets called after save with *args, **kwargs (optional)
         protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
+        admin_only: Setting can only be read or written via the API by admin (staff) users (optional, default: False)
         required: Is this setting required to work, can be used in combination with .check_all_settings(...) (optional, default: False)
         model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
         confirm: Require an explicit confirmation before changing the setting (optional, default: False)
@@ -62,6 +63,7 @@ class SettingsKeyType(TypedDict, total=False):
     before_save: Callable[..., None]
     after_save: Callable[..., None]
     protected: bool
+    admin_only: bool
     required: bool
     model: str
     confirm: bool
