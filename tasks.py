@@ -2050,6 +2050,7 @@ def test(
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
         'branch': 'Specify branch of demo-dataset to clone',
+        'bulk': 'Use the faster bulkloaddata command when importing records (default = False)',
         'verbose': 'Print verbose output from management commands',
     }
 )
@@ -2063,6 +2064,7 @@ def setup_test(
     verbose: bool = False,
     path: str = 'inventree-demo-dataset',
     branch: Optional[str] = None,
+    bulk: bool = False,
 ):
     """Setup a testing environment, filled out with demo data."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
@@ -2129,6 +2131,7 @@ def setup_test(
         filename=template_dir.joinpath('inventree_data.json'),
         clear=True,
         ignore_nonexistent=True,
+        bulk=bulk,
         verbose=verbose,
     )
 
