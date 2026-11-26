@@ -1,5 +1,6 @@
 """System settings for the stock app."""
 
+from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 import common.validators
@@ -49,11 +50,11 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STOCK_STALE_DAYS': {
         'name': _('Stock Stale Time'),
         'description': _(
-            'Number of days stock items are considered stale before expiring'
+            'Number of days stock items are considered stale before expiring (set to zero to disable). Requires stock expiry to be enabled'
         ),
         'default': 0,
         'units': _('days'),
-        'validator': [int],
+        'validator': [int, MinValueValidator(0)],
     },
     'STOCK_ALLOW_EXPIRED_BUILD': {
         'name': _('Build Expired Stock'),

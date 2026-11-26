@@ -113,11 +113,17 @@ export default function UserSettings() {
         label: t`Notifications`,
         icon: <IconBellCog />,
         content: (
-          <PluginSettingsGroup
-            mixin='notification'
-            global={false}
-            message={t`The settings below are specific to each available notification method`}
-          />
+          <Stack gap='xs'>
+            {/* Error reports are only sent to staff users */}
+            {user?.is_staff && (
+              <UserSettingList keys={['NOTIFICATION_ERROR_REPORT']} />
+            )}
+            <PluginSettingsGroup
+              mixin='notification'
+              global={false}
+              message={t`The settings below are specific to each available notification method`}
+            />
+          </Stack>
         )
       },
       {
@@ -135,7 +141,7 @@ export default function UserSettings() {
         )
       }
     ];
-  }, []);
+  }, [user]);
 
   if (!isLoggedIn()) {
     return <Skeleton />;

@@ -41,7 +41,7 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 from common.currency import currency_codes
 from common.models import CustomUnit, InvenTreeSetting
-from common.settings import get_global_setting
+from common.settings import get_global_setting, set_global_setting
 from InvenTree import apps
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
@@ -1567,8 +1567,23 @@ class TestSettings(InvenTreeTestCase):
         self.assertIsNone(version.inventree_identifier())
 
         # with env set
-        with in_env_context({'INVENTREE_ANNOUNCE_ID': 'True'}):
-            self.assertEqual(val, version.inventree_identifier())
+        for enabled in ['True', 'true', '1', 'yes']:
+            with in_env_context({'INVENTREE_ANNOUNCE_ID': enabled}):
+                self.assertEqual(val, version.inventree_identifier())
+
+        # "False-y" environment values must not announce the ID
+        for disabled in ['False', 'false', '0', 'no']:
+            with in_env_context({'INVENTREE_ANNOUNCE_ID': disabled}):
+                self.assertIsNone(version.inventree_identifier())
+
+        # Database setting (no environment override)
+        set_global_setting('INVENTREE_ANNOUNCE_ID', True)
+        self.assertEqual(val, version.inventree_identifier())
+        set_global_setting('INVENTREE_ANNOUNCE_ID', False)
+        self.assertIsNone(version.inventree_identifier())
+
+        # Override always returns the ID
+        self.assertEqual(val, version.inventree_identifier(override_announce=True))
 
 
 class TestInstanceName(InvenTreeTestCase):

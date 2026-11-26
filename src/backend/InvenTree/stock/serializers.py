@@ -1,6 +1,5 @@
 """JSON serializers for Stock app."""
 
-from datetime import timedelta
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -635,20 +634,16 @@ class StockItemSerializer(
         )
 
         # Add flag to indicate if the StockItem is stale
-        stale_days = get_global_setting('STOCK_STALE_DAYS')
-        stale_date = InvenTree.helpers.current_date() + timedelta(days=stale_days)
-        stale_filter = (
-            StockItem.IN_STOCK_FILTER
-            & ~Q(expiry_date=None)
-            & Q(expiry_date__lt=stale_date)
-        )
-
-        queryset = queryset.annotate(
-            stale=Case(
+        # (always False if stale stock detection is disabled)
+        if (stale_filter := StockItem.get_stale_filter()) is not None:
+            stale_value = Case(
                 When(stale_filter, then=Value(True, output_field=BooleanField())),
                 default=Value(False, output_field=BooleanField()),
             )
-        )
+        else:
+            stale_value = Value(False, output_field=BooleanField())
+
+        queryset = queryset.annotate(stale=stale_value)
 
         # Annotate with the total number of "installed items"
         queryset = queryset.annotate(installed_items=SubqueryCount('installed_parts'))
