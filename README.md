@@ -117,6 +117,8 @@ There are several options to deploy InvenTree.
     <span> · </span>
     <a href="https://inventree.org/digitalocean"><img src="https://www.deploytodo.com/do-btn-blue-ghost.svg" alt="Deploy to DO" width="auto" height="40" /></a>
     <span> · </span>
+    <a href="https://dash.elest.io/deploy?soft=InvenTree&id=499"><img src="https://elest.io/images/logos/deploy-to-elestio-btn.svg" alt="Deploy on Elestio" width="auto" height="40" /></a>
+    <span> · </span>
     <a href="https://docs.inventree.org/en/latest/start/install/">Bare Metal</a>
 </h4></div>
 
