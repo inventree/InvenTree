@@ -39,18 +39,53 @@ def global_setting_overrides() -> dict:
     return {}
 
 
-def get_global_setting(key, backup_value=None, environment_key=None, **kwargs):
-    """Return the value of a global setting using the provided key."""
+def get_global_setting(
+    key,
+    backup_value=None,
+    environment_key=None,
+    *,
+    create: Optional[bool] = None,
+    cache: Optional[bool] = None,
+    **unexpected,
+):
+    """Return the value of a global setting using the provided key.
+
+    Arguments:
+        key: The setting key
+        backup_value: Value to return if the setting is not found (defaults to the setting default)
+        environment_key: Environment variable which, if set, overrides the setting value
+        create: Create the setting in the database if it does not exist (default = True)
+        cache: Use the global cache for the lookup (default = GLOBAL_CACHE_ENABLED)
+
+    Any other keyword arguments are ignored (with a warning). They are not
+    forwarded, as they would otherwise become part of the setting cache key,
+    resulting in a stale cache entry which is never refreshed when the setting is saved.
+    """
     import InvenTree.ready
     from common.models import InvenTreeSetting
+
+    if unexpected:
+        logger.warning(
+            'get_global_setting: ignoring unexpected arguments %s for setting %s',
+            sorted(unexpected.keys()),
+            key,
+        )
 
     if environment_key:
         value = environ.get(environment_key)
         if value:
             return value
 
+    kwargs = {}
+
     if backup_value is not None:
         kwargs['backup_value'] = backup_value
+
+    if create is not None:
+        kwargs['create'] = create
+
+    if cache is not None:
+        kwargs['cache'] = cache
 
     # Prevent database writes if we are in a read-only command
     if InvenTree.ready.isReadOnlyCommand():
