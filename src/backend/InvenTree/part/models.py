@@ -800,13 +800,31 @@ class Part(
                     log_error('validate_part_ipn', plugin=plugin.slug)
 
         # If we get to here, none of the plugins have raised an error
-        pattern = get_global_setting('PART_IPN_REGEX', '', create=False).strip()
+        pattern = str(
+            get_global_setting('PART_IPN_REGEX', '', create=False) or ''
+        ).strip()
 
-        if pattern:
-            match = re.search(pattern, self.IPN)
+        # Blank IPN values are permitted, and are not checked against the pattern
+        if not pattern or not self.IPN:
+            return
 
-            if match is None:
-                raise ValidationError(_(f'IPN must match regex pattern {pattern}'))
+        try:
+            match = re.search(pattern, str(self.IPN))
+        except re.error:
+            # A malformed pattern may already be stored (e.g. from before validation was added)
+            log_error('validate_ipn')
+            raise ValidationError({
+                'IPN': _(
+                    'The IPN regex pattern configured in system settings is invalid'
+                )
+            })
+
+        if match is None:
+            raise ValidationError({
+                'IPN': _('IPN must match regex pattern {pattern}').format(
+                    pattern=pattern
+                )
+            })
 
     def validate_revision(self):
         """Check the 'revision' and 'revision_of' fields."""

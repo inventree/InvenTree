@@ -3,8 +3,27 @@
 import re
 
 from django.core.exceptions import FieldDoesNotExist, ValidationError
+from django.utils.translation import gettext_lazy as _
 
 from jinja2.sandbox import SandboxedEnvironment
+
+
+def validate_ipn_regex(value):
+    """Validate that the PART_IPN_REGEX setting is a valid regular expression.
+
+    An empty value is allowed (and disables IPN pattern matching).
+    """
+    pattern = str(value or '').strip()
+
+    if not pattern:
+        return
+
+    try:
+        re.compile(pattern)
+    except re.error as exc:
+        raise ValidationError({
+            'value': _('Invalid regular expression: {error}').format(error=exc)
+        })
 
 
 def validate_part_name_format(value):
