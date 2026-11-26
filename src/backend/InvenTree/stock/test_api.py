@@ -2415,6 +2415,101 @@ class StockItemTest(StockAPITestCase):
         )
         self.assertEqual(trackable_part.get_stock_count(), 10)
 
+    def test_protected_fields(self):
+        """Fields managed by stock operations cannot be changed via a direct update."""
+        location = StockLocation.objects.first()
+        item = StockItem.objects.create(
+            part=Part.objects.filter(virtual=False, trackable=False).first(),
+            quantity=10,
+            location=location,
+        )
+
+        url = reverse('api-stock-detail', kwargs={'pk': item.pk})
+
+        other_part = Part.objects.filter(virtual=False).exclude(pk=item.part.pk).first()
+        other_location = StockLocation.objects.exclude(pk=location.pk).first()
+        other_item = StockItem.objects.exclude(pk=item.pk).first()
+        customer = company.models.Company.objects.filter(is_customer=True).first()
+        supplier = company.models.Company.objects.filter(is_supplier=True).first()
+        assembly = Part.objects.filter(assembly=True).first()
+
+        sales_order = order.models.SalesOrder.objects.create(
+            reference='SO-9901', customer=customer
+        )
+        purchase_order = order.models.PurchaseOrder.objects.create(
+            reference='PO-9901', supplier=supplier
+        )
+        build_order = build.models.Build.objects.create(
+            reference='BO-9901', part=assembly, quantity=1, title='Test build'
+        )
+
+        new_values = {
+            'part': other_part.pk,
+            'quantity': 5,
+            'location': other_location.pk,
+            'belongs_to': other_item.pk,
+            'customer': customer.pk,
+            'sales_order': sales_order.pk,
+            'purchase_order': purchase_order.pk,
+            'consumed_by': build_order.pk,
+        }
+
+        for field, value in new_values.items():
+            response = self.patch(url, {field: value}, expected_code=400)
+            self.assertIn(field, response.data)
+
+        # Changing several protected fields at once reports each of them
+        response = self.patch(
+            url, {'location': other_location.pk, 'quantity': 3}, expected_code=400
+        )
+        self.assertIn('location', response.data)
+        self.assertIn('quantity', response.data)
+
+        # Nothing was changed
+        item.refresh_from_db()
+        self.assertEqual(item.part, Part.objects.get(pk=item.part.pk))
+        self.assertEqual(item.quantity, 10)
+        self.assertEqual(item.location, location)
+        self.assertIsNone(item.belongs_to)
+        self.assertIsNone(item.customer)
+        self.assertIsNone(item.sales_order)
+        self.assertIsNone(item.purchase_order)
+        self.assertIsNone(item.consumed_by)
+
+        # Sending the existing values back is allowed (e.g. a full object update)
+        self.patch(
+            url,
+            {
+                'part': item.part.pk,
+                'quantity': '10.00000',
+                'location': location.pk,
+                'belongs_to': None,
+                'customer': None,
+                'batch': 'B-123',
+            },
+            expected_code=200,
+        )
+
+        item.refresh_from_db()
+        self.assertEqual(item.batch, 'B-123')
+
+        # Protected fields can still be set when a stock item is created
+        response = self.post(
+            self.list_url,
+            {'part': item.part.pk, 'quantity': 3, 'location': other_location.pk},
+            expected_code=201,
+        )
+        self.assertEqual(response.data[0]['location'], other_location.pk)
+
+        # ... and changed via the dedicated stock operations
+        self.post(
+            reverse('api-stock-transfer'),
+            {'items': [{'pk': item.pk, 'quantity': 10}], 'location': other_location.pk},
+            expected_code=201,
+        )
+        item.refresh_from_db()
+        self.assertEqual(item.location, other_location)
+
     def test_edit_serial(self):
         """Test that we can edit serial numbers via the API."""
         item = StockItem.objects.create(
