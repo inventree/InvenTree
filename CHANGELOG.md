@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- [#XXXXX](https://github.com/inventree/InvenTree/pull/XXXXX) Removes the `ENABLE_PLUGINS_NAVIGATION` setting, which had no effect since the legacy user interface was removed. The `NavigationMixin` is retained for compatibility, but its navigation links are not displayed - plugins should use the `get_ui_navigation_items` method of the `UserInterfaceMixin` instead.
 - [#13369](https://github.com/inventree/InvenTree/pull/13369) Removes settings which have had no effect since the legacy user interface was removed (or were never implemented): `STOCK_SHOW_INSTALLED_ITEMS`, `PART_SHOW_RELATED`, `BARCODE_INPUT_DELAY` and `PLUGIN_UPDATE_CHECK` (global), and `REPORT_INLINE` and `LABEL_INLINE` (user).
 
 ## 1.7.0 - 2026-11.03

@@ -3747,11 +3747,7 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
         # The 'sample' plugin makes use of the (gated) URL integration
         registry.set_plugin_state('sample', True)
 
-        for key in [
-            'ENABLE_PLUGINS_APP',
-            'ENABLE_PLUGINS_NAVIGATION',
-            'ENABLE_PLUGINS_URL',
-        ]:
+        for key in ['ENABLE_PLUGINS_APP', 'ENABLE_PLUGINS_URL']:
             set_global_setting(key, True, None)
 
         self.assertNotIn('SampleIntegrationPlugin', message()['message'])
@@ -3828,7 +3824,6 @@ class AdminMessageAPITests(InvenTreeAPITestCase):
             'ENABLE_PLUGINS_APP',
             'ENABLE_PLUGINS_EVENTS',
             'ENABLE_PLUGINS_MAILS',
-            'ENABLE_PLUGINS_NAVIGATION',
             'ENABLE_PLUGINS_SCHEDULE',
             'ENABLE_PLUGINS_URL',
             'ENABLE_PLUGINS_INTERFACE',
