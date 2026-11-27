@@ -1,13 +1,14 @@
 """Overrides for allauth and adjacent packages to enforce InvenTree specific auth settings and restirctions."""
 
+import functools
 from typing import Literal
 
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.http import HttpResponseRedirect, JsonResponse
+from django.urls import URLPattern, URLResolver, reverse
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -102,6 +103,67 @@ def registration_enabled(setting_name: RegistrationKeys = 'LOGIN_ENABLE_REG'):
     return False
 
 
+def password_reset_enabled() -> bool:
+    """Return True if the 'forgot password' (password reset) functionality is enabled."""
+    return str2bool(get_global_setting('LOGIN_ENABLE_PWD_FORGOT', True, cache=False))
+
+
+# Names of the allauth (headless) URL patterns which perform password reset
+PASSWORD_RESET_URL_NAMES = ('request_password_reset', 'reset_password')
+
+
+def password_reset_guard(view):
+    """Wrap a password reset view, rejecting all requests if password reset is disabled.
+
+    The request is rejected *before* any account lookup is performed, and the
+    response is identical for every request. This prevents the endpoint from
+    revealing which email addresses are associated with an account.
+
+    This covers both requesting a reset, and resetting the password from a key,
+    so that previously issued reset keys cannot be used while reset is disabled.
+    """
+
+    @functools.wraps(view)
+    def wrapped_view(request, *args, **kwargs):
+        if not password_reset_enabled():
+            return JsonResponse(
+                {
+                    'status': 403,
+                    'errors': [
+                        {
+                            'message': str(_('Password reset is disabled')),
+                            'code': 'password_reset_disabled',
+                        }
+                    ],
+                },
+                status=403,
+            )
+
+        return view(request, *args, **kwargs)
+
+    return wrapped_view
+
+
+def guard_password_reset_urls(patterns: list) -> list:
+    """Apply password_reset_guard to the password reset views in a list of URL patterns.
+
+    Arguments:
+        patterns: List of URL patterns (e.g. from allauth.headless.urls.build_urlpatterns)
+
+    Returns:
+        The same list of URL patterns, with the password reset views wrapped.
+    """
+    for pattern in patterns:
+        if isinstance(pattern, URLResolver):
+            guard_password_reset_urls(pattern.url_patterns)
+        elif (
+            isinstance(pattern, URLPattern) and pattern.name in PASSWORD_RESET_URL_NAMES
+        ):
+            pattern.callback = password_reset_guard(pattern.callback)
+
+    return patterns
+
+
 class RegistrationMixin:
     """Mixin to check if registration should be enabled."""
 
@@ -188,9 +250,16 @@ class CustomAccountAdapter(RegistrationMixin, DefaultAccountAdapter):
         return False
 
     def send_password_reset_mail(self, user, email, context):
-        """Send the password reset mail."""
-        if not get_global_setting('LOGIN_ENABLE_PWD_FORGOT'):
-            raise PermissionDenied('Password reset is disabled')
+        """Send the password reset mail.
+
+        Note: Requests are rejected by password_reset_guard before this point if
+        password reset is disabled. This check is an additional safeguard - it returns
+        silently (rather than raising an error), as allauth only calls this method for
+        *existing* accounts, and an error here would reveal which accounts exist.
+        """
+        if not password_reset_enabled():
+            logger.warning('Password reset email not sent - password reset is disabled')
+            return
         return super().send_password_reset_mail(user, email, context)
 
 

@@ -43,6 +43,7 @@ from .api import (
     VersionTextView,
     VersionView,
 )
+from .auth_overrides import guard_password_reset_urls
 from .config import get_setting
 from .magic_login import GetSimpleLoginView
 from .views import AccountLoginRedirectView, auth_request
@@ -115,7 +116,12 @@ apipatterns = [
             path(
                 '',
                 include(
-                    (build_urlpatterns(Client.BROWSER), 'headless'), namespace='browser'
+                    (
+                        # Password reset views are guarded by the LOGIN_ENABLE_PWD_FORGOT setting
+                        guard_password_reset_urls(build_urlpatterns(Client.BROWSER)),
+                        'headless',
+                    ),
+                    namespace='browser',
                 ),
             ),  # Allauth headless logic (only the browser client is included as we only use sessions based auth there)
         ]),
