@@ -588,19 +588,24 @@ class ParametricDataMixin:
         Returns:
             The list of created parts
         """
-        parts = Part.objects.bulk_create([
-            Part(
-                name=f'Part {i}',
-                description=f'Description for part {i}',
-                category=cls.category,
-                IPN=f'PART-{i:03d}',
-                level=0,
-                tree_id=0,
-                lft=0,
-                rght=0,
-            )
-            for i in range(offset + 1, offset + count + 1)
-        ])
+        from InvenTree.helpers_db import bulk_create_and_fetch
+
+        parts = bulk_create_and_fetch(
+            Part,
+            [
+                Part(
+                    name=f'Part {i}',
+                    description=f'Description for part {i}',
+                    category=cls.category,
+                    IPN=f'PART-{i:03d}',
+                    level=0,
+                    tree_id=0,
+                    lft=0,
+                    rght=0,
+                )
+                for i in range(offset + 1, offset + count + 1)
+            ],
+        )
 
         # Create parameters for each part
         parameters = []
