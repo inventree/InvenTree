@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from django.db import connection
-from django.db.models import Sum
+from django.db.models import F, Sum
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
@@ -1916,9 +1916,16 @@ class BuildLineTests(BuildAPITest):
 
     def test_available_variant_stock(self):
         """Test the 'available_variant_stock' annotation for BuildLine objects."""
+        # Select a BuildLine whose BOM item belongs to the part being built
+        # (not every fixture BuildLine is consistent with its build),
+        # and whose sub_part is not trackable (allocations would require a build output)
         line = (
             BuildLine.objects
-            .filter(bom_item__sub_part__isnull=False)
+            .filter(
+                bom_item__sub_part__isnull=False,
+                bom_item__sub_part__trackable=False,
+                bom_item__part=F('build__part'),
+            )
             .order_by('pk')
             .first()
         )
