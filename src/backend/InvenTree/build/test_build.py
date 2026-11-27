@@ -1333,6 +1333,68 @@ class ExternalBuildTest(InvenTreeAPITestCase):
             str(err.exception.messages),
         )
 
+    def test_external_setting(self):
+        """External build orders can only be created when the feature is enabled."""
+        part = Part.objects.create(
+            name='Test part',
+            description='A test part',
+            assembly=True,
+            purchaseable=True,
+        )
+
+        set_global_setting('BUILDORDER_EXTERNAL_BUILDS', False)
+
+        # Cannot create a new external build order
+        build = Build(part=part, title='Test build order', quantity=10, external=True)
+
+        with self.assertRaises(ValidationError) as err:
+            build.clean()
+
+        self.assertIn('External build orders are not enabled', str(err.exception))
+
+        # ... including via the API
+        url = reverse('api-build-list')
+        data = {
+            'part': part.pk,
+            'quantity': 10,
+            'title': 'API build order',
+            'reference': 'BO-9901',
+            'external': True,
+        }
+
+        self.assignRole('build.add')
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('External build orders are not enabled', str(response.data))
+
+        # Cannot convert an existing (internal) build order to external
+        build = Build.objects.create(
+            part=part, title='Internal build order', quantity=10, external=False
+        )
+
+        build.external = True
+        with self.assertRaises(ValidationError):
+            build.clean()
+
+        # Enable the feature - now external build orders can be created
+        set_global_setting('BUILDORDER_EXTERNAL_BUILDS', True)
+
+        build.clean()
+        build.save()
+
+        self.post(url, data, expected_code=201)
+
+        # Disable the feature again - existing external builds can still be edited
+        set_global_setting('BUILDORDER_EXTERNAL_BUILDS', False)
+
+        build.refresh_from_db()
+        self.assertTrue(build.external)
+        build.title = 'Updated title'
+        build.clean()
+
+        # ... and can be converted back to internal builds
+        build.external = False
+        build.clean()
+
     def test_build_requirement(self):
         """Test the global 'BUILDORDER_EXTERNAL_REQUIRED' setting."""
         # Create required test data
