@@ -306,5 +306,5 @@ def inventree_identifier(override_announce: bool = False):
             'INVENTREE_ANNOUNCE_ID', environment_key='INVENTREE_ANNOUNCE_ID'
         )
     ):
-        return get_global_setting('INVENTREE_INSTANCE_ID', default='')
+        return get_global_setting('INVENTREE_INSTANCE_ID', backup_value='')
     return None
