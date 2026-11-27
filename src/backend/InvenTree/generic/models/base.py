@@ -97,6 +97,11 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
                 'Object %s of type %s no longer exists', str(self), str(self.__class__)
             )
 
+        # If items are to be deleted, ensure that *all* of them can be deleted,
+        # before any changes are made to the database
+        if delete_items:
+            self.validate_delete_items(cascade=delete_children)
+
         tree_id = self.tree_id
         parent = getattr(self, self.NODE_PARENT_KEY, None)
 
@@ -351,11 +356,58 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
             )
             return False
 
+    # Maximum number of blocking items to list in a validation error message
+    MAX_DELETE_ERRORS = 10
+
+    def validate_delete_items(self, cascade: bool = False):
+        """Ensure that all 'items' under this node can be deleted.
+
+        Each item is checked using its own 'check_delete' method (if it has one),
+        which applies the same rules as deleting that item individually.
+
+        Arguments:
+            cascade: If True, also check items under all child nodes
+
+        Raises:
+            ValidationError: If any item cannot be deleted. No changes are made.
+        """
+        items = self.get_items(cascade=cascade)
+
+        if not items:
+            return
+
+        errors = []
+        n_blocked = 0
+
+        for item in items:
+            check_delete = getattr(item, 'check_delete', None)
+
+            if not check_delete:
+                continue
+
+            try:
+                check_delete()
+            except ValidationError as exc:
+                n_blocked += 1
+
+                if len(errors) < self.MAX_DELETE_ERRORS:
+                    errors.append(f'{item}: {"; ".join(exc.messages)}')
+
+        if n_blocked > 0:
+            msg = _('{n} item(s) cannot be deleted').format(n=n_blocked)
+
+            if n_blocked > len(errors):
+                errors.append('...')
+
+            raise ValidationError([msg, *errors])
+
     def delete_items(self, cascade: bool = False):
         """Delete any 'items' which exist under this node in the tree.
 
         - Note that an 'item' is an instance of a different model class.
         - Not all tree structures will have items associated with them.
+        - Items are deleted in bulk (for performance). The items must first be
+          checked with validate_delete_items, which is performed by delete().
         """
         if items := self.get_items(cascade=cascade):
             items.delete()

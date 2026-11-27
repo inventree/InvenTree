@@ -404,6 +404,87 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
             self.assertEqual(response.data['description'], 'A part category')
 
+    def test_category_delete_blocked(self):
+        """A category cannot be deleted (with its parts) if any part cannot be deleted."""
+        from common.settings import set_global_setting
+
+        def setup_category():
+            """Create a category, with a child category, each with an inactive part."""
+            cat = PartCategory.objects.create(name='To delete', description='Delete me')
+            child = PartCategory.objects.create(
+                name='Child', description='Child category', parent=cat
+            )
+            parts = [
+                Part.objects.create(
+                    name=f'Part {c.pk}', description='A part', category=c, active=False
+                )
+                for c in [cat, child]
+            ]
+            return cat, child, parts
+
+        def check_blocked(cat, child, parts, msg, cascade=True):
+            """Attempt to delete the category, and check that nothing was changed."""
+            url = reverse('api-part-category-detail', kwargs={'pk': cat.pk})
+            response = self.delete(
+                url,
+                {'delete_parts': True, 'delete_child_categories': cascade},
+                expected_code=400,
+            )
+            self.assertIn('cannot be deleted', str(response.data))
+            self.assertIn(msg, str(response.data))
+
+            # Nothing has been deleted or moved
+            for obj in [cat, child, *parts]:
+                obj.refresh_from_db()
+
+            self.assertEqual(child.parent, cat)
+            for p in parts:
+                self.assertIn(p.category, [cat, child])
+
+        set_global_setting('PART_ENABLE_LOCKING', True)
+        set_global_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', False)
+
+        # 1. An active part (in a child category) blocks deletion
+        cat, child, parts = setup_category()
+        Part.objects.filter(pk=parts[1].pk).update(active=True)
+        check_blocked(cat, child, parts, 'still active')
+
+        # ... unless the child category is not deleted (only direct parts are deleted)
+        self.delete(
+            reverse('api-part-category-detail', kwargs={'pk': cat.pk}),
+            {'delete_parts': True, 'delete_child_categories': False},
+            expected_code=204,
+        )
+        with self.assertRaises(Part.DoesNotExist):
+            parts[0].refresh_from_db()
+        parts[1].refresh_from_db()
+
+        # 2. A locked part blocks deletion
+        cat, child, parts = setup_category()
+        Part.objects.filter(pk=parts[0].pk).update(locked=True)
+        check_blocked(cat, child, parts, 'locked')
+
+        # 3. A part which is used in an assembly blocks deletion
+        cat, child, parts = setup_category()
+        assembly = Part.objects.create(
+            name='Assembly', description='An assembly', assembly=True
+        )
+        BomItem.objects.create(part=assembly, sub_part=parts[1], quantity=1)
+        check_blocked(cat, child, parts, 'used in an assembly')
+
+        # Once the assembly restriction is lifted, the category can be deleted
+        set_global_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', True)
+
+        self.delete(
+            reverse('api-part-category-detail', kwargs={'pk': cat.pk}),
+            {'delete_parts': True, 'delete_child_categories': True},
+            expected_code=204,
+        )
+
+        for obj in [cat, child, *parts]:
+            with self.assertRaises(obj.__class__.DoesNotExist):
+                obj.refresh_from_db()
+
     def test_category_delete(self):
         """Test category deletion with different parameters."""
         for delete_child_categories in [False, True]:
@@ -436,6 +517,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                             name=f'Part {"A" if delete_child_categories else "B"}{"C" if delete_parts else "D"}-{jj}',
                             description='Child part of the deleted category',
                             category=cat_to_delete,
+                            active=False,
                         )
                     )
 
@@ -457,6 +539,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                                 name=f'Part xyz {jj}_{ii}-{"E" if delete_child_categories else "F"}{"G" if delete_parts else "H"}',
                                 description='Child part in the child category of the deleted category',
                                 category=child,
+                                active=False,
                             )
                         )
 
