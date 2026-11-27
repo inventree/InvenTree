@@ -329,11 +329,13 @@ def variant_stock_query(reference: str = '', filter: Optional[Q] = None) -> Quer
     ).filter(stock_filter)
 
 
-def annotate_variant_quantity(subquery: Q, reference: str = 'quantity') -> QuerySet:
+def annotate_variant_quantity(
+    subquery: QuerySet, reference: str = 'quantity'
+) -> Coalesce:
     """Create a subquery annotation for all variant part stock items on the given parent query.
 
     Args:
-        subquery: A 'variant_stock_query' Q object
+        subquery: A 'variant_stock_query' QuerySet
         reference: The relationship reference of the variant stock items from the current queryset
     """
     return Coalesce(
