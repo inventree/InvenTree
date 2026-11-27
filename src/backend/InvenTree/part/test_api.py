@@ -1,5 +1,6 @@
 """Unit tests for the various part API endpoints."""
 
+import io
 import os
 from datetime import datetime
 from decimal import Decimal
@@ -2145,6 +2146,46 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
             # And now check that the image has been set
             p = Part.objects.get(pk=pk)
             self.assertIsNotNone(p.image)
+
+    def test_image_upload_size_limit(self):
+        """Part images which exceed INVENTREE_UPLOAD_MAX_SIZE are rejected."""
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        from common.settings import set_global_setting
+
+        p = Part.objects.filter(active=True).first()
+        url = reverse('api-part-detail', kwargs={'pk': p.pk})
+
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 1, change_user=None)
+
+        def png(size: int) -> SimpleUploadedFile:
+            """Generate a PNG image (random noise does not compress)."""
+            buf = io.BytesIO()
+            Image.frombytes('RGB', (size, size), os.urandom(size * size * 3)).save(
+                buf, format='PNG'
+            )
+            return SimpleUploadedFile('image.png', buf.getvalue(), 'image/png')
+
+        # A small image is accepted
+        self.upload_client.patch(
+            url, {'image': png(64)}, format='multipart', expected_code=200
+        )
+
+        # An image larger than 1 MB is rejected
+        large = png(700)
+        self.assertGreater(large.size, 1024 * 1024)
+
+        response = self.upload_client.patch(
+            url, {'image': large}, format='multipart', expected_code=400
+        )
+        self.assertIn('exceeds maximum upload limit of 1 MB', str(response.data))
+
+        # The previously uploaded image is retained, and the part is still editable
+        p.refresh_from_db()
+        self.assertTrue(p.image)
+        self.patch(url, {'description': 'Still editable'}, expected_code=200)
+
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 10, change_user=None)
 
     def test_existing_image(self):
         """Test that we can allocate an existing uploaded image to a new Part."""

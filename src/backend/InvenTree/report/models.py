@@ -22,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 from pypdf import PdfWriter
 
+import common.validators
 import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.ready
@@ -477,7 +478,10 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         upload_to=rename_template,
         verbose_name=_('Template'),
         help_text=_('Template file'),
-        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+        validators=[
+            FileExtensionValidator(allowed_extensions=['html', 'htm']),
+            common.validators.validate_uploaded_file,
+        ],
     )
 
     page_size = models.CharField(
@@ -811,7 +815,10 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         upload_to=rename_template,
         verbose_name=_('Template'),
         help_text=_('Template file'),
-        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+        validators=[
+            FileExtensionValidator(allowed_extensions=['html', 'htm']),
+            common.validators.validate_uploaded_file,
+        ],
     )
 
     width = models.FloatField(
@@ -959,7 +966,10 @@ class ReportSnippet(TemplateUploadMixin, models.Model):
         upload_to=rename_template,
         verbose_name=_('Snippet'),
         help_text=_('Report snippet file'),
-        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+        validators=[
+            FileExtensionValidator(allowed_extensions=['html', 'htm']),
+            common.validators.validate_uploaded_file,
+        ],
     )
 
     description = models.CharField(
@@ -985,6 +995,7 @@ class ReportAsset(TemplateUploadMixin, models.Model):
         upload_to=rename_template,
         verbose_name=_('Asset'),
         help_text=_('Report asset file'),
+        validators=[common.validators.validate_uploaded_file],
     )
 
     # Asset description (user facing string, not used internally)

@@ -115,19 +115,53 @@ def validate_attachment_model_type(value):
         raise ValidationError('Model type does not support attachments')
 
 
-def validate_attachment_file(attachment):
-    """Ensure that the provided attachment file is valid."""
+def validate_uploaded_file(file):
+    """Ensure that an uploaded file is valid.
+
+    This validator should be applied to every model field which accepts user uploads.
+
+    Checks:
+    - The file size does not exceed the INVENTREE_UPLOAD_MAX_SIZE setting
+    - The file name is valid for the storage backend
+
+    Only newly uploaded files are checked. Files which are already stored are skipped,
+    so that existing records remain editable (e.g. if the upload limit is reduced),
+    and the storage backend is not accessed to determine the size of stored files.
+    """
+    if not file:
+        return
+
+    # FieldFile objects which are already saved to storage are "committed"
+    if getattr(file, '_committed', False):
+        return
+
     max_size = get_global_setting('INVENTREE_UPLOAD_MAX_SIZE', create=False)
 
-    if attachment.size > (max_size * 1024 * 1024):
+    try:
+        max_bytes = int(max_size) * 1024 * 1024
+    except (TypeError, ValueError):  # pragma: no cover
+        max_bytes = None
+
+    if max_bytes and file.size > max_bytes:
         raise ValidationError(
-            _(f'File size exceeds maximum upload limit of {max_size} MB')
+            _('File size exceeds maximum upload limit of {max_size} MB').format(
+                max_size=max_size
+            )
         )
 
     try:
-        default_storage.generate_filename(attachment.name)
+        default_storage.generate_filename(file.name)
     except SuspiciousFileOperation:  # pragma: no cover
         raise ValidationError(_('Invalid file name'))
+
+
+def validate_attachment_file(attachment):
+    """Ensure that the provided attachment file is valid.
+
+    Note: Retained for compatibility with existing database migrations.
+    New code should use validate_uploaded_file instead.
+    """
+    validate_uploaded_file(attachment)
 
 
 def validate_email_domains(setting):
