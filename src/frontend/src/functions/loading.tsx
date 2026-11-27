@@ -40,11 +40,6 @@ export function Loadable(
   );
 }
 
-export function LoadingItem({ item }: Readonly<{ item: any }>): JSX.Element {
-  const Itm = Loadable(item);
-  return <Itm />;
-}
-
 /**
  * Like Loadable, but never suspends: the import is resolved into plain
  * state instead of thrown as a Suspense promise, so React.lazy's commit-

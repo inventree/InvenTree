@@ -3,7 +3,7 @@ import { ActionIcon, Tooltip } from '@mantine/core';
 import { IconCommand } from '@tabler/icons-react';
 
 import { useLocalLibState } from '@lib/states/LocalLibState';
-import { firstSpotlight, searchShortcutKey } from '../nav/Layout';
+import { firstSpotlight, searchShortcutKey } from '../nav/spotlightStore';
 
 /**
  * A button which opens the quick command modal
