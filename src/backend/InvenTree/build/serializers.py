@@ -6,16 +6,7 @@ from typing import Optional
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
-from django.db.models import (
-    BooleanField,
-    Case,
-    ExpressionWrapper,
-    F,
-    FloatField,
-    Q,
-    Value,
-    When,
-)
+from django.db.models import BooleanField, Case, ExpressionWrapper, F, Q, Value, When
 from django.db.models.functions import Coalesce, Greatest
 from django.utils.translation import gettext_lazy as _
 
@@ -1682,32 +1673,9 @@ class BuildLineSerializer(
         )
 
         # Annotate the queryset with 'available variant stock' information
-        variant_stock_query = part.filters.variant_stock_query(
-            reference='bom_item__sub_part__', filter=stock_filter
-        )
-
-        queryset = queryset.alias(
-            variant_stock_total=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='quantity'
-            ),
-            variant_bo_allocations=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='sales_order_allocations__quantity'
-            ),
-            variant_so_allocations=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='allocations__quantity'
-            ),
-        )
-
         queryset = queryset.annotate(
-            available_variant_stock=Greatest(
-                ExpressionWrapper(
-                    F('variant_stock_total')
-                    - F('variant_bo_allocations')
-                    - F('variant_so_allocations'),
-                    output_field=FloatField(),
-                ),
-                0,
-                output_field=FloatField(),
+            available_variant_stock=part.filters.annotate_available_variant_stock(
+                reference='bom_item__sub_part__', filter=stock_filter
             )
         )
 

@@ -20,6 +20,7 @@ from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
 import common.settings
+import common.validators
 import InvenTree.format
 import InvenTree.helpers
 import report.mixins
@@ -901,6 +902,7 @@ class InvenTreeImageMixin(ModelFeatureMixin, models.Model):
         variations={'thumbnail': (128, 128), 'preview': (256, 256)},
         delete_orphans=False,
         verbose_name=_('Image'),
+        validators=[common.validators.validate_uploaded_file],
     )
 
     def get_image_url(self) -> str:

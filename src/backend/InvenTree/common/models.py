@@ -2241,7 +2241,7 @@ class Attachment(InvenTreeAuditMixin, InvenTreeTagsMixin, InvenTreeMetadataModel
     attachment = models.FileField(
         upload_to=rename_attachment,
         verbose_name=_('Attachment'),
-        validators=[common.validators.validate_attachment_file],
+        validators=[common.validators.validate_uploaded_file],
         help_text=_('Select file to attach'),
         blank=True,
         null=True,
@@ -3561,7 +3561,10 @@ class NotesImage(models.Model):
     """
 
     image = models.ImageField(
-        upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
+        upload_to=rename_notes_image,
+        verbose_name=_('Image'),
+        help_text=_('Image file'),
+        validators=[common.validators.validate_uploaded_file],
     )
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
