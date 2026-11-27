@@ -277,6 +277,7 @@ export default function Stock() {
   const scanInStockItem = useBarcodeScanDialog({
     title: t`Scan Stock Item`,
     modelType: ModelType.stockitem,
+    allowMultiple: true,
     callback: async (barcode, response) => {
       const item = response.stockitem.instance;
 

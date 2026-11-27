@@ -51,7 +51,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'SEARCH_HIDE_INACTIVE_PARTS': {
         'name': _('Hide Inactive Parts'),
-        'description': _('Excluded inactive parts from search preview window'),
+        'description': _('Exclude inactive parts from search preview window'),
         'default': False,
         'validator': bool,
     },
@@ -213,7 +213,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': 'YYYY-MM-DD',
         'choices': [
             ('YYYY-MM-DD', '2022-02-22'),
-            ('YYYY/MM/DD', '2022/22/22'),
+            ('YYYY/MM/DD', '2022/02/22'),
             ('DD-MM-YYYY', '22-02-2022'),
             ('DD/MM/YYYY', '22/02/2022'),
             ('MM-DD-YYYY', '02-22-2022'),

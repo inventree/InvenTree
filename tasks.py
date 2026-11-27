@@ -359,6 +359,7 @@ def builtin_apps():
 
 def content_excludes(
     allow_auth: bool = True,
+    allow_currency: bool = True,
     allow_email: bool = False,
     allow_plugins: bool = True,
     allow_session: bool = True,
@@ -369,6 +370,7 @@ def content_excludes(
 
     Arguments:
         allow_auth (bool): Allow user authentication data to be exported / imported
+        allow_currency (bool): Allow currency exchange rate data to be exported / imported
         allow_email (bool): Allow email log data to be exported / imported
         allow_plugins (bool): Allow plugin information to be exported / imported
         allow_session (bool): Allow user session data to be exported / imported
@@ -383,8 +385,6 @@ def content_excludes(
         'django_q.schedule',
         'django_q.task',
         'django_q.ormq',
-        'exchange.rate',
-        'exchange.exchangebackend',
         'common.dataoutput',
         'common.newsfeedentry',
         'common.notificationentry',
@@ -393,6 +393,10 @@ def content_excludes(
         'importer.dataimportcolumnmap',
         'importer.dataimportrow',
     ]
+
+    # Optionally exclude currency exchange rate data
+    if not allow_currency:
+        excludes.extend(['exchange.rate', 'exchange.exchangebackend'])
 
     # Optional exclude email message logs
     if not allow_email:
@@ -1241,6 +1245,7 @@ def update(
         'include_permissions': 'Include user and group permissions in the output file (default = False)',
         'include_tokens': 'Include API tokens in the output file (default = False)',
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
+        'exclude_currency': 'Exclude currency exchange rate data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
         'include_remote_addr': 'Include remote IP addresses for audit log entries in the output file (default = False)',
@@ -1259,6 +1264,7 @@ def export_records(
     include_permissions: bool = False,
     include_tokens: bool = False,
     exclude_plugins: bool = False,
+    exclude_currency: bool = False,
     include_sso: bool = False,
     include_session: bool = False,
     include_remote_addr: bool = False,
@@ -1293,6 +1299,7 @@ def export_records(
         allow_email=include_email,
         allow_tokens=include_tokens,
         allow_plugins=not exclude_plugins,
+        allow_currency=not exclude_currency,
         allow_session=include_session,
         allow_sso=include_sso,
     )
@@ -2043,6 +2050,7 @@ def test(
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
         'branch': 'Specify branch of demo-dataset to clone',
+        'bulk': 'Use the faster bulkloaddata command when importing records (default = False)',
         'verbose': 'Print verbose output from management commands',
     }
 )
@@ -2056,8 +2064,9 @@ def setup_test(
     verbose: bool = False,
     path: str = 'inventree-demo-dataset',
     branch: Optional[str] = None,
+    bulk: bool = False,
 ):
-    """Setup a testing environment."""
+    """Setup a testing environment, filled out with demo data."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
         get_media_dir,
     )
@@ -2122,6 +2131,7 @@ def setup_test(
         filename=template_dir.joinpath('inventree_data.json'),
         clear=True,
         ignore_nonexistent=True,
+        bulk=bulk,
         verbose=verbose,
     )
 

@@ -109,23 +109,19 @@ def annotate_on_order_quantity(reference: str = '') -> QuerySet:
         order__status__in=PurchaseOrderStatusGroups.OPEN, quantity__gt=F('received')
     )
 
+    # Note: A single subquery is used to calculate the outstanding (quantity - received) amount
     return Greatest(
         Coalesce(
             SubquerySum(
                 ExpressionWrapper(
-                    F(f'{reference}supplier_parts__purchase_order_line_items__quantity')
-                    * F(f'{reference}supplier_parts__pack_quantity_native'),
-                    output_field=DecimalField(),
-                ),
-                filter=order_filter,
-            ),
-            Decimal(0),
-            output_field=DecimalField(),
-        )
-        - Coalesce(
-            SubquerySum(
-                ExpressionWrapper(
-                    F(f'{reference}supplier_parts__purchase_order_line_items__received')
+                    (
+                        F(
+                            f'{reference}supplier_parts__purchase_order_line_items__quantity'
+                        )
+                        - F(
+                            f'{reference}supplier_parts__purchase_order_line_items__received'
+                        )
+                    )
                     * F(f'{reference}supplier_parts__pack_quantity_native'),
                     output_field=DecimalField(),
                 ),
@@ -333,11 +329,13 @@ def variant_stock_query(reference: str = '', filter: Optional[Q] = None) -> Quer
     ).filter(stock_filter)
 
 
-def annotate_variant_quantity(subquery: Q, reference: str = 'quantity') -> QuerySet:
+def annotate_variant_quantity(
+    subquery: QuerySet, reference: str = 'quantity'
+) -> Coalesce:
     """Create a subquery annotation for all variant part stock items on the given parent query.
 
     Args:
-        subquery: A 'variant_stock_query' Q object
+        subquery: A 'variant_stock_query' QuerySet
         reference: The relationship reference of the variant stock items from the current queryset
     """
     return Coalesce(
@@ -350,6 +348,45 @@ def annotate_variant_quantity(subquery: Q, reference: str = 'quantity') -> Query
             .order_by()
         ),
         0,
+        output_field=FloatField(),
+    )
+
+
+def annotate_available_variant_stock(
+    reference: str = '', filter: Optional[Q] = None
+) -> Case:
+    """Annotate the total 'available' stock quantity for all variants of a part.
+
+    available_variant_stock = variant_stock - variant_allocations
+
+    Arguments:
+        reference: The relationship reference of the part from the current model (e.g. 'sub_part__')
+        filter: Q object which defines how to filter the variant stock items
+
+    Notes:
+        Variant parts are the descendants of a part in the variant tree (MPTT),
+        so a part can only have variant stock if (rght - lft) > 1.
+        The variant subqueries are only evaluated for such parts,
+        which avoids running three correlated subqueries for every row.
+    """
+    vq = variant_stock_query(reference=reference, filter=filter)
+
+    available = Greatest(
+        ExpressionWrapper(
+            annotate_variant_quantity(vq, reference='quantity')
+            - annotate_variant_quantity(
+                vq, reference='sales_order_allocations__quantity'
+            )
+            - annotate_variant_quantity(vq, reference='allocations__quantity'),
+            output_field=FloatField(),
+        ),
+        0,
+        output_field=FloatField(),
+    )
+
+    return Case(
+        When(Q(**{f'{reference}rght__gt': F(f'{reference}lft') + 1}), then=available),
+        default=Value(0.0),
         output_field=FloatField(),
     )
 
@@ -444,21 +481,13 @@ def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> Quer
 
     And then finally, annotate the 'can_build' quantity for each BomItem:
     """
-    # Pre-fetch the required related fields
-    queryset = queryset.prefetch_related(
-        f'{reference}sub_part',
-        f'{reference}sub_part__stock_items',
-        f'{reference}sub_part__stock_items__allocations',
-        f'{reference}sub_part__stock_items__sales_order_allocations',
-        f'{reference}substitutes',
-        f'{reference}substitutes__part__stock_items',
-    )
-
     # Queryset reference to the linked sub_part instance
     sub_part_ref = f'{reference}sub_part__'
 
     # Apply some aliased annotations to the queryset
-    queryset = queryset.annotate(
+    # Note: These are aliased (not annotated), as they are only used to calculate 'available_stock'.
+    # Annotating them would add a further copy of each (expensive) subquery to the SELECT clause.
+    queryset = queryset.alias(
         # Total stock quantity (just for the sub_part itself)
         total_stock=annotate_total_stock(sub_part_ref),
         # Total allocated to sales orders
@@ -481,31 +510,9 @@ def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> Quer
         )
     )
 
-    # Annotate the total stock for any variant parts
-    vq = variant_stock_query(reference=sub_part_ref)
-
-    queryset = queryset.alias(
-        variant_stock_total=annotate_variant_quantity(vq, reference='quantity'),
-        variant_bo_allocations=annotate_variant_quantity(
-            vq, reference='sales_order_allocations__quantity'
-        ),
-        variant_so_allocations=annotate_variant_quantity(
-            vq, reference='allocations__quantity'
-        ),
-    )
-
-    # Annotate total variant stock
+    # Annotate the total available stock for any variant parts
     queryset = queryset.annotate(
-        available_variant_stock=Greatest(
-            ExpressionWrapper(
-                F('variant_stock_total')
-                - F('variant_bo_allocations')
-                - F('variant_so_allocations'),
-                output_field=FloatField(),
-            ),
-            0,
-            output_field=FloatField(),
-        )
+        available_variant_stock=annotate_available_variant_stock(reference=sub_part_ref)
     )
 
     # Account for substitute parts
@@ -538,7 +545,7 @@ def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> Quer
 
     # Now we can annotate the total "available" stock for the BomItem
     queryset = queryset.alias(
-        total_stock=ExpressionWrapper(
+        total_available_stock=ExpressionWrapper(
             F('available_variant_stock')
             + F('available_substitute_stock')
             + F('available_stock'),
@@ -552,7 +559,7 @@ def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> Quer
             ExpressionWrapper(
                 Case(
                     When(Q(quantity=0), then=Value(0)),
-                    default=(F('total_stock') - F('setup_quantity'))
+                    default=(F('total_available_stock') - F('setup_quantity'))
                     / (
                         F('quantity')
                         * F('piece_count')
