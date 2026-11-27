@@ -5,7 +5,8 @@ import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
-import { Box, Divider, Modal } from '@mantine/core';
+import { Box, Checkbox, Divider, Modal, Stack } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { useCallback, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
@@ -36,6 +37,7 @@ export default function BarcodeScanDialog({
   opened,
   callback,
   modelType,
+  allowMultiple = false,
   onClose,
   onScanSuccess
 }: Readonly<{
@@ -43,6 +45,7 @@ export default function BarcodeScanDialog({
   opened: boolean;
   modelType?: ModelType;
   callback?: BarcodeScanCallback;
+  allowMultiple?: boolean;
   onClose: () => void;
   onScanSuccess?: BarcodeScanSuccessCallback;
 }>) {
@@ -62,6 +65,7 @@ export default function BarcodeScanDialog({
           onClose={onClose}
           onScanSuccess={onScanSuccess}
           modelType={modelType}
+          allowMultiple={allowMultiple}
           callback={callback}
         />
       </Box>
@@ -72,6 +76,7 @@ export default function BarcodeScanDialog({
 export function ScanInputHandler({
   callback,
   modelType,
+  allowMultiple = false,
   onClose,
   onScanSuccess,
   navigate
@@ -80,10 +85,16 @@ export function ScanInputHandler({
   onClose: () => void;
   onScanSuccess?: BarcodeScanSuccessCallback;
   modelType?: ModelType;
+  allowMultiple?: boolean;
   navigate: NavigateFunction;
 }>) {
   const [error, setError] = useState<string>('');
   const [processing, setProcessing] = useState<boolean>(false);
+  const [resetKey, setResetKey] = useState<number>(0);
+  const [keepOpen, setKeepOpen] = useLocalStorage<boolean>({
+    key: 'barcodeScanKeepOpen',
+    defaultValue: false
+  });
   const user = useUserState();
 
   const defaultScan = useCallback(
@@ -162,7 +173,11 @@ export function ScanInputHandler({
                     message: result.success,
                     color: 'green'
                   });
-                  onClose();
+                  if (allowMultiple && keepOpen) {
+                    setResetKey((k) => k + 1);
+                  } else {
+                    onClose();
+                  }
                 } else {
                   setError(result.error ?? t`Failed to handle barcode`);
                 }
@@ -189,20 +204,38 @@ export function ScanInputHandler({
           setProcessing(false);
         });
     },
-    [callback, defaultScan, modelType, onClose]
+    [allowMultiple, callback, defaultScan, keepOpen, modelType, onClose]
   );
 
-  return <BarcodeInput onScan={onScan} error={error} processing={processing} />;
+  return (
+    <Stack gap='xs'>
+      <BarcodeInput
+        onScan={onScan}
+        error={error}
+        processing={processing}
+        resetKey={resetKey}
+      />
+      {allowMultiple && (
+        <Checkbox
+          label={t`Keep dialog open for multiple scans`}
+          checked={keepOpen}
+          onChange={(event) => setKeepOpen(event.currentTarget.checked)}
+        />
+      )}
+    </Stack>
+  );
 }
 
 export function useBarcodeScanDialog({
   title,
   callback,
-  modelType
+  modelType,
+  allowMultiple = false
 }: Readonly<{
   title: string;
   modelType?: ModelType;
   callback: BarcodeScanCallback;
+  allowMultiple?: boolean;
 }>) {
   const [opened, setOpened] = useState(false);
 
@@ -216,6 +249,7 @@ export function useBarcodeScanDialog({
       opened={opened}
       callback={callback}
       modelType={modelType}
+      allowMultiple={allowMultiple}
       onClose={() => setOpened(false)}
     />
   );

@@ -14,10 +14,20 @@ from common.settings import get_global_setting
 
 
 def mfa_enforced() -> bool:
-    """Check if MFA is enforced globally for all users."""
-    return bool(
-        settings.MFA_ENABLED
-        and get_global_setting('LOGIN_ENFORCE_MFA', None, 'INVENTREE_LOGIN_ENFORCE_MFA')
+    """Check if MFA is enforced globally for all users.
+
+    MFA enforcement is controlled by the LOGIN_ENFORCE_MFA global setting,
+    which can be overridden by the INVENTREE_LOGIN_ENFORCE_MFA environment variable.
+    """
+    if not settings.MFA_ENABLED:
+        return False
+
+    return InvenTree.helpers.str2bool(
+        get_global_setting(
+            'LOGIN_ENFORCE_MFA',
+            backup_value=None,
+            environment_key='INVENTREE_LOGIN_ENFORCE_MFA',
+        )
     )
 
 
