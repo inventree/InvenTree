@@ -1,6 +1,7 @@
 """Unit tests for the 'users' app."""
 
 import datetime
+import os
 from unittest import mock
 
 from django.apps import apps
@@ -764,3 +765,54 @@ class UserProfileMetadataPermissionTests(InvenTreeAPITestCase):
         url = self._metadata_url(self.other_user.profile.pk)
         self.get(url, expected_code=403)
         self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+
+
+class MfaEnforcedTest(TestCase):
+    """Tests for the mfa_enforced helper function."""
+
+    def test_setting(self):
+        """MFA enforcement follows the LOGIN_ENFORCE_MFA global setting."""
+        from users.authentication import mfa_enforced
+
+        with self.settings(MFA_ENABLED=True), mock.patch.dict('os.environ', {}):
+            # Ensure the environment variable is not set (restored after the block)
+            os.environ.pop('INVENTREE_LOGIN_ENFORCE_MFA', None)
+
+            set_global_setting('LOGIN_ENFORCE_MFA', False)
+            self.assertFalse(mfa_enforced())
+
+            set_global_setting('LOGIN_ENFORCE_MFA', True)
+            self.assertTrue(mfa_enforced())
+
+            set_global_setting('LOGIN_ENFORCE_MFA', False)
+
+        # Never enforced if MFA support is disabled on the server
+        with (
+            self.settings(MFA_ENABLED=False),
+            mock.patch.dict('os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': 'True'}),
+        ):
+            self.assertFalse(mfa_enforced())
+
+    def test_environment(self):
+        """The environment variable overrides the setting, and is parsed as a boolean."""
+        from users.authentication import mfa_enforced
+
+        set_global_setting('LOGIN_ENFORCE_MFA', False)
+
+        with self.settings(MFA_ENABLED=True):
+            for value in ['True', 'true', '1', 'yes']:
+                with mock.patch.dict(
+                    'os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': value}
+                ):
+                    self.assertTrue(mfa_enforced(), value)
+
+            # "False-y" values must not enforce MFA
+            set_global_setting('LOGIN_ENFORCE_MFA', True)
+
+            for value in ['False', 'false', '0', 'no']:
+                with mock.patch.dict(
+                    'os.environ', {'INVENTREE_LOGIN_ENFORCE_MFA': value}
+                ):
+                    self.assertFalse(mfa_enforced(), value)
+
+        set_global_setting('LOGIN_ENFORCE_MFA', False)

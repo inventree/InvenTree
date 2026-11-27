@@ -29,6 +29,7 @@ from mptt.models import TreeForeignKey
 
 import build.models
 import common.models
+import common.validators
 import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.ready
@@ -3914,6 +3915,7 @@ class StockItemTestResult(InvenTreeMetadataModel):
         upload_to=rename_stock_item_test_result_attachment,
         verbose_name=_('Attachment'),
         help_text=_('Test result attachment'),
+        validators=[common.validators.validate_uploaded_file],
     )
 
     notes = models.CharField(

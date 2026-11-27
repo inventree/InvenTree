@@ -1,5 +1,6 @@
 """Unit tests for the various part API endpoints."""
 
+import io
 import os
 from datetime import datetime
 from decimal import Decimal
@@ -2146,6 +2147,46 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
             p = Part.objects.get(pk=pk)
             self.assertIsNotNone(p.image)
 
+    def test_image_upload_size_limit(self):
+        """Part images which exceed INVENTREE_UPLOAD_MAX_SIZE are rejected."""
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        from common.settings import set_global_setting
+
+        p = Part.objects.filter(active=True).first()
+        url = reverse('api-part-detail', kwargs={'pk': p.pk})
+
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 1, change_user=None)
+
+        def png(size: int) -> SimpleUploadedFile:
+            """Generate a PNG image (random noise does not compress)."""
+            buf = io.BytesIO()
+            Image.frombytes('RGB', (size, size), os.urandom(size * size * 3)).save(
+                buf, format='PNG'
+            )
+            return SimpleUploadedFile('image.png', buf.getvalue(), 'image/png')
+
+        # A small image is accepted
+        self.upload_client.patch(
+            url, {'image': png(64)}, format='multipart', expected_code=200
+        )
+
+        # An image larger than 1 MB is rejected
+        large = png(700)
+        self.assertGreater(large.size, 1024 * 1024)
+
+        response = self.upload_client.patch(
+            url, {'image': large}, format='multipart', expected_code=400
+        )
+        self.assertIn('exceeds maximum upload limit of 1 MB', str(response.data))
+
+        # The previously uploaded image is retained, and the part is still editable
+        p.refresh_from_db()
+        self.assertTrue(p.image)
+        self.patch(url, {'description': 'Still editable'}, expected_code=200)
+
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 10, change_user=None)
+
     def test_existing_image(self):
         """Test that we can allocate an existing uploaded image to a new Part."""
         # First, upload an image for an existing part
@@ -3445,6 +3486,55 @@ class BomItemTest(InvenTreeAPITestCase):
         response = self.get('/api/bom/1/', {}, expected_code=200)
 
         self.assertEqual(response.data['available_variant_stock'], 1000)
+
+    def test_bom_list_stock_scaling(self):
+        """BOM list queries must not scale with the amount of stock for each component.
+
+        Stock quantities are provided via queryset annotations,
+        so stock items (and their allocations) must not be prefetched.
+        """
+        url = reverse('api-bom-list')
+
+        params = {
+            'part': 100,
+            'substitutes': True,
+            'sub_part_detail': True,
+            'part_detail': True,
+            'pricing': True,
+        }
+
+        bom_items = list(BomItem.objects.filter(part=100))
+        self.assertGreater(len(bom_items), 0)
+
+        # Warm up any caches
+        self.get(url, params, expected_code=200)
+
+        with CaptureQueriesContext(connection) as ctx:
+            response = self.get(url, params, expected_code=200)
+
+        initial_stock = {row['pk']: row['available_stock'] for row in response.data}
+
+        # Create a large number of additional stock items for each component
+        StockItem.objects.bulk_create([
+            StockItem(part=item.sub_part, quantity=5)
+            for item in bom_items
+            for _ in range(25)
+        ])
+
+        with CaptureQueriesContext(connection) as ctx2:
+            response = self.get(url, params, expected_code=200)
+
+        self.assertEqual(len(ctx2), len(ctx))
+
+        for query in ctx2.captured_queries:
+            self.assertFalse(
+                query['sql'].startswith('SELECT "stock_stockitem"'),
+                f'Unexpected stock item query: {query["sql"][:200]}',
+            )
+
+        # The annotated stock quantities reflect the new stock items
+        for row in response.data:
+            self.assertEqual(row['available_stock'], initial_stock[row['pk']] + 125)
 
     def test_bom_export(self):
         """Test for exporting BOM data."""
