@@ -1,12 +1,8 @@
 import { t } from '@lingui/core/macro';
 import { Container, Flex, Space } from '@mantine/core';
-import {
-  Spotlight,
-  type SpotlightActionData,
-  createSpotlight
-} from '@mantine/spotlight';
+import { Spotlight, type SpotlightActionData } from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';
-import { type JSX, useEffect, useMemo, useState } from 'react';
+import { type JSX, lazy, useEffect, useMemo, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Boundary } from '@lib/components/Boundary';
@@ -15,6 +11,7 @@ import { ApiEndpoints, apiUrl } from '@lib/index';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
 import { getActions } from '../../defaults/actions';
+import { Loadable } from '../../functions/loading';
 import * as classes from '../../main.css';
 import {
   useGlobalSettingsState,
@@ -30,10 +27,14 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../plugins/PluginUIFeature';
-import GlobalPreviewDrawer from '../previews/GlobalPreviewDrawer';
 import { FirstUseTour } from './FirstUseTour';
 import { Footer } from './Footer';
 import { Header } from './Header';
+import { firstStore, searchShortcutKey } from './spotlightStore';
+
+const GlobalPreviewDrawer = Loadable(
+  lazy(() => import('../previews/GlobalPreviewDrawer'))
+);
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const location = useLocation();
@@ -54,10 +55,6 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 
   return children;
 };
-
-export const [firstStore, firstSpotlight] = createSpotlight();
-
-export const searchShortcutKey = 'mod+K';
 
 export default function LayoutComponent() {
   const navigate = useNavigate();
