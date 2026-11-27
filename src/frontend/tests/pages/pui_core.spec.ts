@@ -47,7 +47,9 @@ test('Core - User Profile', async ({ browser }) => {
   // Edit the user profile via the account settings page
   await navigate(page, 'settings/user/account');
   await page.getByText('Account Details').waitFor();
-  await page.getByRole('button', { name: 'Edit Profile' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-edit-profile-' })
+    .click();
 
   await page.getByLabel('text-field-position').fill(position);
   await page.getByLabel('text-field-location').fill(location);
