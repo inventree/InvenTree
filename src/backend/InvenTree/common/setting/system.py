@@ -552,14 +552,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'after_save': reload_plugin_registry,
         'flags': [SettingFlag.TOGGLE],
     },
-    'ENABLE_PLUGINS_NAVIGATION': {
-        'name': _('Enable navigation integration'),
-        'description': _('Enable plugins to integrate into navigation'),
-        'default': False,
-        'validator': bool,
-        'after_save': reload_plugin_registry,
-        'flags': [SettingFlag.TOGGLE],
-    },
     'ENABLE_PLUGINS_APP': {
         'name': _('Enable app integration'),
         'description': _('Enable plugins to add apps'),

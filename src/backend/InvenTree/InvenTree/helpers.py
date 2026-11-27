@@ -1255,7 +1255,6 @@ def plugins_disabled_mixins() -> list[dict]:
         PluginMixinEnum.APP: 'ENABLE_PLUGINS_APP',
         PluginMixinEnum.EVENTS: 'ENABLE_PLUGINS_EVENTS',
         PluginMixinEnum.MAIL: 'ENABLE_PLUGINS_MAILS',
-        PluginMixinEnum.NAVIGATION: 'ENABLE_PLUGINS_NAVIGATION',
         PluginMixinEnum.SCHEDULE: 'ENABLE_PLUGINS_SCHEDULE',
         PluginMixinEnum.URLS: 'ENABLE_PLUGINS_URL',
         PluginMixinEnum.USER_INTERFACE: 'ENABLE_PLUGINS_INTERFACE',

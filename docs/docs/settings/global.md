@@ -254,7 +254,6 @@ Refer to the [transfer order settings](../stock/transfer_order.md#transfer-order
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("PLUGIN_ON_STARTUP") }}
 {{ globalsetting("ENABLE_PLUGINS_URL") }}
-{{ globalsetting("ENABLE_PLUGINS_NAVIGATION") }}
 {{ globalsetting("ENABLE_PLUGINS_APP") }}
 {{ globalsetting("ENABLE_PLUGINS_SCHEDULE") }}
 {{ globalsetting("ENABLE_PLUGINS_EVENTS") }}
