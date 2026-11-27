@@ -3476,6 +3476,55 @@ class BomItemTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.data['available_variant_stock'], 1000)
 
+    def test_bom_list_stock_scaling(self):
+        """BOM list queries must not scale with the amount of stock for each component.
+
+        Stock quantities are provided via queryset annotations,
+        so stock items (and their allocations) must not be prefetched.
+        """
+        url = reverse('api-bom-list')
+
+        params = {
+            'part': 100,
+            'substitutes': True,
+            'sub_part_detail': True,
+            'part_detail': True,
+            'pricing': True,
+        }
+
+        bom_items = list(BomItem.objects.filter(part=100))
+        self.assertGreater(len(bom_items), 0)
+
+        # Warm up any caches
+        self.get(url, params, expected_code=200)
+
+        with CaptureQueriesContext(connection) as ctx:
+            response = self.get(url, params, expected_code=200)
+
+        initial_stock = {row['pk']: row['available_stock'] for row in response.data}
+
+        # Create a large number of additional stock items for each component
+        StockItem.objects.bulk_create([
+            StockItem(part=item.sub_part, quantity=5)
+            for item in bom_items
+            for _ in range(25)
+        ])
+
+        with CaptureQueriesContext(connection) as ctx2:
+            response = self.get(url, params, expected_code=200)
+
+        self.assertEqual(len(ctx2), len(ctx))
+
+        for query in ctx2.captured_queries:
+            self.assertFalse(
+                query['sql'].startswith('SELECT "stock_stockitem"'),
+                f'Unexpected stock item query: {query["sql"][:200]}',
+            )
+
+        # The annotated stock quantities reflect the new stock items
+        for row in response.data:
+            self.assertEqual(row['available_stock'], initial_stock[row['pk']] + 125)
+
     def test_bom_export(self):
         """Test for exporting BOM data."""
         url = reverse('api-bom-list')
