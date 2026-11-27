@@ -1516,7 +1516,6 @@ class BomItemSerializer(
         prefetch_fields=[
             'substitutes',
             'substitutes__part',
-            'substitutes__part__stock_items',
             'substitutes__part__pricing_data',
         ],
     )
@@ -1677,18 +1676,14 @@ class BomItemSerializer(
         """
 
         # Prefetch related fields
+        # Note: Stock and allocation quantities are provided by annotations below,
+        # so there is no need to prefetch (potentially very large) related stock data
         queryset = queryset.prefetch_related(
             'part',
             'part__category',
-            'part__stock_items',
             'sub_part',
-            'sub_part__builds',
             'sub_part__category',
             'sub_part__pricing_data',
-            'sub_part__stock_items',
-            'sub_part__stock_items__allocations',
-            'sub_part__stock_items__sales_order_allocations',
-            'sub_part__stock_items__transfer_order_allocations',
         )
 
         # Annotate with the 'total pricing' information based on unit pricing and quantity

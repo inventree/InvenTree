@@ -1,6 +1,7 @@
 """API unit tests for InvenTree common functionality."""
 
 import io
+import os
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -3098,6 +3099,34 @@ class NotesImageAPITests(InvenTreeAPITestCase):
         Image.new('RGB', (16, 16), color='blue').save(buf, format='PNG')
         buf.seek(0)
         return SimpleUploadedFile(name, buf.read(), content_type='image/png')
+
+    def test_upload_size_limit(self):
+        """Notes images which exceed INVENTREE_UPLOAD_MAX_SIZE are rejected."""
+        from common.settings import set_global_setting
+
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 1, change_user=None)
+
+        # Random noise does not compress, so this image is > 1 MB
+        buf = io.BytesIO()
+        Image.frombytes('RGB', (700, 700), os.urandom(700 * 700 * 3)).save(
+            buf, format='PNG'
+        )
+        large = SimpleUploadedFile('large.png', buf.getvalue(), 'image/png')
+        self.assertGreater(large.size, 1024 * 1024)
+
+        n = common.models.NotesImage.objects.count()
+
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={'image': large, 'note': self.note.pk},
+            format='multipart',
+            expected_code=400,
+        )
+        self.assertIn('image', response.data)
+        self.assertIn('exceeds maximum upload limit of 1 MB', str(response.data))
+        self.assertEqual(common.models.NotesImage.objects.count(), n)
+
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 10, change_user=None)
 
     def test_upload_requires_note(self):
         """Uploading an image without a linked 'note' is rejected."""

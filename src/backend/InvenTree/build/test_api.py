@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from django.db import connection
-from django.db.models import Sum
+from django.db.models import F, Sum
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
@@ -1913,6 +1913,75 @@ class BuildLineTests(BuildAPITest):
         for name in ['quantity']:
             self.assertIn(name, allocation)
             self.assertNotIn('default', allocation[name])
+
+    def test_available_variant_stock(self):
+        """Test the 'available_variant_stock' annotation for BuildLine objects."""
+        # Select a BuildLine whose BOM item belongs to the part being built
+        # (not every fixture BuildLine is consistent with its build),
+        # and whose sub_part is not trackable (allocations would require a build output)
+        line = (
+            BuildLine.objects
+            .filter(
+                bom_item__sub_part__isnull=False,
+                bom_item__sub_part__trackable=False,
+                bom_item__part=F('build__part'),
+            )
+            .order_by('pk')
+            .first()
+        )
+        assert line is not None
+
+        # Variant stock can only be allocated if the BOM item allows variants
+        line.bom_item.allow_variants = True
+        line.bom_item.save()
+
+        url = reverse('api-build-line-detail', kwargs={'pk': line.pk})
+
+        sub_part = line.bom_item.sub_part
+        initial = self.get(url, expected_code=200).data['available_variant_stock']
+
+        # Create some variants of the referenced sub_part, with stock
+        sub_part.is_template = True
+        sub_part.save()
+
+        variant_stock = []
+
+        for idx in range(3):
+            variant = Part.objects.create(
+                name=f'Variant {idx}',
+                description='A variant part',
+                variant_of=sub_part,
+                component=True,
+            )
+
+            variant_stock.append(StockItem.objects.create(part=variant, quantity=100))
+
+        data = self.get(url, expected_code=200).data
+        self.assertEqual(data['available_variant_stock'], initial + 300)
+
+        # Allocate some variant stock - this reduces the available variant stock
+        BuildItem.objects.create(
+            build_line=line, stock_item=variant_stock[0], quantity=40
+        )
+
+        data = self.get(url, expected_code=200).data
+        self.assertEqual(data['available_variant_stock'], initial + 260)
+
+        # Stock for a variant-of-a-variant is also counted
+        parent_variant = variant_stock[1].part
+        parent_variant.is_template = True
+        parent_variant.save()
+
+        nested = Part.objects.create(
+            name='Nested variant',
+            description='A variant of a variant',
+            variant_of=variant_stock[1].part,
+            component=True,
+        )
+        StockItem.objects.create(part=nested, quantity=7)
+
+        data = self.get(url, expected_code=200).data
+        self.assertEqual(data['available_variant_stock'], initial + 267)
 
     def test_consumed_read_only(self):
         """The 'consumed' quantity cannot be changed via the BuildLine API.
