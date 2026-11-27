@@ -659,7 +659,7 @@ test('Parts - Locking', async ({ browser }) => {
 
   // Check the "parameters" tab also
   await loadTab(page, 'Parameters');
-  await page.getByText('Part parameters cannot be').waitFor();
+  await page.getByText('This item is locked').waitFor();
 });
 
 test('Parts - Details', async ({ browser }) => {

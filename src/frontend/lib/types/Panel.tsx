@@ -26,12 +26,12 @@ export type PanelType = {
  *
  * @param model - The model type (e.g. 'part', or a plugin defined model)
  * @param id - The primary key of the model instance
- * @param instanceInfo - Aggregated counts for the instance (e.g. attachment_count)
+ * @param instanceInfo - Aggregated counts and states for the instance
  */
 export type ModelFeaturePanelProps = {
   model: string;
   id: number;
-  instanceInfo: Record<string, number | undefined>;
+  instanceInfo: Record<string, (number | boolean) | undefined>;
   userSettings: SettingsStateProps;
   globalSettings: SettingsStateProps;
 };

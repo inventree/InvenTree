@@ -14,7 +14,8 @@ export const ModelFeaturePanelLookup: Record<string, ModelFeaturePanelFactory> =
       return ParametersPanel({
         model_type: model as ModelType,
         model_id: id,
-        parameter_count: instanceInfo.parameter_count
+        parameter_count: instanceInfo.parameter_count as number,
+        locked: instanceInfo.locked as boolean
       });
     },
     [ModelFeature.attachments]: async ({ model, id, instanceInfo }) => {
@@ -22,7 +23,7 @@ export const ModelFeaturePanelLookup: Record<string, ModelFeaturePanelFactory> =
       return AttachmentPanel({
         model_type: model as ModelType,
         model_id: id,
-        attachment_count: instanceInfo.attachment_count
+        attachment_count: instanceInfo.attachment_count as number
       });
     },
     [ModelFeature.notes]: async ({ model, id, instanceInfo }) => {
@@ -30,7 +31,8 @@ export const ModelFeaturePanelLookup: Record<string, ModelFeaturePanelFactory> =
       return NotesPanel({
         model_type: model as ModelType,
         model_id: id,
-        note_count: instanceInfo.note_count
+        note_count: instanceInfo.note_count as number,
+        locked: instanceInfo.locked as boolean
       });
     },
     [ModelFeature.history]: async ({

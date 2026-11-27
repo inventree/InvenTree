@@ -20,7 +20,6 @@ import {
   IconExclamationCircle,
   IconInfoCircle,
   IconLayersLinked,
-  IconListDetails,
   IconListTree,
   IconLock,
   IconLockOpen,
@@ -85,7 +84,6 @@ import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import { ParameterTable } from '../../tables/general/ParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartSalesOrdersTable from '../../tables/part/PartSalesOrdersTable';
 import PartTestResultTable from '../../tables/part/PartTestResultTable';
@@ -349,10 +347,7 @@ export default function PartDetail() {
                   <Text>{t`The Bill of Materials for this assembly has not been validated.`}</Text>
                 </Alert>
               )}
-            <BomTable
-              partId={part.pk ?? -1}
-              partLocked={part?.locked == true}
-            />
+            <BomTable partId={part.pk ?? -1} partLocked={instanceInfo.locked} />
           </Stack>
         ) : (
           <Skeleton />
@@ -456,9 +451,7 @@ export default function PartDetail() {
         content: part?.pk ? (
           <PartTestTemplateTable
             partId={part?.pk}
-            partLocked={
-              globalSettings.isSet('PART_ENABLE_LOCKING') && part?.locked
-            }
+            partLocked={instanceInfo.locked}
           />
         ) : (
           <Skeleton />
@@ -480,32 +473,6 @@ export default function PartDetail() {
         label: t`Related Parts`,
         icon: <IconLayersLinked />,
         content: <RelatedPartTable partId={part.pk} />
-      },
-      // TODO: remove this panel once generic model locking is available
-      {
-        name: 'parameters',
-        label: t`Parameters`,
-        icon: <IconListDetails />,
-        notification_dot: instanceInfo.parameter_count ? 'info' : null,
-        content: (
-          <>
-            {lockingEnabled && part.locked && (
-              <Alert
-                title={t`Part is Locked`}
-                color='orange'
-                icon={<IconLock />}
-                p='xs'
-              >
-                <Text>{t`Part parameters cannot be edited, as the part is locked`}</Text>
-              </Alert>
-            )}
-            <ParameterTable
-              modelType={ModelType.part}
-              modelId={part?.pk}
-              allowEdit={!lockingEnabled || part?.locked != true}
-            />
-          </>
-        )
       }
     ];
   }, [
@@ -813,7 +780,7 @@ export default function PartDetail() {
                       variant='transparent'
                       disabled={!user.hasChangeRole(UserRoles.part)}
                       onClick={() => {
-                        const locking = !part.locked;
+                        const locking = instanceInfo.locked;
                         api
                           .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
                             locked: locking

@@ -24,6 +24,7 @@ import generic.states.custom
 from generic.modelfeatures import get_model_features
 from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
+    InvenTreeLockableMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
 )
@@ -947,7 +948,7 @@ def check_model_change_permission(
         raise PermissionDenied(permission_error_msg)
 
 
-def check_note_change_permission(user, *, template, model_type):
+def check_note_change_permission(user, *, template, model_type, model_id=None):
     """Check whether a user is permitted to create, edit or delete a note.
 
     Shared between NoteSerializer.save() (create/update) and NoteDetail's
@@ -972,6 +973,13 @@ def check_note_change_permission(user, *, template, model_type):
         _('Invalid model type specified for note'),
         _('User does not have permission to create or edit notes for this model'),
     )
+
+    if issubclass(target_model_class, InvenTreeLockableMixin) and (
+        target_model_class.check_pk_locked(model_id)
+    ):
+        raise PermissionDenied(
+            _('Notes cannot be changed, as the linked item is locked')
+        )
 
 
 class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
@@ -1033,7 +1041,12 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             self.instance and self.instance.model_type
         )
 
-        check_note_change_permission(user, template=is_template, model_type=model_type)
+        model_id = self.validated_data.get(
+            'model_id', getattr(self.instance, 'model_id', None)
+        )
+        check_note_change_permission(
+            user, template=is_template, model_type=model_type, model_id=model_id
+        )
 
         return super().save(updated_by=user, **kwargs)
 
@@ -1357,6 +1370,10 @@ class InstanceInfoSerializer(serializers.Serializer):
         label=_('Parameter Count'),
         help_text=_('Number of parameters associated with this instance'),
         read_only=True,
+    )
+
+    locked = serializers.BooleanField(
+        label=_('Locked'), read_only=True, allow_null=True
     )
 
 

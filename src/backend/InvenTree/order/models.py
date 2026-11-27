@@ -55,6 +55,7 @@ from generic.models.modelmixins import (
     InvenTreeAttachmentMixin,
     InvenTreeAuditMixin,
     InvenTreeBarcodeMixin,
+    InvenTreeLockableMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
     InvenTreeReferenceIndexingMixin,
@@ -364,6 +365,7 @@ class TransferOrderReportContext(BaseOrderReportContext, TypedDict):
 
 
 class Order(
+    InvenTreeLockableMixin,
     StatusCodeMixin,
     StateTransitionMixin,
     InvenTreeParameterMixin,

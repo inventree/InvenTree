@@ -58,10 +58,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useImporterState } from '../../states/ImporterState';
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../../states/SettingsStates';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
 // Calculate the total stock quantity available for a given BomItem
@@ -125,12 +122,7 @@ export function BomTable({
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  const globalSettings = useGlobalSettingsState();
-
-  const isLocked = useMemo(
-    () => globalSettings.isSet('PART_ENABLE_LOCKING') && (partLocked ?? false),
-    [globalSettings, partLocked]
-  );
+  const isLocked = partLocked ?? false;
 
   const userSettings = useUserSettingsState();
 

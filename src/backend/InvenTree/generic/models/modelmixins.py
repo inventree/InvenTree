@@ -659,6 +659,42 @@ class InvenTreeParameterMixin(
         return True
 
 
+class InvenTreeLockableMixin(ModelFeatureMixin):
+    """Mixin for models which can be 'locked'.
+
+    A model declares its locking rule by overriding check_locked().
+    """
+
+    MODEL_FEATURE = 'org.inventree.i.modelfeatures.lockable'
+
+    def check_locked(self, db: bool = False) -> bool:
+        """Return True if this instance is locked."""
+        return False
+
+    @classmethod
+    def check_pk_locked(cls, pk) -> bool:
+        """Return True if the instance with the given primary key exists and is locked."""
+        if pk is None:
+            return False
+        instance = cls.objects.filter(pk=pk).first()
+        return bool(instance and instance.check_locked())
+
+    # overrides of parameter checks for lockable models
+    def check_parameter_delete(self, parameter) -> bool:
+        """Run a check to determine if the provided parameter can be deleted."""
+        if self.check_locked():
+            raise ValidationError(_('Cannot delete parameters of a locked item'))
+
+        return super().check_parameter_delete(parameter)
+
+    def check_parameter_save(self, parameter) -> bool:
+        """Run a check to determine if the provided parameter can be saved."""
+        if self.check_locked():
+            raise ValidationError(_('Cannot modify parameters of a locked item'))
+
+        return super().check_parameter_save(parameter)
+
+
 class InvenTreeNoteMixin(
     ModelFeatureMixin, InvenTreePermissionCheckMixin, models.Model
 ):

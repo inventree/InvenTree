@@ -51,6 +51,7 @@ from generic.models.modelmixins import (
     InvenTreeAuditMixin,
     InvenTreeBarcodeMixin,
     InvenTreeImageMixin,
+    InvenTreeLockableMixin,
     InvenTreeMetadataMixin,
     InvenTreeNoteMixin,
     InvenTreeParameterMixin,
@@ -474,6 +475,7 @@ class PartReportContext(report.mixins.BaseReportContext, TypedDict):
 
 @cleanup.ignore
 class Part(
+    InvenTreeLockableMixin,
     InvenTreeAuditMixin,
     InvenTreePluginValidationMixin,
     InvenTreeParameterMixin,
@@ -596,15 +598,10 @@ class Part(
             'test_templates': self.getTestTemplateMap(),
         }
 
-    def check_parameter_delete(self, parameter):
-        """Custom delete check for Parameter instances associated with this Part."""
-        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
-            raise ValidationError(_('Cannot delete parameters of a locked part'))
-
-    def check_parameter_save(self, parameter):
-        """Custom save check for Parameter instances associated with this Part."""
-        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
-            raise ValidationError(_('Cannot modify parameters of a locked part'))
+    def check_locked(self, db: bool = False) -> bool:
+        """Check if this part is 'locked' (and part locking is enabled)."""
+        instance = (self.get_db_instance() if db else None) or self
+        return bool(instance.locked and get_global_setting('PART_ENABLE_LOCKING'))
 
     def delete(self, **kwargs):
         """Custom delete method for the Part model.
@@ -614,7 +611,7 @@ class Part(
         - The part is still active
         - The part is used in a BOM for a different part.
         """
-        if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
+        if self.check_locked():
             raise ValidationError(_('Cannot delete this part as it is locked'))
 
         if self.active:
@@ -3189,13 +3186,13 @@ class BomItem(InvenTreeAuditMixin, InvenTreeMetadataModel):
         if not get_global_setting('PART_ENABLE_LOCKING'):
             return
 
-        if assembly.locked:
+        if assembly.check_locked():
             raise ValidationError(_('BOM item cannot be modified - assembly is locked'))
 
         # If this BOM item is inherited, check all variants of the assembly
         if self.inherited:
             for part in assembly.get_descendants(include_self=False):
-                if part.locked:
+                if part.check_locked():
                     raise ValidationError(
                         _('BOM item cannot be modified - variant assembly is locked')
                     )

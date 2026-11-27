@@ -8,12 +8,14 @@ export interface InstanceInfo {
   attachment_count: number;
   note_count: number;
   parameter_count: number;
+  locked: boolean;
 }
 
 const emptyInstanceInfo: InstanceInfo = {
   attachment_count: 0,
   note_count: 0,
-  parameter_count: 0
+  parameter_count: 0,
+  locked: false
 };
 
 /**

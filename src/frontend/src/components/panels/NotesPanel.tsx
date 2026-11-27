@@ -11,12 +11,12 @@ import NotesEditor from '../editors/NotesEditor';
 export default function NotesPanel({
   model_type,
   model_id,
-  editable,
+  locked,
   note_count
 }: {
   model_type: ModelType;
   model_id: number | undefined;
-  editable?: boolean;
+  locked?: boolean;
   note_count?: number;
 }): PanelType {
   return {
@@ -27,7 +27,11 @@ export default function NotesPanel({
     notification_dot: note_count ? 'info' : null,
     content:
       model_type && model_id ? (
-        <NotesEditor modelType={model_type} modelId={model_id} />
+        <NotesEditor
+          modelType={model_type}
+          modelId={model_id}
+          locked={locked}
+        />
       ) : (
         <Skeleton />
       ),

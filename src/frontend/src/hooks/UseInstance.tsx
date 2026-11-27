@@ -1,6 +1,6 @@
 import { apiUrl } from '@lib/functions/Api';
 import type { UseInstanceResult, useInstanceProps } from '@lib/types/Rendering';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useApi } from '../contexts/ApiContext';
 
@@ -27,6 +27,7 @@ export function useInstance<T = any>({
   updateInterval
 }: useInstanceProps): UseInstanceResult {
   const api = useApi();
+  const queryClient = useQueryClient();
 
   const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
@@ -95,11 +96,17 @@ export function useInstance<T = any>({
     );
   }, [instanceQuery]);
 
+  const refetechInfo = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['instance-info'] });
+  }, [queryClient]);
+
   const refreshInstance = useCallback(() => {
+    refetechInfo();
     instanceQuery.refetch();
   }, []);
 
   const refreshInstancePromise = useCallback(() => {
+    refetechInfo();
     return instanceQuery.refetch();
   }, []);
 
