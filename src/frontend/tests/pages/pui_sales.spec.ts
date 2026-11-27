@@ -188,6 +188,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await clearTableFilters(page);
 
   // Click through to a particular sales order
+  await tableSearch(page, 'SO0006');
   await page.getByRole('cell', { name: 'SO0006' }).first().click();
   await loadTab(page, 'Shipments');
   await clearTableFilters(page);
@@ -626,7 +627,10 @@ test('Sales Orders - Parametric View', async ({ browser }) => {
 
   // Columns and data are rendered in the parametric table
   await page.getByRole('button', { name: 'Customer' }).waitFor();
-  await page.getByRole('cell', { name: 'SO0001' }).waitFor();
+  await page
+    .getByRole('cell', { name: /^SO\d+$/ })
+    .first()
+    .waitFor();
 
   // Search within the parametric table
   await tableSearch(page, 'SO0001');
