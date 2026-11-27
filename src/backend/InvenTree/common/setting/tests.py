@@ -43,6 +43,8 @@ class SettingsValidatorTests(TestCase):
 
     def test_get_global_setting_unexpected_kwargs(self):
         """Unexpected keyword arguments are dropped, rather than forwarded."""
+        from unittest import mock
+
         from common.models import InvenTreeSetting
         from common.settings import get_global_setting
 
