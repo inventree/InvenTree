@@ -28,7 +28,7 @@ InvenTree functionality is split into a number of distinct roles. A group will h
 {{ roles() }}
 
 !!! info "Pricing Role"
-    Access to part pricing data is controlled separately from general part data, via the *Pricing* role. Refer to the [pricing permissions](../part/pricing.md#pricing-permissions) documentation for more information.
+    Access to pricing and cost data is controlled separately from general part and stock data, via the *Pricing* role. Refer to the [part pricing permissions](../part/pricing.md#pricing-permissions) and [stock item cost permissions](../stock/costs.md#permissions) documentation for more information.
 
 {{ image("admin/roles.png", "Roles") }}
 

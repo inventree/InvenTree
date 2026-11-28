@@ -177,8 +177,11 @@ class DataImportSession(models.Model):
         - Models marked with IMPORT_REQUIRES_STAFF require the user to be staff,
           matching the API write permissions for that model.
         - The user must also have 'change' permission for the target model.
+        - Models may specify additional (role, permission) pairs via IMPORT_REQUIRED_ROLES,
+          for models whose API requires permissions beyond the model's own role
+          (e.g. stock item cost entries also require the 'stock' change permission).
         """
-        from users.permissions import check_user_permission
+        from users.permissions import check_user_permission, check_user_role
 
         model_class = self.model_class
 
@@ -189,6 +192,10 @@ class DataImportSession(models.Model):
             user, 'is_staff', False
         ):
             return False
+
+        for role, permission in getattr(model_class, 'IMPORT_REQUIRED_ROLES', []):
+            if not check_user_role(user, role, permission):
+                return False
 
         return check_user_permission(user, model_class, 'change')
 

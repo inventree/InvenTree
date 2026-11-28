@@ -6,7 +6,15 @@ from django.urls import reverse
 from audit.models import AuditLogEntry
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
-from pricing.models import PartInternalPriceBreak, PartPricing, PartSellPriceBreak
+from pricing.models import (
+    CostSource,
+    PartInternalPriceBreak,
+    PartPricing,
+    PartSellPriceBreak,
+    StockItemCostEntry,
+)
+from pricing.status_codes import CostType
+from stock.models import StockItem
 
 ACTION = AuditLogEntry.Action
 
@@ -159,3 +167,107 @@ class PricingAuditTest(InvenTreeAPITestCase):
         self.assignRole('part.view')
 
         self.assertEqual(pricing_entries(), [])
+
+
+class StockItemCostAuditPermissionTest(InvenTreeAPITestCase):
+    """Audit history of stock item cost entries requires permission to view the stock item.
+
+    Regression test: the cost entry API requires both the 'pricing' and 'stock' roles,
+    but the audit history of cost entries was visible with only the 'pricing' role.
+    """
+
+    roles = ['pricing.view', 'stock.view']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create a stock item with a cost entry (and an update to it)."""
+        super().setUpTestData()
+
+        part = Part.objects.create(name='Widget', description='A widget')
+        cls.item = StockItem.objects.create(part=part, quantity=10)
+
+        cls.entry = StockItemCostEntry.objects.create_cost(
+            cls.item, CostType.PURCHASE, CostSource.MANUAL, min_cost=10, currency='USD'
+        )
+
+        StockItemCostEntry.objects.update_cost(cls.entry, min_cost=12, max_cost=12)
+
+    def audit_entries(self):
+        """Return the audit log entries for the cost entry model."""
+        return AuditLogEntry.objects.filter(
+            content_type=ContentType.objects.get_for_model(StockItemCostEntry)
+        )
+
+    def cost_entries(self, params=None):
+        """Return the cost entries visible via the audit log API."""
+        return [
+            e
+            for e in self.get(reverse('api-audit-log-list'), params or {}).data
+            if e['model_type'] == 'pricing.stockitemcostentry'
+        ]
+
+    def check_visible(self, visible: bool):
+        """Check whether the cost entry history is visible to the user."""
+        expected = 2 if visible else 0
+
+        # Global audit log
+        self.assertEqual(len(self.cost_entries()), expected)
+
+        # Filtered by model type
+        self.assertEqual(
+            len(self.cost_entries({'model_type': 'pricing.stockitemcostentry'})),
+            expected,
+        )
+
+        # History of the cost entry itself
+        self.assertEqual(
+            len(
+                self.cost_entries({
+                    'model_type': 'pricing.stockitemcostentry',
+                    'model_id': self.entry.pk,
+                })
+            ),
+            expected,
+        )
+
+        # Detail endpoint
+        for entry in self.audit_entries():
+            self.get(
+                reverse('api-audit-log-detail', kwargs={'pk': entry.pk}),
+                expected_code=200 if visible else 404,
+            )
+
+    def test_parent_permission(self):
+        """Cost entry history requires both the 'pricing' and 'stock' view roles."""
+        self.assertEqual(self.audit_entries().count(), 2)
+
+        # Both roles - visible (including via the history of the stock item)
+        self.check_visible(True)
+
+        self.assertEqual(
+            len(
+                self.cost_entries({
+                    'model_type': 'stock.stockitem',
+                    'model_id': self.item.pk,
+                })
+            ),
+            2,
+        )
+
+        # Only the 'pricing' role - hidden
+        self.clearRoles()
+        self.assignRole('pricing.view')
+        self.check_visible(False)
+
+        # Only the 'stock' role - hidden
+        self.clearRoles()
+        self.assignRole('stock.view')
+        self.check_visible(False)
+
+        self.assertEqual(
+            self.cost_entries({
+                'model_type': 'stock.stockitem',
+                'model_id': self.item.pk,
+            }),
+            [],
+        )

@@ -1094,8 +1094,16 @@ def update_exchange_rates(force: bool = False):
 
     except (AppRegistryNotReady, OperationalError, ProgrammingError):
         logger.warning('Could not update exchange rates - database not ready')
+        return
     except Exception as e:  # pragma: no cover
         logger.exception('Error updating exchange rates: %s', type(e))
+        return
+
+    # Convert any stock item costs which could not previously be converted
+    # (or were converted to a previous default currency) using the new rates
+    offload_task(
+        'pricing.tasks.reconvert_stock_item_costs', group='pricing', retry=False
+    )
 
 
 @receiver(post_currency_change, dispatch_uid='receive_update_exchange_rates')

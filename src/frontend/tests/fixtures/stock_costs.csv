@@ -1,0 +1,4 @@
+Cost Type,Minimum Cost,Maximum Cost,Currency,Notes
+Landed,2.5,,USD,Imported freight
+Fees,1,1.5,USD,Imported handling fee
+Adjustment,-0.5,,USD,Imported rebate

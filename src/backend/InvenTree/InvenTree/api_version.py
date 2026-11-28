@@ -1,10 +1,26 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 584
+INVENTREE_API_VERSION = 585
+
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v585 -> 2026-11-25 : https://github.com/inventree/InvenTree/pull/13294
+    - Adds StockItemCostEntry and StockItemCost (summary) models to the "pricing" app
+    - Access to these endpoints requires the "pricing" role, and the "stock" role (view to read, change to write)
+    - Adds optional "pricing_detail" field to the StockItem API (requires the "pricing" view role)
+    - Breaking: Removes the "purchase_price" and "purchase_price_currency" fields from the StockItem API (read and write) - stock item costs are managed via /api/pricing/stock-cost-entry/, and the cost summary is available via "pricing_detail"
+    - Breaking: Removes the "has_purchase_price" filter and "purchase_price" ordering option from the StockItem API
+    - Adds "copy_costs" option (default True) when duplicating a StockItem via the API
+    - Adds "has_unit_cost" filter and "unit_cost" ordering option to the StockItem API (ignored for users without the "pricing" view role)
+    - Breaking: The per-line "purchase_price" / "purchase_price_currency" fields of the stock disassembly endpoint are renamed to "unit_cost" / "unit_cost_currency". Explicit unit costs create "material" cost entries (and no longer set the purchase price), and default to the default currency
+    - Breaking: Stock disassembly only allocates the remaining cost of the assembly (less explicit unit costs and installed item costs) to lines without a unit cost if part pricing is available for every such line - otherwise no cost is recorded (no "even" split)
+    - Breaking: Removes the "PURCHASEORDER_CONVERT_CURRENCY" global setting
+    - The "source" and "source_data" fields of /api/pricing/stock-cost-entry/ are read-only - entries created via the API are always "manual" entries
+    - Adds data export and import support for stock item cost entries ("stockitemcostentry" import model type, which requires the "pricing" change and "stock" change permissions)
+    - Adds the read-only "source_text" field (human readable label for the "source" field) to /api/pricing/stock-cost-entry/
 
 v584 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/13346
     - Adds "search_fields" query parameter to list endpoints, to limit a search to a subset of the searchable fields

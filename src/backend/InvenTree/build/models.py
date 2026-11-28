@@ -901,6 +901,13 @@ class Build(
             copy_related_cache(source_item, new_item)
             copy_related_cache(source_item, new_stock_items[i])
 
+        # Each split-off item carries the same (per unit) cost as its source item
+        from pricing.models import StockItemCostEntry
+
+        StockItemCostEntry.objects.copy_costs(
+            (source_item, new_item) for source_item, new_item, _quantity in split_items
+        )
+
         split_events = []
         install_events = []
 

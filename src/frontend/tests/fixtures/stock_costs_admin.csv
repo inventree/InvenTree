@@ -1,0 +1,3 @@
+Stock Item,Cost Type,Minimum Cost,Currency,Notes
+223,Landed,0.25,USD,Admin import freight
+225,Purchase,12,USD,Admin import purchase

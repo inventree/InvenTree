@@ -5,6 +5,7 @@ import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
+  IconCurrencyDollar,
   IconInfoCircle,
   IconPackages,
   IconShoppingCart,
@@ -63,6 +64,7 @@ import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
+import StockItemCostEntryTable from '../../tables/stock/StockItemCostEntryTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
 import TransferOrderAllocationTable from '../../tables/stock/TransferOrderAllocationTable';
@@ -97,6 +99,8 @@ export default function StockDetail() {
       part_detail: true,
       location_detail: true,
       path_detail: true,
+      // Cost summary - only returned for users with the 'pricing' view role
+      pricing_detail: true,
       tags: true
     }
   });
@@ -265,6 +269,20 @@ export default function StockDetail() {
           <StockItemTestResultTable
             itemId={stockitem.pk}
             partId={stockitem.part}
+          />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
+        name: 'costs',
+        label: t`Item Costs`,
+        icon: <IconCurrencyDollar />,
+        hidden: !user.hasViewRole(UserRoles.pricing),
+        content: stockitem?.pk ? (
+          <StockItemCostEntryTable
+            stockItem={stockitem}
+            onCostsChanged={refreshInstance}
           />
         ) : (
           <Skeleton />

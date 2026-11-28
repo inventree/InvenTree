@@ -114,14 +114,14 @@ When dealing with a supplier part, quantities are counted in *packs*, and prices
 
 InvenTree converts these values into the units of the base part where required:
 
-- When a purchase order line item is received, the quantity added to stock is the number of packs multiplied by the pack quantity. The purchase price recorded against the new stock item is the pack price divided by the pack quantity, i.e. the price per unit of the base part.
+- When a purchase order line item is received, the quantity added to stock is the number of packs multiplied by the pack quantity. The purchase cost recorded against the new stock item is the pack price divided by the pack quantity, i.e. the cost per unit of the base part.
 - When calculating [part pricing](../part/pricing.md), supplier price breaks and purchase history are divided by the pack quantity, so that prices from supplier parts with different pack sizes can be compared directly.
 
 ### Adding Stock Manually
 
 When adding stock manually against a supplier part which has a pack size other than 1, the quantity can be specified in packs or in base part units. This is to allow the addition of items in opened packages.
 
-Set the flag "Use pack size" (`use_pack_size` in the API) to True in order to add parts in packs. In this case, both the quantity *and* the purchase price are treated as values per pack, and converted to base part units when the stock item is created. If the flag is False, the quantity and purchase price are used as provided.
+Set the flag "Use pack size" (`use_pack_size` in the API) to True in order to add parts in packs. In this case, the quantity is treated as a number of packs, and converted to base part units when the stock item is created. If the flag is False, the quantity is used as provided.
 
 !!! warning "API Usage"
     When creating a stock item via the API against a supplier part with a pack size other than 1, the `use_pack_size` flag must be provided - otherwise the request will be rejected.
@@ -134,7 +134,7 @@ The supplier offers a price of €8.50 per tin, when buying 10 or more tins. Thi
 
 - The price per litre of paint is €8.50 / 0.25 = €34.00, which is displayed in the *Unit Price* column of the supplier pricing table, and used for [part pricing](../part/pricing.md#supplier-pricing) calculations.
 - A purchase order line for this supplier part, with a quantity of `12` and a purchase price of `€8.50`, represents twelve tins at €8.50 each.
-- When the line item is received, 3 litres of paint are added to stock (12 x 0.25), with a purchase price of €34.00 per litre.
+- When the line item is received, 3 litres of paint are added to stock (12 x 0.25), with a purchase cost of €34.00 per litre.
 
 !!! tip "Bundled Items"
     A pack size only ever represents multiple units of the *same* part. If a supplier instead sells a kit or assortment of *different* components as a single purchasable item, refer to the [bundled items](./purchase_order.md#bundled-items) documentation instead.

@@ -137,7 +137,7 @@ jobs:
           pip-dependency: psycopg
       - name: Set up test data
         run: |
-          invoke dev.setup-test -iv --bulk
+          invoke dev.setup-test -iv -b stock-pricing-migration
           invoke int.rebuild-thumbnails
       - name: Install dependencies
         run: invoke int.frontend-compile --extract

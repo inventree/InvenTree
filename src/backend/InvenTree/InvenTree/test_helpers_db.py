@@ -110,6 +110,22 @@ class BulkCreateAndFetchTest(TestCase):
 
         self.assertEqual([c.name for c in result], names)
 
+    def test_insertion_order_batches(self):
+        """Insertion order is retained when the items are created in multiple batches."""
+        company = Company.objects.create(name='ACME')
+
+        # More than one bulk_create batch (500 items)
+        names = [f'Contact {idx:04d}' for idx in reversed(range(1201))]
+        items = [Contact(company=company, name=name) for name in names]
+
+        result = list(bulk_create_and_fetch(Contact, items))
+
+        self.assertEqual([c.name for c in result], names)
+
+        # Primary keys increase with the position in the input list
+        pks = [c.pk for c in result]
+        self.assertEqual(pks, sorted(pks))
+
     def test_empty_list(self):
         """Calling with an empty list of items should not raise, and return no items."""
         result = bulk_create_and_fetch(Contact, [])

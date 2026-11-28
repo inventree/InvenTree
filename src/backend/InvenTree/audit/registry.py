@@ -59,8 +59,17 @@ def audited_models() -> list:
 
 def register_model(model, **kwargs) -> None:
     """Register a single model with django-auditlog, using the model's audit attributes."""
+    # Reverse one-to-one relations (e.g. StockItem.cost, Part.pricing_data) are not part of the
+    # model's own data - reading them while calculating the diff would cost one query per instance
+    reverse_one_to_one = {
+        field.name
+        for field in model._meta.get_fields()
+        if field.one_to_one and field.auto_created and not field.concrete
+    }
+
     exclude_fields = {
         *BASE_EXCLUDE_FIELDS,
+        *reverse_one_to_one,
         *getattr(model, 'AUDIT_EXCLUDE_FIELDS', ()),
         *kwargs.pop('exclude_fields', ()),
     }

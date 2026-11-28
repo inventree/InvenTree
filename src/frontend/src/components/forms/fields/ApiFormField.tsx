@@ -289,7 +289,7 @@ export function ApiFormField({
             definition={fieldDefinition}
             fieldName={fieldName}
             value={value}
-            onChange={field.onChange}
+            onChange={onChange}
             error={error}
           />
         );

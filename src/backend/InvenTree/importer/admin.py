@@ -1,5 +1,7 @@
 """Admin site specification for the 'importer' app."""
 
+import copy
+
 from django.contrib import admin
 
 import importer.models
@@ -25,6 +27,12 @@ class DataImportColumnMapAdmin(admin.TabularInline):
 
             if queryset.count() > 0:
                 session = queryset.first().session
+
+                # Note: Set the choices on a *copy* of the model field.
+                # The model field is shared by the whole process - setting its choices
+                # would cause model validation to reject the columns of every other
+                # import session (e.g. when updating a column mapping via the API)
+                db_field = copy.copy(db_field)
                 db_field.choices = [(col, col) for col in session.columns]
 
         return super().formfield_for_dbfield(db_field, request, **kwargs)
@@ -64,6 +72,8 @@ class DataImportSessionAdmin(admin.ModelAdmin):
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         """Override the choices for the model_type field."""
         if db_field.name == 'model_type':
+            # Set the choices on a copy of the (shared) model field - see above
+            db_field = copy.copy(db_field)
             db_field.choices = importer.registry.supported_model_options()
 
         return super().formfield_for_dbfield(db_field, request, **kwargs)

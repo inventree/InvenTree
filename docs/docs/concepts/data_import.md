@@ -19,6 +19,8 @@ External data can be imported via the [Admin Center](../settings/admin.md#admin-
 
 To import data, the user must have the appropriate permissions. The user must be a *staff* user, and have the `change` permission for the model in question.
 
+Some models require additional permissions, matching the permissions required to create those records via the API. For example, importing [stock item costs](../stock/costs.md#importing-costs) also requires `change` permission for the *Stock Items* role.
+
 ### Mapping to Existing Data
 
 Many data models in InvenTree have relationships to other models. When importing data, the user must ensure that the related data is correctly mapped to existing records in the database. For example, when importing a list of parts, the user must ensure that the *part category* data has already been imported, and that the part category field in the imported file is correctly mapped to the existing part category records in the database.

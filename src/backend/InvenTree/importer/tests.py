@@ -1400,3 +1400,45 @@ class AdminTest(ImporterMixin, AdminTestCase):
             model_kwargs={'data_file': data_file, 'model_type': 'company'},
         )
         self.helper(model=DataImportRow, model_kwargs={'session_id': session.id})
+
+    def test_admin_does_not_modify_model_fields(self):
+        """Rendering a session in the admin must not change the (shared) model fields.
+
+        Regression test: the column mapping inline set the choices of the
+        DataImportColumnMap.column model field to the columns of the displayed session.
+        As model fields are shared by the whole process, model validation then
+        rejected the columns of every other import session - so updating a column
+        mapping via the API failed with "Value '...' is not a valid choice".
+        """
+        column_field = DataImportColumnMap._meta.get_field('column')
+        model_type_field = DataImportSession._meta.get_field('model_type')
+
+        column_choices = column_field.choices
+        model_type_choices = model_type_field.choices
+
+        # Display a session (and its column mappings) in the admin
+        session = self.helper(
+            model=DataImportSession,
+            model_kwargs={
+                'data_file': self.helper_file('companies.csv'),
+                'model_type': 'company',
+            },
+        )
+        self.assertTrue(session.column_mappings.exists())
+
+        self.assertEqual(column_field.choices, column_choices)
+        self.assertEqual(model_type_field.choices, model_type_choices)
+
+        # A column mapping of another session (with other columns) can still be updated
+        other = DataImportSession.objects.create(
+            data_file=self.helper_file('part_categories.csv'),
+            model_type='partcategory',
+            user=self.user,
+        )
+
+        self.assertNotEqual(set(other.columns), set(session.columns))
+
+        mapping = other.column_mappings.get(field='name')
+        mapping.column = 'Name'
+        mapping.full_clean()
+        mapping.save()
