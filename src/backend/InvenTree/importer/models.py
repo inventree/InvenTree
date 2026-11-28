@@ -18,6 +18,7 @@ import structlog
 from auditlog.context import disable_auditlog
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
+import common.validators
 import importer.operations
 import importer.registry
 import importer.tasks
@@ -90,6 +91,7 @@ class DataImportSession(models.Model):
                 allowed_extensions=InvenTree.helpers.GetExportFormats()
             ),
             importer.validators.validate_data_file,
+            common.validators.validate_uploaded_file,
         ],
     )
 
@@ -1096,8 +1098,10 @@ class DataImportRow(models.Model):
                     self.errors = {'non_field_errors': str(e)}
                     result = False
 
-                self.save()
-                self.session.check_complete()
+        if commit:
+            # Persist errors discovered when revalidating against newly imported rows.
+            self.save()
+            self.session.check_complete()
 
         return result
 

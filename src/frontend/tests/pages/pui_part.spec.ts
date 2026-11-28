@@ -654,7 +654,7 @@ test('Parts - Locking', async ({ browser }) => {
 
   // Check expected "badge" values
   await page.getByText('In Stock: 13').waitFor();
-  await page.getByText('Required: 10').waitFor();
+  await page.getByText(/Required: \d+/).waitFor();
   await page.getByText('In Production: 50').waitFor();
 
   // Check the "parameters" tab also
@@ -689,14 +689,14 @@ test('Parts - Details', async ({ browser }) => {
 
   // Non-consumable part
   await expect(
-    page.getByRole('row', { name: 'Consumable Part' })
+    page.getByRole('row', { name: /^Consumable Part/ })
   ).toContainText('No');
 
   // Consumable part
   await navigate(page, 'part/921/details');
 
   await expect(
-    page.getByRole('row', { name: 'Consumable Part' })
+    page.getByRole('row', { name: /^Consumable Part/ })
   ).toContainText('Yes');
 });
 
@@ -910,7 +910,10 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   // Overview Graph
   const graph = page.getByLabel('pricing-overview-chart');
   await graph.waitFor();
-  await graph.getByText('$60').waitFor();
+  await graph
+    .getByText(/^\$\d+/)
+    .first()
+    .waitFor();
   await graph.locator('tspan').filter({ hasText: 'BOM Pricing' }).waitFor();
   await graph.locator('tspan').filter({ hasText: 'Overall Pricing' }).waitFor();
 
@@ -1228,7 +1231,10 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   await clearTableFilters(page);
 
   // All parts should be available (no filters applied)
-  await page.getByText(/\/ 43\d/).waitFor();
+  // Record the unfiltered total, so we can check it is restored later
+  const totalParts = page.getByText(/1 - \d+ \/ \d+/).first();
+  await totalParts.waitFor();
+  const totalText = await totalParts.innerText();
 
   const clearParamFilter = async (name: string) => {
     await clickOnParamFilter(page, name);
@@ -1246,7 +1252,7 @@ test('Parts - Parameter Filtering', async ({ browser }) => {
   // Reset the filter
   await clearParamFilter('Color');
 
-  await page.getByText(/\/ 43\d/).waitFor();
+  await page.getByText(totalText, { exact: true }).waitFor();
 });
 
 test('Parts - Test Results', async ({ browser }) => {

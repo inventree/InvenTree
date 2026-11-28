@@ -244,6 +244,17 @@ class Build(
                 )
             })
 
+        # A build order can only be marked as external if the feature is enabled.
+        # Existing external build orders remain valid if the feature is later disabled.
+        if (
+            self.external
+            and (self.pk is None or self.has_field_changed('external'))
+            and not get_global_setting('BUILDORDER_EXTERNAL_BUILDS', cache=False)
+        ):
+            raise ValidationError({
+                'external': _('External build orders are not enabled')
+            })
+
         if get_global_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
             if not self.responsible:
                 raise ValidationError({

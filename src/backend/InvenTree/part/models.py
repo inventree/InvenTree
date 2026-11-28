@@ -609,10 +609,24 @@ class Part(
     def delete(self, **kwargs):
         """Custom delete method for the Part model.
 
+        Raises:
+            ValidationError: If the part cannot be deleted (see check_delete)
+        """
+        self.check_delete()
+
+        super().delete()
+
+    def check_delete(self):
+        """Check whether this Part can be deleted.
+
         Prevents deletion of a Part if any of the following conditions are met:
 
+        - The part is locked
         - The part is still active
         - The part is used in a BOM for a different part.
+
+        Raises:
+            ValidationError: If the part cannot be deleted
         """
         if self.locked and get_global_setting('PART_ENABLE_LOCKING'):
             raise ValidationError(_('Cannot delete this part as it is locked'))
@@ -625,8 +639,6 @@ class Part(
                 raise ValidationError(
                     _('Cannot delete this part as it is used in an assembly')
                 )
-
-        super().delete()
 
     def save(self, *args, **kwargs):
         """Overrides the save function for the Part model.

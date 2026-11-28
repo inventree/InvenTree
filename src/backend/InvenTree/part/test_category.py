@@ -449,7 +449,15 @@ class CategoryTest(TestCase):
         # All parts should have been deleted
         self.assertEqual(Part.objects.filter(category=C32).count(), 10)
 
-        # Now, delete C32 and delete all parts underneath
+        # Active parts cannot be deleted - so neither can the category (with its parts)
+        with self.assertRaises(ValidationError):
+            C32.delete(delete_parts=True)
+
+        C32.refresh_from_db()
+        self.assertEqual(Part.objects.filter(category=C32).count(), 10)
+
+        # Now, deactivate the parts, delete C32 and delete all parts underneath
+        Part.objects.filter(category=C32).update(active=False)
         C32.delete(delete_parts=True)
 
         # 10 parts should have been deleted from the database

@@ -2758,3 +2758,63 @@ class AdminTest(AdminTestCase):
             model=Attachment,
             model_kwargs={'link': 'https://aa.example.org', 'model_id': 1},
         )
+
+
+class UploadValidatorTest(TestCase):
+    """Unit tests for the validate_uploaded_file helper."""
+
+    def test_size_limit(self):
+        """Uploaded files must not exceed the INVENTREE_UPLOAD_MAX_SIZE setting."""
+        from django.core.exceptions import ValidationError
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        from common.settings import set_global_setting
+        from common.validators import validate_attachment_file, validate_uploaded_file
+
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 1, change_user=None)
+        limit = 1024 * 1024
+
+        # Empty values are ignored
+        validate_uploaded_file(None)
+
+        # A file exactly at the limit is accepted
+        validate_uploaded_file(SimpleUploadedFile('ok.txt', b'\x00' * limit))
+
+        # A file over the limit is rejected, with the limit in the message
+        large = SimpleUploadedFile('big.txt', b'\x00' * (limit + 1))
+
+        for validator in [validate_uploaded_file, validate_attachment_file]:
+            with self.assertRaises(ValidationError) as err:
+                validator(large)
+
+            self.assertIn(
+                'File size exceeds maximum upload limit of 1 MB',
+                str(err.exception.messages),
+            )
+
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 10, change_user=None)
+
+    def test_stored_files_skipped(self):
+        """Files which are already stored are not re-validated."""
+        from common.settings import set_global_setting
+        from common.validators import validate_uploaded_file
+
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 1, change_user=None)
+
+        class StoredFile:
+            """A file which is already saved to storage."""
+
+            _committed = True
+            name = 'stored.txt'
+
+            @property
+            def size(self):
+                raise AssertionError('Size of stored file should not be accessed')
+
+            def __bool__(self):
+                return True
+
+        # No exception (and no storage access) for a stored file
+        validate_uploaded_file(StoredFile())
+
+        set_global_setting('INVENTREE_UPLOAD_MAX_SIZE', 10, change_user=None)

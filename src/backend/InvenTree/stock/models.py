@@ -28,6 +28,7 @@ from mptt.models import TreeForeignKey
 
 import build.models
 import common.models
+import common.validators
 import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.ready
@@ -604,13 +605,11 @@ class StockItem(
 
         Arguments:
             ignore_serial_check: If True, allow deletion of serialized stock items regardless of global setting
+
+        Raises:
+            ValidationError: If the stock item cannot be deleted (see check_delete)
         """
-        if (
-            not ignore_serial_check
-            and not get_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', cache=False)
-            and self.serialized
-        ):
-            raise ValidationError(_('Serialized stock items cannot be deleted'))
+        self.check_delete(ignore_serial_check=ignore_serial_check)
 
         with transaction.atomic():
             # Re-link any child items to the parent of this item,
@@ -626,6 +625,22 @@ class StockItem(
             audited_update(children, parent=parent)
 
             super().delete(**kwargs)
+
+    def check_delete(self, ignore_serial_check: bool = False):
+        """Check whether this StockItem can be deleted.
+
+        Arguments:
+            ignore_serial_check: If True, allow deletion of serialized stock items regardless of global setting
+
+        Raises:
+            ValidationError: If the stock item cannot be deleted
+        """
+        if (
+            not ignore_serial_check
+            and not get_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', cache=False)
+            and self.serialized
+        ):
+            raise ValidationError(_('Serialized stock items cannot be deleted'))
 
     @staticmethod
     def get_api_url():
@@ -4099,6 +4114,7 @@ class StockItemTestResult(InvenTreeMetadataModel):
         upload_to=rename_stock_item_test_result_attachment,
         verbose_name=_('Attachment'),
         help_text=_('Test result attachment'),
+        validators=[common.validators.validate_uploaded_file],
     )
 
     notes = models.CharField(

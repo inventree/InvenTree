@@ -1,6 +1,12 @@
 import { test } from './baseFixtures';
 import { stevenuser } from './defaults';
-import { globalSearch, loadTab, navigate, waitForDataOutput } from './helpers';
+import {
+  globalSearch,
+  loadTab,
+  navigate,
+  tableSearch,
+  waitForDataOutput
+} from './helpers';
 import { doCachedLogin } from './login';
 
 // Helper function to open the export data dialog
@@ -35,6 +41,7 @@ test('Exporting - Orders', async ({ browser }) => {
   );
 
   // Download list of purchase order items
+  await tableSearch(page, 'PO0014');
   await page.getByRole('cell', { name: 'PO0014' }).click();
 
   // Click through to the PurchaseOrder from the detail tab

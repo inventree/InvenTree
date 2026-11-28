@@ -239,6 +239,44 @@ class StockLocationTest(StockAPITestCase):
 
         self.post(self.list_url, data, expected_code=201)
 
+    def test_stock_location_delete_blocked(self):
+        """A location cannot be deleted (with its stock) if any stock item cannot be deleted."""
+        part = Part.objects.filter(trackable=True).first()
+
+        location = StockLocation.objects.create(name='To delete', description='Gone')
+        child = StockLocation.objects.create(
+            name='Child', description='Child location', parent=location
+        )
+
+        plain = StockItem.objects.create(part=part, location=location, quantity=5)
+        serialized = StockItem.objects.create(
+            part=part, location=child, quantity=1, serial='DEL-001'
+        )
+
+        url = reverse('api-location-detail', kwargs={'pk': location.pk})
+        params = {'delete_stock_items': True, 'delete_sub_locations': True}
+
+        # Serialized stock cannot be deleted - so neither can the location
+        set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', False)
+
+        response = self.delete(url, params, expected_code=400)
+        self.assertIn('Serialized stock items cannot be deleted', str(response.data))
+
+        # Nothing has been deleted
+        for obj in [location, child, plain, serialized]:
+            obj.refresh_from_db()
+
+        self.assertEqual(child.parent, location)
+        self.assertEqual(serialized.location, child)
+
+        # Once the setting allows it, the location can be deleted
+        set_global_setting('STOCK_ALLOW_DELETE_SERIALIZED', True)
+        self.delete(url, params, expected_code=204)
+
+        for obj in [location, child, plain, serialized]:
+            with self.assertRaises(obj.__class__.DoesNotExist):
+                obj.refresh_from_db()
+
     def test_stock_location_delete(self):
         """Test stock location deletion with different parameters."""
         # First, construct a set of template / variant parts

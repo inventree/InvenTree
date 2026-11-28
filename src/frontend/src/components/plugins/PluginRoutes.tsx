@@ -8,7 +8,7 @@ import { useInvenTreeContext } from './PluginContext';
 
 import NotFound from '../errors/NotFound';
 
-export function PluginRoutes() {
+export default function PluginRoutes() {
   const routes = usePluginUIFeature<RouteUIFeature>({
     featureType: 'route',
     context: {}
