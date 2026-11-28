@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 584
+INVENTREE_API_VERSION = 585
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v585 -> 2026-11-26 : https://github.com/inventree/InvenTree/pull/13347
+    - Adds bulk create support to the BomItem API endpoint (POST a list of items)
 
 v584 -> 2026-11-23 : https://github.com/inventree/InvenTree/pull/13346
     - Adds "search_fields" query parameter to list endpoints, to limit a search to a subset of the searchable fields
