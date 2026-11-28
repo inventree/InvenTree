@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-24 02:55\n"
+"PO-Revision-Date: 2026-11-28 09:28\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -111,8 +111,8 @@ msgstr "Дії"
 
 #: lib/components/SearchInput.tsx:34
 #: src/components/forms/fields/RelatedModelField.tsx:553
-#: src/components/nav/FirstUseTour.tsx:62
-#: src/components/nav/Header.tsx:187
+#: src/components/nav/FirstUseTour.tsx:60
+#: src/components/nav/Header.tsx:190
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:80
@@ -196,7 +196,7 @@ msgstr "Частина"
 #: lib/enums/Roles.tsx:38
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:39
-#: src/pages/Index/Settings/SystemSettings.tsx:219
+#: src/pages/Index/Settings/SystemSettings.tsx:218
 #: src/pages/part/CategoryDetail.tsx:211
 #: src/pages/part/CategoryDetail.tsx:266
 #: src/pages/part/CategoryDetail.tsx:313
@@ -214,7 +214,7 @@ msgstr "Параметр"
 #: src/components/panels/ParametersPanel.tsx:23
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:234
-#: src/pages/Index/Settings/SystemSettings.tsx:213
+#: src/pages/Index/Settings/SystemSettings.tsx:212
 #: src/pages/part/PartDetail.tsx:487
 msgid "Parameters"
 msgstr "Параметри"
@@ -319,13 +319,13 @@ msgstr "У наявності"
 #: lib/enums/ModelInformation.tsx:131
 #: lib/enums/Roles.tsx:54
 #: src/components/previews/models/StockLocationPreview.tsx:12
-#: src/pages/stock/LocationDetail.tsx:431
+#: src/pages/stock/LocationDetail.tsx:432
 msgid "Stock Location"
 msgstr "Розташування складу"
 
 #: lib/enums/ModelInformation.tsx:132
 #: src/pages/stock/LocationDetail.tsx:124
-#: src/pages/stock/LocationDetail.tsx:419
+#: src/pages/stock/LocationDetail.tsx:420
 #: src/pages/stock/LocationTypeDetailsPanel.tsx:16
 #: src/pages/stock/StockDetail.tsx:754
 msgid "Stock Locations"
@@ -365,7 +365,7 @@ msgstr "Замовлення на збірку"
 #: lib/enums/ModelInformation.tsx:155
 #: lib/enums/Roles.tsx:36
 #: src/defaults/actions.tsx:182
-#: src/pages/Index/Settings/SystemSettings.tsx:319
+#: src/pages/Index/Settings/SystemSettings.tsx:316
 #: src/pages/build/BuildIndex.tsx:87
 #: src/pages/part/PartDetail.tsx:420
 #: src/pages/sales/SalesOrderDetail.tsx:210
@@ -436,7 +436,7 @@ msgstr "Замовлення на купівлю"
 #: lib/enums/ModelInformation.tsx:192
 #: lib/enums/Roles.tsx:44
 #: src/defaults/actions.tsx:133
-#: src/pages/Index/Settings/SystemSettings.tsx:347
+#: src/pages/Index/Settings/SystemSettings.tsx:344
 #: src/pages/company/CompanyDetail.tsx:120
 #: src/pages/company/SupplierPartDetail.tsx:97
 #: src/pages/part/PartDetail.tsx:390
@@ -471,7 +471,7 @@ msgstr "Замовлення на купівлю"
 #: lib/enums/ModelInformation.tsx:208
 #: lib/enums/Roles.tsx:50
 #: src/defaults/actions.tsx:143
-#: src/pages/Index/Settings/SystemSettings.tsx:367
+#: src/pages/Index/Settings/SystemSettings.tsx:365
 #: src/pages/company/CompanyDetail.tsx:142
 #: src/pages/part/PartDetail.tsx:402
 #: src/pages/sales/SalesIndex.tsx:109
@@ -497,7 +497,7 @@ msgstr "Замовлення на повернення"
 #: lib/enums/ModelInformation.tsx:228
 #: lib/enums/Roles.tsx:46
 #: src/defaults/actions.tsx:163
-#: src/pages/Index/Settings/SystemSettings.tsx:380
+#: src/pages/Index/Settings/SystemSettings.tsx:378
 #: src/pages/company/CompanyDetail.tsx:150
 #: src/pages/part/PartDetail.tsx:413
 #: src/pages/sales/SalesIndex.tsx:150
@@ -523,7 +523,7 @@ msgstr "Замовлення на переміщення"
 #: lib/enums/ModelInformation.tsx:244
 #: lib/enums/Roles.tsx:48
 #: src/defaults/actions.tsx:153
-#: src/pages/Index/Settings/SystemSettings.tsx:301
+#: src/pages/Index/Settings/SystemSettings.tsx:298
 #: src/pages/part/PartDetail.tsx:427
 #: src/pages/stock/LocationDetail.tsx:164
 msgid "Transfer Orders"
@@ -549,7 +549,7 @@ msgstr "Адреси"
 
 #: lib/enums/ModelInformation.tsx:264
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
-#: src/pages/core/UserDetail.tsx:132
+#: src/pages/core/UserDetailsPanel.tsx:113
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:160
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:146
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:148
@@ -574,10 +574,11 @@ msgid "Owners"
 msgstr "Власники"
 
 #: lib/enums/ModelInformation.tsx:276
+#: src/components/previews/models/UserPreview.tsx:13
 #: src/components/tables/ColumnRenderers.tsx:603
 #: src/components/tables/Filter.tsx:441
 #: src/pages/Auth/ChangePassword.tsx:36
-#: src/pages/core/UserDetail.tsx:221
+#: src/pages/core/UserDetail.tsx:77
 #: src/tables/general/AuditLogTable.tsx:503
 #: src/tables/general/AuditLogTable.tsx:593
 #: src/tables/settings/ApiTokenTable.tsx:153
@@ -593,7 +594,7 @@ msgstr "Користувач"
 #: src/defaults/actions.tsx:220
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
 #: src/pages/core/CoreIndex.tsx:22
-#: src/pages/core/UserDetail.tsx:227
+#: src/pages/core/UserDetail.tsx:83
 msgid "Users"
 msgstr "Користувачі"
 
@@ -607,7 +608,7 @@ msgstr "Група"
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
 #: src/pages/core/CoreIndex.tsx:28
 #: src/pages/core/GroupDetail.tsx:82
-#: src/pages/core/UserDetail.tsx:96
+#: src/pages/core/UserDetailsPanel.tsx:74
 #: src/tables/settings/UserTable.tsx:277
 msgid "Groups"
 msgstr "Групи"
@@ -676,7 +677,7 @@ msgid "Selection Entries"
 msgstr "Записи списку вибору"
 
 #: lib/enums/ModelInformation.tsx:342
-#: src/components/barcodes/BarcodeInput.tsx:114
+#: src/components/barcodes/BarcodeInput.tsx:122
 #: src/components/buttons/StarredToggleButton.tsx:46
 #: src/components/dashboard/DashboardLayout.tsx:299
 #: src/components/editors/NotesEditor.tsx:401
@@ -693,7 +694,7 @@ msgstr "Записи списку вибору"
 #: src/components/nav/NotificationDrawer.tsx:257
 #: src/components/nav/SearchDrawer.tsx:612
 #: src/components/settings/SettingList.tsx:158
-#: src/components/tables/InvenTreeTableHeader.tsx:164
+#: src/components/tables/InvenTreeTableHeader.tsx:182
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:87
@@ -747,7 +748,7 @@ msgid "Admin"
 msgstr "Адмін"
 
 #: lib/enums/Roles.tsx:42
-#: src/pages/Index/Settings/SystemSettings.tsx:159
+#: src/pages/Index/Settings/SystemSettings.tsx:158
 msgid "Pricing"
 msgstr "Ціноутворення"
 
@@ -837,35 +838,35 @@ msgstr "Зупинити сканування"
 msgid "Start scanning"
 msgstr "Почати сканування"
 
-#: src/components/barcodes/BarcodeInput.tsx:34
+#: src/components/barcodes/BarcodeInput.tsx:35
 #: src/tables/general/BarcodeScanTable.tsx:57
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:64
 msgid "Barcode"
 msgstr "Штрих-код"
 
-#: src/components/barcodes/BarcodeInput.tsx:35
+#: src/components/barcodes/BarcodeInput.tsx:36
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:18
 #: src/defaults/actions.tsx:173
 msgid "Scan"
 msgstr "Сканувати"
 
-#: src/components/barcodes/BarcodeInput.tsx:53
+#: src/components/barcodes/BarcodeInput.tsx:61
 msgid "Camera Input"
 msgstr "Запис камери"
 
-#: src/components/barcodes/BarcodeInput.tsx:63
+#: src/components/barcodes/BarcodeInput.tsx:71
 msgid "Scanner Input"
 msgstr "Сканер вводу"
 
-#: src/components/barcodes/BarcodeInput.tsx:105
+#: src/components/barcodes/BarcodeInput.tsx:113
 msgid "Barcode Data"
 msgstr "Дані штрихкоду"
 
-#: src/components/barcodes/BarcodeInput.tsx:109
+#: src/components/barcodes/BarcodeInput.tsx:117
 msgid "No barcode data"
 msgstr "Немає даних штрих-коду"
 
-#: src/components/barcodes/BarcodeInput.tsx:110
+#: src/components/barcodes/BarcodeInput.tsx:118
 msgid "Scan or enter barcode data"
 msgstr "Сканувати або ввести дані штрихкоду"
 
@@ -873,7 +874,7 @@ msgstr "Сканувати або ввести дані штрихкоду"
 msgid "Enter barcode data"
 msgstr "Введіть дані штрихкоду"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:56
+#: src/components/barcodes/BarcodeScanDialog.tsx:59
 #: src/components/buttons/ScanButton.tsx:58
 #: src/components/nav/NavigationDrawer.tsx:122
 #: src/forms/PurchaseOrderForms.tsx:582
@@ -881,15 +882,15 @@ msgstr "Введіть дані штрихкоду"
 msgid "Scan Barcode"
 msgstr "Сканувати штрих-код"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:121
+#: src/components/barcodes/BarcodeScanDialog.tsx:132
 msgid "No matching item found"
 msgstr "Відповідного елементу не знайдено"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:150
+#: src/components/barcodes/BarcodeScanDialog.tsx:161
 msgid "Barcode does not match the expected model type"
 msgstr "Штрих-код не відповідає очікуваному типу моделі"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:161
+#: src/components/barcodes/BarcodeScanDialog.tsx:172
 #: src/components/editors/NotesEditor.tsx:392
 #: src/components/forms/ApiForm.tsx:588
 #: src/components/wizards/ImportPartWizard.tsx:566
@@ -901,14 +902,18 @@ msgstr "Штрих-код не відповідає очікуваному ти�
 msgid "Success"
 msgstr "Успіх"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:167
+#: src/components/barcodes/BarcodeScanDialog.tsx:182
 msgid "Failed to handle barcode"
 msgstr "Не вдалося обробити штрих-код"
 
-#: src/components/barcodes/BarcodeScanDialog.tsx:183
+#: src/components/barcodes/BarcodeScanDialog.tsx:198
 #: src/pages/Index/Scan.tsx:135
 msgid "Failed to scan barcode"
 msgstr "Не вдалося сканувати штрих-код"
+
+#: src/components/barcodes/BarcodeScanDialog.tsx:220
+msgid "Keep dialog open for multiple scans"
+msgstr ""
 
 #: src/components/barcodes/QRCode.tsx:94
 msgid "Low (7%)"
@@ -1128,7 +1133,7 @@ msgid "Refresh calendar"
 msgstr "Оновити календар"
 
 #: src/components/calendar/Calendar.tsx:334
-#: src/components/tables/InvenTreeTableHeader.tsx:343
+#: src/components/tables/InvenTreeTableHeader.tsx:369
 msgid "Export data"
 msgstr "Експорт даних"
 
@@ -1532,16 +1537,16 @@ msgstr "Створити новий звіт про інвентаризацію
 
 #: src/components/details/Details.tsx:133
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
-#: src/pages/core/UserDetail.tsx:90
-#: src/pages/core/UserDetail.tsx:202
+#: src/pages/core/UserDetail.tsx:58
+#: src/pages/core/UserDetailsPanel.tsx:68
 #: src/tables/settings/UserTable.tsx:412
 msgid "Superuser"
 msgstr "Суперкористувач"
 
 #: src/components/details/Details.tsx:135
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
-#: src/pages/core/UserDetail.tsx:84
-#: src/pages/core/UserDetail.tsx:199
+#: src/pages/core/UserDetail.tsx:55
+#: src/pages/core/UserDetailsPanel.tsx:62
 #: src/tables/settings/UserTable.tsx:286
 #: src/tables/settings/UserTable.tsx:407
 msgid "Administrator"
@@ -1554,7 +1559,7 @@ msgstr "Адміністратор"
 #: src/components/tables/ColumnRenderers.tsx:618
 #: src/pages/company/CompanyDetail.tsx:255
 #: src/pages/company/SupplierPartDetail.tsx:203
-#: src/pages/core/UserDetail.tsx:210
+#: src/pages/core/UserDetail.tsx:66
 #: src/pages/part/PartDetail.tsx:620
 msgid "Inactive"
 msgstr "Неактивний"
@@ -2168,7 +2173,8 @@ msgstr "Або продовжити з іншими методами"
 #: src/components/forms/AuthenticationForm.tsx:296
 #: src/pages/Auth/ProviderSignup.tsx:129
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:64
-#: src/pages/core/UserDetail.tsx:45
+#: src/pages/core/UserDetailsPanel.tsx:23
+#: src/tables/settings/GroupTable.tsx:178
 msgid "Username"
 msgstr "Ім'я користувача"
 
@@ -2202,7 +2208,8 @@ msgstr "Скинути пароль"
 #: src/components/forms/AuthenticationForm.tsx:303
 #: src/pages/Auth/ProviderSignup.tsx:135
 #: src/pages/Auth/Reset.tsx:17
-#: src/pages/core/UserDetail.tsx:68
+#: src/pages/core/UserDetailsPanel.tsx:46
+#: src/tables/settings/GroupTable.tsx:184
 msgid "Email"
 msgstr "Електронна пошта"
 
@@ -2306,9 +2313,10 @@ msgstr "Хост"
 #: src/tables/machine/MachineTypeTable.tsx:358
 #: src/tables/plugin/PluginErrorTable.tsx:35
 #: src/tables/settings/ApiTokenTable.tsx:84
-#: src/tables/settings/GroupTable.tsx:96
-#: src/tables/settings/GroupTable.tsx:149
-#: src/tables/settings/GroupTable.tsx:257
+#: src/tables/settings/GroupTable.tsx:181
+#: src/tables/settings/GroupTable.tsx:280
+#: src/tables/settings/GroupTable.tsx:351
+#: src/tables/settings/GroupTable.tsx:459
 #: src/tables/settings/PendingTasksTable.tsx:37
 #: src/tables/stock/LocationTypesTable.tsx:65
 msgid "Name"
@@ -2380,8 +2388,8 @@ msgstr "Версія API"
 #: src/components/nav/NavigationDrawer.tsx:192
 #: src/defaults/actions.tsx:230
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:293
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:393
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:57
+#: src/pages/Index/Settings/SystemSettings.tsx:391
 msgid "Plugins"
 msgstr "Плагіни"
 
@@ -2445,7 +2453,7 @@ msgid "Uncategorized"
 msgstr "Без категорії"
 
 #: src/components/forms/fields/IconField.tsx:221
-#: src/components/nav/Layout.tsx:147
+#: src/components/nav/Layout.tsx:144
 #: src/tables/part/PartThumbTable.tsx:209
 msgid "Search..."
 msgstr "Пошук..."
@@ -2496,7 +2504,7 @@ msgstr "Додати новий рядок"
 #: src/components/forms/fields/TreeField.tsx:330
 #: src/components/render/Instance.tsx:145
 #: src/components/render/ModelHoverCard.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:1161
+#: src/components/tables/InvenTreeTable.tsx:1203
 msgid "View details"
 msgstr "Переглянути деталі"
 
@@ -2718,8 +2726,8 @@ msgstr "Параметри"
 #~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:175
-#: src/components/tables/InvenTreeTableHeader.tsx:246
-#: src/components/tables/InvenTreeTableHeader.tsx:247
+#: src/components/tables/InvenTreeTableHeader.tsx:264
+#: src/components/tables/InvenTreeTableHeader.tsx:265
 msgid "Barcode Actions"
 msgstr "Дії зі штрих-кодами"
 
@@ -2821,7 +2829,7 @@ msgstr "Імпорт деталей"
 
 #: src/components/items/PartCreationMenu.tsx:62
 #: src/pages/part/PartDetail.tsx:663
-#: src/tables/part/PartTable.tsx:199
+#: src/tables/part/PartTable.tsx:201
 msgid "Add Part"
 msgstr "Додати деталь"
 
@@ -3239,66 +3247,66 @@ msgstr "Видалити фільтри навігації з поточного
 msgid "{0} of {1}"
 msgstr "{0} з {1}"
 
-#: src/components/nav/FirstUseTour.tsx:47
+#: src/components/nav/FirstUseTour.tsx:45
 msgid "Navigation Area"
 msgstr "Навігаційна область"
 
-#: src/components/nav/FirstUseTour.tsx:48
+#: src/components/nav/FirstUseTour.tsx:46
 msgid "The navigation area provides quick access to different sections of the application."
 msgstr "Навігаційна область надає швидкий доступ до різних розділів застосунку."
 
-#: src/components/nav/FirstUseTour.tsx:52
+#: src/components/nav/FirstUseTour.tsx:50
 msgid "Navigation Drawer"
 msgstr "Навігаційна панель"
 
-#: src/components/nav/FirstUseTour.tsx:53
+#: src/components/nav/FirstUseTour.tsx:51
 msgid "Using the icon you can open and close the navigation drawer which contains most available pages accessible to you."
 msgstr "За допомогою цієї іконки ви можете відкривати та закривати навігаційну панель, яка містить більшість доступних вам сторінок."
 
-#: src/components/nav/FirstUseTour.tsx:57
+#: src/components/nav/FirstUseTour.tsx:55
 msgid "Main Menu"
 msgstr "Головне меню"
 
-#: src/components/nav/FirstUseTour.tsx:58
+#: src/components/nav/FirstUseTour.tsx:56
 msgid "The main menu provides access to top level navigation targets. Plugins can extend the menu with additional options."
 msgstr "Головне меню надає доступ до навігаційних розділів верхнього рівня. Плагіни можуть розширювати меню додатковими пунктами."
 
-#: src/components/nav/FirstUseTour.tsx:63
+#: src/components/nav/FirstUseTour.tsx:61
 msgid "The global search allows you to quickly find items across all objects. You can configure which objects categories are included in the search and how terms are matched."
 msgstr "Глобальний пошук дозволяє швидко знаходити об'єкти серед усіх категорій. Ви можете налаштувати, які категорії об'єктів включені в пошук і як збігаються терміни."
 
-#: src/components/nav/FirstUseTour.tsx:69
+#: src/components/nav/FirstUseTour.tsx:67
 msgid "Command Palette"
 msgstr "Палітра команд"
 
-#: src/components/nav/FirstUseTour.tsx:70
+#: src/components/nav/FirstUseTour.tsx:68
 msgid "Quickly access commands and actions anywhere using the command palette. Available commands are dependent on your current context. Use cmd + k to open it anywhere."
 msgstr "Швидкий доступ до команд і дій будь-де за допомогою палітри команд. Доступні команди залежать від поточного контексту. Щоб відкрити палітру в будь-якому місці, використовуйте cmd + k."
 
-#: src/components/nav/FirstUseTour.tsx:77
+#: src/components/nav/FirstUseTour.tsx:75
 msgid "Barcode Scanner"
 msgstr "Сканер штрих-кодів"
 
-#: src/components/nav/FirstUseTour.tsx:78
+#: src/components/nav/FirstUseTour.tsx:76
 msgid "Allows for quick scanning of barcodes with your device's camera or a handheld scanner."
 msgstr "Дозволяє швидко сканувати штрих-коди камерою пристрою або ручним сканером."
 
-#: src/components/nav/FirstUseTour.tsx:85
-#: src/components/nav/Header.tsx:209
+#: src/components/nav/FirstUseTour.tsx:83
+#: src/components/nav/Header.tsx:212
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:203
-#: src/pages/Index/Settings/SystemSettings.tsx:147
+#: src/pages/Index/Settings/SystemSettings.tsx:146
 #: src/pages/Index/Settings/UserSettings.tsx:113
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
 msgstr "Сповіщення"
 
-#: src/components/nav/FirstUseTour.tsx:86
+#: src/components/nav/FirstUseTour.tsx:84
 msgid "Depending on your instance and user settings notifications are delivered through various channels. This notification bar is annotated with a bell when there are unread user interface notifications."
 msgstr "Залежно від вашого екземпляра та налаштувань користувача сповіщення доставляються різними каналами. Ця панель сповіщень позначається дзвінком, коли є непрочитані сповіщення інтерфейсу."
 
-#: src/components/nav/FirstUseTour.tsx:90
+#: src/components/nav/FirstUseTour.tsx:88
 #: src/components/nav/MainMenu.tsx:80
 #: src/components/nav/NavigationDrawer.tsx:180
 #: src/pages/Index/Settings/AdminCenter/EmailManagementPanel.tsx:21
@@ -3306,25 +3314,25 @@ msgstr "Залежно від вашого екземпляра та налаш�
 msgid "Settings"
 msgstr "Налаштування"
 
-#: src/components/nav/FirstUseTour.tsx:91
+#: src/components/nav/FirstUseTour.tsx:89
 msgid "The main menu allows you to access preferences and access system-wide settings. Options depend on your permissions."
 msgstr "Головне меню дає доступ до особистих налаштувань та системних параметрів. Доступні пункти залежать від ваших прав."
 
-#: src/components/nav/FirstUseTour.tsx:98
+#: src/components/nav/FirstUseTour.tsx:96
 #: src/components/nav/MainMenu.tsx:88
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/UserSettings.tsx:150
-#: src/pages/Index/Settings/UserSettings.tsx:154
+#: src/pages/Index/Settings/UserSettings.tsx:152
+#: src/pages/Index/Settings/UserSettings.tsx:156
 msgid "User Settings"
 msgstr "Налаштування користувача"
 
-#: src/components/nav/FirstUseTour.tsx:99
+#: src/components/nav/FirstUseTour.tsx:97
 msgid "The user settings menu allows you to configure your personal preferences and account settings. This also contains security and notification settings."
 msgstr "Меню налаштувань користувача дозволяє налаштувати особисті параметри та параметри облікового запису. Там також є налаштування безпеки та сповіщень."
 
-#: src/components/nav/FirstUseTour.tsx:106
+#: src/components/nav/FirstUseTour.tsx:104
 #: src/components/nav/MainMenu.tsx:106
 #: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:42
@@ -3334,11 +3342,11 @@ msgstr "Меню налаштувань користувача дозволяє 
 msgid "Admin Center"
 msgstr "Центр адміністрування"
 
-#: src/components/nav/FirstUseTour.tsx:107
+#: src/components/nav/FirstUseTour.tsx:105
 msgid "The admin center provides access to administrative functions and can be used to manage various functions required for operation of the instance like user management, templates, parameters, plugins."
 msgstr "Центр адміністрування надає доступ до адміністративних функцій і може бути використаний для керування різними функціями, необхідними для роботи екземпляра, зокрема керуванням користувачами, шаблонами, параметрами, плагінами."
 
-#: src/components/nav/FirstUseTour.tsx:113
+#: src/components/nav/FirstUseTour.tsx:111
 #: src/components/nav/MainMenu.tsx:128
 #: src/defaults/actions.tsx:78
 #: src/defaults/links.tsx:152
@@ -3346,28 +3354,28 @@ msgstr "Центр адміністрування надає доступ до �
 msgid "About InvenTree"
 msgstr "Про InvenTree"
 
-#: src/components/nav/FirstUseTour.tsx:114
+#: src/components/nav/FirstUseTour.tsx:112
 msgid "Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports."
 msgstr "Надає інформацію про екземпляр InvenTree, зокрема дані про версію та відповідні посилання. Важливо для звітів про помилки."
 
-#: src/components/nav/FirstUseTour.tsx:194
+#: src/components/nav/FirstUseTour.tsx:181
 msgid "First Use Tour available"
 msgstr "Доступний ознайомчий тур"
 
-#: src/components/nav/FirstUseTour.tsx:197
+#: src/components/nav/FirstUseTour.tsx:184
 msgid "It looks like you did not complete the First Use Tour yet."
 msgstr "Схоже, ви ще не завершили ознайомчий тур."
 
-#: src/components/nav/FirstUseTour.tsx:210
+#: src/components/nav/FirstUseTour.tsx:197
 msgid "Start Tour"
 msgstr "Почати тур"
 
-#: src/components/nav/FirstUseTour.tsx:223
+#: src/components/nav/FirstUseTour.tsx:210
 msgid "Dismiss permanently"
 msgstr "Закрити назавжди"
 
-#: src/components/nav/Header.tsx:59
-#: src/components/nav/Header.tsx:66
+#: src/components/nav/Header.tsx:62
+#: src/components/nav/Header.tsx:69
 msgid "Open search"
 msgstr "Відкрити пошук"
 
@@ -3375,19 +3383,19 @@ msgstr "Відкрити пошук"
 #~ msgid "Administrator Mode"
 #~ msgstr "Administrator Mode"
 
-#: src/components/nav/Header.tsx:232
+#: src/components/nav/Header.tsx:235
 msgid "Superuser Mode"
 msgstr "Режим суперкористувача"
 
-#: src/components/nav/Header.tsx:232
+#: src/components/nav/Header.tsx:235
 msgid "Admin Mode"
 msgstr "Режим адміністратора"
 
-#: src/components/nav/Header.tsx:238
+#: src/components/nav/Header.tsx:241
 msgid "The current user has elevated privileges and should not be used for regular usage."
 msgstr "Поточний користувач має підвищені права і не повинен використовуватися для звичайної роботи."
 
-#: src/components/nav/Layout.tsx:150
+#: src/components/nav/Layout.tsx:147
 msgid "Nothing found..."
 msgstr "Нічого не знайдено..."
 
@@ -3418,8 +3426,8 @@ msgstr "Нічого не знайдено..."
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:191
-#: src/pages/Index/Settings/SystemSettings.tsx:412
-#: src/pages/Index/Settings/SystemSettings.tsx:417
+#: src/pages/Index/Settings/SystemSettings.tsx:410
+#: src/pages/Index/Settings/SystemSettings.tsx:415
 msgid "System Settings"
 msgstr "Налаштування системи"
 
@@ -3449,10 +3457,10 @@ msgstr "Вихід"
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:47
 #: src/forms/StockForms.tsx:1515
-#: src/pages/Index/Settings/SystemSettings.tsx:261
+#: src/pages/Index/Settings/SystemSettings.tsx:259
 #: src/pages/part/PartDetail.tsx:301
-#: src/pages/stock/LocationDetail.tsx:386
-#: src/pages/stock/LocationDetail.tsx:431
+#: src/pages/stock/LocationDetail.tsx:387
+#: src/pages/stock/LocationDetail.tsx:432
 #: src/pages/stock/LocationTypeDetail.tsx:114
 #: src/pages/stock/StockDetail.tsx:308
 #: src/pages/stock/TransferOrderDetail.tsx:352
@@ -3462,7 +3470,7 @@ msgstr "В наявності"
 
 #: src/components/nav/NavigationDrawer.tsx:84
 #: src/defaults/links.tsx:56
-#: src/pages/Index/Settings/SystemSettings.tsx:314
+#: src/pages/Index/Settings/SystemSettings.tsx:311
 #: src/pages/build/BuildDetail.tsx:572
 #: src/pages/build/BuildIndex.tsx:123
 msgid "Manufacturing"
@@ -3470,7 +3478,7 @@ msgstr "Виробництво"
 
 #: src/components/nav/NavigationDrawer.tsx:91
 #: src/defaults/links.tsx:62
-#: src/pages/Index/Settings/SystemSettings.tsx:343
+#: src/pages/Index/Settings/SystemSettings.tsx:340
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:179
 #: src/pages/company/SupplierDetail.tsx:9
@@ -3482,7 +3490,7 @@ msgstr "Закупівля"
 
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:68
-#: src/pages/Index/Settings/SystemSettings.tsx:362
+#: src/pages/Index/Settings/SystemSettings.tsx:360
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:333
 #: src/pages/sales/SalesIndex.tsx:214
@@ -3725,8 +3733,8 @@ msgstr "Дата"
 
 #: src/components/plugins/PluginDrawer.tsx:108
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:68
-#: src/pages/core/UserDetail.tsx:78
-#: src/pages/core/UserDetail.tsx:208
+#: src/pages/core/UserDetail.tsx:64
+#: src/pages/core/UserDetailsPanel.tsx:56
 #: src/pages/part/PartDetailsPanel.tsx:256
 #: src/tables/bom/UsedInTable.tsx:107
 #: src/tables/company/CompanyTable.tsx:85
@@ -3774,9 +3782,9 @@ msgid "Package"
 msgstr "Пакет"
 
 #: src/components/plugins/PluginDrawer.tsx:156
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:67
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:66
 #: src/pages/Index/Settings/PluginSettingsGroup.tsx:119
-#: src/pages/Index/Settings/UserSettings.tsx:135
+#: src/pages/Index/Settings/UserSettings.tsx:137
 msgid "Plugin Settings"
 msgstr "Налаштування плагінів"
 
@@ -3968,7 +3976,7 @@ msgstr "Категорія"
 #: src/forms/StockForms.tsx:1884
 #: src/forms/StockForms.tsx:1928
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
-#: src/pages/core/UserDetail.tsx:155
+#: src/pages/core/UserDetailsPanel.tsx:136
 #: src/pages/stock/StockDetailsPanel.tsx:237
 #: src/tables/general/AuditLogTable.tsx:246
 msgid "Location"
@@ -4315,7 +4323,7 @@ msgid "Allocated Lines"
 msgstr "Зарезервовані рядки"
 
 #: src/components/tables/ColumnRenderers.tsx:626
-#: src/pages/core/UserDetail.tsx:173
+#: src/pages/core/UserDetailsPanel.tsx:154
 msgid "User Information"
 msgstr "Інформація про користувача"
 
@@ -4622,7 +4630,7 @@ msgstr "Включити результати для варіантів дета
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:104
 #: src/pages/build/BuildOrderDetailsPanel.tsx:75
-#: src/pages/core/UserDetail.tsx:148
+#: src/pages/core/UserDetailsPanel.tsx:129
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:73
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:73
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:73
@@ -4797,7 +4805,7 @@ msgid "Delete filter group"
 msgstr "Видалити групу фільтрів"
 
 #: src/components/tables/FilterSelectDrawer.tsx:649
-#: src/components/tables/InvenTreeTableHeader.tsx:313
+#: src/components/tables/InvenTreeTableHeader.tsx:339
 msgid "Table Filters"
 msgstr "Фільтри таблиці"
 
@@ -4825,75 +4833,75 @@ msgstr "Зберегти фільтри"
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/InvenTreeTable.tsx:83
-#: src/components/tables/InvenTreeTable.tsx:742
+#: src/components/tables/InvenTreeTable.tsx:84
+#: src/components/tables/InvenTreeTable.tsx:782
 msgid "No records found"
 msgstr "Записів не знайдено"
 
-#: src/components/tables/InvenTreeTable.tsx:215
+#: src/components/tables/InvenTreeTable.tsx:231
 msgid "Error loading table options"
 msgstr "Помилка завантаження параметрів таблиці"
 
-#: src/components/tables/InvenTreeTable.tsx:787
+#: src/components/tables/InvenTreeTable.tsx:827
 msgid "Server returned incorrect data type"
 msgstr "Сервер повернув неправильний тип даних"
 
-#: src/components/tables/InvenTreeTable.tsx:820
-#: src/components/tables/InvenTreeTable.tsx:979
+#: src/components/tables/InvenTreeTable.tsx:861
+#: src/components/tables/InvenTreeTable.tsx:1021
 msgid "Error loading table data"
 msgstr "Помилка завантаження даних таблиці"
 
-#: src/components/tables/InvenTreeTable.tsx:1164
+#: src/components/tables/InvenTreeTable.tsx:1206
 msgid "View {model}"
 msgstr "Переглянути {model}"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:130
+#: src/components/tables/InvenTreeTableHeader.tsx:148
 msgid "No items selected"
 msgstr "Нічого не вибрано"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:132
+#: src/components/tables/InvenTreeTableHeader.tsx:150
 msgid "1 selected item will be deleted"
 msgstr "1 вибраний елемент буде видалено"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:134
+#: src/components/tables/InvenTreeTableHeader.tsx:152
 msgid "{N} selected items will be deleted"
 msgstr "{N} вибраних елементів буде видалено"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:140
+#: src/components/tables/InvenTreeTableHeader.tsx:158
 msgid "Delete Selected Items"
 msgstr "Видалити вибрані елементи"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:144
+#: src/components/tables/InvenTreeTableHeader.tsx:162
 msgid "Are you sure you want to delete the selected items?"
 msgstr "Ви дійсно бажаєте видалити вибрані елементи?"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:148
+#: src/components/tables/InvenTreeTableHeader.tsx:166
 #: src/tables/plugin/PluginListTable.tsx:327
 msgid "This action cannot be undone"
 msgstr "Цю дію не можна скасувати"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:160
+#: src/components/tables/InvenTreeTableHeader.tsx:178
 msgid "Items deleted"
 msgstr "Елементи видалено"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:165
+#: src/components/tables/InvenTreeTableHeader.tsx:183
 msgid "Failed to delete items"
 msgstr "Не вдалося видалити елементи"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:216
+#: src/components/tables/InvenTreeTableHeader.tsx:234
 msgid "Custom table filters are active"
 msgstr "Активні власні фільтри таблиці"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:256
+#: src/components/tables/InvenTreeTableHeader.tsx:274
 #: src/tables/general/BarcodeScanTable.tsx:95
 msgid "Delete selected records"
 msgstr "Видалити вибрані записи"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:276
+#: src/components/tables/InvenTreeTableHeader.tsx:302
 msgid "Refresh data"
 msgstr "Оновити дані"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:325
+#: src/components/tables/InvenTreeTableHeader.tsx:351
 msgid "Active Filters"
 msgstr "Активні фільтри"
 
@@ -4950,6 +4958,18 @@ msgstr "Включає запас варіантів"
 #: src/components/tables/PartStockCell.tsx:106
 msgid "Direct stock"
 msgstr "Прямий запас"
+
+#: src/components/tables/TableSearchFieldSelect.tsx:62
+msgid "Select search fields"
+msgstr ""
+
+#: src/components/tables/TableSearchFieldSelect.tsx:68
+msgid "Search in fields"
+msgstr ""
+
+#: src/components/tables/TableSearchFieldSelect.tsx:74
+msgid "All fields"
+msgstr ""
 
 #: src/components/tables/bom/BomTable.tsx:200
 #~ msgid "Validate"
@@ -5526,7 +5546,7 @@ msgstr "Будь ласка, виправте помилки у вибраних
 
 #: src/components/wizards/OrderPartsWizard.tsx:630
 #: src/tables/build/BuildLineTable.tsx:971
-#: src/tables/part/PartTable.tsx:267
+#: src/tables/part/PartTable.tsx:269
 #: src/tables/sales/SalesOrderLineItemTable.tsx:459
 #: src/tables/stock/TransferOrderLineItemTable.tsx:333
 msgid "Order Parts"
@@ -6297,8 +6317,8 @@ msgstr "За бажанням попередньо заповніть цю но�
 #~ msgid "Part updated"
 #~ msgstr "Part updated"
 
-#: src/forms/PartForms.tsx:142
-#: src/forms/PartForms.tsx:283
+#: src/forms/PartForms.tsx:145
+#: src/forms/PartForms.tsx:288
 #: src/pages/part/PartCategoryDetailsPanel.tsx:62
 #: src/pages/part/PartDetailsPanel.tsx:282
 #: src/tables/part/PartCategoryTable.tsx:95
@@ -6306,15 +6326,15 @@ msgstr "За бажанням попередньо заповніть цю но�
 msgid "Subscribed"
 msgstr "Ви підписані"
 
-#: src/forms/PartForms.tsx:143
+#: src/forms/PartForms.tsx:146
 msgid "Subscribe to notifications for this part"
 msgstr "Підписатися на сповіщення про цю деталь"
 
-#: src/forms/PartForms.tsx:269
+#: src/forms/PartForms.tsx:274
 msgid "Parent part category"
 msgstr "Батьківська категорія деталей"
 
-#: src/forms/PartForms.tsx:284
+#: src/forms/PartForms.tsx:289
 msgid "Subscribe to notifications for this category"
 msgstr "Підписатися на сповіщення про цю категорію"
 
@@ -7034,7 +7054,7 @@ msgid "Warning"
 msgstr "Попередження"
 
 #: src/hooks/UseAdminMessages.tsx:62
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:44
 #: src/tables/settings/UserTable.tsx:196
 msgid "Info"
 msgstr "Інфо"
@@ -7079,16 +7099,16 @@ msgstr "Ви впевнені, що хочете видалити цю пози�
 #~ msgid "Latest serial number"
 #~ msgstr "Latest serial number"
 
-#: src/hooks/UseRemotePlugin.tsx:102
+#: src/hooks/UseRemotePlugin.tsx:104
 msgid "Failed to load module: {moduleUrl}"
 msgstr "Не вдалося завантажити модуль: {moduleUrl}"
 
 #. placeholder {0}: typeof func
-#: src/hooks/UseRemotePlugin.tsx:129
+#: src/hooks/UseRemotePlugin.tsx:131
 msgid "Export {exportName} in {moduleUrl} is not a function (found type {0})."
 msgstr "Експорт {exportName} у {moduleUrl} не є функцією (знайдено тип {0})."
 
-#: src/hooks/UseRemotePlugin.tsx:131
+#: src/hooks/UseRemotePlugin.tsx:133
 msgid "Plugin entrypoint {exportName} does not exist in {moduleUrl}."
 msgstr "Точка входу плагіна {exportName} не існує у {moduleUrl}."
 
@@ -7784,12 +7804,12 @@ msgstr "Дані профілю оновлено"
 #~ msgstr "Last name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:65
-#: src/pages/core/UserDetail.tsx:52
+#: src/pages/core/UserDetailsPanel.tsx:30
 msgid "First Name"
 msgstr "Ім`я"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:66
-#: src/pages/core/UserDetail.tsx:60
+#: src/pages/core/UserDetailsPanel.tsx:38
 msgid "Last Name"
 msgstr "Прізвище"
 
@@ -7806,13 +7826,13 @@ msgstr "Прізвище"
 #~ msgstr "Staff Access"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:85
-#: src/pages/core/UserDetail.tsx:116
+#: src/pages/core/UserDetailsPanel.tsx:97
 #: src/tables/settings/CustomStateTable.tsx:101
 msgid "Display Name"
 msgstr "Відображувана назва"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:86
-#: src/pages/core/UserDetail.tsx:124
+#: src/pages/core/UserDetailsPanel.tsx:105
 msgid "Position"
 msgstr "Посада"
 
@@ -7822,7 +7842,7 @@ msgid "Type"
 msgstr "Тип"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:91
-#: src/pages/core/UserDetail.tsx:140
+#: src/pages/core/UserDetailsPanel.tsx:121
 msgid "Organisation"
 msgstr "Організація"
 
@@ -8896,8 +8916,8 @@ msgid "Data Management"
 msgstr "Управління даними"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:345
-#: src/pages/Index/Settings/SystemSettings.tsx:195
-#: src/pages/Index/Settings/UserSettings.tsx:125
+#: src/pages/Index/Settings/SystemSettings.tsx:194
+#: src/pages/Index/Settings/UserSettings.tsx:131
 msgid "Reporting"
 msgstr "Звітність"
 
@@ -8974,11 +8994,11 @@ msgstr "Шаблони нотаток можна використовувати 
 #~ msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 #~ msgstr "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:49
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:48
 msgid "External plugins are not enabled for this InvenTree installation."
 msgstr "Зовнішні плагіни не ввімкнені для цього InvenTree встановлення."
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:76
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:75
 msgid "Plugin Errors"
 msgstr "Помилки плагіна"
 
@@ -9125,7 +9145,7 @@ msgstr "Штрих-коди"
 #~ msgid "This panel is a placeholder."
 #~ msgstr "This panel is a placeholder."
 
-#: src/pages/Index/Settings/SystemSettings.tsx:132
+#: src/pages/Index/Settings/SystemSettings.tsx:131
 msgid "Display"
 msgstr "Відображення"
 
@@ -9133,8 +9153,8 @@ msgstr "Відображення"
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:153
-#: src/pages/Index/Settings/UserSettings.tsx:119
+#: src/pages/Index/Settings/SystemSettings.tsx:152
+#: src/pages/Index/Settings/UserSettings.tsx:124
 msgid "The settings below are specific to each available notification method"
 msgstr "Налаштування нижче специфічні для кожного доступного методу сповіщення"
 
@@ -9142,15 +9162,15 @@ msgstr "Налаштування нижче специфічні для кожн
 #~ msgid "Labels"
 #~ msgstr "Labels"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:239
+#: src/pages/Index/Settings/SystemSettings.tsx:237
 msgid "Part Creation"
 msgstr "Створення деталі"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:282
+#: src/pages/Index/Settings/SystemSettings.tsx:279
 msgid "Stock Expiry"
 msgstr "Термін придатності запасів"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:291
+#: src/pages/Index/Settings/SystemSettings.tsx:288
 msgid "Part Stocktake"
 msgstr "Інвентаризація деталей"
 
@@ -9164,7 +9184,7 @@ msgstr "Інвентаризація деталей"
 #~ msgid "Switch to User Setting"
 #~ msgstr "Switch to User Setting"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:332
+#: src/pages/Index/Settings/SystemSettings.tsx:329
 msgid "External Build Orders"
 msgstr "Зовнішні замовлення на збірку"
 
@@ -9806,7 +9826,7 @@ msgstr "Наявність"
 
 #: src/pages/core/CoreIndex.tsx:47
 #: src/pages/core/GroupDetail.tsx:81
-#: src/pages/core/UserDetail.tsx:225
+#: src/pages/core/UserDetail.tsx:81
 msgid "System Overview"
 msgstr "Огляд системи"
 
@@ -9816,35 +9836,35 @@ msgstr "Назва групи"
 
 #: src/pages/core/GroupDetail.tsx:49
 #: src/pages/core/GroupDetail.tsx:65
-#: src/tables/settings/GroupTable.tsx:86
+#: src/tables/settings/GroupTable.tsx:270
 msgid "Group Details"
 msgstr "Деталі групи"
 
 #: src/pages/core/GroupDetail.tsx:53
-#: src/tables/settings/GroupTable.tsx:113
+#: src/tables/settings/GroupTable.tsx:297
 msgid "Group Roles"
 msgstr "Ролі групи"
 
-#: src/pages/core/UserDetail.tsx:174
-msgid "User Permissions"
-msgstr "Дозволи користувача"
-
-#: src/pages/core/UserDetail.tsx:176
-msgid "User Profile"
-msgstr "Профіль користувача"
-
-#: src/pages/core/UserDetail.tsx:187
+#: src/pages/core/UserDetail.tsx:43
 #: src/tables/settings/UserTable.tsx:165
 msgid "User Details"
 msgstr "Інформація про користувача"
 
-#: src/pages/core/UserDetail.tsx:205
+#: src/pages/core/UserDetail.tsx:61
 msgid "Normal user"
 msgstr "Звичайний користувач"
 
 #: src/pages/core/UserDetail.tsx:206
 #~ msgid "Basic user"
 #~ msgstr "Basic user"
+
+#: src/pages/core/UserDetailsPanel.tsx:155
+msgid "User Permissions"
+msgstr "Дозволи користувача"
+
+#: src/pages/core/UserDetailsPanel.tsx:157
+msgid "User Profile"
+msgstr "Профіль користувача"
 
 #: src/pages/part/CategoryDetail.tsx:107
 #: src/pages/part/CategoryDetail.tsx:176
@@ -10070,7 +10090,7 @@ msgid "Search by serial number"
 msgstr "Пошук за серійним номером"
 
 #: src/pages/part/PartDetail.tsx:762
-#: src/tables/part/PartTable.tsx:251
+#: src/tables/part/PartTable.tsx:253
 msgid "Part Actions"
 msgstr "Дії з деталями"
 
@@ -11016,7 +11036,7 @@ msgid "Default Parts"
 msgstr "Типові деталі"
 
 #: src/pages/stock/LocationDetail.tsx:211
-#: src/pages/stock/LocationDetail.tsx:370
+#: src/pages/stock/LocationDetail.tsx:371
 #: src/tables/stock/StockLocationTable.tsx:137
 msgid "Edit Stock Location"
 msgstr "Редагувати місце зберігання"
@@ -11026,7 +11046,7 @@ msgid "Move items to parent location"
 msgstr "Перемістити позиції в батьківське місце зберігання"
 
 #: src/pages/stock/LocationDetail.tsx:232
-#: src/pages/stock/LocationDetail.tsx:375
+#: src/pages/stock/LocationDetail.tsx:376
 msgid "Delete Stock Location"
 msgstr "Видалити місце складу"
 
@@ -11039,7 +11059,7 @@ msgid "Action for stock items in this location"
 msgstr "Дія для товарів в цьому розташуванні"
 
 #: src/pages/stock/LocationDetail.tsx:242
-#: src/pages/stock/LocationDetail.tsx:366
+#: src/pages/stock/LocationDetail.tsx:367
 #: src/tables/stock/StockLocationTable.tsx:158
 msgid "Location Actions"
 msgstr "Дії з місцями зберігання"
@@ -11060,41 +11080,41 @@ msgstr "Сканувати складську позицію"
 #~ msgid "Locations Action"
 #~ msgstr "Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:296
+#: src/pages/stock/LocationDetail.tsx:297
 #: src/pages/stock/StockDetail.tsx:507
 msgid "Scanned stock item into location"
 msgstr "Скановану складську позицію поміщено в місце зберігання"
 
-#: src/pages/stock/LocationDetail.tsx:302
+#: src/pages/stock/LocationDetail.tsx:303
 #: src/pages/stock/StockDetail.tsx:513
 msgid "Error scanning stock item"
 msgstr "Помилка сканування складської позиції"
 
-#: src/pages/stock/LocationDetail.tsx:309
+#: src/pages/stock/LocationDetail.tsx:310
 msgid "Scan Stock Location"
 msgstr "Сканувати місце зберігання"
 
-#: src/pages/stock/LocationDetail.tsx:321
+#: src/pages/stock/LocationDetail.tsx:322
 msgid "Scanned stock location into location"
 msgstr "Скановане місце зберігання поміщено в місце зберігання"
 
-#: src/pages/stock/LocationDetail.tsx:327
+#: src/pages/stock/LocationDetail.tsx:328
 msgid "Error scanning stock location"
 msgstr "Помилка сканування місця зберігання"
 
-#: src/pages/stock/LocationDetail.tsx:337
+#: src/pages/stock/LocationDetail.tsx:338
 msgid "Scan in stock items"
 msgstr "Сканувати складські позиції"
 
-#: src/pages/stock/LocationDetail.tsx:339
+#: src/pages/stock/LocationDetail.tsx:340
 msgid "Scan item into this location"
 msgstr "Сканувати позицію в це місце зберігання"
 
-#: src/pages/stock/LocationDetail.tsx:343
+#: src/pages/stock/LocationDetail.tsx:344
 msgid "Scan in container"
 msgstr "Сканувати в контейнер"
 
-#: src/pages/stock/LocationDetail.tsx:345
+#: src/pages/stock/LocationDetail.tsx:346
 msgid "Scan container into this location"
 msgstr "Сканувати контейнер у це місце зберігання"
 
@@ -13005,16 +13025,16 @@ msgstr "Показати незавершені замовлення"
 msgid "Show completed line items"
 msgstr "Показати завершені позиції"
 
-#: src/tables/part/PartTable.tsx:214
-#: src/tables/part/PartTable.tsx:257
+#: src/tables/part/PartTable.tsx:216
+#: src/tables/part/PartTable.tsx:259
 msgid "Set Category"
 msgstr "Задати категорію"
 
-#: src/tables/part/PartTable.tsx:259
+#: src/tables/part/PartTable.tsx:261
 msgid "Set category for selected parts"
 msgstr "Задати категорію для вибраних деталей"
 
-#: src/tables/part/PartTable.tsx:269
+#: src/tables/part/PartTable.tsx:271
 msgid "Order selected parts"
 msgstr "Замовити вибрані деталі"
 
@@ -14196,53 +14216,94 @@ msgstr "Немає інформації"
 msgid "No error details are available for this task"
 msgstr "Для цього завдання немає деталей про помилку"
 
-#: src/tables/settings/GroupTable.tsx:72
-msgid "Group with id {id} not found"
-msgstr "Групу з ідентифікатором {id} не знайдено"
-
-#: src/tables/settings/GroupTable.tsx:74
-msgid "An error occurred while fetching group details"
-msgstr "Помилка під час отримання даних групи"
-
-#: src/tables/settings/GroupTable.tsx:97
-#: src/tables/settings/GroupTable.tsx:258
-msgid "Name of the user group"
-msgstr "Назва групи користувачів"
-
 #: src/tables/settings/GroupTable.tsx:117
 #~ msgid "Permission set"
 #~ msgstr "Permission set"
 
+#: src/tables/settings/GroupTable.tsx:121
+msgid "User added"
+msgstr ""
+
+#: src/tables/settings/GroupTable.tsx:121
+msgid "User removed"
+msgstr ""
+
+#: src/tables/settings/GroupTable.tsx:122
+msgid "User added to group"
+msgstr ""
+
+#: src/tables/settings/GroupTable.tsx:122
+msgid "User removed from group"
+msgstr ""
+
+#: src/tables/settings/GroupTable.tsx:128
+msgid "Error updating group membership"
+msgstr ""
+
+#: src/tables/settings/GroupTable.tsx:152
+#: src/tables/settings/UserTable.tsx:465
+msgid "Add User"
+msgstr "Додати користувача"
+
+#: src/tables/settings/GroupTable.tsx:153
+msgid "Select a user to add to this group"
+msgstr ""
+
 #: src/tables/settings/GroupTable.tsx:171
-#: src/tables/settings/UserTable.tsx:317
-msgid "Open Profile"
-msgstr "Відкрити профіль"
+msgid "No users in this group"
+msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:186
-msgid "Delete group"
-msgstr "Видалити групу"
-
-#: src/tables/settings/GroupTable.tsx:187
-msgid "Group deleted"
-msgstr "Групу видалено"
-
-#: src/tables/settings/GroupTable.tsx:189
-msgid "Are you sure you want to delete this group?"
-msgstr "Ви впевнені, що хочете видалити цю групу?"
-
-#: src/tables/settings/GroupTable.tsx:201
-msgid "Add group"
-msgstr "Додати групу"
+#: src/tables/settings/GroupTable.tsx:205
+msgid "Remove user from group"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:213
 #~ msgid "Edit group"
 #~ msgstr "Edit group"
 
-#: src/tables/settings/GroupTable.tsx:222
+#: src/tables/settings/GroupTable.tsx:256
+msgid "Group with id {id} not found"
+msgstr "Групу з ідентифікатором {id} не знайдено"
+
+#: src/tables/settings/GroupTable.tsx:258
+msgid "An error occurred while fetching group details"
+msgstr "Помилка під час отримання даних групи"
+
+#: src/tables/settings/GroupTable.tsx:281
+#: src/tables/settings/GroupTable.tsx:460
+msgid "Name of the user group"
+msgstr "Назва групи користувачів"
+
+#: src/tables/settings/GroupTable.tsx:308
+msgid "Group Users"
+msgstr ""
+
+#: src/tables/settings/GroupTable.tsx:373
+#: src/tables/settings/UserTable.tsx:317
+msgid "Open Profile"
+msgstr "Відкрити профіль"
+
+#: src/tables/settings/GroupTable.tsx:388
+msgid "Delete group"
+msgstr "Видалити групу"
+
+#: src/tables/settings/GroupTable.tsx:389
+msgid "Group deleted"
+msgstr "Групу видалено"
+
+#: src/tables/settings/GroupTable.tsx:391
+msgid "Are you sure you want to delete this group?"
+msgstr "Ви впевнені, що хочете видалити цю групу?"
+
+#: src/tables/settings/GroupTable.tsx:403
+msgid "Add group"
+msgstr "Додати групу"
+
+#: src/tables/settings/GroupTable.tsx:424
 msgid "Edit Group"
 msgstr "Редагувати групу"
 
-#: src/tables/settings/GroupTable.tsx:254
+#: src/tables/settings/GroupTable.tsx:456
 msgid "Add Group"
 msgstr "Додати групу"
 
@@ -14579,10 +14640,6 @@ msgstr "Показати суперкористувачів"
 #: src/tables/settings/UserTable.tsx:432
 msgid "Edit User"
 msgstr "Редагувати користувача"
-
-#: src/tables/settings/UserTable.tsx:465
-msgid "Add User"
-msgstr "Додати користувача"
 
 #: src/tables/settings/UserTable.tsx:473
 msgid "Added user"
