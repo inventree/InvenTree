@@ -147,7 +147,7 @@ def filter_parameters_by_value(
     Notes:
     - Parts which do not have a value for the given parameter are excluded.
     """
-    from common.models import ParameterTemplate
+    from common.models import Parameter, ParameterTemplate
 
     # Ensure that the provided function is valid
     if func and func not in PARAMETER_FILTER_OPERATORS:
@@ -195,10 +195,7 @@ def filter_parameters_by_value(
     text_only = any([func in ['icontains'], value_numeric is None])
 
     # Query for 'numeric' value - this has priority over 'string' value
-    data_numeric = {
-        'parameters_list__template': template,
-        'parameters_list__data_numeric__isnull': False,
-    }
+    data_numeric = {'data_numeric__isnull': False}
 
     if not text_only:
         # Numeric values may be the result of unit conversion,
@@ -207,18 +204,15 @@ def filter_parameters_by_value(
 
         match func:
             case 'gt':
-                data_numeric['parameters_list__data_numeric__gt'] = value_max
+                data_numeric['data_numeric__gt'] = value_max
             case 'gte':
-                data_numeric['parameters_list__data_numeric__gte'] = value_min
+                data_numeric['data_numeric__gte'] = value_min
             case 'lt':
-                data_numeric['parameters_list__data_numeric__lt'] = value_min
+                data_numeric['data_numeric__lt'] = value_min
             case 'lte':
-                data_numeric['parameters_list__data_numeric__lte'] = value_max
+                data_numeric['data_numeric__lte'] = value_max
             case _:
-                data_numeric['parameters_list__data_numeric__range'] = (
-                    value_min,
-                    value_max,
-                )
+                data_numeric['data_numeric__range'] = (value_min, value_max)
 
     query_numeric = Q(**data_numeric)
 
@@ -227,25 +221,35 @@ def filter_parameters_by_value(
         func = f'__{func}'
 
     # Query for 'string' value
-    data_text = {
-        'parameters_list__template': template,
-        f'parameters_list__data{func}': str(value),
-    }
+    data_text = {f'data{func}': str(value)}
 
     if not text_only:
-        data_text['parameters_list__data_numeric__isnull'] = True
+        data_text['data_numeric__isnull'] = True
 
     query_text = Q(**data_text)
 
     # Combine the queries based on whether we are filtering by text or numeric value
     q = query_text if text_only else query_text | query_numeric
 
+    # Use a correlated EXISTS subquery (rather than joining against the
+    # parameters_list relation and calling .distinct()).
+    # A DISTINCT query forces the database to evaluate every annotation
+    # on every matching row (and again for the pagination COUNT query),
+    # which is very expensive for heavily annotated querysets (e.g. Part).
+    # The (model_type, model_id, template) unique index makes this lookup cheap.
+    matching_parameters = Parameter.objects.filter(
+        q,
+        template=template,
+        model_type=ContentType.objects.get_for_model(queryset.model),
+        model_id=OuterRef('pk'),
+    )
+
     # Special handling for the '__ne' (not equal) operator
     # In this case, we want the *opposite* of the above queries
     if invert:
-        return queryset.exclude(q).distinct()
+        return queryset.exclude(Exists(matching_parameters))
     else:
-        return queryset.filter(q).distinct()
+        return queryset.filter(Exists(matching_parameters))
 
 
 def filter_parametric_data(queryset: QuerySet, parameters: dict[str, str]) -> QuerySet:

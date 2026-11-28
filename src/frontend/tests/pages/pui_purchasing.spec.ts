@@ -178,6 +178,7 @@ test('Purchase Orders - General', async ({ browser }) => {
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.waitForURL('**/purchasing/index/**');
 
+  await tableSearch(page, 'PO0012');
   await page.getByRole('cell', { name: 'PO0012' }).click();
   await page.waitForLoadState('networkidle');
 
@@ -241,14 +242,24 @@ test('Purchase Orders - Table', async ({ browser }) => {
   await clearTableFilters(page);
 
   // Check for expected values
-  await page.getByRole('cell', { name: 'PO0014' }).waitFor();
-  await page.getByText('Wire-E-Coyote').waitFor();
-  await page.getByText('Cancelled').first().waitFor();
-  await page.getByText('Pending').first().waitFor();
-  await page.getByText('On Hold').first().waitFor();
+  // (search for specific orders, as the table is paginated)
+  const expectedValues: [string, string][] = [
+    ['PO0014', 'PCBWOY'],
+    ['PO0011', 'Wire-E-Coyote'],
+    ['PO0004', 'Cancelled'],
+    ['PO0012', 'Pending'],
+    ['PO0001', 'On Hold']
+  ];
+
+  for (const [reference, text] of expectedValues) {
+    await tableSearch(page, reference);
+    await page.getByRole('cell', { name: reference }).waitFor();
+    await page.getByText(text).first().waitFor();
+  }
 
   // Filter by 'has start date'
   await setTableChoiceFilter(page, 'Has Start Date', 'Yes');
+  await tableSearch(page, 'PO0015');
   await page.getByRole('cell', { name: 'Scheduled purchase order' }).waitFor();
 
   // Click through to a particular purchase order
@@ -506,6 +517,7 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.waitForURL('**/purchasing/index/**');
 
+  await tableSearch(page, 'PO0014');
   await page.getByRole('cell', { name: 'PO0014' }).click();
 
   await loadTab(page, 'Order Details');

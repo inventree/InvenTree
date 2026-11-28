@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import { type Page, expect } from '@playwright/test';
 import { createApi } from '../api';
 import { test } from '../baseFixtures';
 import { adminuser } from '../defaults';
@@ -232,5 +232,10 @@ test('Barcode Scanning - Forms', async ({ browser }) => {
     .getByRole('textbox', { name: 'barcode-scan-keyboard-input' })
     .fill('INV-SL37');
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
-  await page.getByText('Offsite Storage').waitFor();
+
+  // The scanned location is shown in the location field
+  // (the stock table behind the form may also show 'Offsite Storage')
+  await expect(
+    page.getByRole('textbox', { name: 'tree-field-location' })
+  ).toHaveValue('Offsite Storage');
 });

@@ -1091,8 +1091,10 @@ class DataImportRow(models.Model):
                     self.errors = {'non_field_errors': str(e)}
                     result = False
 
-                self.save()
-                self.session.check_complete()
+        if commit:
+            # Persist errors discovered when revalidating against newly imported rows.
+            self.save()
+            self.session.check_complete()
 
         return result
 
