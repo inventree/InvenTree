@@ -287,6 +287,7 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending').first().waitFor();
 
+  await tableSearch(page, 'BO0011');
   await page.getByRole('cell', { name: 'BO0011' }).click();
   await loadTab(page, 'Incomplete Outputs');
   await page.getByRole('cell', { name: 'BX-123' }).waitFor();
