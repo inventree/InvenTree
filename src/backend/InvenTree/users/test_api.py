@@ -1365,9 +1365,12 @@ class PasswordResetDisabledTests(InvenTreeAPITestCase):
         from common.settings import set_global_setting
 
         set_global_setting('LOGIN_ENABLE_PWD_FORGOT', True)
+        mail.outbox = []
 
-        known = self.request_reset('resetme@example.org')
-        unknown = self.request_reset('nobody@example.org')
+        # CustomAccountAdapter only sends mail if EMAIL_HOST is configured
+        with self.settings(EMAIL_HOST='localhost', TESTING_BYPASS_MAILCHECK=True):
+            known = self.request_reset('resetme@example.org')
+            unknown = self.request_reset('nobody@example.org')
 
         self.assertEqual(known.status_code, unknown.status_code)
         self.assertEqual(known.status_code, 200, known.content)
