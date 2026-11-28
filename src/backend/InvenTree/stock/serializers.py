@@ -496,6 +496,55 @@ class StockItemSerializer(
 
         return part
 
+    # Fields which may be set when a StockItem is created,
+    # but may only be changed afterwards via dedicated stock operations.
+    # These operations perform the required validation and stock tracking,
+    # which would otherwise be bypassed by a direct update.
+    UPDATE_PROTECTED_FIELDS = {
+        'part': _('Part cannot be changed - use the "convert" stock action'),
+        'quantity': _(
+            'Quantity cannot be changed directly - use the "count", "add" or "remove" stock actions'
+        ),
+        'location': _(
+            'Location cannot be changed directly - use the "transfer" stock action'
+        ),
+        'belongs_to': _(
+            'Installed item cannot be changed directly - use the "install" or "uninstall" stock actions'
+        ),
+        'customer': _(
+            'Customer cannot be changed directly - use the "assign" stock action or a sales order'
+        ),
+        'sales_order': _(
+            'Sales order cannot be changed directly - stock is assigned via sales order shipments'
+        ),
+        'purchase_order': _(
+            'Purchase order cannot be changed directly - it is set when stock is received'
+        ),
+        'consumed_by': _(
+            'Consuming build order cannot be changed directly - it is set when stock is consumed by a build order'
+        ),
+    }
+
+    def validate(self, data):
+        """Prevent changes to protected fields when updating an existing StockItem.
+
+        Values matching the existing values are accepted (e.g. a client sending
+        the complete object back), but any change to a protected field is rejected.
+        """
+        data = super().validate(data)
+
+        if self.instance is not None and isinstance(self.instance, StockItem):
+            errors = {}
+
+            for field, message in self.UPDATE_PROTECTED_FIELDS.items():
+                if field in data and data[field] != getattr(self.instance, field):
+                    errors[field] = message
+
+            if errors:
+                raise ValidationError(errors)
+
+        return data
+
     def update(self, instance, validated_data):
         """Custom update method to pass the user information through to the instance."""
         instance._user = self.context.get('user', None)

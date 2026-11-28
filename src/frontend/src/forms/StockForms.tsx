@@ -244,6 +244,7 @@ export function useStockFields({
       location: {
         // Cannot adjust location for existing stock items
         hidden: !create,
+        exclude: !create,
         value: location,
         onValueChange: (value) => {
           setLocation(value);
@@ -254,7 +255,9 @@ export function useStockFields({
         }
       },
       quantity: {
+        // Cannot adjust quantity for existing stock items
         hidden: !create,
+        exclude: !create,
         description: t`Enter initial quantity for this stock item`,
         onValueChange: (value) => {
           batchGenerator.update({ quantity: value });
