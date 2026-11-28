@@ -13,6 +13,7 @@ import { StockLocationTypePreviewComponent } from './models/StockLocationTypePre
 import { StockPreviewComponent } from './models/StockPreview';
 import { SupplierPartPreviewComponent } from './models/SupplierPartPreview';
 import { TransferOrderPreviewComponent } from './models/TransferOrderPreview';
+import { UserPreviewComponent } from './models/UserPreview';
 
 registerModelPreviews({
   part: PartPreviewComponent,
@@ -28,5 +29,6 @@ registerModelPreviews({
   salesorder: SalesOrderPreviewComponent,
   salesordershipment: SalesOrderShipmentPreviewComponent,
   returnorder: ReturnOrderPreviewComponent,
-  transferorder: TransferOrderPreviewComponent
+  transferorder: TransferOrderPreviewComponent,
+  user: UserPreviewComponent
 });

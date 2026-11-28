@@ -855,6 +855,66 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         item = StockItem.objects.get(part=part)
         self.assertEqual(item.quantity, 5)
 
+    def test_accept_rows_persists_revalidation_errors(self):
+        """Expose a row's validation error when an earlier import causes a conflict."""
+        from company.models import Company
+
+        initial_count = Company.objects.count()
+        self.assignRole('purchase_order.change')
+
+        session_data = self.post(
+            reverse('api-importer-session-list'),
+            {
+                'model_type': 'company',
+                'data_file': ContentFile(
+                    'name,email,description\n'
+                    'Conflicting import company,conflict@example.com,First row\n'
+                    'Conflicting import company,conflict@example.com,Second row\n',
+                    'conflicting_companies.csv',
+                ),
+            },
+            format='multipart',
+            expected_code=201,
+        ).data
+        session_id = session_data['pk']
+
+        self.post(
+            reverse('api-import-session-accept-fields', kwargs={'pk': session_id}),
+            expected_code=200,
+        )
+
+        first_row, second_row = DataImportRow.objects.filter(
+            session_id=session_id
+        ).order_by('row_index')
+        for row in [first_row, second_row]:
+            self.assertTrue(row.valid)
+            self.assertFalse(row.errors)
+            self.assertFalse(row.complete)
+
+        # Both rows pass initially, but the first import makes the second a duplicate.
+        self.post(
+            reverse('api-import-session-accept-rows', kwargs={'pk': session_id}),
+            {'rows': [first_row.pk, second_row.pk]},
+            format='json',
+            expected_code=201,
+        )
+
+        self.assertEqual(Company.objects.count(), initial_count + 1)
+        company = Company.objects.get(
+            name='Conflicting import company', email='conflict@example.com'
+        )
+        self.assertEqual(company.description, 'First row')
+        first_row.refresh_from_db()
+        self.assertTrue(first_row.complete)
+
+        # The UI fetches rows again after acceptance and must see the new error.
+        detail = self.get(
+            reverse('api-importer-row-detail', kwargs={'pk': second_row.pk})
+        ).data
+        self.assertFalse(detail['valid'])
+        self.assertFalse(detail['complete'])
+        self.assertTrue(detail['errors']['non_field_errors'])
+
     def test_column_mapping_lookup_field(self):
         """Test that the 'lookup_field' option can be specified via the column-mapping API."""
         f = self.helper_file('companies.csv')

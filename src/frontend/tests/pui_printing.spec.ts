@@ -125,6 +125,7 @@ test('Printing - Report Printing', async ({ browser }) => {
   await loadTab(page, 'Purchase Orders');
   await activateTableView(page);
 
+  await tableSearch(page, 'PO0013');
   await page.getByRole('cell', { name: 'PO0013' }).click();
 
   // Select "print report"
