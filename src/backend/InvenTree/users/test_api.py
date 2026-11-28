@@ -1318,3 +1318,101 @@ class NewUserMfaOnboardingTests(InvenTreeAPITestCase):
         self.assertFalse(
             EmailAddress.objects.filter(user=new_user, verified=True).exists()
         )
+
+
+class PasswordResetDisabledTests(InvenTreeAPITestCase):
+    """Tests for the LOGIN_ENABLE_PWD_FORGOT setting.
+
+    When password reset is disabled, the reset endpoints must reject every request
+    in the same way - regardless of whether the email address belongs to an account.
+    """
+
+    NEW_PASSWORD = 'Corr3ct-Horse-Battery-Staple!'
+
+    def setUp(self):
+        """Create a user with a known email address, and log out."""
+        super().setUp()
+        self.target = User.objects.create_user(
+            username='resetme', email='resetme@example.org', password='old-password'
+        )
+        self.client.logout()
+
+    def request_reset(self, email):
+        """Request a password reset for the given email address."""
+        return self.client.post(
+            reverse('browser:account:request_password_reset'),
+            {'email': email},
+            content_type='application/json',
+        )
+
+    def reset_with_key(self):
+        """Attempt to reset the target user's password using a valid key."""
+        from allauth.account.forms import default_token_generator
+        from allauth.account.utils import user_pk_to_url_str
+
+        key = f'{user_pk_to_url_str(self.target)}-{default_token_generator.make_token(self.target)}'
+
+        return self.client.post(
+            reverse('browser:account:reset_password'),
+            {'key': key, 'password': self.NEW_PASSWORD},
+            content_type='application/json',
+        )
+
+    def test_reset_enabled(self):
+        """With password reset enabled, known and unknown emails get the same response."""
+        from django.core import mail
+
+        from common.settings import set_global_setting
+
+        set_global_setting('LOGIN_ENABLE_PWD_FORGOT', True)
+        mail.outbox = []
+
+        # CustomAccountAdapter only sends mail if EMAIL_HOST is configured
+        with self.settings(EMAIL_HOST='localhost', TESTING_BYPASS_MAILCHECK=True):
+            known = self.request_reset('resetme@example.org')
+            unknown = self.request_reset('nobody@example.org')
+
+        self.assertEqual(known.status_code, unknown.status_code)
+        self.assertEqual(known.status_code, 200, known.content)
+
+        # A reset email is sent to the known account
+        self.assertTrue(
+            any('resetme@example.org' in m.to for m in mail.outbox), mail.outbox
+        )
+
+    def test_reset_disabled(self):
+        """With password reset disabled, every request is rejected identically."""
+        from django.core import mail
+
+        from common.settings import set_global_setting
+
+        set_global_setting('LOGIN_ENABLE_PWD_FORGOT', False)
+        mail.outbox = []
+
+        known = self.request_reset('resetme@example.org')
+        unknown = self.request_reset('nobody@example.org')
+
+        # Responses do not reveal whether an account exists
+        self.assertEqual(known.status_code, 403, known.content)
+        self.assertEqual(unknown.status_code, 403, unknown.content)
+        self.assertEqual(known.json(), unknown.json())
+        self.assertEqual(known.json()['errors'][0]['code'], 'password_reset_disabled')
+
+        # No emails are sent
+        self.assertEqual(len(mail.outbox), 0)
+
+        # A previously issued reset key cannot be used
+        response = self.reset_with_key()
+        self.assertEqual(response.status_code, 403, response.content)
+
+        self.target.refresh_from_db()
+        self.assertTrue(self.target.check_password('old-password'))
+
+        # Re-enable: the same key can now be used
+        set_global_setting('LOGIN_ENABLE_PWD_FORGOT', True)
+
+        response = self.reset_with_key()
+        self.assertIn(response.status_code, [200, 401], response.content)
+
+        self.target.refresh_from_db()
+        self.assertTrue(self.target.check_password(self.NEW_PASSWORD))
