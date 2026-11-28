@@ -297,22 +297,32 @@ test('Plugins - Creator', async ({ browser }) => {
     user: adminuser
   });
 
-  // Ensure that the SampleIntegration plugin is enabled
-  await setPluginState({
-    plugin: 'my-custom-plugin',
-    state: true
-  });
+  // Enable the plugin, and wait for its static files to be served.
+  // The plugin is toggled off -> on each attempt, because the static file copy
+  // can be lost if activation races a concurrent registry reload (triggered by
+  // other tests toggling plugins in parallel). Re-activating an already active
+  // plugin is a no-op, so without the toggle a retry could never recover.
+  await expect(async () => {
+    await setPluginState({
+      plugin: 'my-custom-plugin',
+      state: false
+    });
 
-  // Allow time for installation of plugin static files, etc
-  await expect
-    .poll(
-      async () =>
-        (
-          await page.request.get('/static/plugins/my-custom-plugin/Panel.js')
-        ).status(),
-      { timeout: 2500 }
-    )
-    .toBe(200);
+    await setPluginState({
+      plugin: 'my-custom-plugin',
+      state: true
+    });
+
+    await expect
+      .poll(
+        async () =>
+          (
+            await page.request.get('/static/plugins/my-custom-plugin/Panel.js')
+          ).status(),
+        { timeout: 5000 }
+      )
+      .toBe(200);
+  }).toPass({ timeout: 60000 });
 
   await expect(async () => {
     await navigate(page, 'part/106/details/');
