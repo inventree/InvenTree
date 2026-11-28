@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('pricing', '0004_legacy_purchase_price_entries'),
-        ('stock', '0131_stocklocation_exclude_from_stock'),
+        ('stock', '0132_upload_size_validator'),
     ]
 
     operations = [
