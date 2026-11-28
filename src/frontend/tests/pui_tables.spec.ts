@@ -131,7 +131,7 @@ test('Tables - Pagination', async ({ browser }) => {
   await page.getByText(/11 - 20 \/ \d+/).waitFor();
 
   // Set page size back to 25
-  await page.getByRole('button', { name: '10' }).click();
+  await page.getByRole('button', { name: '10' }).first().click();
   await page.getByRole('menuitem', { name: '25', exact: true }).click();
 
   await page.getByText(/1 - 25 \/ \d+/).waitFor();

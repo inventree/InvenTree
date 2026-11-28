@@ -7,7 +7,8 @@ import {
   navigate,
   openDetailAction,
   setTableChoiceFilter,
-  showParametricView
+  showParametricView,
+  tableSearch
 } from '../helpers.js';
 import { doCachedLogin } from '../login.js';
 
@@ -25,6 +26,7 @@ test('Company - Basic Tests', async ({ browser }) => {
 
   await loadTab(page, 'Purchase Orders');
   await clearTableFilters(page);
+  await tableSearch(page, 'Molex');
   await page.getByRole('cell', { name: 'Molex connectors' }).first().waitFor();
 
   await loadTab(page, 'Stock Items');
